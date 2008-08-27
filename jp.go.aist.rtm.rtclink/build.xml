@@ -1,0 +1,72 @@
+<project name="jp.go.aist.rtm.rtclink_0.4.0" default="jar">
+	<property name="target.name" value="jp.go.aist.rtm.rtclink_0.4.0"/>
+
+	<property name="source" value="src"/>
+	<property name="source.sdo" value="src/_SDOPackage"/>
+	<property name="source.rtc" value="src/RTC"/>
+
+	<property name="dist.dir" value="jar" />
+	<property name="build.dir" value="bin"/>
+	<property name="icons.dir" value="icons"/>
+	<property name="lib.dir" value="lib"/>
+
+	<property environment="env"/>
+	<!--
+	<property name="eclipse.home" value="${eclipse.pdebuild.home}/../../"/>
+	-->
+	<property name="eclipse.home" value="${env.ECLIPSE_HOME}"/>
+
+	<property name="idl.path" value="idl" />
+	<property name="idl.SDOPackage" value="${idl.path}/SDOPackage.idl" />
+	<property name="idl.RTC" value="${idl.path}/RTC_061222.idl" />
+	
+	<taskdef resource="net/sf/ant4eclipse/antlib.xml" />
+	<property name="targetPlatformLocation" value="${eclipse.home}" />
+	<property name="workspace" value="${basedir}/.." />
+	<property name="project.name" value="jp.go.aist.rtm.rtclink" />
+
+	<target name="buildAll">
+		<antcall target="idlCompile" />
+		<antcall target="clean" />
+		<antcall target="compile" />
+		<antcall target="jar" />
+	</target>
+
+	<target name="idlCompile" description="IDLファイルをコンパイルします">
+		<delete dir="${source.sdo}" />
+		<delete dir="${source.rtc}" />
+		<exec executable="${java.home}\..\bin\idlj">
+			<arg line="-fall -td ${source} -i ${idl.path} -emitAll ${idl.SDOPackage}"/>
+		</exec>
+		<exec executable="${java.home}\..\bin\idlj">
+			<arg line="-fall -td ${source} -i ${idl.path} -emitAll ${idl.RTC}"/>
+		</exec>
+	</target>
+
+	<target name="clean" description="ビルドで生成されたファイルを削除します">
+		<delete includeEmptyDirs="true">
+			<fileset dir="${build.dir}" includes="**/*.class" />
+		</delete>
+	</target>
+
+	<target name="compile" description="ソースをコンパイルします">
+		<getEclipseClasspath pathid="build.classpath" targetplatformlocation="${targetPlatformLocation}"
+					workspace="${workspace}" projectname="${project.name}"/>
+		<javac srcdir="${source}" destdir="${build.dir}"
+			classpathref="build.classpath" classpath="lib/commons-lang-2.2.jar" encoding="Shift_JIS" />
+	</target>
+
+	<target name="jar" description="jarファイルを作成します">
+		<mkdir dir="${dist.dir}" />
+		<delete file="${dist.dir}/${target.name}.jar" />
+
+		<jar destfile="${dist.dir}/${target.name}.jar" manifest="META-INF/MANIFEST.MF">
+			<fileset dir="${build.dir}" />
+			<fileset dir=".">
+				<include name="icons/**.**" />
+				<include name="lib/**.**" />
+				<include name="plugin.xml" />
+			</fileset>
+		</jar>
+	</target>
+</project>

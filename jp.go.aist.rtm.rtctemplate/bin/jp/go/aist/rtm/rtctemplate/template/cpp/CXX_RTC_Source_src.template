@@ -1,0 +1,181 @@
+// -*- C++ -*-
+/*!
+ * @file  ${rtcParam.name}.cpp
+ * @brief ${rtcParam.description}
+ * @date ${dol}Date${dol}
+ *
+ * ${dol}Id${dol}
+ */
+
+${sharp}include "${rtcParam.name}.h"
+
+// Module specification
+// <rtc-template block="module_spec">
+static const char* ${rtcParam.name.toLowerCase()}_spec[] =
+  {
+    "implementation_id", "${rtcParam.name}",
+    "type_name",         "${rtcParam.name}",
+    "description",       "${rtcParam.description}",
+    "version",           "${rtcParam.version}",
+    "vendor",            "${rtcParam.vender}",
+    "category",          "${rtcParam.category}",
+    "activity_type",     "${rtcParam.activityType}",
+    "max_instance",      "${rtcParam.maxInstance}",
+    "language",          "C++",
+    "lang_type",         "compile",
+    ""
+  };
+// </rtc-template>
+
+${rtcParam.name}::${rtcParam.name}(RTC::Manager* manager)
+  : RTC::DataFlowComponentBase(manager),
+    // <rtc-template block="initializer">
+   #foreach($port in ${rtcParam.inports}) m_${port.name}In("${port.name}", m_${port.name}),
+   #end
+#foreach($port in ${rtcParam.outports}) m_${port.name}Out("${port.name}", m_${port.name}),
+   #end
+ #foreach($serviceReferenceParam in ${rtcParam.providerReferences})m_${serviceReferenceParam.interfaceName}Port("${serviceReferenceParam.interfaceName}"),#end
+#foreach($serviceReferenceParam in ${rtcParam.consumerReferences})m_${serviceReferenceParam.interfaceName}Port("${serviceReferenceParam.interfaceName}"),#end 
+
+    // </rtc-template>
+	dummy(0)
+{
+  // Registration: InPort/OutPort/Service
+  // <rtc-template block="registration">
+  // Set InPort buffers
+#foreach($port in ${rtcParam.inports})
+  registerInPort("${port.name}", m_${port.name}In);
+#end
+  
+  // Set OutPort buffer
+#foreach($port in ${rtcParam.outports})
+  registerOutPort("${port.name}", m_${port.name}Out);
+#end
+  
+  // Set service provider to Ports
+#foreach($serviceReferenceParam in ${rtcParam.providerReferences})
+  m_${serviceReferenceParam.interfaceName}Port.registerProvider("${serviceReferenceParam.name}", "${serviceReferenceParam.type}", m_${serviceReferenceParam.name});
+#end
+  
+  // Set service consumers to Ports
+#foreach($serviceReferenceParam in ${rtcParam.consumerReferences})
+  m_${serviceReferenceParam.interfaceName}Port.registerConsumer("${serviceReferenceParam.name}", "${serviceReferenceParam.type}", m_${serviceReferenceParam.name});
+#end
+  
+  // Set CORBA Service Ports
+#foreach($serviceReferenceParam in ${rtcParam.consumerReferences})
+  registerPort(m_${serviceReferenceParam.interfaceName}Port);
+#end
+#foreach($serviceReferenceParam in ${rtcParam.providerReferences})
+  registerPort(m_${serviceReferenceParam.interfaceName}Port);
+#end
+  
+  // </rtc-template>
+
+}
+
+${rtcParam.name}::~${rtcParam.name}()
+{
+}
+
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onInitialize()
+{
+  return RTC::OK;
+}
+*/
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onFinalize()
+{
+  return RTC::OK;
+}
+*/
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onStartup(RTC::UniqueId ec_id)
+{
+  return RTC::OK;
+}
+*/
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onShutdown(RTC::UniqueId ec_id)
+{
+  return RTC::OK;
+}
+*/
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onActivated(RTC::UniqueId ec_id)
+{
+  return RTC::OK;
+}
+*/
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onDeactivated(RTC::UniqueId ec_id)
+{
+  return RTC::OK;
+}
+*/
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onExecute(RTC::UniqueId ec_id)
+{
+  return RTC::OK;
+}
+*/
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onAborting(RTC::UniqueId ec_id)
+{
+  return RTC::OK;
+}
+*/
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onError(RTC::UniqueId ec_id)
+{
+  return RTC::OK;
+}
+*/
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onReset(RTC::UniqueId ec_id)
+{
+  return RTC::OK;
+}
+*/
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onStateUpdate(RTC::UniqueId ec_id)
+{
+  return RTC::OK;
+}
+*/
+
+/*
+RTC::ReturnCode_t ${rtcParam.name}::onRateChanged(RTC::UniqueId ec_id)
+{
+  return RTC::OK;
+}
+*/
+
+
+
+extern "C"
+{
+ 
+  void ${rtcParam.name}Init(RTC::Manager* manager)
+  {
+    RTC::Properties profile(${rtcParam.name.toLowerCase()}_spec);
+    manager->registerFactory(profile,
+                             RTC::Create<${rtcParam.name}>,
+                             RTC::Delete<${rtcParam.name}>);
+  }
+  
+};
+
+

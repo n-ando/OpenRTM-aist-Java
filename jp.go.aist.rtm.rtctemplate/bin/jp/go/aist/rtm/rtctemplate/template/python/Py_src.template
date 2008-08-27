@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+# -*- Python -*-
+import sys
+sys.path.append(".")
+
+# Inport RTM module
+import RTM
+
+# This module's spesification
+mod_spec = {
+        RTM.RTC_MODULE_NAME:      "${rtcParam.name}",
+        RTM.RTC_MODULE_DESC:      "${rtcParam.description}",
+        RTM.RTC_MODULE_VERSION:   "${rtcParam.version}",
+        RTM.RTC_MODULE_AUTHOR:    "${rtcParam.vender}",
+        RTM.RTC_MODULE_COMPANY:   "${rtcParam.vender}", 
+        RTM.RTC_MODULE_CATEGORY:  "${rtcParam.category}",
+        RTM.RTC_MODULE_COMP_TYPE: "${rtcParam.componentType}",
+        RTM.RTC_MODULE_ACT_TYPE:  "${rtcParam.activityType}",
+        RTM.RTC_MODULE_MAX_INST:  "${rtcParam.maxInstance}",
+        RTM.RTC_MODULE_LANG:      "Python",
+        RTM.RTC_MODULE_LANG_TYPE: "SCRIPT",
+        RTM.RTC_MODULE_SPEC_END:  " "
+  }
+
+class ${rtcParam.name}(RTM.RtcBase):
+	def __init__(self, mgr):
+		try:
+			RTM.RtcBase.__init__(self, mgr)
+
+			# Initialize InPorts and OutPorts
+#foreach($port in ${rtcParam.inports})
+			self.${port.name} = RTM.${port.type}In("${port.name}")
+#end
+#foreach($port in ${rtcParam.outports})
+			self.${port.name} = RTM.${port.type}Out("${port.name}")
+#end
+#foreach($port in ${rtcParam.inports})
+			self.registerInPort(self.${port.name})
+#end
+#foreach($port in ${rtcParam.outports})
+			self.registerOutPort(self.${port.name})
+#end
+
+		except:
+			pass
+		return
+
+#foreach($activity in ["rtc_init_entry","rtc_ready_entry","rtc_ready_do","rtc_ready_exit","rtc_starting_entry","rtc_active_entry","rtc_active_do","rtc_active_exit","rtc_stopping_entry","rtc_aborting_entry","rtc_error_entry","rtc_error_do","rtc_error_exit","rtc_fatal_entry","rtc_fatal_do","rtc_fatal_exit","rtc_exiting_entry"])
+	#def ${activity}(self):
+	#	try:
+	#		# do something
+	#		pass
+	#	except:
+	#		pass
+	#	return 0
+	
+#end
+
+
+def main():
+	arg = ["-f", "./rtc.conf"]
+	mgr = RTM.RtcManager(arg)
+	mgr.initManager()
+	mgr.activateManager()
+	prof = RTM.RtcModuleProfile(mod_spec)
+	mgr.registerComponent((prof, ${rtcParam.name}))
+	time.sleep(3)
+	s = mgr.create_component("${rtcParam.name}", "${rtcParam.category}")
+	mgr.runManager()
+
+if __name__ == "__main__":
+	main()

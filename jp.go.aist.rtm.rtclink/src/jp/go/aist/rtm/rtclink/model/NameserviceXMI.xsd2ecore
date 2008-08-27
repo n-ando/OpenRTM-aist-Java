@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd2ecore:XSD2EcoreMappingRoot xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsd2ecore="http://www.eclipse.org/emf/2002/XSD2Ecore" inputs="nameservice.ecore#/"
+    outputs="NameserviceXMI.xsd#/">
+  <nested inputs="nameservice.ecore#/" outputs="NameserviceXMI.xsd#/">
+    <nested inputs="nameservice.ecore#//CategoryNamingContext" outputs="NameserviceXMI.xsd#//CategoryNamingContext;XSDComplexTypeDefinition"/>
+    <nested inputs="nameservice.ecore#//CategoryNamingContext" outputs="NameserviceXMI.xsd#//CategoryNamingContext;XSDElementDeclaration"/>
+    <nested inputs="nameservice.ecore#//HostNamingContext" outputs="NameserviceXMI.xsd#//HostNamingContext;XSDComplexTypeDefinition=1"/>
+    <nested inputs="nameservice.ecore#//HostNamingContext" outputs="NameserviceXMI.xsd#//HostNamingContext;XSDElementDeclaration=1"/>
+    <nested inputs="nameservice.ecore#//ManagerNamingContext" outputs="NameserviceXMI.xsd#//ManagerNamingContext;XSDComplexTypeDefinition=2"/>
+    <nested inputs="nameservice.ecore#//ManagerNamingContext" outputs="NameserviceXMI.xsd#//ManagerNamingContext;XSDElementDeclaration=2"/>
+    <nested inputs="nameservice.ecore#//ModuleNamingContext" outputs="NameserviceXMI.xsd#//ModuleNamingContext;XSDComplexTypeDefinition=3"/>
+    <nested inputs="nameservice.ecore#//ModuleNamingContext" outputs="NameserviceXMI.xsd#//ModuleNamingContext;XSDElementDeclaration=3"/>
+    <nested inputs="nameservice.ecore#//NameServerNamingContext" outputs="NameserviceXMI.xsd#//NameServerNamingContext;XSDComplexTypeDefinition=4"/>
+    <nested inputs="nameservice.ecore#//NameServerNamingContext" outputs="NameserviceXMI.xsd#//NameServerNamingContext;XSDElementDeclaration=4"/>
+    <nested inputs="nameservice.ecore#//NamingContextNode" outputs="NameserviceXMI.xsd#//NamingContextNode;XSDComplexTypeDefinition=5">
+      <nested inputs="nameservice.ecore#//NamingContextNode/nodes" outputs="NameserviceXMI.xsd#//NamingContextNode;XSDComplexTypeDefinition=5/XSDParticle/XSDModelGroup/XSDParticle"/>
+    </nested>
+    <nested inputs="nameservice.ecore#//NamingContextNode" outputs="NameserviceXMI.xsd#//NamingContextNode;XSDElementDeclaration=5"/>
+    <nested inputs="nameservice.ecore#//NamingObjectNode" outputs="NameserviceXMI.xsd#//NamingObjectNode;XSDComplexTypeDefinition=6">
+      <nested inputs="nameservice.ecore#//NamingObjectNode/corbaWrapperObject" outputs="NameserviceXMI.xsd#//NamingObjectNode;XSDComplexTypeDefinition=6/XSDParticle/XSDModelGroup/XSDParticle"/>
+    </nested>
+    <nested inputs="nameservice.ecore#//NamingObjectNode" outputs="NameserviceXMI.xsd#//NamingObjectNode;XSDElementDeclaration=6"/>
+    <nested inputs="nameservice.ecore#//Node" outputs="NameserviceXMI.xsd#//Node;XSDComplexTypeDefinition=7">
+      <nested inputs="nameservice.ecore#//Node/nameServiceReference" outputs="NameserviceXMI.xsd#//Node;XSDComplexTypeDefinition=7/XSDAttributeUse"/>
+      <nested inputs="nameservice.ecore#//Node/nameServiceReference" outputs="NameserviceXMI.xsd#//Node;XSDComplexTypeDefinition=7/XSDParticle/XSDModelGroup/XSDParticle"/>
+    </nested>
+    <nested inputs="nameservice.ecore#//Node" outputs="NameserviceXMI.xsd#//Node;XSDElementDeclaration=7"/>
+    <nested inputs="nameservice.ecore#//NamingContext" outputs="NameserviceXMI.xsd#//NamingContext;XSDComplexTypeDefinition=8"/>
+    <nested inputs="nameservice.ecore#//NamingContext" outputs="NameserviceXMI.xsd#//NamingContext;XSDElementDeclaration=8"/>
+    <nested inputs="nameservice.ecore#//NameServiceReference" outputs="NameserviceXMI.xsd#//NameServiceReference;XSDComplexTypeDefinition=9">
+      <nested inputs="nameservice.ecore#//NameServiceReference/binding" outputs="NameserviceXMI.xsd#//NameServiceReference;XSDComplexTypeDefinition=9/XSDAttributeUse=1"/>
+      <nested inputs="nameservice.ecore#//NameServiceReference/nameServerName" outputs="NameserviceXMI.xsd#//NameServiceReference;XSDComplexTypeDefinition=9/XSDAttributeUse=2"/>
+      <nested inputs="nameservice.ecore#//NameServiceReference/rootNamingContext"
+          outputs="NameserviceXMI.xsd#//NameServiceReference;XSDComplexTypeDefinition=9/XSDAttributeUse=3"/>
+    </nested>
+    <nested inputs="nameservice.ecore#//NameServiceReference" outputs="NameserviceXMI.xsd#//NameServiceReference;XSDElementDeclaration=9"/>
+  </nested>
+</xsd2ecore:XSD2EcoreMappingRoot>
