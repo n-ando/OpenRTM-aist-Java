@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/velocity-dep-1.5.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="lib" path="/jp.go.aist.rtm.logview/jar/jp.go.aist.rtm.logview_1.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/work/eclipse32_rtclink041_rtctemplate041_win32/eclipse/plugins/org.junit_3.8.1/junit.jar"/>
+	<classpathentry kind="lib" path="/jp.go.aist.rtm.toolscommon.profiles/jar/jp.go.aist.rtm.toolscommon.profiles_1.0.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,1 @@
+rtc-template -bcxx --module-name=foo --module-desc='MDesc' --module-version=1.0.1 --module-vendor=TA --module-category=Manip --module-comp-type=STATIC2 --module-act-type=PERIODIC2 --module-max-inst=5 --inport=InP1:TimedShort --inport=InP2:TimedLong --outport=OutP1:TimedDouble --outport=OutP2:TimedFloat --service-idl=MyService.idl --service=svPort:acc:MyService 

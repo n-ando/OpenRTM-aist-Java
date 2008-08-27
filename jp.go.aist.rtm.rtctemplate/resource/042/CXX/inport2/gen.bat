@@ -1,0 +1,1 @@
+rtc-template.py -bcxx --module-name=foo --module-desc='MDesc' --module-version=1.0.1 --module-vendor=TA --module-category=Manip --module-comp-type=STATIC2 --module-act-type=PERIODIC2 --module-max-inst=5 --inport=InP1:TimedShort --inport=InP2:TimedLong 

@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{${cXXConv.getProjectGID(${rtcParam.isTest})}}") = "${rtcParam.name}Comp", "${rtcParam.name}Comp_vc8.vcproj", "{${cXXConv.getCompProjectUUID(${rtcParam.isTest})}}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{${cXXConv.getProjectGID(${rtcParam.isTest})}}") = "${rtcParam.name}", "${rtcParam.name}_vc8.vcproj", "{${cXXConv.getProjectUUID(${rtcParam.isTest})}}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|Win32 = Release|Win32
+		Debug|Win32 = Debug|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{${cXXConv.getCompProjectUUID(${rtcParam.isTest})}}.Release|Win32.ActiveCfg = Release|Win32
+		{${cXXConv.getCompProjectUUID(${rtcParam.isTest})}}.Release|Win32.Build.0   = Release|Win32
+		{${cXXConv.getCompProjectUUID(${rtcParam.isTest})}}.Debug|Win32.ActiveCfg = Debug|Win32
+		{${cXXConv.getCompProjectUUID(${rtcParam.isTest})}}.Debug|Win32.Build.0   = Debug|Win32
+		{${cXXConv.getProjectUUID(${rtcParam.isTest})}}.Release|Win32.ActiveCfg = Release|Win32
+		{${cXXConv.getProjectUUID(${rtcParam.isTest})}}.Release|Win32.Build.0   = Release|Win32
+		{${cXXConv.getProjectUUID(${rtcParam.isTest})}}.Debug|Win32.ActiveCfg = Debug|Win32
+		{${cXXConv.getProjectUUID(${rtcParam.isTest})}}.Debug|Win32.Build.0   = Debug|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

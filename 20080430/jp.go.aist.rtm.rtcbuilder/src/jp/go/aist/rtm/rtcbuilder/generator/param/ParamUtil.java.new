@@ -1,0 +1,793 @@
+package jp.go.aist.rtm.rtcbuilder.generator.param;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import jp.go.aist.rtm.rtcbuilder.IRtcBuilderConstants;
+import jp.go.aist.rtm.rtcbuilder.IRtcBuilderConstantsJava;
+import jp.go.aist.rtm.rtcbuilder.IRtcBuilderConstantsPython;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.ActionStatus;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.Actions;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.Basic;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.Configuration;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.Cxxlang;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.DataPort;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.DocBasic;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.DocConfiguration;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.DocDataPort;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.DocServiceinterface;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.DocServiceport;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.Javalang;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.Language;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.ObjectFactory;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.Parameter;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.RtcProfile;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.ServiceInterface;
+import jp.go.aist.rtm.rtcbuilder.model.jaxb.ServicePort;
+import jp.go.aist.rtm.rtcbuilder.ui.preference.ComponentPreferenceManager;
+import jp.go.aist.rtm.rtcbuilder.ui.preference.ConfigPreferenceManager;
+
+import org.eclipse.core.commands.ParameterType;
+
+public class ParamUtil {
+	
+	public static RtcProfile initialXml() {
+		ObjectFactory objFactory = new ObjectFactory();
+		RtcProfile profileType = objFactory.createRtcProfile();
+		String moduleId = IRtcBuilderConstants.SPEC_SUFFIX + IRtcBuilderConstants.SPEC_MAJOR_SEPARATOR +
+							ComponentPreferenceManager.getInstance().getBasic_VendorName() + IRtcBuilderConstants.SPEC_MINOR_SEPARATOR +
+							ComponentPreferenceManager.getInstance().getBasic_Category() + IRtcBuilderConstants.SPEC_MINOR_SEPARATOR +
+							ComponentPreferenceManager.getInstance().getBasic_ComponentName() + IRtcBuilderConstants.SPEC_MAJOR_SEPARATOR +
+							ComponentPreferenceManager.getInstance().getBasic_Version();
+		profileType.setId(moduleId);
+		
+		Basic basic = objFactory.createBasic();
+		basic.setName(ComponentPreferenceManager.getInstance().getBasic_ComponentName());
+		basic.setDescription(ComponentPreferenceManager.getInstance().getBasic_Description());
+		basic.setVersion(ComponentPreferenceManager.getInstance().getBasic_Version());
+		basic.setVendor(ComponentPreferenceManager.getInstance().getBasic_VendorName());
+		basic.setCategory(ComponentPreferenceManager.getInstance().getBasic_Category());
+		basic.setComponentType(ComponentPreferenceManager.getInstance().getBasic_ComponentType());
+		basic.setActivityType(ComponentPreferenceManager.getInstance().getBasic_ActivityType());
+		basic.setComponentKind(ComponentPreferenceManager.getInstance().getBasic_ComponentKind());
+		basic.setMaxInstances(BigInteger.valueOf(ComponentPreferenceManager.getInstance().getBasic_MaxInstances()));
+		basic.setExecutionType(ComponentPreferenceManager.getInstance().getBasic_ExecutionType());
+		basic.setExecutionRate(ComponentPreferenceManager.getInstance().getBasic_ExecutionRate());
+		profileType.setBasic(basic);
+		//
+		Actions actionType = objFactory.createActions();
+		ActionStatus actionStatus = objFactory.createActionStatus();
+		actionStatus.setImplemented(false);
+
+		actionType.setOnInitialize(actionStatus);
+		actionType.setOnFinalize(actionStatus);
+		actionType.setOnStartup(actionStatus);
+		actionType.setOnShutdown(actionStatus);
+		actionType.setOnActivated(actionStatus);
+		actionType.setOnDeactivated(actionStatus);
+		actionType.setOnExecute(actionStatus);
+		actionType.setOnAborting(actionStatus);
+		actionType.setOnError(actionStatus);
+		actionType.setOnReset(actionStatus);
+		actionType.setOnStateUpdate(actionStatus);
+		actionType.setOnRateChanged(actionStatus);
+		profileType.setActions(actionType);
+		
+		return profileType;
+	}
+
+	public static RtcParam convertFromModule(RtcProfile profile, GeneratorParam generatorParam) {
+		RtcParam rtcParam = new RtcParam(generatorParam);
+		
+		Basic basic = profile.getBasic();
+		
+		//Šî–{
+		rtcParam.setName(basic.getName());
+		rtcParam.setDescription(basic.getDescription());
+		rtcParam.setVersion(basic.getVersion());
+		rtcParam.setVender(basic.getVendor());
+		rtcParam.setCategory(basic.getCategory());
+		rtcParam.setComponentType(basic.getComponentType());
+		rtcParam.setActivityType(basic.getActivityType());
+		rtcParam.setComponentKind(basic.getComponentKind());
+		if( basic.getMaxInstances() != null )
+			rtcParam.setMaxInstance(basic.getMaxInstances().intValue());
+		rtcParam.setExecutionType(basic.getExecutionType());
+		rtcParam.setExecutionRate(basic.getExecutionRate());
+		//Data Ports
+		if( profile.getDataPort() != null ) {
+			createDataPortParam(profile.getDataPort(), rtcParam);
+		}
+		//Service Ports
+		if( profile.getServicePort() != null ) {
+			createServicePortParam(profile.getServicePort(), rtcParam.getServicePorts());
+		}
+		//Configuration
+		createConfigParam(profile.getConfiguration(), rtcParam);
+		//Parameter
+		String[] Config_Items = ConfigPreferenceManager.getInstance().getConfigName();
+		for( Parameter param : profile.getParameter() ) {
+			ConfigParameterParam paramp = new ConfigParameterParam(Config_Items);
+			paramp.setConfigName(param.getName());
+			paramp.setDefaultVal(param.getDefaultValue());
+			
+			for( int intIdx=0; intIdx<Config_Items.length;intIdx++ ) {
+				if( param.getName().equals(Config_Items[intIdx]) ) {
+					paramp.setIndex(intIdx);
+					break;
+				}
+			}
+			rtcParam.getConfigParameterParams().add(paramp);
+		}
+		//Language
+		Language language = profile.getLanguage();
+		if( language != null ) {
+			Cxxlang cxx = language.getCxx();
+			Javalang java = language.getJava();
+			if( cxx != null ) {
+				if( cxx.getOs().equals("Windows") ) {
+					rtcParam.getLangList().add(IRtcBuilderConstants.LANG_CPPWIN);
+				} else {
+					rtcParam.getLangList().add(IRtcBuilderConstants.LANG_CPP);
+				}
+			} else 	if( java != null ) {
+				rtcParam.getLangList().add(IRtcBuilderConstantsJava.LANG_JAVA);
+				rtcParam.setJavaClassPathes(java.getLibrary());
+				
+			} else if( language.getPython() != null ) {
+				rtcParam.getLangList().add(IRtcBuilderConstantsPython.LANG_PYTHON);
+			} else if( language.getCsharp() != null ) {
+				rtcParam.getLangList().add(IRtcBuilderConstants.LANG_CSHARP);
+			} else if( language.getRuby() != null ) {
+				rtcParam.getLangList().add(IRtcBuilderConstants.LANG_RUBY);
+			}
+		}
+		//Doc Basic
+		DocBasic docbasic = profile.getDoc();
+		if( docbasic != null ) {
+			rtcParam.setDocDescription(docbasic.getDescription());
+			rtcParam.setDocInOut(docbasic.getInout());
+			rtcParam.setDocAlgorithm(docbasic.getAlgorithm());
+			rtcParam.setDocCreator(docbasic.getCreator());
+			rtcParam.setDocLicense(docbasic.getLicense());
+			rtcParam.setDocReference(docbasic.getReference());
+		}
+		//Actions
+		Actions actions = profile.getActions();
+		if( actions != null ) {
+			if( actions.getOnInitialize() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_INITIALIZE, actions.getOnInitialize());
+			if( actions.getOnFinalize() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_FINALIZE, actions.getOnFinalize());
+			if( actions.getOnStartup() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_STARTUP, actions.getOnStartup());
+			if( actions.getOnShutdown() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_SHUTDOWN, actions.getOnShutdown());
+			if( actions.getOnActivated() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_ACTIVATED, actions.getOnActivated());
+			if( actions.getOnDeactivated() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_DEACTIVATED, actions.getOnDeactivated());
+			if( actions.getOnExecute() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_EXECUTE, actions.getOnExecute());
+			if( actions.getOnAborting() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_ABORTING, actions.getOnAborting());
+			if( actions.getOnError() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_ERROR, actions.getOnError());
+			if( actions.getOnReset() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_RESET, actions.getOnReset());
+			if( actions.getOnStateUpdate() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_STATE_UPDATE, actions.getOnStateUpdate());
+			if( actions.getOnRateChanged() != null )
+				setActions( rtcParam, IRtcBuilderConstants.ACTIVITY_RATE_CHANGED, actions.getOnRateChanged());
+		}
+		//
+		return rtcParam;
+	}
+
+	private static void createConfigParam(List<Configuration> configs, RtcParam rtcParam) {
+		for( Configuration config : configs ) {
+			DocConfiguration docConfig = config.getDoc();
+			ConfigSetParam configp = new ConfigSetParam(
+					config.getName(), config.getType(), config.getVarname(), config.getDefaultValue(),
+					docConfig.getDataname(), docConfig.getDescription(), docConfig.getDefaultvalue(),
+					docConfig.getUnit(), docConfig.getRange(), docConfig.getConstraint());
+			rtcParam.getConfigParams().add(configp);
+		}
+	}
+	
+	private static void setActions(RtcParam rtcParam, int actionId, ActionStatus actionStatus) {
+		rtcParam.setActionImplemented( actionId, actionStatus.isImplemented());
+		if( actionStatus.getDoc() != null ) {
+			rtcParam.setDocActionOverView( actionId, actionStatus.getDoc().getDescription()); 
+			rtcParam.setDocActionPreCondition( actionId, actionStatus.getDoc().getPreCondition()); 
+			rtcParam.setDocActionPostCondition( actionId, actionStatus.getDoc().getPostCondition()); 
+		}
+	}
+
+	private static void createServicePortParam(List<ServicePort> servicePorts, List<ServicePortParam> targetPort) {
+		for( ServicePort serviceport : servicePorts ) {
+			ServicePortParam serviceportp = new ServicePortParam();
+			serviceportp.setName(serviceport.getName());
+			serviceportp.setPosition(serviceport.getPosition());
+			DocServiceport doc = serviceport.getDoc();
+			if( doc != null ) {
+				serviceportp.setDocDescription(doc.getDescription());
+				serviceportp.setDocIfDescription(doc.getIfdescription());
+			}
+			//Service Interface
+			for( ServiceInterface serviceinterface : serviceport.getServiceInterface() ) {
+				DocServiceinterface docSrv = serviceinterface.getDoc();
+				ServicePortInterfaceParam serviceIF = new ServicePortInterfaceParam(serviceportp);
+				serviceIF.setName(serviceinterface.getName());
+				serviceIF.setDirection(serviceinterface.getDirection());
+				serviceIF.setInstanceName(serviceinterface.getInstanceName());
+				serviceIF.setVarName(serviceinterface.getVarname());
+				serviceIF.setIdlFile(serviceinterface.getIdlFile());
+				serviceIF.setInterfaceType(serviceinterface.getType());
+				serviceIF.setIdlSearchPath(serviceinterface.getPath());
+				if( docSrv!=null ) {
+					serviceIF.setDocDescription(docSrv.getDescription());
+					serviceIF.setDocArgument(docSrv.getDocargument());
+					serviceIF.setDocReturn(docSrv.getDocreturn());
+					serviceIF.setDocException(docSrv.getDocexception());
+					serviceIF.setDocPreCondition(docSrv.getDocprecondition());
+					serviceIF.setDocPostCondition(docSrv.getDocpostcondition());
+				}
+				serviceportp.getServicePortInterfaces().add(serviceIF);
+			}
+			targetPort.add(serviceportp);
+		}
+	}
+
+	private static void createDataPortParam(List<DataPort> dataPorts, RtcParam rtcParam) {
+		List<DataPortParam> InPortList = new ArrayList<DataPortParam>();
+		List<DataPortParam> OutPortList = new ArrayList<DataPortParam>();
+		for( DataPort dataport : dataPorts ) {
+			DocDataPort docPort = dataport.getDoc();
+			DataPortParam dataportp = new DataPortParam();
+			dataportp.setName(dataport.getName());
+			dataportp.setType(dataport.getType());
+			dataportp.setVarName(dataport.getVarname());
+			dataportp.setPosition(dataport.getPosition());
+			if( docPort!=null ) {
+				dataportp.setDocDescription(docPort.getDescription());
+				dataportp.setDocType(docPort.getType());
+				dataportp.setDocNum(docPort.getNumber());
+				dataportp.setDocSemantics(docPort.getSemantics());
+				dataportp.setDocUnit(docPort.getUnit());
+				dataportp.setDocOccurrence(docPort.getOccerrence());
+				dataportp.setDocOperation(docPort.getOperation());
+			}
+			if(dataport.getPortType().equals(IRtcBuilderConstants.SPEC_DATA_INPORT_KIND) )
+				InPortList.add(dataportp);
+			else
+				OutPortList.add(dataportp);
+		}
+		rtcParam.setInports(InPortList);
+		rtcParam.setOutports(OutPortList);
+	}
+
+	public static RtcProfileTypeImpl convertToModule(GeneratorParam generatorParam) {
+		RtcParam rtcParam = generatorParam.getRtcParams().get(0);
+		
+		ObjectFactory objFactory = new ObjectFactory();
+		RtcProfileTypeImpl profile = objFactory.createRtcProfileType();
+		String moduleId = IRtcBuilderConstants.SPEC_SUFFIX + IRtcBuilderConstants.SPEC_MAJOR_SEPARATOR +
+							rtcParam.getVender() + IRtcBuilderConstants.SPEC_MINOR_SEPARATOR +
+							rtcParam.getCategory() + IRtcBuilderConstants.SPEC_MINOR_SEPARATOR +
+							rtcParam.getName() + IRtcBuilderConstants.SPEC_MAJOR_SEPARATOR +
+							rtcParam.getVersion();
+		profile.setId(moduleId);
+		//Šî–{
+		BasicTypeImpl basic = objFactory.createBasicType();
+		basic.setName(rtcParam.getName());
+		basic.setDescription(rtcParam.getDescription());
+		basic.setVersion(rtcParam.getVersion());
+		basic.setVendor(rtcParam.getVender());
+		basic.setCategory(rtcParam.getCategory());
+		basic.setComponent_type(rtcParam.getComponentType());
+		basic.setActivity_type(rtcParam.getActivityType());
+		basic.setComponent_kind(rtcParam.getComponentKind());
+		basic.setMax_instances(BigInteger.valueOf(rtcParam.getMaxInstance()));
+		basic.setExecution_type(rtcParam.getExecutionType());
+		basic.setExecution_rate(rtcParam.getExecutionRate());
+		profile.setBasic(basic);
+		//Doc Basic
+		DocBasicType docbasic = objFactory.createDocBasicType();
+		if( rtcParam.isDocExist() ) {
+			docbasic.setDescription(rtcParam.getDocDescription());
+			docbasic.setInout(rtcParam.getDocInOut());
+			docbasic.setAlgorithm(rtcParam.getDocAlgorithm());
+			docbasic.setCreator(rtcParam.getDocCreator());
+			docbasic.setLicense(rtcParam.getDocLicense());
+			docbasic.setReference(rtcParam.getDocReference());
+			profile.setDoc(docbasic);
+		}
+		//Actions
+		ActionsTypeImpl actions = objFactory.createActionsType();
+		actions.setOn_initialize(createActions(IRtcBuilderConstants.ACTIVITY_INITIALIZE, rtcParam, objFactory));
+		actions.setOn_finalize(createActions(IRtcBuilderConstants.ACTIVITY_FINALIZE, rtcParam, objFactory));
+		actions.setOn_startup(createActions(IRtcBuilderConstants.ACTIVITY_STARTUP, rtcParam, objFactory));
+		actions.setOn_shutdown(createActions(IRtcBuilderConstants.ACTIVITY_SHUTDOWN, rtcParam, objFactory));
+		actions.setOn_activated(createActions(IRtcBuilderConstants.ACTIVITY_ACTIVATED, rtcParam, objFactory));
+		actions.setOn_deactivated(createActions(IRtcBuilderConstants.ACTIVITY_DEACTIVATED, rtcParam, objFactory));
+		actions.setOn_execute(createActions(IRtcBuilderConstants.ACTIVITY_EXECUTE, rtcParam, objFactory));
+		actions.setOn_aborting(createActions(IRtcBuilderConstants.ACTIVITY_ABORTING, rtcParam, objFactory));
+		actions.setOn_error(createActions(IRtcBuilderConstants.ACTIVITY_ERROR, rtcParam, objFactory));
+		actions.setOn_reset(createActions(IRtcBuilderConstants.ACTIVITY_RESET, rtcParam, objFactory));
+		actions.setOn_state_update(createActions(IRtcBuilderConstants.ACTIVITY_STATE_UPDATE, rtcParam, objFactory));
+		actions.setOn_rate_changed(createActions(IRtcBuilderConstants.ACTIVITY_RATE_CHANGED, rtcParam, objFactory));
+		profile.setActions(actions);
+		
+		//Data Ports
+		for( DataPortParam dataportp : rtcParam.getInports() ) {
+			profile.getDataPort().add(createDataPort(objFactory, dataportp, IRtcBuilderConstants.SPEC_DATA_INPORT_KIND));
+		}
+		for( DataPortParam dataportp : rtcParam.getOutports() ) {
+			profile.getDataPort().add(createDataPort(objFactory, dataportp, IRtcBuilderConstants.SPEC_DATA_OUTPORT_KIND));
+		}
+		//Service Ports
+		for( ServicePortParam serviceportp : rtcParam.getServicePorts() ) {
+			ServicePortTypeImpl serviceport = createServicePort(objFactory, serviceportp);
+			profile.getServicePort().add(serviceport);
+		}
+		//Configuration
+		for( ConfigSetParam configp : rtcParam.getConfigParams() ) {
+			ConfigurationTypeImpl config = objFactory.createConfigurationType();
+			config.setName(configp.getName());
+			config.setType(configp.getType());
+			config.setVarname(configp.getVarName());
+			config.setDefault_value(configp.getDefaultVal());
+			profile.getConfiguration().add(config);
+			//
+			DocConfiguration docconfig = objFactory.createDocConfiguration();
+			docconfig.setDataname(configp.getDocDataName());
+			docconfig.setDefaultvalue(configp.getDocDefaultVal());
+			docconfig.setDescription(configp.getDocDescription());
+			docconfig.setUnit(configp.getDocUnit());
+			docconfig.setRange(configp.getDocRange());
+			docconfig.setConstraint(configp.getDocConstraint());
+			if( !configp.getDocDataName().equals("") ||
+				 !configp.getDocDefaultVal().equals("") ||
+				 !configp.getDocDescription().equals("") ||
+				 !configp.getDocUnit().equals("") ||
+				 !configp.getDocRange().equals("") ||
+				 !configp.getDocConstraint().equals("") ) {
+				config.setDoc(docconfig);
+			}
+
+		}
+		//Parameter
+		for( ConfigParameterParam configp : rtcParam.getConfigParameterParams() ) {
+			ParameterType param = objFactory.createParameterType();
+			param.setName(configp.getConfigName());
+			param.setDefaultValue(configp.getDefaultVal());
+			profile.getParameter().add(param);
+		}
+		//Language
+		for( String languagep : rtcParam.getLangList() ) {
+			LanguageType language = objFactory.createLanguageType();
+			if(languagep.equals(IRtcBuilderConstants.LANG_CPP)) {
+				CxxlangImpl cxx = objFactory.createCxxlang();
+				cxx.setOs("etc");
+				language.setCxx(cxx);
+			} else 	if(languagep.equals(IRtcBuilderConstants.LANG_CPPWIN)) {
+				CxxlangImpl cxx = objFactory.createCxxlang();
+				cxx.setOs("Windows");
+				language.setCxx(cxx);
+			}  else if(languagep.equals(IRtcBuilderConstantsJava.LANG_JAVA)) {
+				JavalangImpl javaLang = objFactory.createJavalang();
+				javaLang.getLibrary().clear();
+				javaLang.getLibrary().addAll(rtcParam.getJavaClassPathes());
+				language.setJava(javaLang);
+			}  else if(languagep.equals(IRtcBuilderConstantsPython.LANG_PYTHON)) {
+				language.setPython("Python");
+			}  else if(languagep.equals(IRtcBuilderConstants.LANG_CSHARP)) {
+				language.setCsharp("Csharp");
+			}  else if(languagep.equals(IRtcBuilderConstants.LANG_RUBY)) {
+				language.setRuby("Ruby");
+			}
+			profile.setLanguage(language);
+		}
+		//
+		return profile;
+	}
+
+	private static DataPortTypeImpl createDataPort(ObjectFactory objFactory, DataPortParam dataportp, String portType) {
+		DataPortTypeImpl dataport = objFactory.createDataPortType();
+		dataport.setPort_type(portType);
+		dataport.setName(dataportp.getName());
+		dataport.setType(dataportp.getType());
+		dataport.setVarname(dataportp.getVarName());
+		dataport.setPosition(dataportp.getPosition());
+		//
+		DocDataPort docdataport = objFactory.createDocDataPort();
+		docdataport.setDescription(dataportp.getDocDescription());
+		docdataport.setType(dataportp.getDocType());
+		docdataport.setNumber(dataportp.getDocNum());
+		docdataport.setSemantics(dataportp.getDocSemantics());
+		docdataport.setUnit(dataportp.getDocUnit());
+		docdataport.setOccerrence(dataportp.getDocOccurrence());
+		docdataport.setOperation(dataportp.getDocOperation());
+		if( !dataportp.getDocDescription().equals("") ||
+			 !dataportp.getDocType().equals("") ||
+			 !dataportp.getDocNum().equals("") ||
+			 !dataportp.getDocSemantics().equals("") ||
+			 !dataportp.getDocUnit().equals("") ||
+			 !dataportp.getDocOccurrence().equals("") ||
+			 !dataportp.getDocOperation().equals("") ) {
+			dataport.setDoc(docdataport);
+		}
+		//
+		return dataport;
+	}
+
+	private static ServicePortTypeImpl createServicePort(ObjectFactory objFactory, ServicePortParam serviceportp) {
+		ServicePortTypeImpl serviceport = objFactory.createServicePortType();
+		serviceport.setName(serviceportp.getName());
+		serviceport.setPosition(serviceportp.getPosition());
+		//
+		DocServiceport docserviceport = objFactory.createDocServiceport();
+		docserviceport.setDescription(serviceportp.getDocDescription());
+		docserviceport.setIfdescription(serviceportp.getDocIfDescription());
+		if( !serviceportp.getDocDescription().equals("") ||
+			 !serviceportp.getDocIfDescription().equals("") ) {
+			serviceport.setDoc(docserviceport);
+		}
+		//Service Interface
+		for( ServicePortInterfaceParam serviceinterfacep : serviceportp.getServicePortInterfaces() ) {
+			ServiceInterfaceType serviceIF = objFactory.createServiceInterfaceType();
+			serviceIF.setName(serviceinterfacep.getName());
+			serviceIF.setDirection(serviceinterfacep.getDirection());
+			serviceIF.setInstanceName(serviceinterfacep.getInstanceName());
+			serviceIF.setVarname(serviceinterfacep.getVarName());
+			serviceIF.setIdlFile(serviceinterfacep.getIdlFile());
+			serviceIF.setType(serviceinterfacep.getInterfaceType());
+			serviceIF.setPath(serviceinterfacep.getIdlSearchPath());
+			//
+			DocServiceinterface docserviceIF = objFactory.createDocServiceinterface();
+			docserviceIF.setDescription(serviceinterfacep.getDocDescription());
+			docserviceIF.setDocargument(serviceinterfacep.getDocArgument());
+			docserviceIF.setDocreturn(serviceinterfacep.getDocReturn());
+			docserviceIF.setDocexception(serviceinterfacep.getDocException());
+			docserviceIF.setDocprecondition(serviceinterfacep.getDocPreCondition());
+			docserviceIF.setDocpostcondition(serviceinterfacep.getDocPostCondition());
+			if( !serviceinterfacep.getDocDescription().equals("") ||
+				 !serviceinterfacep.getDocArgument().equals("") ||
+				 !serviceinterfacep.getDocReturn().equals("") ||
+				 !serviceinterfacep.getDocException().equals("") ||
+				 !serviceinterfacep.getDocPreCondition().equals("") ||
+				 !serviceinterfacep.getDocPostCondition().equals("") ) {
+				serviceIF.setDoc(docserviceIF);
+			}
+			
+			serviceport.getServiceInterface().add(serviceIF);
+		}
+		return serviceport;
+	}
+
+	private static ActionStatusImpl createActions(int actionId, RtcParam rtcParam, ObjectFactory objFactory) {
+		ActionStatusImpl status = objFactory.createActionStatus();
+		DocActionImpl docAction = objFactory.createDocAction();
+		//
+		docAction.setDescription(rtcParam.getDocActionOverView(actionId));
+		docAction.setPre_condition(rtcParam.getDocActionPreCondition(actionId));
+		docAction.setPost_condition(rtcParam.getDocActionPostCondition(actionId));
+		if( (docAction.getDescription()!=null && !docAction.getDescription().equals("")) || 
+			 (docAction.getPre_condition()!=null && !docAction.getPre_condition().equals("")) ||
+			 (docAction.getPost_condition()!=null && !docAction.getPost_condition().equals("")) ) {
+			status.setDoc(docAction);
+		}
+		//
+		status.setImplemented(rtcParam.getActionImplemented(actionId));
+		//
+		return status;
+	}
+	
+	public static RtcProfileTypeImpl convertFromYaml(Map yaml) {
+		boolean isActionAdded = false;
+		RtcProfileTypeImpl profile = null;
+		
+		Map profileY = (Map)yaml.get("rtc_profile");
+		if( profileY != null ) {
+			ObjectFactory objFactory = new ObjectFactory();
+			profile = objFactory.createRtcProfileType();
+			profile.setId((String)profileY.get("Id"));
+			Map basicY = (Map)profileY.get("basic");
+			//Šî–{
+			BasicTypeImpl basic = objFactory.createBasicType();
+			basic.setName((String)basicY.get("name"));
+			basic.setDescription((String)basicY.get("description"));
+			basic.setVersion((String)basicY.get("version"));
+			basic.setVendor((String)basicY.get("vendor"));
+			basic.setCategory((String)basicY.get("category"));
+			basic.setComponent_type((String)basicY.get("component_type"));
+			basic.setActivity_type((String)basicY.get("activity_type"));
+			basic.setComponent_kind((String)basicY.get("component_kind"));
+			basic.setMax_instances(BigInteger.valueOf((Integer)basicY.get("max_instances")));
+			basic.setExecution_type((String)basicY.get("execution_type"));
+			basic.setExecution_rate((Double)basicY.get("execution_rate"));
+			profile.setBasic(basic);
+			//
+			Map docbasicY = (Map)profileY.get("doc");
+			if( docbasicY != null ) {
+				DocBasicType docbasic = objFactory.createDocBasicType();
+				docbasic.setDescription((String)docbasicY.get("description"));
+				docbasic.setInout((String)docbasicY.get("inout"));
+				docbasic.setAlgorithm((String)docbasicY.get("algorithm"));
+				docbasic.setCreator((String)docbasicY.get("creator"));
+				docbasic.setLicense((String)docbasicY.get("license"));
+				docbasic.setReference((String)docbasicY.get("reference"));
+				profile.setDoc(docbasic);
+			}
+			//
+			Map actionsY = (Map)profileY.get("actions");
+			if( actionsY != null ) {
+				ActionsTypeImpl actions = objFactory.createActionsType();
+				Map eachActionY = (Map)actionsY.get("on_initialize");
+				if( eachActionY != null ) {
+					actions.setOn_initialize(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				//
+				eachActionY = (Map)actionsY.get("on_finalize");
+				if( eachActionY != null ) {
+					actions.setOn_finalize(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				//
+				eachActionY = (Map)actionsY.get("on_startup");
+				if( eachActionY != null ) {
+					actions.setOn_startup(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				//
+				eachActionY = (Map)actionsY.get("on_shutdown");
+				if( eachActionY != null ) {
+					actions.setOn_shutdown(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				//
+				eachActionY = (Map)actionsY.get("on_activated");
+				if( eachActionY != null ) {
+					actions.setOn_activated(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				//
+				eachActionY = (Map)actionsY.get("on_deactivated");
+				if( eachActionY != null ) {
+					actions.setOn_deactivated(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				//
+				eachActionY = (Map)actionsY.get("on_execute");
+				if( eachActionY != null ) {
+					actions.setOn_execute(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				//
+				eachActionY = (Map)actionsY.get("on_aborting");
+				if( eachActionY != null ) {
+					actions.setOn_aborting(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				//
+				eachActionY = (Map)actionsY.get("on_error");
+				if( eachActionY != null ) {
+					actions.setOn_error(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				//
+				eachActionY = (Map)actionsY.get("on_reset");
+				if( eachActionY != null ) {
+					actions.setOn_reset(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				//
+				eachActionY = (Map)actionsY.get("on_state_update");
+				if( eachActionY != null ) {
+					actions.setOn_state_update(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				//
+				eachActionY = (Map)actionsY.get("on_rate_changed");
+				if( eachActionY != null ) {
+					actions.setOn_rate_changed(createActionFromYaml(objFactory, eachActionY));
+					isActionAdded = true;
+				}
+				if( isActionAdded ) profile.setActions(actions);
+			}
+		
+			List dataPortListY = (List)profileY.get("dataPort");
+			if( dataPortListY != null ) {
+				for(int intIdx=0;intIdx<dataPortListY.size();intIdx++ ) {
+					Map dataPortInfoY = (Map)dataPortListY.get(intIdx);
+					if( dataPortInfoY != null ) {
+						DataPortTypeImpl dataport = createDataPortFromYaml(objFactory, dataPortInfoY);
+						profile.getDataPort().add(dataport);
+					}
+				}
+			}
+			//Service Ports
+			List servicePortListY = (List)profileY.get("servicePort");
+			if( servicePortListY != null ) {
+				for(int intIdx=0;intIdx<servicePortListY.size();intIdx++ ) {
+					Map servicePortY = (Map)servicePortListY.get(intIdx);
+					if( servicePortY != null ) {
+						ServicePortTypeImpl serviceport = createServicePortFromYaml(objFactory, servicePortY);
+						profile.getServicePort().add(serviceport);
+					}
+				}
+			}
+			//Configuration
+			List configsInfoY = (List)profileY.get("configuration");
+			if( configsInfoY != null ) {
+				for(int intIdx=0;intIdx<configsInfoY.size();intIdx++ ) {
+					Map configInfoY = (Map)configsInfoY.get(intIdx);
+					if( configInfoY != null ) {
+						ConfigurationTypeImpl config = objFactory.createConfigurationType();
+						config.setName((String)configInfoY.get("name"));
+						config.setType((String)configInfoY.get("type"));
+						config.setVarname((String)configInfoY.get("varname"));
+						config.setDefault_value((String)configInfoY.get("default_value"));
+						profile.getConfiguration().add(config);
+						//
+						Map configDocY = (Map)configInfoY.get("doc");
+						if( configDocY != null ) {
+							DocConfiguration docconfig = objFactory.createDocConfiguration();
+							docconfig.setDataname((String)configDocY.get("dataname"));
+							docconfig.setDefaultvalue((String)configDocY.get("defaultvalue"));
+							docconfig.setDescription((String)configDocY.get("description"));
+							docconfig.setUnit((String)configDocY.get("unit"));
+							docconfig.setRange((String)configDocY.get("range"));
+							docconfig.setConstraint((String)configDocY.get("constraint"));
+							
+							config.setDoc(docconfig);
+						}
+					}
+				}
+			}
+				
+			//Parameter
+			List paramsInfoY = (List)profileY.get("parameter");
+			if( paramsInfoY != null ) {
+				for(int intIdx=0;intIdx<paramsInfoY.size();intIdx++ ) {
+					Map paramInfoY = (Map)paramsInfoY.get(intIdx);
+					if( paramInfoY != null ) {
+						ParameterType param = objFactory.createParameterType();
+						param.setName((String)paramInfoY.get("name"));
+						param.setDefaultValue((String)paramInfoY.get("defaultValue"));
+						profile.getParameter().add(param);
+					}
+				}
+			}
+			//Language
+			Map langInfoY = (Map)profileY.get("language");
+			if( langInfoY != null ) {
+				LanguageType language = objFactory.createLanguageType();
+				Map cxxInfoY = (Map)langInfoY.get("cxx");
+				if( cxxInfoY != null ) {
+					CxxlangImpl cxxlang = objFactory.createCxxlang();
+					cxxlang.setOs((String)cxxInfoY.get("os"));
+					cxxlang.setArch((String)cxxInfoY.get("arch"));
+					List libsInfoY = (List)cxxInfoY.get("library");
+					if( libsInfoY != null ) {
+						cxxlang.getLibrary().addAll(libsInfoY);
+					}
+					language.setCxx(cxxlang);
+				}
+				Map javaInfoY = (Map)langInfoY.get("java");
+				if( javaInfoY != null ) {
+					JavalangImpl javaLang = objFactory.createJavalang();
+					List libsInfoY = (List)javaInfoY.get("library");
+					if( libsInfoY != null ) {
+						javaLang.getLibrary().addAll(libsInfoY);
+					}
+					language.setJava(javaLang);
+				}
+				if( langInfoY.get("Python") != null ) {
+					language.setPython("Python");
+				}
+				if( langInfoY.get("Csharp") != null ) {
+					language.setCsharp("Csharp");
+				}
+				if( langInfoY.get("Ruby") != null ) {
+					language.setRuby("Ruby");
+				}
+				profile.setLanguage(language);
+			}
+		//
+		}
+		return profile;
+	}
+
+	private static ActionStatusImpl createActionFromYaml(ObjectFactory objFactory, Map actionY) {
+		ActionStatusImpl actionStatus = objFactory.createActionStatus();
+		Boolean impl = (Boolean)actionY.get("implemented");
+		if(impl.booleanValue())
+			actionStatus.setImplemented("True");
+		else
+			actionStatus.setImplemented("False");
+
+		Map docActionY = (Map)actionY.get("doc");
+		if( docActionY != null ) {
+			DocActionImpl docAction = objFactory.createDocAction();
+			docAction.setDescription((String)docActionY.get("description"));
+			docAction.setPre_condition((String)docActionY.get("preCondition"));
+			docAction.setPost_condition((String)docActionY.get("postCondition"));
+			actionStatus.setDoc(docAction);
+		}
+		
+		return actionStatus;
+	}
+
+	private static ServicePortTypeImpl createServicePortFromYaml(ObjectFactory objFactory, Map yamlMap) {
+		ServicePortTypeImpl serviceport = objFactory.createServicePortType();
+		serviceport.setName((String)yamlMap.get("name"));
+		serviceport.setPosition((String)yamlMap.get("position"));
+		//
+		Map portdocY = (Map)yamlMap.get("doc");
+		if( portdocY != null ) {
+			DocServiceport docserviceport = objFactory.createDocServiceport();
+			docserviceport.setDescription((String)portdocY.get("description"));
+			docserviceport.setIfdescription((String)portdocY.get("ifdescription"));
+			serviceport.setDoc(docserviceport);
+		}
+		//Service Interface
+		List interfacesY = (List)yamlMap.get("serviceInterface");
+		if( interfacesY != null ) {
+			for(int intIdx=0;intIdx<interfacesY.size();intIdx++ ) {
+				Map interfaceY = (Map)interfacesY.get(intIdx);
+				ServiceInterfaceType serviceIF = objFactory.createServiceInterfaceType();
+				serviceIF.setName((String)interfaceY.get("name"));
+				serviceIF.setDirection((String)interfaceY.get("direction"));
+				serviceIF.setInstanceName((String)interfaceY.get("instanceName"));
+				serviceIF.setVarname((String)interfaceY.get("varname"));
+				serviceIF.setIdlFile((String)interfaceY.get("idlFile"));
+				serviceIF.setType((String)interfaceY.get("type"));
+				serviceIF.setPath((String)interfaceY.get("path"));
+				//
+				Map ifDocY = (Map)interfaceY.get("doc");
+				if( ifDocY != null ) {
+					DocServiceinterface docserviceIF = objFactory.createDocServiceinterface();
+					docserviceIF.setDescription((String)ifDocY.get("description"));
+					docserviceIF.setDocargument((String)ifDocY.get("docargument"));
+					docserviceIF.setDocreturn((String)ifDocY.get("docreturn"));
+					docserviceIF.setDocexception((String)ifDocY.get("docexception"));
+					docserviceIF.setDocprecondition((String)ifDocY.get("docprecondition"));
+					docserviceIF.setDocpostcondition((String)ifDocY.get("docpostcondition"));
+					serviceIF.setDoc(docserviceIF);
+				}
+				serviceport.getServiceInterface().add(serviceIF);
+			}
+		}
+
+		return serviceport;
+	}
+
+	private static DataPortTypeImpl createDataPortFromYaml(ObjectFactory objFactory, Map yamlMap) {
+		DataPortTypeImpl dataport = objFactory.createDataPortType();
+		dataport.setPort_type((String)yamlMap.get("port_type"));
+		dataport.setName((String)yamlMap.get("name"));
+		dataport.setType((String)yamlMap.get("type"));
+		dataport.setVarname((String)yamlMap.get("varname"));
+		dataport.setPosition((String)yamlMap.get("position"));
+		//
+		Map portdocY = (Map)yamlMap.get("doc");
+		if( portdocY != null ) {
+			DocDataPort docdataport = objFactory.createDocDataPort();
+			docdataport.setDescription((String)portdocY.get("description"));
+			docdataport.setType((String)portdocY.get("type"));
+			docdataport.setNumber((String)portdocY.get("number"));
+			docdataport.setSemantics((String)portdocY.get("semantics"));
+			docdataport.setUnit((String)portdocY.get("unit"));
+			docdataport.setOccerrence((String)portdocY.get("occerrence"));
+			docdataport.setOperation((String)portdocY.get("operation"));
+			dataport.setDoc(docdataport);
+		}
+		//
+		return dataport;
+	}
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd2ecore:XSD2EcoreMappingRoot xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsd2ecore="http://www.eclipse.org/emf/2002/XSD2Ecore" inputs="core.ecore#/"
+    outputs="CoreXMI.xsd#/">
+  <nested inputs="core.ecore#/" outputs="CoreXMI.xsd#/">
+    <nested inputs="core.ecore#//CorbaWrapperObject" outputs="CoreXMI.xsd#//CorbaWrapperObject;XSDComplexTypeDefinition">
+      <nested inputs="core.ecore#//CorbaWrapperObject/corbaObject" outputs="CoreXMI.xsd#//CorbaWrapperObject;XSDComplexTypeDefinition/XSDAttributeUse"/>
+    </nested>
+    <nested inputs="core.ecore#//CorbaWrapperObject" outputs="CoreXMI.xsd#//CorbaWrapperObject;XSDElementDeclaration"/>
+    <nested inputs="core.ecore#//ModelElement" outputs="CoreXMI.xsd#//ModelElement;XSDComplexTypeDefinition=1">
+      <nested inputs="core.ecore#//ModelElement/constraint" outputs="CoreXMI.xsd#//ModelElement;XSDComplexTypeDefinition=1/XSDAttributeUse"/>
+    </nested>
+    <nested inputs="core.ecore#//ModelElement" outputs="CoreXMI.xsd#//ModelElement;XSDElementDeclaration=1"/>
+    <nested inputs="core.ecore#//IAdaptable" outputs="CoreXMI.xsd#//IAdaptable;XSDComplexTypeDefinition=2"/>
+    <nested inputs="core.ecore#//IAdaptable" outputs="CoreXMI.xsd#//IAdaptable;XSDElementDeclaration=2"/>
+    <nested inputs="core.ecore#//LocalObject" outputs="CoreXMI.xsd#//LocalObject;XSDComplexTypeDefinition=3"/>
+    <nested inputs="core.ecore#//LocalObject" outputs="CoreXMI.xsd#//LocalObject;XSDElementDeclaration=3"/>
+    <nested inputs="core.ecore#//WrapperObject" outputs="CoreXMI.xsd#//WrapperObject;XSDComplexTypeDefinition=4"/>
+    <nested inputs="core.ecore#//WrapperObject" outputs="CoreXMI.xsd#//WrapperObject;XSDElementDeclaration=4"/>
+  </nested>
+</xsd2ecore:XSD2EcoreMappingRoot>

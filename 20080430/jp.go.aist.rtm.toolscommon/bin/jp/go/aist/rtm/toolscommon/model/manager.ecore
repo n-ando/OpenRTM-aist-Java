@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="manager"
+    nsURI="http:///jp/go/aist/rtm/toolscommon/model/manager.ecore" nsPrefix="jp.go.aist.rtm.toolscommon.model.manager">
+  <eClassifiers xsi:type="ecore:EClass" name="RTManager" eSuperTypes="core.ecore#//CorbaWrapperObject">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ownedModules" upperBound="-1"
+        eType="#//RTModule" containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ownedComponents" upperBound="-1"
+        eType="ecore:EClass component.ecore#//Component" containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RTModule" eSuperTypes="core.ecore#//WrapperObject"/>
+</ecore:EPackage>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:jp.go.aist.rtm.rtclink.model.core="http://rtm.aist.go.jp/rtcLink/model/core" xmlns:jp.go.aist.rtm.rtclink.model.nameservice="http://rtm.aist.go.jp/rtcLink/model/nameservice" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://rtm.aist.go.jp/rtcLink/model/nameservice">
+<xsd:import namespace="http://rtm.aist.go.jp/rtcLink/model/core" schemaLocation="core.xsd"/>
+<xsd:import namespace="http://www.omg.org/XMI" schemaLocation="XMI.xsd"/>
+<xsd:complexType name="CategoryNamingContext">
+<xsd:complexContent>
+<xsd:extension base="jp.go.aist.rtm.rtclink.model.nameservice:NamingContextNode"/>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="CategoryNamingContext" type="jp.go.aist.rtm.rtclink.model.nameservice:CategoryNamingContext"/>
+<xsd:complexType name="HostNamingContext">
+<xsd:complexContent>
+<xsd:extension base="jp.go.aist.rtm.rtclink.model.nameservice:NamingContextNode"/>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="HostNamingContext" type="jp.go.aist.rtm.rtclink.model.nameservice:HostNamingContext"/>
+<xsd:complexType name="ManagerNamingContext">
+<xsd:complexContent>
+<xsd:extension base="jp.go.aist.rtm.rtclink.model.nameservice:NamingContextNode"/>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="ManagerNamingContext" type="jp.go.aist.rtm.rtclink.model.nameservice:ManagerNamingContext"/>
+<xsd:complexType name="ModuleNamingContext">
+<xsd:complexContent>
+<xsd:extension base="jp.go.aist.rtm.rtclink.model.nameservice:NamingContextNode"/>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="ModuleNamingContext" type="jp.go.aist.rtm.rtclink.model.nameservice:ModuleNamingContext"/>
+<xsd:complexType name="NameServerNamingContext">
+<xsd:complexContent>
+<xsd:extension base="jp.go.aist.rtm.rtclink.model.nameservice:NamingContextNode"/>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="NameServerNamingContext" type="jp.go.aist.rtm.rtclink.model.nameservice:NameServerNamingContext"/>
+<xsd:complexType name="NamingContextNode">
+<xsd:complexContent>
+<xsd:extension base="jp.go.aist.rtm.rtclink.model.nameservice:Node">
+<xsd:choice maxOccurs="unbounded" minOccurs="0">
+<xsd:element name="nodes" type="jp.go.aist.rtm.rtclink.model.nameservice:Node"/>
+</xsd:choice>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="NamingContextNode" type="jp.go.aist.rtm.rtclink.model.nameservice:NamingContextNode"/>
+<xsd:complexType name="NamingObjectNode">
+<xsd:complexContent>
+<xsd:extension base="jp.go.aist.rtm.rtclink.model.nameservice:Node">
+<xsd:choice maxOccurs="unbounded" minOccurs="0">
+<xsd:element name="corbaWrapperObject" type="jp.go.aist.rtm.rtclink.model.core:CorbaWrapperObject"/>
+</xsd:choice>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="NamingObjectNode" type="jp.go.aist.rtm.rtclink.model.nameservice:NamingObjectNode"/>
+<xsd:complexType name="Node">
+<xsd:complexContent>
+<xsd:extension base="jp.go.aist.rtm.rtclink.model.core:CorbaWrapperObject">
+<xsd:choice maxOccurs="unbounded" minOccurs="0">
+<xsd:element name="nameServiceReference" type="jp.go.aist.rtm.rtclink.model.nameservice:NameServiceReference"/>
+</xsd:choice>
+<xsd:attribute name="nameServiceReference" type="xsd:string"/>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="Node" type="jp.go.aist.rtm.rtclink.model.nameservice:Node"/>
+<xsd:complexType name="NamingContext">
+<xsd:choice maxOccurs="unbounded" minOccurs="0">
+<xsd:element ref="xmi:Extension"/>
+</xsd:choice>
+<xsd:attribute ref="xmi:id"/>
+<xsd:attributeGroup ref="xmi:ObjectAttribs"/>
+</xsd:complexType>
+<xsd:element name="NamingContext" type="jp.go.aist.rtm.rtclink.model.nameservice:NamingContext"/>
+<xsd:complexType name="NameServiceReference">
+<xsd:choice maxOccurs="unbounded" minOccurs="0">
+<xsd:element ref="xmi:Extension"/>
+</xsd:choice>
+<xsd:attribute ref="xmi:id"/>
+<xsd:attributeGroup ref="xmi:ObjectAttribs"/>
+<xsd:attribute name="binding" type="xsd:string"/>
+<xsd:attribute name="nameServerName" type="xsd:string"/>
+<xsd:attribute name="rootNamingContext" type="xsd:string"/>
+</xsd:complexType>
+<xsd:element name="NameServiceReference" type="jp.go.aist.rtm.rtclink.model.nameservice:NameServiceReference"/>
+</xsd:schema>

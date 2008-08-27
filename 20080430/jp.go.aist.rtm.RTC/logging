@@ -1,0 +1,14 @@
+2008/04/02 15:24:54 test INFO     : OpenRTM-aist-0.4.1
+2008/04/02 15:24:54 test INFO     : Copyright (C) 2003-2008
+2008/04/02 15:24:54 test INFO     :   Noriaki Ando
+2008/04/02 15:24:54 test INFO     :   Task-intelligence Research Group,
+2008/04/02 15:24:54 test INFO     :   Intelligent Systems Research Institute, AIST
+2008/04/02 15:24:54 test INFO     : Manager starting.
+2008/04/02 15:24:54 test INFO     : Starting local logging.
+2008/04/02 15:24:54 naming_svc INFO     : NameServer connection succeeded: corba/localhost:2809
+2008/04/02 15:25:21 HD SILENT   : testsilent
+2008/04/02 15:25:21 HD INFO     : testnormal
+2008/04/02 15:25:21 HD WARN     : testwarn
+2008/04/02 15:25:21 HD INFO     : testinfo
+2008/04/02 15:25:21 test NORMAL   : Exception: Caught unknown Exception in Manager.shutdownORB().
+2008/04/02 15:25:21 test NORMAL   : 

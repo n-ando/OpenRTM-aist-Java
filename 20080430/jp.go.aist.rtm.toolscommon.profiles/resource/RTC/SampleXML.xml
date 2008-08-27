@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rtc:RtcProfile rtc:version="1.0" rtc:id="RTC:SampleVendor.SampleCategory.SampleComponent:1.0.0" xmlns:rtcExt="http://www.openrtp.org/namespaces/rtc_ext" xmlns:rtcDoc="http://www.openrtp.org/namespaces/rtc_doc" xmlns:rtc="http://www.openrtp.org/namespaces/rtc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <rtc:BasicInfo xsi:type="rtcExt:basic_info_ext" rtc:updateDate="2008-04-17T14:00:00" rtc:creationDate="2008-04-18T14:00:00" rtc:abstract="SampleAbstract" rtc:version="1.0.0" rtc:vendor="SampleVendor" rtc:maxInstances="1" rtc:executionType="PeriodicExecutionContext" rtc:executionRate="1000.0" rtc:description="SampleDescription" rtc:category="SampleCategory" rtc:componentKind="DataFlowComponent" rtc:activityType="PERIODIC" rtc:componentType="STATIC" rtc:name="SampleComponent">
+        <rtcDoc:Doc rtcDoc:reference="SampleReference" rtcDoc:license="SampleLicense" rtcDoc:creator="SampleCreator" rtcDoc:algorithm="SampleAlgorithm" rtcDoc:inout="SampleBasicInout" rtcDoc:description="SampleBasicDecription"/>
+        <rtcExt:VersionUpLog>2008/04/18 14:00:00:Ver1.0</rtcExt:VersionUpLog>
+        <rtcExt:VersionUpLog>2008/04/18 17:00:00:Ver1.1</rtcExt:VersionUpLog>
+    </rtc:BasicInfo>
+    <rtc:Actions>
+        <rtc:OnInitialize xsi:type="rtcDoc:action_status_doc" rtc:implemented="true">
+            <rtcDoc:Doc rtcDoc:preCondition="on_initialize Pre_condition" rtcDoc:postCondition="on_initialize Post_condition" rtcDoc:description="on_initialize description"/>
+        </rtc:OnInitialize>
+        <rtc:OnFinalize xsi:type="rtcDoc:action_status_doc" rtc:implemented="false">
+            <rtcDoc:Doc rtcDoc:preCondition="on_finalize Pre_condition" rtcDoc:postCondition="on_finalize Post_condition" rtcDoc:description="on_finalize description"/>
+        </rtc:OnFinalize>
+        <rtc:OnStartup xsi:type="rtcDoc:action_status_doc" rtc:implemented="false">
+            <rtcDoc:Doc rtcDoc:preCondition="on_startup Pre_condition" rtcDoc:postCondition="on_startup Post_condition" rtcDoc:description="on_startup description"/>
+        </rtc:OnStartup>
+        <rtc:OnShutdown xsi:type="rtcDoc:action_status_doc" rtc:implemented="true">
+            <rtcDoc:Doc rtcDoc:preCondition="on_shutdown Pre_condition" rtcDoc:postCondition="on_shutdown Post_condition" rtcDoc:description="on_shutdown description"/>
+        </rtc:OnShutdown>
+        <rtc:OnActivated xsi:type="rtcDoc:action_status_doc" rtc:implemented="true">
+            <rtcDoc:Doc rtcDoc:preCondition="on_activated Pre_condition" rtcDoc:postCondition="on_activated Post_condition" rtcDoc:description="on_activated description"/>
+        </rtc:OnActivated>
+        <rtc:OnDeactivated xsi:type="rtcDoc:action_status_doc" rtc:implemented="false">
+            <rtcDoc:Doc rtcDoc:preCondition="on_deactivated Pre_condition" rtcDoc:postCondition="on_deactivated Post_condition" rtcDoc:description="on_deactivated description"/>
+        </rtc:OnDeactivated>
+        <rtc:OnAborting xsi:type="rtcDoc:action_status_doc" rtc:implemented="true">
+            <rtcDoc:Doc rtcDoc:preCondition="on_aborting Pre_condition" rtcDoc:postCondition="on_aborting Post_condition" rtcDoc:description="on_aborting description"/>
+        </rtc:OnAborting>
+        <rtc:OnError xsi:type="rtcDoc:action_status_doc" rtc:implemented="false">
+            <rtcDoc:Doc rtcDoc:preCondition="on_error Pre_condition" rtcDoc:postCondition="on_error Post_condition" rtcDoc:description="on_error description"/>
+        </rtc:OnError>
+        <rtc:OnReset xsi:type="rtcDoc:action_status_doc" rtc:implemented="false">
+            <rtcDoc:Doc rtcDoc:preCondition="on_reset Pre_condition" rtcDoc:postCondition="on_reset Post_condition" rtcDoc:description="on_reset description"/>
+        </rtc:OnReset>
+        <rtc:OnExecute xsi:type="rtcDoc:action_status_doc" rtc:implemented="false">
+            <rtcDoc:Doc rtcDoc:preCondition="on_execute Pre_condition" rtcDoc:postCondition="on_execute Post_condition" rtcDoc:description="on_execute description"/>
+        </rtc:OnExecute>
+        <rtc:OnStateUpdate xsi:type="rtcDoc:action_status_doc" rtc:implemented="false">
+            <rtcDoc:Doc rtcDoc:preCondition="on_state_update Pre_condition" rtcDoc:postCondition="on_state_update Post_condition" rtcDoc:description="on_state_update description"/>
+        </rtc:OnStateUpdate>
+        <rtc:OnRateChanged xsi:type="rtcDoc:action_status_doc" rtc:implemented="false">
+            <rtcDoc:Doc rtcDoc:preCondition="on_rate_changed Pre_condition" rtcDoc:postCondition="on_rate_changed Post_condition" rtcDoc:description="on_rate_changed description"/>
+        </rtc:OnRateChanged>
+    </rtc:Actions>
+    <rtc:ConfigurationSet>
+        <rtc:Configuration xsi:type="rtcDoc:configuration_doc" rtc:defaultValue="1" rtc:varname="var1" rtc:type="int" rtc:name="config1">
+            <rtcDoc:Doc rtcDoc:constraint="config_constraint1" rtcDoc:range="config_range1" rtcDoc:unit="config_unit1" rtcDoc:description="config_Desc1" rtcDoc:defaultValue="default1" rtcDoc:dataname="dataname1"/>
+        </rtc:Configuration>
+        <rtc:Configuration xsi:type="rtcDoc:configuration_doc" rtc:defaultValue="Sample" rtc:varname="var2" rtc:type="String" rtc:name="config2"/>
+    </rtc:ConfigurationSet>
+    <rtc:DataPorts xsi:type="rtcExt:dataport_ext" rtcExt:position="left" rtcExt:varname="In1Var" rtc:subscriprionType="Periodic,New,Flush" rtc:dataflowType="Push,Pull" rtc:interfaceType="CorbaPort" rtc:idlFile="DataPort1.idl" rtc:type="RTC::TimedLong" rtc:name="inport1" rtc:portType="DataInPort">
+        <rtcDoc:Doc rtcDoc:operation="In1Operation" rtcDoc:occerrence="In1Occerrence" rtcDoc:unit="In1Unit" rtcDoc:semantics="In1Semantics" rtcDoc:number="In1Number" rtcDoc:type="In1Type" rtcDoc:description="In1Description"/>
+    </rtc:DataPorts>
+    <rtc:DataPorts xsi:type="rtcExt:dataport_ext" rtcExt:position="left" rtcExt:varname="In2Var" rtc:subscriprionType="New,Periodic" rtc:dataflowType="Push,Pull" rtc:interfaceType="CorbaPort" rtc:type="RTC::TimedDouble" rtc:name="inport2" rtc:portType="DataInPort"/>
+    <rtc:DataPorts xsi:type="rtcExt:dataport_ext" rtcExt:position="right" rtcExt:varname="Out1Var" rtc:subscriprionType="New,Periodic" rtc:dataflowType="Push" rtc:interfaceType="CorbaPort" rtc:type="RTC::TimedLong" rtc:name="outport1" rtc:portType="DataOutPort">
+        <rtcDoc:Doc rtcDoc:operation="Out1Operation" rtcDoc:occerrence="Out1Occerrence" rtcDoc:unit="Out1Unit" rtcDoc:semantics="Out1Semantics" rtcDoc:number="Out1Number" rtcDoc:type="Out1Type" rtcDoc:description="Out1Description"/>
+    </rtc:DataPorts>
+    <rtc:DataPorts xsi:type="rtcExt:dataport_ext" rtcExt:position="right" rtcExt:varname="Out2Var" rtc:subscriprionType="New,Periodic" rtc:dataflowType="Push,Pull" rtc:interfaceType="CorbaPort" rtc:type="RTC::TimedDouble" rtc:name="outport2" rtc:portType="DataOutPort"/>
+    <rtc:ServicePorts xsi:type="rtcExt:serviceport_ext" rtcExt:position="left" rtc:name="SrvPort1">
+        <rtc:ServiceInterface xsi:type="rtcDoc:serviceinterface_doc" rtc:path="IF1SearchPath" rtc:type="IF1Type" rtc:idlFile="IF1Idlfile.idl" rtc:varname="IF1VarName" rtc:instanceName="IF1Instance" rtc:direction="Provided" rtc:name="S1IF1">
+            <rtcDoc:Doc rtcDoc:docPostCondition="if1 PostCond" rtcDoc:docPreCondition="if1 PreCond" rtcDoc:docException="if1 Exception" rtcDoc:docReturn="if1 Return" rtcDoc:docArgument="if1 Argument" rtcDoc:description="if1 Description"/>
+        </rtc:ServiceInterface>
+        <rtc:ServiceInterface xsi:type="rtcDoc:serviceinterface_doc" rtc:path="IF2SearchPath" rtc:type="IF2Type" rtc:idlFile="IF2Idlfile.idl" rtc:varname="IF2VarName" rtc:instanceName="IF2Instance" rtc:direction="Required" rtc:name="S1IF2"/>
+        <rtcDoc:Doc rtcDoc:ifdescription="ServicePort1 I/F description" rtcDoc:description="ServicePort1 description"/>
+    </rtc:ServicePorts>
+    <rtc:ServicePorts xsi:type="rtcExt:serviceport_ext" rtcExt:position="right" rtc:name="SrvPort2">
+        <rtcDoc:Doc rtcDoc:ifdescription="ServicePort2 I/F description" rtcDoc:description="ServicePort2 description"/>
+    </rtc:ServicePorts>
+    <rtc:Parameters rtc:defaultValue="param_def1" rtc:name="param1"/>
+    <rtc:Parameters rtc:defaultValue="param_def2" rtc:name="param2"/>
+    <rtc:Language>
+        <rtc:Java>
+            <rtc:library>library1</rtc:library>
+        </rtc:Java>
+    </rtc:Language>
+</rtc:RtcProfile>

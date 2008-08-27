@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin>
+
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <package 
+       uri = "http://www.openrtp.org/namespaces/rtc_doc" 
+       class = "org.openrtp.namespaces.rtcDoc.RtcDocPackage"
+       genModel = "model/RtcProfile_ext.genmodel" /> 
+  </extension>
+
+  <extension point="org.eclipse.emf.ecore.extension_parser">
+    <parser 
+       type="rtcdoc" 
+       class="org.openrtp.namespaces.rtcDoc.util.RtcDocResourceFactoryImpl" />
+  </extension>
+
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <package 
+       uri = "http://www.openrtp.org/namespaces/rtc_ext" 
+       class = "org.openrtp.namespaces.rtcExt.RtcExtPackage"
+       genModel = "model/RtcProfile_ext.genmodel" /> 
+  </extension>
+
+  <extension point="org.eclipse.emf.ecore.extension_parser">
+    <parser 
+       type="rtcext" 
+       class="org.openrtp.namespaces.rtcExt.util.RtcExtResourceFactoryImpl" />
+  </extension>
+
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <package 
+       uri = "http://www.openrtp.org/namespaces/rtc" 
+       class = "org.openrtp.namespaces.rtc.RtcPackage"
+       genModel = "model/RtcProfile_ext.genmodel" /> 
+  </extension>
+
+  <extension point="org.eclipse.emf.ecore.extension_parser">
+    <parser 
+       type="rtc" 
+       class="org.openrtp.namespaces.rtc.util.RtcResourceFactoryImpl" />
+  </extension>
+
+</plugin>
+

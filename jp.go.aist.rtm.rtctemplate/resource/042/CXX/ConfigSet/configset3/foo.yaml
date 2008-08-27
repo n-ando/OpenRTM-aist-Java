@@ -1,0 +1,178 @@
+rtcProfile: 
+  version: "1.0"
+  id: RTC:TA2.manip2.foo:1.0.3
+  basicInfo:
+    name: foo
+    description: 'MDesc'
+    version: 1.0.3
+    vendor: TA2
+    category: manip2
+    componentType: STATIC2
+    activityType: PERIODIC2
+    componentKind: DataFlowComponent
+    maxInstances: 3
+    abstract: 
+    executionRate: 1000.0
+    executionType: PeriodicExecutionContext
+    creationDate:
+      year: 2008
+      month: 5
+      day: 27
+      hour: 21
+      minute: 10
+      second: 59
+    updateDate:
+      year: 
+      month: 
+      day: 
+      hour: 
+      minute: 
+      second: 
+    "rtcDoc::doc":
+      algorithm: 
+      creator: 
+      description: 
+      inout: 
+      license: 
+      reference: 
+    "rtcExt::versionUpLog": 
+  language: 
+  actions:  
+    onInitialize:
+      implemented: True
+      "rtcDoc::doc":
+        description: onInitialize description
+        postCondition: onInitialize Post_condition
+        preCondition: onInitialize Pre_condition
+    onActivated:
+      implemented: True
+      "rtcDoc::doc":
+        description: onActivated description
+        postCondition: onActivated Post_condition
+        preCondition: onActivated Pre_condition
+    onDeactivated:
+      implemented: True
+      "rtcDoc::doc":
+        description: onDeactivated description
+        postCondition: onDeactivated Post_condition
+        preCondition: onDeactivated Pre_condition
+    onAborting:
+      implemented: True
+      "rtcDoc::doc":
+        description: onAborting description
+        postCondition: onAborting Post_condition
+        preCondition: onAborting Pre_condition
+    onError:
+      implemented: True
+      "rtcDoc::doc":
+        description: onError description
+        postCondition: onError Post_condition
+        preCondition: onError Pre_condition
+    onReset:
+      implemented: True
+      "rtcDoc::doc":
+        description: onReset description
+        postCondition: onReset Post_condition
+        preCondition: onReset Pre_condition
+    onFinalize:
+      implemented: True
+      "rtcDoc::doc":
+        description: onFinalize description
+        postCondition: onFinalize Post_condition
+        preCondition: onFinalize Pre_condition
+    onStartup:
+      implemented: True
+      "rtcDoc::doc":
+        description: onStartup description
+        postCondition: onStartup Post_condition
+        preCondition: onStartup Pre_condition
+    onRateChanged:
+      implemented: True
+      "rtcDoc::doc":
+        description: onRateChanged description
+        postCondition: onRateChanged Post_condition
+        preCondition: onRateChanged Pre_condition
+    onShutdown:
+      implemented: True
+      "rtcDoc::doc":
+        description: onShutdown description
+        postCondition: onShutdown Post_condition
+        preCondition: onShutdown Pre_condition
+    onExecute:
+      implemented: True
+      "rtcDoc::doc":
+        description: onExecute description
+        postCondition: onExecute Post_condition
+        preCondition: onExecute Pre_condition
+    onStateUpdate:
+      implemented: True
+      "rtcDoc::doc":
+        description: onStateUpdate description
+        postCondition: onStateUpdate Post_condition
+        preCondition: onStateUpdate Pre_condition
+  dataPorts: 
+  servicePorts: 
+  configurationSet: 
+    configuration: 
+      - 
+        name: int_param0
+        type: int
+        varname: int_param0
+        defaultValue: 0
+        "rtcDoc::doc":
+          constraint: constraint
+          dataname: dataname
+          defaultValue: 0
+          description: description
+          range: range
+          unit: unit
+      - 
+        name: int_param1
+        type: int
+        varname: int_param1
+        defaultValue: 1
+        "rtcDoc::doc":
+          constraint: constraint
+          dataname: dataname
+          defaultValue: 1
+          description: description
+          range: range
+          unit: unit
+      - 
+        name: double_param0
+        type: double
+        varname: double_param0
+        defaultValue: 0.11
+        "rtcDoc::doc":
+          constraint: constraint
+          dataname: dataname
+          defaultValue: 0.11
+          description: description
+          range: range
+          unit: unit
+      - 
+        name: str_param0
+        type: std::string
+        varname: str_param0
+        defaultValue: hoge
+        "rtcDoc::doc":
+          constraint: constraint
+          dataname: dataname
+          defaultValue: hoge
+          description: description
+          range: range
+          unit: unit
+      - 
+        name: str_param1
+        type: std::string
+        varname: str_param1
+        defaultValue: dara
+        "rtcDoc::doc":
+          constraint: constraint
+          dataname: dataname
+          defaultValue: dara
+          description: description
+          range: range
+          unit: unit
+  parameters: 
+

@@ -1,0 +1,1949 @@
+2008-03-03 19:50:21,953 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:21,953 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:21,953 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:21,953 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.CommonGenerateManager.generateReadMe(CommonGenerateManager.java:55)
+	at jp.go.aist.rtm.rtcbuilder.manager.CommonGenerateManager.generateTemplateCode(CommonGenerateManager.java:32)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:21,953 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:21,953 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:21,953 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:21,968 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,000 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,000 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,000 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,000 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,015 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,015 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,062 - Created '20' parsers.
+2008-03-03 19:50:22,078 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,078 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,078 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,078 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:22,250 - Null reference [template '', line 5, column 9] : $Date cannot be resolved.
+2008-03-03 19:50:22,250 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible.  [line 6, column 39]
+2008-03-03 19:50:22,250 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible.  [line 10, column 39]
+2008-03-03 19:50:22,265 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/common/commandline.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,328 - Left side (${rtcParam.docDescription.length()}) of '>' operation has null value. Operation not possible.  [line 33, column 41]
+2008-03-03 19:50:22,328 - Left side (${rtcParam.docInOut.length()}) of '>' operation has null value. Operation not possible.  [line 35, column 35]
+2008-03-03 19:50:22,328 - Left side (${rtcParam.docAlgorithm.length()}) of '>' operation has null value. Operation not possible.  [line 37, column 39]
+2008-03-03 19:50:22,328 - Left side (${rtcParam.docReference.length()}) of '>' operation has null value. Operation not possible.  [line 39, column 39]
+2008-03-03 19:50:22,359 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,359 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,359 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,359 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,359 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateCompSource(JavaGenerateManager.java:117)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:48)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,359 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,359 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,359 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,359 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,359 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,359 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,359 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,359 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,359 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,359 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+mplate.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateCompSource(JavaGenerateManager.java:117)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:48)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,359 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,359 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,359 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,359 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,359 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,359 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,359 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,359 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,359 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,359 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,546 - Created '20' parsers.
+2008-03-03 19:50:22,546 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,546 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,546 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,546 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:22,562 - Null reference [template '', line 5, column 10] : $Date cannot be resolved.
+2008-03-03 19:50:22,578 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,578 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:22,578 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:22,578 - Null reference [template '', line 7, column 4] : $Id cannot be resolved.
+2008-03-03 19:50:22,593 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,593 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,593 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,593 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,593 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,593 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,593 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,593 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,593 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateBuildFile(JavaGenerateManager.java:141)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:50)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,593 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateBuildFile(JavaGenerateManager.java:141)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:50)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,593 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,593 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,593 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,593 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,593 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,593 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,593 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,593 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,593 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,593 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,593 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,593 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,593 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,593 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,593 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,593 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,593 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,593 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,593 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,593 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,609 - Created '20' parsers.
+2008-03-03 19:50:22,609 - Created '20' parsers.
+2008-03-03 19:50:22,609 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,609 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,609 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,609 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,609 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,609 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,609 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:22,609 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:22,625 - Null reference [template '', line 5, column 10] : $Date cannot be resolved.
+2008-03-03 19:50:22,625 - Null reference [template '', line 5, column 10] : $Date cannot be resolved.
+2008-03-03 19:50:22,625 - Null reference [template '', line 7, column 3] : $Id cannot be resolved.
+2008-03-03 19:50:22,625 - Null reference [template '', line 7, column 3] : $Id cannot be resolved.
+2008-03-03 19:50:22,625 - Null reference [template '', line 24, column 29] : ${dest} cannot be resolved.
+2008-03-03 19:50:22,625 - Null reference [template '', line 24, column 29] : ${dest} cannot be resolved.
+2008-03-03 19:50:22,625 - Null reference [template '', line 30, column 35] : ${env.JAVA_HOME} cannot be resolved.
+2008-03-03 19:50:22,625 - Null reference [template '', line 30, column 35] : ${env.JAVA_HOME} cannot be resolved.
+2008-03-03 19:50:22,625 - Null reference [template '', line 52, column 32] : ${source} cannot be resolved.
+2008-03-03 19:50:22,625 - Null reference [template '', line 52, column 32] : ${source} cannot be resolved.
+2008-03-03 19:50:22,625 - Null reference [template '', line 52, column 52] : ${dest} cannot be resolved.
+2008-03-03 19:50:22,625 - Null reference [template '', line 52, column 52] : ${dest} cannot be resolved.
+2008-03-03 19:50:22,640 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,640 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,640 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,640 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,640 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,640 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,640 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,640 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,640 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,640 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,640 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,640 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,640 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCSource(JavaGenerateManager.java:164)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:51)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,640 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCSource(JavaGenerateManager.java:164)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:51)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,640 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCSource(JavaGenerateManager.java:164)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:51)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,640 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,640 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,640 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,640 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,640 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,640 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,640 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,640 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,640 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,640 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,640 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,640 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,640 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,640 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,640 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,640 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,640 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,640 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,656 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,703 - Created '20' parsers.
+2008-03-03 19:50:22,703 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,703 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,703 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,703 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:22,718 - Null reference [template '', line 4, column 10] : $Date cannot be resolved.
+2008-03-03 19:50:22,718 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,718 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:22,718 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:22,718 - Null reference [template '', line 6, column 4] : $Id cannot be resolved.
+2008-03-03 19:50:22,734 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,734 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,734 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,734 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,734 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,734 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,734 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,734 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,734 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCImplSource(JavaGenerateManager.java:204)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:52)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,734 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCImplSource(JavaGenerateManager.java:204)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:52)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,734 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,734 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,734 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,734 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,734 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,734 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,734 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,734 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,734 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,734 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,750 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,750 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,750 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,750 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,750 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,750 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,750 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,750 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,750 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,750 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,750 - Created '20' parsers.
+2008-03-03 19:50:22,750 - Created '20' parsers.
+2008-03-03 19:50:22,750 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,750 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,750 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,750 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,750 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,750 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,750 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:22,750 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:22,796 - Null reference [template '', line 5, column 11] : $Date cannot be resolved.
+2008-03-03 19:50:22,796 - Null reference [template '', line 5, column 11] : $Date cannot be resolved.
+2008-03-03 19:50:22,859 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,859 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,859 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:22,859 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:22,859 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:22,859 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:22,859 - Null reference [template '', line 7, column 4] : $Id cannot be resolved.
+2008-03-03 19:50:22,859 - Left side (${rtcParam.docDescription.length()}) of '>' operation has null value. Operation not possible.  [line 45, column 43]
+2008-03-03 19:50:22,859 - Left side (${rtcParam.docInOut.length()}) of '>' operation has null value. Operation not possible.  [line 49, column 37]
+2008-03-03 19:50:22,859 - Left side (${rtcParam.docAlgorithm.length()}) of '>' operation has null value. Operation not possible.  [line 53, column 41]
+2008-03-03 19:50:22,859 - Left side (${rtcParam.docReference.length()}) of '>' operation has null value. Operation not possible.  [line 57, column 41]
+2008-03-03 19:50:22,875 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,875 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,875 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,875 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,875 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,875 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,875 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,875 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,875 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCExtend(JavaGenerateManager.java:180)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:53)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,875 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCExtend(JavaGenerateManager.java:180)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:53)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,890 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,890 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,890 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,890 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,890 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,890 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,890 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,890 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,890 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,890 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,890 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,890 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,890 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,890 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,890 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,890 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,890 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,890 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,890 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,890 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,890 - Created '20' parsers.
+2008-03-03 19:50:22,890 - Created '20' parsers.
+2008-03-03 19:50:22,890 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,890 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,890 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,890 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,890 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,890 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,890 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:22,890 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:22,921 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,921 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,921 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:22,921 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,921 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,921 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:22,921 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,921 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,921 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:22,921 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,921 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,921 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:22,921 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateSVCSource(JavaGenerateManager.java:230)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:90)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,921 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateSVCSource(JavaGenerateManager.java:230)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:90)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,921 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateSVCSource(JavaGenerateManager.java:230)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:90)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML2(MLTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:22,921 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,921 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,921 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,921 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,921 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,921 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:22,921 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,921 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,921 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:22,921 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,921 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,921 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:22,921 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,921 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,921 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,921 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:22,937 - Created '20' parsers.
+2008-03-03 19:50:22,937 - Created '20' parsers.
+2008-03-03 19:50:22,937 - Created '20' parsers.
+2008-03-03 19:50:22,937 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,937 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,937 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:22,937 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,937 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,937 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:22,937 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,937 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,937 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:22,937 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:22,937 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:22,937 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,000 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,000 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,000 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:23,000 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:23,078 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,078 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,078 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,078 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,078 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,078 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,078 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,078 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,078 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.CommonGenerateManager.generateReadMe(CommonGenerateManager.java:55)
+	at jp.go.aist.rtm.rtcbuilder.manager.CommonGenerateManager.generateTemplateCode(CommonGenerateManager.java:32)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,078 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.CommonGenerateManager.generateReadMe(CommonGenerateManager.java:55)
+	at jp.go.aist.rtm.rtcbuilder.manager.CommonGenerateManager.generateTemplateCode(CommonGenerateManager.java:32)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,093 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,093 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,093 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,093 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,093 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,093 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,093 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,093 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,093 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,093 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,093 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,093 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,093 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,093 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,093 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,093 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,093 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,093 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,093 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,093 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,093 - Created '20' parsers.
+2008-03-03 19:50:23,093 - Created '20' parsers.
+2008-03-03 19:50:23,093 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,093 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,093 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,093 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,093 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,093 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,093 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,093 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,125 - Null reference [template '', line 5, column 9] : $Date cannot be resolved.
+2008-03-03 19:50:23,125 - Null reference [template '', line 5, column 9] : $Date cannot be resolved.
+2008-03-03 19:50:23,125 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible.  [line 6, column 39]
+2008-03-03 19:50:23,125 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible.  [line 6, column 39]
+2008-03-03 19:50:23,125 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible.  [line 10, column 39]
+2008-03-03 19:50:23,125 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible.  [line 10, column 39]
+2008-03-03 19:50:23,140 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/common/commandline.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,140 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/common/commandline.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,140 - Left side (${rtcParam.docDescription.length()}) of '>' operation has null value. Operation not possible.  [line 33, column 41]
+2008-03-03 19:50:23,140 - Left side (${rtcParam.docDescription.length()}) of '>' operation has null value. Operation not possible.  [line 33, column 41]
+2008-03-03 19:50:23,140 - Left side (${rtcParam.docInOut.length()}) of '>' operation has null value. Operation not possible.  [line 35, column 35]
+2008-03-03 19:50:23,140 - Left side (${rtcParam.docInOut.length()}) of '>' operation has null value. Operation not possible.  [line 35, column 35]
+2008-03-03 19:50:23,140 - Left side (${rtcParam.docAlgorithm.length()}) of '>' operation has null value. Operation not possible.  [line 37, column 39]
+2008-03-03 19:50:23,140 - Left side (${rtcParam.docAlgorithm.length()}) of '>' operation has null value. Operation not possible.  [line 37, column 39]
+2008-03-03 19:50:23,140 - Left side (${rtcParam.docReference.length()}) of '>' operation has null value. Operation not possible.  [line 39, column 39]
+2008-03-03 19:50:23,140 - Left side (${rtcParam.docReference.length()}) of '>' operation has null value. Operation not possible.  [line 39, column 39]
+2008-03-03 19:50:23,140 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,140 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,140 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,140 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,140 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,140 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,156 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,156 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,156 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,156 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,156 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,156 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,156 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateCompSource(JavaGenerateManager.java:117)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:48)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,156 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateCompSource(JavaGenerateManager.java:117)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:48)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,156 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateCompSource(JavaGenerateManager.java:117)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:48)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,156 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,156 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,156 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,156 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,156 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,156 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,156 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,156 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,156 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,156 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,156 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,156 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,156 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,156 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,156 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,156 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,156 - Created '20' parsers.
+2008-03-03 19:50:23,156 - Created '20' parsers.
+2008-03-03 19:50:23,156 - Created '20' parsers.
+2008-03-03 19:50:23,156 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,156 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,156 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,171 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,171 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,171 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,171 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,171 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,171 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,171 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,171 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,171 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,171 - Null reference [template '', line 5, column 10] : $Date cannot be resolved.
+2008-03-03 19:50:23,171 - Null reference [template '', line 5, column 10] : $Date cannot be resolved.
+2008-03-03 19:50:23,171 - Null reference [template '', line 5, column 10] : $Date cannot be resolved.
+2008-03-03 19:50:23,171 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,171 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,171 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,171 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:23,171 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:23,171 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:23,171 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:23,171 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:23,171 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:23,171 - Null reference [template '', line 7, column 4] : $Id cannot be resolved.
+2008-03-03 19:50:23,171 - Null reference [template '', line 7, column 4] : $Id cannot be resolved.
+2008-03-03 19:50:23,171 - Null reference [template '', line 7, column 4] : $Id cannot be resolved.
+2008-03-03 19:50:23,171 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,171 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,171 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,171 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,187 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,187 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,187 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,187 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,187 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,187 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,187 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,187 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,187 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,187 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,187 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,187 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,187 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateBuildFile(JavaGenerateManager.java:141)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:50)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,187 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateBuildFile(JavaGenerateManager.java:141)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:50)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,187 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateBuildFile(JavaGenerateManager.java:141)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:50)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,187 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateBuildFile(JavaGenerateManager.java:141)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:50)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,234 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,234 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,234 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,234 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,234 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,234 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,234 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,234 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,234 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,234 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,234 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,234 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,234 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,234 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,234 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,234 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,234 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,234 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,234 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,234 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,234 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,234 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,234 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,234 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,234 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,234 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,250 - Created '20' parsers.
+2008-03-03 19:50:23,250 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,250 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,250 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,250 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,250 - Null reference [template '', line 5, column 10] : $Date cannot be resolved.
+2008-03-03 19:50:23,250 - Null reference [template '', line 7, column 3] : $Id cannot be resolved.
+2008-03-03 19:50:23,250 - Null reference [template '', line 24, column 29] : ${dest} cannot be resolved.
+2008-03-03 19:50:23,250 - Null reference [template '', line 30, column 35] : ${env.JAVA_HOME} cannot be resolved.
+2008-03-03 19:50:23,250 - Null reference [template '', line 52, column 32] : ${source} cannot be resolved.
+2008-03-03 19:50:23,250 - Null reference [template '', line 52, column 52] : ${dest} cannot be resolved.
+2008-03-03 19:50:23,265 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,265 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,265 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,265 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,265 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,265 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,265 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,265 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,265 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCSource(JavaGenerateManager.java:164)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:51)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,265 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCSource(JavaGenerateManager.java:164)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:51)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,265 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,265 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,265 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,265 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,265 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,265 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,265 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,265 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,265 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,265 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,265 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,265 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,265 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,265 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,265 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,265 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,265 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,265 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,265 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,265 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,281 - Created '20' parsers.
+2008-03-03 19:50:23,281 - Created '20' parsers.
+2008-03-03 19:50:23,281 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,281 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,281 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,281 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,281 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,281 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,281 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,281 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,281 - Null reference [template '', line 4, column 10] : $Date cannot be resolved.
+2008-03-03 19:50:23,281 - Null reference [template '', line 4, column 10] : $Date cannot be resolved.
+2008-03-03 19:50:23,281 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,281 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,281 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:23,281 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:23,281 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:23,281 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:23,281 - Null reference [template '', line 6, column 4] : $Id cannot be resolved.
+2008-03-03 19:50:23,281 - Null reference [template '', line 6, column 4] : $Id cannot be resolved.
+2008-03-03 19:50:23,296 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,296 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,296 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,296 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,296 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,296 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,296 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,296 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,296 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,296 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,296 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,296 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,296 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCImplSource(JavaGenerateManager.java:204)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:52)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,296 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCImplSource(JavaGenerateManager.java:204)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:52)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,296 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCImplSource(JavaGenerateManager.java:204)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:52)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,296 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,296 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,296 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,296 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,296 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,296 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,296 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,296 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,296 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,296 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,296 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,296 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,296 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,296 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,296 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,296 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,359 - Created '20' parsers.
+2008-03-03 19:50:23,359 - Created '20' parsers.
+2008-03-03 19:50:23,359 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,359 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,359 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,359 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,359 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,359 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,359 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,359 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,390 - Null reference [template '', line 5, column 11] : $Date cannot be resolved.
+2008-03-03 19:50:23,406 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,406 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:23,406 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:23,406 - Null reference [template '', line 7, column 4] : $Id cannot be resolved.
+2008-03-03 19:50:23,406 - Left side (${rtcParam.docDescription.length()}) of '>' operation has null value. Operation not possible.  [line 45, column 43]
+2008-03-03 19:50:23,406 - Left side (${rtcParam.docInOut.length()}) of '>' operation has null value. Operation not possible.  [line 49, column 37]
+2008-03-03 19:50:23,406 - Left side (${rtcParam.docAlgorithm.length()}) of '>' operation has null value. Operation not possible.  [line 53, column 41]
+2008-03-03 19:50:23,406 - Left side (${rtcParam.docReference.length()}) of '>' operation has null value. Operation not possible.  [line 57, column 41]
+2008-03-03 19:50:23,421 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,421 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,421 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,421 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,421 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,421 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,421 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,421 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,421 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCExtend(JavaGenerateManager.java:180)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:53)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,421 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateRTCExtend(JavaGenerateManager.java:180)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:53)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,421 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,421 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,421 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,421 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,421 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,421 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,421 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,421 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,421 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,421 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,421 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,421 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,421 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,421 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,421 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,421 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,421 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,421 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,421 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,421 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,437 - Created '20' parsers.
+2008-03-03 19:50:23,437 - Created '20' parsers.
+2008-03-03 19:50:23,437 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,437 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,437 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,437 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,437 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,437 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,437 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,437 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,453 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,453 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,453 - Log4JLogChute initialized using file 'velocity.log'
+2008-03-03 19:50:23,453 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,453 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,453 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2008-03-03 19:50:23,453 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,453 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,453 - Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+2008-03-03 19:50:23,453 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,453 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,453 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2008-03-03 19:50:23,453 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateSVCSource(JavaGenerateManager.java:230)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:90)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,453 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateSVCSource(JavaGenerateManager.java:230)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:90)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,453 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:116)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.getEngine(TemplateUtil.java:96)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.generate(TemplateUtil.java:139)
+	at jp.go.aist.rtm.rtcbuilder.template.TemplateUtil.createGeneratedResult(TemplateUtil.java:78)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateSVCSource(JavaGenerateManager.java:230)
+	at jp.go.aist.rtm.rtcbuilder.manager.JavaGenerateManager.generateTemplateCode(JavaGenerateManager.java:90)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:130)
+	at jp.go.aist.rtm.rtcbuilder.Generator.generateTemplateCode(Generator.java:75)
+	at jp.go.aist.rtm.rtcbuilder._test.java.MLTest.testML1(MLTest.java:88)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:128)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:460)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:673)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:386)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:196)
+2008-03-03 19:50:23,453 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,453 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,453 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,453 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,453 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,453 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2008-03-03 19:50:23,453 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,453 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,453 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2008-03-03 19:50:23,453 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,453 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,453 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,453 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,453 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,453 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,453 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2008-03-03 19:50:23,468 - Created '20' parsers.
+2008-03-03 19:50:23,468 - Created '20' parsers.
+2008-03-03 19:50:23,468 - Created '20' parsers.
+2008-03-03 19:50:23,468 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,468 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,468 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2008-03-03 19:50:23,468 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,468 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,468 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2008-03-03 19:50:23,468 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,468 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,468 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2008-03-03 19:50:23,468 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,468 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,468 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2008-03-03 19:50:23,468 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,468 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,468 - ResourceManager : found jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2008-03-03 19:50:23,468 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:23,468 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:23,468 - Left side (${rtcParam.docCreator.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 1, column 39]
+2008-03-03 19:50:23,468 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:23,468 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]
+2008-03-03 19:50:23,468 - Left side (${rtcParam.docLicense.length()}) of '>' operation has null value. Operation not possible. jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template [line 5, column 39]

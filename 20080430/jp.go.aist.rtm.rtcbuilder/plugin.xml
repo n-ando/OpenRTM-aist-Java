@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id: plugin.xml,v 1.1 2007/12/25 05:43:00 tsakamoto Exp $
+-->
+
+<plugin>
+
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <package 
+       uri = "http:///jp/go/aist/rtm/rtcbuilder/model/component.ecore" 
+       class = "jp.go.aist.rtm.rtcbuilder.model.component.ComponentPackage"
+       genModel = "src/jp/go/aist/rtm/rtcbuilder/model/RTC.genmodel" /> 
+  </extension>
+  <extension
+        point="org.eclipse.ui.editors">
+     <editor
+           class="jp.go.aist.rtm.rtcbuilder.ui.editors.RtcBuilderEditor"
+           extensions="rtcbuilder"
+           icon="icons/RtcBuilder.png"
+           id="jp.go.aist.rtm.rtcbuilder.ui.editors.RtcBuilderEditor"
+           name="RTC Builder Editor"/>
+  </extension>
+  <extension
+        point="org.eclipse.ui.popupMenus">
+    <viewerContribution
+           id="jp.go.aist.rtm.rtcbuilder.ui.viewerContribution.saveas"
+           targetID="jp.go.aist.rtm.rtcbuilder.ui.editors.RtcBuilderEditor" >
+		<action id="jp.go.aist.rtm.rtcbuilder.ui.action.SaveAsAction" 
+			label="Save As..." 
+			menubarPath="file"
+			class="jp.go.aist.rtm.rtcbuilder.ui.action.SaveAsAction" > 
+		</action>
+	</viewerContribution>
+    <viewerContribution
+     	id="jp.go.aist.rtm.rtcbuilder.ui.viewerContribution.save"
+        targetID="jp.go.aist.rtm.rtcbuilder.ui.editors.RtcBuilderEditor" >
+		<visibility>
+			<objectState name="dirty" value="true"/>
+		</visibility>
+		<action id="jp.go.aist.rtm.rtcbuilder.ui.action.SaveAction" 
+			label="Save" 
+			menubarPath="file"
+			class="jp.go.aist.rtm.rtcbuilder.ui.action.SaveAction" > 
+		</action>
+	</viewerContribution>
+    <viewerContribution
+           id="jp.go.aist.rtm.rtcbuilder.ui.viewerContribution.open"
+           targetID="jp.go.aist.rtm.rtcbuilder.ui.editors.RtcBuilderEditor">
+		<action id="jp.go.aist.rtm.rtcbuilder.ui.action.OpenAction" 
+			label="Open..." 
+			menubarPath="file"
+			class="jp.go.aist.rtm.rtcbuilder.ui.action.OpenAction" > 
+		</action>
+    </viewerContribution>
+  </extension>
+  <extension
+        point="org.eclipse.ui.actionSets">
+     <actionSet
+           id="jp.go.aist.rtm.rtcbuilder.ui.actionSet"
+           label="RTC Builder Actions">
+			<action
+				id="jp.go.aist.rtm.rtcbuilder.ui.action.NewRtcBuilderEditorAction" 
+				label="&amp;Open New Builder Editor"
+				menubarPath="file/RtcBuilderGroup" 
+				toolbarPath="RtcBuilder"
+				icon="icons/RtcBuilderL.png" 
+				tooltip="Open New RtcBuilder Editor" 
+				class="jp.go.aist.rtm.rtcbuilder.ui.action.NewRtcBuilderEditorAction"> 
+			</action>
+		</actionSet>
+  </extension>
+  <extension
+        point="org.eclipse.ui.perspectiveExtensions">
+    <perspectiveExtension targetID="jp.go.aist.rtm.rtclink.ui.perspective.RtcLinkPerspective">
+		<actionSet id="jp.go.aist.rtm.rtcbuilder.ui.actionSet"/> 
+	</perspectiveExtension>
+  </extension>
+  <extension
+        point="org.eclipse.ui.views">
+     <category
+           id="OpenRTP"
+           name="OpenRTP Tools"/>
+     <view
+           allowMultiple="false"
+           category="OpenRTP"
+           class="jp.go.aist.rtm.rtcbuilder.ui.views.ComponentBuildView"
+           icon="icons/buildView.png"
+           id="jp.go.aist.rtm.rtcbuilder.buildeview"
+           name="BuildView"/>
+  </extension>
+  <extension
+        point="org.eclipse.ui.newWizards">
+     <category
+           id="jp.go.aist.rtm.rtcbuilder.ui.wizard"
+           name="RTC Builder Wizard"/>
+     <wizard
+           class="jp.go.aist.rtm.rtcbuilder.ui.wizard.NewWizard"
+           finalPerspective="jp.go.aist.rtm.rtcbuilder.ui.perspective"
+           icon="icons/RTCBuilder.png"
+           id="jp.go.aist.rtm.rtcbuilder.ui.wizard"
+           name="RTCビルダ"
+           project="true"/>
+  </extension>
+  <extension
+        point="org.eclipse.ui.perspectives">
+     <perspective
+           class="jp.go.aist.rtm.rtcbuilder.ui.Perspective.RtcBuilderPerspectiveFactory"
+           icon="icons/RtcBuilderL.png"
+           id="jp.go.aist.rtm.rtcbuilder.ui.perspective"
+           name="RTC Builder"/>
+  </extension>
+  <extension
+        point="org.eclipse.ui.preferencePages">
+     <page
+           class="jp.go.aist.rtm.rtcbuilder.ui.preference.RtcBuilderPreferencePage"
+           id="jp.go.aist.rtm.rtcbuilder.ui.preferencePage"
+           name="RtcBuilder"/>
+     <page
+           category="jp.go.aist.rtm.rtcbuilder.ui.preferencePage"
+           class="jp.go.aist.rtm.rtcbuilder.ui.preference.BuilderViewPreferencePage"
+           id="jp.go.aist.rtm.rtcbuilder.ui.preferencePage.buildView"
+           name="Builder View"/>
+     <page
+           category="jp.go.aist.rtm.rtcbuilder.ui.preferencePage"
+           class="jp.go.aist.rtm.rtcbuilder.ui.preference.ExportPreferencePage"
+           id="jp.go.aist.rtm.rtcbuilder.ui.preferencePage.export"
+           name="Export"/>
+     <page
+           category="jp.go.aist.rtm.rtcbuilder.ui.preferencePage"
+           class="jp.go.aist.rtm.rtcbuilder.ui.preference.CodeGeneratePreferencePage"
+           id="jp.go.aist.rtm.rtcbuilder.ui.preferencePage.codeGenerate"
+           name="コード生成"/>
+     <page
+           category="jp.go.aist.rtm.rtcbuilder.ui.preferencePage.codeGenerate"
+           class="jp.go.aist.rtm.rtcbuilder.ui.preference.ConfigPreferencePage"
+           id="jp.go.aist.rtm.rtcbuilder.ui.preferencePage.codeGenerate.Configuration"
+           name="Configuration"/>
+     <page
+           category="jp.go.aist.rtm.rtcbuilder.ui.preferencePage.codeGenerate"
+           class="jp.go.aist.rtm.rtcbuilder.ui.preference.CodeGeneratePortPreferencePage"
+           id="jp.go.aist.rtm.rtcbuilder.ui.preferencePage.codeGenerate.Ports"
+           name="Port"/>
+     <page
+           category="jp.go.aist.rtm.rtcbuilder.ui.preferencePage.codeGenerate"
+           class="jp.go.aist.rtm.rtcbuilder.ui.preference.DocumentPreferencePage"
+           id="jp.go.aist.rtm.rtcbuilder.ui.preferencePage.codeGenerate.Document"
+           name="Document"/>
+  </extension>
+
+</plugin>
+

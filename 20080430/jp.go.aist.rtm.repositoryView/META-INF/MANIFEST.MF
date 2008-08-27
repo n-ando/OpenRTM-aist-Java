@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: RepositoryView Plug-in
+Bundle-SymbolicName: jp.go.aist.rtm.repositoryView;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: jp.go.aist.rtm.repositoryView.RepositoryViewPlugin
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ jp.go.aist.rtm.toolscommon,
+ jp.go.aist.rtm.toolscommon.profiles
+Eclipse-LazyStart: true
+Export-Package: jp.go.aist.rtm.repositoryView,
+ jp.go.aist.rtm.repositoryView.adapterfactory,
+ jp.go.aist.rtm.repositoryView.model,
+ jp.go.aist.rtm.repositoryView.ui,
+ jp.go.aist.rtm.repositoryView.ui.action,
+ jp.go.aist.rtm.repositoryView.ui.views
+Bundle-ClassPath: lib/rtrepository_accesslibrary-0.1.jar,
+ lib/commons-logging.jar,
+ lib/log4j-1.2.13.jar,
+ .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

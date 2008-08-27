@@ -1,0 +1,4 @@
+2008/04/02 15:25:21 HD WARN     : testwarn
+2008/04/02 15:25:21 HD INFO     : testinfo
+2008/04/02 15:25:21 test NORMAL   : Exception: Caught unknown Exception in Manager.shutdownORB().
+2008/04/02 15:25:21 test NORMAL   : 

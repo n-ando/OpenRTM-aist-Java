@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+#if( ${rtcParam.javaClassPathes.size()} > 0 )
+#foreach($classPath in ${rtcParam.javaClassPathes})
+	<classpathentry kind="lib" path="${classPath}"/>
+#end
+#else
+	<classpathentry kind="output" path=""/>
+#end
+</classpath>

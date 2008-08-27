@@ -1,0 +1,1 @@
+rtc-template -bcxx --module-name=ModuleName --module-desc='ModuleDescription' --module-version=1.0.0 --module-vendor=VenderName --module-category=Category --module-comp-type=DataFlowComponent --module-act-type=PERIODIC --module-max-inst=1 --service-idl=MyService.idl --service=portName:name:MyService 

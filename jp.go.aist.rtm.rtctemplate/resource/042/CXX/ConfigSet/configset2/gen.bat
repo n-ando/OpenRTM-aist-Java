@@ -1,0 +1,1 @@
+rtc-template.py -bcxx --module-name=foo --module-desc='MDesc' --module-version=1.0.3 --module-vendor=TA2 --module-category=manip2 --module-comp-type=STATIC2 --module-act-type=PERIODIC2 --module-max-inst=3 --config=int_param0:int:0 --config=int_param1:int:1 
