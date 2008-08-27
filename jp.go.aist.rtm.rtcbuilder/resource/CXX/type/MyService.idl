@@ -1,0 +1,19 @@
+interface MyService
+{
+  short echo01(in short ss, out short ss2, inout short ss3);
+  long echo02(in long ss, out long ss2, inout long ss3);
+  long long echo03(in long long ss, out long long ss2, inout long long ss3);
+  unsigned long echo04(in unsigned long ss, out unsigned long ss2, inout unsigned long ss3);
+  unsigned long long echo05(in unsigned long long ss, out unsigned long long ss2, inout unsigned long long ss3);
+  unsigned short echo06(in unsigned short ss, out unsigned short ss2, inout unsigned short ss3);
+  float echo07(in float ss, out float ss2, inout float ss3);
+  double echo08(in double ss, out double ss2, inout double ss3);
+  long double echo09(in long double ss, out long double ss2, inout long double ss3);
+  char echo10(in char ss, out char ss2, inout char ss3);
+  wchar echo11(in wchar ss, out wchar ss2, inout wchar ss3);
+  octet echo12(in octet ss, out octet ss2, inout octet ss3);
+  boolean echo13(in boolean ss, out boolean ss2, inout boolean ss3);
+  string echo14(in string ss, out string ss2, inout string ss3);
+  wstring echo15(in wstring ss, out wstring ss2, inout wstring ss3);
+  any echo16(in any ss, out any ss2, inout any ss3);
+};

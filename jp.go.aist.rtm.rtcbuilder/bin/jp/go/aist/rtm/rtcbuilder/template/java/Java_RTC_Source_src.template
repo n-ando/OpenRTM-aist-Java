@@ -1,0 +1,58 @@
+// -*- Java -*-
+/*!
+ * @file ${rtcParam.name}.java
+ * @date $Date$
+#parse("jp/go/aist/rtm/rtcbuilder/template/java/Java_Document.template")
+ * $Id$
+ */
+
+import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.RTObject_impl;
+import jp.go.aist.rtm.RTC.RtcDeleteFunc;
+import jp.go.aist.rtm.RTC.RtcNewFunc;
+
+/*!
+ * @class ${rtcParam.name}
+ * @brief ${rtcParam.description}
+ */
+public class ${rtcParam.name} implements RtcNewFunc, RtcDeleteFunc {
+
+//  Module specification
+//  <rtc-template block="module_spec">
+    public static String component_conf[] = {
+    	    "implementation_id", "${rtcParam.name}",
+    	    "type_name",         "${rtcParam.name}",
+    	    "description",       "${rtcParam.description}",
+    	    "version",           "${rtcParam.version}",
+    	    "vendor",            "${rtcParam.vender}",
+    	    "category",          "${rtcParam.category}",
+    	    "activity_type",     "${rtcParam.componentType}",
+    	    "max_instance",      "${rtcParam.maxInstance}",
+    	    "language",          "Java",
+    	    "lang_type",         "compile",
+#if( ${rtcParam.IsExecutionRateSet()} )    	    "exec_cxt.periodic.rate", "${rtcParam.executionRate}",
+#end
+#if( ${rtcParam.configParams.size()} > 0 )
+            // Configuration variables
+#foreach($configParam in ${rtcParam.configParams})  
+            "conf.default.${configParam.name}", "${configParam.defaultVal}",
+#end
+#end
+#if( ${rtcParam.configParameterParams.size()} > 0 )
+            // System Configuration
+#foreach($parameterParam in ${rtcParam.configParameterParams})  
+            "${parameterParam.configName}", "${parameterParam.defaultVal}",
+#end
+#end
+    	    ""
+            };
+//  </rtc-template>
+
+    public RTObject_impl createRtc(Manager mgr) {
+        return new ${rtcParam.name}Impl(mgr);
+    }
+
+    public void deleteRtc(RTObject_impl rtcBase) {
+        rtcBase = null;
+    }
+}

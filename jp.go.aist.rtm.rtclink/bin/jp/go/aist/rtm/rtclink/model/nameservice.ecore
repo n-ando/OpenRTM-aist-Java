@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="nameservice"
+    nsURI="http://rtm.aist.go.jp/rtcLink/model/nameservice" nsPrefix="jp.go.aist.rtm.rtclink.model.nameservice">
+  <eClassifiers xsi:type="ecore:EClass" name="CategoryNamingContext" eSuperTypes="#//NamingContextNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="HostNamingContext" eSuperTypes="#//NamingContextNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ManagerNamingContext" eSuperTypes="#//NamingContextNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModuleNamingContext" eSuperTypes="#//NamingContextNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="NameServerNamingContext" eSuperTypes="#//NamingContextNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="NamingContextNode" eSuperTypes="#//Node">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
+        eType="#//Node" containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="zombie" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        changeable="false" volatile="true" transient="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NamingObjectNode" eSuperTypes="#//Node">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="zombie" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        changeable="false" volatile="true" transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="entry" eType="ecore:EClass core.ecore#//WrapperObject"
+        containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Node" eSuperTypes="core.ecore#//CorbaWrapperObject">
+    <eOperations name="deleteR"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nameServiceReference" eType="#//NameServiceReference"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NamingContext" instanceClassName="org.omg.CosNaming.NamingContext"
+      abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="NameServiceReference">
+    <eOperations name="createMergedNameServiceReference" eType="#//NameServiceReference">
+      <eParameters name="childBinding" eType="#//Binding"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="binding" eType="#//Binding"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nameServerName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rootNamingContext" eType="#//NamingContextExt"
+        transient="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="NamingContextExt" instanceClassName="org.omg.CosNaming.NamingContextExt"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="Binding" instanceClassName="org.omg.CosNaming.Binding"/>
+</ecore:EPackage>

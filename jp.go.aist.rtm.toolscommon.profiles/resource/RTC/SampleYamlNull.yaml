@@ -1,0 +1,45 @@
+--- 
+rtcProfile: 
+  actions: 
+    onAborting:
+      implemented: true
+    onActivated:
+      implemented: true
+    onDeactivated:
+    onError:
+    onExecute:
+    onFinalize:
+    onInitialize:
+      implemented: true
+    onRateChanged:
+    onReset:
+    onShutdown:
+      implemented: true
+    onStartup:
+    onStateUpdate:
+  basicInfo:
+    activityType: PERIODIC
+    category: SampleCategory
+    componentKind: DataFlowComponent
+    componentType: STATIC
+    creationDate:
+      day: 18
+      hour: 14
+      minute: 0
+      month: 4
+      second: 0
+      year: 2008
+    description: SampleDescription
+    executionType: PeriodicExecutionContext
+    name: SampleComponent
+    updateDate:
+      day: 17
+      hour: 14
+      minute: 0
+      month: 4
+      second: 0
+      year: 2008
+    vendor: SampleVendor
+    version: 1.0.0
+  id: "RTC:SampleVendor.SampleCategory.SampleComponent:1.0.0"
+  version: "1.0"

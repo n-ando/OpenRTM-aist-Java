@@ -1,0 +1,33 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Systemeditor Plug-in
+Bundle-SymbolicName: jp.go.aist.rtm.systemeditor; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: jp.go.aist.rtm.systemeditor.RTSystemEditorPlugin
+Bundle-Localization: plugin
+Require-Bundle: 
+ org.eclipse.gef,
+ jp.go.aist.rtm.toolscommon,
+ jp.go.aist.rtm.nameserviceview,
+ jp.go.aist.rtm.toolscommon.profiles,
+ jp.go.aist.rtm.repositoryView
+Eclipse-AutoStart: true
+Bundle-ClassPath: .
+Export-Package: jp.go.aist.rtm.systemeditor,
+ jp.go.aist.rtm.systemeditor._debug,
+ jp.go.aist.rtm.systemeditor._test,
+ jp.go.aist.rtm.systemeditor.adapterfactory,
+ jp.go.aist.rtm.systemeditor.ui.action,
+ jp.go.aist.rtm.systemeditor.ui.dialog,
+ jp.go.aist.rtm.systemeditor.ui.editor,
+ jp.go.aist.rtm.systemeditor.ui.editor.action,
+ jp.go.aist.rtm.systemeditor.ui.editor.command,
+ jp.go.aist.rtm.systemeditor.ui.editor.dnd,
+ jp.go.aist.rtm.systemeditor.ui.editor.editpart,
+ jp.go.aist.rtm.systemeditor.ui.editor.editpart.factory,
+ jp.go.aist.rtm.systemeditor.ui.editor.editpart.router,
+ jp.go.aist.rtm.systemeditor.ui.editor.editpolicy,
+ jp.go.aist.rtm.systemeditor.ui.editor.figure,
+ jp.go.aist.rtm.systemeditor.ui.preference,
+ jp.go.aist.rtm.systemeditor.ui.util,
+ jp.go.aist.rtm.systemeditor.ui.workbenchadapter

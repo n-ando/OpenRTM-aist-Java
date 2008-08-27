@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="lib" path="/jp.go.aist.rtm.toolscommon.profiles/jar/jp.go.aist.rtm.toolscommon.profiles_1.0.0.jar"/>
+	<classpathentry kind="lib" path="/jp.go.aist.rtm.toolscommon/jar/jp.go.aist.rtm.toolscommon_1.0.0.jar"/>
+	<classpathentry kind="lib" path="/jp.go.aist.rtm.nameserviceview/jar/jp.go.aist.rtm.nameserviceview_1.0.0.jar"/>
+	<classpathentry kind="lib" path="/jp.go.aist.rtm.repositoryView/jar/jp.go.aist.rtm.repositoryView_1.0.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

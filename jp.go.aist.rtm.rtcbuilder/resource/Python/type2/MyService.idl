@@ -1,0 +1,9 @@
+interface MyService
+{
+  short echo01(in short ss, out short ss2, inout short ss3);
+  void echo02(in short ss, out short ss2, inout short ss3);
+  short echo03(in short ss, in short ss2, in short ss3);
+  short echo04(out short ss, out short ss2, out short ss3);
+  short echo05(inout short ss, inout short ss2, inout short ss3);
+
+};

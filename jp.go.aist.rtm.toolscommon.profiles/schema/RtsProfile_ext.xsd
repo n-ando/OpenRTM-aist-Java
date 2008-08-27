@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:rts_ext="http://www.openrtp.org/namespaces/rts_ext"
+	xmlns:rts="http://www.openrtp.org/namespaces/rts"
+	targetNamespace="http://www.openrtp.org/namespaces/rts_ext"
+	elementFormDefault="qualified"
+	attributeFormDefault="qualified">
+
+	<xsd:import namespace="http://www.openrtp.org/namespaces/rts" schemaLocation="RtsProfile.xsd"/>
+
+	<xsd:complexType name="rts_profile_ext">
+		<xsd:complexContent>
+			<xsd:extension base ="rts:rts_profile">
+				<xsd:sequence>
+					<xsd:element name="VersionUpLog" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="component_ext">
+		<xsd:complexContent>
+			<xsd:extension base ="rts:component">
+				<xsd:sequence>
+					<xsd:element name="Location" type="rts_ext:location" minOccurs="1" maxOccurs="1"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="location">
+		<xsd:attribute name="x" type="xsd:integer" use="required"/>
+		<xsd:attribute name="y" type="xsd:integer" use="required"/>
+		<xsd:attribute name="height" type="xsd:integer" use="required"/>
+		<xsd:attribute name="width" type="xsd:integer" use="required"/>
+		<xsd:attribute name="direction" use="required">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="DOWN"/>
+					<xsd:enumeration value="RIGHT"/>
+					<xsd:enumeration value="UP"/>
+					<xsd:enumeration value="LEFT"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+
+</xsd:schema>

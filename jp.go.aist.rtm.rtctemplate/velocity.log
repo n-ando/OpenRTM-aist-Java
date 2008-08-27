@@ -1,0 +1,27 @@
+Mon Apr 14 15:14:15 JST 2008  [debug] AvalonLogSystem initialized using logfile 'velocity.log'
+Mon Apr 14 15:14:15 JST 2008   [info] ************************************************************** 
+Mon Apr 14 15:14:15 JST 2008   [info] Starting Jakarta Velocity v1.4
+Mon Apr 14 15:14:15 JST 2008   [info] RuntimeInstance initializing.
+Mon Apr 14 15:14:15 JST 2008   [info] Default Properties File: org\apache\velocity\runtime\defaults\velocity.properties
+Mon Apr 14 15:14:15 JST 2008   [info] Trying to use logger class org.apache.velocity.runtime.log.AvalonLogSystem
+Mon Apr 14 15:14:15 JST 2008   [info] Using logger class org.apache.velocity.runtime.log.AvalonLogSystem
+Mon Apr 14 15:14:15 JST 2008   [info] Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+Mon Apr 14 15:14:15 JST 2008   [info] Resource Loader Instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Mon Apr 14 15:14:15 JST 2008   [info] ClasspathResourceLoader : initialization starting.
+Mon Apr 14 15:14:15 JST 2008   [info] ClasspathResourceLoader : initialization complete.
+Mon Apr 14 15:14:15 JST 2008   [info] ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+Mon Apr 14 15:14:15 JST 2008   [info] Default ResourceManager initialization complete.
+Mon Apr 14 15:14:15 JST 2008   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+Mon Apr 14 15:14:15 JST 2008   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+Mon Apr 14 15:14:15 JST 2008   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+Mon Apr 14 15:14:15 JST 2008   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Include
+Mon Apr 14 15:14:15 JST 2008   [info] Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+Mon Apr 14 15:14:15 JST 2008   [info] Created: 20 parsers.
+Mon Apr 14 15:14:15 JST 2008   [info] Velocimacro : initialization starting.
+Mon Apr 14 15:14:15 JST 2008   [info] Velocimacro : allowInline = true : VMs can be defined inline in templates
+Mon Apr 14 15:14:15 JST 2008   [info] Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+Mon Apr 14 15:14:15 JST 2008   [info] Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
+Mon Apr 14 15:14:15 JST 2008   [info] Velocimacro : messages on  : VM system will output logging messages
+Mon Apr 14 15:14:15 JST 2008   [info] Velocimacro : autoload off  : VM system will not automatically reload global library macros
+Mon Apr 14 15:14:15 JST 2008   [info] Velocimacro : initialization complete.
+Mon Apr 14 15:14:15 JST 2008   [info] Velocity successfully started.

@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="app"
+         point="org.eclipse.core.runtime.applications"
+         name="%appName">
+      <application>
+         <run
+               class="jp.go.aist.rtm.rtclink.rcp.RtcLinkApplication">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="jp.go.aist.rtm.rtclink.ui.perspective.RtcLinkPerspective"
+            icon="icons/RT_icon.png"
+            id="jp.go.aist.rtm.rtclink.RCP.perspective"
+            name="RtcLink">
+      </perspective>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="jp.go.aist.rtm.rtclink.RCP.app"
+            name="%productName">
+         <property
+               name="aboutText"
+               value="%aboutText"/>
+         <property
+               name="windowImages"
+               value="icons/RTM_logoL.gif"/>
+         <property
+               name="aboutImage"
+               value="icons/RTM_logo.gif"/>
+         <property
+               name="startupForegroundColor"
+               value="000000"/>
+         <property
+               name="startupMessageRect"
+               value="0,0,0,0"/>
+         <property
+               name="startupProgressRect"
+               value="0,0,0,0"/>
+      </product>
+   </extension>
+
+   <!-- 以下はRtcLinkからのコピー -->
+   <extension-point id="wrapperfactory" name="WrapperFactory" schema="schema/wrapperfactory.exsd"/>
+   <extension-point id="editpartfactory" name="EditPartFactory" schema="schema/editpartfactory.exsd"/>
+   
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package uri="http://rtm.aist.go.jp/rtcLink/model/core" class="jp.go.aist.rtm.rtclink.model.core.CorePackage"/>
+   </extension>
+   
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package uri="http://rtm.aist.go.jp/rtcLink/model/component" class="jp.go.aist.rtm.rtclink.model.component.ComponentPackage"/>
+   </extension>
+   
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package uri="http://rtm.aist.go.jp/rtcLink/model/nameservice" class="jp.go.aist.rtm.rtclink.model.nameservice.NameservicePackage"/>
+   </extension>
+   
+   	<extension
+		point="org.eclipse.emf.ecore.generated_package">
+		<package uri="http:///jp/go/aist/rtm/rtcLink/model/core.ecore" class="jp.go.aist.rtm.rtclink.model.core.CorePackage"/>
+	</extension>
+	
+	<extension point="jp.go.aist.rtm.rtclink.wrapperfactory">
+		<mappingrule seq="100" mappingrule="jp.go.aist.rtm.rtclink.model.component.impl.NameValueImpl.MAPPING_RULE"/>
+		<mappingrule seq="200" mappingrule="jp.go.aist.rtm.rtclink.model.component.impl.ConnectorProfileImpl.MAPPING_RULE"/>
+		<mappingrule seq="300" mappingrule="jp.go.aist.rtm.rtclink.model.component.impl.PortProfileImpl.MAPPING_RULE"/>
+		<mappingrule seq="400" mappingrule="jp.go.aist.rtm.rtclink.model.component.impl.ConfigurationSetImpl.MAPPING_RULE"/>
+		<mappingrule seq="500" mappingrule="jp.go.aist.rtm.rtclink.model.nameservice.impl.NamingObjectNodeImpl.MAPPING_RULE"/>
+		<mappingrule seq="600" mappingrule="jp.go.aist.rtm.rtclink.model.component.impl.ComponentImpl.MAPPING_RULE"/>
+		<mappingrule seq="700" mappingrule="jp.go.aist.rtm.rtclink.model.component.impl.InPortImpl.MAPPING_RULE"/>
+		<mappingrule seq="800" mappingrule="jp.go.aist.rtm.rtclink.model.component.impl.OutPortImpl.MAPPING_RULE"/>
+		<mappingrule seq="900" mappingrule="jp.go.aist.rtm.rtclink.model.component.impl.ServicePortImpl.MAPPING_RULE"/>
+		<mappingrule seq="1000" mappingrule="jp.go.aist.rtm.rtclink.model.component.impl.PortConnectorImpl.MAPPING_RULE"/>
+		<mappingrule seq="1100" mappingrule="jp.go.aist.rtm.rtclink.model.component.impl.LifeCycleStateImpl.MAPPING_RULE"/>
+		<mappingrule seq="1200" mappingrule="jp.go.aist.rtm.rtclink.model.component.impl.ExecutionContextImpl.MAPPING_RULE"/>
+		<mappingrule seq="1300" mappingrule="jp.go.aist.rtm.rtclink.model.nameservice.impl.HostNamingContextImpl.MAPPING_RULE"/>
+		<mappingrule seq="1400" mappingrule="jp.go.aist.rtm.rtclink.model.nameservice.impl.ManagerNamingContextImpl.MAPPING_RULE"/>
+		<mappingrule seq="1500" mappingrule="jp.go.aist.rtm.rtclink.model.nameservice.impl.ModuleNamingContextImpl.MAPPING_RULE"/>
+		<mappingrule seq="1600" mappingrule="jp.go.aist.rtm.rtclink.model.nameservice.impl.CategoryNamingContextImpl.MAPPING_RULE"/>
+		<mappingrule seq="1700" mappingrule="jp.go.aist.rtm.rtclink.model.nameservice.impl.NameServerNamingContextImpl.MAPPING_RULE"/>
+		<mappingrule seq="1800" mappingrule="jp.go.aist.rtm.rtclink.model.nameservice.impl.NamingContextNodeImpl.MAPPING_RULE"/>
+		<mappingrule seq="1900" mappingrule="jp.go.aist.rtm.rtclink.model.core.impl.UnknownObjectImpl.MAPPING_RULE"/>
+	</extension>
+
+	<extension point="jp.go.aist.rtm.rtclink.editpartfactory">
+		<editpart seq="100" targetclass="jp.go.aist.rtm.rtclink.model.component.InPort" editpartclass="jp.go.aist.rtm.rtclink.ui.editor.editpart.InPortEditPart" />
+		<editpart seq="200" targetclass="jp.go.aist.rtm.rtclink.model.component.OutPort" editpartclass="jp.go.aist.rtm.rtclink.ui.editor.editpart.OutPortEditPart" />
+		<editpart seq="300" targetclass="jp.go.aist.rtm.rtclink.model.component.ServicePort" editpartclass="jp.go.aist.rtm.rtclink.ui.editor.editpart.ServicePortEditPart" />
+		<editpart seq="400" targetclass="jp.go.aist.rtm.rtclink.model.component.PortConnector" editpartclass="jp.go.aist.rtm.rtclink.ui.editor.editpart.PortConnectorEditPart" />
+		<editpart seq="500" targetclass="jp.go.aist.rtm.rtclink.model.component.Component" editpartclass="jp.go.aist.rtm.rtclink.ui.editor.editpart.ComponentEditPart" />
+		<editpart seq="600" targetclass="jp.go.aist.rtm.rtclink.model.component.SystemDiagram" editpartclass="jp.go.aist.rtm.rtclink.ui.editor.editpart.SystemDiagramEditPart" />
+	</extension>
+
+    
+	<extension
+		point="org.eclipse.ui.editors">
+		<editor
+			name="System Editor"
+			contributorClass="jp.go.aist.rtm.rtclink.ui.editor.SystemDiagramEditorContributor"
+			icon="icons/RT.png"
+			extensions="rtclink"
+			class="jp.go.aist.rtm.rtclink.ui.editor.SystemDiagramEditor"
+			id="jp.go.aist.rtm.rtclink.ui.editor.SystemDiagramEditor">
+		</editor>
+	</extension>
+
+	<extension
+		point="org.eclipse.ui.views">
+		<category
+			name="RtcLink"
+			id="rtcLink">
+		</category>
+		<view
+			name="NameServiceView"
+			icon="icons/Connect.png"
+			category="rtcLink"
+			class="jp.go.aist.rtm.rtclink.ui.views.nameserviceview.NameServiceView"
+			id="jp.go.aist.rtm.rtclink.ui.views.nameserviceview.NameServiceView">
+		</view>
+		<view
+			name="ConfigurationView"
+			icon="icons/Configuration.gif"
+			category="rtcLink"
+			class="jp.go.aist.rtm.rtclink.ui.views.configurationview.ConfigurationView"
+			id="jp.go.aist.rtm.rtclink.ui.views.configurationview.ConfigurationView">
+		</view>
+<!--		<view
+			name="RtcLinkLogView"
+			icon="icons/RT_icon.png"
+			category="rtcLink"
+			class="org.eclipse.ui.internal.console.ConsoleView"
+			id="jp.go.aist.rtm.rtclink.ui.views.RtcLinkLogView">
+		</view> -->
+	</extension>
+	
+<!--	<extension
+		point = "org.eclipse.ui.viewActions">
+		<viewContribution 
+			id="jp.go.aist.rtm.rtclink.ui.views.nameserviceview.NameServiceView.contribution" 
+			targetID="jp.go.aist.rtm.rtclink.ui.views.nameserviceview.NameServiceView">        
+			<action id="jp.go.aist.rtm.rtclink.ui.action.AddNameServiceAction" 
+				label="Add Name Server" 
+				menubarPath="additions"
+				toolbarPath="additions" 
+				icon="icons/Connect.png" 
+				tooltip="Add Name Server" 
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.AddNameServiceAction" > 
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.RefreshNameServerAction" 
+				label="Refresh" 
+				menubarPath="additions"
+				toolbarPath="additions" 
+				icon="icons/Refresh.png" 
+				tooltip="Refresh Name Service" 
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.RefreshNameServerAction" > 
+			</action>
+		</viewContribution>
+		
+	</extension>
+	
+	<extension
+		point="org.eclipse.ui.editorActions">
+		<editorContribution
+			targetID="jp.go.aist.rtm.rtclink.ui.editor.SystemDiagramEditor"
+			id="jp.go.aist.rtm.rtclink.ui.editor.SystemDiagramEditor.editorActions">
+			<action id="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate.AllStop" 
+				label="All Stop" 
+				toolbarPath="additions" 
+				icon="icons/AllStop.gif" 
+				tooltip="All Stop" 
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate"> 
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate.AllStart" 
+				label="All Start" 
+				toolbarPath="additions" 
+				icon="icons/AllStart.gif" 
+				tooltip="All Start" 
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate"> 
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate.AllDeactivate" 
+				label="All Deactivate" 
+				toolbarPath="additions" 
+				icon="icons/AllDeactivate.gif" 
+				tooltip="All Deactivate" 
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate"> 
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate.AllActivate" 
+				label="All Activate" 
+				toolbarPath="additions" 
+				icon="icons/AllActivate.gif" 
+				tooltip="All Activate" 
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate"> 
+			</action>	         
+		</editorContribution>
+	</extension> -->
+	
+    <extension  point="org.eclipse.core.runtime.adapters">
+        <factory    
+            class="jp.go.aist.rtm.rtclink.adapterfactory.AdapterFactory"
+            adaptableType="jp.go.aist.rtm.rtclink.model.nameservice.NamingObjectNode">
+                <adapter type="jp.go.aist.rtm.rtclink.model.component.Component"/>
+        </factory>
+        <factory    
+            class="jp.go.aist.rtm.rtclink.adapterfactory.AdapterFactory"
+            adaptableType="jp.go.aist.rtm.rtclink.ui.editor.editpart.ComponentEditPart">
+                <adapter type="jp.go.aist.rtm.rtclink.model.component.Component"/>
+        </factory>
+        <factory    
+            class="jp.go.aist.rtm.rtclink.adapterfactory.WorkbenchAdapterFactory"
+            adaptableType="jp.go.aist.rtm.rtclink.model.core.ModelElement">
+                <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+        </factory>
+        <factory    
+            class="jp.go.aist.rtm.rtclink.adapterfactory.WorkbenchAdapterFactory"
+            adaptableType="jp.go.aist.rtm.rtclink.model.component.PortInterfaceProfile"><!-- PortInterfaceProfileはModelElementではないため、別途定義を行う -->
+                <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+        </factory>
+    </extension>
+
+<!--	<extension
+		point="org.eclipse.ui.popupMenus">
+		<viewerContribution
+			id="jp.go.aist.rtm.rtclink.ui.viewerContribution"
+			targetID="jp.go.aist.rtm.rtclink.ui.views.nameserviceview.NameServiceView" >
+			<action id="jp.go.aist.rtm.rtclink.ui.action.AddNameServiceAction" 
+				label="Add Name Server" 
+				icon="icons/Connect.png" 
+				menubarPath="additions"
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.AddNameServiceAction" > 
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.RefreshNameServerAction"
+				label="Refresh"
+				icon="icons/Refresh.png"
+				menubarPath="additions"
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.RefreshNameServerAction">	
+			</action>
+		</viewerContribution>
+		
+		<viewerContribution
+			id="jp.go.aist.rtm.rtclink.ui.editor.SystemDiagramEditor.contribution" 
+			targetID="jp.go.aist.rtm.rtclink.ui.editor.SystemDiagramEditor">        
+			<action id="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate.AllStop" 
+				label="All Stop" 
+				menubarPath="all"
+				icon="icons/AllStop.gif" 
+				tooltip="All Stop" 
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate"> 
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate.AllStart" 
+				label="All Start" 
+				menubarPath="all"
+				icon="icons/AllStart.gif" 
+				tooltip="All Start" 
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate"> 
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate.AllDeactivate" 
+				label="All Deactivate" 
+				menubarPath="all"
+				icon="icons/AllDeactivate.gif" 
+				tooltip="All DeactivateO" 
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate"> 
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate.AllActivate" 
+				label="All Activate" 
+				menubarPath="all"
+				icon="icons/AllActivate.gif" 
+				tooltip="All Activate" 
+				helpContextId=""
+				class="jp.go.aist.rtm.rtclink.ui.action.AllComponentActionDelegate"> 
+			</action>			
+		</viewerContribution>
+		
+		<objectContribution
+			id="jp.go.aist.rtm.rtclink.ui.action.DeleteINamingContextActionDelegate"
+        	objectClass="java.lang.Object">
+			<visibility> 
+				<and>
+					<or>
+						<objectClass name="jp.go.aist.rtm.rtclink.model.nameservice.NamingContextNode"/> 
+						<objectClass name="jp.go.aist.rtm.rtclink.model.nameservice.NamingObjectNode"/> 
+					</or>
+					<not>
+						<objectClass name="jp.go.aist.rtm.rtclink.model.nameservice.NameServerNamingContext"/> 
+					</not>
+				</and>
+			</visibility>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.DeleteINamingContextActionDelegate"
+				label="Delete from Name Service"
+				menubarPath="namingContextObjectContribution"
+				class="jp.go.aist.rtm.rtclink.ui.action.DeleteINamingContextActionDelegate">
+			</action>
+		</objectContribution>
+
+		<objectContribution
+			id="jp.go.aist.rtm.rtclink.ui.action.DeleteNameServiceAction"
+        	objectClass="jp.go.aist.rtm.rtclink.model.nameservice.NameServerNamingContext">
+			<action id="jp.go.aist.rtm.rtclink.ui.action.DeleteNameServiceAction"
+				label="Delete from View"
+				menubarPath="namingContextObjectContribution"
+				class="jp.go.aist.rtm.rtclink.ui.action.DeleteNameServiceAction">
+			</action>
+		</objectContribution>
+		
+ 		<objectContribution
+			id="jp.go.aist.rtm.rtclink.ui.objectContribution.Component"
+        	objectClass="jp.go.aist.rtm.rtclink.model.component.Component"
+        	adaptable="true">
+			<action id="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate.Exit"
+				label="Exit"
+				menubarPath="component"
+				class="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate">
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate.Finalize"
+				label="Finalize"
+				menubarPath="component"
+				class="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate">
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate.Reset"
+				label="Reset"
+				menubarPath="component"
+				class="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate">
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate.Deactivate"
+				label="Deactivate"
+				menubarPath="component"
+				class="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate">
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate.Activate"
+				label="Activate"
+				menubarPath="component"
+				class="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate">
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate.executioncontext.Stop"
+				label="Stop"
+				menubarPath="executionContext"
+				class="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate">
+			</action>
+			<action id="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate.executioncontext.Start"
+				label="Start"
+				menubarPath="executionContext"
+				class="jp.go.aist.rtm.rtclink.ui.action.IComponentActionDelegate">
+			</action>
+		</objectContribution>
+	</extension> -->
+
+	<extension point = "org.eclipse.ui.actionSets"> 
+		<actionSet
+			id="jp.go.aist.rtm.rtclink.ui.actionSet" 
+			label="RtcLink Actions"> 
+			<action
+				id="jp.go.aist.rtm.rtclink.ui.action.NewSystemDiagramEditorAction" 
+				label="&amp;Open New System Editor"
+				menubarPath="file/RtcLinkGroup" 
+				toolbarPath="RtcLink"
+				icon="icons/NewRTSystem.png" 
+				tooltip="Open New System Editor" 
+				class="jp.go.aist.rtm.rtclink.ui.action.NewSystemDiagramEditorAction"> 
+			</action>
+
+		</actionSet>
+	</extension>
+
+	<extension
+		point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension
+			targetID="jp.go.aist.rtm.rtclink.RCP.perspective">
+			<actionSet id="jp.go.aist.rtm.rtclink.ui.actionSet"/> 
+			<view
+				ratio="0.2"
+				relative="org.eclipse.ui.editorss"
+				relationship="left"
+				id="jp.go.aist.rtm.rtclink.ui.views.nameserviceview.NameServiceView">
+			</view>
+			<view
+				ratio="0.7"
+				relative="org.eclipse.ui.editorss"
+				relationship="right"
+				id="org.eclipse.ui.views.PropertySheet">
+			</view>
+			<view
+				ratio="0.7"
+				relative="org.eclipse.ui.editorss"
+				relationship="bottom"
+				id="jp.go.aist.rtm.rtclink.ui.views.configurationview.ConfigurationView">
+			</view>
+<!--			<view
+				relative="jp.go.aist.rtm.rtclink.ui.views.configurationview.ConfigurationView"
+				relationship="stack"
+				id="jp.go.aist.rtm.rtclink.ui.views.RtcLinkLogView">
+			</view> -->
+			<viewShortcut id="jp.go.aist.rtm.rtclink.ui.views.nameserviceview.NameServiceView"/>
+			<viewShortcut id="jp.go.aist.rtm.rtclink.ui.views.configurationview.ConfigurationView"/>
+<!--			<viewShortcut id="jp.go.aist.rtm.rtclink.ui.views.RtcLinkLogView"/> -->
+		</perspectiveExtension>
+	</extension>
+	
+<!--	<extension
+		point = "org.eclipse.ui.preferencePages">
+		<page
+			id="jp.go.aist.rtm.rtclink.ui.preference.MainPreferencePage"
+			class="jp.go.aist.rtm.rtclink.ui.preference.MainPreferencePage"
+			name="RTCLink">
+		</page>
+		<page
+			id="jp.go.aist.rtm.rtclink.ui.preference.ConnectionPreferencePage"
+			class="jp.go.aist.rtm.rtclink.ui.preference.ConnectionPreferencePage"
+			name="接続情報"
+			category="jp.go.aist.rtm.rtclink.ui.preference.MainPreferencePage">
+		</page>
+		<page
+			id="jp.go.aist.rtm.rtclink.ui.preference.ColorPreferencePage"
+			class="jp.go.aist.rtm.rtclink.ui.preference.ColorPreferencePage"
+			name="表示色"
+			category="jp.go.aist.rtm.rtclink.ui.preference.MainPreferencePage">
+		</page>
+	</extension> -->
+</plugin>

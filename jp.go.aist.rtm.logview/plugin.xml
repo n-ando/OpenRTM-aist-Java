@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="OpenRTP"
+            name="OpenRTP Tools"/>
+      <view
+            category="OpenRTP"
+            class="jp.go.aist.rtm.logview.view.LogViewPart"
+            icon="icons/RT_icon.png"
+            id="jp.go.aist.rtm.logview.view"
+            name="LogView"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="jp.go.aist.rtm.logview.preferences.LogViewPreferencePage"
+            id="jp.go.aist.rtm.logview.preferences.LogViewPreferencePage"
+            name="LogView"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="jp.go.aist.rtm.logview.ui.actionSet"
+            label="LogView Actions">
+         <action
+               class="jp.go.aist.rtm.logview.view.action.OpenLogViewAction"
+               icon="icons/console.gif"
+               id="jp.go.aist.rtm.logview.ui.action.OpenLogViewAction"
+               label="Open LogView"
+               toolbarPath="LogView"
+               tooltip="Open LogView"/>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+<!--      <perspectiveExtension targetID="jp.go.aist.rtm.rtclink.ui.perspective.RtcLinkPerspective">-->
+      <perspectiveExtension targetID="jp.go.aist.rtm.rtclink.RCP.perspective">
+         <actionSet id="jp.go.aist.rtm.logview.ui.actionSet" />
+<!--			<view
+				relative="jp.go.aist.rtm.rtclink.ui.views.configurationview.ConfigurationView"
+				relationship="stack"
+				id="jp.go.aist.rtm.logview.view">
+			</view>-->
+			<viewShortcut id="jp.go.aist.rtm.logview.view"/>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>

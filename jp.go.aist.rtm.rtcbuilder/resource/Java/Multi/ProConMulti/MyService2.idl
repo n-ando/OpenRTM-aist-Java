@@ -1,0 +1,6 @@
+interface MyService2
+{
+  void setKpGain(in float gainkp);
+  float getKpGain();
+};
+

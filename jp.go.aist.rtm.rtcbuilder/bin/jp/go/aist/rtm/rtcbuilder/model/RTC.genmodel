@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/jp.go.aist.rtm.rtcbuilder/src"
+    editDirectory="/jp.go.aist.rtm.rtcbuilder.edit/src" editorDirectory="/jp.go.aist.rtm.rtcbuilder.editor/src"
+    modelPluginID="jp.go.aist.rtm.rtcbuilder" modelName="RTC" editPluginClass="jp.go.aist.rtm.rtcbuilder.model.component.provider.RTCEditPlugin"
+    editorPluginClass="jp.go.aist.rtm.rtcbuilder.model.component.presentation.RTCEditorPlugin"
+    testSuiteClass="jp.go.aist.rtm.rtcbuilder.model.component.tests.RTCAllTests" importerID="org.eclipse.emf.importer.java">
+  <foreignModel>@model</foreignModel>
+  <genPackages prefix="Component" basePackage="jp.go.aist.rtm.rtcbuilder.model" disposableProviderFactory="true"
+      ecorePackage="component.ecore#/"/>
+</genmodel:GenModel>

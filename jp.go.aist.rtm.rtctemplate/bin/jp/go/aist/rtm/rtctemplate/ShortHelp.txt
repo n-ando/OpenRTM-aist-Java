@@ -1,0 +1,23 @@
+Usage: rtc-template [OPTIONS]
+
+Options:
+
+    [-h]                                  Print short help.
+    [--help]                              Print details help.
+    [--backend[=backend] or -b]           Specify template code generator.
+    [--module-name[=name]]                Your module name.
+    [--module-desc[=description]]         Module description.
+    [--module-version[=version]]          Module version.
+    [--module-vendor[=vendor]]            Module vendor.
+    [--module-category[=category]]        Module category.
+    [--module-comp-type[=component_type]] Component type.
+    [--module-act-type[=activity_type]]   Component's activity type.
+    [--module-max-inst[=max_instance]]    Number of maximum instance.
+    [--module-lang[=language]]            Language.
+    [--inport[=PortName:Type]]            InPort's name and tyoe.
+    [--outport[=PortName:Type]]           OutPort's name and type
+    [--service[=PortName:Name:Type]]      Service Provider Port
+    [--service-idl[=IDL_file]]            IDL file name for service
+    [--consumer[=PortName:Name:Type]]     Service Consumer Port
+    [--consumer-idl[=IDL_file]]           IDL file name for consumer
+    [--idl-include=[path]]                Search path for IDL compile

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         name="RepositoryView"
+         point="org.eclipse.ui.views">
+      <category
+            id="OpenRTP"
+            name="OpenRTP Tools"/>
+      <view
+            category="OpenRTP"
+            class="jp.go.aist.rtm.repositoryView.ui.views.RepositoryView"
+            icon="icon/repositories.gif"
+            id="jp.go.aist.rtm.repositoryView.view"
+            name="RepositoryView"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            id="jp.go.aist.rtm.repositoryView.ServerRVRootItemContribution"
+            objectClass="jp.go.aist.rtm.repositoryView.model.ServerRVRootItem">
+         <action
+               class="jp.go.aist.rtm.repositoryView.ui.action.ViewActionUpLoad"
+               definitionId="jp.go.aist.rtm.repositoryView.UpLoadCommand"
+               icon="icon/export.gif"
+               id="jp.go.aist.rtm.repositoryView.UploadAction"
+               label="Upload"
+               menubarPath="servers"
+               style="push"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="jp.go.aist.rtm.repositoryView.RepositoryViewItemContribution"
+            objectClass="jp.go.aist.rtm.repositoryView.model.RepositoryViewItem">
+         <action
+               class="jp.go.aist.rtm.repositoryView.ui.action.ViewActionDelete"
+               definitionId="jp.go.aist.rtm.repositoryView.DeleteCommand"
+               icon="icon/delete.gif"
+               id="jp.go.aist.rtm.repositoryView.DeleteAction"
+               label="Delete"
+               menubarPath="additions"
+               style="push"/>
+      </objectContribution>
+      <viewerContribution
+            id="jp.go.aist.rtm.repositoryView.viewContribution"
+            targetID="jp.go.aist.rtm.repositoryView.view">
+         <action
+               class="jp.go.aist.rtm.repositoryView.ui.action.ViewActionLoadDirecroty"
+               icon="icon/importdir_wiz.gif"
+               id="jp.go.aist.rtm.repositoryView.LoadDirAction"
+               label="Load Dir"
+               menubarPath="locals"/>
+         <action
+               class="jp.go.aist.rtm.repositoryView.ui.action.ViewActionLoadFile"
+               icon="icon/file_with_arrow.gif"
+               id="jp.go.aist.rtm.repositoryView.LoadFileAction"
+               label="Load File"
+               menubarPath="locals"/>
+         <action
+               class="jp.go.aist.rtm.repositoryView.ui.action.ConnectRTRepositoryAction"
+               icon="icon/Connect.gif"
+               id="jp.go.aist.rtm.repositoryView.ConnectRTRepositoryAction"
+               label="Connect RT Repository"
+               menubarPath="servers"/>
+      </viewerContribution>
+      <objectContribution
+            adaptable="true"
+            id="jp.go.aist.rtm.repositoryView.RepositoryViewLeafItemContribution"
+            objectClass="jp.go.aist.rtm.repositoryView.model.RepositoryViewLeafItem">
+         <action
+               class="jp.go.aist.rtm.repositoryView.ui.action.ViewActionRepositoryDelete"
+               definitionId="jp.go.aist.rtm.repositoryView.RepositoryDeleteCommand"
+               icon="icon/delete_repository2.gif"
+               id="jp.go.aist.rtm.repositoryView.RepositoryDeleteAction"
+               label="Delete from Repository"
+               menubarPath="additions"
+               style="push"/>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="jp.go.aist.rtm.repositoryView.ui.views.repositoryView.contribution"
+            targetID="jp.go.aist.rtm.repositoryView.view">
+         <action
+               class="jp.go.aist.rtm.repositoryView.ui.action.ConnectRTRepositoryAction"
+               icon="icon/Connect.gif"
+               id="jp.go.aist.rtm.repositoryView.ui.action.ConnectRTRepositoryAction"
+               label="Connect RT Repository"
+               menubarPath="additions"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Connect RT Repository"/>
+      </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="jp.go.aist.rtm.repositoryView.DeleteCommand"
+            contextId="jp.go.aist.rtm.repositoryView.context"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Delete"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            id="jp.go.aist.rtm.repositoryView.context"
+            name="jp.go.aist.rtm.repositoryView.context"
+            parentId="org.eclipse.ui.contexts.window"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="jp.go.aist.rtm.repositoryView.category"
+            name="RepositoryView"/>
+      <command
+            categoryId="jp.go.aist.rtm.repositoryView.category"
+            id="jp.go.aist.rtm.repositoryView.DeleteCommand"
+            name="ItemDelete"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="jp.go.aist.rtm.repositoryView.model.RepositoryViewItem"
+            class="jp.go.aist.rtm.repositoryView.adapterfactory.AdapterFactory">
+         <adapter type="jp.go.aist.rtm.toolscommon.model.component.AbstractComponent"/>
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="jp.go.aist.rtm.repositoryView.ui.preference.RepositoryViewPreferencePage"
+            id="jp.go.aist.rtm.repositoryView.ui.preferencePage"
+            name="Repository View"/>
+   </extension>
+
+</plugin>

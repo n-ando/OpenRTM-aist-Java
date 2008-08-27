@@ -1,0 +1,1420 @@
+Buildfile: build.xml
+
+buildAllLinux:
+
+idlCompile:
+   [delete] Deleting directory /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/_SDOPackage
+   [delete] Deleting directory /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/RTC
+     [exec] Parsing idl/OpenRTM.idl
+     [exec]  Parsing idl/RTC.idl
+     [exec]   Parsing idl/SDOPackage.idl
+     [exec]   done  - idl/SDOPackage.idl
+     [exec]  done  - idl/RTC.idl
+     [exec] done  - idl/OpenRTM.idl
+
+     [exec] Generating _SDOPackage
+     [exec] done   -   _SDOPackage
+     [exec] Generating RTC
+     [exec] done   -   RTC
+     [exec] Generating RTC
+     [exec] done   -   RTC
+     [exec] Parsing idl/DataPort.idl
+     [exec] done  - idl/DataPort.idl
+
+     [exec] Generating RTC
+     [exec] done   -   RTC
+     [exec] Parsing idl/BasicDataType.idl
+     [exec] done  - idl/BasicDataType.idl
+
+     [exec] Generating RTC
+     [exec] done   -   RTC
+
+idlCompileEtc:
+   [delete] Deleting directory /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/tests/src/jp/go/aist/rtm/bind
+     [exec] Parsing tests/idl/CorbaConsumer/Hello.idl
+     [exec] done  - tests/idl/CorbaConsumer/Hello.idl
+
+     [exec] Generating jp/go/aist/rtm/bind/CorbaConsumer
+     [exec] done   -   jp/go/aist/rtm/bind/CorbaConsumer
+     [exec] Parsing tests/idl/CorbaPort/MyService.idl
+     [exec] done  - tests/idl/CorbaPort/MyService.idl
+
+     [exec] Generating jp/go/aist/rtm/bind/CorbaPort
+     [exec] done   -   jp/go/aist/rtm/bind/CorbaPort
+
+clean:
+
+compile:
+    [javac] Compiling 377 source files to /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/bin
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] Compiling 165 source files to /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/bin
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/util/ORBUtil.java:37: warning: com.sun.corba.se.spi.orb.ORB is Sun proprietary API and may be removed in a future release
+    [javac]                 if (orb instanceof com.sun.corba.se.spi.orb.ORB) {
+    [javac]                                                            ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/util/ORBUtil.java:38: warning: com.sun.corba.se.spi.orb.ORB is Sun proprietary API and may be removed in a future release
+    [javac]                     Logger logger = ((com.sun.corba.se.spi.orb.ORB) orb).getLogger("");
+    [javac]                                                               ^
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] 2 warnings
+
+jar:
+      [jar] Building jar: /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/jar/OpenRTM-aist-0.4.1.jar
+     [copy] Copying 1 file to /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/installer/resources/Source/jar
+
+javaExamples:
+   [delete] Deleting directory /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/installer/resources/Source/examples/RTMExamples
+     [copy] Copying 140 files to /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/installer/resources/Source/examples/RTMExamples
+
+javaDoc:
+   [delete] Deleting directory /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/installer/resources/Source/JavaDoc
+  [javadoc] Generating Javadoc
+  [javadoc] Javadoc execution
+  [javadoc] Creating destination directory: "/home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/installer/resources/Source/JavaDoc/"
+  [javadoc] Loading source files for package RTC...
+  [javadoc] Loading source files for package RTMExamples.ConfigSample...
+  [javadoc] Loading source files for package RTMExamples.ExtTrigger...
+  [javadoc] Loading source files for package RTMExamples.GUIIn...
+  [javadoc] Loading source files for package RTMExamples.GUIIn.control...
+  [javadoc] Loading source files for package RTMExamples.GUIIn.model...
+  [javadoc] Loading source files for package RTMExamples.GUIIn.view...
+  [javadoc] Loading source files for package RTMExamples.SeqIO...
+  [javadoc] Loading source files for package RTMExamples.SeqIO.view...
+  [javadoc] Loading source files for package RTMExamples.SimpleIO...
+  [javadoc] Loading source files for package RTMExamples.SimpleService...
+  [javadoc] Loading source files for package RTMExamples.SinCosOut...
+  [javadoc] Loading source files for package _SDOPackage...
+  [javadoc] Loading source files for package jp.go.aist.rtm...
+  [javadoc] Loading source files for package jp.go.aist.rtm.RTC...
+  [javadoc] Loading source files for package jp.go.aist.rtm.RTC.SDOPackage...
+  [javadoc] Loading source files for package jp.go.aist.rtm.RTC.buffer...
+  [javadoc] Loading source files for package jp.go.aist.rtm.RTC.executionContext...
+  [javadoc] Loading source files for package jp.go.aist.rtm.RTC.log...
+  [javadoc] Loading source files for package jp.go.aist.rtm.RTC.port...
+  [javadoc] Loading source files for package jp.go.aist.rtm.RTC.port.publisher...
+  [javadoc] Loading source files for package jp.go.aist.rtm.RTC.util...
+  [javadoc] Constructing Javadoc information...
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/ManagerConfig.java:13: package org.apache.commons.cli does not exist
+  [javadoc] import org.apache.commons.cli.BasicParser;
+  [javadoc]                              ^
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/ManagerConfig.java:14: package org.apache.commons.cli does not exist
+  [javadoc] import org.apache.commons.cli.CommandLine;
+  [javadoc]                              ^
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/ManagerConfig.java:15: package org.apache.commons.cli does not exist
+  [javadoc] import org.apache.commons.cli.CommandLineParser;
+  [javadoc]                              ^
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/ManagerConfig.java:16: package org.apache.commons.cli does not exist
+  [javadoc] import org.apache.commons.cli.Options;
+  [javadoc]                              ^
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/ManagerConfig.java:17: package org.apache.commons.cli does not exist
+  [javadoc] import org.apache.commons.cli.ParseException;
+  [javadoc]                              ^
+  [javadoc] Standard Doclet version 1.6.0_05
+  [javadoc] Building tree for all the packages and classes...
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/ModuleManager.java:201: warning - Tag @see:illegal character: "12289" in "??????????????????load()??????????"
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/ModuleManager.java:201: warning - Tag @see:illegal character: "12290" in "??????????????????load()??????????"
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/ModuleManager.java:201: warning - Tag @see: missing '#': "??????????????????load()??????????"
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/ModuleManager.java:201: warning - Tag @see: can't find ??????????????????load()?????????? in jp.go.aist.rtm.RTC.ModuleManager
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/RTObject_impl.java:62: warning - Tag @return cannot be used in field documentation.  It can only be used in the following types of documentation: method.
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/SDOPackage/Organization_impl.java:463: warning - @member is an unknown tag.
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/util/NVUtil.java:538: warning - @param argument "??????NameValue??????" is not a parameter name.
+  [javadoc] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/src/jp/go/aist/rtm/RTC/util/NVUtil.java:548: warning - @param argument "??????NameValue??????" is not a parameter name.
+  [javadoc] Building index for all the packages and classes...
+  [javadoc] Building index for all classes...
+  [javadoc] Generating /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.RTC/installer/resources/Source/JavaDoc/stylesheet.css...
+  [javadoc] 13 warnings
+
+BUILD SUCCESSFUL
+Total time: 16 seconds
+Buildfile: build.xml
+
+buildAll:
+
+clean:
+
+compile:
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.navigator.resources.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.navigator.resources.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.navigator.resources; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.navigator.resources.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit.runtime.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit.runtime.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.forms.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.forms.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.forms; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.forms.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.commands.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.commands.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.commands; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.commands.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ssh2; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.contenttype.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.contenttype.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.contenttype; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.contenttype.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.text.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.text.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.text; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.text.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.views.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.views.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.views; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.views.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.tomcat.nl1_4.1.130.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.tomcat.nl1_4.1.130.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.tomcat; bundle-version="[4.1.130,4.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.tomcat.nl1_4.1.130.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.osgi.services.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.osgi.services.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.osgi.services; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.osgi.services.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime.compatibility.auth; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.base.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.base.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.base; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.base.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.common.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.common.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.common; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.common.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.variables.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.variables.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.variables; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.variables.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.workbench.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.workbench.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.workbench; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.workbench.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.webapp.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.webapp.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.webapp; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.webapp.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.rcp.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.rcp.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.rcp.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.rcp.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.externaltools.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.externaltools.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.externaltools; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.externaltools.nl1_3.1.101.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.databinding.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.databinding.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface.databinding; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.databinding.nl1_1.0.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.intro.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.intro.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.intro; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.intro.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.ide.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.ide.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.ide; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.ide.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'com.ibm.icu.nl1_3.4.4.v200606220026@/home/openrtm/eclipse/plugins/com.ibm.icu.nl1_3.4.4.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: com.ibm.icu; bundle-version="[3.4.4,3.5.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: com.ibm.icu.nl1_3.4.5.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.debug.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.debug.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.debug.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.debug.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.apt.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.apt.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.apt.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.apt.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.boot.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.boot.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.boot; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.boot.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.workbench.texteditor; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.sdk.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.sdk.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.sdk; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.sdk.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.launching.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.launching.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.launching; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.launching.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.swt.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.swt.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.swt; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.swt.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.scheduler.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.scheduler.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.scheduler; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.scheduler.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.filesystem.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.filesystem.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.filesystem; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.filesystem.nl1_1.0.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.registry.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.registry.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.registry; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.registry.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.resources.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.resources.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.resources; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.resources.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.jobs.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.jobs.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.jobs; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.jobs.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.debug.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.debug.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.debug.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.debug.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.intro.universal.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.intro.universal.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.intro.universal; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.intro.universal.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.doc.user.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ant.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ant.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ant.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ant.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.apt.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.apt.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.apt.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.apt.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime.compatibility; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.search.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.search.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.search; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.search.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.configurator.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.configurator.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.configurator; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.configurator.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.preferences.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.preferences.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.preferences; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.preferences.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ltk.core.refactoring.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ltk.core.refactoring.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ltk.core.refactoring; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ltk.core.refactoring.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ltk.ui.refactoring.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ltk.ui.refactoring.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ltk.ui.refactoring; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ltk.ui.refactoring.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.expressions.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.expressions.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.expressions; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.expressions.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'com.ibm.icu.source.nl1_3.4.4.v200606220026@/home/openrtm/eclipse/plugins/com.ibm.icu.source.nl1_3.4.4.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: com.ibm.icu.source; bundle-version="[3.4.4,3.5.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: com.ibm.icu.source.nl1_3.4.5.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.compare.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.compare.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.compare; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.compare.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.navigator.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.navigator.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.navigator; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.navigator.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.views.properties.tabbed.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.views.properties.tabbed.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.views.properties.tabbed; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.views.properties.tabbed.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.ui.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.debug.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.debug.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.debug.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.debug.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.swt.gtk.linux.x86_3.2.2.v3236@/home/openrtm/eclipse/plugins/org.eclipse.swt.gtk.linux.x86_3.2.2.v3236.jar':
+[getEclipseClasspath] WARN -   Platform filter did not match: (& (osgi.ws=gtk) (osgi.os=linux) (osgi.arch=x86))
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.swt; bundle-version="[3.0.0,4.0.0)"
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.doc.user.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ant.core.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ant.core.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ant.core; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ant.core.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.osgi.util.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.osgi.util.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.osgi.util; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.osgi.util.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.appserver.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.appserver.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.appserver; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.appserver.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ssh.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ssh.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ssh; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ssh.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.cheatsheets.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.cheatsheets.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.cheatsheets; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.cheatsheets.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.core.manipulation.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.core.manipulation.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.core.manipulation; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.core.manipulation.nl1_1.0.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.doc.isv.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.doc.isv.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.doc.isv; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.doc.isv.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.doc.isv.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.doc.isv.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.doc.isv; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.doc.isv.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.doc.user.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit4.runtime.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit4.runtime.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit4.runtime; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit4.runtime.nl1_1.0.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.console.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.console.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.console; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.console.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.debug.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.debug.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.debug; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.debug.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.filebuffers.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.filebuffers.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.filebuffers; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.filebuffers.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.junit.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.junit.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.junit.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.junit.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.text.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.text.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface.text; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.text.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.browser.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.browser.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.browser; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.browser.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.presentations.r21.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.presentations.r21.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.presentations.r21; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.presentations.r21.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.editors.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.editors.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.editors; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.editors.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.rcp.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.rcp.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.rcp; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.rcp.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.build.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.build.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.build; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.build.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.source.nl1_3.2.1.v200609270227
+    [javac] Compiling 77 source files to /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.fsmcbuilder/bin
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+
+jar:
+      [jar] Building jar: /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.fsmcbuilder/jar/jp.go.aist.rtm.fsmcbuilder_1.0.0.jar
+
+BUILD SUCCESSFUL
+Total time: 3 seconds
+Buildfile: build.xml
+
+buildAll:
+
+clean:
+
+compile:
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.navigator.resources.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.navigator.resources.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.navigator.resources; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.navigator.resources.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit.runtime.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit.runtime.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.forms.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.forms.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.forms; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.forms.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.commands.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.commands.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.commands; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.commands.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ssh2; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.contenttype.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.contenttype.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.contenttype; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.contenttype.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.text.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.text.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.text; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.text.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.views.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.views.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.views; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.views.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.tomcat.nl1_4.1.130.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.tomcat.nl1_4.1.130.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.tomcat; bundle-version="[4.1.130,4.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.tomcat.nl1_4.1.130.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.osgi.services.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.osgi.services.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.osgi.services; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.osgi.services.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime.compatibility.auth; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.base.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.base.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.base; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.base.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.common.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.common.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.common; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.common.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.variables.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.variables.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.variables; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.variables.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.workbench.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.workbench.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.workbench; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.workbench.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.webapp.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.webapp.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.webapp; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.webapp.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.rcp.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.rcp.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.rcp.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.rcp.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.externaltools.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.externaltools.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.externaltools; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.externaltools.nl1_3.1.101.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.databinding.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.databinding.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface.databinding; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.databinding.nl1_1.0.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.intro.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.intro.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.intro; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.intro.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.ide.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.ide.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.ide; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.ide.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'com.ibm.icu.nl1_3.4.4.v200606220026@/home/openrtm/eclipse/plugins/com.ibm.icu.nl1_3.4.4.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: com.ibm.icu; bundle-version="[3.4.4,3.5.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: com.ibm.icu.nl1_3.4.5.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.debug.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.debug.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.debug.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.debug.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.apt.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.apt.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.apt.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.apt.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.boot.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.boot.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.boot; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.boot.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.workbench.texteditor; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.sdk.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.sdk.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.sdk; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.sdk.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.launching.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.launching.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.launching; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.launching.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.swt.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.swt.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.swt; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.swt.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.scheduler.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.scheduler.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.scheduler; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.scheduler.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.filesystem.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.filesystem.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.filesystem; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.filesystem.nl1_1.0.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.registry.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.registry.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.registry; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.registry.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.resources.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.resources.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.resources; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.resources.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.jobs.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.jobs.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.jobs; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.jobs.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.debug.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.debug.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.debug.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.debug.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.intro.universal.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.intro.universal.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.intro.universal; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.intro.universal.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.doc.user.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ant.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ant.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ant.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ant.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.apt.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.apt.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.apt.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.apt.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime.compatibility; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.search.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.search.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.search; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.search.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.configurator.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.configurator.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.configurator; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.configurator.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.preferences.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.preferences.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.preferences; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.preferences.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ltk.core.refactoring.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ltk.core.refactoring.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ltk.core.refactoring; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ltk.core.refactoring.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ltk.ui.refactoring.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ltk.ui.refactoring.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ltk.ui.refactoring; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ltk.ui.refactoring.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.expressions.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.expressions.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.expressions; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.expressions.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'com.ibm.icu.source.nl1_3.4.4.v200606220026@/home/openrtm/eclipse/plugins/com.ibm.icu.source.nl1_3.4.4.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: com.ibm.icu.source; bundle-version="[3.4.4,3.5.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: com.ibm.icu.source.nl1_3.4.5.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.compare.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.compare.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.compare; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.compare.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.navigator.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.navigator.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.navigator; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.navigator.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.views.properties.tabbed.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.views.properties.tabbed.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.views.properties.tabbed; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.views.properties.tabbed.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.ui.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.debug.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.debug.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.debug.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.debug.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.swt.gtk.linux.x86_3.2.2.v3236@/home/openrtm/eclipse/plugins/org.eclipse.swt.gtk.linux.x86_3.2.2.v3236.jar':
+[getEclipseClasspath] WARN -   Platform filter did not match: (& (osgi.ws=gtk) (osgi.os=linux) (osgi.arch=x86))
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.swt; bundle-version="[3.0.0,4.0.0)"
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.doc.user.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ant.core.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ant.core.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ant.core; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ant.core.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.osgi.util.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.osgi.util.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.osgi.util; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.osgi.util.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.appserver.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.appserver.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.appserver; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.appserver.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ssh.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ssh.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ssh; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ssh.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.cheatsheets.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.cheatsheets.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.cheatsheets; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.cheatsheets.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.core.manipulation.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.core.manipulation.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.core.manipulation; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.core.manipulation.nl1_1.0.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.doc.isv.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.doc.isv.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.doc.isv; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.doc.isv.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.doc.isv.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.doc.isv.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.doc.isv; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.doc.isv.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.doc.user.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit4.runtime.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit4.runtime.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit4.runtime; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit4.runtime.nl1_1.0.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.console.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.console.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.console; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.console.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.debug.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.debug.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.debug; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.debug.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.filebuffers.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.filebuffers.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.filebuffers; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.filebuffers.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.junit.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.junit.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.junit.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.junit.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.text.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.text.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface.text; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.text.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.browser.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.browser.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.browser; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.browser.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.presentations.r21.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.presentations.r21.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.presentations.r21; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.presentations.r21.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.editors.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.editors.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.editors; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.editors.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.rcp.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.rcp.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.rcp; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.rcp.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.build.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.build.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.build; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.build.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.source.nl1_3.2.1.v200609270227
+    [javac] Compiling 119 source files to /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.toolscommon.profiles/bin
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.toolscommon.profiles/src/org/ho/yaml/tests/IntegrationTests.java:2177: warning: unmappable character for encoding Shift_JIS
+    [javac]         final String text = "Hallo, verr?kte Welt!";
+    [javac]                                         ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.toolscommon.profiles/src/org/ho/yaml/tests/IntegrationTests.java:2200: warning: unmappable character for encoding Shift_JIS
+    [javac]         final String text = "Hallo, verr?kte Welt!";
+    [javac]                                         ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.toolscommon.profiles/src/org/ho/yaml/tests/IntegrationTests.java:2209: warning: unmappable character for encoding Shift_JIS
+    [javac]         final String text = "Hallo, verr?kte Welt!";
+    [javac]                                         ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.toolscommon.profiles/src/org/ho/yaml/YamlConfig.java:615: warning: non-varargs call of varargs method with inexact argument type for last parameter;
+    [javac] cast to java.lang.Class for a varargs call
+    [javac] cast to java.lang.Class[] for a non-varargs call and to suppress this warning
+    [javac]             Constructor constr = clazz.getDeclaredConstructor(null);
+    [javac]                                                               ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.toolscommon.profiles/src/org/ho/yaml/wrapper/AbstractWrapper.java:52: warning: non-varargs call of varargs method with inexact argument type for last parameter;
+    [javac] cast to java.lang.Class for a varargs call
+    [javac] cast to java.lang.Class[] for a non-varargs call and to suppress this warning
+    [javac] 	            Constructor constr = type.getDeclaredConstructor(null);
+    [javac] 	                                                             ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.toolscommon.profiles/src/org/ho/yaml/wrapper/DefaultBeanWrapper.java:63: warning: non-varargs call of varargs method with inexact argument type for last parameter;
+    [javac] cast to java.lang.Object for a varargs call
+    [javac] cast to java.lang.Object[] for a non-varargs call and to suppress this warning
+    [javac]                 return rm.invoke(obj, null);
+    [javac]                                       ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.toolscommon.profiles/src/org/ho/yaml/wrapper/EnumWrapper.java:42: warning: non-varargs call of varargs method with inexact argument type for last parameter;
+    [javac] cast to java.lang.Class for a varargs call
+    [javac] cast to java.lang.Class[] for a non-varargs call and to suppress this warning
+    [javac]             return getType().getMethod("name", null).invoke(getObject(), null);
+    [javac]                                                ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.toolscommon.profiles/src/org/ho/yaml/wrapper/EnumWrapper.java:42: warning: non-varargs call of varargs method with inexact argument type for last parameter;
+    [javac] cast to java.lang.Object for a varargs call
+    [javac] cast to java.lang.Object[] for a non-varargs call and to suppress this warning
+    [javac]             return getType().getMethod("name", null).invoke(getObject(), null);
+    [javac]                                                                          ^
+    [javac] Note: Some input files use or override a deprecated API.
+    [javac] Note: Recompile with -Xlint:deprecation for details.
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] 8 warnings
+
+jar:
+      [jar] Building jar: /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.toolscommon.profiles/jar/jp.go.aist.rtm.toolscommon.profiles_1.0.0.jar
+
+BUILD SUCCESSFUL
+Total time: 4 seconds
+Buildfile: build.xml
+
+buildAll:
+
+clean:
+
+compile:
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.navigator.resources.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.navigator.resources.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.navigator.resources; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.navigator.resources.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit.runtime.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit.runtime.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.forms.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.forms.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.forms; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.forms.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.commands.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.commands.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.commands; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.commands.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ssh2; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.contenttype.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.contenttype.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.contenttype; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.contenttype.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.text.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.text.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.text; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.text.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.views.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.views.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.views; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.views.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.tomcat.nl1_4.1.130.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.tomcat.nl1_4.1.130.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.tomcat; bundle-version="[4.1.130,4.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.tomcat.nl1_4.1.130.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.osgi.services.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.osgi.services.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.osgi.services; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.osgi.services.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime.compatibility.auth; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.base.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.base.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.base; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.base.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.common.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.common.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.common; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.common.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.variables.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.variables.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.variables; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.variables.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.workbench.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.workbench.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.workbench; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.workbench.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.webapp.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.webapp.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.webapp; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.webapp.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.rcp.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.rcp.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.rcp.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.rcp.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.externaltools.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.externaltools.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.externaltools; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.externaltools.nl1_3.1.101.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.databinding.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.databinding.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface.databinding; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.databinding.nl1_1.0.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.intro.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.intro.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.intro; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.intro.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.ide.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.ide.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.ide; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.ide.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'com.ibm.icu.nl1_3.4.4.v200606220026@/home/openrtm/eclipse/plugins/com.ibm.icu.nl1_3.4.4.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: com.ibm.icu; bundle-version="[3.4.4,3.5.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: com.ibm.icu.nl1_3.4.5.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.debug.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.debug.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.debug.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.debug.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.apt.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.apt.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.apt.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.apt.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.boot.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.boot.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.boot; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.boot.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.workbench.texteditor; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.sdk.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.sdk.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.sdk; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.sdk.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.launching.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.launching.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.launching; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.launching.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.swt.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.swt.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.swt; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.swt.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.scheduler.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.scheduler.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.scheduler; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.scheduler.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.filesystem.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.filesystem.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.filesystem; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.filesystem.nl1_1.0.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.registry.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.registry.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.registry; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.registry.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.resources.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.resources.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.resources; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.resources.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.jobs.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.jobs.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.jobs; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.jobs.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.debug.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.debug.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.debug.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.debug.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.intro.universal.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.intro.universal.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.intro.universal; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.intro.universal.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.doc.user.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ant.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ant.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ant.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ant.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.apt.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.apt.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.apt.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.apt.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime.compatibility; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.search.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.search.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.search; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.search.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.configurator.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.configurator.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.configurator; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.configurator.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.preferences.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.preferences.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.preferences; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.preferences.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ltk.core.refactoring.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ltk.core.refactoring.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ltk.core.refactoring; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ltk.core.refactoring.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ltk.ui.refactoring.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ltk.ui.refactoring.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ltk.ui.refactoring; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ltk.ui.refactoring.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.expressions.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.expressions.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.expressions; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.expressions.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'com.ibm.icu.source.nl1_3.4.4.v200606220026@/home/openrtm/eclipse/plugins/com.ibm.icu.source.nl1_3.4.4.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: com.ibm.icu.source; bundle-version="[3.4.4,3.5.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: com.ibm.icu.source.nl1_3.4.5.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.compare.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.compare.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.compare; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.compare.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.navigator.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.navigator.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.navigator; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.navigator.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.views.properties.tabbed.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.views.properties.tabbed.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.views.properties.tabbed; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.views.properties.tabbed.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.ui.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.debug.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.debug.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.debug.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.debug.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.swt.gtk.linux.x86_3.2.2.v3236@/home/openrtm/eclipse/plugins/org.eclipse.swt.gtk.linux.x86_3.2.2.v3236.jar':
+[getEclipseClasspath] WARN -   Platform filter did not match: (& (osgi.ws=gtk) (osgi.os=linux) (osgi.arch=x86))
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.swt; bundle-version="[3.0.0,4.0.0)"
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.doc.user.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ant.core.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ant.core.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ant.core; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ant.core.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.osgi.util.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.osgi.util.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.osgi.util; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.osgi.util.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.appserver.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.appserver.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.appserver; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.appserver.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ssh.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ssh.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ssh; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ssh.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.cheatsheets.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.cheatsheets.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.cheatsheets; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.cheatsheets.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.core.manipulation.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.core.manipulation.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.core.manipulation; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.core.manipulation.nl1_1.0.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.doc.isv.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.doc.isv.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.doc.isv; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.doc.isv.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.doc.isv.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.doc.isv.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.doc.isv; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.doc.isv.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.doc.user.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit4.runtime.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit4.runtime.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit4.runtime; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit4.runtime.nl1_1.0.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.console.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.console.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.console; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.console.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.debug.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.debug.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.debug; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.debug.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.filebuffers.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.filebuffers.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.filebuffers; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.filebuffers.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.junit.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.junit.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.junit.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.junit.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.text.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.text.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface.text; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.text.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.browser.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.browser.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.browser; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.browser.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.presentations.r21.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.presentations.r21.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.presentations.r21; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.presentations.r21.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.editors.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.editors.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.editors; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.editors.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.rcp.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.rcp.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.rcp; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.rcp.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.build.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.build.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.build; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.build.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.source.nl1_3.2.1.v200609270227
+    [javac] Compiling 10 source files to /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.logview/bin
+
+jar:
+      [jar] Building jar: /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.logview/jar/jp.go.aist.rtm.logview_1.0.0.jar
+
+BUILD SUCCESSFUL
+Total time: 3 seconds
+Buildfile: build.xml
+
+buildAll:
+
+clean:
+
+compile:
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.navigator.resources.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.navigator.resources.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.navigator.resources; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.navigator.resources.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit.runtime.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit.runtime.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.forms.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.forms.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.forms; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.forms.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.commands.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.commands.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.commands; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.commands.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ssh2; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ssh2.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.contenttype.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.contenttype.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.contenttype; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.contenttype.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.text.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.text.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.text; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.text.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.views.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.views.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.views; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.views.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.tomcat.nl1_4.1.130.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.tomcat.nl1_4.1.130.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.tomcat; bundle-version="[4.1.130,4.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.tomcat.nl1_4.1.130.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.osgi.services.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.osgi.services.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.osgi.services; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.osgi.services.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime.compatibility.auth; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.compatibility.auth.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.base.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.base.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.base; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.base.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.common.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.common.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.common; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.common.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.variables.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.variables.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.variables; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.variables.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.workbench.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.workbench.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.workbench; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.workbench.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.webapp.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.webapp.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.webapp; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.webapp.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.rcp.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.rcp.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.rcp.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.rcp.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.externaltools.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.externaltools.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.externaltools; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.externaltools.nl1_3.1.101.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.databinding.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.databinding.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface.databinding; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.databinding.nl1_1.0.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.intro.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.intro.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.intro; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.intro.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.ide.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.ide.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.ide; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.ide.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'com.ibm.icu.nl1_3.4.4.v200606220026@/home/openrtm/eclipse/plugins/com.ibm.icu.nl1_3.4.4.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: com.ibm.icu; bundle-version="[3.4.4,3.5.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: com.ibm.icu.nl1_3.4.5.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.debug.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.debug.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.debug.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.debug.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.apt.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.apt.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.apt.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.apt.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.boot.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.boot.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.boot; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.boot.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.workbench.texteditor; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.workbench.texteditor.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.sdk.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.sdk.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.sdk; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.sdk.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.launching.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.launching.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.launching; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.launching.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.swt.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.swt.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.swt; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.swt.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.scheduler.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.scheduler.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.scheduler; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.scheduler.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.source.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.filesystem.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.filesystem.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.filesystem; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.filesystem.nl1_1.0.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.registry.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.registry.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.registry; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.registry.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.resources.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.resources.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.resources; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.resources.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.jobs.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.jobs.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.jobs; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.jobs.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.debug.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.debug.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.debug.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.debug.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.intro.universal.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.intro.universal.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.intro.universal; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.intro.universal.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.doc.user.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ant.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ant.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ant.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ant.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.apt.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.apt.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.apt.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.apt.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime.compatibility; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.compatibility.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.search.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.search.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.search; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.search.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.configurator.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.configurator.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.configurator; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.configurator.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.equinox.preferences.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.equinox.preferences.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.equinox.preferences; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.equinox.preferences.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ltk.core.refactoring.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ltk.core.refactoring.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ltk.core.refactoring; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ltk.core.refactoring.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ltk.ui.refactoring.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ltk.ui.refactoring.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ltk.ui.refactoring; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ltk.ui.refactoring.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.expressions.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.expressions.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.expressions; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.expressions.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'com.ibm.icu.source.nl1_3.4.4.v200606220026@/home/openrtm/eclipse/plugins/com.ibm.icu.source.nl1_3.4.4.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: com.ibm.icu.source; bundle-version="[3.4.4,3.5.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: com.ibm.icu.source.nl1_3.4.5.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.compare.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.compare.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.compare; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.compare.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.navigator.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.navigator.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.navigator; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.navigator.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.views.properties.tabbed.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.views.properties.tabbed.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.views.properties.tabbed; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.views.properties.tabbed.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.ui.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.debug.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.debug.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.debug.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.debug.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.swt.gtk.linux.x86_3.2.2.v3236@/home/openrtm/eclipse/plugins/org.eclipse.swt.gtk.linux.x86_3.2.2.v3236.jar':
+[getEclipseClasspath] WARN -   Platform filter did not match: (& (osgi.ws=gtk) (osgi.os=linux) (osgi.arch=x86))
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.swt; bundle-version="[3.0.0,4.0.0)"
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.update.core.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.update.core.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.update.core; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.update.core.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.doc.user.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ant.core.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ant.core.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ant.core; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ant.core.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.osgi.util.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.osgi.util.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.osgi.util; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.osgi.util.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.appserver.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.appserver.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help.appserver; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.appserver.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.ui.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.ui.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.ui; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.ui.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.team.cvs.ssh.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.team.cvs.ssh.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.team.cvs.ssh; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.team.cvs.ssh.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.cheatsheets.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.cheatsheets.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.cheatsheets; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.cheatsheets.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.core.manipulation.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.core.manipulation.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.core.manipulation; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.core.manipulation.nl1_1.0.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.doc.isv.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.doc.isv.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.doc.isv; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.doc.isv.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.platform.doc.isv.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.platform.doc.isv.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.platform.doc.isv; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.platform.doc.isv.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.doc.user.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.doc.user.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.doc.user; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.doc.user.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.junit4.runtime.nl1_1.0.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.junit4.runtime.nl1_1.0.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.junit4.runtime; bundle-version="[1.0.0,1.1.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.junit4.runtime.nl1_1.0.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.console.nl1_3.1.100.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.console.nl1_3.1.100.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.console; bundle-version="[3.1.100,3.2.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.console.nl1_3.1.100.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jdt.debug.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jdt.debug.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jdt.debug; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jdt.debug.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.core.filebuffers.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.core.filebuffers.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.core.filebuffers; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.core.filebuffers.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.junit.runtime.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.junit.runtime.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.junit.runtime; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.junit.runtime.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.jface.text.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.jface.text.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.jface.text; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.jface.text.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.browser.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.browser.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.browser; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.browser.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.presentations.r21.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.presentations.r21.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.presentations.r21; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.presentations.r21.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.help.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.help.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.help; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.help.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.ui.editors.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.ui.editors.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.ui.editors; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.ui.editors.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.rcp.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.rcp.nl1_3.2.0.v200606220026.jar':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.rcp; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.rcp.nl1_3.2.0.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.build.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.build.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.build; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.build.nl1_3.2.1.v200609270227
+[getEclipseClasspath] WARN - Could not resolve 'org.eclipse.pde.source.nl1_3.2.0.v200606220026@/home/openrtm/eclipse/plugins/org.eclipse.pde.source.nl1_3.2.0.v200606220026':
+[getEclipseClasspath] WARN -   Missing Constraint: Fragment-Host: org.eclipse.pde.source; bundle-version="[3.2.0,3.3.0)"
+[getEclipseClasspath] WARN -   Another singleton version selected: org.eclipse.pde.source.nl1_3.2.1.v200609270227
+    [javac] Compiling 313 source files to /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/bin
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/generator/param/RtcParam.java:14: warning: com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl is Sun proprietary API and may be removed in a future release
+    [javac] import com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl;
+    [javac]                                                        ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/generator/param/ParamUtil.java:38: warning: com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl is Sun proprietary API and may be removed in a future release
+    [javac] import com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl;
+    [javac]                                                        ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/generator/param/ParamUtil.java:39: warning: com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl is Sun proprietary API and may be removed in a future release
+    [javac] import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+    [javac]                                                        ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/ui/editors/RtcBuilderEditor.java:72: warning: com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl is Sun proprietary API and may be removed in a future release
+    [javac] import com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl;
+    [javac]                                                        ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/ui/wizard/NewWizard.java:23: warning: com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl is Sun proprietary API and may be removed in a future release
+    [javac] import com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl;
+    [javac]                                                        ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/ui/wizard/RtcExportWizardPage.java:40: warning: sun.net.ProgressMonitor is Sun proprietary API and may be removed in a future release
+    [javac] import sun.net.ProgressMonitor;
+    [javac]               ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/generator/param/RtcParam.java:103: warning: com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl is Sun proprietary API and may be removed in a future release
+    [javac] 			DatatypeFactory dateFactory = new DatatypeFactoryImpl();
+    [javac] 			                                  ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/generator/param/ParamUtil.java:66: warning: com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl is Sun proprietary API and may be removed in a future release
+    [javac] 		DatatypeFactory dateFactory = new DatatypeFactoryImpl();
+    [javac] 		                                  ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/generator/param/ParamUtil.java:374: warning: com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl is Sun proprietary API and may be removed in a future release
+    [javac] 		if(rtcParam.getCreationDate()!=null) basic.setCreationDate(XMLGregorianCalendarImpl.parse(rtcParam.getCreationDate()));
+    [javac] 		                                                           ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/generator/param/ParamUtil.java:375: warning: com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl is Sun proprietary API and may be removed in a future release
+    [javac] 		if(rtcParam.getUpdateDate()!=null) basic.setUpdateDate(XMLGregorianCalendarImpl.parse(rtcParam.getUpdateDate()));
+    [javac] 		                                                       ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/ui/editors/RtcBuilderEditor.java:436: warning: com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl is Sun proprietary API and may be removed in a future release
+    [javac] 			DatatypeFactory dateFactory = new DatatypeFactoryImpl();
+    [javac] 			                                  ^
+    [javac] /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/ui/wizard/NewWizard.java:41: warning: com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl is Sun proprietary API and may be removed in a future release
+    [javac] 			DatatypeFactory dateFactory = new DatatypeFactoryImpl();
+    [javac] 			                                  ^
+    [javac] Note: /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/src/jp/go/aist/rtm/rtcbuilder/ui/wizard/RtcExportWizard.java uses or overrides a deprecated API.
+    [javac] Note: Recompile with -Xlint:deprecation for details.
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] 12 warnings
+
+jar:
+      [jar] Building jar: /home/openrtm/subtest/testsrc21/20080430/jp.go.aist.rtm.rtcbuilder/jar/jp.go.aist.rtm.rtcbuilder_1.0.0.jar
+
+BUILD SUCCESSFUL
+Total time: 13 seconds
+--

@@ -1,0 +1,49 @@
+// -*-C++-*-
+/*!
+ * @file  ${tmpltHelper.getBasename(${idlFileParam.idlFileNoExt})}${tmpltHelper.serviceImplSuffix}.h
+ * @brief Service implementation header of ${idlFileParam.idlFile}
+#parse("jp/go/aist/rtm/rtcbuilder/template/cpp/CXX_Document.template")
+ */
+
+${sharp}include "${idlFileParam.idlFileNoExt}${tmpltHelper.serviceSkelSuffix}.h"
+
+#ifndef ${idlFileParam.idlFileNoExt.toUpperCase()}${tmpltHelper.serviceImplSuffix.toUpperCase()}_H
+#define ${idlFileParam.idlFileNoExt.toUpperCase()}${tmpltHelper.serviceImplSuffix.toUpperCase()}_H
+ 
+#foreach($serviceClassParam in ${idlFileParam.serviceClassParams})
+/*!
+ * @class ${tmpltHelper.getBasename(${serviceClassParam.name})}${tmpltHelper.serviceImplSuffix}
+ * Example class implementing IDL interface ${cXXConv.convertDelimiter(${serviceClassParam.name})}
+ */
+class ${tmpltHelper.getBasename(${serviceClassParam.name})}${tmpltHelper.serviceImplSuffix}
+ : public virtual POA_${cXXConv.convertDelimiter(${serviceClassParam.name})},
+   public virtual PortableServer::RefCountServantBase
+{
+ private:
+   // Make sure all instances are built on the heap by making the
+   // destructor non-public
+   //virtual ~${tmpltHelper.getBasename(${serviceClassParam.name})}${tmpltHelper.serviceImplSuffix}();
+
+ public:
+  /*!
+   * @brief standard constructor
+   */
+   ${tmpltHelper.getBasename(${serviceClassParam.name})}${tmpltHelper.serviceImplSuffix}();
+  /*!
+   * @brief destructor
+   */
+   virtual ~${tmpltHelper.getBasename(${serviceClassParam.name})}${tmpltHelper.serviceImplSuffix}();
+
+   // attributes and operations
+#foreach($serviceMethodParam in ${serviceClassParam.methods})
+   ${cXXConv.convCpp2CORBA(${serviceMethodParam.type})} ${serviceMethodParam.name}(#foreach($serviceArgumentParam in ${serviceMethodParam.arguments})#if($velocityCount > 1), #end${cXXConv.convCpp2CORBAforArg(${serviceArgumentParam.type},${serviceArgumentParam.direction})} ${serviceArgumentParam.name}#end);
+#end
+
+};
+
+#end
+
+
+#endif // ${idlFileParam.idlFileNoExt.toUpperCase()}${tmpltHelper.serviceImplSuffix.toUpperCase()}_H
+
+
