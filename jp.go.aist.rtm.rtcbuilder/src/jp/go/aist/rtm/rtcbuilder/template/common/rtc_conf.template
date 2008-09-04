@@ -1,5 +1,0 @@
-exec_cxt.periodic.rate:${rtcParam.executionRate}
-#if( ${rtcParam.configParameterParams.size()} > 0 )
-#foreach($parameterParam in ${rtcParam.configParameterParams})  
-${parameterParam.configName}:${parameterParam.defaultVal}
-#end#end

@@ -1,1 +1,0 @@
-java -classpath lib/jp.go.aist.rtm.rtclink_0.4.0.jar;lib/org.eclipse.ui.views_3.1.1.jar;lib/org.eclipse.core.runtime_3.1.1.jar;lib/org.eclipse.emf.common_2.1.0.jar;lib/org.eclipse.emf.ecore.xmi_2.1.0.jar;lib/org.eclipse.emf.ecore_2.1.0.jar jp.go.aist.rtm.rtclink.restoration.Main %1

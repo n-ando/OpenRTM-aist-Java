@@ -1,8 +1,0 @@
-interface DAQService
-{
-  long setCommand(in long com, in double par);
-  short getCommand();
-  unsigned long checkDone();
-  void setDone();
-};
-
