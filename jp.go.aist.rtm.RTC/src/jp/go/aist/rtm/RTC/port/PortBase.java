@@ -126,7 +126,6 @@ public abstract class PortBase extends PortPOA {
      * @param name ポート名
      */
     public PortBase(final String name) {
-
         this.m_profile.name = new String(name);
         this.m_profile.owner = null;
         this.m_profile.interfaces = new PortInterfaceProfile[0];
@@ -142,7 +141,6 @@ public abstract class PortBase extends PortPOA {
      * @return 当該PortのCORBAオブジェクト参照
      */
     public Port _this() {
-        
         if (this.m_objref == null) {
             try {
                 this.m_objref = PortHelper.narrow(POAUtil.getRef(this));
@@ -159,10 +157,9 @@ public abstract class PortBase extends PortPOA {
      * <p>デフォルトコンストラクタです。ポート名には空文字列が割り当てられます。</p>
      */
     public PortBase() {
-        
         this("");
     }
-    
+
     /**
      * <p>PortProfileを取得します。なお、PortProfileは次のメンバを持っています。
      * <ul>
@@ -178,11 +175,18 @@ public abstract class PortBase extends PortPOA {
      * @return 本ポートに関するPortProfileオブジェクト
      */
     public PortProfile get_port_profile() {
-
         synchronized (this.m_profile) {
-
             return PortProfileFactory.clone(this.m_profile);
         }
+    }
+    
+    /**
+     * <p>PortProfileを取得します。</p>
+     * 
+     * @return 本ポートに関するPortProfile
+     */
+    public final PortProfile getPortProfile() {
+        return m_profile;
     }
 
     /**
@@ -232,19 +236,16 @@ public abstract class PortBase extends PortPOA {
             
             if (index < 0) {
                 ConnectorProfile conn_prof = ConnectorProfileFactory.create();
-
-                return conn_prof;
-                
-            } else {
-                ConnectorProfile org_conn_prof = this.m_profile.connector_profiles[index];
-                ConnectorProfile conn_prof = new ConnectorProfile(
-                        org_conn_prof.name,
-                        org_conn_prof.connector_id,
-                        org_conn_prof.ports,
-                        org_conn_prof.properties);
-                
                 return conn_prof;
             }
+            ConnectorProfile org_conn_prof = this.m_profile.connector_profiles[index];
+            ConnectorProfile conn_prof = new ConnectorProfile(
+                    org_conn_prof.name,
+                    org_conn_prof.connector_id,
+                    org_conn_prof.ports,
+                    org_conn_prof.properties);
+            
+            return conn_prof;
         }
     }
 
@@ -276,7 +277,11 @@ public abstract class PortBase extends PortPOA {
             assert (! isExistingConnId(connector_profile.value.connector_id));
         }
 
-        return connector_profile.value.ports[0].notify_connect(connector_profile);
+        try {
+            return connector_profile.value.ports[0].notify_connect(connector_profile);
+        } catch(Exception ex) {
+            return ReturnCode_t.BAD_PARAMETER;
+        }
     }
 
     /**
@@ -378,8 +383,8 @@ public abstract class PortBase extends PortPOA {
                 org_conn_prof.ports,
                 org_conn_prof.properties);
 
-        unsubscribeInterfaces(prof);
         ReturnCode_t retval = disconnectNext(prof);
+        unsubscribeInterfaces(prof);
 
         ConnectorProfileListHolder holder =
             new ConnectorProfileListHolder(this.m_profile.connector_profiles);
@@ -408,9 +413,6 @@ public abstract class PortBase extends PortPOA {
         }
     }
 
-    //============================================================
-    // Local operations
-    //============================================================
     /**
      * <p>ポート名を設定します。指定されたポート名は、PortProfileのnameメンバに設定されます。</p>
      * 
@@ -455,7 +457,7 @@ public abstract class PortBase extends PortPOA {
     /**
      * <p>当該ポートのPortProfileが保持している、当該ポート自身のCORBAオブジェクト参照を取得します。</p>
      * 
-     * @param 当該ポートのCORBAオブジェクト参照
+     * @return 当該ポートのCORBAオブジェクト参照
      */
     public Port getPortRef() {
 
@@ -479,9 +481,6 @@ public abstract class PortBase extends PortPOA {
         }
     }
 
-    //============================================================
-    // protected operations
-    //============================================================
     /**
      * <p>Interface情報を公開します。
      * このメソッドは、notify_connect()処理シーケンスの始めに呼び出されるテンプレートメソッドです。</p>
@@ -607,20 +606,15 @@ public abstract class PortBase extends PortPOA {
      * 与えられた ConnectorProfile に従い接続解除処理を行います。</p>
      *
      * @param connector_profile 接続プロファイル情報
-     * @return ReturnCode_t 戻り値
      */
     protected abstract void unsubscribeInterfaces(final ConnectorProfile connector_profile);
 
-    //============================================================
-    // protected utility functions
-    //============================================================
     /**
      * <p>指定されたConnectorProfileオブジェクト内のconnector_idメンバが空かどうか判定します。</p>
      * 
      * @return 空であればtrueを、さもなくばfalseを返します。
      */
     protected boolean isEmptyId(final ConnectorProfile connector_profile) {
-
         return connector_profile.connector_id.length() == 0;
     }
 
@@ -630,7 +624,6 @@ public abstract class PortBase extends PortPOA {
      * @return 生成されたUUID
      */
     protected String getUUID() {
-
         return UUID.randomUUID().toString();
     }
 
@@ -640,7 +633,6 @@ public abstract class PortBase extends PortPOA {
      * @param connector_profile 設定先となるConnectorProfileオブジェクト
      */
     protected void setUUID(ConnectorProfileHolder connector_profile) {
-
         connector_profile.value.connector_id = getUUID();
         assert (connector_profile.value.connector_id.length() != 0);
     }
@@ -652,7 +644,6 @@ public abstract class PortBase extends PortPOA {
      * @return 存在すればtrueを、さもなくばfalseを返します。
      */
     protected boolean isExistingConnId(final String id) {
-
         ConnectorProfileListHolder holder =
             new ConnectorProfileListHolder(this.m_profile.connector_profiles);
         int index = CORBA_SeqUtil.find(holder, new find_conn_id(id));
@@ -660,7 +651,7 @@ public abstract class PortBase extends PortPOA {
         
         return (index >= 0);
     }
-
+    
     /**
      * <p>指定された接続IDを持つ接続プロファイルが、当該ポートのPortProfileに設定されている
      * ConnectorProfileオブジェクトシーケンス内に存在するかどうかを調べ、存在する場合は
@@ -830,7 +821,6 @@ public abstract class PortBase extends PortPOA {
      * @param value 値
      */
     protected void addProperty(final String key, short value) {
-        
         NVListHolder holder = new NVListHolder(this.m_profile.properties);
         CORBA_SeqUtil.push_back(holder, NVUtil.newNV(key, value));
         this.m_profile.properties = holder.value;
@@ -844,7 +834,6 @@ public abstract class PortBase extends PortPOA {
      * @param value 値
      */
     protected void addProperty(final String key, long value) {
-        
         NVListHolder holder = new NVListHolder(this.m_profile.properties);
         CORBA_SeqUtil.push_back(holder, NVUtil.newNV(key, value));
         this.m_profile.properties = holder.value;
@@ -858,7 +847,6 @@ public abstract class PortBase extends PortPOA {
      * @param value 値
      */
     protected void addProperty(final String key, float value) {
-        
         NVListHolder holder = new NVListHolder(this.m_profile.properties);
         CORBA_SeqUtil.push_back(holder, NVUtil.newNV(key, value));
         this.m_profile.properties = holder.value;
@@ -872,7 +860,6 @@ public abstract class PortBase extends PortPOA {
      * @param value 値
      */
     protected void addProperty(final String key, double value) {
-        
         NVListHolder holder = new NVListHolder(this.m_profile.properties);
         CORBA_SeqUtil.push_back(holder, NVUtil.newNV(key, value));
         this.m_profile.properties = holder.value;
@@ -886,7 +873,6 @@ public abstract class PortBase extends PortPOA {
      * @param value 値
      */
     protected void addProperty(final String key, String value) {
-        
         NVListHolder holder = new NVListHolder(this.m_profile.properties);
         CORBA_SeqUtil.push_back(holder, NVUtil.newNV(key, value));
         this.m_profile.properties = holder.value;
@@ -901,40 +887,37 @@ public abstract class PortBase extends PortPOA {
      * <p>当該ポートのCORBAオブジェクト参照です。</p>
      */
     protected Port m_objref;
+
     /**
      * <p>指定された接続IDを持つ接続プロファイルを検索するためのヘルパクラスです。</p>
      */
     protected class find_conn_id implements equalFunctor {
-        
         /**
          * <p>コンストラクタです。</p>
          * 
          * @param connector_id 検索対象の接続ID
          */
         public find_conn_id(final String connector_id) {
-            
             this.m_connector_id = connector_id;
         }
         
         /**
          * <p>検索対象の接続IDを持つ接続プロファイルか否かを判定します。</p>
          * 
-         * @param 判定対象となるオブジェクト
+         * @param elem 判定対象となるオブジェクト
          * @return 検索対象であればtrueを、さもなくばfalseを返します。
          */
         public boolean equalof(final Object elem) {
-            
             return equalof((ConnectorProfile) elem);
         }
         
         /**
          * <p>検索対象の接続IDを持つ接続プロファイルか否かを判定します。</p>
          * 
-         * @param 判定対象となる接続プロファイル
+         * @param cprof 判定対象となる接続プロファイル
          * @return 検索対象であればtrueを、さもなくばfalseを返します。
          */
         public boolean equalof(final ConnectorProfile cprof) {
-            
             return this.m_connector_id.endsWith(cprof.connector_id);
         }
         
@@ -953,7 +936,6 @@ public abstract class PortBase extends PortPOA {
          * @param port 判定基準となるCORBAオブジェクト参照を持つPortオブジェクト
          */
         public find_port_ref(Port port) {
-            
             this.m_port = port;
         }
         
@@ -964,7 +946,6 @@ public abstract class PortBase extends PortPOA {
          * @return 検索対象である場合はtrueを、さもなくばfalseを返します。
          */
         public boolean equalof(final Object elem) {
-
             return equalof((Port) elem);
         }
         
@@ -975,13 +956,98 @@ public abstract class PortBase extends PortPOA {
          * @return 検索対象である場合はtrueを、さもなくばfalseを返します。
          */
         public boolean equalof(final Port port) {
-            
             return this.m_port._is_equivalent(port);
         }
         
         public Port m_port;
     }
     
+    /**
+     * <p>ポート接続のためのヘルパクラスです。</p>
+     */
+    protected class connect_func implements operatorFunc {
+        public Port m_port_ref;
+        public ConnectorProfileHolder m_connector_profile;
+        public ReturnCode_t m_return_code;
+        
+        /**
+         * <p>コンストラクタです。</p>
+         */
+        public connect_func() {
+        }
+
+        /**
+         * <p>コンストラクタです。</p>
+         * 
+         * @param p 接続を行うポート
+         * @param prof コネクタ・プロファイル
+         */
+        public connect_func(Port p, ConnectorProfileHolder prof) {
+            this.m_port_ref = p;
+            this.m_connector_profile = prof;
+            this.m_return_code = ReturnCode_t.RTC_OK;
+        }
+
+        /**
+         * <p>接続を行います。</p>
+         * 
+         * @param elem 接続プロファイルオブジェクト
+         */
+        public void operator(Object elem) {
+            if( ! this.m_port_ref._is_equivalent((Port)elem) ) {
+                ReturnCode_t retval;
+                retval = ((Port)elem).notify_connect(this.m_connector_profile);
+                if( retval != ReturnCode_t.RTC_OK ) {
+                    this.m_return_code = retval;
+                }
+            }
+        }
+        
+    }
+
+    /**
+     * <p>ポート接続解除のためのヘルパクラスです。</p>
+     */
+    protected class disconnect_func implements operatorFunc {
+        public Port m_port_ref;
+        public ConnectorProfileHolder m_connector_profile;
+        public ReturnCode_t m_return_code;
+        
+        /**
+         * <p>コンストラクタです。</p>
+         */
+        public disconnect_func() {
+            this.m_return_code = ReturnCode_t.RTC_OK;
+        }
+
+        /**
+         * <p>コンストラクタです。</p>
+         * 
+         * @param p 接続を行うポート
+         * @param prof コネクタ・プロファイル
+         */
+        public disconnect_func(Port p, ConnectorProfileHolder prof) {
+            this.m_port_ref = p;
+            this.m_connector_profile = prof;
+            this.m_return_code = ReturnCode_t.RTC_OK;
+        }
+
+        /**
+         * <p>接続解除を行います。</p>
+         * 
+         * @param elem 接続プロファイルオブジェクト
+         */
+        public void operator(Object elem) {
+            if( ! this.m_port_ref._is_equivalent((Port)elem) ) {
+                ReturnCode_t retval;
+                retval = ((Port)elem).disconnect(this.m_connector_profile.value.connector_id);
+                if( retval != ReturnCode_t.RTC_OK ) {
+                    this.m_return_code = retval;
+                }
+            }
+        }
+        
+    }
     /**
      * <p>ポート接続解除のためのヘルパクラスです。</p>
      */
@@ -993,7 +1059,6 @@ public abstract class PortBase extends PortPOA {
          * @param port 接続解除を行うポート
          */
         public disconnect_all_func(PortBase port) {
-            
             this.m_return_code = ReturnCode_t.RTC_OK;
             this.m_port = port;
         }
@@ -1004,7 +1069,6 @@ public abstract class PortBase extends PortPOA {
          * @param elem 接続プロファイルオブジェクト
          */
         public void operator(Object elem) {
-            
             operator((ConnectorProfile) elem);
         }
         
@@ -1014,7 +1078,6 @@ public abstract class PortBase extends PortPOA {
          * @param cprof 接続プロファイルオブジェクト
          */
         public void operator(ConnectorProfile cprof) {
-            
             ReturnCode_t retval = this.m_port.disconnect(cprof.connector_id);
             if (! retval.equals(ReturnCode_t.RTC_OK)) {
                 this.m_return_code = retval;
@@ -1024,8 +1087,7 @@ public abstract class PortBase extends PortPOA {
         public ReturnCode_t m_return_code;
         public PortBase m_port;
     }
-    
-    
+
     /**
      * <p>指定されたインスタンス名と属性を持つインタフェースを検索するためのヘルパクラスです。</p>
      */
@@ -1038,7 +1100,6 @@ public abstract class PortBase extends PortPOA {
          * @param polarity 検索対象インタフェースの属性
          */
         public find_interface(final String instance_name, PortInterfacePolarity polarity) {
-            
             this.m_instance_name = instance_name;
             this.m_polarity = polarity;
         }
@@ -1050,7 +1111,6 @@ public abstract class PortBase extends PortPOA {
          * @return 検索対象のインタフェースであればtrueを、さもなくばfalseを返します。
          */
         public boolean equalof(final Object elem) {
-            
             return equalof((PortInterfaceProfile) elem);
         }
         
@@ -1061,7 +1121,6 @@ public abstract class PortBase extends PortPOA {
          * @return 検索対象のインタフェースであればtrueを、さもなくばfalseを返します。
          */
         public boolean equalof(final PortInterfaceProfile prof) {
-            
             return this.m_instance_name.equals(prof.instance_name)
                 && this.m_polarity.equals(prof.polarity);
         }

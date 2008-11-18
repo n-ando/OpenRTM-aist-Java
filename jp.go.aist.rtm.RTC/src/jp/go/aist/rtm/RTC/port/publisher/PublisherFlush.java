@@ -15,7 +15,6 @@ public class PublisherFlush extends PublisherBase {
      * @param property 当該Publisherの駆動を制御する情報を持つPropertyオブジェクト
      */
     public PublisherFlush(InPortConsumer consumer, final Properties property) {
-        
         m_consumer = consumer;
     }
     
@@ -23,7 +22,6 @@ public class PublisherFlush extends PublisherBase {
      * <p>当該Publisherが不要となり破棄される際に、PublisherFactoryにより呼び出されます。</p>
      */
     public void destruct() {
-        
         m_consumer = null;
     }
     
@@ -31,7 +29,6 @@ public class PublisherFlush extends PublisherBase {
      * <p>ファイナライザです。</p>
      */
     protected void finalize() throws Throwable {
-        
         try {
             destruct();
             
@@ -44,9 +41,9 @@ public class PublisherFlush extends PublisherBase {
      * <p>送出タイミング時に呼び出します。即座に同一スレッドにてコンシューマの送出処理が呼び出されます。</p>
      */
     public void update() {
-        
         m_consumer.push();
     }
+
     private InPortConsumer m_consumer;
 
 }

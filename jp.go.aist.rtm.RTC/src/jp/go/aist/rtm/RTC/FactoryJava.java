@@ -18,7 +18,6 @@ public class FactoryJava extends FactoryBase {
      */
     public FactoryJava(final Properties profile, RtcNewFunc newFunc,
             RtcDeleteFunc deleteFunc) {
-        
         this(profile, newFunc, deleteFunc, new DefaultNumberingPolicy());
     }
     
@@ -35,7 +34,6 @@ public class FactoryJava extends FactoryBase {
      */
     public FactoryJava(final Properties profile, RtcNewFunc newFunc,
             RtcDeleteFunc deleteFunc, NumberingPolicy policy) {
-        
         super(profile);
         m_New = newFunc;
         m_Delete = deleteFunc;
@@ -45,11 +43,10 @@ public class FactoryJava extends FactoryBase {
     /**
      * <p>コンポーネントを生成します。</p>
      * 
-     * @param Managerオブジェクト
+     * @param mgr Managerオブジェクト
      * @return 生成されたコンポーネントのインスタンス
      */
     public RTObject_impl create(Manager mgr) {
-        
         try {
             RTObject_impl rtobj = m_New.createRtc(mgr);
             if (rtobj == null) {
@@ -71,29 +68,26 @@ public class FactoryJava extends FactoryBase {
             return null;
         }
     }
-    
+
     /**
      * <p>コンポーネントを破棄します。</p>
      * 
      * @param comp 破棄対象コンポーネントのインスタンス
      */
     public void destroy(RTObject_impl comp) {
-        
         --m_Number;
         m_policy.onDelete(comp);
         m_Delete.deleteRtc(comp);
     }
-    
+        
     /**
      * <p>コンポーネント生成用インタフェース</p>
      */
     protected RtcNewFunc m_New;
-        
     /**
      * <p>コンポーネント破棄用インタフェース</p>
      */
     protected RtcDeleteFunc m_Delete;
-
     /**
      * <p>コンポーネント生成時のナンバーリング・ポリシ(命名ポリシー)管理用クラス</p>
      */

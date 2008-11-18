@@ -35,7 +35,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable {
         
         int usec = (int) (1000000.0 / hz);
         m_millisec = usec / 1000;
-        m_nanosec = ((int) (usec % 1000)) * 1000;
+        m_nanosec = (usec % 1000) * 1000;
         
         this.open();
     }
@@ -70,7 +70,6 @@ public class PublisherPeriodic extends PublisherBase implements Runnable {
      * <p>当該Publisherを駆動するスレッドコンテキストです。コンシューマの送出処理が呼び出されます。</p>
      */
     public void run() {
-        
         this.svc();
     }
 
@@ -78,9 +77,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable {
      * <p>当該Publisherの駆動を開始します。</p>
      */
     public int open() {
-        
         m_running = true;
-        // this->activate();
         Thread t = new Thread(this);
         t.start();
         
@@ -93,14 +90,11 @@ public class PublisherPeriodic extends PublisherBase implements Runnable {
      * <p>ただし、最大１回のみコンシューマの送出処理が呼び出されることがあります。</p>
      */
     public void release() {
-        
         m_running = false;
     }
     
     private InPortConsumer m_consumer;
-    
     private boolean m_running;
-    
     private long m_millisec;
     private int m_nanosec;
 

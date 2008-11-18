@@ -10,7 +10,6 @@ import jp.go.aist.rtm.RTC.util.Properties;
  * 即座にコンシューマの送出処理を呼び出します。</p>
  */
 public class PublisherNew extends PublisherBase implements Runnable {
-
     /**
      * <p>コンストラクタです。</p>
      * 
@@ -18,7 +17,6 @@ public class PublisherNew extends PublisherBase implements Runnable {
      * @param property （本Publisherでは利用されません。）
      */
     public PublisherNew(InPortConsumer consumer, final Properties property) {
-        
         this.m_consumer = consumer;
         this.m_running = true;
         this.m_data = new NewData();
@@ -31,11 +29,14 @@ public class PublisherNew extends PublisherBase implements Runnable {
      * コンシューマへの送出処理が行われます。</p>
      */
     public void update() {
-        
         synchronized (this.m_data) {
             
             this.m_data._updated = true;
+            try{
             this.m_data.notify();
+        } catch(Exception ex) {
+            System.out.println("aaa");
+        }
         }
         
         Thread.yield();
@@ -45,13 +46,12 @@ public class PublisherNew extends PublisherBase implements Runnable {
             ignored.printStackTrace();
         }
     }
-    
+
     /**
      * <p>当該Publisherオブジェクトのスレッドコンテキストです。
      * 送出タイミングが通知されるまでブロックします。</p>
      */
     public int svc() {
-        
         while (this.m_running) {
             
             synchronized (this.m_data) {
@@ -74,14 +74,13 @@ public class PublisherNew extends PublisherBase implements Runnable {
         
         return 0;
     }
-    
+
     /**
      * <p>当該Publisherの駆動を開始します。</p>
      * 
      * @param args （本Publisherでは使用されません。）
      */
     public int open(Object[] args) {
-        
         this.m_running = true;
         
         Thread thread = new Thread(this);
@@ -97,8 +96,13 @@ public class PublisherNew extends PublisherBase implements Runnable {
      * 最大１回のみコンシューマの送出処理が呼び出されることがあります。</p>
      */
     public void release() {
-        
         this.m_running = false;
+        try {
+            this.m_data.notify();
+            this.m_data.wait();
+        } catch (InterruptedException e) {
+        } catch (IllegalMonitorStateException e) {
+        }
     }
     
     /**
@@ -106,18 +110,17 @@ public class PublisherNew extends PublisherBase implements Runnable {
      * 送出タイミングが通知されるまでブロックします。</p>
      */
     public void run() {
-        
         svc();
     }
-
+    
     private InPortConsumer m_consumer;
-
     private boolean m_running;
     
     private class NewData {
-        
         public boolean _updated = false;
     }
     
+    // A condition variable for data update notification
     private NewData m_data;
+    
 }

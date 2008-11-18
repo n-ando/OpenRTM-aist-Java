@@ -11,13 +11,13 @@ public class Timer implements Runnable {
     /**
      * <p>コンストラクタです。</p>
      * 
-     * @param inteval  タイマー起動周期
+     * @param interval  タイマー起動周期
      */
     public Timer(TimeValue interval) {
         m_interval = new TimeValue(interval);
         m_running = false;
     }
-        
+
     /**
      * <p>タイマー用スレッドを生成します。</p>
      */
@@ -26,6 +26,7 @@ public class Timer implements Runnable {
         t.start();
         return 0;
     }
+
     /**
      * <p>タイマーの周期処理です。
      * invokeを起動します。</p>
@@ -48,12 +49,14 @@ public class Timer implements Runnable {
         }
         return 0;
     }
+
     /**
      * <p>タイマーを起動します。</p>
      */
     public void run() {
         this.svc();
     }
+
     /**
      * <p>タイマーを起動します。</p>
      */
@@ -63,6 +66,7 @@ public class Timer implements Runnable {
             this.open();
         }
     }
+
     /**
      * <p>タイマーを停止します。</p>
      */
@@ -92,7 +96,7 @@ public class Timer implements Runnable {
     /**
      * <p>タイマー処理用リスナーを登録します。</p>
      * 
-     * @param listner  タイマー処理用リスナー
+     * @param listener  タイマー処理用リスナー
      * @param tm  起動周期
      */
     public synchronized ListenerBase registerListener(ListenerBase listener, TimeValue tm) {

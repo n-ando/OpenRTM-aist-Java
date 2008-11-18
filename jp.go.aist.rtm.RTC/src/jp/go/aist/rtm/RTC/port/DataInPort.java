@@ -9,13 +9,13 @@ import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
 import RTC.ReturnCode_t;
 
-
 /**
  * <p>データ入力ポートの実装クラスです。</p>
  * 
  * @param <DataType> データ型を指定します。 
  */
 public class DataInPort<DataType> extends PortBase {
+    
     /**
      * <p>コンストラクタです。</p>
      * 
@@ -66,7 +66,7 @@ public class DataInPort<DataType> extends PortBase {
 
         return ReturnCode_t.RTC_OK;
     }
-    
+
     /**
      * <p>Interfaceに接続します。Portが所有するConsumerに適合するProviderに関する情報を
      * ConnectorProfile#propertiesから抽出し、ConsumerにCORBAオブジェクト参照を設定します。</p>
@@ -102,4 +102,5 @@ public class DataInPort<DataType> extends PortBase {
     private Vector<Integer> m_dummy = new Vector<Integer>();
     private Vector<InPortProvider> m_providers = new Vector<InPortProvider>();
     private Vector<OutPortConsumer> m_consumers = new Vector<OutPortConsumer>();
+    
 }

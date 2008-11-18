@@ -59,9 +59,6 @@ public class PortAdminTest extends TestCase {
         private POAManager _poaMgr;
     }
 
-//    int g_argc;
-//    vector<string> g_argv;
-//    
     private class PortBaseMock extends PortBase {
         
         protected ReturnCode_t publishInterfaces(ConnectorProfileHolder connector_profile) {
@@ -77,73 +74,17 @@ public class PortAdminTest extends TestCase {
         protected void unsubscribeInterfaces(ConnectorProfile connector_profile) {
         }
     }
-//    class PortBase
-//    : public RTC::PortBase
-//    {
-//    protected:
-//        virtual RTC::ReturnCode_t publishInterfaces(RTC::ConnectorProfile&)
-//        {
-//            return RTC::RTC_OK;
-//        }
-//        virtual RTC::ReturnCode_t subscribeInterfaces(const RTC::ConnectorProfile&)
-//        {
-//            return RTC::RTC_OK;
-//        }
-//        virtual void unsubscribeInterfaces(const RTC::ConnectorProfile&)
-//        {
-//        }
-//    };
-//
+
     private PortAdmin m_ppadm;
     private PortBase m_ppb;
     private PortBase m_ppb2;
     private ORB m_orb;
     private POA m_poa;
     private OrbRunner m_orbRunner;
-//private:
-//    RTC::PortAdmin* m_ppadm;
-//    PortBase* m_ppb;
-//    PortBase* m_ppb2;
-//    CORBA::ORB_ptr          m_orb;
-//    PortableServer::POA_ptr m_poa;
-//      
-//public:
-//
-//    /*!
-//     * @brief Constructor
-//     */
+
     public PortAdminTest() {
     }
-//    PortAdminTests()
-//    {
-//        char* argv[g_argc];
-//        for (int i = 0; i < g_argc; i++) {
-//            argv[i] = (char *)g_argv[i].c_str();
-//        }
-//        
-//        m_orb = CORBA::ORB_init(g_argc, argv);
-//        CORBA::Object_var  obj = m_orb->resolve_initial_references("RootPOA");
-//        m_poa = PortableServer::POA::_narrow(obj);
-//        PortableServer::POAManager_var pman = m_poa->the_POAManager();
-//        pman->activate();
-//    }
-//
-//    /*!
-//     * @brief Destructor
-//     */
-//    ~PortAdminTests()
-//    {
-//    }
-//
 
-
-//    /*!
-//     * @brief 初期化/後始末
-//     * ここでは以下の処理を行っている。
-//     *  (1) PortAdminクラス、PortBaseクラスのインスタンス生成
-//     *  (2) PortBaseクラスにPortProfileを登録
-//     *  (3) PortAdminクラスにPortBaseオブジェクトを登録
-//     */
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -168,47 +109,13 @@ public class PortAdminTest extends TestCase {
         this.m_ppadm.registerPort(this.m_ppb);
         this.m_ppadm.registerPort(this.m_ppb2);
     }
-//    virtual void setUp()
-//    {
-//        // PortAdminクラスのインスタンス生成
-//        m_ppadm = new RTC::PortAdmin(m_orb, m_poa);
-//        
-//        // PortBaseクラスのインスタンス生成
-//        m_ppb = new PortBase();
-//        
-//        // PortBaseクラスのインスタンス生成
-//        m_ppb2 = new PortBase();
-//        
-//        // PortProfileの登録
-//        m_ppb->setName("port0");
-//        m_ppb2->setName("port1");
-//        
-//        // PortBaseオブジェクトの登録
-//        m_ppadm->registerPort(*m_ppb);
-//        m_ppadm->registerPort(*m_ppb2);
-//    }
-//
-//    /*!
-//     * @brief Test finalization
-//     */
+
     protected void tearDown() throws Exception {
         super.tearDown();
 
         this.m_orbRunner.shutdown();
     }
-//    virtual void tearDown()
-//    { 
-//        //    delete m_ppb;
-//        // PortAdminインスタンスの破棄
-//        delete m_ppadm;
-//    }
-    
-    /*!
-     * @brief getPortList()のテスト
-     *    getPortList()でPortListのポインタを取得し、そのポインタを用いPortインタフェースの
-     *    オペレーション呼び出しを行っている。
-     *    PortListは事前にsetUp()メソッドで登録している。
-     */
+
     /**
      * <p>Portリスト取得のテストです。
      * 取得したPort群に対してポートプロファイル取得のテストも行います。</p>
@@ -226,33 +133,7 @@ public class PortAdminTest extends TestCase {
         PortProfile getProf1 = getPList.value[1].get_port_profile();
         assertEquals("port1", getProf1.name);
     }
-    
-//     void test_getPortList() {
-//         PortList* getPList;
-//         // getPortList()のテスト
-//         getPList = m_ppadm->getPortList();
-//        
-//         PortProfile *getProf0, *getProf1;
-//         // 取得したPortインタフェースのオペレーション呼び出し。
-//         getProf0 = (*getPList)[0]->get_port_profile();
-//        
-//         string setstr, getstr;
-//         getstr = getProf0->name;
-//         setstr = "port0";
-//         CPPUNIT_ASSERT(getstr == setstr);
-//        
-//         getProf1 = (*getPList)[1]->get_port_profile();
-//         getstr = getProf1->name;
-//         setstr = "port1";
-//         CPPUNIT_ASSERT(getstr == setstr);
-//    }
 
-    /*!
-     * @brief getPortRef()のテスト
-     *   (1) get_PortRef()でPortのオブジェクトリファレンス取得
-     *   (2) 取得したオブジェクトリファレンスを用いPortオペレーションの呼び出しを行う。
-     *   ※ PortのオブジェクトリファレンスはsetUp()にて登録している。
-     */
     /**
      * <p>ポート名によるPort取得のテストです。
      * 取得されたPortに対して、ポートプロファイル取得のテストも行います。</p>
@@ -287,51 +168,6 @@ public class PortAdminTest extends TestCase {
         assertNull(port);
     }
     
-//    void test_getPortRef() {
-//        Port_var getP;
-//        string getstr, setstr;
-//        PortProfile *getProf;
-//        
-//        //========= Failure case ================
-//        // 登録していないPortProfile.nameでgetPortRef()を呼ぶとnillが返される。OK.
-//        //    getP = m_ppadm->getPortRef("");
-//        //    if (CORBA::is_nil(getP))
-//        //      cout << "getP is nil." << endl;
-//        //    getP = m_ppadm->getPortRef("test");
-//        //    if (CORBA::is_nil(getP))
-//        //      cout << "getP is nil." << endl;
-//        //========================================================
-//        
-//        // getPortRef()のテスト
-//        getP = m_ppadm->getPortRef("port1");
-//        
-//        if (CORBA::is_nil(getP))
-//            cout << "getP is nil." << endl;
-//        
-//        getProf = getP->get_port_profile();
-//        getstr = getProf->name;
-//        setstr = "port1";
-//        CPPUNIT_ASSERT(getstr == setstr);
-//        
-//        
-//        // test  getPortRef()
-//        getP = m_ppadm->getPortRef("port0");
-//        
-//        if (CORBA::is_nil(getP))
-//            cout << "getP is nil." << endl;
-//        
-//        getProf = getP->get_port_profile();
-//        getstr = getProf->name;
-//        setstr = "port0";
-//        CPPUNIT_ASSERT(getstr == setstr);
-//    }
-
-    /*!
-     * @brief getPort()のテスト
-     *   (1) getPort()にてPortBaseへのポインタを取得
-     *   (2) 取得したポインタを用い、PortBaseクラスのメソッド呼び出しを行う。
-     *   ※ PortBaseクラスのポインタはsetUp()で登録済みである。
-     */
     /**
      * <p>ポート名によるPortサーバント取得のテストです。</p>
      */
@@ -352,44 +188,6 @@ public class PortAdminTest extends TestCase {
         assertEquals("port0", prof0.name);
     }
     
-//    void test_getPort() {
-//        RTC::PortBase* pb;
-//        PortProfile* getProf;
-//        string setstr, getstr;
-//        
-//        // Failure case: unknown exception例外発生。
-//        //    pb = m_ppadm->getPort("");
-//        //    pb = m_ppadm->getPort("test"); // 登録していないname
-//        
-//        // test getPort()
-//        pb = m_ppadm->getPort("port1");
-//        getProf = pb->get_port_profile();
-//        setstr = "port1";
-//        getstr = getProf->name;
-//        CPPUNIT_ASSERT(setstr == getstr);
-//        
-//        // test getPort()
-//        pb = m_ppadm->getPort("port0");
-//        getProf = pb->get_port_profile();
-//        setstr = "port0";
-//        getstr = getProf->name;
-//        CPPUNIT_ASSERT(setstr == getstr);
-//    }
-
-//    /*!
-//     * @brief tests for registerPort()
-//     */
-//    void test_registerPort() {
-//        // setUp()にてテスト。
-//    }
-
-    /*!
-     * @brief deletePort()のテスト
-     *   ※ Port_ptrはsetUp()にてregisterPort()を用いて登録済みである。(2つのポートを登録。)
-     *   (1) deletePort()呼び出し。
-     *   (2) getPortList()にてPortListを取得。
-     *   (3) (1)の処理が正しく行われているかを確認。
-     */
     /**
      * <p>Portサーバントの登録解除をテストします。</p>
      */
@@ -418,44 +216,6 @@ public class PortAdminTest extends TestCase {
         }
     }
     
-//    void test_deletePort() {
-//        
-//        // (1) deletePort()呼び出し。
-//        m_ppadm->deletePort(*m_ppb2);
-//        
-//        // (2) getPortList()にてPortListを取得。
-//        PortList* getPList;
-//        getPList = m_ppadm->getPortList();
-//        
-//        cout << getPList->length() << endl;
-//        
-//        
-//        // (3) (1)の処理が正しく行われているかを確認。
-//        PortProfile *getProf0, *getProf1;
-//        // 取得したPortBaseオブジェクト−オペレーション呼び出し。
-//        getProf0 = (*getPList)[0]->get_port_profile();
-//        string setstr, getstr;
-//        getstr = getProf0->name;
-//        setstr = "port0";
-//        CPPUNIT_ASSERT(getstr == setstr);
-//        
-//        
-//        // Failure case :
-//        //    setUp()で2つのポートを登録しており、(1)で一つ削除したので、ここでの処理は
-//        //    エラーとなるはずである。
-//        getProf1 = (*getPList)[1]->get_port_profile();
-//        getstr = getProf1->name;
-//        setstr = "port1";
-//        CPPUNIT_ASSERT(getstr == setstr);
-//    }
-
-    /*!
-     * @brief tests for deletePortByName()
-     *   ※ Port_ptrはsetUp()にてregisterPort()を用いて登録済みである。(2つのポートを登録。)
-     *    (1) getPortList()にてPortListを取得し登録されているPortの数を確認。
-     *    (2）deletePortByName()にて"port1"の名前を持つPortの削除を行う。
-     *    (3) getPortList()にてPortListを取得し登録されているPortの数を確認。
-     */
     /**
      * <p>ポート名によるPortサーバント登録解除をテストします。</p>
      */
@@ -472,26 +232,6 @@ public class PortAdminTest extends TestCase {
         assertEquals(1, getPList.value.length);
     }
     
-//    void test_deletePortByName() {
-//        PortList* getPList;
-//    
-//        // (1) getPortList()にてPortListを取得し登録されているPortの数を確認。
-//        getPList = m_ppadm->getPortList();
-//        cout << getPList->length() << endl;
-//        
-//        m_ppadm->deletePortByName("port1");
-//        
-//        // (3) getPortList()にてPortListを取得し登録されているPortの数を確認。
-//        getPList = m_ppadm->getPortList();
-//        cout << getPList->length() << endl;
-//    }
-
-    /*!
-     * @brief tests for finalizePorts()
-     *   (1) getPortList()にてPortListを取得し登録されているPortの数を確認。
-     *   (2) finalizePorts()の呼び出し。
-     *   (3) getPortList()にてPortListを取得し登録されているPortの数を確認。
-     */
     /**
      * <p>全ポート終了処理のテストを行います。</p>
      */
@@ -508,22 +248,4 @@ public class PortAdminTest extends TestCase {
         getPList = this.m_ppadm.getPortList();
         assertEquals(0, getPList.value.length);
     }
-    
-//    void test_finalizePorts() {
-//        PortList* getPList;
-//        
-//        // (1) getPortList()にてPortListを取得し登録されているPortの数を確認。
-//        getPList = m_ppadm->getPortList();
-//        cout << getPList->length() << endl;
-//        
-//        
-//        // (2) finalizePorts()の呼び出し。
-//        m_ppadm->finalizePorts();
-//        
-//        
-//        // (3) getPortList()にてPortListを取得し登録されているPortの数を確認。
-//        getPList = m_ppadm->getPortList();
-//        cout << getPList->length() << endl;
-//    }
-    
 }

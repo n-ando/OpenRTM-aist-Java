@@ -11,17 +11,15 @@ public class ECFactoryJava extends ECFactoryBase {
      * @param name 生成対象のExecutionContextクラス名の完全修飾名(フルパスのクラス名)
      */
     public ECFactoryJava(final String name) {
-
         m_name = name;
     }
-
+    
     /**
      * <p>生成対象のExecutionContextの完全修飾名(フルパスのクラス名)を取得します。</p>
      * 
      * @return 生成対象のExecutionContextクラス名の完全修飾名(フルパスのクラス名)
      */
     public String name() {
-        
         return m_name;
     }
 
@@ -37,7 +35,6 @@ public class ECFactoryJava extends ECFactoryBase {
         try {
             target = (ECNewDeleteFunc) this.createClass(m_name);
             return target.ECNewFunc();
-            
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             

@@ -30,7 +30,6 @@ public class Organization_impl {
     public Organization_impl() {
         m_pId = UUID.randomUUID().toString();
     }
-
     /**
      * <p>[CORBA interface] Organization ID を取得します。</p>
      *
@@ -43,7 +42,6 @@ public class Organization_impl {
     public String get_organization_id() throws InvalidParameter, NotAvailable, InternalError {
         return m_pId;
     }
-
     /**
      * <p>[CORBA interface] OrganizationProperty を取得します。<br />
      *
@@ -66,7 +64,6 @@ public class Organization_impl {
 //            throw new InternalError("get_organization_property()");
         }
     }
-
     /**
      * <p>[CORBA interface] OrganizationProperty の特定の値を取得します。<br />
      *
@@ -97,6 +94,7 @@ public class Organization_impl {
         } catch (Exception ex) {
             throw new InternalError("get_organization_property_value()");
         }
+//        return ORBUtil.getOrb().create_any();
     }
 
     /**
@@ -105,7 +103,7 @@ public class Organization_impl {
      * OrganizationProperty を Organization に追加するオペレーション。
      * OrganizationProperty は Organization のプロパティ記述です。</p>
      *
-     * @param org_property セットする OrganizationProperty
+     * @param organization_property セットする OrganizationProperty
      * 
      * @return オペレーションが成功したかどうかを返す。
      * 
@@ -127,6 +125,7 @@ public class Organization_impl {
         } catch (Exception ex) {
             throw new InternalError("set_organization_property()");
         }
+//        return false;
     }
 
     /**
@@ -199,6 +198,7 @@ public class Organization_impl {
         } catch (Exception ex) {
             throw new InternalError("remove_organization_property()");
         }
+//        return false;
     }
 
     /**
@@ -242,6 +242,7 @@ public class Organization_impl {
         } catch (Exception ex) {
             throw new InternalError("set_owner()");
         }
+//        return false;
     }
 
     /**
@@ -292,6 +293,7 @@ public class Organization_impl {
         } catch(Exception ex) {
             throw new InternalError("set_members()");
         }
+//        return false;
     }
 
     /**
@@ -300,7 +302,7 @@ public class Organization_impl {
      * Organization にメンバーとして SDO を追加します。
      * 引数 "sdo" に追加するメンバー SDO を指定します。</p>
      *
-     * @param sdo Organization に追加される SDO のリスト。
+     * @param sdo_list Organization に追加される SDO のリスト。
      * 
      * @return オペレーションが成功したかどうかを返す。
      * 
@@ -399,17 +401,15 @@ public class Organization_impl {
             throw new InternalError("set_dependency(): Unknown.");
         }
     }
-
+    
     /**
      * <p>Organization の識別子</p>
      */
     protected String m_pId = new String();
-
     /**
      * <p>Organization に関連付けられた SDO メンバのリスト</p>
      */
     protected SDO[] m_memberList;
-
     /**
      * <p>Organization の owner</p>
      */   
@@ -461,7 +461,6 @@ public class Organization_impl {
      * @member property NVList
      */
     OrganizationProperty m_orgProperty;
-
     /**
      * <p>Organization プロパティ検索用ヘルパークラス</p>
      */

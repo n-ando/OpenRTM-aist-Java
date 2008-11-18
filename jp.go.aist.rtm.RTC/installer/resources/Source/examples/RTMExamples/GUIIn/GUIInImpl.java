@@ -116,15 +116,15 @@ public class GUIInImpl  extends DataFlowComponentBase {
     // The aborting action when main logic error occurred.
     // former rtc_aborting_entry()
 //  @Override
-//  public ReturnCode_t on_aborting(int ec_id) {
-//      return super.on_aborting(ec_id);
+//  public ReturnCode_t onAborting(int ec_id) {
+//      return super.onAborting(ec_id);
 //  }
     //
     // The error action in ERROR state
     // former rtc_error_do()
 //    @Override
-//    public ReturnCode_t on_error(int ec_id) {
-//        return super.on_error(ec_id);
+//    public ReturnCode_t onError(int ec_id) {
+//        return super.onError(ec_id);
 //    }
     //
     // The reset action that is invoked resetting

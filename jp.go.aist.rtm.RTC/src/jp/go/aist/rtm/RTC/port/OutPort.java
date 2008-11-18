@@ -18,7 +18,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @param valueRef 本ポートにバインドするデータ変数を内包するDataRefオブジェクト
      */
     public OutPort(final String name, DataRef<DataType> valueRef) {
-        
         this(new RingBuffer<DataType>(8), name, valueRef);
     }
     
@@ -30,7 +29,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @param length バッファ長
      */
     public OutPort(final String name, DataRef<DataType> valueRef, int length) {
-        
         this(new RingBuffer<DataType>(length), name, valueRef);
     }
     
@@ -138,7 +136,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @return データを書き込めた場合はtrueを、さもなくばfalseを返します。
      */
     public boolean write() {
-        
         return this.write(m_value.v);
     }
     
@@ -219,7 +216,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @param block ブロックモードを指定する場合はtrue、さもなくばfalse
      */
     public void setReadBlock(boolean block) {
-        
         this.m_readBlock = block;
     }
     
@@ -228,20 +224,18 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * ブロックモードを指定した場合は、バッファに書き込む余地ができるかタイムアウトになるまで、
      * write()メソッドの呼び出しがブロックされます。</p>
      * 
-     * @param ブロックモードを指定する場合はtrue、さもなくばfalse
+     * @param block ブロックモードを指定する場合はtrue、さもなくばfalse
      */
     public void setWriteBlock(boolean block) {
-        
         this.m_writeBlock = block;
     }
-    
+
     /**
      * <p>読み出しがブロックモード指定されている場合のタイムアウト時間を設定します。</p>
      * 
      * @param timeout タイムアウト時間 [usec]
      */
     public void setReadTimeout(long timeout) {
-        
         this.m_readTimeout = timeout;
     }
     
@@ -251,7 +245,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @param timeout タイムアウト時間 [usec]
      */
     public void setWriteTimeout(long timeout) {
-        
         this.m_writeTimeout = timeout;
     }
     
@@ -261,7 +254,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @param onWrite OnWriteコールバックインタフェースを持つオブジェクト
      */
     public void setOnWrite(OnWrite<DataType> onWrite) {
-        
         this.m_OnWrite = onWrite;
     }
     
@@ -274,7 +266,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @param onWriteConvert OutWriteConvertコールバックインタフェースを持つオブジェクト
      */
     public void setOnWriteConvert(OnWriteConvert<DataType> onWriteConvert) {
-        
         this.m_OnWriteConvert = onWriteConvert;
     }
     
@@ -284,7 +275,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @param onOverflow OutOverflowコールバックインタフェースを持つオブジェクト
      */
     public void setOnOverflow(OnOverflow<DataType> onOverflow) {
-        
         this.m_OnOverflow = onOverflow;
     }
     
@@ -294,7 +284,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @param onRead OutReadコールバックインタフェースを持つオブジェクト
      */
     public void setOnRead(OnRead<DataType> onRead) {
-        
         this.m_OnRead = onRead;
     }
     
@@ -307,7 +296,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @param onReadConvert OutReadConvertコールバックインタフェースを持つオブジェクト
      */
     public void setOnReadConvert(OnReadConvert<DataType> onReadConvert) {
-        
         this.m_OnReadConvert = onReadConvert;
     }
     
@@ -317,7 +305,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @param onUnderflow OutUnderflowコールバックインタフェースを持つオブジェクト
      */
     public void setOnUnderflow(OnUnderflow<DataType> onUnderflow) {
-        
         this.m_OnUnderflow = onUnderflow;
     }
     
@@ -327,7 +314,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @return バッファ長
      */
     public int length() {
-        
         return this.m_buffer.length();
     }
     
@@ -337,7 +323,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @return バッファフルの場合はtrueを、さもなくばfalseを返します。
      */
     public boolean isFull() {
-        
         return this.m_buffer.isFull();
     }
     
@@ -347,7 +332,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @return バッファが空の場合はtrueを、さもなくばfalseを返します。
      */
     public boolean isEmpty() {
-        
         return this.m_buffer.isEmpty();
     }
 
@@ -358,7 +342,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @param data 書き込むデータ
      */
     public void put(DataType data) {
-        
         this.m_buffer.put(data);
     }
     
@@ -369,7 +352,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @return 読み出したデータ
      */
     public DataType get() {
-        
         return this.m_buffer.get();
     }
     
@@ -379,7 +361,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @return まだ読み出されていないデータがあればtrueを、さもなくばfalseを返します。
      */
     public boolean isNew() {
-        
         return m_buffer.isNew();
     }
 
@@ -397,5 +378,5 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
     private OnReadConvert<DataType> m_OnReadConvert;
     private OnOverflow<DataType> m_OnOverflow;
     private OnUnderflow<DataType> m_OnUnderflow;
-    
+
 }

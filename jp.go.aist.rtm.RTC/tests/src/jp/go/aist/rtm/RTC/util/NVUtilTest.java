@@ -89,50 +89,7 @@ public class NVUtilTest extends TestCase {
         getname = nv.name;
         assertEquals(getname, setname);
         assertEquals("test", nv.value.extract_any().extract_string());
-}
-//        setSt = 1;
-//        nv = newNV("short", setSt);
-//        // (2) newNV()に渡したデータと取得したNameValueの要素を比較。
-//        setname = "short";
-//        getname = nv.name;
-//        CPPUNIT_ASSERT(getname == setname);
-//        nv.value >>= getSt;
-//        CPPUNIT_ASSERT(setSt == getSt);
-//        
-//        // (3) newNV()を用いCORBA::Long型のデータとnameのNameValueを取得。
-//        setLg = 999999999;
-//        nv = newNV("long", setLg);
-//        // (4) newNV()に渡したデータと取得したNameValueの要素を比較。
-//        setname = "long";
-//        getname = nv.name;
-//        CPPUNIT_ASSERT(getname == setname);
-//        nv.value >>= getLg;
-//        CPPUNIT_ASSERT(setLg == getLg);
-//        
-//        // (5) newNV()を用いCORBA::Float型のデータとnameのNameValueを取得。
-//        setFt = 99999.9;
-//        nv = newNV("float", setFt);
-//        
-//        // (6) newNV()に渡したデータと取得したNameValueの要素を比較。
-//        setname = "float";
-//        getname = nv.name;
-//        CPPUNIT_ASSERT(getname == setname);
-//        nv.value >>= getFt;
-//        CPPUNIT_ASSERT(setFt == getFt);
-//        
-//        
-//        
-//        // (7) newNV()を用いCORBA::Double型のデータとnameのNameValueを取得。
-//        setDl = 9999999.999;
-//        nv = newNV("double", setDl);
-//        
-//        // (8) newNV()に渡したデータと取得したNameValueの要素を比較。
-//        setname = "double";
-//        getname = nv.name;
-//        CPPUNIT_ASSERT(getname == setname);
-//        nv.value >>= getDl;
-//        CPPUNIT_ASSERT(setDl == getDl);
-//      }
+    }
     
     /**
      *<pre>
@@ -149,16 +106,10 @@ public class NVUtilTest extends TestCase {
         
         String getname = nv.name;
         assertEquals(name, getname);
-        String getvalue = nv.value.extract_string();
+        String getvalue = nv.value.extract_wstring();
         assertEquals(value, getvalue);
     }
-//    void test_newNVStr() {
-//        SDOPackage::NameValue nv;
-//        const char* name  = "string";
-//        const char* value = "string-data";
-//        // (1) const char*型のnameとvalueをnewNV()に渡し、NameValueを取得する。
-//        nv = newNV(name, value);
-//      }
+    
     /**
      *<pre>
      * 新規NV生成チェック
@@ -180,16 +131,6 @@ public class NVUtilTest extends TestCase {
         assertEquals(ch, getch);
     }
 
-//        CORBA::Char ch = 'A', getch;
-//        SDOPackage::NameValue nv;
-//        nv = newNVChar("char", ch);
-//        string setstr, getstr;
-//        setstr = "char";
-//        getstr = nv.name;
-//        CPPUNIT_ASSERT(getstr == setstr);
-//        nv.value >>= CORBA::Any::to_char(getch);
-//        CPPUNIT_ASSERT(ch == getch);
-
     /**
      *<pre>
      * 新規NV生成チェック
@@ -210,17 +151,6 @@ public class NVUtilTest extends TestCase {
         retval = nv.value.extract_boolean();
         assertEquals(setval, retval);
     }
-//        SDOPackage::NameValue nv;
-//        CORBA::Boolean setval=false, retval;
-//        nv = newNVBool("bool", setval);
-//        string setstr, getstr;
-//        
-//        setstr = "bool";
-//        getstr = nv.name;
-//        CPPUNIT_ASSERT(getstr == setstr);
-//        
-//        nv.value >>= CORBA::Any::to_boolean(retval);
-//        CPPUNIT_ASSERT(setval == retval);
     
     /**
      *<pre>
@@ -242,15 +172,6 @@ public class NVUtilTest extends TestCase {
         retval = nv.value.extract_octet();
         assertEquals(setval, retval);
     }
-//        SDOPackage::NameValue nv;
-//        CORBA::Octet setval=030, getval;
-//        nv = newNVOctet("octet", setval);
-//        string setstr, getstr;
-//        setstr = "octet";
-//        getstr = nv.name;
-//        CPPUNIT_ASSERT(getstr == setstr);
-//        nv.value >>= CORBA::Any::to_octet(getval);
-//        CPPUNIT_ASSERT(setval == getval);
 
     /**
      *<pre>
@@ -266,7 +187,7 @@ public class NVUtilTest extends TestCase {
         Properties prop = new Properties(mProp);
         NVUtil.copyFromProperties(nvlist, prop);
         
-        final String getval = nvlist.value[0].value.extract_string();
+        final String getval = nvlist.value[0].value.extract_wstring();
         String setstr, getstr;
         setstr = "potr-type";
         getstr = nvlist.value[0].name;
@@ -276,25 +197,7 @@ public class NVUtilTest extends TestCase {
         getstr = getval;
         assertEquals(setstr, getstr);
     }
-//    void test_copy() {
-//        SDOPackage::NVList nvlist;
-//        map<string, string> mProp;
-//        mProp["potr-type"];
-//        RTC::Properties prop(mProp);
-//        copy(nvlist, prop);
-//        const char* getval;
-//        nvlist[0].value >>= getval;
-//        
-//        string setstr, getstr;
-//        setstr = "potr-type";
-//        getstr = nvlist[0].name;
-//        CPPUNIT_ASSERT(setstr == getstr);
-//        
-//        setstr = "";
-//        getstr = getval;
-//        CPPUNIT_ASSERT(setstr == getstr);
-//        
-//      }
+    
     /**
      *<pre>
      * プロパティ-NVListコピーチェック
@@ -308,13 +211,13 @@ public class NVUtilTest extends TestCase {
         nvlist.value[0] = new NameValue();
         nvlist.value[0].name = "testname.test1";
         Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_string("testval");
+        anyValue.insert_wstring("testval");
         nvlist.value[0].value = anyValue;
         //
         nvlist.value[1] = new NameValue();
         nvlist.value[1].name = "testname.test2";
         anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_string("testval2");
+        anyValue.insert_wstring("testval2");
         nvlist.value[1].value = anyValue;
         
         Properties prop = new Properties();
@@ -326,6 +229,7 @@ public class NVUtilTest extends TestCase {
         getstr = prop.getProperty("testname.test2");
         assertEquals("testval2", getstr);
     }
+
     /**
      *<pre>
      * プロパティ-NVListコピーチェック
@@ -410,35 +314,6 @@ public class NVUtilTest extends TestCase {
         assertEquals(1, index);
     }
 
-//    void test_find() {
-//        SDOPackage::NVList nvlist;
-//        CORBA::Any any;
-//        CORBA::Short setst,getst;
-//        CORBA::Long  setlg,getlg;
-//        
-//        nvlist.length(2);
-//        
-//        // (1) NVList要素のnameに"short",valueにshort型のデータをセット。
-//        setst = 1;
-//        nvlist[0].name = "short";
-//        nvlist[0].value <<= setst;
-//        
-//        // (2) NVList要素のnameに"long",valueにlong型のデータをセット。
-//        setlg =111;
-//        nvlist[1].name = "long";
-//        nvlist[1].value <<= setlg;
-//        
-//        // (3) nvlistの中からNameValue.nameが"long"のNameValue.valueを取得。
-//        any = find(nvlist, "long");
-//        any >>= getlg;
-//        CPPUNIT_ASSERT(setlg == getlg);
-//        
-//        // (4) nvlistの中からNameValue.nameが"short"のNameValue.valueを取得。
-//        any = find(nvlist, "short");
-//        any >>= getst;
-//        CPPUNIT_ASSERT(setst == getst);
-//      }
-    
     /**
      *<pre>
      * NVList型チェック
@@ -475,32 +350,6 @@ public class NVUtilTest extends TestCase {
         result = NVUtil.isStringValue(nvlist, "string", "stringVal");
         assertEquals(result, true);
 }
-//    void test_isString() {
-//        bool result;
-//        SDOPackage::NVList nvlist;
-//        CORBA::Short setst;
-//        
-//        nvlist.length(2);
-//        
-//        // (1) NVList要素のnameに"short",valueにshort型のデータをセット。
-//        setst = 1;
-//        nvlist[0].name = "short";
-//        nvlist[0].value <<= setst;
-//        
-//        // (2) NVList要素のnameに"string",valueにstring型のデータをセット。
-//        string str("test");
-//        nvlist[1].name = "string";
-//        nvlist[1].value <<= str.c_str();
-//        
-//        // (3) isString(nvlist,name)にて,指定されたnameのvalueの型がstringかどうかを判定。
-//        result = isString(nvlist, "string");
-//        CPPUNIT_ASSERT(result == true);
-//        
-//        // (4) isString(nvlist,name)にて,指定されたnameのvalueの型がstringかどうかを判定。
-//        result = isString(nvlist, "short");
-//        CPPUNIT_ASSERT(result == false);
-//        
-//      }
     
     /**
      *<pre>
@@ -536,36 +385,8 @@ public class NVUtilTest extends TestCase {
         result = NVUtil.toString(nvlist, "short");
         setstr = "";
         assertEquals(result, setstr);
-}
-//    void test_toString() {
-//        string result;
-//        SDOPackage::NVList nvlist;
-//        CORBA::Short setst;
-//        
-//        nvlist.length(2);
-//        
-//        // (1) NVList要素のnameに"short",valueにshort型のデータをセット。
-//        setst = 1;
-//        nvlist[0].name = "short";
-//        nvlist[0].value <<= setst;
-//        
-//        // (2) NVList要素のnameに"string",valueにstring型のデータをセット。
-//        string str("test"), setstr;
-//        nvlist[1].name = "string";
-//        nvlist[1].value <<= str.c_str();
-//        
-//        // (3) toString(nvlist,name)にて,指定されたnameのvalueをstringで取得。
-//        result = toString(nvlist, "string");
-//        setstr = "test";
-//        CPPUNIT_ASSERT(result == setstr);
-//        
-//        // Failure case:
-//        // 
-//        // (4) toString(nvlist,name)にて,指定されたnameのvalueをstringで取得。
-//        result = toString(nvlist, "short");
-//        setstr = "";
-//        CPPUNIT_ASSERT(result == setstr);
-//      }
+    }
+    
     /**
      *<pre>
      * NVList要素追加チェック
@@ -596,18 +417,18 @@ public class NVUtilTest extends TestCase {
         result = NVUtil.appendStringValue(nvlist, "string", "stvalue");
  
         String retstr;
-        retstr = nvlist.value[1].value.extract_string();
+        retstr = nvlist.value[1].value.extract_wstring();
         assertEquals(true, result);
         assertEquals("test,stvalue", retstr);
 
         result = NVUtil.appendStringValue(nvlist, "string", "stvalue");
         
-        retstr = nvlist.value[1].value.extract_string();
+        retstr = nvlist.value[1].value.extract_wstring();
         assertEquals("test,stvalue", retstr);
 
         result = NVUtil.appendStringValue(nvlist, "long", "stvalue");
         
-        retstr = nvlist.value[2].value.extract_string();
+        retstr = nvlist.value[2].value.extract_wstring();
         assertEquals("long",nvlist.value[2].name);
         assertEquals("stvalue", retstr);
     }

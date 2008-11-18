@@ -111,8 +111,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
 //        
         m_pSdoConfigImpl = new Configuration_impl(m_configsets);
         m_pSdoConfig = m_pSdoConfigImpl.getObjRef();
-//        
     }
+
     /**
      * <p>コンポーネント生成時(Created->Alive)に呼び出されるアクションです。</p>
      * 
@@ -121,6 +121,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onInitialize(){
         return ReturnCode_t.RTC_OK;
     }
+
     /**
      * <p>コンポーネント破棄時(Alive->Exit)に呼び出されるアクションです。</p>
      * 
@@ -129,6 +130,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onFinalize() {
         return ReturnCode_t.RTC_OK;
     }
+
     /**
      * <p>ExecutionContextの動作開始時(Stopped->Started)に呼び出されるアクションです。</p>
      * 
@@ -139,6 +141,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onStartup(int ec_id) {
         return ReturnCode_t.RTC_OK;
     }
+
     /**
      * <p>ExecutionContextの動作終了時(Started->Stopped)に呼び出されるアクションです。</p>
      * 
@@ -149,6 +152,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onShutdown(int ec_id) {
         return ReturnCode_t.RTC_OK;        
     }
+
     /**
      * <p>RTコンポーネントのActivate時(Inactive->Active)に呼び出されるアクションです。</p>
      * 
@@ -159,6 +163,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onActivated(int ec_id) {
         return ReturnCode_t.RTC_OK;                
     }
+
     /**
      * <p>RTコンポーネントのDeactivate時(Active->Inactive)に呼び出されるアクションです。</p>
      * 
@@ -169,6 +174,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onDeactivated(int ec_id) {
         return ReturnCode_t.RTC_OK;
     }
+
     /**
      * <p>RTコンポーネントがActivate状態の間呼び出されるアクションです。</p>
      * 
@@ -179,6 +185,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onExecute(int ec_id) {
         return ReturnCode_t.RTC_OK;
     }
+
     /**
      * <p>RTコンポーネントにエラーが発生した時(Active->Error)に呼び出されるアクションです。</p>
      * 
@@ -189,6 +196,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onAborting(int ec_id) {
         return ReturnCode_t.RTC_OK;
     }
+
     /**
      * <p>RTコンポーネントがError状態の間呼び出されるアクションです。</p>
      * 
@@ -199,6 +207,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onError(int ec_id) {
         return ReturnCode_t.RTC_OK;        
     }
+
     /**
      * <p>RTコンポーネントをresetする際(Error->Inactive)に呼び出されるアクションです。</p>
      * 
@@ -209,6 +218,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onReset(int ec_id) {
         return ReturnCode_t.RTC_OK;        
     }
+
     /**
      * <p>RTコンポーネントがActivate状態の間、
      * on_executeの続いて呼び出されるアクションです。</p>
@@ -220,6 +230,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onStateUpdate(int ec_id) {
         return ReturnCode_t.RTC_OK;
     }
+
     /**
      * <p>ExecutionContextの実行周期が変更になった時に呼び出されるアクションです。</p>
      * 
@@ -230,6 +241,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     protected ReturnCode_t onRateChanged(int ec_id) {
         return ReturnCode_t.RTC_OK;        
     }
+
     /**
      * <p>RTコンポーネントを初期化します。<br />
      *
@@ -256,8 +268,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
             }
             if( m_execContexts.value.length>0 ) {
                 m_execContexts.value[0].start();
-                m_alive = true;
             }
+            m_alive = true;
         }
         return ret;
     }
@@ -390,6 +402,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             profile.port_profiles = m_profile.port_profiles;
             profile.parent = m_profile.parent;
             profile.properties = m_profile.properties;
+            profile.port_profiles = m_portAdmin.getPortProfileList().value;
             return profile;
         } catch (Exception ex) {
             ; // This operation throws no exception.
@@ -468,6 +481,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_execContexts.value[ec_id] = null;
         return ReturnCode_t.RTC_OK;
     }
+
     /**
      * <p>[ComponentAction interface] 当該コンポーネントの初期化時に呼び出されます。</p>
      *
@@ -533,6 +547,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
         return ret;
     }
+
     /**
      * <p>[ComponentAction interface] 
      * 当該コンポーネントのActivate時に呼び出されます。</p>
@@ -544,12 +559,14 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public ReturnCode_t on_activated(int ec_id) {
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            m_configsets.update();
             ret = onActivated(ec_id);
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
         return ret;
     }
+    
     /**
      * <p>[ComponentAction interface] 
      * 当該コンポーネントのDeactivate時に呼び出されます。</p>
@@ -567,6 +584,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
         return ret;
     }
+
     /**
      * <p>[ComponentAction interface] 
      * 当該コンポーネントのAbort時に呼び出されます。</p>
@@ -597,6 +615,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
             ret = onError(ec_id);
+            m_configsets.update();
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -638,6 +657,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
         return ret;
     }
+
     /**
      * <p>[ComponentAction interface] 
      * 当該コンポーネントがAvtive状態の間、on_executeの後に呼び出されます。</p>
@@ -656,6 +676,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
         return ret;
     }
+
     /**
      * <p>[ComponentAction interface] 
      * 当該コンポーネントがattachされているExecutionContextの実行周期が変更になった時に呼び出されます。</p>
@@ -673,6 +694,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
         return ret;
     }
+
     /**
      * <p>[CORBA interface] Organization リストを取得します。<br />
      * SDOSystemElement は0個もしくはそれ以上の Organization を所有することが
@@ -689,6 +711,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             throw new NotAvailable();
         }
     }
+
     /**
      * <p>[CORBA interface] SDO IDを取得します。<br />
      * SDO ID を返すオペレーション。
@@ -728,6 +751,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             throw new InternalError("get_sdo_type()");
         }
     }
+
     /**
      * <p>[CORBA interface] SDO DeviceProfile リストを取得します。<br />
      * SDO の DeviceProfile を返すオペレーション。 
@@ -800,6 +824,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
         return null;
     }
+
     /**
      * <p>[CORBA interface] 指定された SDO Service を取得します。<br />
      * このオペレーションは引数 "id" で指定された名前によって区別される
@@ -855,6 +880,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             throw new InternalError("get_configuration()");
         }
     }
+    
     /**
      * <p>[CORBA interface] Monitoring オブジェクト を取得します。<br />
      *  このオペレーションは Monitoring interface への参照を返します。
@@ -872,6 +898,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public Monitoring get_monitoring() throws InterfaceNotImplemented, NotAvailable, InternalError {
         throw new InterfaceNotImplemented();
+//        return null;
     }
 
     /**
@@ -893,7 +920,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
         } catch(Exception ex) {
             throw new InternalError("get_organizations()");
         }
+//        return null;
     }
+
     /**
      * <p>[CORBA interface] SDO Status リスト を取得します。<br />
      * このオペレーションは SDO のステータスを表す NVList を返します</p>
@@ -911,6 +940,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             throw new InternalError("get_status_list()");
         }
     }
+
     /**
      * <p>[CORBA interface] SDO Status を取得します。<br />
      * このオペレーションは 引数で指定された SDO のステータスを返します</p>
@@ -948,7 +978,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     /**
      * <p>当該オブジェクトのインスタンス名を設定します。</p>
      * 
-     * @param インスタンス名
+     * @param instance_name インスタンス名
      */
     public void setInstanceName(final String instance_name) {
         m_properties.setProperty("instance_name", instance_name);
@@ -970,7 +1000,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public final String getCategory() {
         return m_profile.category;
     }
-
     /**
      * <p>当該オブジェクトのNaming Seriveへの登録名を取得します。</p>
      * 
@@ -979,7 +1008,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public String[] getNamingNames() {
         return m_properties.getProperty("naming.names").split(",");
     }
-
     /**
      * <p>CORBAオブジェクト参照を設定します。</p>
      * 
@@ -1042,7 +1070,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_configsets.bindParameter(param_name, var, def_val);
         return true;
     }
-
+    
     /**
      * <p>コンフィギュレーション・パラメータを更新します。</p>
      * 
@@ -1068,6 +1096,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void registerPort(PortBase port) {
         m_portAdmin.registerPort(port);
+        port.setOwner(this.getObjRef());
         return;
     }
 
@@ -1085,7 +1114,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         PortBase port = new DataInPort(DATA_TYPE_CLASS, name, inport);
         this.registerPort(port);
     }
-
+    
     /**
      * <p>[local interface] DataOutPort を登録します。<br />
      *
@@ -1093,13 +1122,14 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * 
      * @param DATA_TYPE_CLASS DataOutPortがやりとりするデータ型
      * @param name DataOutPortの名称
-     * @param inport OutPortへの参照
+     * @param outport OutPortへの参照
      */
     public <DataType, Buffer> void registerOutPort(Class<DataType> DATA_TYPE_CLASS, 
                           final String name, OutPort<DataType> outport) throws Exception {
         PortBase port = new DataOutPort(DATA_TYPE_CLASS, name, outport);
         this.registerPort(port);
     }
+
     /**
      * <p>[local interface] Port の登録を削除します。<br />
      *

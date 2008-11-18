@@ -35,6 +35,7 @@ import org.omg.PortableServer.POAPackage.ServantAlreadyActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 import RTC.RTObject;
+import RTC.ReturnCode_t;
 
 /**
 * <p>各コンポーネントの管理を行うクラスです。</p>
@@ -53,11 +54,11 @@ public class Manager {
         m_runner = null;
         m_terminator = null;
     }
-    
+
     /**
      * <p>コピーコンストラクタです。</p>
      * 
-     * @param コピー元のManagerオブジェクト
+     * @param rhs コピー元のManagerオブジェクト
      */
     public Manager(final Manager rhs) {
         
@@ -140,14 +141,14 @@ public class Manager {
             m_terminator.terminate();
         }
     }
-
+    
     /**
      * <p>Managerオブジェクトを終了します。
      * ORBの終了後，同期を取って終了します。</p>
      */
     public void shutdown() {
         
-        rtcout.println(rtcout.TRACE, "Manager::shutdown()");
+        rtcout.println(rtcout.TRACE, "Manager.shutdown()");
         
         shutdownComponents();
         shutdownNaming();
@@ -160,6 +161,8 @@ public class Manager {
                 m_runner.wait();
                 
             } catch (InterruptedException e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught InterruptedException in Manager.shutdown().");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
             }
         } else {
@@ -168,13 +171,13 @@ public class Manager {
         
         shutdownLogger();
     }
-
+    
     /**
      * <p>Manager終了処理の待ち合わせを行います。</p>
      */
     public void join() {
         
-        rtcout.println(rtcout.TRACE, "Manager::wait()");
+        rtcout.println(rtcout.TRACE, "Manager.join()");
         
         synchronized (Integer.valueOf(m_terminate_waiting)) {
             ++m_terminate_waiting;
@@ -191,6 +194,8 @@ public class Manager {
                 Thread.sleep(0, 100 * 1000);
                 
             } catch (InterruptedException e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught InterruptedException in Manager.join().");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -202,17 +207,15 @@ public class Manager {
 　   * @return ログバッファ
      */ 
     public Logbuf getLogbuf() {
-        
         return m_Logbuf;
     }
-    
+
     /**
      * <p>マネージャのコンフィギュレーションを取得します。</p>
      *
 　   * @return マネージャコンフィギュレーション
      */ 
     public Properties getConfig() {
-        
         return m_config;
     }
     
@@ -224,9 +227,9 @@ public class Manager {
      * @param initProc コールバックインタフェース
      */
     public void setModuleInitProc(ModuleInitProc initProc) {
-
         m_initProc = initProc;
     }
+    
     /**
      * <p>Managerをアクティブ化します。
      * 初期化後にrunManager()呼び出しに先立ってこのメソッドを呼び出す必要があります。</p>
@@ -243,7 +246,7 @@ public class Manager {
      */
     public boolean activateManager() {
         
-        rtcout.println(rtcout.TRACE, "Manager::activateManager()");
+        rtcout.println(rtcout.TRACE, "Manager.activateManager()");
         
         try {
             this.getPOAManager().activate();
@@ -253,17 +256,18 @@ public class Manager {
             }
             
         } catch (Exception e) {
+            rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.activateManager().");
+            rtcout.println(rtcout.NORMAL, e.getMessage());
             return false;
         }
         
         return true;
     }
-    
+
     /**
      * <p>Managerのメインループを実行します。本メソッドは、runManager(false)の呼び出しと同等です。</p>
      */
     public void runManager() {
-        
         this.runManager(false);
     }
     
@@ -280,17 +284,17 @@ public class Manager {
     public void runManager(boolean noBlocking) {
         
         if (noBlocking) {
-            rtcout.println(rtcout.TRACE, "Manager::runManager(): non-blocking mode");
+            rtcout.println(rtcout.TRACE, "Manager.runManager(): non-blocking mode");
             
             m_runner = new OrbRunner(m_pORB);
             m_runner.open("");
             
         } else {
-            rtcout.println(rtcout.TRACE, "Manager::runManager(): blocking mode");
+            rtcout.println(rtcout.TRACE, "Manager.runManager(): blocking mode");
             
             m_pORB.run();
 
-            rtcout.println(rtcout.TRACE, "Manager::runManager(): ORB was terminated");
+            rtcout.println(rtcout.TRACE, "Manager.runManager(): ORB was terminated");
             
             join();
         }
@@ -304,12 +308,14 @@ public class Manager {
      */
     public void load(final String moduleFileName, final String initFunc) {
         
-        rtcout.println(rtcout.TRACE, "Manager::load()");
+        rtcout.println(rtcout.TRACE, "Manager.load()");
         
         try {
             m_module.load(moduleFileName, initFunc);
             
         } catch (Exception e) {
+            rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.load().");
+            rtcout.println(rtcout.NORMAL, e.getMessage());
             e.printStackTrace();
         }
     }
@@ -321,7 +327,7 @@ public class Manager {
      */ 
     public void unload(final String moduleFileName) {
         
-        rtcout.println(rtcout.TRACE, "Manager::unload()");
+        rtcout.println(rtcout.TRACE, "Manager.unload()");
         
         m_module.unload(moduleFileName);
     }
@@ -331,7 +337,7 @@ public class Manager {
      */ 
     public void unloadAll() {
         
-        rtcout.println(rtcout.TRACE, "Manager::unloadAll()");
+        rtcout.println(rtcout.TRACE, "Manager.unloadAll()");
         
         m_module.unloadAll();
     }
@@ -343,7 +349,7 @@ public class Manager {
      */
     public Vector<String> getLoadedModules() {
         
-        rtcout.println(rtcout.TRACE, "Manager::getLoadedModules()");
+        rtcout.println(rtcout.TRACE, "Manager.getLoadedModules()");
         
         return m_module.getLoadedModules();
     }
@@ -355,7 +361,7 @@ public class Manager {
      */
     public Vector<String> getLoadableModules() {
         
-        rtcout.println(rtcout.TRACE, "Manager::getLoadableModules()");
+        rtcout.println(rtcout.TRACE, "Manager.getLoadableModules()");
         
         return m_module.getLoadableModules();
     }
@@ -372,7 +378,7 @@ public class Manager {
     public boolean registerFactory(Properties profile, RtcNewFunc new_func,
             RtcDeleteFunc delete_func) {
         
-        rtcout.println(rtcout.TRACE, "Manager::registerFactory("
+        rtcout.println(rtcout.TRACE, "Manager.registerFactory("
                 + profile.getProperty("type_name") + ")");
 
         try {
@@ -381,10 +387,12 @@ public class Manager {
             return true;
             
         } catch (Exception ex) {
+            rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.registerFactory().");
+            rtcout.println(rtcout.NORMAL, ex.getMessage());
             return false;
         }
     }
-    
+
    /**
     * <p>ExecutionContextファクトリを登録します。</p>
     *
@@ -393,7 +401,7 @@ public class Manager {
     */
     public boolean registerECFactory(final String name) {
         
-        rtcout.println(rtcout.TRACE, "Manager::registerECFactory(" + name + ")");
+        rtcout.println(rtcout.TRACE, "Manager.registerECFactory(" + name + ")");
         
         try {
             ECFactoryBase factory = new ECFactoryJava(name);
@@ -401,6 +409,8 @@ public class Manager {
             return true;
             
         } catch (Exception ex) {
+            rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.registerECFactory().");
+            rtcout.println(rtcout.NORMAL, ex.getMessage());
             return false;
         }
     }
@@ -412,7 +422,7 @@ public class Manager {
      */
     public Vector<String> getModulesFactories() {
         
-        rtcout.println(rtcout.TRACE, "Manager::getModulesFactories()");
+        rtcout.println(rtcout.TRACE, "Manager.getModulesFactories()");
 
         Vector<String> factoryIds = new Vector<String>();
         for (int i = 0; i < m_factory.m_objects.size(); i++) {
@@ -426,7 +436,6 @@ public class Manager {
      * <p>RTコンポーネントファクトリをクリアする。</p>
      */
     public void clearModulesFactories() {
-
         m_factory = new ObjectManager<String, FactoryBase>();
     }
 
@@ -434,7 +443,6 @@ public class Manager {
      * <p>RTコンポーネントマネージャをクリアする。</p>
      */
     public void clearModules() {
-
         m_compManager = new ObjectManager<String, RTObject_impl>();
     }
     
@@ -446,7 +454,7 @@ public class Manager {
      */
     public RTObject_impl createComponent(final String moduleName) {
         
-        rtcout.println(rtcout.TRACE, "Manager::createComponent(" + moduleName + ")");
+        rtcout.println(rtcout.TRACE, "Manager.createComponent(" + moduleName + ")");
 
         // Create Component
         RTObject_impl comp = null;
@@ -463,12 +471,18 @@ public class Manager {
                     m_objManager.activate(comp);
                     
                 } catch (ServantAlreadyActive e) {
+                    rtcout.println(rtcout.NORMAL, "Exception: Caught ServantAlreadyActive Exception in Manager.createComponent().");
+                    rtcout.println(rtcout.NORMAL, e.getMessage());
                     e.printStackTrace();
                     
                 } catch (WrongPolicy e) {
+                    rtcout.println(rtcout.NORMAL, "Exception: Caught WrongPolicy Exception in Manager.createComponent().");
+                    rtcout.println(rtcout.NORMAL, e.getMessage());
                     e.printStackTrace();
                     
                 } catch (ObjectNotActive e) {
+                    rtcout.println(rtcout.NORMAL, "Exception: Caught ObjectNotActive Exception in Manager.createComponent().");
+                    rtcout.println(rtcout.NORMAL, e.getMessage());
                     e.printStackTrace();
                 }
                 
@@ -476,18 +490,30 @@ public class Manager {
             }
         }
         
+        // Load configuration file specified in "rtc.conf"
+        //
+        // rtc.conf:
+        // [category].[type_name].config_file = file_name
+        // [category].[instance_name].config_file = file_name
         configureComponent(comp);
+        //------------------------------------------------------------
+        // Component initialization
+        if( comp.initialize() != ReturnCode_t.RTC_OK ) {
+            rtcout.println(rtcout.TRACE, "RTC initialization failed: " + moduleName);
+            comp.exit();
+            return null;
+        }
+        rtcout.println(rtcout.TRACE, "RTC initialization succeeded: " + moduleName);
         
         // Component initialization
         bindExecutionContext(comp);
-        comp.initialize();
 
         // Bind component to naming service
         registerComponent(comp);
         
         return comp;
     }
-
+    
     /**
      * <p>指定したRTコンポーネントを登録解除します。</p>
      * 
@@ -495,7 +521,7 @@ public class Manager {
      */
     public void cleanupComponent(RTObject_impl comp) {
         
-        rtcout.println(rtcout.TRACE, "Manager::shutdownComponents()");
+        rtcout.println(rtcout.TRACE, "Manager.shutdownComponents()");
         
         unregisterComponent(comp);
     }
@@ -508,7 +534,7 @@ public class Manager {
      */
     public boolean registerComponent(RTObject_impl comp) {
         
-        rtcout.println(rtcout.TRACE, "Manager::registerComponent("
+        rtcout.println(rtcout.TRACE, "Manager.registerComponent("
                 + comp.getInstanceName() + ")");
         
         // NamingManagerのみで代用可能
@@ -531,7 +557,7 @@ public class Manager {
      */
     public boolean unregisterComponent(RTObject_impl comp) {
         
-        rtcout.println(rtcout.TRACE, "Manager::unregisterComponent("
+        rtcout.println(rtcout.TRACE, "Manager.unregisterComponent("
                 + comp.getInstanceName() + ")");
         
         // NamingManager のみで代用可能
@@ -555,7 +581,7 @@ public class Manager {
      */
     public boolean bindExecutionContext(RTObject_impl comp) {
         
-        rtcout.println(rtcout.TRACE, "Manager::bindExecutionContext()");
+        rtcout.println(rtcout.TRACE, "Manager.bindExecutionContext()");
         rtcout.println(rtcout.TRACE, "ExecutionContext type: "
                 + m_config.getProperty("exec_cxt.periodic.type"));
 
@@ -571,12 +597,18 @@ public class Manager {
                 m_objManager.activate(exec_cxt);
                 
             } catch (ServantAlreadyActive e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught ServantAlreadyActive Exception in Manager.bindExecutionContext() DataFlowParticipant.");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
                 
             } catch (WrongPolicy e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught WrongPolicy Exception in Manager.bindExecutionContext() DataFlowParticipant.");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
                 
             } catch (ObjectNotActive e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught ObjectNotActive Exception in Manager.bindExecutionContext() DataFlowParticipant.");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
             }
             
@@ -591,17 +623,24 @@ public class Manager {
                 m_objManager.activate(exec_cxt);
                 
             } catch (ServantAlreadyActive e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught ServantAlreadyActive Exception in Manager.bindExecutionContext() FsmParticipant.");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
                 
             } catch (WrongPolicy e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught WrongPolicy Exception in Manager.bindExecutionContext() FsmParticipant.");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
                 
             } catch (ObjectNotActive e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught ObjectNotActive Exception in Manager.bindExecutionContext() FsmParticipant.");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
             }
         }
 
         exec_cxt.add(rtobj);
+        exec_cxt.start();
         m_ecs.add(exec_cxt);
         
         return true;
@@ -615,7 +654,7 @@ public class Manager {
      */
     public void deleteComponent(final String instanceName) {
         
-        rtcout.println(rtcout.TRACE, "Manager::deleteComponent(" + instanceName + ")");
+        rtcout.println(rtcout.TRACE, "Manager.deleteComponent(" + instanceName + ")");
     }
     
     /**
@@ -627,8 +666,7 @@ public class Manager {
      */
     public RTObject_impl getComponent(final String instanceName) {
         
-        rtcout.println(rtcout.TRACE, "Manager::getComponent(" + instanceName + ")");
-        
+        rtcout.println(rtcout.TRACE, "Manager.getComponent(" + instanceName + ")");
         return null;
     }
     
@@ -639,7 +677,7 @@ public class Manager {
      */
     public Vector<RTObject_impl> getComponents() {
         
-        rtcout.println(rtcout.TRACE, "Manager::getComponents()");
+        rtcout.println(rtcout.TRACE, "Manager.getComponents()");
         
         return m_compManager.getObjects();
     }
@@ -651,7 +689,7 @@ public class Manager {
      */
     public ORB getORB() {
         
-        rtcout.println(rtcout.TRACE, "Manager::getORB()");
+        rtcout.println(rtcout.TRACE, "Manager.getORB()");
         
         return m_pORB;
     }
@@ -663,7 +701,7 @@ public class Manager {
      */
     public POA getPOA() {
         
-        rtcout.println(rtcout.TRACE, "Manager::getPOA()");
+        rtcout.println(rtcout.TRACE, "Manager.getPOA()");
         
         return m_pPOA;
     }
@@ -675,7 +713,7 @@ public class Manager {
      */
     public POAManager getPOAManager() {
         
-        rtcout.println(rtcout.TRACE, "Manager::getPOAManager()");
+        rtcout.println(rtcout.TRACE, "Manager.getPOAManager()");
         
         return m_pPOAManager;
     }
@@ -719,7 +757,7 @@ public class Manager {
      */
     protected void shutdownManager() {
         
-        rtcout.println(rtcout.TRACE, "Manager::shutdownManager()");
+        rtcout.println(rtcout.TRACE, "Manager.shutdownManager()");
     }
     
     /**
@@ -767,7 +805,7 @@ public class Manager {
                     m_config.getProperty("logger.stream_lock"), "enable", "disable", false));
 
             rtcout.println(rtcout.INFO, m_config.getProperty("openrtm.version"));
-            rtcout.println(rtcout.INFO, "Copyright (C) 2003-2007");
+            rtcout.println(rtcout.INFO, "Copyright (C) 2003-2008");
             rtcout.println(rtcout.INFO, "  Noriaki Ando");
             rtcout.println(rtcout.INFO, "  Task-intelligence Research Group,");
             rtcout.println(rtcout.INFO, "  Intelligent Systems Research Institute, AIST");
@@ -782,8 +820,7 @@ public class Manager {
      * <p>System Loggerの終了処理を行います。</p>
      */
     protected void shutdownLogger() {
-        
-        rtcout.println(rtcout.TRACE, "Manager::shutdownLogger()");
+        rtcout.println(rtcout.TRACE, "Manager.shutdownLogger()");
     }
     
     /**
@@ -793,7 +830,7 @@ public class Manager {
      */
     protected boolean initORB() {
 
-        rtcout.println(rtcout.TRACE, "Manager::initORB()");
+        rtcout.println(rtcout.TRACE, "Manager.initORB()");
         
         // Initialize ORB
         try {
@@ -815,7 +852,8 @@ public class Manager {
             m_objManager = new CorbaObjectManager(m_pORB, m_pPOA);
             
         } catch (Exception ex) {
-            rtcout.println(rtcout.ERROR, "Exception: Caught unknown exception in initORB().");
+            rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.initORB().");
+            rtcout.println(rtcout.NORMAL, ex.getMessage());
             return false;
         }
         
@@ -850,13 +888,13 @@ public class Manager {
         
         return opt;
     }
-    
+
     /**
      * <p>ORBの終了処理を行います。</p>
      */
     protected void shutdownORB() {
         
-        rtcout.println(rtcout.TRACE, "Manager::shutdownORB()");
+        rtcout.println(rtcout.TRACE, "Manager.shutdownORB()");
         
         try {
             while (m_pORB.work_pending()) {
@@ -867,6 +905,8 @@ public class Manager {
                 }
             }
         } catch (Exception e) {
+            rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.shutdownORB().");
+            rtcout.println(rtcout.NORMAL, e.getMessage());
             e.getStackTrace();
         }
         
@@ -903,7 +943,7 @@ public class Manager {
                 m_pORB = null;
                 
             } catch (SystemException ex) {
-                rtcout.println(rtcout.ERROR, "Caught CORBA::SystemException during ORB shutdown");
+                rtcout.println(rtcout.ERROR, "Caught SystemException during ORB shutdown");
                 
             } catch (Exception ex) {
                 rtcout.println(rtcout.ERROR, "Caught unknown exception during ORB shutdown.");
@@ -916,7 +956,7 @@ public class Manager {
      */
     protected boolean initNaming() {
         
-        rtcout.println(rtcout.TRACE, "Manager::initNaming()");
+        rtcout.println(rtcout.TRACE, "Manager.initNaming()");
         
         m_namingManager = new NamingManager(this);
 
@@ -952,7 +992,7 @@ public class Manager {
             
             String intr = new String(m_config.getProperty("naming.update.interval"));
             if (! (intr == null || intr.equals(""))) {
-                tm.convert(Double.valueOf(intr));
+                tm.convert(Double.valueOf(intr).doubleValue());
             }
             
             if (m_timer != null) {
@@ -968,7 +1008,7 @@ public class Manager {
      */
     protected void shutdownNaming() {
         
-        rtcout.println(rtcout.TRACE, "Manager::shutdownNaming()");
+        rtcout.println(rtcout.TRACE, "Manager.shutdownNaming()");
       
         m_namingManager.unbindAll();
     }
@@ -978,7 +1018,7 @@ public class Manager {
      */
     protected void shutdownComponents() {
         
-        rtcout.println(rtcout.TRACE, "Manager::shutdownComponents()");
+        rtcout.println(rtcout.TRACE, "Manager.shutdownComponents()");
         
         Vector<RTObject_impl> comps = m_namingManager.getObjects();
         for (int i = 0; i < comps.size(); ++i) {
@@ -999,6 +1039,8 @@ public class Manager {
                 m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_ecs.elementAt(i)));
                 
             } catch (Exception e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.shutdownComponents().");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -1031,9 +1073,13 @@ public class Manager {
                 name_prop.load(conff);
                 
             } catch (FileNotFoundException e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught FileNotFoundException in Manager.configureComponent() name_conf.");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
                 
             } catch (Exception e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught unknown in Manager.configureComponent() name_conf.");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -1047,9 +1093,13 @@ public class Manager {
                 type_prop.load(conff);
                 
             } catch (FileNotFoundException e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught FileNotFoundException in Manager.configureComponent() type_conf.");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
                 
             } catch (Exception e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.configureComponent() type_conf.");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -1092,15 +1142,14 @@ public class Manager {
      * <p>Timerを初期化します。</p>
      */
     protected boolean initTimer() {
-        
         return true;
     }
     
     /**
      * <p>プロパティファイルを読み込んで、指定されたPropertiesオブジェクトに設定します。</p>
      * 
-     * @param 設定対象のPropertiesオブジェクト
-     * @param プロパティファイル名
+     * @param properties 設定対象のPropertiesオブジェクト
+     * @param fileName プロパティファイル名
      * @return 正常に設定できた場合はtrueを、さもなくばfalseを返します。
      */
     protected boolean mergeProperty(Properties properties, final String fileName) {
@@ -1121,9 +1170,13 @@ public class Manager {
                 return true;
 
             } catch (FileNotFoundException e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught FileNotFoundException in Manager.mergeProperty().");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
 
             } catch (Exception e) {
+                rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.mergeProperty().");
+                rtcout.println(rtcout.NORMAL, e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -1136,7 +1189,7 @@ public class Manager {
      * 
      * @param namingFormat 書式指定
      * @param properties 出力対象となるPropertiesオブジェクト
-     * @param Propertiesオブジェクトの内容を文字列出力したもの
+     * @return Propertiesオブジェクトの内容を文字列出力したもの
      */
     protected String formatString(final String namingFormat, Properties properties) {
         
@@ -1172,7 +1225,7 @@ public class Manager {
                         str.append(properties.getProperty("category"));
                     }
                     else if (c == 'h') {
-                        str.append(m_config.getProperty("os.hostname"));
+                        str.append(m_config.getProperty("manager.os.hostname"));
                     }
                     else if (c == 'M') {
                         str.append(m_config.getProperty("manager.name"));
@@ -1197,22 +1250,18 @@ public class Manager {
      * <p>唯一のManagerインスタンスです。</p>
      */
     protected static Manager manager;
-    
     /**
      * <p>Manager用ミューテックス変数です。</p>
      */
     protected static String manager_mutex = new String();
-
     /**
      * <p>ORB</p>
      */
     protected ORB m_pORB;
-    
     /**
      * <p>POA</p>
      */
     protected POA m_pPOA;
-    
     /**
      * <p>POAManager</p>
      */
@@ -1222,47 +1271,39 @@ public class Manager {
      * <p>ユーザコンポーネント初期化プロシジャオブジェクト</p>
      */
     protected ModuleInitProc m_initProc;
-
     /**
      * <p>Managerコンフィギュレーション</p>
      */
     protected Properties m_config = new Properties();
-
     /**
      * <p>Module Manager</p>
      */
     protected ModuleManager m_module;
-    
     /**
      * <p>Naming Manager</p>
      */
     protected NamingManager m_namingManager;
-
     /**
      * <p>CORBA Object Manager</p>
      */
     protected CorbaObjectManager m_objManager;
-
     /**
      * <p>Timer</p>
      */
     protected Timer m_timer;
-
     /**
      * <p>ロガーバッファ</p>
      */
     protected Logbuf m_Logbuf;
-    
     /**
      * <p>ロガー仲介バッファ</p>
      */
     protected MedLogbuf m_MedLogbuf;
-    
     /**
      * <p>ロガーストリーム</p>
      */
     protected LogStream rtcout;
-
+    
     /**
      * <p>Object検索用ヘルパークラスです。</p>
      */
@@ -1287,7 +1328,7 @@ public class Manager {
      * <p>Component Manager</p>
      */
     protected ObjectManager<String, RTObject_impl> m_compManager = new ObjectManager<String, RTObject_impl>();
-
+    
     /**
      * <p>Factory検索用ヘルパークラスです。</p>
      */
@@ -1337,12 +1378,10 @@ public class Manager {
      * <p>ExecutionContext Factory</p>
      */
     protected ObjectManager<String, java.lang.Object> m_ecfactory = new ObjectManager<String, java.lang.Object>();
-    
     /**
      * <p>ExecutionContext</p>
      */
     protected Vector<ExecutionContextBase> m_ecs = new Vector<ExecutionContextBase>();
-
     /**
      * <p>ORB実行用ヘルパークラスです。</p>
      */
@@ -1376,12 +1415,11 @@ public class Manager {
 
         private ORB m_pORB;
     }
-
     /**
      * <p>ORB Runner</p>
      */
     protected OrbRunner m_runner;
-
+    
     /**
      * <p>終了処理用ヘルパークラスです。</p>
      */
@@ -1418,7 +1456,6 @@ public class Manager {
      * <p>Terminator</p>
      */
     protected Terminator m_terminator;
-
     /**
      * <p>Terminator用カウンタ</p>
      */

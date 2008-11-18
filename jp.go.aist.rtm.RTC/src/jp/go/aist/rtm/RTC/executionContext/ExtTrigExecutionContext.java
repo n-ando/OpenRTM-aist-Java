@@ -16,24 +16,22 @@ public class ExtTrigExecutionContext
     public ExtTrigExecutionContext() {
         super();
     }
-
+    
     /**
      * <p>ExecutionContextの処理を１周期分進めます。</p>
      */
     public void tick() {
-        
         synchronized (m_worker) {
             m_worker._called = true;
             m_worker.notifyAll();
         }
     }
-    
+
     /**
      * <p>ExecutionContextにattachされている各Componentの処理を呼び出します。
      * 全Componentの処理を呼び出した後、次のイベントが発生するまで休止します。</p>
      */
     public int svc() {
-
         do {
             TimeValue tv = new TimeValue(0, m_usec); // (s, us)
 
@@ -68,28 +66,24 @@ public class ExtTrigExecutionContext
         
         return 0;
     }
-    
+
     /**
      * <p>ExecutionContextを起動します。</p>
      */
     public void run() {
-        
         this.svc();
     }
 
     private class Worker {
         
         public Worker() {
-            
             this._called = false;
         }
 
         public boolean _called;
     }
     
-//  // A condition variable for external triggered worker
     private Worker m_worker = new Worker();
-//    Worker m_worker;
 
     /**
      * <p>このExecutionContextを生成するFactoryクラスを
@@ -107,7 +101,6 @@ public class ExtTrigExecutionContext
      * @param comp 破棄対象ExecutionContextインスタンス
      */
     public void ECDeleteFunc(ExecutionContextBase comp) {
-        
         comp = null;
     }
 
@@ -117,7 +110,6 @@ public class ExtTrigExecutionContext
      * @return ExecutionContextインスタンス
      */
     public ExecutionContextBase ECNewFunc() {
-        
         return this;
     }
     

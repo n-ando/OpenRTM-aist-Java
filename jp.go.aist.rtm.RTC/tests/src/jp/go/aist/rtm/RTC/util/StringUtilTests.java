@@ -31,12 +31,6 @@ public class StringUtilTests extends TestCase {
             String str = escapedStrs[i];
             assertTrue(StringUtil.isEscaped(str, str.length() - 1));
         }
-        
-//        string str;
-//        ifstream ifs("isEscaped.data");
-//        getline(ifs, str);
-//        ifs.close();
-//        CPPUNIT_ASSERT(isEscaped(str, str.size() - 1));
     }
 
     /**
@@ -64,61 +58,6 @@ public class StringUtilTests extends TestCase {
             String expected = pairs[i][1];
             assertEquals(expected, StringUtil.escape(org));
         }
-        
-//        string orig, result, expectation;
-//        //    ifstream ifs("escape.data");
-//        //    getline(ifs, orig);
-//        //    getline(ifs, expectation);
-//        //    ifs.close();
-//        
-//        orig = '\t';
-//        expectation = "\\t";
-//        result = escape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = '\n';
-//        expectation = "\\n";
-//        result = escape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = '\f';
-//        expectation = "\\f";
-//        result = escape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = '\r';
-//        expectation = "\\r";
-//        result = escape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = '\"';
-//        expectation = "\"";
-//        result = escape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = '\'';
-//        expectation = "\'";
-//        result = escape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = '\c';
-//        expectation = '\c';
-//        result = escape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = "\\\thello\t";
-//        expectation = "\\\\thello\\t";
-//        result = escape(orig);
-//        //    cout << "original:" << orig << " 
-//        //    result:" << result << " expectation:" << expectation << endl;
-//        CPPUNIT_ASSERT(result == expectation);
     }
 
     /**
@@ -136,7 +75,7 @@ public class StringUtilTests extends TestCase {
                 {"\\r", "\r"},
                 {"\\\"", "\""}, // ダブルクォートもアンエスケープされる
                 {"\\'", "'"}, // シングルクォートもアンエスケープされる
-                {"\\c", "c"},
+                {"\\c", "c"}, 
                 {"\\\\", "\\"}, // \もアンエスケープされる
                 {"\\tHello\\t", "\tHello\t"}
         };
@@ -146,66 +85,5 @@ public class StringUtilTests extends TestCase {
             String expected = pairs[i][1];
             assertEquals(expected, StringUtil.unescape(org));
         }
-        
-//        string orig, result, expectation;
-//        //    ifstream ifs("unescape.data");
-//        //    getline(ifs, orig);
-//        //    getline(ifs, expectation);
-//        //    ifs.close();
-//        orig = "\\t";
-//        expectation = '\t';
-//        result = unescape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = "\\n";
-//        expectation = '\n';
-//        result = unescape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = "\\f";
-//        expectation = '\f';
-//        result = unescape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = "\\r";
-//        expectation = '\r';
-//        result = unescape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = "\"";
-//        expectation = '\"';
-//        result = unescape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = "\'";
-//        expectation = '\'';
-//        result = unescape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = "\\c";
-//        expectation = '\c';
-//        result = unescape(orig);
-//        //    cout << "original:" << orig << " result:" << result << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = "\\\\'hello";
-//        expectation = "\\\'hello";
-//        result = unescape(orig);
-//        //    cout << "original:" << orig <<
-//        // " result:" << result << " expectation:" << expectation << endl;
-//        CPPUNIT_ASSERT(result == expectation);
-//        
-//        orig = "\\t hello";
-//        expectation = "\t hello";
-//        result = unescape(orig);
-//        //    cout << "original:" << orig <<
-//        // " result:" << result << " expectation:" << expectation << endl;
-//        CPPUNIT_ASSERT(result == expectation);
     }
 }

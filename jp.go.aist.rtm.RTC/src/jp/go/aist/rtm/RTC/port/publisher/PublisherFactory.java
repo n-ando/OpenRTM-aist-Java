@@ -38,15 +38,15 @@ public class PublisherFactory {
         
         return null;
     }
-    
+
     /**
      * <p>指定されたPublisherを破棄します。</p>
      * 
      * @param publisher 破棄対象のPublisherオブジェクト
      */
     public void destroy(PublisherBase publisher) {
-        
         publisher.release();
         publisher.destruct();
     }
+
 }

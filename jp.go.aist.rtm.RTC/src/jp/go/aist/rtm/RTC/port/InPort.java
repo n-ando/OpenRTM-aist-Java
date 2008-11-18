@@ -4,7 +4,6 @@ import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
 
-
 /**
  * <p>入力ポートのためのベース実装クラスです。
  * 外部から送信されてきたデータは順次、コンストラクタで指定されたバッファに格納されます。
@@ -59,7 +58,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param value このポートにバインドされるDataType型の変数
      */
     public InPort(final String name, DataRef<DataType> value) {
-        
         this(new RingBuffer<DataType>(64), name, value);
     }
     
@@ -72,7 +70,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param value このポートにバインドされるDataType型の変数
      */
     public InPort(BufferBase<DataType> superClass, final String name, DataRef<DataType> value) {
-        
         this(superClass, name, value, false, false, 0, 0);
     }
     
@@ -82,7 +79,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @return ポート名称
      */
     public String name() {
-        
         return this.m_name;
     }
     
@@ -223,17 +219,16 @@ public class InPort<DataType> implements BufferBase<DataType> {
         if (this.m_OnReadConvert == null) {
             this.m_value.v = get();
             return this.m_value.v;
-            
-        } else {
-            this.m_value.v = this.m_OnReadConvert.run(get());
-            return this.m_value.v;
         }
+        this.m_value.v = this.m_OnReadConvert.run(get());
+        return this.m_value.v;
     }
     
     /**
      * <p>当該ポートに割り当てられているバッファを、指定されたデータで埋め尽くします。</p>
      */
     public void init(DataType value) {
+        // 何もしない
     }
     
     /**
@@ -259,7 +254,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param onWrite OnWrite&lt;DataType&gt;インタフェースを持つオブジェクト
      */
     public void setOnWrite(OnWrite<DataType> onWrite) {
-        
         this.m_OnWrite = onWrite;
     }
     
@@ -271,7 +265,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param onWriteConvert OnWriteConvert&lt;DataType&gt;インタフェースを持つオブジェクト
      */
     public void setOnWriteConvert(OnWriteConvert<DataType> onWriteConvert) {
-        
         this.m_OnWriteConvert = onWriteConvert;
     }
     
@@ -282,10 +275,9 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param onRead OnRead&lt;DataType&gt;インタフェースを持つオブジェクト
      */
     public void setOnRead(OnRead<DataType> onRead) {
-        
         this.m_OnRead = onRead;
     }
-
+    
     /**
      * <p>ポートが持つバッファからデータが読み出される際に呼び出される
      * コールバックインタフェースを設定します。<br />
@@ -294,7 +286,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param onReadConvert OnReadConvert&lt;DataType&gt;インタフェースを持つオブジェクト
      */
     public void setOnReadConvert(OnReadConvert<DataType> onReadConvert) {
-        
         this.m_OnReadConvert = onReadConvert;
     }
     
@@ -305,7 +296,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param onOverflow OnOverflow&lt;DataType&gt;インタフェースを持つオブジェクト
      */
     public void setOnOverflow(OnOverflow<DataType> onOverflow) {
-        
         this.m_OnOverflow = onOverflow;
     }
     
@@ -316,7 +306,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param onUnderflow OnUnderflow&lt;DataType&gt;インタフェースを持つオブジェクト
      */
     public void setOnUnderflow(OnUnderflow<DataType> onUnderflow) {
-        
         this.m_OnUnderflow = onUnderflow;
     }
     
@@ -326,7 +315,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @return バッファ長
      */
     public int length() {
-
         return this.m_superClass.length();
     }
 
@@ -336,7 +324,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param valueRef 読み取ったデータを受け取るためのDataRefオブジェクト
      */
     public boolean read(DataRef<DataType> valueRef) {
-        
         return this.m_superClass.read(valueRef);
     }
 
@@ -346,7 +333,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @return バッファフルの場合はtrueを、さもなくばfalseを返します。
      */
     public boolean isFull() {
-
         return this.m_superClass.isFull();
     }
 
@@ -356,7 +342,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @return バッファが空の場合はtrueを、さもなくばfalseを返します。
      */
     public boolean isEmpty() {
-
         return this.m_superClass.isEmpty();
     }
 
@@ -366,7 +351,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param data 書き込むデータ
      */
     public void put(final DataType data) {
-        
         this.m_superClass.put(data);
     }
 
@@ -376,7 +360,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @return 読み取ったデータ
      */
     public DataType get() {
-        
         return this.m_superClass.get();
     }
     
@@ -398,4 +381,5 @@ public class InPort<DataType> implements BufferBase<DataType> {
     public boolean isNew() {
         return m_superClass.isNew();
     }
+    
 }

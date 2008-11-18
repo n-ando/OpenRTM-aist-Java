@@ -20,10 +20,10 @@ public class SampleTests{
 		//$JUnit-BEGIN$
         suite.addTestSuite(ConsoleInTest.class);
         suite.addTestSuite(ConsoleOutTest.class);
-        suite.addTestSuite(SeqInTest.class);
-        suite.addTestSuite(SeqOutTest.class);
+//        suite.addTestSuite(SeqInTest.class);
+//        suite.addTestSuite(SeqOutTest.class);
         suite.addTestSuite(ConfigSampleTest.class);
-        suite.addTestSuite(ExTrigTest.class);
+//        suite.addTestSuite(ExTrigTest.class);
         suite.addTestSuite(MyServiceConsumerTest.class);
         suite.addTestSuite(MyServiceProviderTest.class);
 //$JUnit-END$

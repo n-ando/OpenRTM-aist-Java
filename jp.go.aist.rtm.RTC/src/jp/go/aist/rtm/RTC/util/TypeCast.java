@@ -160,9 +160,23 @@ public class TypeCast<T> {
         }
         else if (klass.equals(TimedUShortSeq.class)) {
             return klass.cast(TimedUShortSeqHelper.extract(data));
+
+        } else {
+            String className = klass.getCanonicalName();
+            if (className == null) {
+                throw new IllegalStateException("Cannot get class name.");
+            }
+            try {
+                Class helper = Class.forName(className + "Helper", true, klass.getClassLoader()); 
+                Method method = helper.getMethod("extract", org.omg.CORBA.Any.class);
+                Object targetObject = method.invoke(
+                        null, // invoke static method.
+                        data);
+                return klass.cast(targetObject);
+            } catch ( Exception ex) {
+                throw new ClassCastException("Unknown data type.");
+            }
         }
-        
-        throw new ClassCastException("Unknown data type.");
     }
     
     public T castType(org.omg.CORBA.Object obj)
@@ -174,7 +188,7 @@ public class TypeCast<T> {
             throw new IllegalStateException("Cannot get class name.");
         }
         
-        Class helper = Class.forName(className + "Helper");
+        Class helper = Class.forName(className + "Helper", true, klass.getClassLoader()); 
         Method method = helper.getMethod("narrow", org.omg.CORBA.Object.class);
         
         java.lang.Object narrowedObj = method.invoke(
@@ -354,9 +368,25 @@ public class TypeCast<T> {
             timedData.tm = fillTime(timedData.tm);
             TimedUShortSeqHelper.insert(any, timedData);
             return any;
+        } else {
+            String className = klass.getCanonicalName();
+            if (className == null) {
+                throw new IllegalStateException("Cannot get class name.");
+            }
+            try {
+                Class targetClass = Class.forName(className, true, klass.getClassLoader()); 
+                Object targetObject = targetClass.cast(data);
+                //
+                Class helper = Class.forName(className + "Helper", true, klass.getClassLoader()); 
+                Method method = helper.getMethod("insert", org.omg.CORBA.Any.class, targetClass);
+                method.invoke(
+                        null, // invoke static method.
+                        any, targetObject);
+                return any;
+            } catch ( Exception ex) {
+                throw new ClassCastException("Unknown data type.");
+            }
         }
-        
-        throw new ClassCastException("Unknown data type.");
     }
 
     /**

@@ -112,23 +112,24 @@ public class MedLogbuf{
    /**
     * <p>ログに出力します。</p>
     * 
-    * @return ログ内容
+    * @param string ログ内容
     */
    public void log(String string) {
        SimpleDateFormat formatter = new SimpleDateFormat(m_DateFmt);
        formatter.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
        m_logbuf.log(formatter.format(new Date()) + " " + m_Suffix + " " + string);
    }
-    /**
-     * <p>ログ出力先</p>
-     */
-    private Logbuf m_logbuf;
-    /**
-     * <p>ログに付加する日付形式の書式</p>
-     */
-    private String m_DateFmt = "yyyy/MM/dd HH:mm:ss";
-    /**
-     * <p>日付の後に付加するヘッダ</p>
-     */
-    private String m_Suffix = " ";
+   /**
+    * <p>ログ出力先</p>
+    */
+   private Logbuf m_logbuf;
+   /**
+    * <p>ログに付加する日付形式の書式</p>
+    */
+   private String m_DateFmt = "yyyy/MM/dd HH:mm:ss";
+   /**
+    * <p>日付の後に付加するヘッダ</p>
+    */
+   private String m_Suffix = " ";
+
 }

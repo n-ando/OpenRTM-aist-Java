@@ -70,6 +70,7 @@ public class DefaultNumberingPolicy implements NumberingPolicy {
         }
         throw new Exception("ObjectNotFound");
     }
+
     private int m_num;
     private Vector m_objects = new Vector();
 }

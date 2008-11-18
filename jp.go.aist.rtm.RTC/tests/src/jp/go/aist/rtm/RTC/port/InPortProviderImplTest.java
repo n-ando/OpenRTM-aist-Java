@@ -57,18 +57,15 @@ public class InPortProviderImplTest extends TestCase {
         provider.publishInterfaceProfile(prop);
 
         assertEquals("DATA_TYPE",
-                NVUtil.find(prop, "dataport.data_type").extract_string());
+                NVUtil.find(prop, "dataport.data_type").extract_wstring());
         assertEquals("INTERFACE_TYPE",
-                NVUtil.find(prop, "dataport.interface_type").extract_string());
+                NVUtil.find(prop, "dataport.interface_type").extract_wstring());
         assertEquals("DATA_FLOW_TYPE",
-                NVUtil.find(prop, "dataport.dataflow_type").extract_string());
+                NVUtil.find(prop, "dataport.dataflow_type").extract_wstring());
         assertEquals("SUBSCRIPTION_TYPE",
-                NVUtil.find(prop, "dataport.subscription_type").extract_string());
+                NVUtil.find(prop, "dataport.subscription_type").extract_wstring());
     }
 
-    /*
-     * 'jp.go.aist.rtm.RTC.InPortProviderImpl.publishInterface(NVListHolder)' のためのテスト・メソッド
-     */
     /**
      * <p>publishInterface()メソッドのテストです。</p>
      * <p>次の点をテストします。

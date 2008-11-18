@@ -21,6 +21,7 @@ import _SDOPackage.NVListHolder;
  */
 public class InPortCorbaProvider<DataType>
     extends InPortAnyPOA implements InPortProvider {
+
     /**
      * <p>コンストラクタです。</p>
      * 
@@ -98,7 +99,6 @@ public class InPortCorbaProvider<DataType>
      * @param data 書き込むデータ
      */
     public void put(final Any data) {
-        
         this.m_buffer.write(TYPE_CAST.castType(data));
     }
     
@@ -108,14 +108,11 @@ public class InPortCorbaProvider<DataType>
      * @param properties InterfaceProfile情報を受け取るホルダオブジェクト
      */
     public void publishInterfaceProfile(NVListHolder properties) {
-        
         this.m_inPortProvider.publishInterfaceProfile(properties);
     }
     
     private BufferBase<DataType> m_buffer;
-
     private InPortAny m_objref;
-
     private Class<DataType> DATA_TYPE_CLASS;
     private TypeCast<DataType> TYPE_CAST;
     private InPortProviderImpl m_inPortProvider = new InPortProviderImpl();

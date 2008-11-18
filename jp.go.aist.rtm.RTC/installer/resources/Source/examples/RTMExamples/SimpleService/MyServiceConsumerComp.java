@@ -74,7 +74,7 @@ public class MyServiceConsumerComp implements ModuleInitProc {
 
         // Activate manager and register to naming service
         manager.activateManager();
-
+        
         // run the manager in blocking mode
         // runManager(false) is the default.
         manager.runManager();

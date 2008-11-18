@@ -122,7 +122,7 @@ public class Properties {
 			}
 		}
 	}
-	
+
 	/**
 	 * <p>指定されたPropertiesオブジェクトの内容を、当該Propertiesオブジェクトに設定します。</p>
      * 
@@ -161,7 +161,6 @@ public class Properties {
 	}
 	
 	protected void finalize() throws Throwable {
-		
 		try {
 			destruct();
             
@@ -176,34 +175,31 @@ public class Properties {
      * @return キー
      */
     public String getName() {
-        
         return this.name;
     }
-    
+
     /**
      * <p>当該Propertiesオブジェクトの子ノード群を取得します。</p>
      * 
      * @return 子ノードPropertiesオブジェクトリスト
      */
     public Vector<Properties> getLeaf() {
-        
         return this.leaf;
     }
-    
+
     /**
      * <p>当該Propertiesオブジェクトの親ノードを取得します。</p>
      * 
      * @return 親ノードPropertiesオブジェクト
      */
     public Properties getRoot() {
-        
         return this.root;
     }
     
     /**
      * <p>指定されたキーに対応する値を取得します。</p>
      * 
-     * @param キー
+     * @param key キー
      * @return 指定されたキーに対応する値を返します。<br />
      * 指定されたキーが存在するが値が設定されていない場合は、デフォルト値を返します。<br />
      * また、指定されたキーが存在しない場合は空文字列を返します。
@@ -219,6 +215,7 @@ public class Properties {
         
         return this.EMPTY;
     }
+    
     /**
      * 指定されたキーに対応する値を取得します。ただし、指定されたキーが存在しない場合や、
      * キーに対応する値が空文字列である場合は、指定された代替値が取得されます。
@@ -333,7 +330,6 @@ public class Properties {
      * @param out 出力先ストリーム
      */
     public void list(OutputStream out) {
-        
         _store(out, "", this);
     }
     
@@ -379,7 +375,7 @@ public class Properties {
             pline = "";
         }
     }
-
+    
     /**
      * <p>当該Propertiesオブジェクトの内容を、指定されたストリームに出力します。</p>
      * 
@@ -387,7 +383,6 @@ public class Properties {
      * @param header 出力内容の先頭に付加されるヘッダコメント文字列
      */
     public void save(OutputStream out, final String header) {
-        
         store(out, header);
     }
     
@@ -429,7 +424,6 @@ public class Properties {
      * @return プロパティ数
      */
     public final int size() {
-        
         return propertyNames().size();
     }
     
@@ -589,7 +583,6 @@ public class Properties {
     }
     
     protected String indent(int index) {
-        
         StringBuffer spaces = new StringBuffer();
         for (int i = 0; i < index - 1; i++) {
             spaces.append("  ");
@@ -599,7 +592,6 @@ public class Properties {
     }
     
     protected Properties _getNode(Vector<String> keys, int index, final Properties curr) {
-        
         Properties next = curr.hasKey(keys.get(index));
         
         if (next == null) {
@@ -650,7 +642,7 @@ public class Properties {
             }
         }
     }
-
+    
     protected OutputStream _dump(OutputStream out, final Properties curr, int index) {
         
         PrintWriter writer = new PrintWriter(out);

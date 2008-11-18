@@ -1,6 +1,6 @@
-<project name="OpenRTM-aist-0.4.0" default="jar">
-	<property name="version" value="0.4.0"/>
-	<property name="target.name" value="OpenRTM-aist-0.4.0"/>
+<project name="OpenRTM-aist-0.4.1" default="jar">
+	<property name="version" value="0.4.1"/>
+	<property name="target.name" value="OpenRTM-aist-0.4.1"/>
 
 	<property name="source" value="src"/>
 	<property name="source.sdo" value="src/_SDOPackage"/>
@@ -36,7 +36,7 @@
 	<property name="idl.BasicDataType" value="${idl.path}/BasicDataType.idl" />
 	<property name="idl.test.CorbaConsumer" value="${idl.path.tests}/CorbaConsumer/Hello.idl" />
 	<property name="idl.test.CorbaPort" value="${idl.path.tests}/CorbaPort/MyService.idl" />
-	<property name="idl.test.TypeCast" value="${idl.path.tests}/TypeCast/Mock.idl" />
+	<!--	<property name="idl.test.TypeCast" value="${idl.path.tests}/TypeCast/Mock.idl" />-->
 	<property name="idl.sample" value="${source.samples.java}/MyService.idl" />
 
 	<target name="buildAll">
@@ -94,10 +94,10 @@
 
 	<target name="javaInstaller"  description="インストーラを作成します">
 		<exec dir="${installer.dir}" executable="${wix.dir}\candle.exe">
-			<arg line="OpenRTM-aist-Java-0.4.0.wxs"/>
+			<arg line="OpenRTM-aist-Java-0.4.1.wxs"/>
 		</exec>
 		<exec dir="${installer.dir}" executable="${wix.dir}\light.exe">
-			<arg line="OpenRTM-aist-Java-0.4.0.wixobj -out OpenRTM-aist-Java-0.4.0.msi ${wix.dir}\wixui.wixlib -loc wixui_ja-jp.wxl"/>
+			<arg line="OpenRTM-aist-Java-0.4.1.wixobj -out OpenRTM-aist-Java-0.4.1.msi ${wix.dir}\wixui.wixlib -loc wixui_ja-jp.wxl"/>
 		</exec>
 	</target>
 
@@ -123,10 +123,11 @@
 		<exec executable="${java.home}\..\bin\idlj">
 			<arg line="-v -fall -td ${source.test} -pkgPrefix CorbaPort jp.go.aist.rtm.bind ${idl.test.CorbaPort}"/>
 		</exec>
+		<!--
 		<exec executable="${java.home}\..\bin\idlj">
 			<arg line="-v -fall -td ${source.test} -pkgPrefix TypeCast jp.go.aist.rtm.bind ${idl.test.TypeCast}"/>
 		</exec>
-		
+		-->
 		<delete includeEmptyDirs="true">
 			<fileset dir="${source.samples.java.SimpleService}" excludes="**.idl,MyServiceConsumer**.java,MyServiceProvider**.java,MyServiceSVC_impl.java,rtc.conf" />
 		</delete>

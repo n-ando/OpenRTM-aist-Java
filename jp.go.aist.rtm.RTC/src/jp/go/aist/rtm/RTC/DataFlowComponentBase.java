@@ -45,5 +45,6 @@ public class DataFlowComponentBase extends RTObject_impl {
      */
     public void init(){
     }
+    
     private DataFlowComponent m_ref;
 }

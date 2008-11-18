@@ -158,5 +158,4 @@ public class LogStream {
      * <p>設定されたログレベル・コード</p>
      */
     private int m_LogLevel;
-
 }

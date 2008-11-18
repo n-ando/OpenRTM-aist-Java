@@ -23,8 +23,6 @@ public class ResetSampleComponentComp {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-////            manager.cleanupComponent("mod_cxt:HelloRTWorld", "cate_cxt:example");
-//            manager.cleanupComponent(this);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

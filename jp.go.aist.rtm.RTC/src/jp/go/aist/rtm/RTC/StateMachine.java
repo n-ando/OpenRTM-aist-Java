@@ -2,8 +2,6 @@ package jp.go.aist.rtm.RTC;
 
 import java.util.HashMap;
 
-import RTC.ReturnCode_t;
-
 
 
 /**
@@ -95,7 +93,7 @@ import RTC.ReturnCode_t;
 * 一旦 Exit が呼ばれた後、Entry が実行され、以降は前項と同じ動作をします。
 * </ul>
 */
-public class StateMachine<STATE, RESULT, LISTENER> {
+public class StateMachine<STATE, LISTENER> {
     /**
      * <p>コンストラクタです。</p>
      * 
@@ -111,6 +109,7 @@ public class StateMachine<STATE, RESULT, LISTENER> {
         //
         m_transit = null;
     }
+
     /**
      * <p>NOP関数を登録します。</p>
      */
@@ -123,6 +122,7 @@ public class StateMachine<STATE, RESULT, LISTENER> {
         //
         m_transit = null;
     }
+
     /**
      * <p>Listener オブジェクトを登録します。</p>
      *
@@ -157,6 +157,7 @@ public class StateMachine<STATE, RESULT, LISTENER> {
         m_predo.put(state, call_back);
         return true;
     }
+
     /**
      * <p>Do action 関数を登録します。</p>
      *
@@ -169,6 +170,7 @@ public class StateMachine<STATE, RESULT, LISTENER> {
         m_do.put(state, call_back);
         return true;
     }
+
     /**
      * <p>Post action 関数を登録します。</p>
      *
@@ -198,7 +200,6 @@ public class StateMachine<STATE, RESULT, LISTENER> {
     /**
      * <p>State transition action 関数を登録します。</p>
      *
-     * @param state  登録対象状態
      * @param call_back  実行アクションクラス
      * 
      * @return 処理結果(True/False)
@@ -207,7 +208,7 @@ public class StateMachine<STATE, RESULT, LISTENER> {
       m_transit = call_back;
       return true;
     }
-//
+
     /**
       * <p>初期状態をセットします。</p>
       *
@@ -218,7 +219,7 @@ public class StateMachine<STATE, RESULT, LISTENER> {
         m_states.prev = (STATE)states.prev;
         m_states.next = (STATE)states.next;
     }
-//
+
     /**
       * <p>現在の状態を取得します。</p>
       *
@@ -227,7 +228,7 @@ public class StateMachine<STATE, RESULT, LISTENER> {
     public synchronized STATE getState() {
         return m_states.curr;
     }
-//
+
     /**
       * <p>現在状態を確認します。</p>
       *
@@ -236,10 +237,10 @@ public class StateMachine<STATE, RESULT, LISTENER> {
       * @return 確認結果
       */
     public synchronized boolean isIn(STATE state) {
-        if( m_states.curr == state )    return true;
-        else                            return false;
+        if( m_states.curr == state ) return true;
+        return false;
     }
-//
+
     /**
       * <p>状態を変更します。</p>
       * 
@@ -251,70 +252,63 @@ public class StateMachine<STATE, RESULT, LISTENER> {
             m_selftrans = true;
         }
     }
-//
+
     /**
       * <p>StateMachineの駆動用クラスです。</p>
       */
-    public RESULT worker() {
-        RESULT res = (RESULT)ReturnCode_t.RTC_OK;
+    public void worker() {
         StateHolder state;
-        boolean selftrans;
         
         synchronized (m_states) {
             state = new StateHolder(m_states);
-            selftrans = m_selftrans;
-            m_selftrans = false;
         }
-        // Entry アクション
-        // 前回から状態が変わった
-        // もしくは自己遷移が行われたのでEntryアクションを行う
-        if( (state.prev!=state.curr) || selftrans ) {
-            if( m_entry.get(state.curr) != null ) {
-                // Entry アクションを実行
-                res = (RESULT)m_entry.get(state.curr).doAction(state);
+        if( state.curr==state.next ) {
+            // pre-do
+            if( m_predo.get(state.curr) != null ) {
+                m_predo.get(state.curr).doAction(state);
+            }
+            
+            if( need_trans() ) return;
+
+            // do
+            if( m_do.get(state.curr) != null ) {
+                m_do.get(state.curr).doAction(state);
+            }
+        
+            if( need_trans() ) return;
+        
+            //post-do
+            if( m_postdo.get(state.curr) != null ) {
+                m_postdo.get(state.curr).doAction(state);
+            }
+        } else {
+            if( m_exit.get(state.curr) != null ) {
+                m_exit.get(state.curr).doAction(state);
+            }
+
+            synchronized (m_states) {
+                state = new StateHolder(m_states);
+            }
+
+            if( state.curr != state.next ) {
+                state.curr = state.next;
+                if( m_entry.get(state.curr)!=null ) {
+                    m_entry.get(state.curr).doAction(state);
+                }
+                update_curr((STATE)state.curr);
             }
         }
-
-        // この区間では状態の変更を感知しない。
-        // ただし状態変数 m_states は外部から変更される可能性がある。
-        // Do アクション判定にはローカル変数を使う。
-        
-        // Do アクション
-        if( state.curr==state.next ) {
-            if( m_predo.get(state.curr)!=null )
-                res = (RESULT)m_predo.get(state.curr).doAction(state);
-            if( m_do.get(state.curr)!=null )
-                res = (RESULT)m_do.get(state.curr).doAction(state);
-            if( m_postdo.get(state.curr)!=null )
-                res = (RESULT)m_postdo.get(state.curr).doAction(state);
-        }
-
-        // この区間では次の状態が変更されているかもしれない。
-        // 状態は m_states.next に反映されている。
-        // lock
-        synchronized (m_states) {
-            // 状態のコピー
-            state.next = m_states.next;
-            selftrans = m_selftrans;
-        }
-
-        // Exit アクション
-        if( (state.curr!=state.next) || selftrans ) {
-            // Exit action of pre-state
-            if( m_exit.get(state.curr)!=null )
-                res = (RESULT)m_exit.get(state.curr).doAction(state);
-            if( m_transit!=null )
-                res = (RESULT)m_transit.doAction(state);
-      }
-
-        synchronized (m_states) {
-            // 状態を更新
-            m_states.prev = m_states.curr;
-            m_states.curr = m_states.next;
-        }
-        return res;
     }
-//
+    private boolean need_trans() {
+        synchronized (m_states) {
+            return m_states.curr != m_states.next;
+        }
+    }
+    private void update_curr(final STATE curr) {
+        synchronized (m_states) {
+            m_states.curr = curr;
+        }
+    }
     /**
      * <p>状態数</p>
      */   

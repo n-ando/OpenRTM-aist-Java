@@ -29,5 +29,4 @@ public abstract class ECFactoryBase {
      * @param comp 破棄対象ExecutionContextインスタンス
      */
     public abstract void destroy(ExecutionContextBase comp);
-
 }

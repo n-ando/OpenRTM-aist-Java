@@ -26,8 +26,6 @@ import _SDOPackage.NameValue;
 public class ConnectorComp {
 
     public static void main(String[] args) {
-//        int _argc(0);
-//        char** _argv(0);
         
         String subs_type = "";
         String period = "";

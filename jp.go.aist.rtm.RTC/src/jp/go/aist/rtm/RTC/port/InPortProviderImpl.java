@@ -48,7 +48,6 @@ public class InPortProviderImpl implements InPortProvider {
      * @param dataType データタイプ
      */
     protected void setDataType(final String dataType) {
-        
         this.m_dataType = dataType;
     }
     
@@ -58,7 +57,6 @@ public class InPortProviderImpl implements InPortProvider {
      * @param interfaceType インタフェースタイプ
      */
     protected void setInterfaceType(final String interfaceType) {
-        
         this.m_interfaceType = interfaceType;
     }
     
@@ -68,7 +66,6 @@ public class InPortProviderImpl implements InPortProvider {
      * @param dataflowType データフロータイプ
      */
     protected void setDataFlowType(final String dataflowType) {
-        
         this.m_dataflowType = dataflowType;
     }
     
@@ -78,7 +75,6 @@ public class InPortProviderImpl implements InPortProvider {
      * @param subscriptionType サブスクリプションタイプ
      */
     protected void setSubscriptionType(final String subscriptionType) {
-        
         this.m_subscriptionType = subscriptionType;
     }
     
@@ -91,5 +87,4 @@ public class InPortProviderImpl implements InPortProvider {
     private String m_interfaceType = new String();
     private String m_dataflowType = new String();
     private String m_subscriptionType = new String();
-    
 }

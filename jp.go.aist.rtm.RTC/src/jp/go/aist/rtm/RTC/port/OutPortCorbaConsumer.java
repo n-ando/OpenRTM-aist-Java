@@ -93,13 +93,15 @@ public class OutPortCorbaConsumer<DataType>
         }
         
         Object obj = properties.value[index].value.extract_Object();
-        if (getObject()._is_equivalent(obj)) {
-            releaseObject();
+        
+        if( getObject() != null ) {
+            if (getObject()._is_equivalent(obj)) {
+                releaseObject();
+            }
         }
     }
     
     private BufferBase<DataType> m_buffer;
-    
     private TypeCast<DataType> TYPE_CAST;
     
 }

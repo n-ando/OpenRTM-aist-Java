@@ -1,6 +1,7 @@
 package jp.go.aist.rtm.RTC;
 
 import jp.go.aist.rtm.RTC.SDOPackage.Configuration_impl;
+import jp.go.aist.rtm.RTC.SDOPackage.Organization_impl;
 import jp.go.aist.rtm.RTC.util.FloatHolder;
 import jp.go.aist.rtm.RTC.util.IntegerHolder;
 import jp.go.aist.rtm.RTC.util.Properties;
@@ -19,6 +20,7 @@ import _SDOPackage.InvalidParameter;
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
 import _SDOPackage.NotAvailable;
+import _SDOPackage.OrganizationListHolder;
 import _SDOPackage.ParameterListHolder;
 import _SDOPackage.ServiceProfile;
 import _SDOPackage.ServiceProfileListHolder;
@@ -35,33 +37,6 @@ public class SdoConfigurationTest extends TestCase {
     private POA m_poa;
     
     public SdoConfigurationTest() {
-//        String param[] = {"corba.nameservers:localhost",
-//                "corba.id.omniORB",
-//                "corba.endpoint.test",
-//                "naming.formats: %n.rtc",
-//                "logger.file_name.logging",
-//                "timer.enable.yes",
-//                "timer.tick.1000",
-//                "logger.enable.yes",
-//                "manager.name.test",
-//                "logger.date_format.xxx"};
-//        ManagerConfig config;
-//        Properties  m_config;
-//        try {
-//            config = new ManagerConfig(param);
-//            m_config = new Properties();
-//            config.configure(m_config);
-//        } catch (Exception e1) {
-//            e1.printStackTrace();
-//        }
-//        m_orb = ORB.init();
-//        Object obj;
-//        try {
-//            obj = m_orb.resolve_initial_references("RootPOA");
-//            m_poa = POAHelper.narrow(obj);
-//        } catch (InvalidName e) {
-//        }
-//        Manager manager = Manager.instance();
     }
     protected void setUp() throws Exception {
         super.setUp();
@@ -380,45 +355,7 @@ public class SdoConfigurationTest extends TestCase {
 
       //==================================================================
     }
-//    /* 
-//     * @brief add_organization()のテスト
-//     *    
-//     */
-//    public void test_add_organization() {
-//        Organization orgPtr = new OrganizationPOA();
-//        boolean result;
-//        OrganizationListHolder orgList = new OrganizationListHolder();
-//        
-//        orgPtr.set_dependency(DependencyType.OWN);
-//      
-//        try {
-//            result = m_pConf.add_organization(orgPtr);
-//        } catch (InvalidParameter e) {
-//            e.printStackTrace();
-//        } catch (NotAvailable e) {
-//            e.printStackTrace();
-//        } catch (InternalError e) {
-//            e.printStackTrace();
-//        }
-////      if (!result)
-////    cout << "Couldn't add organization object." << endl;
-////      
-//      orgList = m_pConf.getOrganizations();
-//      assertNotNull(orgList);
-//    }
-//    
-//    /* tests for */
-//    void test_remove_service_profile() {
-//      //    test_set_service_profile()にてテスト
-//    }
-//    
-//    
-//    /* tests for */
-//    void test_remove_organization() {
-//      //    test_add_organization()にてテスト
-//    }
-//    
-//    
+
     /**
      *<pre>
      * SDO　コンフィギュレーション パラメータの設定/取得チェック
@@ -441,32 +378,7 @@ public class SdoConfigurationTest extends TestCase {
       int length = paramList.value.length;
       assertEquals(0, length);
     }
-//    
-//    
-//    /* tests for */
-//    void test_get_configuration_parameter_values() {
-//      //    test_get_configuration_sets()にてテスト
-//    }
-//    
-//    
-//    /* tests for */
-//    void test_get_configuration_parameter_value() {
-//      //    test_get_configuration_sets()にてテスト
-//    }
-//    
-//    /* tests for */
-//    void test_set_configuration_parameter() {
-//      //    test_get_configuration_sets()にてテスト
-//    }
-//    
-//    
-    /*
-     * @brief get_configuration_sets(), add_configuration_set(),
-     *        activate_configuration_set(), set_configuration_parameter()
-     *        get_configuration_parameter_values(), get_configuration_set()
-     *        get_active_configuration_set(),
-     *        remove_configuration_set()のテスト
-     */
+
     /**
      *<pre>
      * SDO　コンフィギュレーションセットのチェック
@@ -575,7 +487,7 @@ public class SdoConfigurationTest extends TestCase {
       assertEquals("configset_id1", getname);
 //      rst = confSetList.value[0].configuration_data[0].value.extract_Value();
       Any getAny = confSetList.value[0].configuration_data[0].value;
-      rst = Short.valueOf(getAny.extract_string());
+      rst = Short.valueOf(getAny.extract_wstring());
 //      rst = ((ShortHolder)confSetList.value[0].configuration_data[0].value.extract_Value()).getValue();
       assertEquals(10000, rst);
       
@@ -584,7 +496,7 @@ public class SdoConfigurationTest extends TestCase {
 //      rlg = confSetList.value[1].configuration_data[0].value.extract_long();
 //      rlg = ((IntegerHolder)confSetList.value[1].configuration_data[0].value.extract_Value()).getValue();
       getAny = confSetList.value[1].configuration_data[0].value;
-      rlg = Integer.valueOf(getAny.extract_string());
+      rlg = Integer.valueOf(getAny.extract_wstring());
       assertEquals(20000, rlg);
       //=================================================================
       
@@ -596,7 +508,7 @@ public class SdoConfigurationTest extends TestCase {
       assertEquals("configset_id1", getname);
 //      rst = ((ShortHolder)confSet3.configuration_data[0].value.extract_Value()).getValue();
       getAny = confSet3.configuration_data[0].value;
-      rst = Short.valueOf(getAny.extract_string());
+      rst = Short.valueOf(getAny.extract_wstring());
       assertEquals(10000, rst);
       
       confSet3 = m_pConf.get_configuration_set("configset_id2");
@@ -605,7 +517,7 @@ public class SdoConfigurationTest extends TestCase {
       assertEquals("configset_id2", getname);
 //      rlg = ((IntegerHolder)confSet3.configuration_data[0].value.extract_Value()).getValue();
       getAny = confSet3.configuration_data[0].value;
-      rlg = Integer.valueOf(getAny.extract_string());
+      rlg = Integer.valueOf(getAny.extract_wstring());
       assertEquals(20000, rlg);
       //==================================================================
       
@@ -635,7 +547,7 @@ public class SdoConfigurationTest extends TestCase {
 //      rft = getconfset.configuration_data[0].value.extract_float();
 //      rft = ((FloatHolder)getconfset.configuration_data[0].value.extract_Value()).getValue();
       getAny = getconfset.configuration_data[1].value;
-      rft = Float.valueOf(getAny.extract_string());
+      rft = Float.valueOf(getAny.extract_wstring());
       assertEquals(999.999F, rft);
       
       // ConfigurationSetが正しくセットされているかを確認するため
@@ -648,14 +560,14 @@ public class SdoConfigurationTest extends TestCase {
       assertEquals("configset_id1", getname);
 //      rst = ((ShortHolder)confSetList.value[0].configuration_data[0].value.extract_Value()).getValue();
       getAny = confSetList.value[0].configuration_data[0].value;
-      rst = Short.valueOf(getAny.extract_string());
+      rst = Short.valueOf(getAny.extract_wstring());
       assertEquals(10000, rst);
       
       getname = confSetList.value[1].id;
       assertEquals("configset_id2", getname);
 //      rft = ((FloatHolder)confSetList.value[1].configuration_data[0].value.extract_Value()).getValue();
       getAny = confSetList.value[1].configuration_data[0].value;
-      rft = Float.valueOf(getAny.extract_string());
+      rft = Float.valueOf(getAny.extract_wstring());
       assertEquals(20000.0F, rft);
       //===================================================================
       
@@ -683,7 +595,7 @@ public class SdoConfigurationTest extends TestCase {
 //      rst = getconfset.configuration_data[0].value.extract_short();
 //      rst = ((ShortHolder)getconfset.configuration_data[0].value.extract_Value()).getValue();
       getAny = confSetList.value[0].configuration_data[0].value;
-      rst = Short.valueOf(getAny.extract_string());
+      rst = Short.valueOf(getAny.extract_wstring());
       assertEquals(10000, rst);
       //===================================================================
       } catch (InvalidParameter e) {
@@ -697,62 +609,4 @@ public class SdoConfigurationTest extends TestCase {
           fail();
       }
     }
-//    
-//    
-//    /* tests for */
-//    void test_get_configuration_set() {
-//      //    test_get_configuration_sets()にてテスト
-//    }
-//    
-//    /* tests for */
-//    void test_set_configuration_set_values() {
-//      //    test_get_configuration_sets()にてテスト
-//    }
-//    
-//    
-//    /* tests for */
-//    void test_get_active_configuration_set() {
-//      //    test_get_configuration_sets()にてテスト
-//    }
-//    
-//    
-//    /* tests for */
-//    void test_add_configuration_set() {
-//      //    test_get_configuration_sets()にてテスト。
-//    }
-//    
-//    
-//    /* tests for */
-//    void test_remove_configuration_set() {
-//      //    test_get_configuration_sets()にてテスト。
-//    }
-//    
-//    
-//    /* tests for */
-//    void test_activate_configuration_set() {
-//      //    test_get_configuration_sets()にてテスト。
-//    }
-//    
-//    
-//    /* tests for */
-//    void test_getDeviceProfile() {
-//      //    test_set_device_profile()にてテスト
-//    }
-//    
-//    
-//    /* tests for */
-//    void test_getServiceProfiles() {
-//      //    test_set_service_profile()にてテスト
-//    }
-//    
-//    /* tests for */
-//    void test_getServiceProfile() {
-//      //    test_set_service_profile()にてテスト
-//    }
-//    
-//    /* tests for */
-//    void test_getOrganizations() {
-//      //    test_add_organization()にてテスト
-//    }
-//    
 }

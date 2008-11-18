@@ -1,6 +1,5 @@
 package jp.go.aist.rtm.RTC.util;
 
-
 /**
  * <p>タイマーに登録するリスナー用クラスです。</p>
  */
@@ -21,6 +20,5 @@ public class ListenerObject implements ListenerBase {
     public void invoke() {
         m_cbf.doOperate();
     }
-
     private CallbackFunction m_cbf;
 }

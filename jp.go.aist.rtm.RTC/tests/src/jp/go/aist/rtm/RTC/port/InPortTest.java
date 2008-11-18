@@ -20,17 +20,12 @@ public class InPortTest extends TestCase {
                 new NullBuffer<Integer>(this.m_value.v), "int", this.m_value);
         this.m_pInport.setOnWrite(new OnWriteMock());
         this.m_pInport.setOnWriteConvert(new OnWriteConvertMock());
-
-//        m_pInport = new InPortInt("int", m_value);
-//        m_pInport->setOnWrite(new OnWrite());
-//        m_pInport->setOnWriteConvert(new OnWriteConvert());
     }
 
     protected void tearDown() throws Exception {
         super.tearDown();
 
         this.m_pInport = null;
-//        delete m_pInport; 
     }
 
     private InPort<Integer> m_pInport;
@@ -42,14 +37,6 @@ public class InPortTest extends TestCase {
             System.out.println("put(): " + value);
         }
     }
-//    class OnWrite
-//        : public RTC::OnWrite<int>
-//    {
-//        void operator()(const int& value)
-//        {
-//            std::cout << "put(): " << value << std::endl;
-//        };
-//    };
 
     class OnWriteConvertMock implements OnWriteConvert<Integer> {
 
@@ -57,14 +44,6 @@ public class InPortTest extends TestCase {
             return value * value * value;
         }
     }
-//    class OnWriteConvert
-//        : public RTC::OnWriteConvert<int>
-//    {
-//        int operator()(const int& value)
-//        {
-//            return value * value * value;
-//        };
-//    };
 
     /**
      * <p>ポート名取得のテストです。name()メソッドにより正しくポート名を取得できることを確認します。</p>
@@ -93,16 +72,6 @@ public class InPortTest extends TestCase {
             assertEquals(new Integer(i * i * i), this.m_pInport.read());
         }
     }
-//    /* tests for void registerObject(Object* obj) */
-//    void test_put()
-//    {
-//        for (int i = 0; i < 100; ++i)
-//        {
-//            //    std::cout << i << std::endl;
-//            m_pInport->write(i);
-//            std::cout << m_pInport->read() << std::endl;
-//        }
-//    }
 
     /**
      * <p>update()メソッドにより、書き込んだデータがバインド変数に正しく反映されることをテストします。</p>

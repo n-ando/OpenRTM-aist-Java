@@ -19,7 +19,6 @@ public class RingBuffer<DataType> implements BufferBase<DataType> {
      * @param length バッファ長
      */
     public RingBuffer(int length) {
-        
         this.m_length = (length < 2) ? 2 : length;
         this.m_oldPtr = 0;
         this.m_newPtr = (length < 2) ? 1 : length - 1;
@@ -35,7 +34,6 @@ public class RingBuffer<DataType> implements BufferBase<DataType> {
      * @param data バッファ全体に設定されるデータ
      */
     public void init(DataType data) {
-        
         for (int i = 0; i < this.m_length; i++) {
             put(data);
         }
@@ -47,7 +45,6 @@ public class RingBuffer<DataType> implements BufferBase<DataType> {
      * @return バッファ長
      */
     public int length() {
-        
         return this.m_length;
     }
 
@@ -58,7 +55,6 @@ public class RingBuffer<DataType> implements BufferBase<DataType> {
      * @return 書き込みに成功した場合はtrueを、さもなくばfalseを返します。
      */
     public boolean write(final DataType value) {
-        
         put(value);
         return true;
     }
@@ -70,7 +66,6 @@ public class RingBuffer<DataType> implements BufferBase<DataType> {
      * @return 読み込みに成功した場合はtrueを、さもなくばfalseを返します。
      */
     public boolean read(DataRef<DataType> valueRef) {
-        
         valueRef.v = get();
         return true;
     }
@@ -81,7 +76,6 @@ public class RingBuffer<DataType> implements BufferBase<DataType> {
      * @return バッファがフルならばtrue、さもなくばfalseを返します。
      */
     public boolean isFull() {
-        
         return false;
     }
 
@@ -91,7 +85,6 @@ public class RingBuffer<DataType> implements BufferBase<DataType> {
      * @return バッファが空ならばtrue、さもなくばfalseを返します。
      */
     public boolean isEmpty() {
-        
         return !this.isNew();
     }
 
@@ -101,7 +94,6 @@ public class RingBuffer<DataType> implements BufferBase<DataType> {
      * @return 読み取られていないデータがあればtrueを、さもなくばfalseを返します。
      */
     public boolean isNew() {
-        
         return this.m_buffer.get(this.m_newPtr).isNew();
     }
 
@@ -111,7 +103,6 @@ public class RingBuffer<DataType> implements BufferBase<DataType> {
      * @param data 書き込むデータ
      */
     public void put(final DataType data) {
-        
         this.m_buffer.get(this.m_oldPtr).write(data);
         this.m_newPtr = this.m_oldPtr;
         this.m_oldPtr = (++m_oldPtr) % this.m_length;
@@ -123,32 +114,27 @@ public class RingBuffer<DataType> implements BufferBase<DataType> {
      * @return 読み込んだデータ
      */
     public DataType get() {
-
         return this.m_buffer.get(this.m_newPtr).read();
     }
-    
+
     class Data<D> {
         
         public Data() {
-            
             this.data = null;
             this.is_new = false;
         }
         
         public void write(final D other) {
-
             this.data = other;
             this.is_new = true;
         }
         
         public D read() {
-            
             this.is_new = false;
             return this.data;
         }
         
         public boolean isNew() {
-
             return this.is_new;
         }
         

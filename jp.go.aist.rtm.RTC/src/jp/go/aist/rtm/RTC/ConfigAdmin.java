@@ -285,7 +285,6 @@ public class ConfigAdmin {
     private ConfigAdmin(final ConfigAdmin ca) {
         m_configsets = ca.m_configsets;
     }
-
     /**
      * コンフィギュレーションセット・リスト
      */

@@ -83,57 +83,14 @@ public class DataOutPortTest extends TestCase {
         public String type_name = "DataOutPortMock_type_name";
         public PortInterfacePolarity pol = PortInterfacePolarity.REQUIRED;
     }
-//    CPPUNIT_TEST_SUITE(DataOutPortTests);
-//    CPPUNIT_TEST(test_write);
-//    CPPUNIT_TEST(test_profile);
-//    CPPUNIT_TEST(test_connect);
-//    CPPUNIT_TEST_SUITE_END();
 
-//private:
     private OutPort<TimedFloat> m_outport;
     private DataRef<TimedFloat> m_tfloat = new DataRef<TimedFloat>(new TimedFloat());
     private DataOutPort m_doutport;
     private Port m_portref;
     private OrbRunner m_orbRunner;
     private POA m_pPOA;
-//    RTC::OutPort<RTC::TimedFloat> m_outport;
-//    RTC::TimedFloat m_tfloat;
-//    RTC::DataOutPort* m_doutport;
-//    RTC::Port_var m_portref;
-//
-//    CORBA::ORB_ptr m_pORB;
-//    PortableServer::POA_ptr m_pPOA;
 
-//public:
-  
-    /*!
-     * @brief Constructor
-     */
-//    DataOutPortTests()
-//    : m_outport("fout", m_tfloat)
-//    {
-//        int argc(0);
-//        char** argv(NULL);
-//        m_pORB = CORBA::ORB_init(argc, argv);
-//        m_pPOA = PortableServer::POA::_narrow(
-//                m_pORB->resolve_initial_references("RootPOA"));
-//        m_pPOA->the_POAManager()->activate();
-//
-//        m_doutport = new RTC::DataOutPort("DataOutPortTests", m_outport);
-//
-//        m_portref = m_doutport->get_port_profile()->port_ref;
-//    }
-    
-    /*!
-     * @brief Destructor
-     */
-//    ~DataOutPortTests()
-//    {
-//    }
-  
-    /*!
-     * @brief Test initialization
-     */
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -145,23 +102,12 @@ public class DataOutPortTest extends TestCase {
         this.m_portref = this.m_doutport.get_port_profile().port_ref;
     }
 
-//    virtual void setUp()
-//    {
-//    }
-    
-    /*!
-     * @brief Test finalization
-     */
     protected void tearDown() throws Exception {
         super.tearDown();
         
         this.m_orbRunner.shutdown();
     }
-//    virtual void tearDown()
-//    { 
-//    }
-  
-    /* test case */
+
     /**
      * <p>DataOutPortに割り当てたOutPortのデータ書き込み/読み込みをテストします。<br />
      * データ書き込み後に読み出しを行い、書き込んだデータと一致することを確認します。</p>
@@ -175,14 +121,6 @@ public class DataOutPortTest extends TestCase {
         this.m_outport.read(data);
         assertEquals(this.m_tfloat.v.data, data.v.data);
     }
-//    void test_write()
-//    {
-//        m_tfloat.data = 1.23456;
-//        m_outport.write();
-//        RTC::TimedFloat data;
-//        m_outport.read(data);
-//        std::cout << data.data << std::endl;
-//    }
 
     /**
      * <p>get_port_profile()メソッドによるポートプロファイル取得をテストします。</p>
@@ -214,28 +152,6 @@ public class DataOutPortTest extends TestCase {
             assertEquals("property_value2", NVUtil.toString(holder, "property_name2"));
         }
     }
-//    void test_profile()
-//    {
-//        RTC::PortProfile* prof;
-//        prof = m_doutport->get_port_profile();
-//
-//        std::cout << "port_name: " << prof->name << std::endl;
-//        std::cout << "if_name: " << prof->interfaces[0].instance_name
-//            << std::endl;
-//        std::cout << "if_type: " << prof->interfaces[0].type_name << std::endl;
-//        std::cout << "if_polr: " << prof->interfaces[0].polarity << std::endl;
-//        std::cout << "IOR: " << m_pORB->object_to_string(prof->port_ref)
-//            <<std::endl;
-//
-//        for (CORBA::ULong i = 0; i < prof->properties.length(); ++i)
-//        {
-//            std::cout << "prop_name: " << prof->properties[i].name << std::endl;
-//            std::cout << "prop_valu: "
-//                <<  NVUtil::toString(prof->properties,
-//                        prof->properties[i].name)
-//                        << std::endl;
-//        }
-//    }
 
     /**
      * <p>接続のテストです。複数ポート間の接続ではなく、単体ポートのみでの接続動作をテストします。</p>
@@ -261,24 +177,4 @@ public class DataOutPortTest extends TestCase {
 
         System.out.println(prof.connector_id);
     }
-//    void test_connect()
-//    {
-//        RTC::ConnectorProfile prof;
-//        prof.connector_id = "";
-//        prof.name = CORBA::string_dup("connector0");
-//        prof.ports.length(1);
-//        prof.ports[0] = m_portref;
-//        CORBA_SeqUtil::push_back(prof.properties,
-//                NVUtil::newNV("dataport.interface_type",
-//                "CORBA_Any"));
-//        CORBA_SeqUtil::push_back(prof.properties,
-//                NVUtil::newNV("dataport.dataflow_type",
-//                "Push"));
-//        CORBA_SeqUtil::push_back(prof.properties,
-//                NVUtil::newNV("dataport.subscription_type",
-//                "New"));
-//        m_doutport->connect(prof);
-//
-//        std::cout << prof.connector_id << std::endl;
-//    }
 }

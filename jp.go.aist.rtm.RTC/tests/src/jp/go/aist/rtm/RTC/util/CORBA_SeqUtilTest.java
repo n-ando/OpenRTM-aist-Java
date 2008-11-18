@@ -1,13 +1,11 @@
 package jp.go.aist.rtm.RTC.util;
 
-import jp.go.aist.rtm.RTC.SDOPackage.Organization_impl;
 import junit.framework.TestCase;
 
 import org.omg.CORBA.Any;
 
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
-import _SDOPackage.OrganizationListHolder;
 import _SDOPackage.ServiceProfile;
 import _SDOPackage.ServiceProfileListHolder;
 
@@ -73,12 +71,6 @@ public class CORBA_SeqUtilTest extends TestCase {
         super.tearDown();
     }
 
-//    /* tests for */
-//    void test_for_each() {
-//      CORBA_SeqUtil::for_each(nvlist, for_eachFunc("test"));
-//    }
-
-    /* tests for */
     /**
      *<pre>
      * シーケンスからのオブジェクト取得チェック
@@ -100,24 +92,7 @@ public class CORBA_SeqUtilTest extends TestCase {
         index = CORBA_SeqUtil.find(nvlist, new findFuncStr("char"));
         assertEquals(-1, index);
     }
-//    void test_find() {
-//      CORBA::Long index;
-//      
-//      index = CORBA_SeqUtil::find(nvlist, findFuncStr("double"));
-//      CPPUNIT_ASSERT((CORBA::Long)3 == index);
-//      
-//      index = CORBA_SeqUtil::find(nvlist, findFuncStr("float"));
-//      CPPUNIT_ASSERT((CORBA::Long)2 == index);
-//      
-//      index = CORBA_SeqUtil::find(nvlist, findFuncStr("long"));
-//      CPPUNIT_ASSERT((CORBA::Long)1 == index);
-//      
-//      index = CORBA_SeqUtil::find(nvlist, findFuncStr("short"));
-//      CPPUNIT_ASSERT((CORBA::Long)0 == index);
-//    }
     
-    
-//    /* tests for */
     /**
      *<pre>
      * シーケンスへのオブジェクト追加チェック
@@ -169,49 +144,7 @@ public class CORBA_SeqUtilTest extends TestCase {
             assertEquals(st2, rst2);
         }
     }
-//    void test_push_back() {
-//      nv.name = "short";
-//      CORBA::Short st2, rst2;
-//      st2 = 20;
-//      nv.value <<= st2;
-//      string setstr, retstr;
-//      
-//      for (int i = 0; i < 100; i++) {
-//    CORBA_SeqUtil::push_back(nvlist, nv);
-//      }
-//      
-//      setstr = "short";
-//      retstr = nvlist[0].name;
-//      nvlist[0].value >>= rst;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(st == rst);
-//      
-//      setstr = "long";
-//      retstr = nvlist[1].name;
-//      nvlist[1].value >>= rlg;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(lg == rlg);
-//      
-//      setstr = "float";
-//      retstr = nvlist[2].name;
-//      nvlist[2].value >>= rft;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(ft == rft);
-//      
-//      setstr = "double";
-//      retstr = nvlist[3].name;
-//      nvlist[3].value >>= rdl;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(dl == rdl);
-//      
-//      setstr = "short";
-//      for (int i = 4; i < 104; i++) {
-//    retstr = nvlist[i].name;
-//    nvlist[i].value >>= rst2;
-//    CPPUNIT_ASSERT(setstr == retstr);
-//    CPPUNIT_ASSERT(st2 == rst2);
-//      }
-//    }
+    
     /**
      *<pre>
      * サービス・オブジェクトの追加チェック
@@ -247,38 +180,7 @@ public class CORBA_SeqUtilTest extends TestCase {
         assertEquals("sp2name", sph.value[2].id);
         assertEquals("provided2", sph.value[2].interface_type);
     }
-//    public void test_push_back_organization() {
-//        OrganizationListHolder olh = new OrganizationListHolder();
-////        olh.value = new Organization_impl[2];
-//        
-//        Organization_impl og0 = new Organization_impl();
-//        sp0.id = "sp0name";
-//        sp0.interface_type = "required";
-//        sph.value[0] = sp0;
-//        
-//        ServiceProfile sp1 = new ServiceProfile();
-//        sp1.id = "sp1name";
-//        sp1.interface_type = "provided";
-//        sph.value[1] = sp1;
-//
-//        ServiceProfile sp2 = new ServiceProfile();
-//        sp2.id = "sp2name";
-//        sp2.interface_type = "provided2";
-//
-//        CORBA_SeqUtil.push_back(sph, sp2);
-//        
-//        assertEquals( 3, sph.value.length);
-//
-//        assertEquals("sp0name", sph.value[0].id);
-//        assertEquals("required", sph.value[0].interface_type);
-//        assertEquals("sp1name", sph.value[1].id);
-//        assertEquals("provided", sph.value[1].interface_type);
-//        assertEquals("sp2name", sph.value[2].id);
-//        assertEquals("provided2", sph.value[2].interface_type);
-//    }
-//    
-//    
-//    /* tests for */
+
     /**
      *<pre>
      * NVList型オブジェクトの追加チェック
@@ -383,92 +285,7 @@ public class CORBA_SeqUtilTest extends TestCase {
          assertEquals(setstr, retstr);
          assertEquals(dl2, rdl);
     }
-//    void test_push_back_list() {
-//      NameValue nv2;
-//      NVList nvlist2;
-//      CORBA::Short  st2;
-//      CORBA::Long   lg2;
-//      CORBA::Float  ft2;
-//      CORBA::Double dl2;
-//      string setstr, retstr;
-//      
-//      nvlist2.length(4);
-//      
-//      st2 = 32767;
-//      lg2 = 999999999;
-//      ft2 = 999999.9;
-//      dl2 = 99999999999.99;
-//      
-//      nv2.name = "short2";
-//      nv2.value <<= st2;
-//      nvlist2[0] = nv2;
-//      
-//      nv2.name = "long2";
-//      nv2.value <<= lg2;
-//      nvlist2[1] = nv2;
-//      
-//      nv2.name = "float2";
-//      nv2.value <<= ft2;
-//      nvlist2[2] = nv2;
-//      
-//      nv2.name = "double2";
-//      nv2.value <<= dl2;
-//      nvlist2[3] = nv2;
-//      
-//      CORBA_SeqUtil::push_back_list(nvlist, nvlist2);
-//      
-//      setstr = "short";
-//      retstr = nvlist[0].name;
-//      nvlist[0].value >>= rst;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(st == rst);
-//      
-//      setstr = "long";
-//      retstr = nvlist[1].name;
-//      nvlist[1].value >>= rlg;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(lg == rlg);
-//      
-//      setstr = "float";
-//      retstr = nvlist[2].name;
-//      nvlist[2].value >>= rft;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(ft == rft);
-//      
-//      setstr = "double";
-//      retstr = nvlist[3].name;
-//      nvlist[3].value >>= rdl;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(dl == rdl);
-//      
-//      setstr = "short2";
-//      retstr = nvlist[4].name;
-//      nvlist[4].value >>= rst;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(st2 == rst);
-//      
-//      setstr = "long2";
-//      retstr = nvlist[5].name;
-//      nvlist[5].value >>= rlg;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(lg2 == rlg);
-//      
-//      setstr = "float2";
-//      retstr = nvlist[6].name;
-//      nvlist[6].value >>= rft;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(ft2 == rft);
-//      
-//      setstr = "double2";
-//      retstr = nvlist[7].name;
-//      nvlist[7].value >>= rdl;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(dl2 == rdl);
-//      
-//    }
-//    
-//    
-//    /* tests for */
+
     /**
      *<pre>
      * シーケンスへのオブジェクト挿入チェック
@@ -521,49 +338,7 @@ public class CORBA_SeqUtilTest extends TestCase {
         assertEquals(setstr, retstr);
         assertEquals(dl, rdl);
     }
-//    void test_insert() {
-//      string setstr, retstr;
-//      nv.name = "short-insert";
-//      CORBA::Short st2, rst2;
-//      st2 = 20;
-//      nv.value <<= st2;
-//      CORBA::ULong index;
-//      
-//      index = nvlist.length();
-//      // 例外発生!!!!!!!
-//      CORBA_SeqUtil::insert(nvlist, nv, 0);
-//      
-//      
-//      setstr = "short-insert";
-//      retstr = nvlist[0].name;
-//      nvlist[0].value >>= rst2;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(st2 == rst2);
-//      
-//      setstr = "short";
-//      retstr = nvlist[1].name;
-//      nvlist[1].value >>= rst;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(st == rst);
-//      
-//      setstr = "long";
-//      retstr = nvlist[2].name;
-//      nvlist[2].value >>= rlg;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(lg == rlg);
-//      
-//      setstr = "float";
-//      retstr = nvlist[3].name;
-//      nvlist[3].value >>= rft;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(ft == rft);
-//      
-//      setstr = "double";
-//      retstr = nvlist[4].name;
-//      nvlist[4].value >>= rdl;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(dl == rdl);
-//    }
+
     /**
      *<pre>
      * シーケンスへのオブジェクト挿入チェック
@@ -616,6 +391,7 @@ public class CORBA_SeqUtilTest extends TestCase {
         assertEquals(setstr, retstr);
         assertEquals(dl, rdl);
     }
+
     /**
      *<pre>
      * シーケンスへのオブジェクト挿入チェック
@@ -668,9 +444,8 @@ public class CORBA_SeqUtilTest extends TestCase {
         assertEquals(setstr, retstr);
         assertEquals(st2, rst2);
       
-}
+    }
 
-//    /* tests for */
     /**
      *<pre>
      * シーケンスへのオブジェクト挿入チェック
@@ -691,22 +466,7 @@ public class CORBA_SeqUtilTest extends TestCase {
             assertEquals(retval, st);
         }
     }
-//    void test_front() {
-//      string setstr, retstr;
-//      CORBA::Short retval;
-//      NameValue retnv;
-//      
-//      for (int i = 0; i < 100; i++) {
-//    retnv = CORBA_SeqUtil::front<NVList, NameValue>(nvlist);
-//    
-//    setstr = "short";
-//    retstr = retnv.name;
-//    retnv.value >>= retval;
-//    
-//    CPPUNIT_ASSERT(retval == st);
-//      }
-//    }
-//  /* tests for */
+
     /**
      *<pre>
      * シーケンスへのオブジェクト挿入チェック
@@ -729,22 +489,7 @@ public class CORBA_SeqUtilTest extends TestCase {
             assertEquals(retval, dl);
         }
     }
-//      string setstr, retstr;
-//      CORBA::Double retval;
-//      NameValue retnv;
-//      
-//      for (int i = 0; i < 100; i++) {
-//    retnv = CORBA_SeqUtil::back<NVList, NameValue>(nvlist);
-//    
-//    setstr = "double";
-//    retstr = retnv.name;
-//    retnv.value >>= retval;
-//    
-//    CPPUNIT_ASSERT(retval == dl);
-//      }
-//    }
-//    
-//    /* tests for */
+    
     /**
      *<pre>
      * シーケンスからのオブジェクト削除チェック
@@ -778,6 +523,7 @@ public class CORBA_SeqUtilTest extends TestCase {
         assertEquals(setstr,retstr);
         assertEquals(dl,rdl);
     }
+    
     /**
      *<pre>
      * シーケンスからのオブジェクト削除チェック
@@ -810,6 +556,7 @@ public class CORBA_SeqUtilTest extends TestCase {
         assertEquals(setstr, retstr);
         assertEquals(dl, rdl);
     }
+    
     /**
      *<pre>
      * シーケンスからのオブジェクト削除チェック
@@ -842,81 +589,7 @@ public class CORBA_SeqUtilTest extends TestCase {
         assertEquals(setstr, retstr);
         assertEquals(ft, rft);
     }
-//    void test_erase() {
-//      string setstr, retstr;
-//      CORBA::ULong index; // OK.
-//      
-//      // Success case
-//      //    index = 0;
-//      /*
-//    CORBA_SeqUtil::erase(nvlist, index);
-//    
-//    setstr = "long";
-//    retstr = nvlist[0].name;
-//    nvlist[0].value >>= rlg;
-//    CPPUNIT_ASSERT(setstr == retstr);
-//    CPPUNIT_ASSERT(lg == rlg);
-//    
-//    setstr = "float";
-//    retstr = nvlist[1].name;
-//    nvlist[1].value >>= rft;
-//    CPPUNIT_ASSERT(setstr == retstr);
-//    CPPUNIT_ASSERT(ft == rft);
-//    
-//    setstr = "double";
-//    retstr = nvlist[2].name;
-//    nvlist[2].value >>= rdl;
-//    CPPUNIT_ASSERT(setstr == retstr);
-//    CPPUNIT_ASSERT(dl == rdl);
-//      */
-//      
-//      /*
-//    index = 1;
-//    CORBA_SeqUtil::erase(nvlist, index);
-//    
-//    setstr = "short";
-//    retstr = nvlist[0].name;
-//    nvlist[0].value >>= rst;
-//    CPPUNIT_ASSERT(setstr == retstr);
-//    CPPUNIT_ASSERT(st == rst);
-//    
-//    setstr = "float";
-//    retstr = nvlist[1].name;
-//    nvlist[1].value >>= rft;
-//    CPPUNIT_ASSERT(setstr == retstr);
-//    CPPUNIT_ASSERT(ft == rft);
-//    
-//    setstr = "double";
-//    retstr = nvlist[2].name;
-//    nvlist[2].value >>= rdl;
-//    CPPUNIT_ASSERT(setstr == retstr);
-//    CPPUNIT_ASSERT(dl == rdl);
-//      */
-//      
-//      index = 6; // 何も削除されない。
-//      CORBA_SeqUtil::erase(nvlist, index);
-//      
-//      setstr = "short";
-//      retstr = nvlist[0].name;
-//      nvlist[0].value >>= rst;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(st == rst);
-//      
-//      setstr = "long";
-//      retstr = nvlist[1].name;
-//      nvlist[1].value >>= rlg;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(lg == rlg);
-//      
-//      setstr = "float";
-//      retstr = nvlist[2].name;
-//      nvlist[2].value >>= rft;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(ft == rft);
-//    }
-//    
-//    
-//    /* tests for */
+    
     /**
      *<pre>
      * シーケンスからのオブジェクト削除チェック
@@ -996,87 +669,7 @@ public class CORBA_SeqUtilTest extends TestCase {
       CORBA_SeqUtil.erase_if(nvlist, new findFuncStr("float"));
       assertEquals(0, nvlist.value.length);
     }
-//    void test_erase_if() {
-//      string setstr, retstr;
-//      
-//      // 何も削除されない。
-//      CORBA_SeqUtil::erase_if(nvlist, erase_ifFunc("test"));
-//      setstr = "short";
-//      retstr = nvlist[0].name;
-//      nvlist[0].value >>= rst;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(st == rst);
-//      
-//      setstr = "long";
-//      retstr = nvlist[1].name;
-//      nvlist[1].value >>= rlg;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(lg == rlg);
-//      
-//      setstr = "float";
-//      retstr = nvlist[2].name;
-//      nvlist[2].value >>= rft;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(ft == rft);
-//      
-//      setstr = "double";
-//      retstr = nvlist[3].name;
-//      nvlist[3].value >>= rdl;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(dl == rdl);
-//      
-//      
-//      
-//      CORBA_SeqUtil::erase_if(nvlist, erase_ifFunc("double"));
-//      setstr = "short";
-//      retstr = nvlist[0].name;
-//      nvlist[0].value >>= rst;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(st == rst);
-//      
-//      setstr = "long";
-//      retstr = nvlist[1].name;
-//      nvlist[1].value >>= rlg;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(lg == rlg);
-//      
-//      setstr = "float";
-//      retstr = nvlist[2].name;
-//      nvlist[2].value >>= rft;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(ft == rft);
-//      
-//      
-//      
-//      CORBA_SeqUtil::erase_if(nvlist, erase_ifFunc("short"));
-//      setstr = "long";
-//      retstr = nvlist[0].name;
-//      nvlist[0].value >>= rlg;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(lg == rlg);
-//      
-//      setstr = "float";
-//      retstr = nvlist[1].name;
-//      nvlist[1].value >>= rft;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(ft == rft);
-//      
-//      
-//      
-//      CORBA_SeqUtil::erase_if(nvlist, erase_ifFunc("long"));
-//      setstr = "float";
-//      retstr = nvlist[0].name;
-//      nvlist[0].value >>= rft;
-//      CPPUNIT_ASSERT(setstr == retstr);
-//      CPPUNIT_ASSERT(ft == rft);
-//      
-//      
-//      CORBA_SeqUtil::erase_if(nvlist, erase_ifFunc("float"));
-//      cout << endl << "Length after having called erase_if(): " << nvlist.length() << endl;
-//    }
-//    
-//    
-//    /* tests for */
+
     /**
      *<pre>
      * シーケンスからの全オブジェクト削除チェック
@@ -1088,56 +681,6 @@ public class CORBA_SeqUtilTest extends TestCase {
         CORBA_SeqUtil.clear(nvlist);
         assertEquals(0, nvlist.value.length);
     }
-//    void test_clear() {
-//      CORBA_SeqUtil::clear(nvlist);
-//      cout << endl << "Length after having called clear(): " << nvlist.length() << endl;
-//    }
-//    
-//  protected:
-//    
-//    struct nv_name
-//    {
-//      nv_name(const char* name) : m_name(name) {};
-//      bool operator()(const NameValue& nv)
-//      {
-//    return m_name == std::string(nv.name);
-//      }
-//      std::string m_name;
-//    };
-//    
-//    struct for_eachFunc
-//    {
-//      for_eachFunc(const char* name) : m_name(name) {};
-//      bool operator()(const NameValue& nv)
-//      {
-//    cout << nv.name << " " << m_name << endl;
-//    CORBA::Short  rst;
-//    CORBA::Long   rlg;
-//    CORBA::Float  rft;
-//    CORBA::Double rdl;
-//    
-//    if (nv.value.type() == CORBA::_tc_short) {
-//      nv.value >>= rst;
-//      cout << rst << endl;
-//    }
-//    else if (nv.value.type() == CORBA::_tc_long) {
-//      nv.value >>= rlg;
-//      cout << rlg << endl;
-//    }
-//    else if (nv.value.type() == CORBA::_tc_float) {
-//      nv.value >>= rft;
-//      cout << rft << endl;
-//    }
-//    else if (nv.value.type() == CORBA::_tc_double) {
-//      nv.value >>= rdl;
-//      cout << rdl << endl;
-//    }
-//    
-//    return m_name == std::string(nv.name);
-//      }
-//      std::string m_name;
-//    };
-//    
 
     class findFuncStr implements equalFunctor {
         public findFuncStr(final String name) {
@@ -1148,74 +691,4 @@ public class CORBA_SeqUtilTest extends TestCase {
         }
         private String m_name;
     }
-//    struct findFuncStr
-//    {
-//      findFuncStr(const char* name) : m_name(name) {};
-//      bool operator()(const NameValue& nv)
-//      {
-//    return m_name == std::string(nv.name);
-//      }
-//      std::string m_name;
-//    };
-//    
-//    struct erase_ifFunc
-//    {
-//      erase_ifFunc(const char* name) : m_name(name) {};
-//      bool operator()(const NameValue& nv)
-//      {
-//    return m_name == std::string(nv.name);
-//      }
-//      std::string m_name;
-//    };
-
-    
-//    /*
-//      template<typename T>
-//      struct findFuncData
-//      {
-//      findFuncData(const T data) : m_data(data) {};
-//      bool operator()(const NameValue& nv)
-//      {
-//      CORBA::Short  rst;
-//      CORBA::Long   rlg;
-//      CORBA::Float  rft;
-//      CORBA::Double rdl;
-//      if (data.type() == CORBA::_tc_short && nv.value.type() == CORBA::_tc_short) {
-//      nv.value >>= rst;
-//      return m_data == rst;
-//      }
-//      else if (data.type() == CORBA::_tc_long && nv.value.type() == CORBA::_tc_long) {
-//      nv.value >>= rlg;
-//      return m_data == rlg;
-//      }
-//      else if (data.type() == CORBA::_tc_float && nv.value.type() == CORBA::_tc_float) {
-//      nv.value >>= rft;
-//      return m_data == rft;
-//      }
-//      else if (data.type() == CORBA::_tc_double && nv.value.type() == CORBA::_tc_double) {
-//      nv.value >>= rdl;
-//      return m_data == rdl;
-//      }
-//      return false;
-//      }
-//      T m_data;
-//      };
-//    */
-//    
-//    /*
-//      template<typename T, typename CorbaSequence>
-//      struct sequence_data
-//      {
-//      sequence_data(const T data) : m_data(data) {};
-//      
-//      bool operator()(const CorbaSequence& cseq)
-//      {
-//      return m_data == std::string(nv.name);
-//      }
-//      std::string m_name;
-//      };
-//    */
-//    
-//  };
-//
 }

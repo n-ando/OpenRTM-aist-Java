@@ -16,6 +16,8 @@ import RTC.Port;
 import RTC.PortInterfaceProfile;
 import RTC.PortInterfaceProfileListHolder;
 import RTC.PortListHolder;
+import RTC.PortProfile;
+import RTC.PortProfileListHolder;
 
 /**
  * <p>CORBAシーケンスに対するユーティリティクラスです。各メソッドはスレッドセーフではないため、
@@ -31,7 +33,6 @@ public class CORBA_SeqUtil {
      * @return 引数で指定されたoperatorFuncオブジェクト
      */
     public static operatorFunc for_each(NVListHolder seq, operatorFunc func) {
-        
         for (int i = 0; i < seq.value.length; ++i) {
             func.operator(seq.value[i]);
         }
@@ -47,7 +48,6 @@ public class CORBA_SeqUtil {
      * @return 引数で指定されたoperatorFuncオブジェクト
      */
     public static operatorFunc for_each(ConnectorProfileListHolder seq, operatorFunc func) {
-        
         for (int i = 0; i < seq.value.length; ++i) {
             func.operator(seq.value[i]);
         }
@@ -64,7 +64,6 @@ public class CORBA_SeqUtil {
      * 合致するNameValueオブジェクトが存在しない場合は、-1を返します。
      */
     public static int find(final NVListHolder seq, equalFunctor func) {
-        
         for (int i = 0; i < seq.value.length; ++i) {
             if (func.equalof(seq.value[i])) {
                 return i;
@@ -83,7 +82,6 @@ public class CORBA_SeqUtil {
      * 合致するPortオブジェクトが存在しない場合は、-1を返します。
      */
     public static int find(final PortListHolder seq, equalFunctor func) {
-        
         for (int i = 0; i < seq.value.length; ++i) {
             if (func.equalof(seq.value[i])) {
                 return i;
@@ -102,7 +100,6 @@ public class CORBA_SeqUtil {
      * 合致するPortInterfaceProfileオブジェクトが存在しない場合は、-1を返します。
      */
     public static int find(final PortInterfaceProfileListHolder seq, equalFunctor func) {
-        
         for (int i = 0; i < seq.value.length; ++i) {
             if (func.equalof(seq.value[i])) {
                 return i;
@@ -116,12 +113,11 @@ public class CORBA_SeqUtil {
      * <p>指定されたシーケンス内の指定条件に合致するConnectorProfileオブジェクトのインデクスを取得します。</p>
      * 
      * @param seq ConnectorProfileオブジェクトシーケンスを保持するConnectorProfileListHolderオブジェクト
-     * @param func 合致判定を行うequalFunctorオブジェクト
+     * @param f 合致判定を行うequalFunctorオブジェクト
      * @return 合致するConnectorProfileオブジェクトが存在する場合は、そのオブジェクトのシーケンス内でのインデクスを返します。<br />
      * 合致するConnectorProfileオブジェクトが存在しない場合は、-1を返します。
      */
     public static int find(final ConnectorProfileListHolder seq, equalFunctor f) {
-        
         for (int i = 0; i < seq.value.length; ++i) {
             if (f.equalof(seq.value[i])) {
                 return i;
@@ -138,7 +134,6 @@ public class CORBA_SeqUtil {
      * @param elem 追加するNameValueオブジェクト
      */
     public static void push_back(NVListHolder seq, NameValue elem) {
-        
         int len = seq.value.length;
         NameValue[] newlist = new NameValue[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
@@ -155,7 +150,6 @@ public class CORBA_SeqUtil {
      * @param elem 追加するServiceProfileオブジェクト
      */
     public static void push_back(ServiceProfileListHolder seq, ServiceProfile elem) {
-        
         int len = seq.value.length;
         ServiceProfile[] newlist = new ServiceProfile[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
@@ -172,7 +166,6 @@ public class CORBA_SeqUtil {
      * @param elem 追加するOrganizationオブジェクト
      */
     public static void push_back(OrganizationListHolder seq, Organization elem) {
-        
         int len = seq.value.length;
         Organization[] newlist = new Organization[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
@@ -189,7 +182,6 @@ public class CORBA_SeqUtil {
      * @param elem 追加するExecutionContextServiceオブジェクト
      */
     public static void push_back(ExecutionContextServiceListHolder seq, ExecutionContextService elem) {
-        
         int len = seq.value.length;
         ExecutionContextService[] newlist = new ExecutionContextService[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
@@ -206,7 +198,6 @@ public class CORBA_SeqUtil {
      * @param elem 追加するPortオブジェクト
      */
     public static void push_back(PortListHolder seq, Port elem) {
-        
         int len = seq.value.length;
         Port[] newlist = new Port[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
@@ -223,7 +214,6 @@ public class CORBA_SeqUtil {
      * @param elem 追加するConnectorProfileオブジェクト
      */
     public static void push_back(ConnectorProfileListHolder seq, ConnectorProfile elem) {
-        
         int len = seq.value.length;
         ConnectorProfile[] newlist = new ConnectorProfile[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
@@ -240,7 +230,6 @@ public class CORBA_SeqUtil {
      * @param elem 追加するPortInterfaceProfileオブジェクト
      */
     public static void push_back(PortInterfaceProfileListHolder seq, PortInterfaceProfile elem) {
-
         int len = seq.value.length;
         PortInterfaceProfile[] newlist = new PortInterfaceProfile[len + 1];
         for (int i = 0; i < len; i++) {
@@ -251,13 +240,27 @@ public class CORBA_SeqUtil {
     }
     
     /**
+     * <p>シーケンスの末尾にPortProfileオブジェクトを追加します。</p>
+     * 
+     * @param seq 追加先PortProfileオブジェクトシーケンスを保持するPortProfileListHolderオブジェクト
+     * @param elem 追加するPortProfileオブジェクト
+     */
+    public static void push_back(PortProfileListHolder seq, PortProfile elem) {
+        int len = seq.value.length;
+        PortProfile[] newlist = new PortProfile[len + 1];
+        for (int i = 0; i < len; i++) {
+            newlist[i] = seq.value[i];
+        }
+        newlist[len] = elem;
+        seq.value = newlist;
+    }
+    /**
      * <p>シーケンスの末尾に、別のNameValueオブジェクトシーケンスを追加します。</p>
      * 
      * @param seq1 追加先のNameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
      * @param seq2 追加するNameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
      */
     public static void push_back_list(NVListHolder seq1, NVListHolder seq2) {
-
         int len1 = seq1.value.length;
         int len2 = seq2.value.length;
         int len = len1 + len2;
@@ -278,7 +281,6 @@ public class CORBA_SeqUtil {
      * @param seq2 追加する_SDOPackage.SDOオブジェクトシーケンスを保持するSDOListHolderオブジェクト
      */
     public static void push_back_list(SDOListHolder seq1, SDOListHolder seq2) {
-        
         int len1 = seq1.value.length;
         int len2 = seq2.value.length;
         int len = len1 + len2;
@@ -300,7 +302,6 @@ public class CORBA_SeqUtil {
      * @param index 挿入先を指すインデクス
      */
     public static void insert(NVListHolder seq, NameValue elem, int index) {
-        
         int len = seq.value.length;
         if (index > len) {
             push_back(seq, elem);
@@ -323,17 +324,15 @@ public class CORBA_SeqUtil {
      * @return シーケンス内の先頭NameValueオブジェクト
      */
     public static NameValue front(NVListHolder seq) {
-        
         return seq.value[0];
     }
-
+    
     /**
      * <p>シーケンス内の末尾NameValueオブジェクトを取得します。</p>
      * 
      * @return シーケンス内の末尾NameValueオブジェクト
      */
     public static NameValue back(NVListHolder seq) {
-        
         return seq.value[seq.value.length - 1];
     }
     
@@ -506,7 +505,7 @@ public class CORBA_SeqUtil {
      * <p>シーケンス内の条件に合致する要素を削除します。</p>
      * 
      * @param seq Portオブジェクトシーケンスを保持するPortListHolderオブジェクト
-     * @param func 合致判定を行うequalFunctorオブジェクト
+     * @param f 合致判定を行うequalFunctorオブジェクト
      */
     public static void erase_if(PortListHolder seq, equalFunctor f) {
         
@@ -516,14 +515,14 @@ public class CORBA_SeqUtil {
         }
         CORBA_SeqUtil.erase(seq, index);
     }
-    
+
     /**
      * <p>指定されたシーケンスの全要素を削除します。</p>
      * 
-     * @param NameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
+     * @param seq NameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
      */
     public static void clear(NVListHolder seq) {
-        
         seq.value = new NameValue[0];
     }
+    
 }

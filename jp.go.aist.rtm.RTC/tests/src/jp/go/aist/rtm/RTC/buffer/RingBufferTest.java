@@ -23,11 +23,6 @@ public class RingBufferTest extends TestCase {
         this.m_string = new RingBuffer<String>(17);
         this.m_double_s = new RingBuffer<Double>(2);
         this.m_string_s = new RingBuffer<String>(2);
-        
-//        m_double = new RTC::RingBuffer<double>(17);
-//        m_string = new RTC::RingBuffer<std::string>(17);
-//        m_double_s = new RTC::RingBuffer<double>(2);
-//        m_string_s = new RTC::RingBuffer<std::string>(2);
     }
 
     protected void tearDown() throws Exception {
@@ -109,22 +104,6 @@ public class RingBufferTest extends TestCase {
         
         // read()後なので isNew() == false のはず
         assertFalse(this.m_double.isNew());
-        
-//        // 初期化前なので isNew() == false のはず
-//        CPPUNIT_ASSERT(!m_double->isNew());
-//
-//        double data(3.14159265);
-//        m_double->init(data);
-//
-//        // 初期化後なので isNew() == true のはず
-//        CPPUNIT_ASSERT(m_double->isNew());
-//
-//        double dvar;
-//        m_double->read(dvar);
-//        CPPUNIT_ASSERT(data == dvar);
-//
-//        // read()後なので isNew() == false のはず
-//        CPPUNIT_ASSERT(!m_double->isNew());
     }
 
     /**
@@ -150,23 +129,6 @@ public class RingBufferTest extends TestCase {
         
         // read()後なので isNew() == false のはず
         assertFalse(this.m_string.isNew());
-        
-//      // 初期化前なので isNew() == false のはず
-//      CPPUNIT_ASSERT(!m_string->isNew());
-//
-//      std::string data("3.14159265");
-//      m_string->init(data);
-//
-//
-//      // 初期化後なので isNew() == true のはず
-//      CPPUNIT_ASSERT(m_string->isNew());
-//
-//      std::string dvar;
-//      m_string->read(dvar);
-//      CPPUNIT_ASSERT(data == dvar);
-//
-//      // read()後なので isNew() == false のはず
-//      CPPUNIT_ASSERT(!m_string->isNew());
     }
 
     /**
@@ -186,27 +148,6 @@ public class RingBufferTest extends TestCase {
             this.m_double.read(dvar);
             assertEquals((double) i, dvar.v);
         }
-        
-//        for (int i = 0; i < ITNUM; ++i)
-//        {
-//            if (m_double->write(i))
-//                ;
-//            else
-//                CPPUNIT_ASSERT(false);
-//
-//            double dvar;
-//            if (m_double->read(dvar))
-//            {
-//#ifdef DEBUG
-//                std::cout << i << "\t" << dvar << std::endl;
-//#endif
-//                CPPUNIT_ASSERT((double)i == dvar);
-//            }
-//            else
-//            {
-//                CPPUNIT_ASSERT(false);
-//            }
-//        }
     }
 
     /**
@@ -230,28 +171,6 @@ public class RingBufferTest extends TestCase {
             this.m_string.read(strvar);
             assertEquals(str.toString(), strvar.v);
         }
-        
-//        for (int i = 0; i < ITNUM; ++i)
-//        {
-//            std::stringstream str_stream;
-//            str_stream << "Hogehoge" << i;
-//            if (m_string->write(str_stream.str()))
-//                ;
-//            else
-//                CPPUNIT_ASSERT(false);
-//
-//            std::string strvar;
-//            if (m_string->read(strvar))
-//            {
-//#ifdef DEBUG
-//                std::cout << str_stream.str() << "\t" << strvar << std::endl;
-//#endif
-//                CPPUNIT_ASSERT(strvar == str_stream.str());       
-//            }
-//            else
-//            {
-//            }
-//        }
     }
 
     /**
@@ -272,27 +191,6 @@ public class RingBufferTest extends TestCase {
             this.m_double_s.read(dvar);
             assertEquals((double) i, dvar.v);
         }
-        
-//        for (int i = 0; i < ITNUM; ++i)
-//        {
-//            if (m_double_s->write(i))
-//                ;
-//            else
-//                CPPUNIT_ASSERT(false);
-//
-//            double dvar;
-//            if (m_double_s->read(dvar))
-//            {
-//#ifdef DEBUG
-//                std::cout << i << "\t" << dvar << std::endl;
-//#endif
-//                CPPUNIT_ASSERT((double)i == dvar);
-//            }
-//            else
-//            {
-//                CPPUNIT_ASSERT(false);
-//            }
-//        }
     }
 
     /**
@@ -316,28 +214,6 @@ public class RingBufferTest extends TestCase {
             this.m_string_s.read(strvar);
             assertEquals(str.toString(), strvar.v);
         }
-        
-//        for (int i = 0; i < ITNUM; ++i)
-//        {
-//            std::stringstream str_stream;
-//            str_stream << "Hogehoge" << i;
-//            if (m_string_s->write(str_stream.str()))
-//                ;
-//            else
-//                CPPUNIT_ASSERT(false);
-//
-//            std::string strvar;
-//            if (m_string_s->read(strvar))
-//            {
-//#ifdef DEBUG
-//                std::cout << str_stream.str() << "\t" << strvar << std::endl;
-//#endif
-//                CPPUNIT_ASSERT(strvar == str_stream.str());       
-//            }
-//            else
-//            {
-//            }
-//        }
     }
 
     /**
@@ -385,41 +261,6 @@ public class RingBufferTest extends TestCase {
                 assertEquals(data, dvar.v);
             }
         }
-        
-//        for (long int i = 0; i < ITNUM; ++i)
-//        {
-//            double data;
-//            data = (double)i * 3.14159265;
-//            m_double->write(data);
-//            if ((i % 13) == 0)
-//            {
-//                double dvar;
-//                if (m_double->isNew())
-//                    m_double->read(dvar);
-//                else
-//                    CPPUNIT_ASSERT(false);
-//                CPPUNIT_ASSERT(data == dvar);
-//            }
-//
-//            if ((i % 7) == 0)
-//            {
-//                double dvar;
-//                m_double->read(dvar);
-//                CPPUNIT_ASSERT(data == dvar);
-//
-//                // isNew() == false のはず
-//                if (m_double->isNew())
-//                    CPPUNIT_ASSERT(false);
-//                m_double->read(dvar);
-//                CPPUNIT_ASSERT(data == dvar);
-//
-//                // isNew() == false のはず
-//                if (m_double->isNew())
-//                    CPPUNIT_ASSERT(false);
-//                m_double->read(dvar);
-//                CPPUNIT_ASSERT(data == dvar);
-//            }
-//        }
     }
 
     /**
@@ -467,88 +308,5 @@ public class RingBufferTest extends TestCase {
                 assertEquals(str.toString(), strvar.v);
             }
         }
-        
-//        for (long int i = 0; i < ITNUM; ++i)
-//        {
-//            std::stringstream strstr;
-//            strstr << "HogeHoge" << i;
-//            m_string->write(strstr.str());
-//            if ((i % 13) == 0)
-//            {
-//                std::string strvar;
-//                if (m_string->isNew())
-//                    m_string->read(strvar);
-//                else
-//                    CPPUNIT_ASSERT(false);
-//                CPPUNIT_ASSERT(strstr.str() == strvar);
-//            }
-//
-//            if ((i % 7) == 0)
-//            {
-//                std::string strvar;
-//                m_string->read(strvar);
-//                CPPUNIT_ASSERT(strstr.str() == strvar);
-//
-//                // isNew() == false のはず
-//                if (m_string->isNew())
-//                    CPPUNIT_ASSERT(false);
-//                m_string->read(strvar);
-//                CPPUNIT_ASSERT(strstr.str() == strvar);
-//
-//                // isNew() == false のはず
-//                if (m_double->isNew())
-//                    CPPUNIT_ASSERT(false);
-//                m_string->read(strvar);
-//                CPPUNIT_ASSERT(strstr.str() == strvar);
-//            }
-//        }         
     }
-//    
-//    
-//    /*!
-//     * @brief tests for
-//     */
-//    void test_get_new_rlist() {}
-//    
-//    
-//    /*!
-//     * @brief tests for
-//     */
-//    void test_get_new_list() {}
-//    
-//    
-//    /*!
-//     * @brief tests for
-//     */
-//    void test_get_new_len() {}
-//    
-//    
-//    /*!
-//     * @brief tests for
-//     */
-//    void test_get_old() {}
-//    
-//    
-//    /*!
-//     * @brief tests for
-//     */
-//    void test_get_back() {}
-//    
-//    
-//    /*!
-//     * @brief tests for
-//     */
-//    void test_get_front() {}
-//    
-//    
-//    /*!
-//     * @brief tests for
-//     */
-//    void test_buff_length() {}
-//    
-//    
-//    /*!
-//     * @brief tests for
-//     */
-//    void test_is_new() {}
 }

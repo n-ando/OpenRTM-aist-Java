@@ -290,14 +290,17 @@ public class ConfigAdminTest extends TestCase {
         admin.addConfigurationSet(props2);
 
         Vector<Properties> getconf = admin.getConfigurationSets();
-        assertEquals(2, admin.m_newConfig.size());
+//        assertEquals(2, admin.m_newConfig.size());
+        assertEquals(3, getconf.size());
         
         admin.removeConfigurationSet("configtest");
-        assertEquals(1, admin.m_newConfig.size());
+//        assertEquals(1, admin.m_newConfig.size());
+        assertEquals(2, getconf.size());
         
         getconf = admin.getConfigurationSets();
 
-        assertEquals("configtest2", admin.m_newConfig.elementAt(0));
+//        assertEquals("configtest2", admin.m_newConfig.elementAt(0));
+        assertEquals("configtest2", getconf.elementAt(1).getName());
 
     }
 

@@ -27,12 +27,10 @@ public class RTCUtil {
     public static boolean isDataFlowParticipant(Object obj) {
         
         DataFlowParticipant dfp = DataFlowParticipantHelper.narrow(obj);
-        if (dfp != null) {
-            return true;
-            
-        } else {
+        if (dfp == null) {
             return false;
         }
+        return true;
     }
     
     /**
@@ -44,12 +42,10 @@ public class RTCUtil {
     public static boolean isFsmParticipant(Object obj) {
         
         FsmParticipant fsmp = FsmParticipantHelper.narrow(obj);
-        if (fsmp != null) {
-            return true;
-            
-        } else {
+        if (fsmp == null) {
             return false;
         }
+        return true;
     }
     
     /**
@@ -61,14 +57,12 @@ public class RTCUtil {
     public static boolean isFsmObject(Object obj) {
         
         FsmObject fsm = FsmObjectHelper.narrow(obj);
-        if (fsm != null) {
-            return true;
-            
-        } else {
+        if (fsm == null) {
             return false;
         }
-    }
-
+        return true;
+}
+    
     /**
      * <p>RTコンポーネントのインスタンスがMultiModeObjectであるかどうか判断します。</p>
      * 
@@ -78,11 +72,10 @@ public class RTCUtil {
     public static boolean isMultiModeObject(Object obj) {
         
         MultiModeObject fsm = MultiModeObjectHelper.narrow(obj);
-        if (fsm != null) {
-            return true;
-            
-        } else {
+        if (fsm == null) {
             return false;
         }
+        return true;
     }
+    
 }

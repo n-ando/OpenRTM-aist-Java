@@ -18,4 +18,5 @@ public interface NumberingPolicy {
      * @param obj 削除対象オブジェクト
      */
     public void onDelete(RTObject_impl obj);
+
 }

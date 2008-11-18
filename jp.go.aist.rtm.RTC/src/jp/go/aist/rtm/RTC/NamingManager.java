@@ -119,13 +119,13 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @return 登録オブジェクトのリスト
      */
     protected synchronized Vector<RTObject_impl> getObjects() {
-        
         Vector<RTObject_impl> comps = new Vector<RTObject_impl>();
         for(int intIdx=0;intIdx<m_compNames.size();++intIdx) {
             comps.add(m_compNames.elementAt(intIdx).rtobj);
         }
         return comps;
     }
+    
     /**
      * <p>NameServerに登録するオブジェクトを生成します。</p>
      * 
@@ -194,6 +194,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
         }
         return;
     }
+
     /**
     * <p>Naming Serviceクラスです。</p>
     */
@@ -262,7 +263,6 @@ public class NamingManager implements NamingBase, CallbackFunction {
     public void doOperate() {
         this.update();
     }
-
 
     /**
      * <p>Managerオブジェクト</p>

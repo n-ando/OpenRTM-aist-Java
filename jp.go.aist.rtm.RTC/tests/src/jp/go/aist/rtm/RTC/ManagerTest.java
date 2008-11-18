@@ -114,10 +114,6 @@ public class ManagerTest extends TestCase {
         assertNotNull(manager.m_terminator);
         assertNotNull(manager.m_timer);
         assertNotNull(manager.m_MedLogbuf);
-        
-//        System.out.println(manager.rtcout.getLogData());
-//        assertEquals(strout,manager.rtcout.getLogData());
-        
     }
     /**
      *<pre>
@@ -171,13 +167,6 @@ public class ManagerTest extends TestCase {
         assertNotNull(manager.getPOA());
         assertNotNull(manager.getPOAManager());
         assertNotNull(manager.m_objManager);
-        
-//        manager.shutdownORB();
-//        assertNull(manager.getORB());
-//        assertNull(manager.getPOA());
-//        assertNull(manager.getPOAManager());
-//        manager.shutdownLogger();
-
     }
     
     /**
@@ -257,7 +246,6 @@ public class ManagerTest extends TestCase {
         assertEquals(0, modules.size());
         modules = manager.getLoadableModules();
         assertEquals(0, modules.size());
-//        manager.runManager();
     }
     /**
      *<pre>
@@ -279,7 +267,6 @@ public class ManagerTest extends TestCase {
             fail();
         }
         manager.activateManager();
-//        manager.runManager();
         assertNotNull(manager.getORB());
         assertNotNull(manager.getPOA());
         assertNotNull(manager.getPOAManager());
@@ -300,12 +287,6 @@ public class ManagerTest extends TestCase {
         //
         assertNull(manager.getORB());
         assertNull(manager.getPOA());
-//        assertNull(manager.m_objManager);
-//        assertNull(manager.m_namingManager);
-//        assertNull(manager.m_module);
-//        assertNull(manager.m_terminator);
-//        assertNull(manager.m_timer);
-//        assertNull(manager.m_MedLogbuf);
     }
 }
 

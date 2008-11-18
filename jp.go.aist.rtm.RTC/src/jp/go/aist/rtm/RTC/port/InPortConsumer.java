@@ -33,4 +33,5 @@ public interface InPortConsumer {
      * @param properties 登録解除時に参照される情報
      */
     public void unsubscribeInterface(final NVListHolder properties);
+    
 }

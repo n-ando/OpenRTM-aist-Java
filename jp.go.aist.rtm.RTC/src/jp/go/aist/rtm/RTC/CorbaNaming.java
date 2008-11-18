@@ -498,6 +498,7 @@ public class CorbaNaming {
         throws NotFound, CannotProceed, InvalidName {
         this.rebind(name, name_cxt, force);
         return;
+        
     }
 
     /**
@@ -585,7 +586,7 @@ public class CorbaNaming {
      * ネームサーバのルートコンテキストに対して resolve() が呼び出される点が
      * 異なります。</p>
      *
-     * @param name 解決すべきオブジェクトの名前の文字列表現
+     * @param string_name 解決すべきオブジェクトの名前の文字列表現
      * @return 解決されたオブジェクト参照
      *
      * @exception NotFound Objectが存在しない。
@@ -608,7 +609,6 @@ public class CorbaNaming {
      * 異なります。</p>
      *
      * @param name 解決すべきオブジェクトの名前のネームコンポーネント
-     * @return 解決されたオブジェクト参照
      *
      * @exception NotFound 解除対象のオブジェクトが存在しない。
      * @exception CannotProceed 何らかの理由で処理を継続できない。
@@ -629,7 +629,6 @@ public class CorbaNaming {
      * 異なります。</p>
      *
      * @param string_name 解決すべきオブジェクトの名前の文字列表現
-     * @return 解決されたオブジェクト参照
      *
      * @exception NotFound 解除対象のオブジェクトが存在しない。
      * @exception CannotProceed 何らかの理由で処理を継続できない。
@@ -787,7 +786,6 @@ public class CorbaNaming {
                     // If Object is object, unbind it.
                     context.unbind(bl.value[intIdx].binding_name);
                 }
-//        else assert(0); // never comes here
             }
     
             // no more binding -> do-while loop will be finished
@@ -796,7 +794,6 @@ public class CorbaNaming {
                 if( bi.value!=null ) {
                     if( bi.value.next_n(m_blLength, bl) == false )
                         return;
-//                    bi.value.next_one(bl);
                 } else {
                     return;
                 }
@@ -805,6 +802,7 @@ public class CorbaNaming {
       if( bi!=null ) bi.value.destroy();
       return;
     }
+
     /**
      * <p>すべての Binding を削除します。</p>
      *
@@ -820,7 +818,7 @@ public class CorbaNaming {
     /**
      * <p>与えられた NamingContext の Binding を取得します。</p>
      *
-     * @param context 取得対象の NamingContext
+     * @param name_cxt 取得対象の NamingContext
      * @param how_many 取得するBindingの最大数
      * @param bl 取得するBindingのリスト
      * @param bi 取得するBindingのイテレータ
@@ -929,6 +927,7 @@ public class CorbaNaming {
      */
     public NamingContext bindOrResolve(NamingContext context, final NameComponent[] name, Object obj)
         throws NotFound, CannotProceed, InvalidName {
+        
         context.rebind(name, obj);
         return context;
     }
@@ -1015,7 +1014,7 @@ public class CorbaNaming {
     /**
      * <p>与えられた名前がネーミングコンテキストかどうか判断します。<p>
      *
-     * @param name 判断対象コンポーネント名称
+     * @param string_name 判断対象コンポーネント名称
      *
      * @exception NotFound 対象オブジェクトが存在しない。
      * @exception CannotProceed 何らかの理由で処理を継続できない。
@@ -1064,7 +1063,7 @@ public class CorbaNaming {
         }
         return sub_name;
     }
-
+        
     /**
      * <p>ネームコンポーネントの文字列表現を取得します。</p>
      *
@@ -1129,6 +1128,7 @@ public class CorbaNaming {
         }
         return slen;
     }
+
     /**
      * ORB
      */

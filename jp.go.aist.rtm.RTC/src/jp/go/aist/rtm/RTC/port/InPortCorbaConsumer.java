@@ -53,7 +53,6 @@ public class InPortCorbaConsumer<DataType>
      * @param data 書き込むデータ
      */
     public void put(DataType data) {
-        
         _ptr().put(TYPE_CAST.castAny(data));
     }
     
@@ -66,6 +65,7 @@ public class InPortCorbaConsumer<DataType>
         this.m_buffer.read(data);
         Any tmp = TYPE_CAST.castAny(data.v);
         
+        // TODO 本当はエラー処理をすべき
         if (_ptr() == null) {
             return;
         }
@@ -78,14 +78,13 @@ public class InPortCorbaConsumer<DataType>
             return;
         }
     }
-
+    
     /**
      * <p>当該InPortCorbaConsumerオブジェクトの複製を生成します。</p>
      * 
      * @return 複製されたInPortCorbaConsumerオブジェクト
      */
     public InPortCorbaConsumer clone() {
-        
         return new InPortCorbaConsumer<DataType>(this);
     }
     
@@ -124,9 +123,9 @@ public class InPortCorbaConsumer<DataType>
      * @param properties 登録解除時に参照される情報
      */
     public void unsubscribeInterface(final NVListHolder properties) {
+        // 何もしない
     }
     
     private BufferBase<DataType> m_buffer;
-
     private TypeCast<DataType> TYPE_CAST;
 }

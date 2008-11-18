@@ -12,7 +12,7 @@ public class StringUtil {
         
         return (i % 2) == 1;
     }
-
+    
     /**
      * 文字列をエスケープする。<br />
      * 次の文字をエスケープシーケンスに変換する。<br />
@@ -112,6 +112,7 @@ public class StringUtil {
         
         return unescaped_str.toString();
     }
+
     public static boolean toBool(String target, String yes, String no, boolean default_value) {
         if( target.toUpperCase().contains(yes.toUpperCase()) ) {
             return true;
@@ -121,6 +122,7 @@ public class StringUtil {
             return default_value;
         }
     }
+
     public static Vector<String> unique_sv(String[] sv) {
         Vector<String> str = new Vector<String>();
         for( int intIdx=0;intIdx<sv.length;intIdx++ ) {
@@ -130,6 +132,7 @@ public class StringUtil {
         }
       return str;
     }
+
     public static String flatten(Vector<String> sv) {
         if( sv.size()==0) return "";
 
@@ -140,6 +143,7 @@ public class StringUtil {
         str.append(sv.lastElement());
         return str.toString();
     }
+
     public static Vector<String> split(final String input, final String delimiter) {
         Vector<String> result = new Vector<String>();
         if( input==null || input.equals("") ) return result;

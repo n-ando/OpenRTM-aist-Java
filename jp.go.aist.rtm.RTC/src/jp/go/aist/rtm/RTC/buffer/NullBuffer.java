@@ -15,7 +15,6 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
      * @param size バッファ長
      */
     public NullBuffer(long size) {
-        
         m_length = 1;
     }
     
@@ -23,7 +22,6 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
      * <p>デフォルトコンストラクタです。</p>
      */
     public NullBuffer() {
-        
         this(1);
     }
     
@@ -33,7 +31,6 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
      * @return バッファ長
      */
     public int length() {
-     
         return this.m_length;
     }
 
@@ -44,7 +41,6 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
      * @return 書き込みに成功した場合はtrueを、さもなくばfalseを返します。
      */
     public boolean write(final DataType value) {
-        
         this.m_data = value;
         return true;
     }
@@ -56,7 +52,6 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
      * @return 読み込みに成功した場合はtrueを、さもなくばfalseを返します。
      */
     public boolean read(DataRef<DataType> valueRef) {
-        
         valueRef.v = this.m_data;
         return true;
     }
@@ -67,7 +62,6 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
      * @return バッファがフルならばtrue、さもなくばfalseを返します。
      */
     public boolean isFull() {
-        
         return false;
     }
 
@@ -77,7 +71,6 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
      * @return バッファが空ならばtrue、さもなくばfalseを返します。
      */
     public boolean isEmpty() {
-        
         return false;
     }
 
@@ -87,7 +80,6 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
      * @param data 書き込むデータ
      */
     public void put(final DataType data) {
-        
         this.m_data = data;
     }
 
@@ -97,7 +89,6 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
      * @return 読み込んだデータ
      */
     public DataType get() {
-        
         return this.m_data;
     }
 
@@ -107,7 +98,6 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
      * @return 読み取られていないデータがあればtrueを、さもなくばfalseを返します。
      */
     public boolean isNew() {
-    
         return false;
     }
 

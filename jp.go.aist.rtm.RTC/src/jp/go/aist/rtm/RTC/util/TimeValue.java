@@ -23,6 +23,7 @@ public class TimeValue {
         this.tv_sec = sec;
         this.tv_usec = usec;
     }
+
     /**
      * <p>コピーコンストラクタです。</p>
      * 

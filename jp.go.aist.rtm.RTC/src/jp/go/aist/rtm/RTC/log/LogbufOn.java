@@ -5,7 +5,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 /**
  * <p>ログ収集ON時のロギングクラスです。</p>
@@ -21,7 +20,7 @@ public class LogbufOn extends Logbuf {
     public static int strToLogLevel(final String loglevel) {
         return LogStream.strToLogLevel(loglevel);
     }
-      
+
     /**
      * <p>デフォルトコンストラクタです。</p>
      */
@@ -49,34 +48,34 @@ public class LogbufOn extends Logbuf {
     public void log(String contents){
         m_Logger.log(Level.INFO, contents);
     }
-        /**
-         * <p>ログ・ロックフラグ</p>
-         */
-        private boolean m_LogLock;
-        /**
-         * <p>ログクラス</p>
-         */
-        private Logger m_Logger;
-        private class OpenRTMFormatter extends Formatter {
+    /**
+     * <p>ログ・ロックフラグ</p>
+     */
+    private boolean m_LogLock;
+    /**
+     * <p>ログクラス</p>
+     */
+    private Logger m_Logger;
 
-            @Override
-            public String format(LogRecord record) {
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(formatMessage(record));
-                buffer.append("\n");
-                return buffer.toString();
-            }
+    private class OpenRTMFormatter extends Formatter {
 
-            @Override
-            public String getHead(Handler h) {
-                return "";
-            }
-
-            @Override
-            public String getTail(Handler h) {
-                return "";
-            }
-            
+        @Override
+        public String format(LogRecord record) {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append(formatMessage(record));
+            buffer.append("\n");
+            return buffer.toString();
         }
 
+        @Override
+        public String getHead(Handler h) {
+            return "";
+        }
+
+        @Override
+        public String getTail(Handler h) {
+            return "";
+        }
+        
+    }
 }

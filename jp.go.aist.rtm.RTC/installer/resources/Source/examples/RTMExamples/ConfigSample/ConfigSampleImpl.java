@@ -92,65 +92,65 @@ public class ConfigSampleImpl  extends DataFlowComponentBase {
     @Override
     protected ReturnCode_t onExecute(int ec_id) {
 
-//        int maxlen = 0;
-//        int curlen = 0;
-//        final String c = "                    ";
-//        if( true ) {
-//            System.out.println( "---------------------------------------" );
-//            System.out.println( " Active Configuration Set: " );
-//            System.out.println( m_configsets.getActiveId() + c );
-//            System.out.println(  "---------------------------------------" );
-//            
-//            System.out.println( "int_param0:       " + m_int_param0 + c );
-//            System.out.println( "int_param1:       " + m_int_param1 + c );
-//            System.out.println( "double_param0:    " + m_double_param0 + c );
-//            System.out.println( "double_param1:    " + m_double_param1 + c );
-//            System.out.println( "str_param0:       " + m_str_param0 + c );
-//            System.out.println( "str_param1:       " + m_str_param1 + c );
-//            for( int intIdx=0;intIdx<m_vector_param0.value.size();++intIdx ) {
-//                System.out.println( "vector_param0[" + intIdx + "]: " + m_vector_param0.value.elementAt(intIdx) + c );
-//            }
-//            System.out.println( "---------------------------------------" );
-//
-//            curlen = m_vector_param0.value.size();
-//            if( curlen >= maxlen ) maxlen = curlen;
-//            for( int intIdx=0;intIdx<maxlen-curlen;++intIdx ) {
-//                System.out.println( c + c );
-//            }
-//            System.out.println( "Updating.... " + ticktack() + c );
+        int maxlen = 0;
+        int curlen = 0;
+        final String c = "                    ";
+        if( true ) {
+            System.out.println( "---------------------------------------" );
+            System.out.println( " Active Configuration Set: " );
+            System.out.println( m_configsets.getActiveId() + c );
+            System.out.println(  "---------------------------------------" );
+            
+            System.out.println( "int_param0:       " + m_int_param0 + c );
+            System.out.println( "int_param1:       " + m_int_param1 + c );
+            System.out.println( "double_param0:    " + m_double_param0 + c );
+            System.out.println( "double_param1:    " + m_double_param1 + c );
+            System.out.println( "str_param0:       " + m_str_param0 + c );
+            System.out.println( "str_param1:       " + m_str_param1 + c );
+            for( int intIdx=0;intIdx<m_vector_param0.value.size();++intIdx ) {
+                System.out.println( "vector_param0[" + intIdx + "]: " + m_vector_param0.value.elementAt(intIdx) + c );
+            }
+            System.out.println( "---------------------------------------" );
 
-//            for( int intIdx=0;intIdx<11+maxlen;++intIdx ) {
-////          std::cout << "[A\r";
-//            }
-//        }
-//        if( m_int_param0.value>1000 && m_int_param0.value<1000000 ) {
-//            try {
-//                Thread.sleep(0, m_int_param0.value);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            try {
-//                Thread.sleep(100);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
+            curlen = m_vector_param0.value.size();
+            if( curlen >= maxlen ) maxlen = curlen;
+            for( int intIdx=0;intIdx<maxlen-curlen;++intIdx ) {
+                System.out.println( c + c );
+            }
+            System.out.println( "Updating.... " + ticktack() + c );
+
+            for( int intIdx=0;intIdx<11+maxlen;++intIdx ) {
+//          std::cout << "[A\r";
+            }
+        }
+        if( m_int_param0.value>1000 && m_int_param0.value<1000000 ) {
+            try {
+                Thread.sleep(0, m_int_param0.value);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return ReturnCode_t.RTC_OK;
     }
     //
     // The aborting action when main logic error occurred.
     // former rtc_aborting_entry()
 //  @Override
-//  public ReturnCode_t on_aborting(int ec_id) {
-//      return super.on_aborting(ec_id);
+//  public ReturnCode_t onAborting(int ec_id) {
+//      return super.onAborting(ec_id);
 //  }
     //
     // The error action in ERROR state
     // former rtc_error_do()
 //    @Override
-//    public ReturnCode_t on_error(int ec_id) {
-//        return super.on_error(ec_id);
+//    public ReturnCode_t onError(int ec_id) {
+//        return super.onError(ec_id);
 //    }
     //
     // The reset action that is invoked resetting

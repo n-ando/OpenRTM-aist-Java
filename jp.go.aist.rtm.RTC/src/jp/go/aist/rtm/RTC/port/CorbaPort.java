@@ -221,6 +221,7 @@ public class CorbaPort extends PortBase {
     }
     
     private Vector<Consumer> m_consumers = new Vector<Consumer>();
+
     private class subscribe implements operatorFunc {
         
         public subscribe(Vector<Consumer> cons) {
@@ -247,9 +248,10 @@ public class CorbaPort extends PortBase {
             }
         }
         
-        private Vector<Consumer> m_cons;
+        private Vector<Consumer> m_cons; // コンストラクタで必ず初期化されるので、ここではインスタンス生成しない。
         private int m_len;
     }
+    
     private class unsubscribe implements operatorFunc {
         
         public unsubscribe(final Vector<Consumer> cons) {
@@ -271,7 +273,8 @@ public class CorbaPort extends PortBase {
                 }
             }
         }
-        private Vector<Consumer> m_cons;
+        private Vector<Consumer> m_cons; // コンストラクタで必ず初期化されるので、ここではインスタンス生成しない。
         private int m_len;
     }
+    
 }

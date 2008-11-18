@@ -136,7 +136,6 @@ public class Configuration_impl extends ConfigurationPOA {
         NVUtil.copyFromProperties(nvlist, prop);
         conf.configuration_data = nvlist.value;
     }
-
     /**
      *
      * <p>[CORBA interface] SDO の DeviceProfile をセットします。<br />
@@ -428,6 +427,8 @@ public class Configuration_impl extends ConfigurationPOA {
     public synchronized ConfigurationSet get_configuration_set(String config_id)
             throws NotAvailable, InternalError {
         if( config_id==null || config_id.equals("") ) throw new InternalError("ID is empty");
+        // Originally getConfigurationSet raises InvalidParameter according to the
+        // SDO specification. However, SDO's IDL lacks InvalidParameter.
         
         if(!m_configsets.haveConfig(config_id)) throw new InternalError("No such ConfigurationSet");
         
@@ -446,7 +447,7 @@ public class Configuration_impl extends ConfigurationPOA {
      *
      * このオペレーションは指定された id の ConfigurationSet を更新します。</p>
      *
-     * @param configu_id 変更する ConfigurationSet の ID。
+     * @param config_id 変更する ConfigurationSet の ID。
      * @param configuration_set 変更する ConfigurationSet そのもの。
      * @return ConfigurationSet が正常に更新できた場合は true。
      *         そうでなければ false を返す。
@@ -535,7 +536,7 @@ public class Configuration_impl extends ConfigurationPOA {
      *
      * ConfigurationProfile から ConfigurationSet を削除します。</p>
      *
-     * @param configu_id 削除する ConfigurationSet の id。
+     * @param config_id 削除する ConfigurationSet の id。
      * @return オペレーションが成功したかどうか。
      *
      * @exception InvalidParameter 引数 "configurationSetID" が null である、
@@ -638,7 +639,6 @@ public class Configuration_impl extends ConfigurationPOA {
     public final OrganizationListHolder getOrganizations() {
       return m_organizations;
     }
-
     /**
      * <p>オブジェクト参照</p>
      */
@@ -647,22 +647,18 @@ public class Configuration_impl extends ConfigurationPOA {
      * <p>DeviceProfile</p>
      */
     protected DeviceProfile m_deviceProfile = new DeviceProfile();
-
     /**
      * <p>ServiceProfile リスト</p>
      */
     protected ServiceProfileListHolder m_serviceProfiles;
-
     /**
      * <p>Parameter リスト</p>
      */
     protected ParameterListHolder m_parameters;
-
     /**
      * <p>コンフィギュレーションセット情報</p>
      */
     protected ConfigAdmin m_configsets;
-
     /**
      * <p>Organization リスト</p>
      */

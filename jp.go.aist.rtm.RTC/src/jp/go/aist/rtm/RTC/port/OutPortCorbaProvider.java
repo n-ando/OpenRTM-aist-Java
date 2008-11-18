@@ -21,12 +21,11 @@ import _SDOPackage.NVListHolder;
  */
 public class OutPortCorbaProvider<DataType>
     extends OutPortAnyPOA implements OutPortProvider {
-
     /**
      * <p>コンストラクタです。</p>
      * 
      * @param DATA_TYPE_CLASS 型パラメータで指定したデータ型のClassオブジェクト
-     * @param 当該プロバイダに割り当てるバッファ
+     * @param buffer 当該プロバイダに割り当てるバッファ
      */
     public OutPortCorbaProvider(Class<DataType> DATA_TYPE_CLASS,
             BufferBase<DataType> buffer) throws Exception {
@@ -101,9 +100,7 @@ public class OutPortCorbaProvider<DataType>
     }
 
     private BufferBase<DataType> m_buffer;
-    
     private OutPortAny m_objref;
-
     private TypeCast<DataType> TYPE_CAST;
     private OutPortProviderImpl m_outPortProvider = new OutPortProviderImpl();
 

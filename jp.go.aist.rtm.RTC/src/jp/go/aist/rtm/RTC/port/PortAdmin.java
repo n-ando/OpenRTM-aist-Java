@@ -13,6 +13,8 @@ import org.omg.PortableServer.POA;
 import RTC.Port;
 import RTC.PortListHolder;
 import RTC.PortOperations;
+import RTC.PortProfile;
+import RTC.PortProfileListHolder;
 
 /**
  * <p>Portの管理を行うクラスです。</p>
@@ -26,7 +28,6 @@ public class PortAdmin {
      * @param poa POAオブジェクト
      */
     public PortAdmin(ORB orb, POA poa) {
-        
         this.m_pORB = orb;
         this.m_pPOA = poa;
     }
@@ -37,8 +38,23 @@ public class PortAdmin {
      * @return Portオブジェクトリストを内包するPortListHolderオブジェクト
      */
     public PortListHolder getPortList() {
-        
         return PortListHolderFactory.clone(this.m_portRefs);
+    }
+    
+    /**
+     * <p>登録されているPortのリストを取得します。</p>
+     * 
+     * @return Portオブジェクトリストを内包するPortListHolderオブジェクト
+     */
+    public final PortProfileListHolder getPortProfileList() {
+        PortProfileListHolder port_profs = new PortProfileListHolder();
+        port_profs.value = new PortProfile[0]; 
+        port_prof_collect p = new port_prof_collect(port_profs);
+        //
+        for( PortBase port : m_portServants.getObjects()) {
+            p.operator(port);
+        }
+        return port_profs;
     }
     
     /**
@@ -67,10 +83,9 @@ public class PortAdmin {
      * @return 指定されたポート名を持つPortサーバントのオブジェクト
      */
     public PortBase getPort(final String portName) {
-        
         return this.m_portServants.find(new find_port_name(portName));
     }
-    
+
     /**
      * <p>Portサーバントを登録します。</p>
      * 
@@ -108,7 +123,7 @@ public class PortAdmin {
             ignored.printStackTrace();
         }
     }
-    
+
     /**
      * <p>指定されたポート名を持つPortサーバントの登録を解除します。</p>
      * 
@@ -122,7 +137,7 @@ public class PortAdmin {
         
         deletePort(this.m_portServants.find(new find_port_name(portName)));
     }
-    
+
     /**
      * <p>登録されているすべてのPortサーバントについて、deactivateしたうえで登録を解除します。</p>
      */
@@ -136,22 +151,18 @@ public class PortAdmin {
     
     // ORB へのポインタ
     private ORB m_pORB;
-
     // POA へのポインタ
     private POA m_pPOA;
-
     // PortのCORBAオブジェクト参照のリスト
     private PortListHolder  m_portRefs = PortListHolderFactory.create();
     
     protected class find_port_name implements equalFunctor {
         
         public find_port_name(final String name) {
-            
             this.m_name = name;
         }
 
         public boolean equalof(Object element) {
-            
             PortOperations port = (PortOperations) element;
             return this.m_name.equals(port.get_port_profile().name);
         }
@@ -162,4 +173,13 @@ public class PortAdmin {
     // サーバントを直接格納するオブジェクトマネージャ
     private ObjectManager<String, PortBase> m_portServants = new ObjectManager<String, PortBase>();
     
+    protected class port_prof_collect {
+        public port_prof_collect(PortProfileListHolder p){
+            m_p = p;
+        }
+        public void operator(final PortBase port) {
+            CORBA_SeqUtil.push_back(m_p, port.getPortProfile() );
+        }
+        private PortProfileListHolder m_p;
+    }
 }

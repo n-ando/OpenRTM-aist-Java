@@ -43,20 +43,6 @@ public class NullBufferTest extends TestCase {
             this.m_intBuf.read(intvar);
             assertEquals(i, intvar.v.intValue());
         }
-        
-//        for (int i = 0; i < 100; ++i)
-//        {
-//            if (m_intBuf->write(i))
-//                ;
-//            else
-//                CPPUNIT_ASSERT(false);
-//
-//            int intvar;
-//            if (m_intBuf->read(intvar))
-//                ;
-//            else
-//                CPPUNIT_ASSERT(i == intvar);
-//        }
     }
     
     /**
@@ -78,20 +64,6 @@ public class NullBufferTest extends TestCase {
             this.m_charBuf.read(charvar);
             assertEquals(c, charvar.v.charValue());
         }
-
-//        for (int i = 0; i < 100; ++i)
-//        {
-//            if (m_charBuf->write(i))
-//                ;
-//            else
-//                CPPUNIT_ASSERT(false);
-//
-//            char charvar;
-//            if (m_charBuf->read(charvar))
-//                CPPUNIT_ASSERT(i == charvar);
-//            else
-//                CPPUNIT_ASSERT(false);
-//        }
     }
 
     /**
@@ -118,28 +90,6 @@ public class NullBufferTest extends TestCase {
             this.m_dataBuf.read(dvar);
             assertEquals(expected, dvar.v);
         }
-        
-//        for (int i = 0; i < 100; ++i)
-//        {
-//            Data data;
-//            data.int_data = i;
-//            data.double_data = i / 3.141592653589793238462643383279;
-//
-//            if (m_dataBuf->write(data))
-//                ;
-//            else
-//                CPPUNIT_ASSERT(false);
-//
-//            Data dvar;
-//            if (m_dataBuf->read(dvar))
-//            {
-//                CPPUNIT_ASSERT(data.int_data == dvar.int_data);
-//                CPPUNIT_ASSERT(data.double_data == dvar.double_data);
-//                // std::cout << dvar.int_data << "\t" << dvar.double_data << std::endl;
-//            }
-//            else
-//                CPPUNIT_ASSERT(false);
-//        } 
     }
 
     /**
@@ -154,10 +104,6 @@ public class NullBufferTest extends TestCase {
         assertFalse(this.m_intBuf.isFull());
         assertFalse(this.m_charBuf.isFull());
         assertFalse(this.m_dataBuf.isFull());
-        
-//        CPPUNIT_ASSERT(!m_intBuf->isFull());
-//        CPPUNIT_ASSERT(!m_charBuf->isFull());
-//        CPPUNIT_ASSERT(!m_dataBuf->isFull());
     }
 
     /**
@@ -190,9 +136,6 @@ public class NullBufferTest extends TestCase {
         assertFalse(this.m_charBuf.isEmpty());
         assertFalse(this.m_dataBuf.isEmpty());
         
-//        CPPUNIT_ASSERT(!m_intBuf->isEmpty());
-//        CPPUNIT_ASSERT(!m_charBuf->isEmpty());
-//        CPPUNIT_ASSERT(!m_dataBuf->isEmpty());
     }
 
     /**
@@ -232,12 +175,6 @@ public class NullBufferTest extends TestCase {
             int result = intBuf.get();
             assertEquals(i, result);
         }
-        
-//        for (int i = 0; i < 100; ++i)
-//        {
-//            dynamic_cast<MyBuffer<int>*>(m_intBuf)->put(i);
-//            CPPUNIT_ASSERT(i == dynamic_cast<MyBuffer<int>*>(m_intBuf)->get());
-//        }
     }
 
     /**
@@ -259,12 +196,6 @@ public class NullBufferTest extends TestCase {
             char result = charBuf.get();
             assertEquals(c, result);
         }
-
-//        for (int i = 0; i < 100; ++i)
-//        {
-//            dynamic_cast<MyBuffer<char>*>(m_charBuf)->put(i);
-//            CPPUNIT_ASSERT(i == dynamic_cast<MyBuffer<char>*>(m_charBuf)->get());
-//        }
     }
 
     /**
@@ -291,21 +222,6 @@ public class NullBufferTest extends TestCase {
             Data result = dataBuf.get();
             assertEquals(expected, result);
         }
-
-//        for (int i = 0; i < 100; ++i)
-//        {
-//            Data data;
-//            data.int_data = i;
-//            data.double_data = i / 3.141592653589793238462643383279;
-//
-//            dynamic_cast<MyBuffer<Data>*>(m_dataBuf)->put(data);
-//
-//            CPPUNIT_ASSERT(data.int_data
-//                    == dynamic_cast<MyBuffer<Data>*>(m_dataBuf)->get().int_data);
-//            CPPUNIT_ASSERT(data.double_data
-//                    == dynamic_cast<MyBuffer<Data>*>(m_dataBuf)->get().double_data);
-//            // std::cout << dvar.int_data << "\t" << dvar.double_data << std::endl;
-//        } 
     }
     
     class Data implements Cloneable {
@@ -335,21 +251,11 @@ public class NullBufferTest extends TestCase {
     class MyBuffer<DataType> extends NullBuffer<DataType> {
         
         public void put(final DataType data) {
-            
             super.put(data);
         }
-//        virtual void put(const DataType& data)
-//        {
-//            RTC::NullBuffer<DataType>::put(data);
-//        }
         
         public DataType get() {
-            
             return super.get();
         }
-//        virtual const DataType& get()
-//        {
-//            return RTC::NullBuffer<DataType>::get();
-//        }
     }
 }

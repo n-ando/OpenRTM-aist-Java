@@ -45,5 +45,6 @@ public class NamingOnCorba implements NamingBase {
         } catch (Exception ex) {
         }
     }
+
     private CorbaNaming m_cosnaming;
 }

@@ -92,4 +92,5 @@ public class OutPortProviderImpl implements OutPortProvider {
     private String m_interfaceType = new String();
     private String m_dataflowType = new String();
     private String m_subscriptionType = new String();
+    
 }

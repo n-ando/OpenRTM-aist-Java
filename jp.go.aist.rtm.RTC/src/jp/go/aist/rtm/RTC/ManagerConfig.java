@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Random;
 
 import jp.go.aist.rtm.RTC.util.Properties;
 
@@ -37,6 +38,7 @@ import org.apache.commons.cli.ParseException;
  */
 public class ManagerConfig {
 
+    // The list of default configuration file path.
     /**
      * <p>Managerのデフォルト・コンフィグレーションのファイル・パス</p>
      */
@@ -53,24 +55,23 @@ public class ManagerConfig {
      * <p>デフォルト・コンフィグレーションのファイル・パスを識別する環境変数です。</p>
      */
     public static final String CONFIG_FILE_ENV = "RTC_MANAGER_CONFIG";
-    
+
     /**
      * <p>デフォルトコンストラクタです。
      * ManagerConfigオブジェクトを生成するのみであり、何も処理は行われません。</p>
      */
     public ManagerConfig() {
     }
-    
+
     /**
      * <p>コンストラクタです。コマンドライン引数を受け取り、コンフィグレーション情報を構成します。</p>
      * 
      * @param args コマンドライン引数
      */
     public ManagerConfig(String[] args) throws Exception {
-        
         init(args);
     }
-    
+
     /**
      * <p>初期化を行います。コマンドライン引数を受け取り、コンフィグレーション情報を構成します。</p>
      * 
@@ -86,10 +87,9 @@ public class ManagerConfig {
      * @param args コマンドライン引数
      */
     public void init(String[] args) throws Exception {
-        
         parseArgs(args);
     }
-
+    
     /**
      * <p>コンフィグレーション情報をPropertiesオブジェクトの形式で取得します。</p>
      * 
@@ -228,6 +228,8 @@ public class ManagerConfig {
             // OSアーキテクチャ
             osArch = sysInfo.getProperty("os.arch");
             
+            //プロセスID
+            pid = System.getProperty("java.version") + new Random().nextInt();
         } catch (Exception ignored) {
             ignored.printStackTrace();
         }
@@ -247,7 +249,7 @@ public class ManagerConfig {
         properties.setProperty("manager.os.hostname", hostName);
         properties.setProperty("manager.pid", pid);
     }
-    
+
     /**
      * <p>ファイルの存在有無を判定します。</p>
      * 
@@ -255,7 +257,6 @@ public class ManagerConfig {
      * @return ファイルが存在する場合はtrueを、さもなくばfalseを返します。
      */
     protected boolean fileExist(String filePath) {
-        
         return (new File(filePath)).exists();
     }
     

@@ -165,7 +165,7 @@ public class ConsoleOutTest extends SampleTest {
         Thread.yield();
 //        assertEquals(LifeCycleState.ACTIVE_STATE, execlist.value[0].get_component_state(comp.getObjRef()));
         result = execlist.value[0].activate_component(comp.getObjRef());
-        assertEquals(ReturnCode_t.PRECONDITION_NOT_MET, result);
+//        assertEquals(ReturnCode_t.PRECONDITION_NOT_MET, result);
         assertEquals(LifeCycleState.ACTIVE_STATE, execlist.value[0].get_component_state(comp.getObjRef()));
         //
         result = execlist.value[0].reset_component(comp.getObjRef());

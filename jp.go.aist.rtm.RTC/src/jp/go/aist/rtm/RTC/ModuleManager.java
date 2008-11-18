@@ -64,7 +64,6 @@ public class ModuleManager {
      * 当該ModuleManagerオブジェクトの使用を終えた際に、明示的に呼び出してください。</p>
      */
     public void destruct() {
-        
         unloadAll();
     }
     
@@ -143,8 +142,6 @@ public class ModuleManager {
 
         Method initMethod;
         try {
-            // initMethod = target.getMethod(init_func, new
-            // Class[]{ModuleManager.class});
             initMethod = target.getMethod(methodName);
             
         } catch (SecurityException e) {
@@ -157,7 +154,6 @@ public class ModuleManager {
         }
 
         try {
-            // initMethod.invoke(target.newInstance(), new Object[]{this});
             initMethod.invoke(target.newInstance());
             
         } catch (IllegalArgumentException e) {
@@ -195,7 +191,7 @@ public class ModuleManager {
      */
     public void unloadAll() {
     }
-
+    
     /**
      * <p>規定となるモジュールロードパスを指定します。</p>
      * 
@@ -203,7 +199,6 @@ public class ModuleManager {
      * @see 規定ロードパスの使われ方については、load()を参照してください。
      */
     public void setLoadpath(final Vector<String> loadPath) {
-        
         m_loadPath = new Vector<String>(loadPath);
     }
     
@@ -213,7 +208,6 @@ public class ModuleManager {
     * @return 規定モジュールロードパス
     */
     public Vector<String> getLoadPath() {
-        
         return new Vector<String>(m_loadPath);
     }
 
@@ -223,7 +217,6 @@ public class ModuleManager {
      * @param loadPath 追加する規定ロードパス
      */
     public void addLoadPath(final Vector<String> loadPath) {
-        
         m_loadPath.addAll(loadPath);
     }
     
@@ -235,14 +228,13 @@ public class ModuleManager {
     public Vector<String> getLoadedModules() {
         return new Vector<String>(m_modules.values());
     }
-    
+        
     /**
      * <p>ロード可能なモジュールリストを取得します。</p>
      * 
      * @return ロード可能なモジュールリスト
      */
     public Vector<String> getLoadableModules() {
-        
         return new Vector<String>();
     }
     
@@ -250,7 +242,6 @@ public class ModuleManager {
      * <p>モジュールのフルクラス名指定を指定します。</p>
      */
     public void allowAbsolutePath() {
-        
         m_absoluteAllowed = true;
     }
     
@@ -258,7 +249,6 @@ public class ModuleManager {
      * <p>モジュールのフルクラス名指定解除を指定します。</p>
      */
     public void disallowAbsolutePath() {
-        
         m_absoluteAllowed = false;
     }
     
@@ -266,7 +256,6 @@ public class ModuleManager {
      * <p>モジュールのダウンロード許可を指定します。</p>
      */
     public void allowModuleDownload() {
-        
         m_downloadAllowed = true;
     }
     
@@ -274,7 +263,6 @@ public class ModuleManager {
      * <p>モジュールのダウンロード許可を解除します。</p>
      */
     public void disallowModuleDownload() {
-        
         m_downloadAllowed = false;
     }
     
@@ -282,40 +270,32 @@ public class ModuleManager {
      * <p>ModuleManagerプロパティ</p>
      */
     protected Properties m_properties;
-
     /**
      * <p>ロード済みモジュール</p>
      */
     protected Map<String, String> m_modules = new HashMap<String, String>();
-
     /**
      * <p>モジュールロードパス</p>
      */
     protected Vector<String> m_loadPath = new Vector<String>();
-
     /**
      * <p>コンフィギュレーションパス</p>
      */
     protected Vector<String> m_configPath = new Vector<String>();
-
     /**
      * <p>モジュールダウンロード許可フラグ</p>
      */
     protected boolean m_downloadAllowed;
-
     /**
      * <p>モジュール絶対パス指定許可フラグ</p>
      */
     protected boolean m_absoluteAllowed;
-
     /**
      * <p>初期実行関数サフィックス</p>
      */
     protected String m_initFuncSuffix = new String();
-
     /**
      * <p>初期実行関数プリフィックス</p>
      */
     protected String m_initFuncPrefix = new String();
-
 }

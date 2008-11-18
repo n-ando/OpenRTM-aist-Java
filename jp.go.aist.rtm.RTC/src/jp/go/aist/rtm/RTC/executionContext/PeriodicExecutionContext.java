@@ -29,6 +29,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     public PeriodicExecutionContext() {
         super();
         m_running = false;
+        m_nowait = false;
         if( m_profile==null ) m_profile = new ExecutionContextProfile();
         m_profile.kind = ExecutionKind.PERIODIC;
         m_profile.rate = 0.0;
@@ -51,10 +52,12 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public PeriodicExecutionContext(DataFlowComponent owner, double rate) {
         m_running = false;
+        m_nowait = false;
         m_profile.kind = ExecutionKind.PERIODIC;
         m_profile.rate = rate;
         if( rate==0 ) rate = 0.0000001;
         m_usec = (long)(1000000/rate);
+        if( m_usec==0 ) m_nowait = true;
     }
 
     /**
@@ -68,11 +71,12 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     /**
      * <p>本オブジェクトのExecutionContextServiceとしてのCORBAオブジェクト参照を設定します。</p>
      * 
-     * @param ref CORBAオブジェクト参照
+     * @return CORBAオブジェクト参照
      */
     public ExecutionContextService getRef() {
         return m_ref;
     }
+
     /**
      * <p>ExecutionContext用のスレッドを生成します。</p>
      */
@@ -99,10 +103,12 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
                     e.printStackTrace();
                 }
             }
-            try {
-                Thread.sleep(0, (int)tv.getUsec());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if( !m_nowait ) {
+                try {
+                    Thread.sleep(0, (int)tv.getUsec());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         } while( m_running );
       return 0;
@@ -119,8 +125,6 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * <p>スレッド終了関数です。</p>
      */
     public int close(long flags) {
-      //    RTC_TRACE(("RtcBase::close()"));
-      
       // At this point, this component have to be finished.
       // Current state and Next state should be RTC_EXITING.
       //    delete this;
@@ -195,6 +199,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         if( rate>0.0 ){
             m_profile.rate = rate;
             this.m_usec = (long)(1000000/rate);
+            if( m_usec == 0 ) m_nowait = true;
             for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
                 m_comps.elementAt(intIdx).invoke_on_rate_changed();
             }
@@ -378,108 +383,108 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
          * <p>onActivatedアクション定義用抽象クラスです。</p>
          */
         private class onActivated implements StateAction {
-            public Object doAction(StateHolder state) {
-                return on_activated(state);
+            public void doAction(StateHolder state) {
+                on_activated(state);
             }
         }
         /**
          * <p>onExecuteアクション定義用抽象クラスです。</p>
          */
         private class onExecute implements StateAction {
-            public Object doAction(StateHolder state) {
-                return on_execute(state);
+            public void doAction(StateHolder state) {
+                on_execute(state);
             }
         }
         /**
          * <p>onStateUpdateアクション定義用抽象クラスです。</p>
          */
         private class onStateUpdate implements StateAction {
-            public Object doAction(StateHolder state) {
-                return on_state_update(state);
+            public void doAction(StateHolder state) {
+                on_state_update(state);
             }
         }
         /**
          * <p>onDeactivatedアクション定義用抽象クラスです。</p>
          */
         private class onDeactivated implements StateAction {
-            public Object doAction(StateHolder state) {
-                return on_deactivated(state);
+            public void doAction(StateHolder state) {
+                on_deactivated(state);
             }
         }
         /**
          * <p>onAbortingアクション定義用抽象クラスです。</p>
          */
         private class onAborting implements StateAction {
-            public Object doAction(StateHolder state) {
-                return on_aborting(state);
+            public void doAction(StateHolder state) {
+                on_aborting(state);
             }
         }
         /**
          * <p>onErrorアクション定義用抽象クラスです。</p>
          */
         private class onError implements StateAction {
-            public Object doAction(StateHolder state) {
-                return on_error(state);
+            public void doAction(StateHolder state) {
+                on_error(state);
             }
         }
         /**
          * <p>onResetアクション定義用抽象クラスです。</p>
          */
         private class onReset implements StateAction {
-            public Object doAction(StateHolder state) {
-                return on_reset(state);
+            public void doAction(StateHolder state) {
+                on_reset(state);
             }
         }
 
-        //
         /**
          * <p>ExecutionContextのstart時に呼ばれる抽象メソッドです。</p>
          */
-        public abstract ReturnCode_t on_startup();
+        public abstract void on_startup();
         /**
          * <p>ExecutionContextのstop時に呼ばれる抽象メソッドです。</p>
          */
-        public abstract ReturnCode_t on_shutdown();
+        public abstract void on_shutdown();
         
         /**
          * <p>コンポーネントのactivate時に呼ばれる抽象メソッドです。</p>
          */
-        public abstract ReturnCode_t on_activated(final StateHolder st);
+        public abstract void on_activated(final StateHolder st);
         /**
          * <p>コンポーネントのdeactivate時に呼ばれる抽象メソッドです。</p>
          */
-        public abstract ReturnCode_t on_deactivated(final StateHolder st);
+        public abstract void on_deactivated(final StateHolder st);
         /**
          * <p>コンポーネントのabort時に呼ばれる抽象メソッドです。</p>
          */
-        public abstract ReturnCode_t on_aborting(final StateHolder st);
+        public abstract void on_aborting(final StateHolder st);
         /**
          * <p>コンポーネントがerror状態の時に呼ばれる抽象メソッドです。</p>
          */
-        public abstract ReturnCode_t on_error(final StateHolder st);
+        public abstract void on_error(final StateHolder st);
         /**
          * <p>コンポーネントreset時に呼ばれる抽象メソッドです。</p>
          */
-        public abstract ReturnCode_t on_reset(final StateHolder st);
+        public abstract void on_reset(final StateHolder st);
         /**
          * <p>コンポーネント実行時に呼ばれる抽象メソッドです。</p>
          */
-        public abstract ReturnCode_t on_execute(final StateHolder st);
+        public abstract void on_execute(final StateHolder st);
         /**
          * <p>コンポーネントの実行時に呼ばれる抽象メソッドです。</p>
          */
-        public abstract ReturnCode_t on_state_update(final StateHolder st);
+        public abstract void on_state_update(final StateHolder st);
 
         /**
          * <p>ExecutionContextの実行周期変更時に呼ばれる抽象メソッドです。</p>
          */
-        public abstract ReturnCode_t on_rate_changed();
+        public abstract void on_rate_changed();
         /**
          * <p>ExecutionContextの状態遷移用ワーカーです。</p>
          */
-        public ReturnCode_t worker() {
-            return m_sm.worker();
+        public void worker() {
+            m_sm.worker();
         }
+
         /**
          * <p>現在の状態を取得します。</p>
          * 
@@ -496,9 +501,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         /**
          * <p>ExecutionContextのStateMachine</p>
          */
-        public StateMachine<LifeCycleState, ReturnCode_t, DFPBase> m_sm;
+        public StateMachine<LifeCycleState, DFPBase> m_sm;
         
     }
+
     /**
      * <p>DataFlowComponentのAction定義用抽象クラスです。</p>
      */
@@ -514,86 +520,85 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             m_obj = obj;
             m_active = true;
         }
-        
         /**
          * <p>onStartupアクション定義用メソッドです。</p>
          */
-        public ReturnCode_t on_startup() {
-            return m_obj.on_startup(ec_id);
+        public void on_startup() {
+            m_obj.on_startup(ec_id);
         }
         /**
          * <p>onShutdownアクション定義用メソッドです。</p>
          */
-        public ReturnCode_t on_shutdown() {
-            return m_obj.on_shutdown(ec_id);
+        public void on_shutdown() {
+            m_obj.on_shutdown(ec_id);
         }
         /**
          * <p>onActivatedアクション定義用メソッドです。</p>
          */
-        public ReturnCode_t on_activated(final StateHolder st) {
+        public void on_activated(final StateHolder st) {
             if( m_obj.on_activated(ec_id) != ReturnCode_t.RTC_OK ) {
                 m_sm.goTo(LifeCycleState.ERROR_STATE);
-                return ReturnCode_t.RTC_ERROR;
+                return;
             }
-            return ReturnCode_t.RTC_OK;
+            return;
         }
         /**
          * <p>onDeactivatedアクション定義用メソッドです。</p>
          */
-        public ReturnCode_t on_deactivated(final StateHolder st) {
+        public void on_deactivated(final StateHolder st) {
             if( m_obj.on_deactivated(ec_id) != ReturnCode_t.RTC_OK ) {
                 m_sm.goTo(LifeCycleState.ERROR_STATE);
-                return ReturnCode_t.RTC_ERROR;
+                return;
             }
-            return ReturnCode_t.RTC_OK;
+            return;
         }
         /**
          * <p>onAbortingアクション定義用メソッドです。</p>
          */
-        public ReturnCode_t on_aborting(final StateHolder st) {
-            return m_obj.on_aborting(ec_id);
+        public void on_aborting(final StateHolder st) {
+            m_obj.on_aborting(ec_id);
         }
         /**
          * <p>onErrorアクション定義用メソッドです。</p>
          */
-        public ReturnCode_t on_error(final StateHolder st) {
-            return m_obj.on_error(ec_id);
+        public void on_error(final StateHolder st) {
+            m_obj.on_error(ec_id);
         }
         /**
          * <p>onResetアクション定義用メソッドです。</p>
          */
-        public ReturnCode_t on_reset(final StateHolder st) {
+        public void on_reset(final StateHolder st) {
             if( m_obj.on_reset(ec_id) != ReturnCode_t.RTC_OK) {
                 m_sm.goTo(LifeCycleState.ERROR_STATE);
-                return ReturnCode_t.RTC_ERROR;
+                return;
             }
-            return ReturnCode_t.RTC_OK;
+            return;
         }
         /**
          * <p>onExecuteアクション定義用メソッドです。</p>
          */
-        public ReturnCode_t on_execute(final StateHolder st) {
+        public void on_execute(final StateHolder st) {
             if( m_obj.on_execute(ec_id) != ReturnCode_t.RTC_OK) {
                 m_sm.goTo(LifeCycleState.ERROR_STATE);
-                return ReturnCode_t.RTC_ERROR;
+                return;
             }  
-            return ReturnCode_t.RTC_OK;
+            return;
         }
         /**
          * <p>onStateUpdateアクション定義用メソッドです。</p>
          */
-        public ReturnCode_t on_state_update(final StateHolder st) {
+        public void on_state_update(final StateHolder st) {
             if( m_obj.on_state_update(ec_id) != ReturnCode_t.RTC_OK) {
                 m_sm.goTo(LifeCycleState.ERROR_STATE);
-                return ReturnCode_t.RTC_ERROR;
+                return;
             }
-            return ReturnCode_t.RTC_OK;
+            return;
         }
         /**
          * <p>onRateChangedアクション定義用メソッドです。</p>
          */
-        public ReturnCode_t on_rate_changed() {
-            return m_obj.on_rate_changed(ec_id);
+        public void on_rate_changed() {
+            m_obj.on_rate_changed(ec_id);
         }
         private DataFlowComponent m_obj; 
         private boolean m_active;
@@ -701,6 +706,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * <p>ExecutionContextServiceとしてのCORBAオブジェクト参照です。</p>
      */
     protected ExecutionContextService m_ref;
+    protected boolean m_nowait;
 
     /**
      * <p>このExecutionContextを生成するFactoryクラスを
@@ -711,6 +717,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     public static void PeriodicExecutionContextInit(Manager manager) {
         manager.registerECFactory("jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext");
     }
+
     /**
      * <p>ExecutionContextのインスタンスを取得します。</p>
      * 

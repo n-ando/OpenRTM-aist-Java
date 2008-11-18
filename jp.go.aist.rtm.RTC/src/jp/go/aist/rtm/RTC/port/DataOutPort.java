@@ -13,13 +13,22 @@ import RTC.ReturnCode_t;
 import _SDOPackage.NVListHolder;
 
 
+/*!
+ * @if jp
+ * @class DataOutPort
+ * @brief InPort 用 Port
+ * @else
+ * @class DataOutPort
+ * @brief InPort abstruct class
+ * @endif
+ */
 /**
  * <p>データ出力ポートです。</p>
  * 
  * @param <DataType> データ型を指定します。
  */
 public class DataOutPort<DataType> extends PortBase {
-    
+
     /**
      * <p>コンストラクタです。</p>
      * 
@@ -129,13 +138,14 @@ public class DataOutPort<DataType> extends PortBase {
     protected void unsubscribeInterfaces(final ConnectorProfile connector_profile) {
         
         PublisherBase publisher = this.m_outPort.detach(connector_profile.connector_id);
-        this.m_pf.destroy(publisher);
+        if( publisher != null ) {
+            this.m_pf.destroy(publisher);
+        }
     }
     
     private Vector<OutPortProvider> m_providers = new Vector<OutPortProvider>();
     private Vector<InPortConsumer> m_consumers = new Vector<InPortConsumer>();
     private OutPortBase m_outPort;
-
     private PublisherFactory m_pf = new PublisherFactory();
 
     private class subscribe {

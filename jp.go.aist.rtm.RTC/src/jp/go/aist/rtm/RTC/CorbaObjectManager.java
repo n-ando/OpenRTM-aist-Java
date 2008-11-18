@@ -82,5 +82,4 @@ public class CorbaObjectManager {
      * POA
      */
     private POA m_pPOA;
-
 }

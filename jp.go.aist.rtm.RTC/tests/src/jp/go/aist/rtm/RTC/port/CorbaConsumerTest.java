@@ -22,57 +22,12 @@ public class CorbaConsumerTest extends TestCase {
             System.out.println("hello world");
         }
     }
-//  class hello_impl
-//  : virtual public POA_hello,
-//    virtual public PortableServer::RefCountServantBase
-//  {
-//  public:
-//      hello_impl(){};
-//      virtual ~hello_impl(){};
-//
-//      void hello_world()
-//      {
-//          std::cout << "hello world" << std::endl;
-//      }
-//  };
 
-//    CPPUNIT_TEST_SUITE(CorbaConsumerTests);
-//    CPPUNIT_TEST(test_consumer);
-//    CPPUNIT_TEST_SUITE_END();
-  
-//private:
     private ORB m_orb;
     private POA m_poa;
-//    CORBA::ORB_ptr m_pORB;
-//    PortableServer::POA_ptr m_pPOA;
 
-//public:
-  
-    /*!
-     * @brief Constructor
-     */
     public CorbaConsumerTest() {
     }
-//    CorbaConsumerTests()
-//    {
-//        int argc(0);
-//        char** argv(NULL);
-//        m_pORB = CORBA::ORB_init(argc, argv);
-//        m_pPOA = PortableServer::POA::_narrow(
-//                m_pORB->resolve_initial_references("RootPOA"));
-//        m_pPOA->the_POAManager()->activate();
-//    }
-    
-    /*!
-     * @brief Destructor
-     */
-//    ~CorbaConsumerTests()
-//    {
-//    }
-
-    /*!
-     * @brief Test initialization
-     */
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -87,21 +42,11 @@ public class CorbaConsumerTest extends TestCase {
                 this.m_orb.resolve_initial_references("RootPOA"));
         this.m_poa.the_POAManager().activate();
     }
-//    virtual void setUp()
-//    {
-//    }
-    
-    /*!
-     * @brief Test finalization
-     */
     protected void tearDown() throws Exception {
         super.tearDown();
         
         this.m_orb.destroy();
     }
-//    virtual void tearDown()
-//    { 
-//    }
     
     /**
      * <p>次のテストを行います。
@@ -122,20 +67,5 @@ public class CorbaConsumerTest extends TestCase {
         hello helloRef = cons._ptr();
         helloRef.hello_world();
     }
-//    void test_consumer()
-//    {
-//        hello_impl* pHello = new hello_impl();
-//      
-//        PortableServer::ServantBase* servant;
-//      
-//        servant = pHello;
-//      
-//        PortableServer::ObjectId_var oid;
-//        oid = m_pPOA->activate_object(servant);
-//      
-//        RTC::CorbaConsumer<hello> cons;
-//        cons.setObject(m_pPOA->id_to_reference(oid));
-//        cons._ptr()->hello_world();
-//    }
 }
 
