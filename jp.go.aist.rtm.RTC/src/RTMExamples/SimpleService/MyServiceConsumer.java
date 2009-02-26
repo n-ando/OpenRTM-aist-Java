@@ -1,11 +1,9 @@
 package RTMExamples.SimpleService;
 
 import jp.go.aist.rtm.RTC.Manager;
-import jp.go.aist.rtm.RTC.ModuleInitProc;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.RtcDeleteFunc;
 import jp.go.aist.rtm.RTC.RtcNewFunc;
-import jp.go.aist.rtm.RTC.util.Properties;
 
 public class MyServiceConsumer implements RtcNewFunc, RtcDeleteFunc {
 

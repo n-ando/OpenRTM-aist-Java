@@ -8,7 +8,6 @@ import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.port.CorbaConsumer;
 import jp.go.aist.rtm.RTC.port.CorbaPort;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
 import RTC.ReturnCode_t;
 
 public class MyServiceConsumerImpl  extends DataFlowComponentBase {
