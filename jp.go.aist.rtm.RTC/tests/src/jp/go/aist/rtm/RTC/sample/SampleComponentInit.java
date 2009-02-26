@@ -49,13 +49,11 @@ public class SampleComponentInit implements ModuleInitProc {
 //        try {
 //            Thread.sleep(1000);
 //        } catch (InterruptedException e) {
-//            // TODO Auto-generated catch block
 //            e.printStackTrace();
 //        }
 //        try {
 //            comp.rtc_start();
 //        } catch (IllegalTransition e) {
-//            // TODO Auto-generated catch block
 //            e.printStackTrace();
 //        }
     }
