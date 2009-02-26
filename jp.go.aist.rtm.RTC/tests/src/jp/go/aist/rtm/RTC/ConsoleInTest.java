@@ -62,9 +62,11 @@ public class ConsoleInTest extends SampleTest {
     protected void tearDown() throws Exception {
         for(int intIdx=0;intIdx<manager.m_ecs.size();intIdx++) {
             manager.m_ecs.elementAt(intIdx).stop();
-            Thread.yield();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+            }
         }
-        Thread.sleep(300);
         manager.shutdownComponents();
         manager.shutdownNaming();
         manager = null;
@@ -81,12 +83,12 @@ public class ConsoleInTest extends SampleTest {
      */
     public void test_profile() {
         ComponentProfile prof = comp.get_component_profile();
-//        assertEquals("ConsoleIn0", comp.get_component_profile().instance_name);
-        assertEquals("ConsoleIn", comp.get_component_profile().type_name);
-        assertEquals("Console input component", comp.get_component_profile().description);
-        assertEquals("1.0", comp.get_component_profile().version);
-        assertEquals("Noriaki Ando, AIST", comp.get_component_profile().vendor);
-        assertEquals("example", comp.get_component_profile().category);
+        assertTrue(prof.instance_name.startsWith("ConsoleIn"));
+        assertEquals("ConsoleIn", prof.type_name);
+        assertEquals("Console input component", prof.description);
+        assertEquals("1.0", prof.version);
+        assertEquals("Noriaki Ando, AIST", prof.vendor);
+        assertEquals("example", prof.category);
         //
         PortListHolder portlist = new PortListHolder(comp.get_ports());
         assertEquals( 1, portlist.value.length);
@@ -96,7 +98,7 @@ public class ConsoleInTest extends SampleTest {
         this.copyToProperties(prop, new NVListHolder(portlist.value[0].get_port_profile().properties));
         assertEquals( "DataOutPort", prop.getProperty("port.port_type"));
         assertEquals( "TimedLong", prop.getProperty("dataport.data_type"));
-        assertEquals( "CORBA_Any", prop.getProperty("dataport.interface_type"));
+        assertEquals( "CORBA_Any,TCP_Any", prop.getProperty("dataport.interface_type"));
         assertEquals( "Push, Pull", prop.getProperty("dataport.dataflow_type"));
         assertEquals( "Flush, New, Periodic", prop.getProperty("dataport.subscription_type"));
         //
@@ -162,7 +164,10 @@ public class ConsoleInTest extends SampleTest {
         //
         result = execlist.value[0].activate_component(comp.getObjRef());
         assertEquals(ReturnCode_t.RTC_OK, result);
-        Thread.yield();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+        }
 //        assertEquals(LifeCycleState.ACTIVE_STATE, execlist.value[0].get_component_state(comp.getObjRef()));
         result = execlist.value[0].activate_component(comp.getObjRef());
 //        assertEquals(ReturnCode_t.PRECONDITION_NOT_MET, result);
@@ -176,9 +181,13 @@ public class ConsoleInTest extends SampleTest {
         //
         result = execlist.value[0].stop();
         result = comp._finalize();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+        }
         assertEquals(ReturnCode_t.RTC_OK,  result);
-        assertEquals(true, comp.is_alive());
-        result = comp.exit();
+//        assertEquals(true, comp.is_alive());
+//        result = comp.exit();
         assertEquals(false, comp.is_alive());
     }
 

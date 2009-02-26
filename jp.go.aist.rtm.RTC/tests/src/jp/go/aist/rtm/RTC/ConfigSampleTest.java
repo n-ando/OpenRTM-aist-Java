@@ -1,7 +1,6 @@
 package jp.go.aist.rtm.RTC;
 
 import jp.go.aist.rtm.RTC.util.Properties;
-import RTC.ComponentProfile;
 import RTC.ExecutionContextListHolder;
 import RTC.ExecutionKind;
 import RTC.LifeCycleState;
@@ -9,7 +8,6 @@ import RTC.ReturnCode_t;
 import RTMExamples.ConfigSample.ConfigSample;
 import RTMExamples.ConfigSample.ConfigSampleComp;
 import RTMExamples.ConfigSample.ConfigSampleImpl;
-import RTMExamples.ConfigSample.ConfigSampleStub;
 
 /**
 * ConfigSample　テスト(22)

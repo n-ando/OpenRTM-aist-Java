@@ -14,7 +14,7 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 /**
 *
-* CORBAオブジェクトマネージャクラス　テスト(2)
+* CORBAオブジェクトマネージャクラス　テスト
 * 対象クラス：CorbaObjectManager
 *
 */
@@ -28,8 +28,6 @@ public class CorbaObjectManagerTest extends TestCase {
         String[] argv = new String[0];
         // (1-1) ORBの初期化
         java.util.Properties props = new java.util.Properties();
-        props.put("org.omg.CORBA.ORBInitialPort", "2809");
-        props.put("org.omg.CORBA.ORBInitialHost", "localhost");
         m_ORB = ORB.init(argv, props);
 
         // (1-2) POAManagerのactivate
@@ -51,14 +49,19 @@ public class CorbaObjectManagerTest extends TestCase {
     }
     protected void tearDown() throws Exception {
         super.tearDown();
+        if( m_ORB != null) {
+            m_ORB.destroy();
+            m_ORB = null;
+        }
     }
 
     /**
-     *<pre>
-     * RTObjectのActivate/Deactivate
-     *　・RTObjectをActivateできるか？
-     *　・RTObjectをDeactivateできるか？
-     *</pre>
+     * <p>RTObjectのActivate/Deactivate
+     * <ul>
+     * <li>RTObjectをActivateできるか？</li>
+     * <li>RTObjectをDeactivateできるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_activate_deactivate_rtobject() {
         Manager manager = Manager.instance();
@@ -69,8 +72,12 @@ public class CorbaObjectManagerTest extends TestCase {
         } catch ( Exception ex ) {
         }
         try {
+            // RTObjectをアクティブ化する
             objManager.activate(rtobject);
             assertNotNull(rtobject._this());
+            // RTObjectに参照が設定されているか確認することでアクティブ化の成功を確認する
+            assertNotNull(rtobject.getObjRef());
+            rtobject.get_sdo_id();
         } catch (ServantAlreadyActive e) {
             e.printStackTrace();
             fail();
@@ -80,8 +87,12 @@ public class CorbaObjectManagerTest extends TestCase {
         } catch (ObjectNotActive e) {
             e.printStackTrace();
             fail();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
         }
         try {
+            // 非アクティブ化する
             objManager.deactivate(rtobject);
         } catch (ServantNotActive e) {
             e.printStackTrace();
@@ -92,6 +103,10 @@ public class CorbaObjectManagerTest extends TestCase {
         } catch (ObjectNotActive e) {
             e.printStackTrace();
             fail();
+        }
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
         }
     }
 }
