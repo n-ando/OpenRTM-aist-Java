@@ -78,8 +78,6 @@ public class PortAdminTest extends TestCase {
     private PortAdmin m_ppadm;
     private PortBase m_ppb;
     private PortBase m_ppb2;
-    private ORB m_orb;
-    private POA m_poa;
     private OrbRunner m_orbRunner;
 
     public PortAdminTest() {
@@ -117,8 +115,11 @@ public class PortAdminTest extends TestCase {
     }
 
     /**
-     * <p>Portリスト取得のテストです。
-     * 取得したPort群に対してポートプロファイル取得のテストも行います。</p>
+     * <p>getPortList()メソッドのテスト
+     * <ul>
+     * <li>取得されたPortが、あらかじめ登録したものと一致するか？</li>
+     * </ul>
+     * </p>
      */
     public void test_getPortList() {
         
@@ -136,7 +137,10 @@ public class PortAdminTest extends TestCase {
 
     /**
      * <p>ポート名によるPort取得のテストです。
-     * 取得されたPortに対して、ポートプロファイル取得のテストも行います。</p>
+     * <ul>
+     * <li>登録されているPortの参照を正しく取得できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_getPortRef() {
         
@@ -159,7 +163,10 @@ public class PortAdminTest extends TestCase {
 
     /**
      * <p>ポート名によるPort取得のテストです。
-     * 存在しないポート名で取得を試みて、取得できないことをテストします。</p>
+     * <ul>
+     * <li>登録されていないPortの名称を指定した場合、意図どおりnullが得られるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_getPortRef_nonexistent_port() {
 
@@ -169,7 +176,11 @@ public class PortAdminTest extends TestCase {
     }
     
     /**
-     * <p>ポート名によるPortサーバント取得のテストです。</p>
+     * <p>ポート名によるPortサーバント取得のテストです。
+     * <ul>
+     * <li> ポート名称を指定して、登録されているPortオブジェクトを正しく取得できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_getPort() {
         
@@ -189,7 +200,12 @@ public class PortAdminTest extends TestCase {
     }
     
     /**
-     * <p>Portサーバントの登録解除をテストします。</p>
+     * <p>deletePort()のテスト
+     * <ul>
+     * <li>Portを正しく削除できるか？</li>
+     * <li>削除したPortのProfileのリファレンスがnullになっているか？</li>
+     * </ul>
+     * </p>
      */
     public void test_deletePort() {
   
@@ -217,7 +233,12 @@ public class PortAdminTest extends TestCase {
     }
     
     /**
-     * <p>ポート名によるPortサーバント登録解除をテストします。</p>
+     * <p>deletePortByName()メソッドのテスト
+     * <ul>
+     * <li>指定した名称を持つPortを正しく削除できるか？</li>
+     * <li>削除したPortのProfileのリファレンスがnullになっているか？</li>
+     * </ul>
+     * </p>
      */
     public void test_deletePortByName() {
         
@@ -233,7 +254,12 @@ public class PortAdminTest extends TestCase {
     }
     
     /**
-     * <p>全ポート終了処理のテストを行います。</p>
+     * <p>finalizePorts()メソッドのテスト
+     * <ul>
+     * <li>登録されているすべてのPortを、PortAdminから削除できるか？</li>
+     * <li>すべてのPortのProfileのリファレンスがnilになっているか？</li>
+     * </ul>
+     * </p>
      */
     public void test_finalizePorts() {
         

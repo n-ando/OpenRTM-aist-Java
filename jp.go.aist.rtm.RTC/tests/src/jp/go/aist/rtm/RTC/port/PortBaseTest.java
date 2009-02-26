@@ -1,11 +1,17 @@
 package jp.go.aist.rtm.RTC.port;
 
+import java.util.Calendar;
+import java.util.Vector;
+
+import jp.go.aist.rtm.RTC.util.ConnectorProfileFactory;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.PortProfileFactory;
+import junit.framework.TestCase;
+
 import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAManager;
-
-import _SDOPackage.NameValue;
 
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
@@ -14,12 +20,7 @@ import RTC.PortInterfacePolarity;
 import RTC.PortInterfaceProfile;
 import RTC.PortProfile;
 import RTC.ReturnCode_t;
-
-
-import jp.go.aist.rtm.RTC.util.ConnectorProfileFactory;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
-import jp.go.aist.rtm.RTC.util.PortProfileFactory;
-import junit.framework.TestCase;
+import _SDOPackage.NameValue;
 
 /**
  * <p>PortBaseクラスのためのテストケースです。</p>
@@ -27,11 +28,27 @@ import junit.framework.TestCase;
 public class PortBaseTest extends TestCase {
 
     class PortBaseMock extends jp.go.aist.rtm.RTC.port.PortBase {
+        
+        private Vector<String> _notifyConnectTimes = new Vector<String>();
+        private Vector<String> _notifyDisconnectTimes = new Vector<String>();
+        private Vector<String> _publishIfsTimes = new Vector<String>();
+        private Vector<String> _subscribeIfsTimes = new Vector<String>();
+        private Vector<String> _unsubscribeIfsTimes = new Vector<String>();
 
         public PortBaseMock(PortProfile profile) {
             super();
             this.m_profile = profile;
             this.m_profile.port_ref = this.m_objref;
+        }
+        
+        public ReturnCode_t notify_connect(ConnectorProfileHolder connector_profile) {
+            _notifyConnectTimes.add(getNow());
+            return super.notify_connect(connector_profile);
+        }
+        
+        public ReturnCode_t notify_disconnect(String connector_id) {
+            _notifyDisconnectTimes.add(getNow());
+            return super.notify_disconnect(connector_id);
         }
         
         protected ReturnCode_t publishInterfaces(ConnectorProfileHolder connector_profile) {
@@ -43,6 +60,30 @@ public class PortBaseTest extends TestCase {
         }
 
         protected void unsubscribeInterfaces(ConnectorProfile connector_profile) {
+        }
+        
+        private String getNow() {
+            return Calendar.getInstance().getTime().toString();
+        }
+        
+        public Vector<String> getNotifyConnectTimes() {
+            return _notifyConnectTimes;
+        }
+        
+        public Vector<String> getNotifyDisconnectTimes() {
+            return _notifyDisconnectTimes;
+        }
+        
+        public Vector<String> getPublishIfsTimes() {
+            return _publishIfsTimes;
+        }
+        
+        public Vector<String> getSubscribeIfsTimes() {
+            return _subscribeIfsTimes;
+        }
+        
+        public Vector<String> getUnsubscribeIfsTimes() {
+            return _unsubscribeIfsTimes;
         }
     }
     
@@ -106,8 +147,7 @@ public class PortBaseTest extends TestCase {
         // PortBaseのインスタンス生成
         this.m_ppb = new PortBaseMock(portProfile);
         
-        // サーバントのオブジェクト参照を取得する
-        this.m_portRef = this.m_ppb.getPortRef();
+        poa.the_POAManager().activate();
     }
 
     protected void tearDown() throws Exception {
@@ -115,10 +155,79 @@ public class PortBaseTest extends TestCase {
     }
 
     /**
-     * <p>get_port_profile()メソッドによるポートプロファイル取得のテストです。
-     * PortProfileオブジェクトの各メンバについて、期待値との比較を行います。</p>
+     * <p>get_port_profile()メソッドのテスト
+     * <ul>
+     * <li>オブジェクト参照経由で、get_port_profile()に正しくアクセスできるか？</li>
+     * <li>PortProfile.nameを正しく取得できるか？</li>
+     * <li>PortProfile.interfaceを正しく取得できるか？</li>
+     * <li>PortProfile.connector_profilesを正しく取得できるか？</li>
+     * <li>PortProfile.propertiesを正しく取得できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_get_port_profile() {
+        
+        // (1) オブジェクト参照経由で、get_port_profile()に正しくアクセスできるか？
+        // get_port_profile()はCORBAインタフェースなので、オブジェクト参照経由でアクセスし、
+        // CORBAインタフェースとして機能していることを確認する
+        Port portRef = this.m_ppb.getPortRef();
+        PortProfile getProf = portRef.get_port_profile();
+        
+        String setstr, getstr;
+        // (2) セットしたPortProfileと取得したPortProfileの要素を比較
+        // check PortProfile.name
+        getstr = getProf.name;
+        setstr = "inport0";
+        assertEquals(setstr, getstr);
+        
+        // check PortProfile.interfaces
+        getstr = getProf.interfaces[0].instance_name;
+        setstr = "PortInterfaceProfile-instance_name";
+        assertEquals(setstr, getstr);
+        
+        getstr = getProf.interfaces[0].type_name;
+        setstr = "PortInterfaceProfile-type_name";
+        assertEquals(setstr, getstr);
+
+        assertEquals(PortInterfacePolarity.REQUIRED, getProf.interfaces[0].polarity);
+        
+        // check PortProfile.connector_profiles
+        getstr = getProf.connector_profiles[0].name;
+        setstr = "ConnectorProfile-name";
+        assertEquals(setstr, getstr);
+        
+        getstr = getProf.connector_profiles[0].connector_id;
+        setstr = "connect_id0";
+        assertEquals(setstr, getstr);
+        
+        getstr = getProf.connector_profiles[0].properties[0].name;
+        setstr = "ConnectorProfile-properties0-name";
+        assertEquals(setstr, getstr);
+
+        float retval = getProf.connector_profiles[0].properties[0].value.extract_float();
+        assertEquals(this.m_connProfileVal, retval);
+        
+        // check PortProfile.properties
+        getstr = getProf.properties[0].name;
+        setstr = "PortProfile-properties0-name";
+        assertEquals(setstr, getstr);
+        
+        retval = getProf.properties[0].value.extract_float();
+        assertEquals(this.m_portProfVal, retval);
+    }
+
+    /**
+     * <p>get_port_profile()メソッドのテスト
+     * <ul>
+     * <li>オブジェクト参照経由で、get_port_profile()に正しくアクセスできるか？</li>
+     * <li>PortProfile.nameを正しく取得できるか？</li>
+     * <li>PortProfile.interfaceを正しく取得できるか？</li>
+     * <li>PortProfile.connector_profilesを正しく取得できるか？</li>
+     * <li>PortProfile.propertiesを正しく取得できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_getPortProfile() {
         
         PortProfile getProf;
         
@@ -169,16 +278,25 @@ public class PortBaseTest extends TestCase {
     }
 
     /**
-     * <p>get_connector_profiles()メソッドによる接続プロファイル取得のテストです。
-     * ConnectorProfileオブジェクトの各メンバについて、期待値との比較を行います。</p>
+     * <p>get_connector_profiles()メソッドのテスト
+     * <ul>
+     * <li>オブジェクト参照経由で、get_connector_profiles()に正しくアクセスできるか？</li>
+     * <li>ConnectorProfile.nameを正しく取得できるか？</li>
+     * <li>ConnectorProfile.connector_idを正しく取得できるか？</li>
+     * <li>ConnectorProfile.propertiesを正しく取得できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_get_connector_profiles() {
         
         ConnectorProfile[] cpList;
         String setstr, getstr;
         
-        // get ConnectorProfileList
-        cpList = this.m_ppb.get_connector_profiles();
+        // (1) オブジェクト参照経由で、get_connector_profiles()に正しくアクセスできるか？
+        // get_connector_profiles()はCORBAインタフェースなので、オブジェクト参照経由でアクセスし、
+        // CORBAインタフェースとして機能していることを確認する
+        Port portRef = this.m_ppb.getPortRef();
+        cpList = portRef.get_connector_profiles();
         
         // (2) セットしたConnectorProfileと取得したConnectorProfileListの
         //     要素であるConnectorProfileの要素を比較。
@@ -203,8 +321,14 @@ public class PortBaseTest extends TestCase {
     }
 
     /**
-     * <p>get_connector_profile()メソッドを用いた、接続IDによる接続プロファイル取得のテストです。<br />
-     * 取得したConnectorProfileオブジェクトの各メンバについて、期待値との比較を行います。</p>
+     * <p>get_connector_profiles()メソッドのテスト
+     * <ul>
+     * <li>オブジェクト参照経由で、get_connector_profiles()に正しくアクセスできるか？</li>
+     * <li>ConnectorProfile.nameを正しく取得できるか？</li>
+     * <li>ConnectorProfile.connector_idを正しく取得できるか？</li>
+     * <li>ConnectorProfile.propertiesを正しく取得できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_get_connector_profile() {
         
@@ -212,7 +336,8 @@ public class PortBaseTest extends TestCase {
         String setstr, getstr;
         
         // (1) get_connector_profileにてConnectorProfileを取得
-        cProf = this.m_ppb.get_connector_profile("connect_id0");
+        Port portRef = this.m_ppb.getPortRef();
+        cProf = portRef.get_connector_profile("connect_id0");
         
         // セットしたConnectorProfileと取得したConnectorProfileを比較。
         // check ConnectorProfile.name
@@ -251,17 +376,159 @@ public class PortBaseTest extends TestCase {
             System.out.println("connect result PRECONDITION_NOT_MET.");
         }
     }
-    
+    /**
+     * <p>connect()メソッドのテスト
+     * <ul>
+     * <li>オブジェクト参照経由で、connect()に正しくアクセスできるか？</li>
+     * <li>接続が成功するか？</li>
+     * <li>接続時にnotify_connect()が意図どおりに１回だけ呼び出されたか？</li>
+     * </ul>
+     * </p>
+     */
     public void test_connect() {
+        // (1) オブジェクト参照経由で、connect()に正しくアクセスできるか？
+        // connect()はCORBAインタフェースなので、オブジェクト参照経由でアクセスし、
+        // CORBAインタフェースとして機能していることを確認する
+        Port portRef = this.m_ppb.getPortRef();
+        
+        // 接続時に必要となるConnectorProfileを構築する
+        ConnectorProfile connProfile = new ConnectorProfile();
+        connProfile.name = "ConnectorProfile-name";
+        connProfile.connector_id = "connect_id0";
+        connProfile.ports = new Port[1];
+        connProfile.ports[0] = portRef;
+        connProfile.properties = new NameValue[1];
+        connProfile.properties[0] = new NameValue();
+        connProfile.properties[0].name = "";
+        connProfile.properties[0].value = ORBUtil.getOrb().create_any();
+        ConnectorProfileHolder holder = new ConnectorProfileHolder(connProfile);
+
+        // (2) 接続が成功するか？
+        assertEquals(ReturnCode_t.RTC_OK, portRef.connect(holder));
+  
+        // (3) 接続時にnotify_connect()が意図どおりに１回だけ呼び出されたか？
+        PortBaseMock pPortBaseMock = this.m_ppb;
+        assertNotNull(pPortBaseMock);
+        assertEquals(1, pPortBaseMock.getNotifyConnectTimes().size());
     }
+    /**
+     * <p>disconnect()メソッドのテスト
+     * <ul>
+     * <li>オブジェクト参照経由で、disconnect()に正しくアクセスできるか？</li>
+     * <li>切断が成功するか？</li>
+     * <li>切断時にnotify_disconnect()が、意図どおり１回だけ呼び出されているか？</li>
+     * </ul>
+     * </p>
+     */
     public void test_disconnect() {
+        // (1) オブジェクト参照経由で、disconnect()に正しくアクセスできるか？
+        // disconnect()はCORBAインタフェースなので、オブジェクト参照経由でアクセスし、
+        // CORBAインタフェースとして機能していることを確認する
+        Port portRef = this.m_ppb.getPortRef();
+        
+        // 接続時に必要となるConnectorProfileを構築する
+        ConnectorProfile connProfile = new ConnectorProfile();
+        connProfile.name = "ConnectorProfile-name";
+        connProfile.connector_id = "connect_id0";
+        connProfile.ports = new Port[1];
+        connProfile.ports[0] = portRef;
+        connProfile.properties = new NameValue[1];
+        connProfile.properties[0] = new NameValue();
+        connProfile.properties[0].name = "";
+        connProfile.properties[0].value = ORBUtil.getOrb().create_any();
+        ConnectorProfileHolder holder = new ConnectorProfileHolder(connProfile);
+
+        // まずは接続する
+        assertEquals(ReturnCode_t.RTC_OK, portRef.connect(holder));
+  
+        // (2) 切断が成功するか？
+        assertEquals(ReturnCode_t.RTC_OK, portRef.disconnect(connProfile.connector_id));
+  
+        // (3) 切断時にnotify_disconnect()が、意図どおり１回だけ呼び出されているか？
+        PortBaseMock pPortBaseMock = this.m_ppb;
+        assertNotNull(pPortBaseMock);
+        assertEquals(1, pPortBaseMock.getNotifyDisconnectTimes().size());
+    }
+    /**
+     * <p>setName()メソッドのテスト
+     * <ul>
+     * <li>オブジェクト参照経由で、disconnect()に正しくアクセスできるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_setName() {
+        // setName()を用いて、PortProfile.nameを書き換える
+        this.m_ppb.setName("inport0-changed");
+        
+        // setName()により、意図どおりにPortProfile.nameが書き換えられているか？
+        PortProfile portProfile = this.m_ppb.getPortProfile();
+        assertEquals("inport0-changed", portProfile.name);
     }
     public void test_disconnect_all() {
     }
-
     /**
-     * <p>getProfile()メソッドによるポートプロファイル取得のテストです。<br />
-     * 取得したPortProfileオブジェクトの各メンバについて、期待値との比較を行います。</p>
+     * <p>getProfile()メソッドのテスト
+     * <ul>
+     * <li>PortProfile.nameを正しく取得できるか？</li>
+     * <li>PortProfile.interfacesを正しく取得できるか？</li>
+     * <li>PortProfile.connector_profilesを正しく取得できるか？</li>
+     * <li>PortProfile.propertiesを正しく取得できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_getProfile2() {
+        PortProfile portProfile = this.m_ppb.getProfile();
+
+        // (1) PortProfile.nameを正しく取得できるか？
+        assertEquals("inport0", portProfile.name);
+
+        // (2) PortProfile.interfacesを正しく取得できるか？
+        PortInterfaceProfile portIfProfile = portProfile.interfaces[0];
+        // (2-a) PortInterfaceProfile.instance_nameを正しく取得できるか？
+        assertEquals("PortInterfaceProfile-instance_name",
+                        portIfProfile.instance_name);
+
+        // (2-b) PortInterfaceProfile.type_nameを正しく取得できるか？
+        assertEquals("PortInterfaceProfile-type_name", portIfProfile.type_name);
+        
+        // (2-c) PortInterfaceProfile.polarityを正しく取得できるか？
+        assertEquals(PortInterfacePolarity.REQUIRED, portIfProfile.polarity);
+
+        // (3) PortProfile.connector_profilesを正しく取得できるか？
+        ConnectorProfile connProfile = portProfile.connector_profiles[0];
+        // (3-a) ConnectorProfile.nameを正しく取得できるか？
+        assertEquals("ConnectorProfile-name", connProfile.name);
+        
+        // (3-b) ConnectorProfile.connector_idを正しく取得できるか？
+        assertEquals("connect_id0", connProfile.connector_id);
+
+        // (3-c) ConnectorPofile.propertiesを正しく取得できるか？
+        NameValue property = connProfile.properties[0];
+        // (3-c-1) nameを正しく取得できるか？
+        assertEquals("ConnectorProfile-properties0-name", property.name);
+        
+        // (3-c-2) valueを正しく取得できるか？
+        float value = property.value.extract_float();
+        assertEquals(1.1f, value);
+
+        // (4) PortProfile.propertiesを正しく取得できるか？
+        property = portProfile.properties[0];
+        // (4-a) nameを正しく取得できるか？
+        assertEquals("PortProfile-properties0-name", property.name);
+            
+        // (4-b) valueを正しく取得できるか？
+        value = property.value.extract_float();
+        assertEquals(2.2f, value);
+    }
+    /**
+     * <p>getProfile()メソッドのテスト
+     * <ul>
+     * <li>PortProfile.nameを正しく取得できるか？</li>
+     * <li>PortProfile.interfacesを正しく取得できるか？</li>
+     * <li>PortProfile.connector_profilesを正しく取得できるか？</li>
+     * <li>PortProfile.propertiesを正しく取得できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_getProfile() {
         
@@ -357,6 +624,23 @@ public class PortBaseTest extends TestCase {
         getstr = pProf.properties[0].name;
         setstr = "PortProfile-properties0-name";
         assertEquals(setstr, getstr);
+    }
+    /**
+     * <p>getUUID()メソッドのテスト
+     * <ul>
+     * <li>UUIDを取得できるか？（空文字列でないかどうかのみでチェック）</li>
+     * </ul>
+     * </p>
+     */
+    public void test_getUUID() {
+        // getUUID()メソッドはprotectedであるため、PortBaseMockにダウンキャストしてからアクセスする
+        PortBaseMock pPortBase = this.m_ppb;
+        assertNotNull(pPortBase);
+        
+        // UUIDを取得できるか？（空文字列でないかどうかのみでチェック）
+        String uuid = pPortBase.getUUID();
+        assertTrue(uuid.length() > 0);
+        //std::cout << std::endl << "uuid: " << uuid << std::endl;
     }
     
 
