@@ -12,6 +12,7 @@ import RTC.ConnectorProfileHolder;
 import RTC.Port;
 import RTC.TimedFloat;
 
+import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.port.DataInPort;
 import jp.go.aist.rtm.RTC.port.DataOutPort;
 import jp.go.aist.rtm.RTC.port.InPort;
@@ -21,6 +22,7 @@ import jp.go.aist.rtm.RTC.util.ConnectorProfileFactory;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.TimedFloatFactory;
 import junit.framework.TestCase;
 
@@ -51,8 +53,7 @@ public class DataInOutPortTest extends TestCase {
         }
         
         public void shutdown() throws Exception {
-            
-            _poaMgr.discard_requests(true);
+            _poaMgr.discard_requests(false);
         }
         
         public void run() {
@@ -69,16 +70,6 @@ public class DataInOutPortTest extends TestCase {
         private POAManager _poaMgr;
     }
 
-    private class HogeConvert_TimedFloat implements OnReadConvert<TimedFloat> {
-        
-        public TimedFloat run(final TimedFloat value) {
-            
-            TimedFloat d = new TimedFloat(value.tm, value.data);
-            d.data = value.data * value.data;
-            return d;
-        }
-    }
-    
     private OutPort<TimedFloat> m_outPortNonBlock;
     private DataRef<TimedFloat> m_outFloatNonBlock;
     private DataOutPort<TimedFloat> m_dataOutPortNonBlock;
@@ -100,7 +91,7 @@ public class DataInOutPortTest extends TestCase {
     private Port m_inPortRefBlock;
 
     private OrbRunner m_orbRunner;
-    private POA m_pPOA;
+//    private POA m_pPOA;
     
     protected void setUp() throws Exception {
         super.setUp();
@@ -114,12 +105,12 @@ public class DataInOutPortTest extends TestCase {
 
         this.m_outPortNonBlock = new OutPort<TimedFloat>("OutPort", this.m_outFloatNonBlock);
         this.m_dataOutPortNonBlock = new DataOutPort<TimedFloat>(
-                TimedFloat.class, "DataOutPort", this.m_outPortNonBlock);
+                TimedFloat.class, "DataOutPort", this.m_outPortNonBlock, new Properties());
         this.m_outPortRefNonBlock = this.m_dataOutPortNonBlock.get_port_profile().port_ref;
         
         this.m_inPortNonBlock = new InPort<TimedFloat>("InPort", this.m_inFloatNonBlock);
         this.m_dataInPortNonBlock = new DataInPort<TimedFloat>(
-                TimedFloat.class, "DataInPort", this.m_inPortNonBlock);
+                TimedFloat.class, "DataInPort", this.m_inPortNonBlock, new Properties());
         this.m_inPortRefNonBlock = this.m_dataInPortNonBlock.get_port_profile().port_ref;
 
         // ブロッキングモードでのポート生成
@@ -127,13 +118,15 @@ public class DataInOutPortTest extends TestCase {
         this.m_inFloatBlock = new DataRef<TimedFloat>(TimedFloatFactory.create());
 
         this.m_outPortBlock = new OutPort<TimedFloat>("OutPort", this.m_outFloatBlock);
+        this.m_outPortBlock.setReadBlock(true);
+        this.m_outPortBlock.setWriteBlock(true);
         this.m_dataOutPortBlock = new DataOutPort<TimedFloat>(
-                TimedFloat.class, "DataOutPort", this.m_outPortBlock);
+                TimedFloat.class, "DataOutPort", this.m_outPortBlock, new Properties());
         this.m_outPortRefBlock = this.m_dataOutPortBlock.get_port_profile().port_ref;
         
-        this.m_inPortBlock = new InPort<TimedFloat>("InPort", this.m_inFloatBlock);
+        this.m_inPortBlock = new InPort<TimedFloat>(new RingBuffer<TimedFloat>(64), "InPort", this.m_inFloatBlock, true, true, 0, 0);
         this.m_dataInPortBlock = new DataInPort<TimedFloat>(
-                TimedFloat.class, "DataInPort", this.m_inPortBlock);
+                TimedFloat.class, "DataInPort", this.m_inPortBlock, new Properties());
         this.m_inPortRefBlock = this.m_dataInPortBlock.get_port_profile().port_ref;
     }
     
@@ -178,7 +171,7 @@ public class DataInOutPortTest extends TestCase {
         assertEquals(o_id, i_id);
 
         for (int i = 0; i < 100; ++i) {
-            System.out.println("Counter: " + i);
+            System.out.println("NB Counter: " + i);
             
             this.m_outFloatNonBlock.v.data = 1.234567f * i;
             this.m_outPortNonBlock.write();
@@ -235,7 +228,7 @@ public class DataInOutPortTest extends TestCase {
         assertEquals(o_id, i_id);
 
         for (int i = 0; i < 100; ++i) {
-            System.out.println("Counter: " + i);
+            System.out.println("B Counter: " + i);
             
             this.m_outFloatBlock.v.data = 1.234567f * i;
             this.m_outPortBlock.write();

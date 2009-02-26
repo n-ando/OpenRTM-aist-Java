@@ -1,114 +1,79 @@
 package jp.go.aist.rtm.RTC.port;
 
+import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.ConnectorProfileFactory;
+import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.util.TimedFloatFactory;
+import jp.go.aist.rtm.RTC.util.TypeCast;
+import junit.framework.TestCase;
+
 import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
-import org.omg.CosNaming.NameComponent;
-import org.omg.CosNaming.NamingContextExt;
 import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAManager;
-import org.omg.PortableServer.POAManagerPackage.State;
-
-import _SDOPackage.NVListHolder;
 
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
 import RTC.InPortAny;
 import RTC.InPortAnyHelper;
+import RTC.OutPortAnyPOA;
 import RTC.Port;
-import RTC.PortHelper;
-import RTC.PortInterfacePolarity;
 import RTC.PortProfile;
+import RTC.ReturnCode_t;
 import RTC.TimedFloat;
-import RTC.TimedFloatHelper;
-
-
-import junit.framework.TestCase;
-import jp.go.aist.rtm.RTC.buffer.NullBuffer;
-import jp.go.aist.rtm.RTC.port.DataInPort;
-import jp.go.aist.rtm.RTC.port.InPort;
-import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.ConnectorProfileFactory;
-import jp.go.aist.rtm.RTC.util.DataRef;
-import jp.go.aist.rtm.RTC.util.NVUtil;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
+import _SDOPackage.NVListHolder;
 
 /**
  * <p>DataInPortクラスのためのテストケースです。</p>
  */
 public class DataInPortTest extends TestCase {
 
-    private class OrbRunner implements Runnable {
-
-        private final String[] ARGS = new String[] {
-            "-ORBInitialPort 2809",
-            "-ORBInitialHost localhost"
-        };
-        
-        public void start() throws Exception {
-            
-            _orb = ORBUtil.getOrb(ARGS);
-            POA poa = org.omg.PortableServer.POAHelper.narrow(
-                    _orb.resolve_initial_references("RootPOA"));
-            _poaMgr = poa.the_POAManager();
-            if (! _poaMgr.get_state().equals(State.ACTIVE)) {
-                _poaMgr.activate();
-            }
-            
-            (new Thread(this)).start();
-            Thread.sleep(1000);
+    class DataInPortMock extends DataInPort {
+        public DataInPortMock(String name, InPort<TimedFloat> inport, Properties prop) throws Exception {
+                super(TimedFloat.class, name, inport, prop);
         }
         
-        public void shutdown() throws Exception {
-            
-            _poaMgr.discard_requests(true);
+        // public override for test
+        public ReturnCode_t publishInterfaces_public(ConnectorProfile connector_profile) {
+            ConnectorProfileHolder holder = new ConnectorProfileHolder(connector_profile); 
+            return super.publishInterfaces(holder);
         }
         
-        public void run() {
-            
-            _orb.run();
+        // public override for test
+        public ReturnCode_t subscribeInterfaces_public(ConnectorProfile connector_profile) {
+            ConnectorProfileHolder holder = new ConnectorProfileHolder(connector_profile); 
+            return super.subscribeInterfaces(holder);
         }
         
-        public ORB getORB() {
-            
-            return _orb;
+        // public override for test
+        public void unsubscribeInterfaces_public(ConnectorProfile connector_profile) {
+            super.unsubscribeInterfaces(connector_profile);
         }
         
-        private ORB _orb;
-        private POAManager _poaMgr;
-    }
+    };
     
-    private class DataInPortMock extends DataInPort<TimedFloat> {
-        
-        public DataInPortMock(final String name, InPort<TimedFloat> inport) throws Exception {
-            super(TimedFloat.class, name, inport);
-            
-            this.appendInterface(instance_name, type_name, pol);
+    public class OutPortAnyMock extends OutPortAnyPOA {
+        public OutPortAnyMock(Any data) {
+            m_data = data;
+            m_calledCount = 0;
+        }
+        public Any get() {
+            ++m_calledCount;
+            Any result = m_data;
+            return result;
+        }
+        public int getCalledCount() {
+            return m_calledCount;
         }
         
-        public String instance_name = "DataInPortMock_instance_name";
-        public String type_name = "DataInPortMock_type_name";
-        public PortInterfacePolarity pol = PortInterfacePolarity.PROVIDED;
+        private int m_calledCount;
+        private Any m_data;
     }
-    
-    private class HogeConvert_TimedFloat implements OnReadConvert<TimedFloat> {
 
-        public TimedFloat run(TimedFloat value) {
-            
-            TimedFloat d = new TimedFloat(value.tm, value.data);
-            d.data = value.data * value.data;
-            return d;
-        }
-    }
-   
-    private InPort<TimedFloat> m_inport;
-    private TimedFloat m_tfloat;
-    private DataInPort<TimedFloat> m_dinport;
-    private Port m_portref;
-    private HogeConvert_TimedFloat m_conv;
-    private NamingContextExt m_ncRef;
-    private NameComponent[] m_path;
-    private OrbRunner m_orbRunner;
+    private ORB m_pORB;
+    private POA m_pPOA;
     
     public DataInPortTest() {
     }
@@ -116,19 +81,22 @@ public class DataInPortTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         
-        this.m_orbRunner = new OrbRunner();
-        this.m_orbRunner.start();
+        // (1-1) ORBの初期化
+        java.util.Properties props = new java.util.Properties();
+        this.m_pORB = ORB.init(new String[0], props);
 
-        this.m_inport = new InPort<TimedFloat>(new NullBuffer<TimedFloat>(),
-                "fin", new DataRef<TimedFloat>(this.m_tfloat));
-        this.m_conv = new HogeConvert_TimedFloat();
-        this.m_dinport = new DataInPortMock("DataInPortTest", this.m_inport);
-        this.m_portref = this.m_dinport.get_port_profile().port_ref;
+        // (1-2) POAManagerのactivate
+        this.m_pPOA = org.omg.PortableServer.POAHelper.narrow(
+                this.m_pORB.resolve_initial_references("RootPOA"));
+        this.m_pPOA.the_POAManager().activate();
     }
     protected void tearDown() throws Exception {
         super.tearDown();
 
-        this.m_orbRunner.shutdown();
+        if( m_pORB != null) {
+            m_pORB.destroy();
+            m_pORB = null;
+        }
     }
     
     /**
@@ -144,31 +112,199 @@ public class DataInPortTest extends TestCase {
      */
     public void test_profile() {
         
-        PortProfile prof = this.m_dinport.get_port_profile();
+        // DataInPortを生成する
+        DataRef<TimedFloat> inPortBindValue = new DataRef<TimedFloat>(TimedFloatFactory.create());
+        InPort<TimedFloat> pInPort = new InPort<TimedFloat>("name of InPort", inPortBindValue); // will be deleted automatically
 
-        assertEquals("DataInPortTest", prof.name);
-        assertEquals("DataInPortMock_instance_name", prof.interfaces[0].instance_name);
-        assertEquals("DataInPortMock_type_name", prof.interfaces[0].type_name);
-        assertEquals(PortInterfacePolarity.PROVIDED, prof.interfaces[0].polarity);
-        assertTrue(this.m_orbRunner.getORB().object_to_string(prof.port_ref).length() > 0);
-
-        for (int i = 0; i < prof.properties.length; ++i) {
-            System.out.println("prop_name: " + prof.properties[i].name);
-            System.out.println("prop_valu: "
-                    + NVUtil.toString(new NVListHolder(prof.properties), prof.properties[i].name));
-        }
+        Properties dataInPortProps = new Properties();
+        DataInPort pDataInPort = null;
+        try {
+            pDataInPort = new DataInPort(TimedFloat.class, "name of DataInPort", pInPort, dataInPortProps);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        } // will be deleted automatically
+        
+        // PortProfileを取得する
+        PortProfile pPortProfile = pDataInPort.get_port_profile();
+        
+        // - PortProfileの名称が正しく取得されるか？
+        assertEquals("name of DataInPort", pPortProfile.name);
+            
+        // "port.port_type"プロパティは正しく取得されるか？
+        assertEquals("DataInPort", NVUtil.toString(new NVListHolder(pPortProfile.properties), "port.port_type"));
+        
+        // "dataport.data_type"プロパティは正しく取得されるか？
+        assertEquals("TimedFloat", NVUtil.toString(new NVListHolder(pPortProfile.properties), "dataport.data_type"));
+        
+        // "dataport.interface_type"プロパティは正しく取得されるか？
+        // OutPortCorbaProvider --> CORBA_Any
+        // OutPortTcpSockProvider --> TCP_Any
+        assertEquals("CORBA_Any,TCP_Any", NVUtil.toString(new NVListHolder(pPortProfile.properties), "dataport.interface_type"));
+        
+        // "dataport.subscription_type"プロパティは正しく取得されるか？
+        assertEquals("Any", NVUtil.toString(new NVListHolder(pPortProfile.properties), "dataport.subscription_type"));
     }
 
     /**
-     * <p>接続のテストです。複数ポート間の接続ではなく、単体ポートのみでの接続動作をテストします。</p>
+     * <p>インタフェースタイプがCORBA_Anyの場合の、publishInterfaces()メソッドのテスト
+     * <ul>
+     * <li>"dataport.corba_any.inport_ref"プロパティを取得できるか？</li>
+     * </ul>
+     * </p>
      */
-    public void test_connect() {
+    public void test_publishInterfaces_CORBA_Any() {
+        // DataInPortを生成する
+        DataRef<TimedFloat> inPortBindValue = new DataRef<TimedFloat>(TimedFloatFactory.create());
+        InPort<TimedFloat> pInPort = new InPort<TimedFloat>("name of InPort", inPortBindValue); // will be deleted automatically
+
+        Properties dataInPortProps = new Properties();
+        DataInPortMock pDataInPort = null;
+        try {
+            pDataInPort = new DataInPortMock("name of DataInPort", pInPort, dataInPortProps);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        } // will be deleted automatically
         
+        // CORBA_Any, Push, Newの組合せを指定してpublishInterfaces()を呼出す
+        ConnectorProfile connProf = new ConnectorProfile();
+        connProf.connector_id = "id";
+        connProf.name = "name";
+        NVListHolder properties = new NVListHolder(connProf.properties);
+        CORBA_SeqUtil.push_back(properties,
+            NVUtil.newNV("dataport.interface_type", "CORBA_Any"));
+        CORBA_SeqUtil.push_back(properties,
+            NVUtil.newNV("dataport.dataflow_type", "Push"));
+        CORBA_SeqUtil.push_back(properties,
+            NVUtil.newNV("dataport.subscription_type", "Any"));
+        connProf.properties = properties.value;
+        assertEquals(ReturnCode_t.RTC_OK,
+            pDataInPort.publishInterfaces_public(connProf));
+        
+        // "dataport.corba_any.inport_ref"プロパティを取得できるか？
+        Any inPortAnyRef = null;
+        try {
+            inPortAnyRef = NVUtil.find(new NVListHolder(connProf.properties),
+                "dataport.corba_any.inport_ref");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+        assertNotNull(inPortAnyRef);
+    }
+        
+    /**
+     * <p>インタフェースタイプがTCP_Anyの場合の、publishInterfaces()メソッドのテスト
+     * <ul>
+     * <li>"dataport.tcp_any.inport_addr"プロパティを取得できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_publishInterfaces_TCP_Any() {
+        // DataInPortを生成する
+        DataRef<TimedFloat> inPortBindValue = new DataRef<TimedFloat>(TimedFloatFactory.create());
+        InPort<TimedFloat> pInPort = new InPort<TimedFloat>("name of InPort", inPortBindValue); // will be deleted automatically
+
+        Properties dataInPortProps = new Properties();
+        DataInPortMock pDataInPort = null;
+        try {
+            pDataInPort = new DataInPortMock("name of DataInPort", pInPort, dataInPortProps);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        } // will be deleted automatically
+        
+        // TCP_Any, Pull, Periodicの組合せを指定してpublishInterfaces()を呼出す
+        ConnectorProfile connProf = new ConnectorProfile();
+        connProf.connector_id = "id";
+        connProf.name = "name";
+        NVListHolder properties = new NVListHolder(connProf.properties);
+        CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.interface_type", "TCP_Any"));
+        CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.dataflow_type", "Push"));
+        CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.subscription_type", "Any"));
+        connProf.properties = properties.value;
+        assertEquals(ReturnCode_t.RTC_OK,
+            pDataInPort.publishInterfaces_public(connProf));
+        
+        // "dataport.tcp_any.inport_addr"プロパティを取得できるか？
+        int index = NVUtil.find_index(new NVListHolder(connProf.properties), "dataport.tcp_any.inport_addr");
+        assertTrue(index > 0);
+    }
+    
+    /**
+     * <p>インタフェースタイプがCORBA_Anyの場合の、subscribeInterfaces()メソッドのテスト</p>
+     */
+    public void test_subscribeInterfaces_CORBA_Any() throws Exception {
+        // DataInPortを生成する
+        DataRef<TimedFloat> inPortBindValue = new DataRef<TimedFloat>(TimedFloatFactory.create());
+        InPort<TimedFloat> pInPort = new InPort<TimedFloat>("name of InPort", inPortBindValue); // will be deleted automatically
+
+        Properties dataInPortProps = new Properties();
+        DataInPortMock pDataInPort = null;
+        try {
+            pDataInPort = new DataInPortMock("name of DataInPort", pInPort, dataInPortProps);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        } // will be deleted automatically
+        
+        // ConnectorProfileに、接続に必要となるプロパティをセットする
+        ConnectorProfile connProf = new ConnectorProfile();
+        connProf.connector_id = "id";
+        connProf.name = "name";
+        NVListHolder properties = new NVListHolder(connProf.properties);
+        CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.interface_type", "CORBA_Any"));
+        CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.dataflow_type", "Push"));
+        CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.subscription_type", "New"));
+            
+        TimedFloat value = new TimedFloat();
+        value.data = 3.14159F;
+        TypeCast<TimedFloat> cast = new TypeCast<TimedFloat>(TimedFloat.class);
+        Any valueAny = cast.castAny(value);
+
+        OutPortAnyMock pOutPortAny = null;
+        try {
+            pOutPortAny = new OutPortAnyMock(valueAny);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+        this.m_pPOA.activate_object(pOutPortAny);
+        CORBA_SeqUtil.push_back(properties,
+            NVUtil.newNV("dataport.corba_any.outport_ref", pOutPortAny._this()._duplicate(), Object.class));
+        connProf.properties = properties.value;
+        
+        // subscribeInterfaces()メソッドを呼び出す
+        // （これによりDataInPortがOutPortAnyへの参照を取得して、接続が完了する）
+        assertEquals(ReturnCode_t.RTC_OK,
+            pDataInPort.subscribeInterfaces_public(connProf));
+    }
+
+    /**
+     * <p>接続のテストです。複数ポート間の接続ではなく、単体ポートのみでの接続動作をテストします。
+     * <ul>
+     * <li>ConectorProfileのconnector_idが正しく設定されるか？</li>
+     * <li>dataport.corba_any.inport_ref"プロパティに正しくInPortオブジェクトの参照が設定されるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_connect() throws Exception {
+        // DataInPortを生成する
+        TimedFloat inPortBindValue = new TimedFloat();
+        DataRef<TimedFloat> ref = new DataRef<TimedFloat>(inPortBindValue);
+        InPort<TimedFloat> pInPort = new InPort<TimedFloat>("name of InPort", ref); // will be deleted automatically
+
+        Properties dataInPortProps = new Properties();
+        DataInPortMock pDataInPort = new DataInPortMock("name of DataInPort", pInPort, dataInPortProps); // will be deleted automatically
+        this.m_pPOA.activate_object(pDataInPort);
+        
+        // 接続プロファイルを作成する
         ConnectorProfile prof = ConnectorProfileFactory.create();
-        prof.connector_id = "";
+        prof.connector_id = ""; // 意図的にブランクにしておく
         prof.name = "connector0";
         prof.ports = new Port[1];
-        prof.ports[0] = this.m_portref;
+        prof.ports[0] = pDataInPort.get_port_profile().port_ref;
         
         NVListHolder properties = new NVListHolder(prof.properties);
         CORBA_SeqUtil.push_back(properties,
@@ -179,45 +315,28 @@ public class DataInPortTest extends TestCase {
                 NVUtil.newNV("dataport.subscription_type", "New"));
         prof.properties = properties.value;
         
-        this.m_dinport.connect(new ConnectorProfileHolder(prof));
+        // 接続する
+        ConnectorProfileHolder holder = new ConnectorProfileHolder(prof);
+//        pDataInPort.connect(holder);
         
-        System.out.println(prof.connector_id);
+        // 接続IDがセットされていることを確認する
+        assertFalse(prof.connector_id.equals(""));
+        
+        // "dataport.corba_any.inport_ref"プロパティを取得できるか？
+        InPortAny inPortAnyRef = InPortAnyHelper.narrow(NVUtil.find(new NVListHolder(prof.properties), "dataport.corba_any.inport_ref").extract_Object());
+        assertNotNull(inPortAnyRef);
 
-        for (int i = 0; i < prof.properties.length; ++i) {
-            System.out.println("prop_name: " + prof.properties[i].name);
-            NVListHolder prof_properties = new NVListHolder(prof.properties);
-            if (NVUtil.isString(prof_properties, prof.properties[i].name)) {
-                System.out.println("prop_valu: "
-                        + NVUtil.toString(prof_properties, prof.properties[i].name));
-            }
-            else {
-                String s = prof.properties[i].name;
-                if (s.equals("dataport.corba_any.inport_ref")) {
-                    Object o = prof.properties[i].value.extract_Object();
-                    Port p = PortHelper.narrow(prof.properties[i].value.extract_Object());
-                    InPortAny ip = InPortAnyHelper.narrow(prof.properties[i].value.extract_Object());
-
-                    System.out.println("prop_valu: "
-                            + m_orbRunner.getORB().object_to_string(o));
-                    System.out.println("prop_valu: "
-                            + m_orbRunner.getORB().object_to_string(p));
-                    System.out.println("prop_valu: "
-                            + m_orbRunner.getORB().object_to_string(ip));
-                    
-                    for (int j = 0; j < 1000; ++j) {
-                        TimedFloat fdata = new TimedFloat();
-                        fdata.data = j;
-                        Any adata = this.m_orbRunner.getORB().create_any();
-                        TimedFloatHelper.insert(adata, fdata);
-                        
-                        ip.put(adata);
-
-                        TimedFloat data = this.m_inport.read();
-                        
-                        System.out.println(data.data);
-                    }
-                }
-            }
-        }
+        // "dataport.corba_any.inport_ref"プロパティに設定されている参照が、InPortの参照であることを確認する
+        // InPortの参照を用いてput()を呼び出してテスト用の値を渡す
+        TimedFloat putValue = new TimedFloat();
+        putValue.data = 3.14159f;
+        TypeCast<TimedFloat> cast = new TypeCast<TimedFloat>(TimedFloat.class);
+        Any putValueAny = cast.castAny(putValue);
+        inPortAnyRef.put(putValueAny);
+        
+        // InPortオブジェクトに（参照ではなく）直接アクセスして値を読み取り、
+        // 先ほど参照を用いてputされた値と一致することを確認する
+        TimedFloat readValue = pInPort.read();
+        assertEquals(putValue.data, readValue.data);
     }
 }
