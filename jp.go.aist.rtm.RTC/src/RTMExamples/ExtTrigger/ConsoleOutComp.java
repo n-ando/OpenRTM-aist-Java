@@ -1,18 +1,16 @@
 package RTMExamples.ExtTrigger;
 
-import _SDOPackage.NVListHolder;
+import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.ModuleInitProc;
+import jp.go.aist.rtm.RTC.RTObject_impl;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
 import RTC.ComponentProfile;
 import RTC.Port;
 import RTC.PortInterfacePolarity;
 import RTC.PortInterfaceProfileListHolder;
 import RTC.PortListHolder;
-import jp.go.aist.rtm.RTC.Manager;
-import jp.go.aist.rtm.RTC.ModuleInitProc;
-import jp.go.aist.rtm.RTC.RTObject_impl;
-import jp.go.aist.rtm.RTC.RtcDeleteFunc;
-import jp.go.aist.rtm.RTC.RtcNewFunc;
-import jp.go.aist.rtm.RTC.util.NVUtil;
-import jp.go.aist.rtm.RTC.util.Properties;
+import _SDOPackage.NVListHolder;
 
 public class ConsoleOutComp implements ModuleInitProc {
 
