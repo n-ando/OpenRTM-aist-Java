@@ -17,6 +17,19 @@ import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
 import org.omg.PortableServer.POA;
 
+import RTC.ComponentProfile;
+import RTC.DataFlowComponentPOA;
+import RTC.ExecutionContext;
+import RTC.ExecutionContextHelper;
+import RTC.ExecutionContextListHolder;
+import RTC.ExecutionContextService;
+import RTC.ExecutionContextServiceHelper;
+import RTC.ExecutionContextServiceListHolder;
+import RTC.LightweightRTObject;
+import RTC.Port;
+import RTC.PortProfile;
+import RTC.RTObject;
+import RTC.ReturnCode_t;
 import _SDOPackage.Configuration;
 import _SDOPackage.DeviceProfile;
 import _SDOPackage.InterfaceNotImplemented;
@@ -33,20 +46,6 @@ import _SDOPackage.SDOServiceHolder;
 import _SDOPackage.ServiceProfile;
 import _SDOPackage.ServiceProfileHolder;
 import _SDOPackage.ServiceProfileListHolder;
-
-import RTC.ComponentProfile;
-import RTC.DataFlowComponentPOA;
-import RTC.ExecutionContext;
-import RTC.ExecutionContextHelper;
-import RTC.ExecutionContextListHolder;
-import RTC.ExecutionContextService;
-import RTC.ExecutionContextServiceHelper;
-import RTC.ExecutionContextServiceListHolder;
-import RTC.LightweightRTObject;
-import RTC.Port;
-import RTC.PortProfile;
-import RTC.RTObject;
-import RTC.ReturnCode_t;
 
 /**
  * <p>DataFlowComponentのベースクラスです。
@@ -258,6 +257,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t initialize() {
         ReturnCode_t ret;
+        if( !m_created ) return ReturnCode_t.PRECONDITION_NOT_MET;
         ret = on_initialize();
         m_created = false;
       
@@ -296,14 +296,19 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public ReturnCode_t _finalize() {
         if( m_created ) return ReturnCode_t.PRECONDITION_NOT_MET;
       
-        for(int intIdx=0;intIdx<m_execContexts.value.length;++intIdx) {
-            if( m_execContexts.value[intIdx].is_running() ) {
-                return ReturnCode_t.PRECONDITION_NOT_MET;
+        if( m_execContexts != null ) {
+            for(int intIdx=0;intIdx<m_execContexts.value.length;++intIdx) {
+                if( m_execContexts.value[intIdx] != null ) {
+                    if( m_execContexts.value[intIdx].is_running() ) {
+                        return ReturnCode_t.PRECONDITION_NOT_MET;
+                    }
+                }
             }
         }
       
         ReturnCode_t ret = on_finalize();
         shutdown();
+        m_alive = false;
         return ret;
     }
 
@@ -325,15 +330,20 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     public ReturnCode_t exit() {
-        if( m_execContexts.value.length>0 ) {
-            m_execContexts.value[0].stop();
-            m_alive = false;
+        if( m_execContexts != null ) {
+    
+            if( m_execContexts.value.length>0 ) {
+                m_execContexts.value[0].stop();
+                //m_alive = false;
+            }
+            for(int intIdx=0;intIdx<m_execContexts.value.length;intIdx++) {
+                m_execContexts.value[intIdx].deactivate_component((LightweightRTObject)m_objref._duplicate());
+            }
+            for(int intIdx=0;intIdx<m_execContexts.value.length;intIdx++) {
+                m_execContexts.value[intIdx].remove((LightweightRTObject)m_objref._duplicate());
+            }
         }
-        for(int intIdx=0;intIdx<m_execContexts.value.length;intIdx++) {
-            m_execContexts.value[intIdx].deactivate_component((LightweightRTObject)m_objref._duplicate());
-        }
-        ReturnCode_t ret = this._finalize();
-        return ret;
+        return this._finalize();
     }
 
     /**
@@ -393,12 +403,12 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public ComponentProfile get_component_profile() {
         try {
             ComponentProfile profile = new ComponentProfile();
-            profile.instance_name = new String(m_profile.instance_name);
-            profile.type_name = new String(m_profile.type_name);
-            profile.description = new String(m_profile.description);
-            profile.version = new String(m_profile.version);
-            profile.vendor = new String(m_profile.vendor);
-            profile.category = new String(m_profile.category);
+            profile.instance_name = m_profile.instance_name;
+            profile.type_name = m_profile.type_name;
+            profile.description = m_profile.description;
+            profile.version = m_profile.version;
+            profile.vendor = m_profile.vendor;
+            profile.category = m_profile.category;
             profile.port_profiles = m_profile.port_profiles;
             profile.parent = m_profile.parent;
             profile.properties = m_profile.properties;
@@ -469,6 +479,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     public ReturnCode_t detach_executioncontext(int ec_id) {
+        if(m_execContexts==null) {
+            return ReturnCode_t.BAD_PARAMETER;
+        }
         if( ec_id > m_execContexts.value.length-1) {
             return ReturnCode_t.BAD_PARAMETER;
         }
@@ -765,12 +778,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public DeviceProfile get_device_profile() throws NotAvailable, InternalError {
         try {
-            DeviceProfile dprofile = new DeviceProfile();
-            dprofile.device_type  = m_profile.category;
-            dprofile.manufacturer = m_profile.vendor;
-            dprofile.model        = m_profile.type_name;
-            dprofile.version      = m_profile.version;
-            dprofile.properties   = m_profile.properties;
+            DeviceProfile dprofile = m_pSdoConfigImpl.getDeviceProfile();
             return dprofile;
         } catch(Exception ex) {
             throw new InternalError("get_device_profile()");
@@ -791,7 +799,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ServiceProfile[] get_service_profiles() throws NotAvailable, InternalError {
         try {
-            return m_sdoSvcProfiles.value.clone();
+            return m_pSdoConfigImpl.getServiceProfiles().value;
         } catch(Exception ex) {
             throw new InternalError("get_service_profiles()");
         }
@@ -810,19 +818,19 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @exception InternalError 内部的エラーが発生した。
      */
     public ServiceProfile get_service_profile(String id) throws InvalidParameter, NotAvailable, InternalError {
-        if( id==null || id.equals("") ) throw new InvalidParameter("get_service_profile(): Empty name.");
-    
+
         try {
-            for(int intIdx=0;intIdx<m_sdoSvcProfiles.value.length;intIdx++) {
-                if(id.equals(m_sdoSvcProfiles.value[intIdx].id)) {
-                    ServiceProfileHolder sprofile = new ServiceProfileHolder(m_sdoSvcProfiles.value[intIdx]);
-                    return sprofile.value; 
-                }
-            }
+            if( id==null || id.equals("") ) throw new InvalidParameter("get_service_profile(): Empty name.");
+        
+            ServiceProfile svcProf = m_pSdoConfigImpl.getServiceProfile(id);
+            if(svcProf==null || !id.equals(svcProf.id)) throw new InvalidParameter("get_service_profile(): Inexist id.");
+            ServiceProfileHolder sprofile = new ServiceProfileHolder(svcProf);
+            return sprofile.value; 
+        } catch(InvalidParameter ex) {
+            throw ex;
         } catch(Exception ex) {
             throw new InternalError("get_service_profile()");
         }
-        return null;
     }
 
     /**
@@ -840,19 +848,21 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @exception InternalError 内部的エラーが発生した。
      */
     public SDOService get_sdo_service(String id) throws InvalidParameter, NotAvailable, InternalError {
-        if( id==null || id.equals("") ) throw new InvalidParameter("get_service(): Empty name.");
-    
         try {
-            for(int intIdx=0;intIdx<m_sdoSvcProfiles.value.length;intIdx++) {
-                if(id.equals(m_sdoSvcProfiles.value[intIdx].id)) {
-                    SDOServiceHolder service = new SDOServiceHolder(m_sdoSvcProfiles.value[intIdx].service);
-                    return service.value; 
-                }
+            if( id==null || id.equals("") ) throw new InvalidParameter("get_service(): Empty name.");
+            
+            ServiceProfile svcProf = m_pSdoConfigImpl.getServiceProfile(id);
+            if( svcProf==null || !id.equals(svcProf.id)) {
+                throw new InvalidParameter("get_service_profile(): Inexist id.");
             }
+            
+            SDOServiceHolder svcVar = new SDOServiceHolder(svcProf.service);
+            return svcVar.value;
+        } catch(InvalidParameter ex ) {
+            throw ex;
         } catch(Exception ex) {
-            throw new InternalError("get_service()");
+            throw new InternalError("get_service_profile()");
         }
-        return null;
     }
     
     /**
@@ -916,11 +926,11 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public Organization[] get_organizations() throws NotAvailable, InternalError {
         try {
-            return m_sdoOrganizations.value.clone();
-        } catch(Exception ex) {
+            OrganizationListHolder orgList = new OrganizationListHolder(m_pSdoConfigImpl.getOrganizations().value);
+            return orgList.value;
+        } catch (Exception ex) {
             throw new InternalError("get_organizations()");
         }
-//        return null;
     }
 
     /**
@@ -960,7 +970,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         if( index<0 ) throw new InvalidParameter("get_status(): Not found");
         try {
             Any status = ORBUtil.getOrb().create_any();
-            status.insert_any(m_sdoStatus.value[index].value);
+            status = m_sdoStatus.value[index].value;
             return status;
         } catch(Exception ex) {
             throw new InternalError("get_status()");
@@ -1035,7 +1045,23 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void setProperties(final Properties prop) {
         m_properties.merge(prop);
-        if( m_profile==null ) m_profile = new ComponentProfile();
+        try {
+            syncAttributesByProperties();
+        } catch (Exception ex) {
+            
+        }
+    }
+    protected void syncAttributesByProperties() throws Exception {
+        // Properties --> DeviceProfile
+        DeviceProfile devProf = m_pSdoConfigImpl.getDeviceProfile();
+        devProf.device_type = m_properties.getProperty("category");
+        devProf.manufacturer = m_properties.getProperty("vendor");
+        devProf.model = m_properties.getProperty("type_name");
+        devProf.version = m_properties.getProperty("version");
+        devProf.properties = new NameValue[0];
+        m_pSdoConfigImpl.set_device_profile(devProf);
+        
+        // Properties --> ComponentProfile
         m_profile.instance_name = m_properties.getProperty("instance_name");
         m_profile.type_name     = m_properties.getProperty("type_name");
         m_profile.description   = m_properties.getProperty("description");
@@ -1111,7 +1137,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public <DataType, Buffer> void registerInPort(Class<DataType> DATA_TYPE_CLASS, 
                             final String name, InPort<DataType> inport) throws Exception {
-        PortBase port = new DataInPort(DATA_TYPE_CLASS, name, inport);
+        String propkey = "port.dataport." + name + ".tcp_any";
+        PortBase port = new DataInPort(DATA_TYPE_CLASS, name, inport, m_properties.getNode(propkey));
         this.registerPort(port);
     }
     
@@ -1126,7 +1153,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public <DataType, Buffer> void registerOutPort(Class<DataType> DATA_TYPE_CLASS, 
                           final String name, OutPort<DataType> outport) throws Exception {
-        PortBase port = new DataOutPort(DATA_TYPE_CLASS, name, outport);
+        String propkey = "port.dataport." + name + ".tcp_any";
+        PortBase port = new DataOutPort(DATA_TYPE_CLASS, name, outport, m_properties.getNode(propkey));
         this.registerPort(port);
     }
 

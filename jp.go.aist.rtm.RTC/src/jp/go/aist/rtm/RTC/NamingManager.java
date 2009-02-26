@@ -76,8 +76,10 @@ public class NamingManager implements NamingBase, CallbackFunction {
                                  m_names.elementAt(intIdx).method + "/" +
                                  m_names.elementAt(intIdx).nsname);
                         m_names.elementAt(intIdx).ns = nsobj;
-                        bindCompsTo(nsobj); // rebind all comps to new NS
                     }
+                }
+                if( m_names.elementAt(intIdx).ns != null ) {
+                    bindCompsTo(m_names.elementAt(intIdx).ns); // rebind all comps to new NS
                 }
             }
         }
@@ -107,9 +109,10 @@ public class NamingManager implements NamingBase, CallbackFunction {
     protected void unbindAll() {
         rtcout.println(rtcout.TRACE, "NamingManager::unbindAll(): " + m_compNames.size() + " names.");
         synchronized (m_compNames) {
-            for(int intIdx=0;intIdx<m_compNames.size();++intIdx) {
-                unbindObject(m_compNames.elementAt(intIdx).name);
-          }
+            int compsnum = m_compNames.size();
+            for(int intIdx=0;intIdx<compsnum;intIdx++) {
+                unbindObject(m_compNames.elementAt(0).name);
+            }
         }
     }
 
@@ -135,7 +138,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @return NameServerオブジェクト
      */
     protected NamingBase createNamingObj(final String method, final String name_server) {
-        String m = new String(method);
+        String m = method;
         if( m.endsWith("corba")) {
             try {
                 NamingOnCorba nameb = new NamingOnCorba(m_manager.getORB(), name_server);
@@ -207,8 +210,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
          * @param naming NameServerオブジェクト
          */
         public Names(final String meth, final String name, NamingBase naming) {
-            method = new String(meth);
-            nsname = new String(name);
+            method = meth;
+            nsname = name;
             ns = naming;
         }
 
@@ -240,7 +243,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
          * @param obj 登録対象オブジェクト
          */
         public Comps(final String n, final RTObject_impl obj) {
-            name = new String(n);
+            name = n;
             rtobj = obj;
         }
         /**

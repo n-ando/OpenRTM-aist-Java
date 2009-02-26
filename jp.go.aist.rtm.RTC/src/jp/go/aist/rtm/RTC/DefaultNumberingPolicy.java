@@ -5,7 +5,7 @@ import java.util.Vector;
 /**
 * <p>オブジェクト生成時のデフォルト・ナンバーリング・ポリシー(命名規則)管理クラスです。</p>
 */
-public class DefaultNumberingPolicy implements NumberingPolicy {
+class DefaultNumberingPolicy implements NumberingPolicy {
 
     /**
      * <p>デフォルト・コンストラクタです。</p>

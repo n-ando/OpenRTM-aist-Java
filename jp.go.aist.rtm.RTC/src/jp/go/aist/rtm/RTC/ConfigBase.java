@@ -3,7 +3,7 @@ package jp.go.aist.rtm.RTC;
 /**
  * <p>コンフィギュレーション情報保持用クラスの基底抽象クラスです。</p>
  */
-public abstract class ConfigBase {
+abstract class ConfigBase {
 
     /**
      * <p>コンストラクタです。</p>
