@@ -4,15 +4,14 @@ import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.JTextField;
-import javax.swing.JPanel;
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import RTMExamples.GUIIn.GUIInImpl;
 import RTMExamples.GUIIn.model.PortValue;
 
 
@@ -34,7 +33,7 @@ public class PortValueSlider extends JPanel {
         
         _checkBox = new JCheckBox(portValue.getName(), portValue.isEnabled());
         
-        _slider = new JSlider(min, max, portValue.getData());
+        _slider = new JSlider(min, max, portValue.getData().intValue());
         _slider.setPaintTicks(true);
         _slider.setMajorTickSpacing((max - min) / 5);
         _slider.setMinorTickSpacing((max - min) / 10);
@@ -67,7 +66,7 @@ public class PortValueSlider extends JPanel {
 
             if (ev.getSource() == _slider) {
                 _textField.setText(Integer.toString(_slider.getValue()));
-                _portValue.setData(_slider.getValue());
+                _portValue.setData(Integer.valueOf(_slider.getValue()));
             }
         }
     }

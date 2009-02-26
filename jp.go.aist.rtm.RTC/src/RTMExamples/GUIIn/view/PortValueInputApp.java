@@ -1,7 +1,6 @@
 package RTMExamples.GUIIn.view;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 
@@ -31,7 +30,7 @@ public class PortValueInputApp extends JFrame {
 
         RootPane pane = new RootPane();
 
-        pvInteger = new PortValue<Integer>("Integer", 0, false);
+        pvInteger = new PortValue<Integer>("Integer", Integer.valueOf(0), false);
         PortValueSlider inputSlider = new PortValueSlider(pvInteger, -100, 100);
         pane.add(inputSlider);
 
@@ -39,7 +38,7 @@ public class PortValueInputApp extends JFrame {
         PortValueTextField inputString = new PortValueTextField(pvString);
         pane.add(inputString);
 
-        pvDouble = new PortValue<Double>("Double", 0.0d, false);
+        pvDouble = new PortValue<Double>("Double", Double.valueOf(0.0d), false);
         PortValueSpinner inputDouble = new PortValueSpinner(pvDouble, -1.0d, 1.0d, 0.1d);
         pane.add(inputDouble);
         
