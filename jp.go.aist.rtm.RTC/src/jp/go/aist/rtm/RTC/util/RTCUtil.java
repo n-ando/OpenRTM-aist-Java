@@ -26,8 +26,10 @@ public class RTCUtil {
      */
     public static boolean isDataFlowParticipant(Object obj) {
         
-        DataFlowParticipant dfp = DataFlowParticipantHelper.narrow(obj);
-        if (dfp == null) {
+        try {
+            DataFlowParticipant dfp = DataFlowParticipantHelper.narrow(obj);
+            if (dfp == null) return false;
+        } catch (Exception ex) {
             return false;
         }
         return true;
@@ -41,8 +43,10 @@ public class RTCUtil {
      */
     public static boolean isFsmParticipant(Object obj) {
         
-        FsmParticipant fsmp = FsmParticipantHelper.narrow(obj);
-        if (fsmp == null) {
+        try {
+            FsmParticipant fsmp = FsmParticipantHelper.narrow(obj);
+            if (fsmp == null) return false;
+        } catch (Exception ex) {
             return false;
         }
         return true;
@@ -56,8 +60,10 @@ public class RTCUtil {
      */
     public static boolean isFsmObject(Object obj) {
         
-        FsmObject fsm = FsmObjectHelper.narrow(obj);
-        if (fsm == null) {
+        try {
+            FsmObject fsm = FsmObjectHelper.narrow(obj);
+            if (fsm == null) return false;
+        } catch ( Exception ex) {
             return false;
         }
         return true;
@@ -71,11 +77,12 @@ public class RTCUtil {
      */
     public static boolean isMultiModeObject(Object obj) {
         
-        MultiModeObject fsm = MultiModeObjectHelper.narrow(obj);
-        if (fsm == null) {
+        try {
+            MultiModeObject fsm = MultiModeObjectHelper.narrow(obj);
+            if (fsm == null) return false;
+        } catch(Exception ex) {
             return false;
         }
         return true;
     }
-    
 }

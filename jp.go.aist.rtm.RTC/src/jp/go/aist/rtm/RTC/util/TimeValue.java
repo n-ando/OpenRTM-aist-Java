@@ -4,6 +4,8 @@ package jp.go.aist.rtm.RTC.util;
 * <p>時間を表現するクラスです。</p>
 */
 public class TimeValue {
+    private final int TIMEVALUE_ONE_SECOND_IN_MSECS =  1000000; // 1 [sec] = 1000000 [μsec]
+
 
     /**
      * <p>デフォルトコンストラクタです。</p>
@@ -11,6 +13,7 @@ public class TimeValue {
     public TimeValue() {
         this.tv_sec = 0;
         this.tv_usec = 0;
+        normalize();
     }
 
     /**
@@ -78,6 +81,7 @@ public class TimeValue {
                 res.tv_usec = - (tm.tv_usec + 1000000) + this.tv_usec; 
             }
         }
+        res.normalize();
         return res;
     }
 
@@ -96,6 +100,7 @@ public class TimeValue {
             ++res.tv_sec;
             res.tv_usec -= 1000000;
         }
+        res.normalize();
         return res;
     }
 
@@ -108,7 +113,8 @@ public class TimeValue {
      */
     public TimeValue convert(double time) {
         this.tv_sec = (long)time;
-        this.tv_usec = (long)((time - this.tv_sec)*1000000);
+        this.tv_usec = (long)((time - this.tv_sec)*1000000+0.5);
+        normalize();
         return this;
     }
 
@@ -118,7 +124,47 @@ public class TimeValue {
      * @return 数字変換結果
      */
     public double toDouble(){
+        normalize();
         return this.tv_sec + this.tv_usec/1000000.0;
+    }
+    
+    /**
+     * <p>保持している内容の符号を判定する。</p>
+     * 
+     * @return 正ならば1を、負ならば-1を、0ならば0
+     */
+    public int sign() {
+        normalize();
+        if( tv_sec > 0 ) return 1;
+        if( tv_sec < 0 ) return -1;
+        if( tv_usec > 0 ) return 1;
+        if( tv_usec < 0 ) return -1;
+        return 0;
+    }
+    /**
+     * <p>値の表現を正準形式に正規化する。</p>
+     * 
+     */
+    private void normalize() {
+        if( tv_usec >= TIMEVALUE_ONE_SECOND_IN_MSECS ) {
+            do {
+                ++tv_sec;
+                tv_usec -= TIMEVALUE_ONE_SECOND_IN_MSECS;
+            } while (tv_usec >= TIMEVALUE_ONE_SECOND_IN_MSECS);
+        } else if (tv_usec <= -TIMEVALUE_ONE_SECOND_IN_MSECS) {
+            do {
+                --tv_sec;
+                tv_usec += TIMEVALUE_ONE_SECOND_IN_MSECS;
+            } while (tv_usec <= -TIMEVALUE_ONE_SECOND_IN_MSECS);
+        }
+
+        if (tv_sec >= 1 && tv_usec < 0) {
+            --tv_sec;
+            tv_usec += TIMEVALUE_ONE_SECOND_IN_MSECS;
+        } else if (tv_sec < 0 && tv_usec > 0) {
+            ++tv_sec;
+            tv_usec -= TIMEVALUE_ONE_SECOND_IN_MSECS;
+        }
     }
 
     /**

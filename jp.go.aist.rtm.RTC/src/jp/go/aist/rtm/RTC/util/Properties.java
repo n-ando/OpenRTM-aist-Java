@@ -54,9 +54,9 @@ public class Properties {
      */
 	public Properties(final String key, final String value) {
 		
-		this.name = new String(key);
-		this.value = new String(value);
-		this.default_value = new String("");
+		this.name = key;
+		this.value = value;
+		this.default_value = "";
 		this.root = null;
 		
 		this.leaf.clear();
@@ -69,9 +69,9 @@ public class Properties {
 	 */
 	public Properties(Map<String, String> defaults) {
 		
-		this.name = new String("");
-		this.value = new String("");
-		this.default_value = new String("");
+		this.name = "";
+		this.value = "";
+		this.default_value = "";
 		this.root = null;
 		
 		this.leaf.clear();
@@ -90,9 +90,9 @@ public class Properties {
 	 */
 	public Properties(final String[] defaults) {
 		
-		this.name = new String("");
-		this.value = new String("");
-		this.default_value = new String("");
+		this.name = "";
+		this.value = "";
+		this.default_value = "";
 		this.root = null;
 		
 		this.leaf.clear();
@@ -108,9 +108,9 @@ public class Properties {
 	 */
 	public Properties(final Properties prop) {
 		
-		this.name = new String(prop.name);
-		this.value = new String(prop.value);
-		this.default_value = new String(prop.default_value);
+		this.name = prop.name;
+		this.value = prop.value;
+		this.default_value = prop.default_value;
 		this.root = null;
 		
 		Vector<String> keys = prop.propertyNames();
@@ -176,6 +176,24 @@ public class Properties {
      */
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * <p>当該Propertiesオブジェクトの値を取得します。</p>
+     * 
+     * @return 値
+     */
+    public String getValue() {
+        return this.value;
+    }
+
+    /**
+     * <p>当該Propertiesオブジェクトのデフォルト値を取得します。</p>
+     * 
+     * @return デフォルト値
+     */
+    public String getDefaultValue() {
+        return this.default_value;
     }
 
     /**
@@ -541,13 +559,13 @@ public class Properties {
         for (int i = 0; i < str.length(); i++) {
             if ((str.charAt(i) == ':' || str.charAt(i) == '=')
                     && !StringUtil.isEscaped(str, i)) {
-                return new Pair<String, String>(str.substring(0, i), str.substring(i + 1));
+                return new Pair<String, String>(str.substring(0, i).trim(), str.substring(i + 1).trim());
             }
         }
         
         for (int i = 0; i < str.length(); i++) {
             if ((str.charAt(i) == ' ') && StringUtil.isEscaped(str, i)) {
-                return new Pair<String, String>(str.substring(0, i), str.substring(i + 1));
+                return new Pair<String, String>(str.substring(0, i).trim(), str.substring(i + 1).trim());
             }
         }
 

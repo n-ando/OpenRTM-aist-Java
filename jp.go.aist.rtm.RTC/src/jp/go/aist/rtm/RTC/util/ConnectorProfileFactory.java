@@ -22,10 +22,7 @@ public class ConnectorProfileFactory {
             return null;
         }
         
-        // Stringは不変オブジェクトなので、そのままコピー可能
         String name = rhs.name;
-        
-        // Stringは不変オブジェクトなので、そのままコピー可能
         String connector_id = rhs.connector_id;
         
         // 配列の中身を丁寧にdeep-copyしてゆく

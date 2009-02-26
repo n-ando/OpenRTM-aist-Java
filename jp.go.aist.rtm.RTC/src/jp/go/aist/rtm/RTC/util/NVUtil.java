@@ -5,8 +5,6 @@ import java.util.Vector;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.TCKind;
 
-import RTC.InPortAny;
-import RTC.OutPortAny;
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
 
@@ -20,71 +18,18 @@ public class NVUtil {
      * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
      * 
      * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するshort値
+     * @param value オブジェクトに設定する値
+     * @param klass オブジェクトに設定する値の型
      * 
      * @return 作成されたNameValueオブジェクト
      */
-    public static NameValue newNV(final String name, short value) {
+    public static <T> NameValue newNV(final String name, T value, Class<T> klass) {
+        
+        TypeCast<T> cast = new TypeCast<T>(klass);
 
         NameValue nv = new NameValue();
         nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_short(value);
-        nv.value = anyValue;
-        return nv;
-    }
-    
-    /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
-     * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するlong値
-     * 
-     * @return 作成されたNameValueオブジェクト
-     */
-    public static NameValue newNV(final String name, long value) {
-        
-        NameValue nv = new NameValue();
-        nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_longlong(value);
-        nv.value = anyValue;
-        return nv;
-    }
-    
-    /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
-     * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するfloat値
-     * 
-     * @return 作成されたNameValueオブジェクト
-     */
-    public static NameValue newNV(final String name, float value) {
-        
-        NameValue nv = new NameValue();
-        nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_float(value);
-        nv.value = anyValue;
-        return nv;
-    }
-    
-    /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
-     * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するdouble値
-     * 
-     * @return 作成されたNameValueオブジェクト
-     */
-    public static NameValue newNV(final String name, double value) {
-        
-        NameValue nv = new NameValue();
-        nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_double(value);
-        nv.value = anyValue;
+        nv.value = cast.castAny(value);
         return nv;
     }
     
@@ -98,122 +43,9 @@ public class NVUtil {
      */
     public static NameValue newNV(final String name, String value) {
         
-        NameValue nv = new NameValue();
-        nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_wstring(value);
-        nv.value = anyValue;
-        return nv;
+        return newNV(name, value, String.class);
     }
     
-    /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
-     * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するInPortAny値
-     * 
-     * @return 作成されたNameValueオブジェクト
-     */
-    public static NameValue newNV(final String name, InPortAny value) {
-        
-        NameValue nv = new NameValue();
-        nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_Object(value);
-        nv.value = anyValue;
-        return nv;
-    }
-    
-    /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
-     * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するOutPortAny値
-     * 
-     * @return 作成されたNameValueオブジェクト
-     */
-    public static NameValue newNV(final String name, OutPortAny value) {
-        
-        NameValue nv = new NameValue();
-        nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_Object(value);
-        nv.value = anyValue;
-        return nv;
-    }
-    
-    /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
-     * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するorg.omg.CORBA.Object値
-     * 
-     * @return 作成されたNameValueオブジェクト
-     */
-    public static NameValue newNV(final String name, org.omg.CORBA.Object value) {
-        
-        NameValue nv = new NameValue();
-        nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_Object(value);
-        nv.value = anyValue;
-        return nv;
-    }
-    
-    /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
-     * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するchar値
-     * 
-     * @return 作成されたNameValueオブジェクト
-     */
-    public static NameValue newNVChar(final String name, final char value) {
-        
-        NameValue nv = new NameValue();
-        nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_char(value);
-        nv.value = anyValue;
-        return nv;
-    }
-
-    /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
-     * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するboolean値
-     * 
-     * @return 作成されたNameValueオブジェクト
-     */
-    public static NameValue newNVBool(final String name, final boolean value) {
-        
-        NameValue nv = new NameValue();
-        nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_boolean(value);
-        nv.value = anyValue;
-        return nv;
-    }
-    
-    /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
-     * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するbyte値
-     * 
-     * @return 作成されたNameValueオブジェクト
-     */
-    public static NameValue newNVOctet(final String name, final byte value) {
-        
-        NameValue nv = new NameValue();
-        nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_octet(value);
-        nv.value = anyValue;
-        return nv;
-    }
-
     /**
      * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
      * 
@@ -226,9 +58,7 @@ public class NVUtil {
         
         NameValue nv = new NameValue();
         nv.name = name;
-        Any anyValue = ORBUtil.getOrb().create_any();
-        anyValue.insert_any(value);
-        nv.value = anyValue;
+        nv.value = value;
         return nv;
     }
 
@@ -277,7 +107,7 @@ public class NVUtil {
                 } else {
                     value = anyVal.extract_Value().toString();
                 }
-                final String name = new String(nvlist.value[intIdx].name);
+                final String name = nvlist.value[intIdx].name;
                 prop.setProperty(name, value);
                 
             } catch (Exception ignored) {
@@ -407,10 +237,10 @@ public class NVUtil {
             } else {
                 str_value = value.extract_string();
             }
-            
         } catch (Exception e) {
             str_value = "";
         }
+        if( str_value==null ) return "";
         
         return str_value;
     }
@@ -430,28 +260,31 @@ public class NVUtil {
         
         int index = find_index(nvlist, name);
         boolean find = false;
-
-        if (index > 0) {
+        
+        if (index >= 0) {
             String tmp_char = null;
             if( nvlist.value[index].value.type().kind() == TCKind.tk_wstring ) {
                 tmp_char = nvlist.value[index].value.extract_wstring();
             } else {
                 tmp_char = nvlist.value[index].value.extract_string();
             }
-            String tmp_str = new String(tmp_char);
-            String[] values = tmp_str.split(",");
-            for (int intIdx = 0; intIdx < values.length; intIdx++) {
-                if (values[intIdx].equals(value)) {
-                    find = true;
-                    break;
+            String tmp_str = tmp_char;
+            String[] newValues = value.split(",");
+            String[] existentValues = tmp_str.split(",");
+            for (int intIdxNew = 0; intIdxNew < newValues.length; intIdxNew++) {
+                for (int intIdx = 0; intIdx < existentValues.length; intIdx++) {
+                    if (existentValues[intIdx].trim().equals(newValues[intIdxNew].trim())) {
+                        find = true;
+                        break;
+                    }
+                }
+                if (!find) {
+                    tmp_str = tmp_str + "," + value;
+                    nvlist.value[index].value.insert_wstring(tmp_str);
                 }
             }
-            if (!find) {
-                tmp_str = tmp_str + "," + value;
-                nvlist.value[index].value.insert_wstring(tmp_str);
-            }
         } else {
-            CORBA_SeqUtil.push_back(nvlist, newNV(name, value));
+            CORBA_SeqUtil.push_back(nvlist, newNV(name, value, String.class));
         }
         
         return true;
@@ -486,7 +319,6 @@ public class NVUtil {
                     str_value = nvlist.value[intIdx].value.extract_string();
                 }
                 System.out.println(nvlist.value[intIdx].name + ":" + str_value);
-                
             } catch (Exception ex) {
                 System.out.println(nvlist.value[intIdx].name + ": not a string value");
             }

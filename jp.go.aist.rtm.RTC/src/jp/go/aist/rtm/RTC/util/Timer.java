@@ -42,7 +42,7 @@ public class Timer implements Runnable {
                 if( m_interval.getSec() != 0) {
                     Thread.sleep(m_interval.getSec() * 1000);
                 }
-                Thread.sleep(0, (int)m_interval.getUsec());
+                Thread.sleep((int)m_interval.getUsec()/1000, ((int)m_interval.getUsec()%1000)*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -86,7 +86,7 @@ public class Timer implements Runnable {
         if( m_tasks==null ) m_tasks = new Vector<Task>();
         for(int intIdx=0; intIdx<m_tasks.size(); ++intIdx) {
             m_tasks.elementAt(intIdx).remains = m_tasks.elementAt(intIdx).remains.minus(m_interval); 
-            if( m_tasks.elementAt(intIdx).remains.getUsec() < 0 ) {
+            if( m_tasks.elementAt(intIdx).remains.sign() <= 0 ) {
                 m_tasks.elementAt(intIdx).listener.invoke();
                 m_tasks.elementAt(intIdx).remains = m_tasks.elementAt(intIdx).period;
             }
