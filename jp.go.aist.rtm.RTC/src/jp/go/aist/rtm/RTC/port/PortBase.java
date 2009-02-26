@@ -126,7 +126,7 @@ public abstract class PortBase extends PortPOA {
      * @param name ポート名
      */
     public PortBase(final String name) {
-        this.m_profile.name = new String(name);
+        this.m_profile.name = name;
         this.m_profile.owner = null;
         this.m_profile.interfaces = new PortInterfaceProfile[0];
         this.m_profile.connector_profiles = new ConnectorProfile[0];
@@ -419,10 +419,8 @@ public abstract class PortBase extends PortPOA {
      * @param name ポート名
      */
     public void setName(final String name) {
-
         synchronized (this.m_profile) {
-
-            this.m_profile.name = new String(name);
+            this.m_profile.name = name;
         }
     }
 
@@ -432,9 +430,7 @@ public abstract class PortBase extends PortPOA {
      * @return 当該ポートが保持しているPortProfileオブジェクト
      */
     public final PortProfile getProfile() {
-
         synchronized (this.m_profile) {
-
             return this.m_profile;
         }
     }
@@ -447,9 +443,7 @@ public abstract class PortBase extends PortPOA {
      * @param port_ref 当該ポートのCORBAオブジェクト参照
      */
     public void setPortRef(Port port_ref) {
-
         synchronized (this.m_profile) {
-
             m_profile.port_ref = port_ref;
         }
     }
@@ -460,9 +454,7 @@ public abstract class PortBase extends PortPOA {
      * @return 当該ポートのCORBAオブジェクト参照
      */
     public Port getPortRef() {
-
         synchronized (this.m_profile) {
-
             return m_profile.port_ref;
         }
     }
@@ -474,9 +466,7 @@ public abstract class PortBase extends PortPOA {
      * @param owner 当該ポートを所有するRTObjectのCORBAオブジェクト参照
      */
     public void setOwner(RTObject owner) {
-
         synchronized (this.m_profile) {
-
             this.m_profile.owner = owner;
         }
     }
@@ -525,9 +515,7 @@ public abstract class PortBase extends PortPOA {
         int index = CORBA_SeqUtil.find(portsHolder, new find_port_ref(this.m_profile.port_ref));
         connector_profile.value.ports = portsHolder.value;
         
-        if (index < 0) {
-            return ReturnCode_t.BAD_PARAMETER;
-        }
+        if (index < 0) return ReturnCode_t.BAD_PARAMETER;
         
         if (++index < connector_profile.value.ports.length) {
             Port p = connector_profile.value.ports[index];
@@ -552,9 +540,7 @@ public abstract class PortBase extends PortPOA {
         int index = CORBA_SeqUtil.find(holder, new find_port_ref(this.m_profile.port_ref));
         connector_profile.ports = holder.value;
         
-        if (index < 0) {
-            return ReturnCode_t.BAD_PARAMETER;
-        }
+        if (index < 0) return ReturnCode_t.BAD_PARAMETER;
         
         if (++index < connector_profile.ports.length) {
             Port p = connector_profile.ports[index];
@@ -737,9 +723,7 @@ public abstract class PortBase extends PortPOA {
             int index = CORBA_SeqUtil.find(cprof_list, new find_conn_id(connector_id));
             this.m_profile.connector_profiles = cprof_list.value;
             
-            if (index < 0) {
-                return false;
-            }
+            if (index < 0) return false;
             
             CORBA_SeqUtil.erase(cprof_list, index);
             this.m_profile.connector_profiles = cprof_list.value;
@@ -774,9 +758,7 @@ public abstract class PortBase extends PortPOA {
                 port_if_prof_list, new find_interface(instance_name, polarity));
         this.m_profile.interfaces = port_if_prof_list.value;
         
-        if (index >= 0) {
-            return false;
-        }
+        if (index >= 0) return false;
         
         // setup PortInterfaceProfile
         PortInterfaceProfile prof = new PortInterfaceProfile(instance_name, type_name, polarity);
@@ -803,9 +785,7 @@ public abstract class PortBase extends PortPOA {
         int index = CORBA_SeqUtil.find(port_if_prof_list, new find_interface(instance_name, polarity));
         this.m_profile.interfaces = port_if_prof_list.value;
         
-        if (index < 0) {
-            return false;
-        }
+        if (index < 0) return false;
         
         CORBA_SeqUtil.erase(port_if_prof_list, index);
         this.m_profile.interfaces = port_if_prof_list.value;
@@ -820,61 +800,9 @@ public abstract class PortBase extends PortPOA {
      * @param key キー
      * @param value 値
      */
-    protected void addProperty(final String key, short value) {
+    protected <T> void addProperty(final String key, T value, Class<T> klass) {
         NVListHolder holder = new NVListHolder(this.m_profile.properties);
-        CORBA_SeqUtil.push_back(holder, NVUtil.newNV(key, value));
-        this.m_profile.properties = holder.value;
-    }
-    
-    /**
-     * <p>当該ポートが持つPortProfile内のpropertiesメンバに、
-     * 指定されたキーと値を持つNameValueオブジェクトを追加します。</p>
-     * 
-     * @param key キー
-     * @param value 値
-     */
-    protected void addProperty(final String key, long value) {
-        NVListHolder holder = new NVListHolder(this.m_profile.properties);
-        CORBA_SeqUtil.push_back(holder, NVUtil.newNV(key, value));
-        this.m_profile.properties = holder.value;
-    }
-    
-    /**
-     * <p>当該ポートが持つPortProfile内のpropertiesメンバに、
-     * 指定されたキーと値を持つNameValueオブジェクトを追加します。</p>
-     * 
-     * @param key キー
-     * @param value 値
-     */
-    protected void addProperty(final String key, float value) {
-        NVListHolder holder = new NVListHolder(this.m_profile.properties);
-        CORBA_SeqUtil.push_back(holder, NVUtil.newNV(key, value));
-        this.m_profile.properties = holder.value;
-    }
-
-    /**
-     * <p>当該ポートが持つPortProfile内のpropertiesメンバに、
-     * 指定されたキーと値を持つNameValueオブジェクトを追加します。</p>
-     * 
-     * @param key キー
-     * @param value 値
-     */
-    protected void addProperty(final String key, double value) {
-        NVListHolder holder = new NVListHolder(this.m_profile.properties);
-        CORBA_SeqUtil.push_back(holder, NVUtil.newNV(key, value));
-        this.m_profile.properties = holder.value;
-    }
-
-    /**
-     * <p>当該ポートが持つPortProfile内のpropertiesメンバに、
-     * 指定されたキーと値を持つNameValueオブジェクトを追加します。</p>
-     * 
-     * @param key キー
-     * @param value 値
-     */
-    protected void addProperty(final String key, String value) {
-        NVListHolder holder = new NVListHolder(this.m_profile.properties);
-        CORBA_SeqUtil.push_back(holder, NVUtil.newNV(key, value));
+        CORBA_SeqUtil.push_back(holder, NVUtil.newNV(key, value, klass));
         this.m_profile.properties = holder.value;
     }
 

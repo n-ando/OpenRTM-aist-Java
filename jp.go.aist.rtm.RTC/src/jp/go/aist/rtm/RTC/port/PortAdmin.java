@@ -28,7 +28,6 @@ public class PortAdmin {
      * @param poa POAオブジェクト
      */
     public PortAdmin(ORB orb, POA poa) {
-        this.m_pORB = orb;
         this.m_pPOA = poa;
     }
     
@@ -149,8 +148,6 @@ public class PortAdmin {
         }
     }
     
-    // ORB へのポインタ
-    private ORB m_pORB;
     // POA へのポインタ
     private POA m_pPOA;
     // PortのCORBAオブジェクト参照のリスト

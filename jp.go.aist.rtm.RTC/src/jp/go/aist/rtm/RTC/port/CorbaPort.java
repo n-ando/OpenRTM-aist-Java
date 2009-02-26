@@ -9,6 +9,7 @@ import jp.go.aist.rtm.RTC.util.operatorFunc;
 
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.Object;
+import org.omg.CORBA.ObjectHelper;
 import org.omg.PortableServer.Servant;
 import org.omg.PortableServer.POAPackage.ObjectNotActive;
 import org.omg.PortableServer.POAPackage.ServantAlreadyActive;
@@ -35,7 +36,7 @@ public class CorbaPort extends PortBase {
     public CorbaPort(final String name) {
         
         super(name);
-        addProperty("port.port_type", "CorbaPort");
+        addProperty("port.port_type", "CorbaPort", String.class);
     }
     
     /**
@@ -64,7 +65,7 @@ public class CorbaPort extends PortBase {
         StringBuffer key = new StringBuffer("port");
         key.append(".").append(type_name).append(".").append(instance_name);
 
-        CORBA_SeqUtil.push_back(this.m_providers, NVUtil.newNV(key.toString(), obj));
+        CORBA_SeqUtil.push_back(this.m_providers, NVUtil.newNV(key.toString(), obj, Object.class));
 
         return true;
     }
@@ -240,8 +241,10 @@ public class CorbaPort extends PortBase {
             for (int i = 0; i < this.m_len; ++i) {
                 if (this.m_cons.get(i).name.equals(nv.name)) {
                     try {
-                        Object obj = nv.value.extract_Object();
-                        this.m_cons.get(i).consumer.setObject(obj);
+                        Object obj = ObjectHelper.extract(nv.value);
+                        if( obj != null ) {
+                            this.m_cons.get(i).consumer.setObject(obj);
+                        }
                     } catch (BAD_OPERATION ignored) {
                     }
                 }

@@ -71,9 +71,7 @@ public class OutPortCorbaConsumer<DataType>
     public boolean subscribeInterface(final NVListHolder properties) {
         
         int index = NVUtil.find_index(properties, "dataport.corba_any.outport_ref");
-        if (index < 0) {
-            return false;
-        }
+        if (index < 0) return false;
         
         setObject(properties.value[index].value.extract_Object());
         
@@ -88,9 +86,7 @@ public class OutPortCorbaConsumer<DataType>
     public void unsubscribeInterface(final NVListHolder properties) {
         
         int index = NVUtil.find_index(properties, "dataport.corba_any.outport_ref");
-        if (index < 0) {
-            return;
-        }
+        if (index < 0) return;
         
         Object obj = properties.value[index].value.extract_Object();
         
@@ -103,5 +99,4 @@ public class OutPortCorbaConsumer<DataType>
     
     private BufferBase<DataType> m_buffer;
     private TypeCast<DataType> TYPE_CAST;
-    
 }

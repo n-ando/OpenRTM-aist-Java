@@ -47,7 +47,7 @@ public class OutPortBase {
      * @param publisher 登録するPublisherオブジェクト
      */
     public void attach_front(final String id, PublisherBase publisher) {
-        this.m_publishers.set(0, new Publisher(id, publisher));
+        this.m_publishers.add(0, new Publisher(id, publisher));
     }
     
     /**

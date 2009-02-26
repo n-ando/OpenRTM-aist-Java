@@ -137,8 +137,11 @@ public class InPort<DataType> implements BufferBase<DataType> {
             }
         }
 
-        if (isFull() && this.m_OnOverflow != null) {
-            this.m_OnOverflow.run(value);
+        if (isFull() ) {
+            if( this.m_OnOverflow != null ) {
+                this.m_OnOverflow.run(value);
+            }
+            return false;
         }
 
         if (this.m_OnWriteConvert == null) {
