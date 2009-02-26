@@ -1,7 +1,5 @@
 package jp.go.aist.rtm.RTC.buffer;
 
-import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.buffer.NullBuffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import junit.framework.TestCase;
 
@@ -25,11 +23,12 @@ public class NullBufferTest extends TestCase {
     }
 
     /**
-     *<pre>
-     *　int型データのwrite/readチェック
-     *　 ・int型データを書き込めるか？
-     *　 ・書き込んだint型データ正常にを読み出せるか？
-     *</pre>
+     * <p>int型データのwrite/readチェック
+     * <ul>
+     * <li>int型データを書き込めるか？</li>
+     * <li>書き込んだint型データ正常にを読み出せるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_wr_int() throws Exception {
         
@@ -46,11 +45,12 @@ public class NullBufferTest extends TestCase {
     }
     
     /**
-     *<pre>
-     *　char型データのwrite/readチェック
-     *　 ・char型データを書き込めるか？
-     *　 ・書き込んだchar型データ正常にを読み出せるか？
-     *</pre>
+     * <p>char型データのwrite/readチェック
+     * <ul>
+     * <li>char型データを書き込めるか？</li>
+     * <li>書き込んだchar型データ正常にを読み出せるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_wr_char() throws Exception {
         
@@ -67,11 +67,12 @@ public class NullBufferTest extends TestCase {
     }
 
     /**
-     *<pre>
-     *　オブジェクトデータのwrite/readチェック
-     *　 ・オブジェクトデータを書き込めるか？
-     *　 ・書き込んだオブジェクトデータ正常にを読み出せるか？
-     *</pre>
+     * <p>オブジェクトデータのwrite/readチェック
+     * <ul>
+     * <li>オブジェクトデータを書き込めるか？</li>
+     * <li>書き込んだオブジェクトデータ正常にを読み出せるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_wr_struct() throws Exception {
         
@@ -93,10 +94,11 @@ public class NullBufferTest extends TestCase {
     }
 
     /**
-     *<pre>
-     * 　isFull()メソッドのチェック
-     * 　 ・初期状態でフルではないか？
-     *</pre>
+     * <p>isFull()メソッドのチェック
+     * <ul>
+     * <li>初期状態でフルではないか？</li>
+     * </ul>
+     * </p>
      */
     public void test_isFull() {
         
@@ -107,10 +109,11 @@ public class NullBufferTest extends TestCase {
     }
 
     /**
-     *<pre>
-     *　isFull()メソッドのチェック
-     *　 ・バッファ長さを越える書き込みを行っても決してフルにならないか？
-     *</pre>
+     * <p>isFull()メソッドのチェック
+     * <ul>
+     * <li>バッファ長さを越える書き込みを行っても決してフルにならないか？</li>
+     * </ul>
+     * </p>
      *
      */
     public void test_isFull_NeverFull() {
@@ -125,10 +128,11 @@ public class NullBufferTest extends TestCase {
     }
     
     /**
-     *<pre>
-     *　isEmpty()メソッドのチェック
-     *　 ・初期状態で空ではないか？
-     *</pre>
+     * <p>isEmpty()メソッドのチェック
+     * <ul>
+     * <li>初期状態で空ではないか？</li>
+     * </ul>
+     * </p>
      */
     public void test_isEmpty() {
         
@@ -139,10 +143,11 @@ public class NullBufferTest extends TestCase {
     }
 
     /**
-     *<pre>
-     *　isEmpty()メソッドのチェック
-     *　 ・バッファ長さを越えるデータの読み込みを行っても空にならないか？
-     *</pre>
+     * <p>isEmpty()メソッドのチェック
+     * <ul>
+     * <li>バッファ長さを越えるデータの読み込みを行っても空にならないか？</li>
+     * </ul>
+     * </p>
      */
     public void test_isEmpty_NeverEmpty() {
 
@@ -157,10 +162,11 @@ public class NullBufferTest extends TestCase {
     }
     
     /**
-     *<pre>
-     *　int型データのput/getチェック
-     *　 ・書き込んだデータを正常に取得できるか？
-     *</pre>
+     * <p>int型データのput/getチェック
+     * <ul>
+     * <li>書き込んだデータを正常に取得できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_pg_int() {
         
@@ -178,17 +184,17 @@ public class NullBufferTest extends TestCase {
     }
 
     /**
-     *<pre>
-     *　char型データのput/getチェック
-     *　 ・書き込んだデータを正常に取得できるか？
-     *</pre>
+     * <p>char型データのput/getチェック
+     * <ul>
+     * <li>書き込んだデータを正常に取得できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_pg_char() {
         
+        MyBuffer<Character> charBuf = (MyBuffer<Character>) this.m_charBuf;
+        
         for (char c = 0; c < 100; c++) {
-            
-            MyBuffer<Character> charBuf = (MyBuffer<Character>) this.m_charBuf;
-            
             // データを書き込む
             charBuf.put(c);
             
@@ -199,20 +205,20 @@ public class NullBufferTest extends TestCase {
     }
 
     /**
-     *<pre>
-     *　 オブジェクト型データのput/getチェック
-     *　 ・書き込んだデータを正常に取得できるか？
-     *</pre>
+     * <p>オブジェクト型データのput/getチェック
+     * <ul>
+     * <li>書き込んだデータを正常に取得できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_put_struct() {
         
+        MyBuffer<Data> dataBuf = (MyBuffer<Data>) this.m_dataBuf;
+        
         for (int i = 0; i < 100; i++) {
-            
             Data data = new Data();
             data.int_data = i;
             data.double_data = i / 3.141592653589793238462643383279;
-            
-            MyBuffer<Data> dataBuf = (MyBuffer<Data>) this.m_dataBuf;
             
             // データを書き込む
             dataBuf.put(data);
