@@ -51,6 +51,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @param rate 動作周期
      */
     public PeriodicExecutionContext(DataFlowComponent owner, double rate) {
+        super();
         m_running = false;
         m_nowait = false;
         m_profile.kind = ExecutionKind.PERIODIC;
@@ -81,8 +82,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * <p>ExecutionContext用のスレッドを生成します。</p>
      */
     public int open() {
-        Thread t = new Thread(this);
-        t.start();
+        if(m_thread==null) {
+            Thread t = new Thread(this, "PeriodicExecutionContext");
+            t.start();
+        }
         return 0;
     }
 
@@ -92,20 +95,21 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public int svc() {
         do {
-            TimeValue tv = new TimeValue(0, m_usec); // (s, us)
+            long millisec = m_usec / 1000;
+            int  nanosec  = (int)((m_usec % 1000) * 1000);
             for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
                 m_comps.elementAt(intIdx).invoke();
             }
             while( !m_running ) {
                 try {
-                    Thread.sleep(0, (int)tv.getUsec());
+                    Thread.sleep(millisec, nanosec);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
             if( !m_nowait ) {
                 try {
-                    Thread.sleep(0, (int)tv.getUsec());
+                    Thread.sleep(millisec, nanosec);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -151,6 +155,11 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     public ReturnCode_t start() {
         if( m_running ) return ReturnCode_t.PRECONDITION_NOT_MET;
 
+        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
+            if( m_comps.elementAt(intIdx)._ref.is_alive()==false) {
+                return ReturnCode_t.PRECONDITION_NOT_MET;
+            }
+        }
         // invoke ComponentAction::on_startup for each comps.
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             m_comps.elementAt(intIdx).invoke_on_startup();
@@ -196,16 +205,15 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @param rate 実行周期(Hz)
      */
     public ReturnCode_t set_rate(double rate) {
-        if( rate>0.0 ){
-            m_profile.rate = rate;
-            this.m_usec = (long)(1000000/rate);
-            if( m_usec == 0 ) m_nowait = true;
-            for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-                m_comps.elementAt(intIdx).invoke_on_rate_changed();
-            }
-            return ReturnCode_t.RTC_OK;
+        if( rate<=0.0 ) return ReturnCode_t.BAD_PARAMETER;
+
+        m_profile.rate = rate;
+        this.m_usec = (long)(1000000/rate);
+        if( m_usec == 0 ) m_nowait = true;
+        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
+            m_comps.elementAt(intIdx).invoke_on_rate_changed();
         }
-        return ReturnCode_t.BAD_PARAMETER;
+        return ReturnCode_t.RTC_OK;
     }
 
     /**
@@ -220,6 +228,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
+                // the given component must be in Alive state.
+                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
+                    return ReturnCode_t.BAD_PARAMETER;
+                }
                 if(!(m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.INACTIVE_STATE))) {
                     return ReturnCode_t.PRECONDITION_NOT_MET;
                 }
@@ -241,6 +253,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
+                // the given component must be in Alive state.
+                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
+                    return ReturnCode_t.BAD_PARAMETER;
+                }
                 if(!(m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.ACTIVE_STATE))) {
                     return ReturnCode_t.PRECONDITION_NOT_MET;
                 }
@@ -262,6 +278,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
+                // the given component must be in Alive state.
+                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
+                    return ReturnCode_t.PRECONDITION_NOT_MET;
+                }
                 if(!(m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.ERROR_STATE))) {
                     return ReturnCode_t.PRECONDITION_NOT_MET;
                 }
@@ -310,6 +330,11 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         //
         try {
             DataFlowComponent dfp = DataFlowComponentHelper.narrow(comp);
+            if( dfp==null ) {
+                // Because the ExecutionKind of this context is PERIODIC,
+                // the RTC must be a data flow component.
+                return ReturnCode_t.PRECONDITION_NOT_MET;
+            }
             //
             int id = dfp.attach_executioncontext(m_ref);
             //
@@ -331,6 +356,11 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
+                // If the component is still Active, this operation shall fail.
+                if( m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.ACTIVE_STATE) ) {
+                    return ReturnCode_t.PRECONDITION_NOT_MET;
+                }
+                m_comps.elementAt(intIdx)._ref.detach_executioncontext(m_comps.elementAt(intIdx)._sm.ec_id);
                 m_comps.remove(m_comps.elementAt(intIdx));
                 return ReturnCode_t.RTC_OK;
             }
@@ -518,7 +548,6 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         public DFP(DataFlowComponent obj, int id) {
             super(id);
             m_obj = obj;
-            m_active = true;
         }
         /**
          * <p>onStartupアクション定義用メソッドです。</p>
@@ -601,7 +630,6 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             m_obj.on_rate_changed(ec_id);
         }
         private DataFlowComponent m_obj; 
-        private boolean m_active;
     }
 
     /**
@@ -707,6 +735,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     protected ExecutionContextService m_ref;
     protected boolean m_nowait;
+    protected ThreadGroup m_thread = null;
 
     /**
      * <p>このExecutionContextを生成するFactoryクラスを
@@ -731,8 +760,8 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * 
      * @param comp 破棄対象ExecutionContextインスタンス
      */
-    public void ECDeleteFunc(ExecutionContextBase comp) {
-        comp = null;
+    public Object ECDeleteFunc(ExecutionContextBase comp) {
+        return null;
     }
 
 }
