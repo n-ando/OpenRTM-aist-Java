@@ -96,13 +96,13 @@ public class GUIInImpl  extends DataFlowComponentBase {
     @Override
     protected ReturnCode_t onExecute(int ec_id) {
         if( guiIn.getSliderValue().isEnabled()) {
-            m_out1_val.data = guiIn.getSliderValue().getData();
+            m_out1_val.data = guiIn.getSliderValue().getData().intValue();
         }
         if( guiIn.getTextValue().isEnabled()) {
             m_out2_val.data = guiIn.getTextValue().getData();
         }
         if( guiIn.getSpinnerValue().isEnabled()) {
-            m_out3_val.data = guiIn.getSpinnerValue().getData();
+            m_out3_val.data = guiIn.getSpinnerValue().getData().doubleValue();
         }
         m_out1Out.write();
         m_out2Out.write();
