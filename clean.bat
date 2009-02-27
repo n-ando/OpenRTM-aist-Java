@@ -32,3 +32,9 @@ rem msiファイルの削除
 rem
 for /r ./ %%L in (*.msi) do del %%L
 
+rem
+rem mixobjファイルの削除
+rem
+for /r ./ %%L in (*.wixobj) do del %%L
+
+
