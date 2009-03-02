@@ -187,6 +187,8 @@
 			<fileset dir="installer/resources/Source/JavaDoc" />
 		</copy>
 		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar" />
+		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.tar.gz" />
+		<tar destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.tar.gz" basedir="../" compression="gzip" excludes="jp.go.aist.rtm.RTC/installer/**, jp.go.aist.rtm.RTC/jar/source/**, jp.go.aist.rtm.RTC/Source/**, jp.go.aist.rtm.RTC/build_org.xml, jp.go.aist.rtm.RTC/jcoverage.ser, buildRTC.bat, buildRTC.sh, clean.bat, clean.sh, cmd.bat, **/*.swp" />
 
 
 	</target>
