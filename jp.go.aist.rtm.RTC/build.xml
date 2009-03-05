@@ -123,11 +123,9 @@
 		<exec executable="${java.home}\..\bin\idlj">
 			<arg line="-v -fall -td ${source.test} -pkgPrefix CorbaPort jp.go.aist.rtm.bind ${idl.test.CorbaPort}"/>
 		</exec>
-		<!--
 		<exec executable="${java.home}\..\bin\idlj">
 			<arg line="-v -fall -td ${source.test} -pkgPrefix TypeCast jp.go.aist.rtm.bind ${idl.test.TypeCast}"/>
 		</exec>
-		-->
 		<delete includeEmptyDirs="true">
 			<fileset dir="${source.samples.java.SimpleService}" excludes="**.idl,MyServiceConsumer**.java,MyServiceProvider**.java,MyServiceSVC_impl.java,rtc.conf" />
 		</delete>
