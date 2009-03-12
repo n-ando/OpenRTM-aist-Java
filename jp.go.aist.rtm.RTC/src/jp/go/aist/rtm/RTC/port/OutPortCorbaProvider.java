@@ -8,6 +8,7 @@ import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.TypeCast;
 
 import org.omg.CORBA.Any;
+import org.omg.CORBA.Object;
 
 import RTC.OutPortAny;
 import RTC.OutPortAnyHelper;
@@ -42,7 +43,7 @@ public class OutPortCorbaProvider<DataType>
         // ConnectorProfile setting
         m_objref = this._this();
         CORBA_SeqUtil.push_back(this.m_outPortProvider.m_properties,
-                NVUtil.newNV("dataport.corba_any.outport_ref", this.m_objref));
+                NVUtil.newNV("dataport.corba_any.outport_ref", this.m_objref, Object.class));
     }
     
     /**

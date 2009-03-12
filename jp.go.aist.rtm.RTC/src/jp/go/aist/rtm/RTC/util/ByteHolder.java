@@ -2,8 +2,6 @@ package jp.go.aist.rtm.RTC.util;
 
 import java.io.Serializable;
 
-import org.omg.CosNaming.NamingContextPackage.NotFound;
-
 /**
 * <p>byte型データ格納用クラスです。</p>
 */

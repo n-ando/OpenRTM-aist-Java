@@ -1,5 +1,7 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
+import org.omg.CORBA.SystemException;
+
 import RTC.ExecutionContextService;
 import RTC.ExtTrigExecutionContextServicePOA;
 
@@ -13,7 +15,7 @@ public abstract class ExecutionContextBase extends
     /**
      * <p>ExecutionContextの処理を１周期分進めます。</p>
      */
-    public void tick() {
+    public void tick() throws SystemException {
     }
     
     /**

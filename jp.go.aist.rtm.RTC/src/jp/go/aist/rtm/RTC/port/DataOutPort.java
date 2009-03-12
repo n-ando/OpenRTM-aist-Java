@@ -37,19 +37,27 @@ public class DataOutPort<DataType> extends PortBase {
      * @param outPort 当該データ出力ポートに関連付けるOutPortオブジェクト
      */
     public DataOutPort(Class<DataType> DATA_TYPE_CLASS,
-            final String name, OutPort<DataType> outPort) throws Exception {
+            final String name, OutPort<DataType> outPort, Properties prop) throws Exception {
         
         super(name);
         this.m_outPort = outPort;
         
         // PortProfile::properties を設定
-        addProperty("port.port_type", "DataOutPort");
+        addProperty("port.port_type", "DataOutPort", String.class);
         
-        this.m_providers.add(new OutPortCorbaProvider<DataType>(DATA_TYPE_CLASS, outPort));
         NVListHolder holder = new NVListHolder(this.m_profile.properties);
+        // CORBA OutPort Provider
+        this.m_providers.add(new OutPortCorbaProvider<DataType>(DATA_TYPE_CLASS, outPort));
         this.m_providers.lastElement().publishInterfaceProfile(holder);
+
+        // TCP Socket OutPort Provider
+        this.m_providers.add(new OutPortTcpSockProvider<DataType>(DATA_TYPE_CLASS, outPort));
+        this.m_providers.lastElement().publishInterfaceProfile(holder);
+
         this.m_profile.properties = holder.value;
+
         this.m_consumers.add(new InPortCorbaConsumer<DataType>(DATA_TYPE_CLASS, outPort));
+        this.m_consumers.add(new InPortTcpSockConsumer<DataType>(DATA_TYPE_CLASS, outPort, prop));
     }
     
     /**
@@ -80,6 +88,7 @@ public class DataOutPort<DataType> extends PortBase {
             OutPortProvider provider = it.next();
             provider.publishInterface(properties);
         }
+        connector_profile.value.properties = properties.value;
         
         return ReturnCode_t.RTC_OK;
     }

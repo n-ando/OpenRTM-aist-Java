@@ -3,6 +3,8 @@ package jp.go.aist.rtm.RTC.port;
 import java.util.Iterator;
 import java.util.Vector;
 
+import jp.go.aist.rtm.RTC.util.Properties;
+
 import _SDOPackage.NVListHolder;
 
 import RTC.ConnectorProfile;
@@ -24,19 +26,26 @@ public class DataInPort<DataType> extends PortBase {
      * @param inPort 当該データ入力ポートに関連付けるInPortオブジェクト
      */
     public DataInPort(Class<DataType> DATA_TYPE_CLASS,
-            final String name, InPort<DataType> inPort) throws Exception {
+            final String name, InPort<DataType> inPort, Properties prop) throws Exception {
         super(name);
     
         // PortProfile::properties を設定
-        addProperty("port.port_type", "DataInPort");
+        addProperty("port.port_type", "DataInPort", String.class);
 
-        this.m_providers.add(new InPortCorbaProvider<DataType>(DATA_TYPE_CLASS, inPort));
         NVListHolder holder = new NVListHolder(this.m_profile.properties);
+        // CORBA InPort Provider
+        this.m_providers.add(new InPortCorbaProvider<DataType>(DATA_TYPE_CLASS, inPort));
         this.m_providers.lastElement().publishInterfaceProfile(holder);
-        this.m_profile.properties = holder.value;
     
+        // TCP Socket InPort Provider
+        this.m_providers.add(new InPortTcpSockProvider<DataType>(DATA_TYPE_CLASS, inPort, prop));
+        this.m_providers.lastElement().publishInterfaceProfile(holder);
+
+        this.m_profile.properties = holder.value;
+
+        // CORBA OutPort Consumer
         this.m_consumers.add(new OutPortCorbaConsumer<DataType>(DATA_TYPE_CLASS, inPort));
-        this.m_dummy.add(1);
+        this.m_dummy.add(Integer.valueOf(1));
     }
     
     /**

@@ -14,7 +14,7 @@ public abstract class FactoryBase {
      */
     public FactoryBase(final Properties profile) {
         m_Profile = new Properties(profile);
-        m_Number = -1;
+        m_Number = 0;
     }
 
     /**
@@ -30,7 +30,7 @@ public abstract class FactoryBase {
      * 
      * @param comp 破棄対象コンポーネントのインスタンス
      */
-    public abstract void destroy(RTObject_impl comp);
+    public abstract RTObject_impl destroy(RTObject_impl comp);
 
     /**
      * <p>コンポーネントのプロファイルを取得します。</p>

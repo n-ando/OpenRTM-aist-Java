@@ -16,10 +16,7 @@ public class PortInterfaceProfileFactory {
     
     public static PortInterfaceProfile clone(final PortInterfaceProfile rhs) {
         
-        // Stringは不変オブジェクトなので、そのままコピー可能
         String instance_name = rhs.instance_name;
-
-        // Stringは不変オブジェクトなので、そのままコピー可能
         String type_name = rhs.type_name;
         
         // enumerationなので、そのままコピー可能だろう

@@ -18,7 +18,7 @@ public class ConfigAdmin {
      */
     public ConfigAdmin(Properties configsets) {
         this.m_configsets = configsets;
-        this.m_activeId = new String("default");
+        this.m_activeId = "default";
         this.m_active = true;
         this.m_changed = false;
     }
@@ -100,7 +100,7 @@ public class ConfigAdmin {
      * @param config_param コンフィギュレーションセットの最後の要素名
      */
     public void update(final String config_set, final String config_param) {
-        String key = new String(config_set + "." + config_param);
+        String key = config_set + "." + config_param;
         
         Iterator<ConfigBase> iterator = m_params.iterator();
         while (iterator.hasNext()) {
@@ -230,7 +230,7 @@ public class ConfigAdmin {
     public boolean addConfigurationSet(final Properties configset) {
         if( m_configsets.hasKey(configset.getName())!=null ) return false;
         
-        String node = new String(configset.getName());
+        String node = configset.getName();
         m_configsets.createNode(node);
         
         m_configsets.getNode(node).merge(configset);

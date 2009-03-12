@@ -28,25 +28,26 @@ public class PeriodicExecutionContextTests extends TestCase {
     }
 
     /**
-     *<pre>
-     * Component生成時のExecutionContextチェック
-     *　・生成したComponentに正常にExecutionContextがattachされているか？
-     *　・ExecutionContextのデフォルト実行周期が設定されているか？
-     *　・ExecutionContextに実行周期が設定できるか？
-     *　・ExecutionContextの種類が正常に設定されているか？
-     *　・ExecutionContextが管理しているRTCの状態が正常に設定されているか？
-     *　・ExecutionContextが正常に起動されている(Running状態)か？
-     *　・開始したExecutionContextを再度開始した場合にエラーが返ってくるか？
-     *　・Inactive状態でdeactivateした場合にエラーが返ってくるか？
-     *　・Inactive状態でresetした場合にエラーが返ってくるか？
-     *　・ExecutionContextを正常に起動できるか？
-     *　・Active状態でactivateした場合にエラーが返ってくるか？
-     *　・Active状態でresetした場合にエラーが返ってくるか？
-     *　・ExecutionContextを正常に停止できるか？
-     *　・ExecutionContextからRTCを正常にremoveできるか？
-     *　・ExecutionContextにattachされていないRTCをremoveした場合にエラーが返ってくるか？
-     *　・Stop状態で再度Stopした場合にエラーが返ってくるか？
-     *</pre>
+     * <p>Component生成時のExecutionContextチェック
+     * <ul>
+     * <li>生成したComponentに正常にExecutionContextがattachされているか？</li>
+     * <li>ExecutionContextのデフォルト実行周期が設定されているか？</li>
+     * <li>ExecutionContextに実行周期が設定できるか？</li>
+     * <li>ExecutionContextの種類が正常に設定されているか？</li>
+     * <li>ExecutionContextが管理しているRTCの状態が正常に設定されているか？</li>
+     * <li>ExecutionContextが正常に起動されている(Running状態)か？</li>
+     * <li>開始したExecutionContextを再度開始した場合にエラーが返ってくるか？</li>
+     * <li>Inactive状態でdeactivateした場合にエラーが返ってくるか？</li>
+     * <li>Inactive状態でresetした場合にエラーが返ってくるか？</li>
+     * <li>ExecutionContextを正常に起動できるか？</li>
+     * <li>Active状態でactivateした場合にエラーが返ってくるか？</li>
+     * <li>Active状態でresetした場合にエラーが返ってくるか？</li>
+     * <li>ExecutionContextを正常に停止できるか？</li>
+     * <li>ExecutionContextからRTCを正常にremoveできるか？</li>
+     * <li>ExecutionContextにattachされていないRTCをremoveした場合にエラーが返ってくるか？</li>
+     * <li>Stop状態で再度Stopした場合にエラーが返ってくるか？</li>
+     * </ul>
+     * </p>
      */
       public void test_component() {
           Manager manager = Manager.instance();
@@ -121,9 +122,7 @@ public class PeriodicExecutionContextTests extends TestCase {
           assertEquals(ReturnCode_t.RTC_OK, retcode);
           //
           retcode = exs[0].remove(rtobj.m_objref);
-          assertEquals(ReturnCode_t.RTC_OK, retcode);
-          retcode = exs[0].remove(rtobj.m_objref);
-          assertEquals(ReturnCode_t.BAD_PARAMETER, retcode);
+          assertEquals(ReturnCode_t.PRECONDITION_NOT_MET, retcode);
           //
           retcode = exs[0].stop();
           assertEquals(ReturnCode_t.PRECONDITION_NOT_MET, retcode);

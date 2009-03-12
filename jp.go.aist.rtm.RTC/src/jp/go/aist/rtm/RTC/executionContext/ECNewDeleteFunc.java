@@ -18,5 +18,5 @@ public interface ECNewDeleteFunc {
      * 
      * @param comp 破棄対象ExecutionContextインスタンス
      */
-    public void ECDeleteFunc(ExecutionContextBase comp);
+    public Object ECDeleteFunc(ExecutionContextBase comp);
 }

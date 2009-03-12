@@ -5,7 +5,7 @@ import jp.go.aist.rtm.RTC.util.Properties;
 /**
  * <p>Java用コンポーネントファクトリの実装です。</p>
  */
-public class FactoryJava extends FactoryBase {
+class FactoryJava extends FactoryBase {
 
     /**
      * <p>コンストラクタです。
@@ -74,10 +74,11 @@ public class FactoryJava extends FactoryBase {
      * 
      * @param comp 破棄対象コンポーネントのインスタンス
      */
-    public void destroy(RTObject_impl comp) {
+    public RTObject_impl destroy(RTObject_impl comp) {
         --m_Number;
         m_policy.onDelete(comp);
         m_Delete.deleteRtc(comp);
+        return comp;
     }
         
     /**

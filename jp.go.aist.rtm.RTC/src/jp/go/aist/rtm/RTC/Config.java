@@ -31,8 +31,12 @@ public class Config extends ConfigBase{
             m_var.stringFrom(val);
             return true;
         } catch (Exception ex) {
-            return false;
+            try {
+                m_var.stringFrom(default_value);
+            } catch (Exception e) {
+            }
         }
+        return false;
     }
 
     /**

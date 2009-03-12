@@ -4,6 +4,9 @@ import org.omg.CORBA.ORB;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAManager;
 import org.omg.PortableServer.POAManagerPackage.State;
+import org.omg.PortableServer.POAPackage.ObjectNotActive;
+import org.omg.PortableServer.POAPackage.ServantAlreadyActive;
+import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
@@ -48,7 +51,7 @@ public class CorbaPortTest extends TestCase {
             Thread.sleep(1000);
         }
         public void shutdown() throws Exception {
-            _poaMgr.discard_requests(true);
+            _poaMgr.discard_requests(false);
         }
         public void run() {
             _orb.run();
@@ -72,12 +75,17 @@ public class CorbaPortTest extends TestCase {
         }
         public void hello_world() {
             System.out.println(this.m_name + ": Hello, World!!!");
+            m_hello_world_called = true;
         }
         public void print_msg(final String msg) {
             System.out.println(this.m_name + ": " + msg);
         }
+        public boolean is_hello_world_called() {
+            return m_hello_world_called;
+        }
         
         private String m_name;
+        private boolean m_hello_world_called;
     }
 
     private CorbaPort m_port0;
@@ -91,6 +99,7 @@ public class CorbaPortTest extends TestCase {
     private CorbaConsumer<MyService> m_cons1 = new CorbaConsumer<MyService>(MyService.class);
     
     private OrbRunner m_orbRunner;
+
     
     protected void setUp() throws Exception {
         super.setUp();
@@ -114,7 +123,6 @@ public class CorbaPortTest extends TestCase {
     }
     protected void tearDown() throws Exception {
         super.tearDown();
-
         this.m_orbRunner.shutdown();
     }
 
@@ -206,6 +214,31 @@ public class CorbaPortTest extends TestCase {
      * </p>
      */
     public void test_connect() {
+        MyService_impl pMyServiceImplA = new MyService_impl(); // will be deleted automatically
+        CorbaConsumer<MyService> pMyServiceConsumerB = new CorbaConsumer<MyService>(MyService.class); // will be deleted automatically
+        
+        MyService_impl pMyServiceImplB = new MyService_impl(); // will be deleted automatically
+        CorbaConsumer<MyService> pMyServiceConsumerA = new CorbaConsumer<MyService>(MyService.class); // will be deleted automatically
+
+        CorbaPort port0 = new CorbaPort("name of port0");
+        CorbaPort port1 = new CorbaPort("name of port1");
+
+        try {
+            port0.registerProvider("MyServiceA", "Generic", pMyServiceImplA);
+            port0.registerConsumer("MyServiceB", "Generic", pMyServiceConsumerB);
+            
+            port1.registerProvider("MyServiceB", "Generic", pMyServiceImplB);
+            port1.registerConsumer("MyServiceA", "Generic", pMyServiceConsumerA);
+        } catch (ServantAlreadyActive e) {
+            e.printStackTrace();
+            fail();
+        } catch (WrongPolicy e) {
+            e.printStackTrace();
+            fail();
+        } catch (ObjectNotActive e) {
+            e.printStackTrace();
+            fail();
+        }
         
         // 接続プロファイルの準備
         ConnectorProfileHolder prof = new ConnectorProfileHolder(
@@ -217,23 +250,23 @@ public class CorbaPortTest extends TestCase {
         prof.value.ports[1] = this.m_port1ref;
 
         // 接続する
-        this.m_port0ref.connect(prof);
+        port0.connect(prof);
         
         // 接続IDが割り当てられたことを確認する
         assertFalse(prof.value.connector_id.equals(""));
 
-        MyService MyService_cons0 = this.m_cons0._ptr();
-        MyService MyService_cons1 = this.m_cons1._ptr();
+        assertEquals("MyService", pMyServiceImplA.name());
+        assertEquals("MyService", pMyServiceImplB.name());
 
-        assertEquals("MyService", MyService_cons0.name());
-        assertEquals("MyService", MyService_cons1.name());
-
-        // リモートサービスを呼び出せることを確認する
-        MyService_cons0.hello_world();
-        MyService_cons0.print_msg("hogehoge");
+        // ポート1のコンシューマ側からメソッドを呼び出すと、ポート0のプロバイダ側が意図どおり呼び出されるか？
+        assertFalse(pMyServiceImplA.is_hello_world_called());
+        pMyServiceImplA.hello_world();
+        assertTrue(pMyServiceImplA.is_hello_world_called());
         
-        MyService_cons1.hello_world();
-        MyService_cons1.print_msg("hogehoge");
+        // ポート0のコンシューマ側からメソッドを呼び出すと、ポート1のプロバイダ側が意図どおり呼び出されるか？
+        assertFalse(pMyServiceImplB.is_hello_world_called());
+        pMyServiceImplB.hello_world();
+        assertTrue(pMyServiceImplB.is_hello_world_called());
     }
 
     /**

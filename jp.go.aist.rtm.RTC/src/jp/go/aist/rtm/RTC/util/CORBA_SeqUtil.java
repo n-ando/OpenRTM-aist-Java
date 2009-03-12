@@ -33,6 +33,7 @@ public class CORBA_SeqUtil {
      * @return 引数で指定されたoperatorFuncオブジェクト
      */
     public static operatorFunc for_each(NVListHolder seq, operatorFunc func) {
+        if( seq.value==null ) return null;
         for (int i = 0; i < seq.value.length; ++i) {
             func.operator(seq.value[i]);
         }
@@ -48,6 +49,7 @@ public class CORBA_SeqUtil {
      * @return 引数で指定されたoperatorFuncオブジェクト
      */
     public static operatorFunc for_each(ConnectorProfileListHolder seq, operatorFunc func) {
+        if( seq.value==null ) return null;
         for (int i = 0; i < seq.value.length; ++i) {
             func.operator(seq.value[i]);
         }
@@ -64,6 +66,7 @@ public class CORBA_SeqUtil {
      * 合致するNameValueオブジェクトが存在しない場合は、-1を返します。
      */
     public static int find(final NVListHolder seq, equalFunctor func) {
+        if( seq.value==null ) return -1;
         for (int i = 0; i < seq.value.length; ++i) {
             if (func.equalof(seq.value[i])) {
                 return i;
@@ -82,6 +85,7 @@ public class CORBA_SeqUtil {
      * 合致するPortオブジェクトが存在しない場合は、-1を返します。
      */
     public static int find(final PortListHolder seq, equalFunctor func) {
+        if( seq.value==null ) return -1;
         for (int i = 0; i < seq.value.length; ++i) {
             if (func.equalof(seq.value[i])) {
                 return i;
@@ -100,6 +104,7 @@ public class CORBA_SeqUtil {
      * 合致するPortInterfaceProfileオブジェクトが存在しない場合は、-1を返します。
      */
     public static int find(final PortInterfaceProfileListHolder seq, equalFunctor func) {
+        if( seq.value==null ) return -1;
         for (int i = 0; i < seq.value.length; ++i) {
             if (func.equalof(seq.value[i])) {
                 return i;
@@ -118,6 +123,7 @@ public class CORBA_SeqUtil {
      * 合致するConnectorProfileオブジェクトが存在しない場合は、-1を返します。
      */
     public static int find(final ConnectorProfileListHolder seq, equalFunctor f) {
+        if( seq.value==null ) return -1;
         for (int i = 0; i < seq.value.length; ++i) {
             if (f.equalof(seq.value[i])) {
                 return i;
@@ -134,7 +140,12 @@ public class CORBA_SeqUtil {
      * @param elem 追加するNameValueオブジェクト
      */
     public static void push_back(NVListHolder seq, NameValue elem) {
-        int len = seq.value.length;
+        int len;
+        if( seq.value==null ) {
+            len = 0;
+        } else {
+            len = seq.value.length;
+        }
         NameValue[] newlist = new NameValue[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
@@ -150,7 +161,12 @@ public class CORBA_SeqUtil {
      * @param elem 追加するServiceProfileオブジェクト
      */
     public static void push_back(ServiceProfileListHolder seq, ServiceProfile elem) {
-        int len = seq.value.length;
+        int len;
+        if( seq.value==null ) {
+            len = 0;
+        } else {
+            len = seq.value.length;
+        }
         ServiceProfile[] newlist = new ServiceProfile[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
@@ -166,7 +182,12 @@ public class CORBA_SeqUtil {
      * @param elem 追加するOrganizationオブジェクト
      */
     public static void push_back(OrganizationListHolder seq, Organization elem) {
-        int len = seq.value.length;
+        int len;
+        if( seq.value==null ) {
+            len = 0;
+        } else {
+            len = seq.value.length;
+        }
         Organization[] newlist = new Organization[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
@@ -182,7 +203,12 @@ public class CORBA_SeqUtil {
      * @param elem 追加するExecutionContextServiceオブジェクト
      */
     public static void push_back(ExecutionContextServiceListHolder seq, ExecutionContextService elem) {
-        int len = seq.value.length;
+        int len;
+        if( seq.value==null ) {
+            len = 0;
+        } else {
+            len = seq.value.length;
+        }
         ExecutionContextService[] newlist = new ExecutionContextService[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
@@ -198,7 +224,12 @@ public class CORBA_SeqUtil {
      * @param elem 追加するPortオブジェクト
      */
     public static void push_back(PortListHolder seq, Port elem) {
-        int len = seq.value.length;
+        int len;
+        if( seq.value==null ) {
+            len = 0;
+        } else {
+            len = seq.value.length;
+        }
         Port[] newlist = new Port[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
@@ -214,7 +245,12 @@ public class CORBA_SeqUtil {
      * @param elem 追加するConnectorProfileオブジェクト
      */
     public static void push_back(ConnectorProfileListHolder seq, ConnectorProfile elem) {
-        int len = seq.value.length;
+        int len;
+        if( seq.value==null ) {
+            len = 0;
+        } else {
+            len = seq.value.length;
+        }
         ConnectorProfile[] newlist = new ConnectorProfile[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
@@ -230,7 +266,12 @@ public class CORBA_SeqUtil {
      * @param elem 追加するPortInterfaceProfileオブジェクト
      */
     public static void push_back(PortInterfaceProfileListHolder seq, PortInterfaceProfile elem) {
-        int len = seq.value.length;
+        int len;
+        if( seq.value==null ) {
+            len = 0;
+        } else {
+            len = seq.value.length;
+        }
         PortInterfaceProfile[] newlist = new PortInterfaceProfile[len + 1];
         for (int i = 0; i < len; i++) {
             newlist[i] = seq.value[i];
@@ -246,7 +287,12 @@ public class CORBA_SeqUtil {
      * @param elem 追加するPortProfileオブジェクト
      */
     public static void push_back(PortProfileListHolder seq, PortProfile elem) {
-        int len = seq.value.length;
+        int len;
+        if( seq.value==null ) {
+            len = 0;
+        } else {
+            len = seq.value.length;
+        }
         PortProfile[] newlist = new PortProfile[len + 1];
         for (int i = 0; i < len; i++) {
             newlist[i] = seq.value[i];
@@ -261,8 +307,17 @@ public class CORBA_SeqUtil {
      * @param seq2 追加するNameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
      */
     public static void push_back_list(NVListHolder seq1, NVListHolder seq2) {
-        int len1 = seq1.value.length;
-        int len2 = seq2.value.length;
+        int len1, len2;
+        if( seq1.value==null ) {
+            len1 = 0;
+        } else {
+            len1 = seq1.value.length;
+        }
+        if( seq2.value==null ) {
+            len2 = 0;
+        } else {
+            len2 = seq2.value.length;
+        }
         int len = len1 + len2;
         NameValue[] newlist = new NameValue[len];
         for (int intIdx = 0; intIdx < len1; intIdx++) {
@@ -281,8 +336,17 @@ public class CORBA_SeqUtil {
      * @param seq2 追加する_SDOPackage.SDOオブジェクトシーケンスを保持するSDOListHolderオブジェクト
      */
     public static void push_back_list(SDOListHolder seq1, SDOListHolder seq2) {
-        int len1 = seq1.value.length;
-        int len2 = seq2.value.length;
+        int len1, len2;
+        if( seq1.value==null ) {
+            len1 = 0;
+        } else {
+            len1 = seq1.value.length;
+        }
+        if( seq2.value==null ) {
+            len2 = 0;
+        } else {
+            len2 = seq2.value.length;
+        }
         int len = len1 + len2;
         SDO[] newlist = new SDO[len];
         for (int intIdx = 0; intIdx < len1; intIdx++) {
@@ -302,7 +366,12 @@ public class CORBA_SeqUtil {
      * @param index 挿入先を指すインデクス
      */
     public static void insert(NVListHolder seq, NameValue elem, int index) {
-        int len = seq.value.length;
+        int len;
+        if( seq.value==null ) {
+            len = 0;
+        } else {
+            len = seq.value.length;
+        }
         if (index > len) {
             push_back(seq, elem);
             return;
@@ -343,11 +412,9 @@ public class CORBA_SeqUtil {
      * @param index 削除要素のシーケンス内インデクス
      */
     public static void erase(NVListHolder seq, int index) {
-
+        if( seq.value==null ) return;
         int len = seq.value.length;
-        if (index > len) {
-            return;
-        }
+        if (index > len) return;
         NameValue[] newlist = new NameValue[len - 1];
         for (int intIdx = 0; intIdx < index; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
@@ -365,7 +432,7 @@ public class CORBA_SeqUtil {
      * @param index 削除要素のシーケンス内インデクス
      */
     public static void erase(SDOListHolder seq, int index) {
-        
+        if( seq.value==null ) return;
         int len = seq.value.length;
         if(index > len) return;
         SDO[] newlist = new SDO[len - 1];
@@ -385,11 +452,9 @@ public class CORBA_SeqUtil {
      * @param index 削除要素のシーケンス内インデクス
      */
     public static void erase(ServiceProfileListHolder seq, int index) {
-
+        if( seq.value==null ) return;
         int len = seq.value.length;
-        if (index > len) {
-            return;
-        }
+        if (index > len) return;
         ServiceProfile[] newlist = new ServiceProfile[len - 1];
         for (int intIdx = 0; intIdx < index; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
@@ -407,11 +472,9 @@ public class CORBA_SeqUtil {
      * @param index 削除要素のシーケンス内インデクス
      */
     public static void erase(OrganizationListHolder seq, int index) {
-
+        if( seq.value==null ) return;
         int len = seq.value.length;
-        if (index > len) {
-            return;
-        }
+        if (index > len) return;
         Organization[] newlist = new Organization[len - 1];
         for (int intIdx = 0; intIdx < index; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
@@ -429,11 +492,9 @@ public class CORBA_SeqUtil {
      * @param index 削除要素のシーケンス内インデクス
      */
     public static void erase(PortListHolder seq, int index) {
-
+        if( seq.value==null ) return;
         int len = seq.value.length;
-        if (index > len) {
-            return;
-        }
+        if (index > len) return;
         Port[] newlist = new Port[len - 1];
         for (int intIdx = 0; intIdx < index; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
@@ -451,7 +512,7 @@ public class CORBA_SeqUtil {
      * @param index 削除要素のシーケンス内インデクス
      */
     public static void erase(ConnectorProfileListHolder seq, int index) {
-        
+        if( seq.value==null ) return;
         int len = seq.value.length;
         if (index > len) return;
         ConnectorProfile[] newlist = new ConnectorProfile[len - 1];
@@ -471,11 +532,9 @@ public class CORBA_SeqUtil {
      * @param index 削除要素のシーケンス内インデクス
      */
     public static void erase(PortInterfaceProfileListHolder seq, int index) {
-
+        if( seq.value==null ) return;
         int len = seq.value.length;
-        if (index > len) {
-            return;
-        }
+        if (index > len) return;
         PortInterfaceProfile[] newlist = new PortInterfaceProfile[len - 1];
         for (int intIdx = 0; intIdx < index; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];

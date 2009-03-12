@@ -8,6 +8,8 @@ import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.TypeCast;
 
 import org.omg.CORBA.Any;
+import org.omg.CORBA.Object;
+import org.omg.CORBA.SystemException;
 
 import RTC.InPortAny;
 import RTC.InPortAnyHelper;
@@ -31,7 +33,6 @@ public class InPortCorbaProvider<DataType>
     public InPortCorbaProvider(Class<DataType> DATA_TYPE_CLASS,
             BufferBase<DataType> buffer) throws Exception {
         
-        this.DATA_TYPE_CLASS = DATA_TYPE_CLASS;
         this.TYPE_CAST = new TypeCast<DataType>(DATA_TYPE_CLASS);
         this.m_buffer = buffer;
 
@@ -51,7 +52,6 @@ public class InPortCorbaProvider<DataType>
      * @param port CORBAオブジェクト参照
      */
     public void setObjRef(final InPortAny port) {
-        
         m_objref = port;
     }
     
@@ -88,7 +88,7 @@ public class InPortCorbaProvider<DataType>
         NVListHolder nv = NVListHolderFactory.clone(this.m_inPortProvider.m_properties);
         CORBA_SeqUtil.push_back(nv,
                 NVUtil.newNV("dataport.corba_any.inport_ref",
-                        InPortAnyHelper.narrow(this.m_objref._duplicate())));
+                        InPortAnyHelper.narrow(this.m_objref._duplicate()), Object.class));
         
         NVUtil.append(properties, nv);
     }
@@ -98,7 +98,7 @@ public class InPortCorbaProvider<DataType>
      * 
      * @param data 書き込むデータ
      */
-    public void put(final Any data) {
+    public void put(final Any data) throws SystemException {
         this.m_buffer.write(TYPE_CAST.castType(data));
     }
     
@@ -113,7 +113,6 @@ public class InPortCorbaProvider<DataType>
     
     private BufferBase<DataType> m_buffer;
     private InPortAny m_objref;
-    private Class<DataType> DATA_TYPE_CLASS;
     private TypeCast<DataType> TYPE_CAST;
     private InPortProviderImpl m_inPortProvider = new InPortProviderImpl();
 }

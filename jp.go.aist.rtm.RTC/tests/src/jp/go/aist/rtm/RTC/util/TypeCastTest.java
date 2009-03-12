@@ -85,7 +85,7 @@ public class TypeCastTest extends TestCase {
         
         TypeCast<Double> tc = new TypeCast<Double>(Double.class);
         for (int val = -100; val < 100; val++) {
-            Double in = Double.valueOf(((double) val) * 3.14159d);
+            Double in = Double.valueOf(val * 3.14159d);
             Double out = tc.castType(tc.castAny(in));
             assertEquals(in, out);
         }
@@ -109,7 +109,7 @@ public class TypeCastTest extends TestCase {
         
         TypeCast<Float> tc = new TypeCast<Float>(Float.class);
         for (int val = -100; val < 100; val++) {
-            Float in = Float.valueOf(((float) val) * 3.14159f);
+            Float in = Float.valueOf(val * 3.14159f);
             Float out = tc.castType(tc.castAny(in));
             assertEquals(in, out);
         }
@@ -314,6 +314,13 @@ public class TypeCastTest extends TestCase {
         assertEquals(in_max.tm.sec, out_max.tm.sec);
         assertEquals(in_max.tm.nsec, out_max.tm.nsec);
         assertEquals(in_max.data, out_max.data);
+        //
+        TimedFloat putValue = new TimedFloat();
+        putValue.data = 3.14159F;
+        putValue.tm = new RTC.Time();
+        Any putValueAny = tc.castAny(putValue);
+        TimedFloat result = tc.castType(putValueAny);
+        assertEquals(putValue.data, result.data);
     }
 
     /**

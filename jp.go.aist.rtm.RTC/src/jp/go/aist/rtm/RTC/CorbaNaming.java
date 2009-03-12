@@ -145,7 +145,11 @@ public class CorbaNaming {
     public void bind(final NameComponent[] name, Object obj, final boolean force)
         throws NotFound, CannotProceed, InvalidName, AlreadyBound {
         try{
-            m_rootContext.bind(name, obj);
+            if( isNamingContext(obj) ) {
+                m_rootContext.bind_context(name, NamingContextExtHelper.narrow(obj));
+            } else {
+                m_rootContext.bind(name, obj);
+            }
         } catch (NotFound ex) {
             if( force ){
                 bindRecursive(m_rootContext, name, obj);
@@ -155,12 +159,6 @@ public class CorbaNaming {
         } catch (CannotProceed ex) {
             if( force ) {
                 bindRecursive(ex.cxt, ex.rest_of_name, obj);
-            } else {
-                throw ex;
-            }
-        } catch (AlreadyBound ex) {
-            if( force ){
-                bindRecursive(m_rootContext, name, obj);
             } else {
                 throw ex;
             }
@@ -243,15 +241,18 @@ public class CorbaNaming {
         for(int intIdx=0; intIdx<len; ++intIdx) {
             if( intIdx==(len-1)) {
                 // this operation may throw AlreadyBound, 
-                cxt.rebind(subName(name, intIdx, intIdx), obj);
-                return;
-            } else {
-            // If the context is not a NamingContext, CannotProceed is thrown
-                if( isNamingContext(cxt) ) {
-                    cxt = bindOrResolveContext(cxt, subName(name, intIdx, intIdx));
+                if(isNamingContext(obj)) {
+                    cxt.bind_context(subName(name, intIdx, intIdx), NamingContextExtHelper.narrow(obj));
                 } else {
-                    throw new CannotProceed(cxt, subName(name, intIdx));
+                    cxt.rebind(subName(name, intIdx, intIdx), obj);
                 }
+                return;
+            }
+            // If the context is not a NamingContext, CannotProceed is thrown
+            if( isNamingContext(cxt) ) {
+                cxt = bindOrResolveContext(cxt, subName(name, intIdx, intIdx));
+            } else {
+                throw new CannotProceed(cxt, subName(name, intIdx));
             }
         }
         return;
@@ -281,7 +282,11 @@ public class CorbaNaming {
     public void rebind(final NameComponent[] name, Object obj, final boolean force)
         throws NotFound, CannotProceed, InvalidName {
         try {
-            m_rootContext.rebind(name, obj);
+            if( isNamingContext(obj) ) {
+                m_rootContext.rebind(name, NamingContextExtHelper.narrow(obj));
+            } else {
+                m_rootContext.rebind(name, obj);
+            }
         } catch(NotFound ex) {
             if( force ) {
                 rebindRecursive(m_rootContext, name, obj);
@@ -354,19 +359,22 @@ public class CorbaNaming {
         
         for( int intIdx=0;intIdx<len;intIdx++ ) {
             if( intIdx==(len-1) ) {
-                cxt.rebind(subName(name, intIdx, intIdx), obj);
-                return;
-            } else {
-                // If the context is not a NamingContext, CannotProceed is thrown
-                if( isNamingContext(cxt)) {
-                    try {
-                        cxt = cxt.bind_new_context(subName(name, intIdx, intIdx));
-                    } catch (AlreadyBound ex) {
-                        cxt = NamingContextExtHelper.narrow(cxt.resolve(subName(name, intIdx, intIdx)));
-                    }
+                if( isNamingContext(obj) ) {
+                    cxt.rebind_context(subName(name, intIdx, intIdx), NamingContextExtHelper.narrow(obj));
                 } else {
-                    throw new CannotProceed(cxt, subName(name, intIdx));
+                    cxt.rebind(subName(name, intIdx, intIdx), obj);
                 }
+                return;
+            }
+            // If the context is not a NamingContext, CannotProceed is thrown
+            if( isNamingContext(cxt)) {
+                try {
+                    cxt = cxt.bind_new_context(subName(name, intIdx, intIdx));
+                } catch (AlreadyBound ex) {
+                    cxt = NamingContextExtHelper.narrow(cxt.resolve(subName(name, intIdx, intIdx)));
+                }
+            } else {
+                throw new CannotProceed(cxt, subName(name, intIdx));
             }
         }
         return;
@@ -812,7 +820,9 @@ public class CorbaNaming {
      * @exception InvalidName 引数 の名前が不正。
      */
     public void clearAll() throws NotEmpty, NotFound, CannotProceed, InvalidName {
-        this.destroyRecursive(m_rootContext);
+        if( m_rootContext!= null ) {
+            this.destroyRecursive(m_rootContext);
+        }
     }
 
     /**
@@ -858,7 +868,7 @@ public class CorbaNaming {
     public NameComponent[] toName(final String sname) throws InvalidName {
         if( sname==null || sname.equals("") ) throw new InvalidName();
         
-        String string_name = new String(sname);
+        String string_name = sname;
         String[] name_comps;
       
         // String name should include 1 or more names
@@ -992,9 +1002,12 @@ public class CorbaNaming {
      * @return 判断結果
      */
     public boolean isNamingContext(Object obj) {
-        NamingContext nc= NamingContextExtHelper.narrow(obj);
-        if( nc!=null ) return true;
-        else            return false;
+        try {
+            NamingContext nc= NamingContextExtHelper.narrow(obj);
+            if( nc!=null ) return true;
+        } catch(Exception ex) {
+        }
+        return false;
     }
 
     /**

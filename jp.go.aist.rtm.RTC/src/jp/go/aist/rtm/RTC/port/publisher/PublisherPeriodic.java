@@ -22,7 +22,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable {
         
         m_consumer = consumer;
         
-        String rate = new String(property.getProperty("dataport.push_rate"));
+        String rate = property.getProperty("dataport.push_rate");
         double hz;
         if (!rate.equals("")) {
             hz = Double.valueOf(rate).doubleValue();

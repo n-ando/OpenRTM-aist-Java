@@ -103,8 +103,7 @@ public class Manager {
     }
     
     /**
-     * <p>Managerオブジェクトを取得します。
-     * 本メソッドの呼び出しに先立っては、必ずinit()が呼び出し済みでなければなりません。</p>
+     * <p>Managerオブジェクトを取得します。</p>
      * 
      * @return Managerオブジェクト
      */
@@ -191,7 +190,7 @@ public class Manager {
             }
             
             try {
-                Thread.sleep(0, 100 * 1000);
+                Thread.sleep(1);
                 
             } catch (InterruptedException e) {
                 rtcout.println(rtcout.NORMAL, "Exception: Caught InterruptedException in Manager.join().");
@@ -306,18 +305,19 @@ public class Manager {
      * @param moduleFileName モジュールファイル名
      * @param initFunc 初期化メソッド名
      */
-    public void load(final String moduleFileName, final String initFunc) {
+    public String load(final String moduleFileName, final String initFunc) {
         
         rtcout.println(rtcout.TRACE, "Manager.load()");
         
         try {
-            m_module.load(moduleFileName, initFunc);
+            return m_module.load(moduleFileName, initFunc);
             
         } catch (Exception e) {
             rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.load().");
             rtcout.println(rtcout.NORMAL, e.getMessage());
             e.printStackTrace();
         }
+        return null;
     }
     
     /**
@@ -325,7 +325,7 @@ public class Manager {
      *
      * @param moduleFileName モジュールファイル名
      */ 
-    public void unload(final String moduleFileName) {
+    public void unload(final String moduleFileName) throws Exception {
         
         rtcout.println(rtcout.TRACE, "Manager.unload()");
         
@@ -351,7 +351,7 @@ public class Manager {
         
         rtcout.println(rtcout.TRACE, "Manager.getLoadedModules()");
         
-        return m_module.getLoadedModules();
+        return new Vector<String>(m_module.getLoadedModules().keySet());
     }
     
     /**
@@ -405,7 +405,11 @@ public class Manager {
         
         try {
             ECFactoryBase factory = new ECFactoryJava(name);
-            m_ecfactory.registerObject(factory, new ECFactoryPredicate(factory));
+            if( factory==null ) return false;
+            if( !m_ecfactory.registerObject(factory, new ECFactoryPredicate(factory))) {
+                factory = null;
+                return false;
+            }
             return true;
             
         } catch (Exception ex) {
@@ -455,17 +459,18 @@ public class Manager {
     public RTObject_impl createComponent(final String moduleName) {
         
         rtcout.println(rtcout.TRACE, "Manager.createComponent(" + moduleName + ")");
+        
+        if( moduleName==null || moduleName.equals("")) return null;
 
         // Create Component
         RTObject_impl comp = null;
         for (int i = 0; i < m_factory.m_objects.size(); i++) {
             FactoryBase factory = m_factory.m_objects.elementAt(i);
+            if (factory == null) return null;
             
             if (factory.m_Profile.getProperty("implementation_id").equals(moduleName)) {
                 comp = m_factory.m_objects.elementAt(i).create(this);
-                if (comp == null) {
-                    return null;
-                }
+                if (comp == null) return null;
                 
                 try {
                     m_objManager.activate(comp);
@@ -489,6 +494,7 @@ public class Manager {
                 rtcout.println(rtcout.TRACE, "RTC Created: " + moduleName);
             }
         }
+        if( comp == null ) return null;
         
         // Load configuration file specified in "rtc.conf"
         //
@@ -506,7 +512,10 @@ public class Manager {
         rtcout.println(rtcout.TRACE, "RTC initialization succeeded: " + moduleName);
         
         // Component initialization
-        bindExecutionContext(comp);
+        if( !bindExecutionContext(comp) ) {
+            rtcout.println(rtcout.TRACE, "RTC EC-binding failed: " + moduleName);
+            return null;
+        }
 
         // Bind component to naming service
         registerComponent(comp);
@@ -591,7 +600,9 @@ public class Manager {
 
         if (RTCUtil.isDataFlowParticipant(rtobj)) {
             final String ectype = m_config.getProperty("exec_cxt.periodic.type");
-            exec_cxt = ((ECFactoryBase) (m_ecfactory.find(new ECFactoryPredicate(ectype)))).create();
+            ECFactoryBase ecfactory = (ECFactoryBase)(m_ecfactory.find(new ECFactoryPredicate(ectype)));
+            if( ecfactory==null ) return false;
+            exec_cxt = ecfactory.create();
             
             try {
                 m_objManager.activate(exec_cxt);
@@ -599,17 +610,17 @@ public class Manager {
             } catch (ServantAlreadyActive e) {
                 rtcout.println(rtcout.NORMAL, "Exception: Caught ServantAlreadyActive Exception in Manager.bindExecutionContext() DataFlowParticipant.");
                 rtcout.println(rtcout.NORMAL, e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
                 
             } catch (WrongPolicy e) {
                 rtcout.println(rtcout.NORMAL, "Exception: Caught WrongPolicy Exception in Manager.bindExecutionContext() DataFlowParticipant.");
                 rtcout.println(rtcout.NORMAL, e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
                 
             } catch (ObjectNotActive e) {
                 rtcout.println(rtcout.NORMAL, "Exception: Caught ObjectNotActive Exception in Manager.bindExecutionContext() DataFlowParticipant.");
                 rtcout.println(rtcout.NORMAL, e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
             }
             
             final String rate = m_config.getProperty("exec_cxt.periodic.rate");
@@ -625,17 +636,17 @@ public class Manager {
             } catch (ServantAlreadyActive e) {
                 rtcout.println(rtcout.NORMAL, "Exception: Caught ServantAlreadyActive Exception in Manager.bindExecutionContext() FsmParticipant.");
                 rtcout.println(rtcout.NORMAL, e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
                 
             } catch (WrongPolicy e) {
                 rtcout.println(rtcout.NORMAL, "Exception: Caught WrongPolicy Exception in Manager.bindExecutionContext() FsmParticipant.");
                 rtcout.println(rtcout.NORMAL, e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
                 
             } catch (ObjectNotActive e) {
                 rtcout.println(rtcout.NORMAL, "Exception: Caught ObjectNotActive Exception in Manager.bindExecutionContext() FsmParticipant.");
                 rtcout.println(rtcout.NORMAL, e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
 
@@ -667,7 +678,7 @@ public class Manager {
     public RTObject_impl getComponent(final String instanceName) {
         
         rtcout.println(rtcout.TRACE, "Manager.getComponent(" + instanceName + ")");
-        return null;
+        return m_compManager.find(new InstanceName(instanceName));
     }
     
     /**
@@ -743,7 +754,7 @@ public class Manager {
 
         if (StringUtil.toBool(m_config.getProperty("timer.enable"), "YES", "NO", true)) {
             TimeValue tm = new TimeValue(0, 100);
-            String tick = new String(m_config.getProperty("timer.tick"));
+            String tick = m_config.getProperty("timer.tick");
             if (! (tick == null || tick.equals(""))) {
                 tm.convert((Double.valueOf(tick)).doubleValue());
                 m_timer = new Timer(tm);
@@ -773,7 +784,7 @@ public class Manager {
             
             m_Logbuf = new LogbufOn();
             
-            String logfile = new String(m_config.getProperty("logger.file_name"));
+            String logfile = m_config.getProperty("logger.file_name");
             if (logfile == null || logfile.equals("")) {
                 logfile = "./rtc.log";
             }
@@ -783,10 +794,10 @@ public class Manager {
                 m_Logbuf.open(new FileHandler(logfile));
                 
             } catch (SecurityException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
                 
             } catch (IOException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
             m_MedLogbuf = new MedLogbuf(m_Logbuf);
             rtcout = new LogStream(m_MedLogbuf);
@@ -835,9 +846,10 @@ public class Manager {
         // Initialize ORB
         try {
             String[] args = createORBOptions().split(" ");
+            java.util.Properties prop = createORBProperties();
 
             // ORB initialization
-            m_pORB = ORBUtil.getOrb(args);
+            m_pORB = ORBUtil.getOrb(args, prop);
 
             // Get the RootPOA
             Object obj = m_pORB.resolve_initial_references("RootPOA");
@@ -867,26 +879,26 @@ public class Manager {
      */
     protected String createORBOptions() {
         
-        String opt = new String(m_config.getProperty("corba.args"));
-        String corba = new String(m_config.getProperty("corba.id"));
-        String endpoint = new String(m_config.getProperty("corba.endpoint"));
-
-        if (! (endpoint == null || endpoint.length() == 0)) {
-            if (! (opt == null || opt.length() == 0)) {
-                opt += " ";
-            }
-            if (corba.equals("omniORB")) {
-                opt = "-ORBendPoint giop:tcp:" + endpoint;
-            }
-            else if (corba.equals("TAO")) {
-                opt = "-ORBEndPoint iiop://" + endpoint;
-            }
-            else if (corba.equals("MICO")) {
-                opt = "-ORBIIOPAddr inet:" + endpoint;
-            }
-        }
+        String opt = m_config.getProperty("corba.args");
         
         return opt;
+    }
+
+    protected java.util.Properties createORBProperties() {
+        String endpoint = m_config.getProperty("corba.endpoint");
+        if(endpoint==null || (endpoint.indexOf(":")<0))  return null;
+        
+        java.util.Properties result = new java.util.Properties();
+        String[] endPointInfo = endpoint.split(":");
+        if( !endPointInfo[0].equals("") ) {
+//            result.put("org.omg.CORBA.ORBInitialHost", endPointInfo[0]);
+            result.put("com.sun.CORBA.ORBServerHost", endPointInfo[0]);
+        }
+        if( endPointInfo.length>1 && !endPointInfo[1].equals("") ) {
+//            result.put("org.omg.CORBA.ORBInitialPort", endPointInfo[1]);
+            result.put("com.sun.CORBA.ORBServerPort", endPointInfo[1]);
+        }
+        return result;
     }
 
     /**
@@ -907,7 +919,7 @@ public class Manager {
         } catch (Exception e) {
             rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.shutdownORB().");
             rtcout.println(rtcout.NORMAL, e.getMessage());
-            e.getStackTrace();
+//            e.getStackTrace();
         }
         
         rtcout.println(rtcout.DEBUG, "No pending works of ORB. Shutting down POA and ORB.");
@@ -916,14 +928,12 @@ public class Manager {
             try {
                 if (m_pPOAManager != null) {
                     m_pPOAManager.deactivate(false, true);
+                    rtcout.println(rtcout.DEBUG, "POA Manager was deactivated.");
                 }
                 
-                rtcout.println(rtcout.DEBUG, "POA Manager was deactivated.");
-                
-                m_pPOA.destroy(false, true);
                 m_pPOA = null;
                 
-                rtcout.println(rtcout.DEBUG, "POA was destroid.");
+//                rtcout.println(rtcout.DEBUG, "POA was destroid.");
                 
             } catch (SystemException ex) {
                 rtcout.println(rtcout.ERROR, "Caught SystemException during root POA destruction");
@@ -940,7 +950,9 @@ public class Manager {
                 rtcout.println(rtcout.DEBUG, "ORB was shutdown.");
                 rtcout.println(rtcout.DEBUG, "ORB was destroied.");
                 
+                m_pORB.destroy();
                 m_pORB = null;
+                ORBUtil.clearOrb();
                 
             } catch (SystemException ex) {
                 rtcout.println(rtcout.ERROR, "Caught SystemException during ORB shutdown");
@@ -990,7 +1002,7 @@ public class Manager {
             TimeValue tm = new TimeValue(10, 0); // default interval = 10sec
                                                   // for safty
             
-            String intr = new String(m_config.getProperty("naming.update.interval"));
+            String intr = m_config.getProperty("naming.update.interval");
             if (! (intr == null || intr.equals(""))) {
                 tm.convert(Double.valueOf(intr).doubleValue());
             }
@@ -1030,7 +1042,7 @@ public class Manager {
                 rtcout.level(LogStream.PARANOID);
 
             } catch (Exception e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
         
@@ -1041,7 +1053,7 @@ public class Manager {
             } catch (Exception e) {
                 rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.shutdownComponents().");
                 rtcout.println(rtcout.NORMAL, e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
     }
@@ -1053,12 +1065,12 @@ public class Manager {
      */
     protected void configureComponent(RTObject_impl comp) {
         
-        String category = new String(comp.getCategory());
-        String type_name = new String(comp.getTypeName());
-        String inst_name = new String(comp.getInstanceName());
+        String category = comp.getCategory();
+        String type_name = comp.getTypeName();
+        String inst_name = comp.getInstanceName();
       
-        String type_conf = new String(category + "." + type_name + ".config_file");
-        String name_conf = new String(category + "." + inst_name + ".config_file");
+        String type_conf = category + "." + type_name + ".config_file";
+        String name_conf = category + "." + inst_name + ".config_file";
       
         Properties type_prop = new Properties();
         Properties name_prop = new Properties();
@@ -1075,12 +1087,12 @@ public class Manager {
             } catch (FileNotFoundException e) {
                 rtcout.println(rtcout.NORMAL, "Exception: Caught FileNotFoundException in Manager.configureComponent() name_conf.");
                 rtcout.println(rtcout.NORMAL, e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
                 
             } catch (Exception e) {
                 rtcout.println(rtcout.NORMAL, "Exception: Caught unknown in Manager.configureComponent() name_conf.");
                 rtcout.println(rtcout.NORMAL, e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
 
@@ -1310,11 +1322,11 @@ public class Manager {
     protected class InstanceName implements equalFunctor {
         
         public InstanceName(RTObject_impl comp) {
-            m_name = new String(comp.getInstanceName());
+            m_name = comp.getInstanceName();
         }
         
         public InstanceName(final String name) {
-            m_name = new String(name);
+            m_name = name;
         }
         
         public boolean equalof(java.lang.Object comp) {
@@ -1389,7 +1401,7 @@ public class Manager {
 
         public OrbRunner(ORB orb) {
             m_pORB = orb;
-            this.open("");
+//            this.open("");
         }
 
         public int open(String args) {
@@ -1401,7 +1413,7 @@ public class Manager {
 
         public int svc() {
             m_pORB.run();
-            Manager.instance().shutdown();
+//            Manager.instance().shutdown();
             return 0;
         }
 

@@ -18,7 +18,7 @@ import RTC.RTObjectHelper;
  * <p>CorbaObjectManagerクラスです。
  * CORBA オブジェクトをアクティブ化、非アクティブ化します。</p>
  */
-public class CorbaObjectManager {
+class CorbaObjectManager {
     /**
      * <p>コンストラクタです。</p>
      *
@@ -26,7 +26,6 @@ public class CorbaObjectManager {
      * @param poa　POA
      */
     public CorbaObjectManager(ORB orb, POA poa) {
-        m_pORB = orb;
         m_pPOA = poa;
     }
 
@@ -67,17 +66,14 @@ public class CorbaObjectManager {
      *
      * @exception ServantAlreadyActive 対象Servantがactivate化されていない
      * @exception WrongPolicy POA でサポートされていないポリシーを使用
-     * @exception ObjectNotActive 指定された oid を持つオブジェクトが Active Object Map にない場合     *
+     * @exception ObjectNotActive 指定された oid を持つオブジェクトが Active Object Map にない場合
+     * 
      */
     public void deactivate(Servant comp) throws ServantNotActive, WrongPolicy, ObjectNotActive {
         byte[] id = m_pPOA.servant_to_id(comp);
         m_pPOA.deactivate_object(id);
     }
 
-    /**
-     * ORB
-     */
-    private ORB m_pORB;
     /**
      * POA
      */

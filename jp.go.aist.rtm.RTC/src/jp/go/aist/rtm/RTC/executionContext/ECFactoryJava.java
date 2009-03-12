@@ -52,22 +52,25 @@ public class ECFactoryJava extends ECFactoryBase {
      * 
      * @param comp 破棄対象ExecutionContextインスタンス
      */
-    public void destroy(ExecutionContextBase comp) {
+    public ExecutionContextBase destroy(ExecutionContextBase comp) {
         
         ECNewDeleteFunc target = null;
         
         try {
             target = (ECNewDeleteFunc) this.createClass(m_name);
-            target.ECDeleteFunc(comp);
+            comp = (ExecutionContextBase)target.ECDeleteFunc(comp);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            return null;
             
         } catch (InstantiationException e) {
             e.printStackTrace();
-            
+            return null;
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+            return null;
         }
+        return comp;
     }
     
     /**

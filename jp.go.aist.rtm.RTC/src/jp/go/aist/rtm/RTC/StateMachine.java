@@ -248,9 +248,6 @@ public class StateMachine<STATE, LISTENER> {
       */
     public synchronized void goTo(STATE state) {
         m_states.next = state;
-        if( m_states.curr==state ) {
-            m_selftrans = true;
-        }
     }
 
     /**
@@ -299,16 +296,19 @@ public class StateMachine<STATE, LISTENER> {
             }
         }
     }
+
     private boolean need_trans() {
         synchronized (m_states) {
             return m_states.curr != m_states.next;
         }
     }
+
     private void update_curr(final STATE curr) {
         synchronized (m_states) {
             m_states.curr = curr;
         }
     }
+
     /**
      * <p>状態数</p>
      */   
@@ -345,8 +345,4 @@ public class StateMachine<STATE, LISTENER> {
      * <p>ステートマシンが保持する状態</p>
      */   
     protected StateHolder<STATE> m_states = new StateHolder<STATE>();
-    /**
-     * <p>自己遷移フラグ</p>
-     */   
-    protected boolean m_selftrans;
 }

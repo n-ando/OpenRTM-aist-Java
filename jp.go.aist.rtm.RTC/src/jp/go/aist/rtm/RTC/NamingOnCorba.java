@@ -5,7 +5,7 @@ import org.omg.CORBA.ORB;
 /**
 * <p>CORBA用Naming Serviceクラスです。</p>
 */
-public class NamingOnCorba implements NamingBase {
+class NamingOnCorba implements NamingBase {
 
     /**
      * <p>コンストラクタです。</p>

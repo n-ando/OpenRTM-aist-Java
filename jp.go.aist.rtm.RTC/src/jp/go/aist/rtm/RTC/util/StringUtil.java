@@ -47,6 +47,18 @@ public class StringUtil {
             case '\r':
                 escapedStr.append("\\r");
                 break;
+            case '\\':
+                escapedStr.append("\\\\");
+                break;
+            case '|':
+                escapedStr.append("\\|");
+                break;
+            case '*':
+                escapedStr.append("\\*");
+                break;
+            case '^':
+                escapedStr.append("\\^");
+                break;
             default:
                 escapedStr.append(c);
             }
@@ -148,7 +160,7 @@ public class StringUtil {
         Vector<String> result = new Vector<String>();
         if( input==null || input.equals("") ) return result;
         
-        String[] splitted = input.split(delimiter);
+        String[] splitted = input.split(escape(delimiter));
         
         for(int intIdx=0;intIdx<splitted.length;intIdx++) {
             if( !splitted[intIdx].trim().equals("") ) {

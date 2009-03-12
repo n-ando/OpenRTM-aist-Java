@@ -20,6 +20,8 @@ import junit.framework.TestCase;
 public class PropertiesTest extends TestCase {
 
 	private jp.go.aist.rtm.RTC.util.Properties m_prop;
+    private Map<String, String> defaults_conf = new HashMap<String, String>(); 
+
 
 	public PropertiesTest(String arg0) {
 		super(arg0);
@@ -28,6 +30,22 @@ public class PropertiesTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
         
+        defaults_conf.put("rtc.openrtm.version", "0.4.0");
+        defaults_conf.put("rtc.openrtm.release", "aist");
+        defaults_conf.put("rtc.openrtm.vendor", "AIST");
+        defaults_conf.put("rtc.openrtm.author", "Noriaki Ando");
+        defaults_conf.put("rtc.manager.nameserver", "zonu.a02.aist.go.jp");
+        defaults_conf.put("rtc.manager.debug.level", "PARANOID");
+        defaults_conf.put("rtc.manager.orb", "omniORB");
+        defaults_conf.put("rtc.manager.orb.options", "IIOPAddrPort, -ORBendPoint, giop:tcp:");
+        defaults_conf.put("rtc.manager.arch", "i386");
+        defaults_conf.put("rtc.manager.os", "FreeBSD");
+        defaults_conf.put("rtc.manager.os.release", "6.1-RELEASE");
+        defaults_conf.put("rtc.manager.language", "C++");
+        defaults_conf.put("rtc.manager.subsystems", "Camera, Manipulator, Force Sensor");
+        defaults_conf.put("rtc.component.conf.path", "C:\\\\Program\\\\ Files\\\\OpenRTM-aist");
+        defaults_conf.put("rtc.manager.opening_message", "\"Hello RT World\"");
+
         this.m_prop = new jp.go.aist.rtm.RTC.util.Properties();
 	}
 
@@ -35,7 +53,116 @@ public class PropertiesTest extends TestCase {
 		super.tearDown();
 	}
 
-	// ===========================================================================
+    /**
+     * <p><<演算子のテスト
+     * <ul>
+     * <li>デフォルト値は、入力されないことを確認する</li>
+     * <li>２つのPropertiesのうち片方だけに設定されているキーに関して、設定されている通常値が、入力前後で変化しないか？</li>
+     * <li>２つのPropertiesの両方に共通しているキーに関して、設定されている通常値が入力した値で上書きされるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_streamInput() {
+        // 入力元となるPropertiesの１つ目を作成する
+        Properties propA = new Properties();
+        
+        String keyA1 = "keyA1";
+        String keyA1DefaultValue = "keyA1-default-value";
+        String keyA1Value = "keyA1-value";
+        propA.setDefault(keyA1, keyA1DefaultValue);
+        propA.setProperty(keyA1, keyA1Value);
+        
+        String keyA2 = "keyA2";
+        String keyA2DefaultValue = "keyA2-default-value";
+        propA.setDefault(keyA2, keyA2DefaultValue);
+        
+        String keyA3 = "keyA3";
+        String keyA3Value = "keyA3-value";
+        propA.setProperty(keyA3, keyA3Value);
+        
+        // 入力元となるPropertiesの２つ目を作成する
+        Properties propB = new Properties();
+        
+        String keyB1 = "keyB1";
+        String keyB1DefaultValue = "keyB1-default-value";
+        String keyB1Value = "keyB1-value";
+        propB.setDefault(keyB1, keyB1DefaultValue);
+        propB.setProperty(keyB1, keyB1Value);
+        
+        String keyB2 = "keyB2";
+        String keyB2DefaultValue = "keyB2-default-value";
+        propB.setDefault(keyB2, keyB2DefaultValue);
+
+        String keyB3 = "keyB3";
+        String keyB3Value = "keyB3-value";
+        propB.setProperty(keyB3, keyB3Value);
+        
+        // ２つのPropertiesに、共通するキー名で互いに異なる値を設定しておく
+        String keyCommon = "keyCommon";
+        String keyCommonValueA = "keyCommon-value-A";
+        String keyCommonValueB = "keyCommon-value-B";
+        propA.setProperty(keyCommon, keyCommonValueA);
+        propB.setProperty(keyCommon, keyCommonValueB);
+
+        // propBをpropAに入力する
+        propA.merge(propB);
+        
+        // 正しくマージされたことを確認する
+        // (1) 入力前から設定されており、共通キーでないものは、もとのままであることを確認する
+        assertEquals(keyA1DefaultValue, propA.getDefault(keyA1));
+        assertEquals(keyA1Value, propA.getProperty(keyA1));
+        assertEquals(keyA2DefaultValue, propA.getDefault(keyA2));
+        assertEquals(keyA2DefaultValue, propA.getProperty(keyA2));
+        assertEquals("", propA.getDefault(keyA3));
+        assertEquals(keyA3Value, propA.getProperty(keyA3));
+
+        // (2) 通常値は入力され、デフォルト値は入力されないことを確認する
+        assertEquals("", propA.getDefault(keyB1));
+        assertEquals(keyB1Value, propA.getProperty(keyB1));
+        assertEquals("", propA.getDefault(keyB2));
+        assertEquals(keyB2DefaultValue, propA.getProperty(keyB2));
+        assertEquals("", propA.getDefault(keyB3));
+        assertEquals(keyB3Value, propA.getProperty(keyB3));
+        
+        // (3) 共通キー名について、入力した値で上書きされていることを確認する
+        assertEquals(keyCommonValueB, propA.getProperty(keyCommon));
+    }
+    /**
+     * <p>getProperty()メソッドのテスト
+     * <ul>
+     * <li>デフォルト値が設定されており、かつ通常の値も設定されている場合に、プロパティ値として正しく通常の値が取得されるか？</li>
+     * <li>デフォルト値が設定されているが、通常の値は設定されていない場合に、プロパティ値として正しくデフォルト値が取得されるか？</li>
+     * <li>デフォルト値は設定されていないが、通常の値は設定されている場合に、プロパティ値として正しく通常の値が取得されるか？</li>
+     * <li>デフォルト値、通常の値のいずれも設定されていない場合に、プロパティ値として正しく空文字列が取得されるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_getProperty() {
+        Properties prop = new Properties();
+        
+        prop.setDefault("property_1", "default_1");
+        prop.setProperty("property_1", "value_1");
+        prop.setDefault("property_2", "default_2");
+        prop.setProperty("property_3", "value_3");
+        
+        // (1) デフォルト値が設定されており、かつ通常の値も設定されている場合に、プロパティ値として正しく通常の値が取得されるか？
+        String expected_1 = "value_1";
+        assertEquals(expected_1, prop.getProperty("property_1"));
+        
+        // (2) デフォルト値が設定されているが、通常の値は設定されていない場合に、プロパティ値として正しくデフォルト値が取得されるか？
+        String expected_2 = "default_2";
+        assertEquals(expected_2, prop.getProperty("property_2"));
+        
+        // (3) デフォルト値は設定されていないが、通常の値は設定されている場合に、プロパティ値として正しく通常の値が取得されるか？
+        String expected_3 = "value_3";
+        assertEquals(expected_3, prop.getProperty("property_3"));
+        
+        // (4) デフォルト値、通常の値のいずれも設定されていない場合に、プロパティ値として正しく空文字列が取得されるか？
+        String expected_4 = "";
+        assertEquals(expected_4, prop.getProperty("property_4"));
+    }
+
+    // ===========================================================================
 	// bind() tests for Properties::Properties()
 	// 引数を取らないコンストラクタの場合のテスト
 	// ===========================================================================
@@ -205,10 +332,42 @@ public class PropertiesTest extends TestCase {
 	}
     
     /**
-     *<pre>
-     * プロパティの読み込み　チェック
-     *　・外部ファイルに記述したプロパティを読み込んで設定できるか？
-     *</pre>
+     * <p>splitKeyValue()メソッドのテスト
+     * <ul>
+     * <li>キーの前に空白文字を含む場合について、キーと値を正しく分離できるか？</li>
+     * <li>キーとデリミタの間に空白文字を含む場合について、キーと値を正しく分離できるか？</li>
+     * <li>デリミタと値の間に空白文字を含む場合について、キーと値を正しく分離できるか？</li>
+     * <li>値の後ろに空白文字を含む場合について、キーと値を正しく分離できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_splitKeyValue2() {
+        class P extends Properties {
+            public Pair<String, String> splitKeyValue_protected(String str, String key, String value) {
+                return splitKeyValue(str);
+            }
+        };
+        
+        String keyAndValue = " property_name : C:\\abc\\pqr.xyz ";
+        
+        String key = null;
+        String value = null;
+        P prop = new P();
+        Pair<String, String> pair = prop.splitKeyValue_protected(keyAndValue, key, value);
+        
+        // キーと値が、余分な空白文字が除去されたうえで分離されていることを確認する
+        String expectedKey = "property_name";
+        assertEquals(expectedKey, pair.getKey());
+
+        String expectedValue = "C:\\abc\\pqr.xyz";
+        assertEquals(expectedValue, pair.getValue());
+    }
+    /**
+     * <p>プロパティの読み込み　チェック
+     * <ul>
+     * <li>外部ファイルに記述したプロパティを読み込んで設定できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_splitKeyValue() throws Exception {
     	
@@ -257,10 +416,11 @@ public class PropertiesTest extends TestCase {
         m_prop.destruct();
 	}
     /**
-     *<pre>
-     * プロパティの読み込み　チェック
-     *　・外部ファイルに記述したプロパティリストを読み込んで設定できるか？
-     *</pre>
+     * <p>プロパティの読み込み　チェック
+     * <ul>
+     * <li>外部ファイルに記述したプロパティリストを読み込んで設定できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_load() throws Exception {
     	
@@ -274,7 +434,15 @@ public class PropertiesTest extends TestCase {
     	_test_getPropertyDefault();
     }
 
-    // store()メソッドのテスト
+    /**
+     * <p>store()メソッドのテスト
+     * <ul>
+     * <li>設定されているプロパティ値が、正しく出力されるか？</li>
+     * <li>指定したヘッダ文字列が、正しく出力されるか？</li>
+     * <li>\（バックスラッシュ）を含む値が、正しくエスケープ処理されて出力されるか？</li>
+     * </ul>
+     * </p>
+     */
     public void test_store() throws Exception {
 
     	m_prop = new jp.go.aist.rtm.RTC.util.Properties();
@@ -497,6 +665,35 @@ public class PropertiesTest extends TestCase {
 		}
 	}
 
+    /**
+     * <p>propertyNames()メソッドのテスト
+     * <ul>
+     * <li>通常のプロパティ値とデフォルト値の両方が設定されているプロパティについて、キー名が取得されるか？</li>
+     * <li>通常のプロパティ値のみが設定されているプロパティについて、キー名が取得されるか？</li>
+     * <li>デフォルト値のみが設定されているプロパティについて、キー名が取得されるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_propertyNames() {
+        Properties prop = new Properties();
+        
+        // (1) 通常のプロパティ値とデフォルト値の両方を設定する
+        prop.setProperty("property_01", "value_01");
+        prop.setDefault("property_01", "default_01");
+        
+        // (2) 通常のプロパティ値のみを設定する
+        prop.setProperty("property_02", "value_02");
+        
+        // (3) デフォルト値のみを設定する
+        prop.setDefault("property_03", "default_03");
+        
+        // (1),(2),(3)いずれの場合についてもキー名が取得されることを確認する
+        Vector<String> keys = prop.propertyNames();
+        assertEquals(3, keys.size());
+        assertTrue(keys.contains("property_01"));
+        assertTrue(keys.contains("property_02"));
+        assertTrue(keys.contains("property_03"));
+    }
 	// propertyNames()メソッドのテスト。
 	// このメソッドも、このテストではsetProperty()の後に呼ばれると仮定している。
 	public void test_propertyNames(Vector<String> vs) {
@@ -535,10 +732,36 @@ public class PropertiesTest extends TestCase {
 	}
 
     /**
-     *<pre>
-     * プロパティの設定/取得　チェック
-     *　・指定したキーでプロパティを設定できるか？
-     *</pre>
+     * <p>プロパティの設定/取得　チェック
+     * <ul>
+     * <li>設定時に指定した値が、正しく設定されるか？</li>
+     * <li>設定時の戻り値として、元の設定値が正しく取得されるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_setProperty2(jp.go.aist.rtm.RTC.util.Properties pProp) {
+        String key = "key";
+        String oldValue = "old-value";
+        String newValue = "new-value";
+        
+        Properties prop = new Properties();
+        prop.setProperty(key, oldValue);
+        
+        // (1) 設定時に指定した値が、正しく設定されるか？
+        assertEquals(oldValue, prop.getProperty(key));
+
+        // (2) 設定時の戻り値として、元の設定値が正しく取得されるか？          
+        assertEquals(oldValue, prop.setProperty(key, newValue));
+
+        // (1) 設定時に指定した値が、正しく設定されるか？（その２）
+        assertEquals(newValue, prop.getProperty(key));
+    }
+    /**
+     * <p>プロパティの設定/取得　チェック
+     * <ul>
+     * <li>指定したキーでプロパティを設定できるか？</li>
+     * </ul>
+     * </p>
      */
 	public void test_setProperty(jp.go.aist.rtm.RTC.util.Properties pProp) {
 		
@@ -557,10 +780,52 @@ public class PropertiesTest extends TestCase {
 	}
     
     /**
-     *<pre>
-     * プロパティの代入　チェック
-     *　・代入したプロパティを正常に取得できるか？
-     *</pre>
+     * <p>=演算子（代入演算子）のテスト
+     * <ul>
+     * <li>デフォルト値、通常値のいずれも設定されている場合に、それら両方が正しく代入されるか？</li>
+     * <li>デフォルト値のみ設定されており、通常値が設定されていない場合に、それら両方が正しく代入されるか？</li>
+     * <li>デフォルト値が設定されていないが、通常値が設定されている場合に、それら両方が正しく代入されるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_substitute2() {
+        // 代入元となるPropertiesを作成する
+        Properties propSrc = new Properties();
+        
+        // (1) デフォルト値、通常値のいずれも設定されている場合
+        String key1 = "key1";
+        String key1DefaultValue = "key1-default-value";
+        String key1Value = "key1-value";
+        propSrc.setDefault(key1, key1DefaultValue);
+        propSrc.setProperty(key1, key1Value);
+        
+        // (2) デフォルト値のみ設定されており、通常値が設定されていない場合
+        String key2 = "key2";
+        String key2DefaultValue = "key2-default-value";
+        propSrc.setDefault(key2, key2DefaultValue);
+        
+        // (3) デフォルト値が設定されていないが、通常値が設定されている場合
+        String key3 = "key3";
+        String key3Value = "key3-value";
+        propSrc.setProperty(key3, key3Value);
+        
+        // 代入を行い、それぞれの場合で、正しく代入されたことを確認する
+        Properties prop = new Properties();
+        prop = propSrc;
+        
+        assertEquals(key1DefaultValue, prop.getDefault(key1));
+        assertEquals(key1Value, prop.getProperty(key1));
+        assertEquals(key2DefaultValue, prop.getDefault(key2));
+        assertEquals(key2DefaultValue, prop.getProperty(key2));
+        assertEquals("", prop.getDefault(key3));
+        assertEquals(key3Value, prop.getProperty(key3));
+    }
+    /**
+     * <p>プロパティの代入　チェック
+     * <ul>
+     * <li>代入したプロパティを正常に取得できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_substitute() {
         
@@ -580,10 +845,51 @@ public class PropertiesTest extends TestCase {
     }
 
     /**
-     *<pre>
-     * デフォルト・プロパティの設定/取得　チェック
-     *　・デフォルト・プロパティを正常に設定できるか？
-     *</pre>
+     * <p>デフォルト・プロパティの設定/取得　チェック
+     * <ul>
+     * <li>デフォルト値が設定されており、かつ通常の値も設定されている場合に、正しく設定されているデフォルト値を取得できるか？</li>
+     * <li>デフォルト値が設定されているが、通常の値は設定されていない場合に、正しく設定されているデフォルト値を取得できるか？</li>
+     * <li>デフォルト値は設定されていないが、通常の値は設定されている場合に、デフォルト値として空文字列が取得されるか？</li>
+     * <li>デフォルト値、通常の値のいずれも設定されていない場合に、デフォルト値として空文字列が取得されるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_getDefault2() {
+        Properties prop = new Properties();
+        
+        String key1 = "key1";
+        String key1DefaultValue = "key1-default-value";
+        String key1Value = "key1-value";
+        prop.setDefault(key1, key1DefaultValue);
+        prop.setProperty(key1, key1Value);
+        
+        String key2 = "key2";
+        String key2DefaultValue = "key2-default-value";
+        prop.setDefault(key2, key2DefaultValue);
+        
+        String key3 = "key3";
+        String key3Value = "key3-value";
+        prop.setProperty(key3, key3Value);
+        
+        // (1) デフォルト値が設定されており、かつ通常の値も設定されている場合に、正しく設定されているデフォルト値を取得できるか？
+        assertEquals(key1DefaultValue, prop.getDefault(key1));
+        
+        // (2) デフォルト値が設定されているが、通常の値は設定されていない場合に、正しく設定されているデフォルト値を取得できるか？
+        assertEquals(key2DefaultValue, prop.getDefault(key2));
+        
+        // (3) デフォルト値は設定されていないが、通常の値は設定されている場合に、デフォルト値として空文字列が取得されるか？
+        assertEquals("", prop.getDefault(key3));
+        
+        // (4) デフォルト値、通常の値のいずれも設定されていない場合に、デフォルト値として空文字列が取得されるか？
+        String keyNonExist = "key-non-exist";
+        assertEquals("", prop.getDefault(keyNonExist));
+    }
+    /**
+     * <p>デフォルト・プロパティの設定/取得　チェック
+     * <ul>
+     * <li>デフォルト・プロパティを正常に設定できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_getDefault() {
         
@@ -595,10 +901,51 @@ public class PropertiesTest extends TestCase {
     }
 
     /**
-     *<pre>
-     * プロパティのノード生成　チェック
-     *　・設定したノードをプロパティ内に正常に生成できるか？
-     *</pre>
+     * <p>プロパティのノード生成　チェック
+     * <ul>
+     * <li>デフォルト値が設定されており、かつ通常の値も設定されている場合に、当該キー名の新規ノード作成が、意図どおり失敗するか？</li>
+     * <li>デフォルト値が設定されているが、通常の値は設定されていない場合に、当該キー名の新規ノード作成が、意図どおり失敗するか？</li>
+     * <li>デフォルト値は設定されていないが、通常の値は設定されている場合に、当該キー名の新規ノード作成が、意図どおり失敗するか？</li>
+     * <li>デフォルト値、通常の値のいずれも設定されていない場合に、新規ノード作成が成功するか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_createNode2() {
+        Properties prop = new Properties();
+        
+        String key1 = "key1";
+        String key1DefaultValue = "key1-default-value";
+        String key1Value = "key1-value";
+        prop.setDefault(key1, key1DefaultValue);
+        prop.setProperty(key1, key1Value);
+        
+        String key2 = "key2";
+        String key2DefaultValue = "key2-default-value";
+        prop.setDefault(key2, key2DefaultValue);
+        
+        String key3 = "key3";
+        String key3Value = "key3-value";
+        prop.setProperty(key3, key3Value);
+        
+        // (1) デフォルト値が設定されており、かつ通常の値も設定されている場合に、当該キー名の新規ノード作成が、意図どおり失敗するか？
+        assertNotNull(prop.createNode(key1));
+        
+        // (2) デフォルト値が設定されているが、通常の値は設定されていない場合に、当該キー名の新規ノード作成が、意図どおり失敗するか？
+        assertNotNull(prop.createNode(key2));
+        
+        // (3) デフォルト値は設定されていないが、通常の値は設定されている場合に、当該キー名の新規ノード作成が、意図どおり失敗するか？
+        assertNotNull(prop.createNode(key3));
+        
+        // (4) デフォルト値、通常の値のいずれも設定されていない場合に、新規ノード作成が成功するか？
+        String keyNonExist = "key-non-exist";
+        assertTrue(prop.createNode(keyNonExist));
+    }
+    /**
+     * <p>プロパティのノード生成　チェック
+     * <ul>
+     * <li>設定したノードをプロパティ内に正常に生成できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_createNode() {
         

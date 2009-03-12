@@ -79,6 +79,49 @@ public class ModuleManager {
             super.finalize();
         }
     }
+    public String load(final String moduleName) throws Exception {
+        String module_path = null;
+
+        if(moduleName==null || moduleName.length()==0) {
+            throw new IllegalArgumentException("moduleName is empty.:load()");
+        }
+
+        try {
+            new URL(moduleName);
+            if (! m_downloadAllowed) {
+                throw new IllegalArgumentException("Downloading module is not allowed.");
+            } else {
+                throw new IllegalArgumentException("Not implemented." + moduleName);
+            }
+        } catch (MalformedURLException moduleName_is_not_URL) {
+        }
+
+        // Find local file from load path or absolute directory
+        Class target = null;
+        if (m_absoluteAllowed) {
+            try {
+                target = Class.forName(moduleName);
+                module_path = moduleName;
+            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+                throw new ClassNotFoundException("Not implemented." + moduleName, e);
+            }
+        } else {
+            if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
+            for (int i = 0; i < m_loadPath.size(); i++) {
+                String fullClassName = m_loadPath.elementAt(i) + "." + moduleName;
+                try {
+                    target = Class.forName(fullClassName);
+                    module_path = fullClassName;                    
+                } catch (ClassNotFoundException e) {
+//                    e.printStackTrace();
+                }
+            }
+            if( target==null ) throw new ClassNotFoundException("Not implemented." + moduleName);
+        }
+        m_modules.put(module_path, target);
+        return module_path;
+    }
 
     /**
      * <p>指定されたモジュールをロードします。初期化メソッドを指定した場合には、
@@ -107,6 +150,7 @@ public class ModuleManager {
             throw new IllegalArgumentException("methodName is empty.:load()");
         }
 
+        String module_path = null;
         try {
             new URL(moduleName);
             if (! m_downloadAllowed) {
@@ -122,19 +166,20 @@ public class ModuleManager {
         if (m_absoluteAllowed) {
             try {
                 target = Class.forName(moduleName);
-                
+                module_path = moduleName;
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
                 throw new ClassNotFoundException("Not implemented.", e);
             }
         } else {
+            if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
             for (int i = 0; i < m_loadPath.size(); i++) {
                 String fullClassName = m_loadPath.elementAt(i) + "." + moduleName;
                 try {
                     target = Class.forName(fullClassName);
-                    
+                    module_path = fullClassName;
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                     // throw new ClassNotFoundException("Not implemented.", ex);
                 }
             }
@@ -145,58 +190,87 @@ public class ModuleManager {
             initMethod = target.getMethod(methodName);
             
         } catch (SecurityException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             throw e;
             
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             throw e;
         }
 
         try {
             initMethod.invoke(target.newInstance());
-            
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             throw e;
-            
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             throw e;
-            
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             throw e;
-            
         } catch (InstantiationException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             throw e;
         }
+        m_modules.put(module_path, target);
         
-        return moduleName;
+        return module_path;
     }
     
     /**
      * <p>指定されたモジュールをアンロードします。</p>
-     * <p>※未実装</p>
      * 
      * @param moduleName アンロードするモジュール名
      */
-    public void unload(String moduleName) {
+    public void unload(String moduleName) throws Exception {
+        if( !m_modules.containsKey(moduleName) ) 
+            throw new IllegalArgumentException("Not Found:" + moduleName);
+        m_modules.remove(moduleName);
     }
     
     /**
      * <p>すべてのモジュールをアンロードします。</p>
-     * <p>※未実装</p>
      */
     public void unloadAll() {
+        m_modules = new HashMap<String, Class>();
     }
     
+    /**
+     * <p>モジュールのメソッドの参照。</p>
+     */
+    public Method symbol(String class_name, String method_name) throws Exception {
+        Class target = m_modules.get(class_name);
+        if( target==null ) 
+            throw new IllegalArgumentException("Not Found(symbol):" + class_name);
+        //
+        Method initMethod;
+        try {
+            initMethod = target.getMethod(method_name);
+        } catch (SecurityException e) {
+//            e.printStackTrace();
+            throw e;
+        } catch (NoSuchMethodException e) {
+//            e.printStackTrace();
+            throw e;
+        }
+        
+        return initMethod;
+    }
+    /**
+     * <p>初期化関数シンボルを生成する</p>
+     */
+    public String getInitFuncName(String class_path) {
+        if( class_path==null || class_path.length()==0 ) return null;
+        String base_names[] = class_path.split("\\.");
+
+        return m_initFuncPrefix + base_names[base_names.length-1] + m_initFuncSuffix;
+    }
+
     /**
      * <p>規定となるモジュールロードパスを指定します。</p>
      * 
      * @param loadPath 規定ロードパス
-     * @see 規定ロードパスの使われ方については、load()を参照してください。
      */
     public void setLoadpath(final Vector<String> loadPath) {
         m_loadPath = new Vector<String>(loadPath);
@@ -225,8 +299,8 @@ public class ModuleManager {
      *
      * @return ロード済みモジュールリスト
      */
-    public Vector<String> getLoadedModules() {
-        return new Vector<String>(m_modules.values());
+    public Map<String, Class> getLoadedModules() {
+        return m_modules;
     }
         
     /**
@@ -273,7 +347,7 @@ public class ModuleManager {
     /**
      * <p>ロード済みモジュール</p>
      */
-    protected Map<String, String> m_modules = new HashMap<String, String>();
+    protected Map<String, Class> m_modules = new HashMap<String, Class>();
     /**
      * <p>モジュールロードパス</p>
      */

@@ -191,21 +191,16 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
         if (isEmpty()) {
             if (this.m_OnUnderflow != null) {
                 valueRef.v = this.m_OnUnderflow.run();
-                return false;
-                
-            } else {
-                return false;
             }
+            return false;
         }
 
         if (this.m_OnReadConvert == null) {
             valueRef.v = get();
-            return true;
-            
         } else {
             valueRef.v = this.m_OnReadConvert.run(get());
-            return true;
         }
+        return true;
     }
     
     /**

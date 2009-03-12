@@ -78,23 +78,31 @@ public class TypeCast<T> {
     public T castType(Any data) {
         
         if (klass.equals(Byte.class)) {
-            return klass.cast(data.extract_octet());
+            return klass.cast(Byte.valueOf(data.extract_octet()));
 
         } else if (klass.equals(Double.class)) {
-            return klass.cast(data.extract_double());
+            return klass.cast(Double.valueOf(data.extract_double()));
 
         } else if (klass.equals(Float.class)) {
-            return klass.cast(data.extract_float());
+            return klass.cast(Float.valueOf(data.extract_float()));
 
         } else if (klass.equals(Integer.class)) {
-            return klass.cast(data.extract_long());
+            return klass.cast(Integer.valueOf(data.extract_long()));
 
         } else if (klass.equals(Long.class)) {
-            return klass.cast(data.extract_longlong());
+            return klass.cast(Long.valueOf(data.extract_longlong()));
 
         } else if (klass.equals(Short.class)) {
-            return klass.cast(data.extract_short());
+            return klass.cast(Short.valueOf(data.extract_short()));
 
+        } else if (klass.equals(String.class)) {
+            return klass.cast(data.extract_wstring());
+
+        } else if (klass.equals(Character.class)) {
+            return klass.cast(Character.valueOf(data.extract_char()));
+
+        } else if (klass.equals(Boolean.class)) {
+            return klass.cast(Boolean.valueOf(data.extract_boolean()));
         } else if (klass.equals(Time.class)) {
             return klass.cast(TimeHelper.extract(data));
 
@@ -130,35 +138,35 @@ public class TypeCast<T> {
 
         } else if (klass.equals(TimedUShort.class)) {
             return klass.cast(TimedUShortHelper.extract(data));
-        }
-        else if (klass.equals(TimedBooleanSeq.class)) {
+
+        } else if (klass.equals(TimedBooleanSeq.class)) {
             return klass.cast(TimedBooleanSeqHelper.extract(data));
-        }
-        else if (klass.equals(TimedCharSeq.class)) {
+            
+        } else if (klass.equals(TimedCharSeq.class)) {
             return klass.cast(TimedCharSeqHelper.extract(data));
-        }
-        else if (klass.equals(TimedDoubleSeq.class)) {
+
+        } else if (klass.equals(TimedDoubleSeq.class)) {
             return klass.cast(TimedDoubleSeqHelper.extract(data));
-        }
-        else if (klass.equals(TimedFloatSeq.class)) {
+
+        } else if (klass.equals(TimedFloatSeq.class)) {
             return klass.cast(TimedFloatSeqHelper.extract(data));
-        }
-        else if (klass.equals(TimedLongSeq.class)) {
+
+        } else if (klass.equals(TimedLongSeq.class)) {
             return klass.cast(TimedLongSeqHelper.extract(data));
-        }
-        else if (klass.equals(TimedOctetSeq.class)) {
+
+        } else if (klass.equals(TimedOctetSeq.class)) {
             return klass.cast(TimedOctetSeqHelper.extract(data));
-        }
-        else if (klass.equals(TimedShortSeq.class)) {
+
+        } else if (klass.equals(TimedShortSeq.class)) {
             return klass.cast(TimedShortSeqHelper.extract(data));
-        }
-        else if (klass.equals(TimedStringSeq.class)) {
+
+        } else if (klass.equals(TimedStringSeq.class)) {
             return klass.cast(TimedStringSeqHelper.extract(data));
-        }
-        else if (klass.equals(TimedULongSeq.class)) {
+
+        } else if (klass.equals(TimedULongSeq.class)) {
             return klass.cast(TimedULongSeqHelper.extract(data));
-        }
-        else if (klass.equals(TimedUShortSeq.class)) {
+
+        } else if (klass.equals(TimedUShortSeq.class)) {
             return klass.cast(TimedUShortSeqHelper.extract(data));
 
         } else {
@@ -215,27 +223,39 @@ public class TypeCast<T> {
         Any any = ORBUtil.getOrb().create_any();
 
         if (klass.equals(Byte.class)) {
-            any.insert_octet(Byte.class.cast(data));
+            any.insert_octet(Byte.class.cast(data).byteValue());
             return any;
             
         } else if (klass.equals(Double.class)) {
-            any.insert_double(Double.class.cast(data));
+            any.insert_double(Double.class.cast(data).doubleValue());
             return any;
             
         } else if (klass.equals(Float.class)) {
-            any.insert_float(Float.class.cast(data));
+            any.insert_float(Float.class.cast(data).floatValue());
             return any;
             
         } else if (klass.equals(Integer.class)) {
-            any.insert_long(Integer.class.cast(data));
+            any.insert_long(Integer.class.cast(data).intValue());
             return any;
             
         } else if (klass.equals(Long.class)) {
-            any.insert_longlong(Long.class.cast(data));
+            any.insert_longlong(Long.class.cast(data).longValue());
             return any;
             
         } else if (klass.equals(Short.class)) {
-            any.insert_short(Short.class.cast(data));
+            any.insert_short(Short.class.cast(data).shortValue());
+            return any;
+            
+        } else if (klass.equals(String.class)) {
+            any.insert_wstring(String.class.cast(data));
+            return any;
+            
+        } else if (klass.equals(Character.class)) {
+            any.insert_char(Character.class.cast(data).charValue());
+            return any;
+            
+        } else if (klass.equals(Boolean.class)) {
+            any.insert_boolean(Boolean.class.cast(data).booleanValue());
             return any;
             
         } else if (klass.equals(Time.class)) {

@@ -23,7 +23,7 @@ import RTMExamples.ExtTrigger.ConsoleInComp;
 import _SDOPackage.NVListHolder;
 
 /**
-* ExtTrigger　テスト(21)
+* ExtTrigger　テスト
 * 対象クラス：ExtTrigExecutionContext
 */
 public class ExTrigTest extends SampleTest {
@@ -103,7 +103,7 @@ public class ExTrigTest extends SampleTest {
         ExecutionContextListHolder execlist = new ExecutionContextListHolder();
         execlist.value = comp.get_contexts();
         Thread.yield();
-        ReturnCode_t resultc = execlist.value[0].stop();
+        execlist.value[0].stop();
         super.tearDown();
         manager.shutdownComponents();
         manager.shutdownNaming();

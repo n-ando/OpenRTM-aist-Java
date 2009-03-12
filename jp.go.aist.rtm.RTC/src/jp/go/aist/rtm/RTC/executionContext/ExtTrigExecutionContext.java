@@ -1,5 +1,7 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
+import org.omg.CORBA.SystemException;
+
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 
@@ -20,7 +22,7 @@ public class ExtTrigExecutionContext
     /**
      * <p>ExecutionContextの処理を１周期分進めます。</p>
      */
-    public void tick() {
+    public void tick() throws SystemException {
         synchronized (m_worker) {
             m_worker._called = true;
             m_worker.notifyAll();
@@ -100,8 +102,8 @@ public class ExtTrigExecutionContext
      * 
      * @param comp 破棄対象ExecutionContextインスタンス
      */
-    public void ECDeleteFunc(ExecutionContextBase comp) {
-        comp = null;
+    public Object ECDeleteFunc(ExecutionContextBase comp) {
+        return null;
     }
 
     /**

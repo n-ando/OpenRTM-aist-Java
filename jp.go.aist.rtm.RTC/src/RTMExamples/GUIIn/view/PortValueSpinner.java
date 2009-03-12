@@ -63,7 +63,7 @@ public class PortValueSpinner extends JPanel {
         
             if (ev.getSource() == _spinner) {
                 Number value = (Number) _spinner.getValue();
-                _portValue.setData(value.doubleValue());
+                _portValue.setData(Double.valueOf(value.doubleValue()));
             }
         }
     }

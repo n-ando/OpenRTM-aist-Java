@@ -36,9 +36,8 @@ import org.apache.commons.cli.ParseException;
  * <p>ただし、コマンドラインオプション -d が指定された場合は、
  * （たとえ -f で設定ファイルを指定しても）埋め込みコンフィグレーション値を優先的に使用します。</p>
  */
-public class ManagerConfig {
+class ManagerConfig {
 
-    // The list of default configuration file path.
     /**
      * <p>Managerのデフォルト・コンフィグレーションのファイル・パス</p>
      */
@@ -141,7 +140,7 @@ public class ManagerConfig {
         }
 
         if (commandLine.hasOption("f")) {
-            this.m_configFile = commandLine.getOptionValue("f");
+            this.m_configFile = commandLine.getOptionValue("f").trim();
         }
         if (commandLine.hasOption("l")) {
             // do nothing

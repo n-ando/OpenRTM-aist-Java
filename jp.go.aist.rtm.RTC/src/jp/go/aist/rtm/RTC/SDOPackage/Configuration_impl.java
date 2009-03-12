@@ -1,5 +1,7 @@
 package jp.go.aist.rtm.RTC.SDOPackage;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -130,8 +132,8 @@ public class Configuration_impl extends ConfigurationPOA {
      * @param prop　コピー元プロパティ
      */
     private void toConfigurationSet(ConfigurationSet conf, final Properties prop) {
-        conf.description = new String(prop.getProperty("description"));
-        conf.id = new String(prop.getName());
+        conf.id = prop.getName();
+        conf.description = prop.getValue();
         NVListHolder nvlist = new NVListHolder();
         NVUtil.copyFromProperties(nvlist, prop);
         conf.configuration_data = nvlist.value;
@@ -404,6 +406,12 @@ public class Configuration_impl extends ConfigurationPOA {
                 for(int intIdx=0; intIdx<cf.size(); ++intIdx) {
                     if( config_sets.value[intIdx]==null ) config_sets.value[intIdx] = new ConfigurationSet();
                     toConfigurationSet(config_sets.value[intIdx], cf.elementAt(intIdx));
+                    String id = config_sets.value[intIdx].id;
+                    if( m_configsetopts.get(id) != null ) {
+                        config_sets.value[intIdx].description = m_configsetopts.get(id).getProperty("description");
+                    } else {
+                        config_sets.value[intIdx].description = "";
+                    }
                 }
                 return config_sets.value;
             }
@@ -436,6 +444,10 @@ public class Configuration_impl extends ConfigurationPOA {
         try{
             ConfigurationSet config = new ConfigurationSet();
             toConfigurationSet(config, configset);
+            String id = config.id;
+            if( m_configsetopts.get(id) != null ) {
+                config.description = m_configsetopts.get(id).getProperty("description");
+            }
             return config;
         } catch (Exception ex) {
             throw new InternalError("Configuration::get_configuration_set()");
@@ -462,10 +474,22 @@ public class Configuration_impl extends ConfigurationPOA {
         try {
             Properties conf = new Properties(config_id);
             toProperties(conf, configuration_set);
-            return m_configsets.setConfigurationSetValues(config_id, conf);
+            if( m_configsets.setConfigurationSetValues(config_id, conf)) {
+                String description = configuration_set.description;
+                //
+                Properties prop = m_configsetopts.get(config_id);
+                if( prop==null ) {
+                    prop = new Properties();
+                    m_configsetopts.put(config_id, prop);
+                }
+                //
+                m_configsetopts.get(config_id).setProperty("description", description);
+                return true;
+            }
         } catch( Exception ex) {
             throw new InternalError("Configuration::set_configuration_set_values()");
         }
+        return false;
     }
 
     /**
@@ -496,6 +520,10 @@ public class Configuration_impl extends ConfigurationPOA {
             synchronized (m_configsets) {
                 ConfigurationSet config = new ConfigurationSet();
                 toConfigurationSet(config, m_configsets.getActiveConfigurationSet());
+                String id = config.id;
+                if( m_configsetopts.get(id) != null ) {
+                    config.description = m_configsetopts.get(id).getProperty("description");
+                }
                 return config;
             }
         } catch (Exception ex) {
@@ -520,15 +548,25 @@ public class Configuration_impl extends ConfigurationPOA {
             throws InvalidParameter, NotAvailable, InternalError {
         try{
             synchronized (m_configsets) {
-                final String config_id = new String(configuration_set.id);
+                final String config_id = configuration_set.id;
                 Properties config = new Properties(config_id);
                 toProperties(config, configuration_set);
-                return m_configsets.addConfigurationSet(config);
+                if( m_configsets.addConfigurationSet(config) ) {
+                    String description = configuration_set.description;
+                    Properties prop = m_configsetopts.get(config_id);
+                    if( prop==null ) {
+                        prop = new Properties();
+                        m_configsetopts.put(config_id, prop);
+                    }
+                    m_configsetopts.get(config_id).setProperty("description", description);
+                    return true;
+                }
 
             }
         } catch(Exception ex) {
             throw new InternalError("Configuration::add_configuration_set()"); 
         }
+        return true;
     }
 
     /**
@@ -550,11 +588,17 @@ public class Configuration_impl extends ConfigurationPOA {
             throw new InvalidParameter("ID is empty.");
         try {
             synchronized (m_configsets) {
-                return m_configsets.removeConfigurationSet(config_id);
+                if( !m_configsets.haveConfig(config_id) )
+                    throw new InvalidParameter("No such ConfigurationSet");
+                if( m_configsets.removeConfigurationSet(config_id) ) {
+                    m_configsetopts.remove(config_id);
+                    return true;
+                }
             }
         } catch (Exception ex) {
             throw new InternalError("Configuration::remove_configuration_set()");
         }
+        return false;
     }
 
     /**
@@ -580,12 +624,13 @@ public class Configuration_impl extends ConfigurationPOA {
             throws InvalidParameter, NotAvailable, InternalError {
         if( config_id==null || config_id.equals(""))
             throw new InvalidParameter("ID is empty.");
+        if( !m_configsets.haveConfig(config_id) )
+            throw new InvalidParameter("No such ConfigurationSet");
         try {
-            m_configsets.activateConfigurationSet(config_id);
+            return m_configsets.activateConfigurationSet(config_id);
         } catch (Exception ex) {
             throw new InternalError("Configuration::activate_configuration_set()");
         }
-        return false;
     }
 
     /**
@@ -623,6 +668,7 @@ public class Configuration_impl extends ConfigurationPOA {
      * @return SDOのServiceProfile
      */
     public final ServiceProfile getServiceProfile(final String id) {
+        if( m_serviceProfiles==null || m_serviceProfiles.value==null ) return null;
         for(int index=0; index<m_serviceProfiles.value.length; index++ ) {
             if(id.equals(m_serviceProfiles.value[index].id)) {
                 return m_serviceProfiles.value[index];
@@ -659,6 +705,7 @@ public class Configuration_impl extends ConfigurationPOA {
      * <p>コンフィギュレーションセット情報</p>
      */
     protected ConfigAdmin m_configsets;
+    protected Map<String, Properties> m_configsetopts = new HashMap<String, Properties>();
     /**
      * <p>Organization リスト</p>
      */

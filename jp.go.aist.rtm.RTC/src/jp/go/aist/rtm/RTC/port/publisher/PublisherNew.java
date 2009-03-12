@@ -33,10 +33,9 @@ public class PublisherNew extends PublisherBase implements Runnable {
             
             this.m_data._updated = true;
             try{
-            this.m_data.notify();
-        } catch(Exception ex) {
-            System.out.println("aaa");
-        }
+                this.m_data.notify();
+            } catch(Exception ex) {
+            }
         }
         
         Thread.yield();
@@ -65,7 +64,7 @@ public class PublisherNew extends PublisherBase implements Runnable {
                     }
                 }
                 
-                if (this.m_data._updated) {
+                if (this.m_data._updated && this.m_running) {
                     this.m_consumer.push();
                     this.m_data._updated = false;
                 }

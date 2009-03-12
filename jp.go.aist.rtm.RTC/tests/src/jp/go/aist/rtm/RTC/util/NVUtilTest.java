@@ -2,13 +2,9 @@ package jp.go.aist.rtm.RTC.util;
 
 import java.util.HashMap;
 
-import jp.go.aist.rtm.RTC.util.LongHolder;
-import jp.go.aist.rtm.RTC.util.NVUtil;
-import jp.go.aist.rtm.RTC.util.StringHolder;
 import junit.framework.TestCase;
 
 import org.omg.CORBA.Any;
-import org.omg.CORBA.ORB;
 
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
@@ -29,73 +25,116 @@ public class NVUtilTest extends TestCase {
     }
     
     public NVUtilTest() {
-        ORB orb = ORB.init(new String[] {"-ORBclientCallTimeOutPeriod", "3000" }, null);
+//        ORB orb = ORB.init(new String[] {"-ORBclientCallTimeOutPeriod", "3000" }, null);
     }
     
     /**
-     *<pre>
-     * 新規NV生成チェック
-     *　・short型のNVを生成できるか？
-     *　・long型のNVを生成できるか？
-     *　・float型のNVを生成できるか？
-     *　・double型のNVを生成できるか？
-     *　・String型のNVを生成できるか？
-     *</pre>
+     * <p>newNV(char*,Value)のテスト
+     * <ul>
+     * <li>short型のNVを生成できるか？</li>
+     * </ul>
+     * </p>
      */
-    public void test_newNV() {
+    public void test_newNV_Short() {
         NameValue nv;
         short setSt, getSt;
-        long setLg, getLg;
-        float setFt, getFt;
-        double setDl, getDl;
         String setname, getname;
-        
+
         setSt = 1;
-        nv = NVUtil.newNV("short", setSt);
+        nv = NVUtil.newNV("short", setSt, Short.class);
         setname = "short";
         getname = nv.name;
         assertEquals(getname, setname);
         getSt = nv.value.extract_short();
         assertEquals(setSt, getSt);
-        
+    }
+    /**
+     * <p>newNV(char*,Value)のテスト
+     * <ul>
+     * <li>long型のNVを生成できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_newNV_Long() {
+        NameValue nv;
+        long setLg, getLg;
+        String setname, getname;
+
         setLg = 999999999;
-        nv = NVUtil.newNV("long", setLg);
+        nv = NVUtil.newNV("long", setLg, Long.class);
         setname = "long";
         getname = nv.name;
         assertEquals(getname, setname);
         getLg = nv.value.extract_longlong();
         assertEquals(setLg, getLg);
-        
+    }
+    /**
+     * <p>newNV(char*,Value)のテスト
+     * <ul>
+     * <li>float型のNVを生成できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_newNV_Float() {
+        NameValue nv;
+        float setFt, getFt;
+        String setname, getname;
+
         setFt = 99999.9F;
-        nv = NVUtil.newNV("float", setFt);
+        nv = NVUtil.newNV("float", setFt, Float.class);
         setname = "float";
         getname = nv.name;
         assertEquals(getname, setname);
         getFt = nv.value.extract_float();
         assertEquals(setFt, getFt);
+    }
+    /**
+     * <p>newNV(char*,Value)のテスト
+     * <ul>
+     * <li>double型のNVを生成できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_newNV_Double() {
+        NameValue nv;
+        double setDl, getDl;
+        String setname, getname;
 
         setDl = 9999999.999;
-        nv = NVUtil.newNV("double", setDl);
+        nv = NVUtil.newNV("double", setDl, Double.class);
         setname = "double";
         getname = nv.name;
         assertEquals(getname, setname);
         getDl = nv.value.extract_double();
         assertEquals(setDl, getDl);
+    }
 
+    /**
+     * <p>newNV(char*,Value)のテスト
+     * <ul>
+     * <li>String型のNVを生成できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_newNV_Str() {
+        NameValue nv;
+        String setname, getname;
+        
         Any anyValue = ORBUtil.getOrb().create_any();
         anyValue.insert_string("test");
         nv = NVUtil.newNVAny("any", anyValue);
         setname = "any";
         getname = nv.name;
         assertEquals(getname, setname);
-        assertEquals("test", nv.value.extract_any().extract_string());
+        assertEquals("test", nv.value.extract_string());
     }
     
     /**
-     *<pre>
-     * 新規NV生成チェック
-     *　・String型のNVを生成できるか？
-     *</pre>
+     * <p>newNV(char*,Value)のテスト
+     * <ul>
+     * <li>String型のNVを生成できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_newNVStr() {
         NameValue nv;
@@ -111,17 +150,19 @@ public class NVUtilTest extends TestCase {
     }
     
     /**
-     *<pre>
-     * 新規NV生成チェック
-     *　・char型のNVを生成できるか？
-     *</pre>
+     * <p>newNV(char*,Value)のテスト
+     * <ul>
+     * <li>char型のNVを生成できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_newNVChar() {
         char ch ='A';
         char getch;
         NameValue nv;
         
-        nv = NVUtil.newNVChar("char", ch);
+//        nv = NVUtil.newNVChar("char", ch);
+        nv = NVUtil.newNV("char", ch, Character.class);
         
         String setstr= "char";
         String getstr = nv.name;
@@ -132,17 +173,19 @@ public class NVUtilTest extends TestCase {
     }
 
     /**
-     *<pre>
-     * 新規NV生成チェック
-     *　・boolean型のNVを生成できるか？
-     *</pre>
+     * <p>newNV(char*,Value)のテスト
+     * <ul>
+     * <li>boolean型のNVを生成できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_newNVBool() {
         NameValue nv;
         boolean setval = false;
         boolean retval;
         
-        nv = NVUtil.newNVBool("bool", setval);
+//        nv = NVUtil.newNVBool("bool", setval);
+        nv = NVUtil.newNV("bool", setval, Boolean.class);
         
         String setstr= "bool";
         String getstr = nv.name;
@@ -153,17 +196,19 @@ public class NVUtilTest extends TestCase {
     }
     
     /**
-     *<pre>
-     * 新規NV生成チェック
-     *　・octet型のNVを生成できるか？
-     *</pre>
+     * <p>newNV(char*,Value)のテスト
+     * <ul>
+     * <li>octet型のNVを生成できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_newNVOctet() {
         NameValue nv;
         byte setval = 030;
         byte retval;
         
-        nv = NVUtil.newNVOctet("octet", setval);
+//        nv = NVUtil.newNVOctet("octet", setval);
+        nv = NVUtil.newNV("octet", setval, Byte.class);
         
         String setstr= "octet";
         String getstr = nv.name;
@@ -174,10 +219,11 @@ public class NVUtilTest extends TestCase {
     }
 
     /**
-     *<pre>
-     * プロパティ-NVListコピーチェック
-     *　・設定したプロパティをNVListにコピーできるか？
-     *</pre>
+     * <p>プロパティ-NVListコピーチェック
+     * <ul>
+     * <li>設定したプロパティをNVListにコピーできるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_copy() {
         NVListHolder nvlist = new NVListHolder();
@@ -199,12 +245,13 @@ public class NVUtilTest extends TestCase {
     }
     
     /**
-     *<pre>
-     * プロパティ-NVListコピーチェック
-     *　・設定したNVListをプロパティにコピーできるか？
-     *</pre>
+     * <p>プロパティ-NVListコピーチェック
+     * <ul>
+     * <li>設定したNVListをプロパティにコピーできるか？</li>
+     * </ul>
+     * </p>
      */
-    public void test_toProp() {
+   public void test_toProp() {
         NVListHolder nvlist = new NVListHolder();
         
         nvlist.value = new NameValue[2];
@@ -230,12 +277,13 @@ public class NVUtilTest extends TestCase {
         assertEquals("testval2", getstr);
     }
 
-    /**
-     *<pre>
-     * プロパティ-NVListコピーチェック
-     *　・設定したプロパティをNVListにコピーできるか？
-     *</pre>
-     */
+   /**
+    * <p>プロパティ-NVListコピーチェック
+    * <ul>
+    * <li>設定したプロパティをNVListにコピーできるか？</li>
+    * </ul>
+    * </p>
+    */
     public void test_copyProp() {
         NVListHolder nvlist = new NVListHolder();
         
@@ -267,10 +315,11 @@ public class NVUtilTest extends TestCase {
     }
 
     /**
-     *<pre>
-     * NVList検索チェック
-     *　・指定した名称でNVListを検索できるか？
-     *</pre>
+     * <p>NVList検索チェック
+     * <ul>
+     * <li>指定した名称でNVListを検索できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_find() {
         NVListHolder nvlist = new NVListHolder();
@@ -315,10 +364,11 @@ public class NVUtilTest extends TestCase {
     }
 
     /**
-     *<pre>
-     * NVList型チェック
-     *　・指定した名称のNVは文字列型か？
-     *</pre>
+     * <p>NVList型チェック
+     * <ul>
+     * <li>指定した名称のNVは文字列型か？</li>
+     * </ul>
+     * </p>
      */
     public void test_isString() {
         boolean result;
@@ -342,20 +392,21 @@ public class NVUtilTest extends TestCase {
         nvlist.value[1].value = anyValue;
         
         result = NVUtil.isString(nvlist, "string");
-        assertEquals(result, true);
+        assertTrue(result);
 
         result = NVUtil.isString(nvlist, "short");
-        assertEquals(result, false);
+        assertFalse(result);
 
         result = NVUtil.isStringValue(nvlist, "string", "stringVal");
-        assertEquals(result, true);
-}
+        assertTrue(result);
+    }
     
     /**
-     *<pre>
-     * NVList文字列変換チェック
-     *　・指定した名称のNVを文字列に変換できるか？
-     *</pre>
+     * <p>NVList文字列変換チェック
+     * <ul>
+     * <li>指定した名称のNVを文字列に変換できるか？</li>
+     * </ul>
+     * </p>
      */
     public void test_toString() {
         String result;
@@ -388,10 +439,11 @@ public class NVUtilTest extends TestCase {
     }
     
     /**
-     *<pre>
-     * NVList要素追加チェック
-     *　・設定した名称，値のNVを追加可能か？
-     *</pre>
+     * <p>NVList要素追加チェック
+     * <ul>
+     * <li>設定した名称，値のNVを追加可能か？</li>
+     * </ul>
+     * </p>
      */
     public void test_appendStringValue() {
         boolean result;
@@ -433,10 +485,11 @@ public class NVUtilTest extends TestCase {
         assertEquals("stvalue", retstr);
     }
     /**
-     *<pre>
-     * NVList要素追加チェック
-     *　・設定したNVListを追加可能か？
-     *</pre>
+     * <p>NVList要素追加チェック
+     * <ul>
+     * <li>設定したNVListを追加可能か？</li>
+     * </ul>
+     * </p>
      */
     public void test_append() {
         NVListHolder nvlist1 = new NVListHolder();

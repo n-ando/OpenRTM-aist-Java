@@ -31,9 +31,7 @@ public class CorbaConsumerBase {
      */
     public boolean setObject(Object obj) {
         
-        if (obj == null) {
-            return false;
-        }
+        if (obj == null) return false;
         
         this.m_objref = obj._duplicate();
         return true;

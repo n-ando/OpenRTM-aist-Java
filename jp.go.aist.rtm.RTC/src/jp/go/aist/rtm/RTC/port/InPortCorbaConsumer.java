@@ -65,7 +65,6 @@ public class InPortCorbaConsumer<DataType>
         this.m_buffer.read(data);
         Any tmp = TYPE_CAST.castAny(data.v);
         
-        // TODO 本当はエラー処理をすべき
         if (_ptr() == null) {
             return;
         }
@@ -104,9 +103,7 @@ public class InPortCorbaConsumer<DataType>
         
         int index = NVUtil.find_index(properties,
                 "dataport.corba_any.inport_ref");
-        if (index < 0) {
-            return false;
-        }
+        if (index < 0) return false;
         
         Object obj = properties.value[index].value.extract_Object();
         if (obj != null) {

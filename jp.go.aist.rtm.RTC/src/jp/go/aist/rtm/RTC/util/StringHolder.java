@@ -35,7 +35,7 @@ public class StringHolder implements ValueHolder, Serializable {
      * @exception Exception 渡された文字列が構文解析可能な String 値を含まない。
      */
     public void stringFrom(String def_val) throws Exception {
-        value = new String(def_val);
+        value = def_val;
     }
 
     /**

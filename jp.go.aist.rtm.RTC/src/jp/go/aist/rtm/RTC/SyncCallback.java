@@ -3,7 +3,7 @@ package jp.go.aist.rtm.RTC;
 /**
  * <p>ログ同期用インターフェースです。</p>
  */
-public class SyncCallback {
+class SyncCallback {
     /**
      * <p>デフォルトコンストラクタです。</p>
      */
