@@ -3,7 +3,7 @@ package jp.go.aist.rtm.RTC.executionContext;
 import org.omg.CORBA.SystemException;
 
 import RTC.ExecutionContextService;
-import RTC.ExtTrigExecutionContextServicePOA;
+import OpenRTM.ExtTrigExecutionContextServicePOA;
 
 /**
  * <p>Periodic Sampled Data Processing(周期実行用)ExecutionContextのベースとなる

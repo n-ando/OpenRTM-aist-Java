@@ -12,10 +12,10 @@ import RTC.ConnectorProfile;
 import RTC.ConnectorProfileListHolder;
 import RTC.ExecutionContextService;
 import RTC.ExecutionContextServiceListHolder;
-import RTC.Port;
+import RTC.PortService;
 import RTC.PortInterfaceProfile;
 import RTC.PortInterfaceProfileListHolder;
-import RTC.PortListHolder;
+import RTC.PortServiceListHolder;
 import RTC.PortProfile;
 import RTC.PortProfileListHolder;
 
@@ -79,12 +79,12 @@ public class CORBA_SeqUtil {
     /**
      * <p>指定されたシーケンス内の指定条件に合致するPortオブジェクトのインデクスを取得します。</p>
      * 
-     * @param seq Portオブジェクトシーケンスを保持するPortListHolderオブジェクト
+     * @param seq Portオブジェクトシーケンスを保持するPortServiceListHolderオブジェクト
      * @param func 合致判定を行うequalFunctorオブジェクト
      * @return 合致するPortオブジェクトが存在する場合は、そのオブジェクトのシーケンス内でのインデクスを返します。<br />
      * 合致するPortオブジェクトが存在しない場合は、-1を返します。
      */
-    public static int find(final PortListHolder seq, equalFunctor func) {
+    public static int find(final PortServiceListHolder seq, equalFunctor func) {
         if( seq.value==null ) return -1;
         for (int i = 0; i < seq.value.length; ++i) {
             if (func.equalof(seq.value[i])) {
@@ -220,17 +220,17 @@ public class CORBA_SeqUtil {
     /**
      * <p>シーケンスの末尾にPortオブジェクトを追加します。</p>
      * 
-     * @param seq 追加先Portオブジェクトシーケンスを保持するPortListHolderオブジェクト
+     * @param seq 追加先Portオブジェクトシーケンスを保持するPortServiceListHolderオブジェクト
      * @param elem 追加するPortオブジェクト
      */
-    public static void push_back(PortListHolder seq, Port elem) {
+    public static void push_back(PortServiceListHolder seq, PortService elem) {
         int len;
         if( seq.value==null ) {
             len = 0;
         } else {
             len = seq.value.length;
         }
-        Port[] newlist = new Port[len + 1];
+        PortService[] newlist = new PortService[len + 1];
         for (int intIdx = 0; intIdx < len; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
         }
@@ -488,14 +488,14 @@ public class CORBA_SeqUtil {
     /**
      * <p>シーケンス内の指定された位置の要素を削除します。</p>
      * 
-     * @param seq 削除対象のPortオブジェクトシーケンスを保持するPortListHolderオブジェクト
+     * @param seq 削除対象のPortオブジェクトシーケンスを保持するPortServiceListHolderオブジェクト
      * @param index 削除要素のシーケンス内インデクス
      */
-    public static void erase(PortListHolder seq, int index) {
+    public static void erase(PortServiceListHolder seq, int index) {
         if( seq.value==null ) return;
         int len = seq.value.length;
         if (index > len) return;
-        Port[] newlist = new Port[len - 1];
+        PortService[] newlist = new PortService[len - 1];
         for (int intIdx = 0; intIdx < index; intIdx++) {
             newlist[intIdx] = seq.value[intIdx];
         }
@@ -563,10 +563,10 @@ public class CORBA_SeqUtil {
     /**
      * <p>シーケンス内の条件に合致する要素を削除します。</p>
      * 
-     * @param seq Portオブジェクトシーケンスを保持するPortListHolderオブジェクト
+     * @param seq Portオブジェクトシーケンスを保持するPortServiceListHolderオブジェクト
      * @param f 合致判定を行うequalFunctorオブジェクト
      */
-    public static void erase_if(PortListHolder seq, equalFunctor f) {
+    public static void erase_if(PortServiceListHolder seq, equalFunctor f) {
         
         int index = find(seq, f);
         if (index < 0) {

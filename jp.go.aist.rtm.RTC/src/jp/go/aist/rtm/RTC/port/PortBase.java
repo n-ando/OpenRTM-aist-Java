@@ -8,13 +8,13 @@ import _SDOPackage.NameValue;
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
 import RTC.ConnectorProfileListHolder;
-import RTC.Port;
-import RTC.PortHelper;
+import RTC.PortService;
+import RTC.PortServiceHelper;
 import RTC.PortInterfacePolarity;
 import RTC.PortInterfaceProfile;
 import RTC.PortInterfaceProfileListHolder;
-import RTC.PortListHolder;
-import RTC.PortPOA;
+import RTC.PortServiceListHolder;
+import RTC.PortServicePOA;
 import RTC.PortProfile;
 import RTC.RTObject;
 import RTC.ReturnCode_t;
@@ -116,7 +116,7 @@ import jp.go.aist.rtm.RTC.util.operatorFunc;
  * これらのメソッドに関連したprotectedメソッドをオーバーライドすることにより振る舞いを変更することが
  * 推奨されます。</p>
  */
-public abstract class PortBase extends PortPOA {
+public abstract class PortBase extends PortServicePOA {
     
     /**
      * <p>本コンストラクタでは、オブジェクトの初期化処理を行うと同時に、
@@ -131,7 +131,7 @@ public abstract class PortBase extends PortPOA {
         this.m_profile.interfaces = new PortInterfaceProfile[0];
         this.m_profile.connector_profiles = new ConnectorProfile[0];
         this.m_profile.properties = new NameValue[0];
-        this.m_objref = PortHelper.narrow(this._this()._duplicate());
+        this.m_objref = PortServiceHelper.narrow(this._this()._duplicate());
         this.m_profile.port_ref = this.m_objref;
     }
 
@@ -140,10 +140,10 @@ public abstract class PortBase extends PortPOA {
      * 
      * @return 当該PortのCORBAオブジェクト参照
      */
-    public Port _this() {
+    public PortService _this() {
         if (this.m_objref == null) {
             try {
-                this.m_objref = PortHelper.narrow(POAUtil.getRef(this));
+                this.m_objref = PortServiceHelper.narrow(POAUtil.getRef(this));
                 
             } catch (Exception e) {
                 throw new IllegalStateException(e);
@@ -442,7 +442,7 @@ public abstract class PortBase extends PortPOA {
      * 
      * @param port_ref 当該ポートのCORBAオブジェクト参照
      */
-    public void setPortRef(Port port_ref) {
+    public void setPortRef(PortService port_ref) {
         synchronized (this.m_profile) {
             m_profile.port_ref = port_ref;
         }
@@ -453,7 +453,7 @@ public abstract class PortBase extends PortPOA {
      * 
      * @return 当該ポートのCORBAオブジェクト参照
      */
-    public Port getPortRef() {
+    public PortService getPortRef() {
         synchronized (this.m_profile) {
             return m_profile.port_ref;
         }
@@ -511,14 +511,14 @@ public abstract class PortBase extends PortPOA {
      */
     protected ReturnCode_t connectNext(ConnectorProfileHolder connector_profile) {
 
-        PortListHolder portsHolder = new PortListHolder(connector_profile.value.ports);
+        PortServiceListHolder portsHolder = new PortServiceListHolder(connector_profile.value.ports);
         int index = CORBA_SeqUtil.find(portsHolder, new find_port_ref(this.m_profile.port_ref));
         connector_profile.value.ports = portsHolder.value;
         
         if (index < 0) return ReturnCode_t.BAD_PARAMETER;
         
         if (++index < connector_profile.value.ports.length) {
-            Port p = connector_profile.value.ports[index];
+            PortService p = connector_profile.value.ports[index];
             ReturnCode_t rc = p.notify_connect(connector_profile);
             return rc;
         }
@@ -536,14 +536,14 @@ public abstract class PortBase extends PortPOA {
      */
     protected ReturnCode_t disconnectNext(ConnectorProfile connector_profile) {
 
-        PortListHolder holder = new PortListHolder(connector_profile.ports);
+        PortServiceListHolder holder = new PortServiceListHolder(connector_profile.ports);
         int index = CORBA_SeqUtil.find(holder, new find_port_ref(this.m_profile.port_ref));
         connector_profile.ports = holder.value;
         
         if (index < 0) return ReturnCode_t.BAD_PARAMETER;
         
         if (++index < connector_profile.ports.length) {
-            Port p = connector_profile.ports[index];
+            PortService p = connector_profile.ports[index];
             return p.notify_disconnect(connector_profile.connector_id);
         }
 
@@ -814,7 +814,7 @@ public abstract class PortBase extends PortPOA {
     /**
      * <p>当該ポートのCORBAオブジェクト参照です。</p>
      */
-    protected Port m_objref;
+    protected PortService m_objref;
 
     /**
      * <p>指定された接続IDを持つ接続プロファイルを検索するためのヘルパクラスです。</p>
@@ -863,7 +863,7 @@ public abstract class PortBase extends PortPOA {
          * 
          * @param port 判定基準となるCORBAオブジェクト参照を持つPortオブジェクト
          */
-        public find_port_ref(Port port) {
+        public find_port_ref(PortService port) {
             this.m_port = port;
         }
         
@@ -874,7 +874,7 @@ public abstract class PortBase extends PortPOA {
          * @return 検索対象である場合はtrueを、さもなくばfalseを返します。
          */
         public boolean equalof(final Object elem) {
-            return equalof((Port) elem);
+            return equalof((PortService) elem);
         }
         
         /**
@@ -883,18 +883,18 @@ public abstract class PortBase extends PortPOA {
          * @param port 判定対象となるPortオブジェクト
          * @return 検索対象である場合はtrueを、さもなくばfalseを返します。
          */
-        public boolean equalof(final Port port) {
+        public boolean equalof(final PortService port) {
             return this.m_port._is_equivalent(port);
         }
         
-        public Port m_port;
+        public PortService m_port;
     }
     
     /**
      * <p>ポート接続のためのヘルパクラスです。</p>
      */
     protected class connect_func implements operatorFunc {
-        public Port m_port_ref;
+        public PortService m_port_ref;
         public ConnectorProfileHolder m_connector_profile;
         public ReturnCode_t m_return_code;
         
@@ -910,7 +910,7 @@ public abstract class PortBase extends PortPOA {
          * @param p 接続を行うポート
          * @param prof コネクタ・プロファイル
          */
-        public connect_func(Port p, ConnectorProfileHolder prof) {
+        public connect_func(PortService p, ConnectorProfileHolder prof) {
             this.m_port_ref = p;
             this.m_connector_profile = prof;
             this.m_return_code = ReturnCode_t.RTC_OK;
@@ -922,9 +922,9 @@ public abstract class PortBase extends PortPOA {
          * @param elem 接続プロファイルオブジェクト
          */
         public void operator(Object elem) {
-            if( ! this.m_port_ref._is_equivalent((Port)elem) ) {
+            if( ! this.m_port_ref._is_equivalent((PortService)elem) ) {
                 ReturnCode_t retval;
-                retval = ((Port)elem).notify_connect(this.m_connector_profile);
+                retval = ((PortService)elem).notify_connect(this.m_connector_profile);
                 if( retval != ReturnCode_t.RTC_OK ) {
                     this.m_return_code = retval;
                 }
@@ -937,7 +937,7 @@ public abstract class PortBase extends PortPOA {
      * <p>ポート接続解除のためのヘルパクラスです。</p>
      */
     protected class disconnect_func implements operatorFunc {
-        public Port m_port_ref;
+        public PortService m_port_ref;
         public ConnectorProfileHolder m_connector_profile;
         public ReturnCode_t m_return_code;
         
@@ -954,7 +954,7 @@ public abstract class PortBase extends PortPOA {
          * @param p 接続を行うポート
          * @param prof コネクタ・プロファイル
          */
-        public disconnect_func(Port p, ConnectorProfileHolder prof) {
+        public disconnect_func(PortService p, ConnectorProfileHolder prof) {
             this.m_port_ref = p;
             this.m_connector_profile = prof;
             this.m_return_code = ReturnCode_t.RTC_OK;
@@ -966,9 +966,9 @@ public abstract class PortBase extends PortPOA {
          * @param elem 接続プロファイルオブジェクト
          */
         public void operator(Object elem) {
-            if( ! this.m_port_ref._is_equivalent((Port)elem) ) {
+            if( ! this.m_port_ref._is_equivalent((PortService)elem) ) {
                 ReturnCode_t retval;
-                retval = ((Port)elem).disconnect(this.m_connector_profile.value.connector_id);
+                retval = ((PortService)elem).disconnect(this.m_connector_profile.value.connector_id);
                 if( retval != ReturnCode_t.RTC_OK ) {
                     this.m_return_code = retval;
                 }

@@ -20,12 +20,12 @@ import _SDOPackage.NameValue;
 
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
-import RTC.DataFlowComponent;
-import RTC.ExecutionContextService;
-import RTC.ExecutionContextServiceListHolder;
-import RTC.ExtTrigExecutionContextService;
-import RTC.Port;
-import RTC.PortListHolder;
+import OpenRTM.DataFlowComponent;
+import RTC.ExecutionContext;
+import RTC.ExecutionContextListHolder;
+import OpenRTM.ExtTrigExecutionContextService;
+import RTC.PortService;
+import RTC.PortServiceListHolder;
 import RTC.RTObject;
 import RTC.ReturnCode_t;
 
@@ -73,10 +73,10 @@ public class ConnectorComp {
         CorbaConsumer<DataFlowComponent> conout = new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
         CorbaConsumer<ExtTrigExecutionContextService> ec0 = new CorbaConsumer<ExtTrigExecutionContextService>(ExtTrigExecutionContextService.class);
         CorbaConsumer<ExtTrigExecutionContextService> ec1 = new CorbaConsumer<ExtTrigExecutionContextService>(ExtTrigExecutionContextService.class);
-        PortListHolder pin = new PortListHolder();
-        pin.value = new Port[0];
-        PortListHolder pout = new PortListHolder();
-        pout.value = new Port[0];
+        PortServiceListHolder pin = new PortServiceListHolder();
+        pin.value = new PortService[0];
+        PortServiceListHolder pout = new PortServiceListHolder();
+        pout.value = new PortService[0];
 
         // find ConsoleIn0 component
         try {
@@ -94,10 +94,10 @@ public class ConnectorComp {
         pin.value[0].disconnect_all();
         assert(pin.value.length > 0);
         // activate ConsoleIn0
-        ExecutionContextServiceListHolder eclisti = new ExecutionContextServiceListHolder();
-        eclisti.value = new ExecutionContextService[0];
+        ExecutionContextListHolder eclisti = new ExecutionContextListHolder();
+        eclisti.value = new ExecutionContext[0];
         RTObject coninRef = conin._ptr();
-        eclisti.value =  coninRef.get_execution_context_services();
+        eclisti.value =  coninRef.get_owned_contexts();
         eclisti.value[0].activate_component(coninRef);
         ec0.setObject(eclisti.value[0]);
         ExtTrigExecutionContextService ec0Ref = ec0._ptr();
@@ -117,10 +117,10 @@ public class ConnectorComp {
         pout.value[0].disconnect_all();
         assert(pout.value.length > 0);
         // activate ConsoleOut0
-        ExecutionContextServiceListHolder eclisto = new ExecutionContextServiceListHolder();
-        eclisto.value = new ExecutionContextService[0];
+        ExecutionContextListHolder eclisto = new ExecutionContextListHolder();
+        eclisto.value = new ExecutionContext[0];
         RTObject conoutRef = conout._ptr();
-        eclisto.value =  conoutRef.get_execution_context_services();
+        eclisto.value =  conoutRef.get_owned_contexts();
         eclisto.value[0].activate_component(conoutRef);
         ec1.setObject(eclisto.value[0]);
         ExtTrigExecutionContextService ec1Ref = ec1._ptr();
@@ -129,7 +129,7 @@ public class ConnectorComp {
         ConnectorProfile prof = new ConnectorProfile();
         prof.connector_id = "";
         prof.name = "connector0";
-        prof.ports = new Port[2];
+        prof.ports = new PortService[2];
         prof.ports[0] = pin.value[0];
         prof.ports[1] = pout.value[0];
         NVListHolder nvholder = new NVListHolder();

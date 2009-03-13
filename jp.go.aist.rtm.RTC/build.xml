@@ -5,6 +5,8 @@
 	<property name="source" value="src"/>
 	<property name="source.sdo" value="src/_SDOPackage"/>
 	<property name="source.rtc" value="src/RTC"/>
+	<property name="source.rtm" value="src/RTM"/>
+	<property name="source.openrtm" value="src/OpenRTM"/>
 	<property name="source.examples" value="src/RTMExamples"/>
 	<property name="source.main" value="src/jp"/>
 	<property name="source.samples.class" value="bin/RTMExamples"/>
@@ -31,6 +33,7 @@
 
 	<property name="idl.path" value="idl" />
 	<property name="idl.path.tests" value="tests/idl" />
+	<property name="idl.Manager" value="${idl.path}/Manager.idl" />
 	<property name="idl.OpenRTM" value="${idl.path}/OpenRTM.idl" />
 	<property name="idl.DataPort" value="${idl.path}/DataPort.idl" />
 	<property name="idl.BasicDataType" value="${idl.path}/BasicDataType.idl" />
@@ -86,7 +89,7 @@
 		<delete dir="${build.doc}" />
 
 		<javadoc sourcepath="${source}" destdir="${build.doc}"
-			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*" encoding="UTF-8"
+			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" encoding="UTF-8"
 			author="true" doctitle="OpenRTM-aist Java" 
 			nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" 
 			package="yes" source="1.5" splitindex="true" use="true" version="true"/>
@@ -104,6 +107,11 @@
 	<target name="idlCompile" description="IDLファイルをコンパイルします">
 		<delete dir="src/_SDOPackage" />
 		<delete dir="src/RTC" />
+		<delete dir="src/OpenRTM" />
+		<delete dir="src/RTM" />
+		<exec executable="${java.home}\..\bin\idlj">
+			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.Manager}"/>
+		</exec>
 		<exec executable="${java.home}\..\bin\idlj">
 			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.OpenRTM}"/>
 		</exec>
@@ -142,7 +150,7 @@
 	</target>
 
 	<target name="compile" description="ソースをコンパイルします">
-		<javac srcdir="${source.sdo}:${source.rtc}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="Shift-JIS" />
+		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="Shift-JIS" />
 		<javac srcdir="${source.main}:${source.examples}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
 	</target>
 

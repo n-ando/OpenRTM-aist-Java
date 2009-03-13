@@ -7,8 +7,8 @@ import jp.go.aist.rtm.RTC.StateAction;
 import jp.go.aist.rtm.RTC.StateHolder;
 import jp.go.aist.rtm.RTC.StateMachine;
 import jp.go.aist.rtm.RTC.util.TimeValue;
-import RTC.DataFlowComponent;
-import RTC.DataFlowComponentHelper;
+import OpenRTM.DataFlowComponent;
+import OpenRTM.DataFlowComponentHelper;
 import RTC.ExecutionContextProfile;
 import RTC.ExecutionContextProfileHolder;
 import RTC.ExecutionContextService;
@@ -155,17 +155,22 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     public ReturnCode_t start() {
         if( m_running ) return ReturnCode_t.PRECONDITION_NOT_MET;
 
-        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-            if( m_comps.elementAt(intIdx)._ref.is_alive()==false) {
-                return ReturnCode_t.PRECONDITION_NOT_MET;
-            }
-        }
+//zxc        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
+//zxc            if( m_comps.elementAt(intIdx)._ref.is_alive()==false) {
+//zxc                return ReturnCode_t.PRECONDITION_NOT_MET;
+//zxc            }
+//zxc        }
         // invoke ComponentAction::on_startup for each comps.
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             m_comps.elementAt(intIdx).invoke_on_startup();
         }
         // change EC thread state
         m_running = true;
+        synchronized (m_worker) {
+            m_worker.running_ = true;
+            m_worker.notifyAll();
+        }
+
         this.open();
 
         return ReturnCode_t.RTC_OK;
@@ -229,9 +234,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
                 // the given component must be in Alive state.
-                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
-                    return ReturnCode_t.BAD_PARAMETER;
-                }
+//zxc                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
+//zxc                    return ReturnCode_t.BAD_PARAMETER;
+//zxc                }
                 if(!(m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.INACTIVE_STATE))) {
                     return ReturnCode_t.PRECONDITION_NOT_MET;
                 }
@@ -254,9 +259,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
                 // the given component must be in Alive state.
-                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
-                    return ReturnCode_t.BAD_PARAMETER;
-                }
+//zxc                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
+//zxc                    return ReturnCode_t.BAD_PARAMETER;
+//zxc                }
                 if(!(m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.ACTIVE_STATE))) {
                     return ReturnCode_t.PRECONDITION_NOT_MET;
                 }
@@ -279,9 +284,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
                 // the given component must be in Alive state.
-                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
-                    return ReturnCode_t.PRECONDITION_NOT_MET;
-                }
+//zxc                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
+//zxc                    return ReturnCode_t.PRECONDITION_NOT_MET;
+//zxc                }
                 if(!(m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.ERROR_STATE))) {
                     return ReturnCode_t.PRECONDITION_NOT_MET;
                 }
@@ -306,7 +311,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
                 return m_comps.elementAt(intIdx)._sm.m_sm.getState();
             }
         }
-        return LifeCycleState.UNKNOWN_STATE;
+        return LifeCycleState.CREATED_STATE;
     }
 
     /**
@@ -325,7 +330,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * 
      * @return 実行結果
      */
-    public ReturnCode_t add(LightweightRTObject comp) {
+    public ReturnCode_t add_component(LightweightRTObject comp) {
         if( comp==null ) return ReturnCode_t.BAD_PARAMETER;
         //
         try {
@@ -336,7 +341,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
                 return ReturnCode_t.PRECONDITION_NOT_MET;
             }
             //
-            int id = dfp.attach_executioncontext(m_ref);
+            int id = dfp.attach_context(m_ref);
             //
             m_comps.add(new Comp((LightweightRTObject)comp._duplicate(), (DataFlowComponent)dfp._duplicate(), id));
             return ReturnCode_t.RTC_OK;
@@ -352,7 +357,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * 
      * @return 実行結果
      */
-    public ReturnCode_t remove(LightweightRTObject comp) {
+    public ReturnCode_t remove_component(LightweightRTObject comp) {
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
@@ -360,7 +365,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
                 if( m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.ACTIVE_STATE) ) {
                     return ReturnCode_t.PRECONDITION_NOT_MET;
                 }
-                m_comps.elementAt(intIdx)._ref.detach_executioncontext(m_comps.elementAt(intIdx)._sm.ec_id);
+                m_comps.elementAt(intIdx)._ref.detach_context(m_comps.elementAt(intIdx)._sm.ec_id);
                 m_comps.remove(m_comps.elementAt(intIdx));
                 return ReturnCode_t.RTC_OK;
             }
@@ -722,6 +727,20 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * <p>ExecutionContextの実行状態です。</p>
      */
     protected boolean m_running;
+
+    protected class Worker {
+
+      public Worker() {
+          this.running_ = false;
+      }
+
+     private  boolean running_;
+
+    };
+
+    // A condition variable for external triggered worker
+    private Worker m_worker = new Worker();
+
     /**
      * <p>ExecutionContextProfileです。</p>
      */

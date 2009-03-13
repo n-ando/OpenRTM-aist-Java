@@ -15,10 +15,11 @@ import jp.go.aist.rtm.RTC.util.equalFunctor;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
+import org.omg.CORBA.SystemException;
 import org.omg.PortableServer.POA;
 
 import RTC.ComponentProfile;
-import RTC.DataFlowComponentPOA;
+import OpenRTM.DataFlowComponentPOA;
 import RTC.ExecutionContext;
 import RTC.ExecutionContextHelper;
 import RTC.ExecutionContextListHolder;
@@ -26,7 +27,7 @@ import RTC.ExecutionContextService;
 import RTC.ExecutionContextServiceHelper;
 import RTC.ExecutionContextServiceListHolder;
 import RTC.LightweightRTObject;
-import RTC.Port;
+import RTC.PortService;
 import RTC.PortProfile;
 import RTC.RTObject;
 import RTC.ReturnCode_t;
@@ -340,7 +341,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
                 m_execContexts.value[intIdx].deactivate_component((LightweightRTObject)m_objref._duplicate());
             }
             for(int intIdx=0;intIdx<m_execContexts.value.length;intIdx++) {
-                m_execContexts.value[intIdx].remove((LightweightRTObject)m_objref._duplicate());
+                m_execContexts.value[intIdx].remove_component((LightweightRTObject)m_objref._duplicate());
             }
         }
         return this._finalize();
@@ -358,8 +359,20 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * 
      * @return Alive状態判断結果
      */
-    public boolean is_alive() {
-        return m_alive;
+//zxc    public boolean is_alive() {
+//        return m_alive;
+//    }
+    public boolean is_alive(ExecutionContext exec_context) throws SystemException {
+//zxc        for(int i=0, len=m_ecMine.value.length; i < len; ++i) {
+//            if (exec_context._is_equivalent(m_ecMine.value[i]))
+              return true;
+//        }
+
+//        for(int i=0, len=m_ecOther.value.length; i < len; ++i) {
+//zxc         if (exec_context._is_equivalent(m_ecOther.value[i]))
+//              return true;
+//      }
+//      return false;
     }
 
     /**
@@ -367,7 +380,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *
      * @return ExecutionContextリスト
      */
-    public ExecutionContext[] get_contexts() {
+    public ExecutionContext[] get_owned_contexts() {
         ExecutionContextListHolder execlist = new ExecutionContextListHolder();
         
         execlist.value = new ExecutionContext[m_execContexts.value.length]; 
@@ -395,6 +408,106 @@ public class RTObject_impl extends DataFlowComponentPOA {
         return ec;
     }
 
+    /**
+     * <p>[CORBA interface] LightweightRTObject</p>
+     *
+     * 
+     * @return ExecutionContextList
+     *
+     */ 
+/*
+    public ExecutionContext[] get_owned_contexts() throws SystemException {
+        ExecutionContextListHolder execlist;
+        execlist = new ExecutionContextListHolder();
+        execlist.value = new ExecutionContext[0];
+    
+        CORBA_SeqUtil.for_each(m_ecMine, new ec_copy(execlist));
+    
+        return execlist.value;
+     }
+*/
+
+
+    /**
+     * <p>[CORBA interface] LightweightRTObject</p>
+     *
+     * 
+     * @return ExecutionContextList
+     *
+     */ 
+    public ExecutionContext[] get_participating_contexts() throws SystemException {
+        ExecutionContextListHolder execlist;
+        execlist = new ExecutionContextListHolder();
+        execlist.value = new ExecutionContext[0];
+    
+//        CORBA_SeqUtil.for_each(m_ecOther, new ec_copy(execlist));
+    
+        return execlist.value;
+    }
+
+
+    /**
+     * <p>[CORBA interface] LightweightRTObject</p>
+     *
+     * @param cxt ExecutionContext
+     * 
+     * @return ExecutionContextHandle_t
+     *
+     */
+    public int get_context_handle(ExecutionContext cxt) throws SystemException {
+        int ech;
+        ech = 0;
+        // ec_id 0 : owned context
+        // ec_id 1-: participating context
+//        if(cxt._is_equivalent(m_ecMine.value[0])){
+
+//            return ech;
+//        }
+        int num;
+//        num = CORBA_SeqUtil.find(m_ecOther, new ec_find(cxt));
+//        return num+1;
+        return 1;
+    }
+
+    /**
+     * 
+     * 
+     * 
+     */
+    public int bindContext(ExecutionContext exec_context)
+    {
+        // ID: 0 - (offset-1) : owned ec
+        // ID: offset -       : participating ec
+        // owned       ec index = ID
+        // participate ec index = ID - offset
+      
+        ExecutionContextService ecs;
+	ecs = ExecutionContextServiceHelper.narrow(exec_context);
+        if (ecs==null) {
+	    return -1;
+        }
+    
+        // if m_ecMine has nil element, insert attached ec to there.
+//        for(int i=0, len=m_ecMine.value.length; i < len; ++i) {
+//            if (m_ecMine.value[i]==null) {
+//                m_ecMine.value[i] = (ExecutionContextService)ecs._duplicate();
+//                return i + ECOTHER_OFFSET;
+//            }
+//        }
+
+        // no space in the list, push back ec to the last.
+//        CORBA_SeqUtil.push_back(m_ecMine, 
+//                                (ExecutionContextService)ecs._duplicate());
+    
+        return 1;
+//        return (m_ecMine.value.length - 1) + ECOTHER_OFFSET;
+  }
+
+
+  //============================================================
+  // RTC::RTObject
+  //============================================================
+  
     /**
      * <p>[RTObject CORBA interface] 当該コンポーネントのプロファイル情報を取得します。</p>
      *
@@ -425,7 +538,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *
      * @return ポート参照情報
      */
-    public Port[] get_ports() {
+    public PortService[] get_ports() {
         try {
             return m_portAdmin.getPortList().value;
         } catch(Exception ex) {
@@ -457,7 +570,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * 
      * @return attachされたExecutionContext数
      */
-    public int attach_executioncontext(ExecutionContext exec_context) {
+    public int attach_context(ExecutionContext exec_context) {
         ExecutionContextService ecs = ExecutionContextServiceHelper.narrow(exec_context);
         if( ecs==null ) {
             return -1;
@@ -470,7 +583,34 @@ public class RTObject_impl extends DataFlowComponentPOA {
       
         return m_execContexts.value.length-1;
     }
+/*
+    public int attach_context(ExecutionContext exec_context) throws SystemException {
+        // ID: 0 - (offset-1) : owned ec
+        // ID: offset -       : participating ec
+        // owned       ec index = ID
+        // participate ec index = ID - offset
+        ExecutionContextService ecs;
+	ecs = ExecutionContextServiceHelper.narrow(exec_context);
+        if (ecs==null) {
+	    return -1;
+        }
+    
+        // if m_ecOther has nil element, insert attached ec to there.
+        for(int i=0, len=m_ecOther.value.length; i < len; ++i) {
+            if (m_ecOther.value[i]==null) {
+                m_ecOther.value[i] = (ExecutionContextService)ecs._duplicate();
+                return i + ECOTHER_OFFSET;
+            }
+        }
 
+        // no space in the list, push back ec to the last.
+        CORBA_SeqUtil.push_back(m_ecOther, 
+                                (ExecutionContextService)ecs._duplicate());
+    
+        return (m_ecOther.value.length - 1) + ECOTHER_OFFSET;
+
+    }
+*/
     /**
      * <p>[CORBA interface] 当該コンポーネントをExecutionContextからdetachします。</p>
      *
@@ -478,7 +618,28 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * 
      * @return 実行結果
      */
-    public ReturnCode_t detach_executioncontext(int ec_id) {
+/*
+    public ReturnCode_t detach_context(int ec_id) throws SystemException {
+        int len = m_ecOther.value.length;
+        // ID: 0 - (offset-1) : owned ec
+        // ID: offset -       : participating ec
+        // owned       ec index = ID
+        // participate ec index = ID - offset
+        if (ec_id < ECOTHER_OFFSET || (ec_id - ECOTHER_OFFSET) > len) {
+	    return ReturnCode_t.BAD_PARAMETER;
+        }
+        int index = (ec_id - ECOTHER_OFFSET);
+        if (m_ecOther.value[index]==null) {
+	    return ReturnCode_t.BAD_PARAMETER;
+        }
+    
+        m_ecOther.value[index] = null;
+        CORBA_SeqUtil.erase(m_ecOther, index);
+
+        return ReturnCode_t.RTC_OK;
+    }
+*/
+    public ReturnCode_t detach_context(int ec_id) {
         if(m_execContexts==null) {
             return ReturnCode_t.BAD_PARAMETER;
         }

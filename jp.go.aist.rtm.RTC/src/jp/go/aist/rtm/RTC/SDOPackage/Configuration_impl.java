@@ -184,7 +184,7 @@ public class Configuration_impl extends ConfigurationPOA {
      * @exception NotAvailable SDOは存在するが応答がない。
      * @exception InternalError 内部的エラーが発生した。
      */
-    public boolean set_service_profile(final ServiceProfile sProfile)
+    public boolean add_service_profile(final ServiceProfile sProfile)
             throws InvalidParameter, NotAvailable, InternalError {
         try{
             if( m_serviceProfiles==null ) {
@@ -206,7 +206,7 @@ public class Configuration_impl extends ConfigurationPOA {
             CORBA_SeqUtil.push_back(m_serviceProfiles, sProfile);
             return true;
         } catch (Exception ex) {
-            throw new InternalError("Configuration::set_service_profile"); 
+            throw new InternalError("Configuration::add_service_profile"); 
         }
     }
 
@@ -468,8 +468,9 @@ public class Configuration_impl extends ConfigurationPOA {
      * @exception NotAvailable SDOは存在するが応答がない。
      * @exception InternalError 内部的エラーが発生した。
      */
-    public boolean set_configuration_set_values(String config_id, ConfigurationSet configuration_set) 
+    public boolean set_configuration_set_values(ConfigurationSet configuration_set) 
             throws InvalidParameter, NotAvailable, InternalError {
+        String config_id = configuration_set.id; 
         if( config_id==null || config_id.equals("") ) throw new InvalidParameter("ID is empty.");
         try {
             Properties conf = new Properties(config_id);

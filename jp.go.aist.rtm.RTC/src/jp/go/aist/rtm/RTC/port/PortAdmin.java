@@ -4,15 +4,15 @@ import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.ObjectManager;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.PortListHolderFactory;
+import jp.go.aist.rtm.RTC.util.PortServiceListHolderFactory;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
 
 import org.omg.CORBA.ORB;
 import org.omg.PortableServer.POA;
 
-import RTC.Port;
-import RTC.PortListHolder;
-import RTC.PortOperations;
+import RTC.PortService;
+import RTC.PortServiceListHolder;
+import RTC.PortServiceOperations;
 import RTC.PortProfile;
 import RTC.PortProfileListHolder;
 
@@ -34,16 +34,16 @@ public class PortAdmin {
     /**
      * <p>登録されているPortのリストを取得します。</p>
      * 
-     * @return Portオブジェクトリストを内包するPortListHolderオブジェクト
+     * @return Portオブジェクトリストを内包するPortServiceListHolderオブジェクト
      */
-    public PortListHolder getPortList() {
-        return PortListHolderFactory.clone(this.m_portRefs);
+    public PortServiceListHolder getPortList() {
+        return PortServiceListHolderFactory.clone(this.m_portRefs);
     }
     
     /**
      * <p>登録されているPortのリストを取得します。</p>
      * 
-     * @return Portオブジェクトリストを内包するPortListHolderオブジェクト
+     * @return Portオブジェクトリストを内包するPortServiceListHolderオブジェクト
      */
     public final PortProfileListHolder getPortProfileList() {
         PortProfileListHolder port_profs = new PortProfileListHolder();
@@ -63,9 +63,9 @@ public class PortAdmin {
      * @return 指定されたポート名を持つPortのCORBAオブジェクト参照を返します。
      * 合致するポート名を持つものが見つからない場合はnullを返します。
      */
-    public Port getPortRef(final String portName) {
+    public PortService getPortRef(final String portName) {
         
-        Port port = null;
+        PortService port = null;
         
         int index = CORBA_SeqUtil.find(this.m_portRefs, new find_port_name(portName));
         if (index >= 0) {
@@ -151,7 +151,7 @@ public class PortAdmin {
     // POA へのポインタ
     private POA m_pPOA;
     // PortのCORBAオブジェクト参照のリスト
-    private PortListHolder  m_portRefs = PortListHolderFactory.create();
+    private PortServiceListHolder  m_portRefs = PortServiceListHolderFactory.create();
     
     protected class find_port_name implements equalFunctor {
         
@@ -160,7 +160,7 @@ public class PortAdmin {
         }
 
         public boolean equalof(Object element) {
-            PortOperations port = (PortOperations) element;
+            PortServiceOperations port = (PortServiceOperations) element;
             return this.m_name.equals(port.get_port_profile().name);
         }
         

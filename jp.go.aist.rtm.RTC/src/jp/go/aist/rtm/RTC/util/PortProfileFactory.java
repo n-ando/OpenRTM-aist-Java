@@ -2,7 +2,7 @@ package jp.go.aist.rtm.RTC.util;
 
 import _SDOPackage.NameValue;
 import RTC.ConnectorProfile;
-import RTC.Port;
+import RTC.PortService;
 import RTC.PortInterfaceProfile;
 import RTC.PortProfile;
 import RTC.RTObject;
@@ -13,7 +13,7 @@ public class PortProfileFactory {
         
         String name = new String();
         PortInterfaceProfile[] interfaces = new PortInterfaceProfile[0];
-        Port port_ref = null;
+        PortService port_ref = null;
         ConnectorProfile[] connector_profiles = new ConnectorProfile[0];
         RTObject owner = null;
         NameValue[] properties = new NameValue[0];
@@ -36,7 +36,7 @@ public class PortProfileFactory {
             interfaces[i] = PortInterfaceProfileFactory.clone(rhs.interfaces[i]);
         }
         
-        Port port_ref = rhs.port_ref;
+        PortService port_ref = rhs.port_ref;
         
         // 配列の中身を丁寧にdeep-copyしてゆく
         ConnectorProfile[] connector_profiles = new ConnectorProfile[rhs.connector_profiles.length];

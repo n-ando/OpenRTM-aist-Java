@@ -598,8 +598,9 @@ public class Manager {
 
         ExecutionContextBase exec_cxt;
 
-        if (RTCUtil.isDataFlowParticipant(rtobj)) {
+        if (RTCUtil.isDataFlowComponent(rtobj)) {
             final String ectype = m_config.getProperty("exec_cxt.periodic.type");
+
             ECFactoryBase ecfactory = (ECFactoryBase)(m_ecfactory.find(new ECFactoryPredicate(ectype)));
             if( ecfactory==null ) return false;
             exec_cxt = ecfactory.create();
@@ -650,7 +651,7 @@ public class Manager {
             }
         }
 
-        exec_cxt.add(rtobj);
+        exec_cxt.add_component(rtobj);
         exec_cxt.start();
         m_ecs.add(exec_cxt);
         
