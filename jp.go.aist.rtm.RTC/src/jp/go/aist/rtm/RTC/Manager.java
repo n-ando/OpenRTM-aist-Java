@@ -456,67 +456,117 @@ public class Manager {
      * @param moduleName モジュール名
      * @return 生成されたRTコンポーネントオブジェクト
      */
-    public RTObject_impl createComponent(final String moduleName) {
+    public RTObject_impl createComponent(final String comp_args) {
         
-        rtcout.println(rtcout.TRACE, "Manager.createComponent(" + moduleName + ")");
+        rtcout.println(rtcout.TRACE, "Manager.createComponent(" + comp_args + ")");
         
-        if( moduleName==null || moduleName.equals("")) return null;
+        if( comp_args==null || comp_args.equals("")) return null;
 
+        //------------------------------------------------------------
+        // extract "comp_type" and "comp_prop" from comp_arg
+        Properties comp_prop = new Properties();
+        Properties comp_id = new Properties();
+        if (!procComponentArgs(comp_args, comp_id, comp_prop)) return null;
+
+        //------------------------------------------------------------
         // Create Component
         RTObject_impl comp = null;
-        for (int i = 0; i < m_factory.m_objects.size(); i++) {
+        Properties prop = new Properties();
+        int i;
+        for (i = 0; i < m_factory.m_objects.size(); i++) {
             FactoryBase factory = m_factory.m_objects.elementAt(i);
             if (factory == null) return null;
             
-            if (factory.m_Profile.getProperty("implementation_id").equals(moduleName)) {
-                comp = m_factory.m_objects.elementAt(i).create(this);
-                if (comp == null) return null;
-                
-                try {
-                    m_objManager.activate(comp);
-                    
-                } catch (ServantAlreadyActive e) {
-                    rtcout.println(rtcout.NORMAL, "Exception: Caught ServantAlreadyActive Exception in Manager.createComponent().");
-                    rtcout.println(rtcout.NORMAL, e.getMessage());
-                    e.printStackTrace();
-                    
-                } catch (WrongPolicy e) {
-                    rtcout.println(rtcout.NORMAL, "Exception: Caught WrongPolicy Exception in Manager.createComponent().");
-                    rtcout.println(rtcout.NORMAL, e.getMessage());
-                    e.printStackTrace();
-                    
-                } catch (ObjectNotActive e) {
-                    rtcout.println(rtcout.NORMAL, "Exception: Caught ObjectNotActive Exception in Manager.createComponent().");
-                    rtcout.println(rtcout.NORMAL, e.getMessage());
-                    e.printStackTrace();
+            if (factory.m_Profile.getProperty("implementation_id").equals(comp_id.getProperty("implementation_id"))) {
+                prop = factory.profile();
+
+
+                Vector<String> keyval = comp_prop.propertyNames();
+                for (int ic=0, len=comp_prop.size(); ic < len; ++ic) {
+                    prop.setProperty(keyval.get(ic) , comp_prop.getProperty(keyval.get(ic)));
                 }
-                
-                rtcout.println(rtcout.TRACE, "RTC Created: " + moduleName);
+
+                final String[] inherit_prop = {
+                    "exec_cxt.periodic.type",
+                    "exec_cxt.periodic.rate",
+                    "exec_cxt.evdriven.type",
+                    "naming.formats",
+                    "logger.enable",
+                    "logger.log_level",
+                    "naming.enable",
+                    "naming.type",
+                    "naming.formats",
+                    ""
+                };
+
+                for (int ic=0; inherit_prop[ic].length() != 0; ++ic) {
+                    System.out.println( inherit_prop[ic] );
+                    //        if (prop.hasKey() == NULL) continue;
+                    prop.setProperty(inherit_prop[ic], m_config.getProperty(inherit_prop[ic]));
+                }
+
+                comp = m_factory.m_objects.elementAt(i).create(this);
+                if (comp == null) {
+                    rtcout.println(rtcout.ERROR, "RTC creation failed: " + comp_id.getProperty("implementaion_id"));
+                    return null;
+                }
+                rtcout.println(rtcout.TRACE, "RTC Created: " + comp_id.getProperty("implementaion_id"));
+                break;
+//                
+//                try {
+//                    m_objManager.activate(comp);
+//                    
+//                } catch (ServantAlreadyActive e) {
+//                    rtcout.println(rtcout.NORMAL, "Exception: Caught ServantAlreadyActive Exception in Manager.createComponent().");
+//                    rtcout.println(rtcout.NORMAL, e.getMessage());
+//                    e.printStackTrace();
+//                    
+//                } catch (WrongPolicy e) {
+//                    rtcout.println(rtcout.NORMAL, "Exception: Caught WrongPolicy Exception in Manager.createComponent().");
+//                    rtcout.println(rtcout.NORMAL, e.getMessage());
+//                    e.printStackTrace();
+//                    
+//                } catch (ObjectNotActive e) {
+//                    rtcout.println(rtcout.NORMAL, "Exception: Caught ObjectNotActive Exception in Manager.createComponent().");
+//                    rtcout.println(rtcout.NORMAL, e.getMessage());
+//                    e.printStackTrace();
+//                }
+//                
+//                rtcout.println(rtcout.TRACE, "RTC Created: " + moduleName);
             }
         }
+        if(i == m_factory.m_objects.size()) {
+            rtcout.println(rtcout.ERROR, "Factory not found: " + comp_id.getProperty("implementaion_id"));
+            return null;
+        } 
         if( comp == null ) return null;
         
+        //------------------------------------------------------------
         // Load configuration file specified in "rtc.conf"
         //
         // rtc.conf:
         // [category].[type_name].config_file = file_name
         // [category].[instance_name].config_file = file_name
-        configureComponent(comp);
+        configureComponent(comp, prop);
+
+        comp.setProperties(prop);
+
         //------------------------------------------------------------
         // Component initialization
         if( comp.initialize() != ReturnCode_t.RTC_OK ) {
-            rtcout.println(rtcout.TRACE, "RTC initialization failed: " + moduleName);
+            rtcout.println(rtcout.TRACE, "RTC initialization failed: " + comp_id.getProperty("implementaion_id"));
             comp.exit();
             return null;
         }
-        rtcout.println(rtcout.TRACE, "RTC initialization succeeded: " + moduleName);
+        rtcout.println(rtcout.TRACE, "RTC initialization succeeded: " + comp_id.getProperty("implementaion_id"));
         
         // Component initialization
-        if( !bindExecutionContext(comp) ) {
-            rtcout.println(rtcout.TRACE, "RTC EC-binding failed: " + moduleName);
-            return null;
-        }
+//        if( !bindExecutionContext(comp) ) {
+//            rtcout.println(rtcout.TRACE, "RTC EC-binding failed: " + moduleName);
+//            return null;
+//        }
 
+        //------------------------------------------------------------
         // Bind component to naming service
         registerComponent(comp);
         
@@ -535,6 +585,69 @@ public class Manager {
         unregisterComponent(comp);
     }
     
+    /**
+     * <p>  </p>
+     *
+     * @param comp_arg String
+     * @param comp_id Properties
+     * @param comp_conf Propertie
+     * @return
+     *
+     */
+    public boolean procComponentArgs(final String comp_arg,
+                                     Properties comp_id,
+                                     Properties comp_conf)
+    {
+        String[] id_and_conf = comp_arg.split("\\?");
+        // arg should be "id?[conf]". id is mandatory, conf is optional
+        if (id_and_conf.length != 1 && id_and_conf.length != 2) {
+            rtcout.println(rtcout.ERROR, "args devided into " + id_and_conf.length);
+            rtcout.println(rtcout.ERROR, "Invalid arguments. Two or more '?' in arg : " + comp_arg);
+            return false;
+        }
+        if (id_and_conf[0].indexOf(":") == -1) {
+            id_and_conf[0] = "RTC:::".concat(id_and_conf[0]);
+            id_and_conf[0] = id_and_conf[0].concat(":");
+        }
+        System.out.println( "ID: " + id_and_conf[0] );
+        String[] id = id_and_conf[0].split(":",-1);
+        System.out.println( "id.size(): " + id.length );
+
+        // id should be devided into 1 or 5 elements
+        // RTC:[vendor]:[category]:impl_id:[version] => 5
+        if (id.length != 5) {
+            rtcout.println(rtcout.ERROR, "Invalid RTC id format.: " + id_and_conf[0]);
+            return false;
+        }
+
+        final String[] prof = {
+          "RTC",
+          "vendor",
+          "category",
+          "implementation_id",
+          "version"
+        };
+
+        if (id[0].trim().equals(prof[0])==false) {
+            rtcout.println(rtcout.ERROR, "Invalid id type: " + id[0]);
+            return false;
+        }
+        for (int i = 1; i < 5; ++i) {
+            comp_id.setProperty(prof[i], id[i].trim());
+            rtcout.println(rtcout.TRACE, "RTC basic propfile " + prof[i] + ":" + id[i]);
+        }
+
+        if (id_and_conf.length == 2) {
+            String[] conf = id_and_conf[1].split("&");
+            for (int i = 0, len = conf.length; i < len; ++i) {
+                String[] keyval = conf[i].split("=", -1);
+                comp_conf.setProperty(keyval[0].trim(), keyval[1].trim());
+                rtcout.println(rtcout.TRACE, "RTC property " + keyval[0] + ":" + keyval[1]);
+            }
+        }
+        return true;
+    }
+
     /**
      * <p>RTコンポーネントを、直接にManagerに登録します。</p>
      *
@@ -559,6 +672,68 @@ public class Manager {
         return true;
     }
     
+    /**
+     * <p>  </p>
+     *
+     * @param ec_arrs String
+     * @return
+     *
+     */
+    public ExecutionContextBase createContext(final String ec_args) {
+        rtcout.println(rtcout.TRACE, "Manager::createContext()");
+        rtcout.println(rtcout.TRACE, "ExecutionContext type: " + m_config.getProperty("exec_cxt.periodic.type") );
+
+        StringBuffer ec_id = new StringBuffer();
+        Properties ec_prop = new Properties();
+        if (!procContextArgs(ec_args, ec_id, ec_prop)) return null;
+
+        ECFactoryBase factory = (ECFactoryBase)m_ecfactory.find(new ECFactoryPredicate(ec_id.toString()));
+
+        if(factory  == null) {
+            rtcout.println(rtcout.ERROR, "Factory not found: " + ec_id);
+            return null;
+        }
+
+        ExecutionContextBase ec;
+        ec = factory.create();
+        return ec;
+
+  }
+    /**
+     * <p>  </p>
+     *
+     * @param ec_arrs String
+     * @param ec_id StringBuffer
+     * @param ec_conf Properties
+     * @return
+     *
+     */
+    public boolean procContextArgs(final String ec_args,
+                                   StringBuffer ec_id,
+                                   Properties ec_conf) {
+
+        String[] id_and_conf = ec_args.split("\\?");
+        if (id_and_conf.length != 1 && id_and_conf.length != 2) {
+            rtcout.println(rtcout.ERROR, "Invalid arguments. Two or more '?' in arg : " + ec_args);
+            return false;
+        }
+        if (id_and_conf[0].length() == 0) {
+            rtcout.println(rtcout.ERROR, "Empty ExecutionContext's name");
+            return false;
+        }
+//zxc        ec_id =id_and_conf[0];
+        ec_id.append(id_and_conf[0]);
+    
+        if (id_and_conf.length == 2) {
+            String[] conf = id_and_conf[1].split("&");
+            for (int i=0, len=conf.length; i < len; ++i) {
+                String[] k = conf[i].split("=");
+                ec_conf.setProperty(k[0], k[1]);
+                rtcout.println(rtcout.TRACE, "EC property "+ k[0] + ":" + k[1]);
+             }
+        }
+        return true;
+    }
     /**
      * <p>指定したRTコンポーネントを登録解除します。</p>
      * 
@@ -1064,7 +1239,7 @@ public class Manager {
      * 
      * @param comp コンフィグレーション設定対象のRTコンポーネント
      */
-    protected void configureComponent(RTObject_impl comp) {
+    protected void configureComponent(RTObject_impl comp, final Properties prop ) {
         
         String category = comp.getCategory();
         String type_name = comp.getTypeName();
@@ -1120,6 +1295,7 @@ public class Manager {
         // Merge Properties. type_prop is merged properties
         type_prop.merge(name_prop);
         comp.getProperties().merge(type_prop);
+        comp.getProperties().merge(prop);
 
         // ------------------------------------------------------------
         // Format component's name for NameService
@@ -1216,6 +1392,20 @@ public class Manager {
                 if ((count % 2) == 0) {
                     str.append(c);
                 }
+	     } else if (c == '$') {
+	        count = 0;
+	        ++i;
+	        if (namingFormat.charAt(i) == '{' || namingFormat.charAt(i) == '(') {
+		    ++i;
+		    String env = "";
+		    for ( ; i < namingFormat.length() && namingFormat.charAt(i) != '}' && namingFormat.charAt(i) != ')'; ++i) {
+		        env += namingFormat.charAt(i);
+		    }
+                    String envval = System.getenv(env);
+		    if (envval != null) str.append(envval);
+	        } else {
+		    str.append(c);
+	        }
             } else {
                 if (count > 0 && (count % 2) != 0) {
                     count = 0;

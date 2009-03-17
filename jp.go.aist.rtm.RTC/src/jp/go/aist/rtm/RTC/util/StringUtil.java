@@ -138,8 +138,8 @@ public class StringUtil {
     public static Vector<String> unique_sv(String[] sv) {
         Vector<String> str = new Vector<String>();
         for( int intIdx=0;intIdx<sv.length;intIdx++ ) {
-            if( !sv[intIdx].trim().equals("") && !str.contains(sv[intIdx]) ) {
-                str.add(sv[intIdx]);
+            if( !sv[intIdx].trim().equals("") && !str.contains(sv[intIdx].trim()) ) {
+                str.add(sv[intIdx].trim());
             }
         }
       return str;

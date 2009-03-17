@@ -6,12 +6,15 @@ import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.StateAction;
 import jp.go.aist.rtm.RTC.StateHolder;
 import jp.go.aist.rtm.RTC.StateMachine;
+import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.util.TimeValue;
+import jp.go.aist.rtm.RTC.util.POAUtil;
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
 import RTC.ExecutionContextProfile;
 import RTC.ExecutionContextProfileHolder;
 import RTC.ExecutionContextService;
+import RTC.ExecutionContextServiceHelper;
 import RTC.ExecutionKind;
 import RTC.LifeCycleState;
 import RTC.LightweightRTObject;
@@ -34,6 +37,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_profile.kind = ExecutionKind.PERIODIC;
         m_profile.rate = 0.0;
         m_usec = 0;
+        m_ref = (ExecutionContextService)this.__this();
     }
 
     /**
@@ -59,6 +63,27 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         if( rate==0 ) rate = 0.0000001;
         m_usec = (long)(1000000/rate);
         if( m_usec==0 ) m_nowait = true;
+        m_ref = (ExecutionContextService)this.__this();
+    }
+
+    /**
+     * <p>  </p>
+     *
+     * @retrun ExecutionContextService
+     */
+
+    public ExecutionContextService __this() {
+
+        if (this.m_ref == null) {
+            try {
+                this.m_ref = ExecutionContextServiceHelper.narrow(POAUtil.getRef(this));
+                
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        return this.m_ref;
     }
 
     /**
@@ -68,6 +93,15 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public void setObjRef(final ExecutionContextService ref) {
         m_ref = ref;
+    }
+    /**
+     * <p>  </p>
+     * 
+     * @return
+     */
+    public ExecutionContextService getObjRef() {
+
+        return m_ref;
     }
     /**
      * <p>本オブジェクトのExecutionContextServiceとしてのCORBAオブジェクト参照を設定します。</p>
@@ -348,6 +382,27 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         } catch(Exception ex) {
             return ReturnCode_t.BAD_PARAMETER;
         }
+    }
+
+    /**
+     * <p> </p>
+     *
+     * @param rtc
+     *
+     * @return the result of execution. 
+     */
+    public ReturnCode_t bindComponent(RTObject_impl rtc) {
+        if (rtc == null) return ReturnCode_t.BAD_PARAMETER;
+
+        LightweightRTObject comp = rtc.getObjRef();
+        DataFlowComponent dfp;
+        dfp = DataFlowComponentHelper.narrow(comp);
+
+        int id = rtc.bindContext(m_ref);
+        m_comps.add(new Comp((LightweightRTObject)comp._duplicate(),
+                             (DataFlowComponent)dfp._duplicate(),
+                             id));
+        return ReturnCode_t.RTC_OK;
     }
 
     /**
