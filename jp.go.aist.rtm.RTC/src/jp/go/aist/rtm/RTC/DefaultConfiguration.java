@@ -48,7 +48,7 @@ interface DefaultConfiguration {
         "exec_cxt.periodic.rate", "1000",
     "exec_cxt.evdriven.type",     "jp.go.aist.rtm.RTC.executionContext.EventDrivenExecutionContext",
         "manager.modules.load_path",        "./",
-        "manager.modules.abs_pth_allowed",  "YES",
+        "manager.modules.abs_path_allowed", "YES",
 
         ""
     };

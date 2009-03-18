@@ -260,9 +260,6 @@ public class Manager {
 
             this.getPOAManager().activate();
 
-            if (m_initProc != null) {
-                m_initProc.myModuleInit(this);
-            }
             
         } catch (Exception e) {
             rtcout.println(rtcout.NORMAL, "Exception: Caught unknown Exception in Manager.activateManager().");
@@ -270,7 +267,54 @@ public class Manager {
             return false;
         }
         
+        preloadComponent();
+
+        precreateComponent();
+
+        if (m_initProc != null) {
+            m_initProc.myModuleInit(this);
+        }
+
         return true;
+    }
+
+    /**
+     * <p> preloadComponent </p>
+     *
+     */
+    private void preloadComponent() {
+        String[] mods = m_config.getProperty("manager.modules.preload").split(",");
+        for (int i=0; i < mods.length; ++i) {
+            if ( mods[i].length() == 0) {
+                continue;
+            }
+            String[] str = mods[i].split("\\.");
+            try {
+                m_module.load(mods[i], "registerModule");
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                rtcout.println(rtcout.ERROR, "Module load error: " + mods[i]);
+            } catch (ClassNotFoundException e) {
+                rtcout.println(rtcout.ERROR, "Module not found: " + mods[i]);
+            } catch (Exception ex) {
+                rtcout.println(rtcout.ERROR, "Unknown Exception");
+            }
+
+        }
+    }
+
+    /**
+     * <p> precreateComponent </p>
+     *
+     */
+    private void precreateComponent() {
+        String[] comp = m_config.getProperty("manager.components.precreate").split(",");
+        for (int i=0; i < comp.length; ++i) {
+            if ( comp[i].length() == 0) {
+                continue;
+            }
+	    this.createComponent(comp[i]);
+        }
     }
 
     /**

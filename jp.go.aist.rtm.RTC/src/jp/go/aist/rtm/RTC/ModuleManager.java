@@ -11,6 +11,8 @@ import java.util.Vector;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 
+
+
 /**
 * <p>モジュール管理クラスです。モジュールのロード・アンロードなどを管理します。</p>
 */
@@ -50,8 +52,14 @@ public class ModuleManager {
             m_loadPath.add(loadPath[i].trim());
         }
         
+System.out.println( "ModuleManager::ModuleManager");
         m_absoluteAllowed = StringUtil.toBool(
                 properties.getProperty(ALLOW_ABSPATH), "yes", "no", false);
+if(m_absoluteAllowed){
+System.out.println( "ModuleManager::ModuleManager---m_absoluteAllowd is true.");
+} else {
+System.out.println( "ModuleManager::ModuleManager---m_absoluteAllowd is false.");
+}
         m_downloadAllowed = StringUtil.toBool(
                 properties.getProperty(ALLOW_URL), "yes", "no", false);
         
@@ -79,6 +87,10 @@ public class ModuleManager {
             super.finalize();
         }
     }
+
+    /**
+     * 
+     */
     public String load(final String moduleName) throws Exception {
 System.out.println( "ModuleManager::load--000--");
         String module_path = null;
@@ -148,73 +160,99 @@ System.out.println( "ModuleManager::load--0e0--");
         
 System.out.println( "ModuleManager::load--000--");
         if (moduleName == null || moduleName.length() == 0) {
+System.out.println( "ModuleManager::load--0r0--");
             throw new IllegalArgumentException("moduleName is empty.:load()");
         }
         if (methodName == null || methodName.length() == 0) {
+System.out.println( "ModuleManager::load--0r1--");
             throw new IllegalArgumentException("methodName is empty.:load()");
         }
 
         String module_path = null;
         try {
+System.out.println( "ModuleManager::load--001--moduleName:" + moduleName);
             new URL(moduleName);
             if (! m_downloadAllowed) {
+System.out.println( "ModuleManager::load--0r1--");
                 throw new IllegalArgumentException("Downloading module is not allowed.");
                 
             } else {
                 throw new IllegalArgumentException("Not implemented.");
             }
         } catch (MalformedURLException moduleName_is_not_URL) {
+System.out.println( "ModuleManager::load--0r2--");
         }
 
         Class target = null;
         if (m_absoluteAllowed) {
             try {
+System.out.println( "ModuleManager::load--01?--moduleName:" + moduleName);
                 target = Class.forName(moduleName);
+System.out.println( "ModuleManager::load--011--moduleName:" + moduleName);
                 module_path = moduleName;
             } catch (ClassNotFoundException e) {
 //                e.printStackTrace();
+System.out.println( "ModuleManager::load--0r3--");
                 throw new ClassNotFoundException("Not implemented.", e);
             }
         } else {
+System.out.println( "ModuleManager::load--010--m_loadPath.size:" + m_loadPath.size());
             if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
             for (int i = 0; i < m_loadPath.size(); i++) {
-                String fullClassName = m_loadPath.elementAt(i) + "." + moduleName;
+                String fullClassName = m_loadPath.elementAt(i) + "." + moduleName ;
                 try {
+System.out.println( "ModuleManager::load--020--fullClassName:" + fullClassName);
                     target = Class.forName(fullClassName);
                     module_path = fullClassName;
                 } catch (ClassNotFoundException e) {
 //                    e.printStackTrace();
                     // throw new ClassNotFoundException("Not implemented.", ex);
+System.out.println( "ModuleManager::load--0r4--");
                 }
             }
         }
 
         Method initMethod;
         try {
+System.out.println( "ModuleManager::load--030--methodName:" + methodName);
+if(target == null ) {
+System.out.println( "ModuleManager::load--030--target is null");
+} else {
+System.out.println( "ModuleManager::load--030--target is not null");
+}
             initMethod = target.getMethod(methodName);
+System.out.println( "ModuleManager::load--040--");
             
         } catch (SecurityException e) {
 //            e.printStackTrace();
+System.out.println( "ModuleManager::load--0r5--");
             throw e;
             
         } catch (NoSuchMethodException e) {
 //            e.printStackTrace();
+System.out.println( "ModuleManager::load--0r6--");
             throw e;
         }
 
         try {
+System.out.println( "ModuleManager::load--050--");
             initMethod.invoke(target.newInstance());
+System.out.println( "ModuleManager::load--060--");
         } catch (IllegalArgumentException e) {
 //            e.printStackTrace();
+System.out.println( "ModuleManager::load--0r7--");
             throw e;
         } catch (IllegalAccessException e) {
 //            e.printStackTrace();
+System.out.println( "ModuleManager::load--0r8--");
             throw e;
         } catch (InvocationTargetException e) {
 //            e.printStackTrace();
+System.out.println( "ModuleManager::load--0r9--");
             throw e;
         } catch (InstantiationException e) {
 //            e.printStackTrace();
+System.out.println( "ModuleManager::load--0ra--");
             throw e;
         }
 System.out.println( "ModuleManager::load--090--");
@@ -322,6 +360,7 @@ System.out.println( "ModuleManager::load--0e0--");
      * <p>モジュールのフルクラス名指定を指定します。</p>
      */
     public void allowAbsolutePath() {
+System.out.println( "ModuleManager::allowAbsolutePath");
         m_absoluteAllowed = true;
     }
     
@@ -329,6 +368,7 @@ System.out.println( "ModuleManager::load--0e0--");
      * <p>モジュールのフルクラス名指定解除を指定します。</p>
      */
     public void disallowAbsolutePath() {
+System.out.println( "ModuleManager::disallowAbsolutePath");
         m_absoluteAllowed = false;
     }
     
