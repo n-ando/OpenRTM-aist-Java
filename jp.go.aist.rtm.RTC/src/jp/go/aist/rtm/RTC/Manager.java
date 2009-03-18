@@ -1,10 +1,14 @@
 package jp.go.aist.rtm.RTC;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.Set;
+import java.util.Iterator;
 import java.util.logging.FileHandler;
 
 import jp.go.aist.rtm.RTC.executionContext.ECFactoryBase;
@@ -91,6 +95,7 @@ public class Manager {
                         manager.initNaming();
                         manager.initExecContext();
                         manager.initTimer();
+                        manager.initManagerServant();
                         
                     } catch (Exception e) {
                         manager = null;
@@ -248,6 +253,11 @@ public class Manager {
         rtcout.println(rtcout.TRACE, "Manager.activateManager()");
         
         try {
+            if(this.getPOAManager()==null) {
+                rtcout.println(rtcout.ERROR, "Could not get POA manager.");
+                return false;
+            }
+
             this.getPOAManager().activate();
 
             if (m_initProc != null) {
@@ -347,11 +357,20 @@ public class Manager {
      * 
 　   * @return ロード済みモジュール名リスト
      */
-    public Vector<String> getLoadedModules() {
+    public Vector<Properties> getLoadedModules() {
         
         rtcout.println(rtcout.TRACE, "Manager.getLoadedModules()");
         
-        return new Vector<String>(m_module.getLoadedModules().keySet());
+//zxc        return new Vector<String>(m_module.getLoadedModules().keySet());
+//        return m_module.getLoadedModules();
+        Set<String> key = m_module.getLoadedModules().keySet();
+        Iterator it = key.iterator();
+        Vector<Properties> props = new Vector<Properties>();
+        while (it.hasNext()) {
+            Properties prop = new Properties((String)it.next());
+            props.add(prop);
+        } 
+        return props;
     }
     
     /**
@@ -359,7 +378,7 @@ public class Manager {
      *
 　   * @return ロード可能モジュール名リスト
      */
-    public Vector<String> getLoadableModules() {
+    public Vector<Properties> getLoadableModules() {
         
         rtcout.println(rtcout.TRACE, "Manager.getLoadableModules()");
         
@@ -391,6 +410,20 @@ public class Manager {
             rtcout.println(rtcout.NORMAL, ex.getMessage());
             return false;
         }
+    }
+
+    /**
+     * <p>  </p>
+     *
+     */
+    public Vector<Properties> getFactoryProfiles() {
+        Vector<FactoryBase> factories = m_factory.getObjects();
+        Vector<Properties> props = new Vector<Properties>();
+        for (int i=0, len=factories.size(); i < len; ++i) {
+            props.add(factories.elementAt(i).profile());
+        }
+
+        return props;
     }
 
    /**
@@ -673,6 +706,29 @@ public class Manager {
     }
     
     /**
+     * <p>指定したRTコンポーネントを登録解除します。</p>
+     * 
+     * @param comp 登録解除するRTコンポーネントオブジェクト
+     */
+    public boolean unregisterComponent(RTObject_impl comp) {
+        
+        rtcout.println(rtcout.TRACE, "Manager.unregisterComponent("
+                + comp.getInstanceName() + ")");
+        
+        // NamingManager のみで代用可能
+        m_compManager.unregisterObject(new InstanceName(comp));
+      
+        String[] names = comp.getNamingNames();
+        for (int i = 0; i < names.length; ++i) {
+            rtcout.println(rtcout.TRACE, "Unbind name: " + names[i]);
+            
+            m_namingManager.unbindObject(names[i]);
+        }
+        
+        return true;
+    }
+    
+    /**
      * <p>  </p>
      *
      * @param ec_arrs String
@@ -734,29 +790,6 @@ public class Manager {
         }
         return true;
     }
-    /**
-     * <p>指定したRTコンポーネントを登録解除します。</p>
-     * 
-     * @param comp 登録解除するRTコンポーネントオブジェクト
-     */
-    public boolean unregisterComponent(RTObject_impl comp) {
-        
-        rtcout.println(rtcout.TRACE, "Manager.unregisterComponent("
-                + comp.getInstanceName() + ")");
-        
-        // NamingManager のみで代用可能
-        m_compManager.unregisterObject(new InstanceName(comp));
-      
-        String[] names = comp.getNamingNames();
-        for (int i = 0; i < names.length; ++i) {
-            rtcout.println(rtcout.TRACE, "Unbind name: " + names[i]);
-            
-            m_namingManager.unbindObject(names[i]);
-        }
-        
-        return true;
-    }
-    
     /**
      * <p>指定したRTコンポーネントに、ExecutionContextをバインドします。</p>
      * 
@@ -1334,6 +1367,61 @@ public class Manager {
         return true;
     }
     
+    /**
+     * <p>  </p>
+     *
+     */
+    protected boolean initManagerServant() {
+        m_mgrservant = new ManagerServant();
+        Properties prop = (m_config.getNode("manager"));
+        String[] names=prop.getProperty("naming_formats").split(",");
+
+        for (int i=0; i < names.length; ++i) {
+            String mgr_name = formatString(names[i], prop);
+            m_namingManager.bindObject(mgr_name, m_mgrservant);
+          }
+
+        File otherref = new File(m_config.getProperty("manager.refstring_path"));
+        if (!otherref.exists()) {
+            try {
+                FileWriter reffile = new FileWriter(otherref);
+                reffile.write(m_pORB.object_to_string(m_mgrservant.getObjRef()));
+                reffile.close();
+            } catch (IOException e) {
+            }
+        }
+        else {
+            try{
+                String refstring = new String();
+                FileReader reffile = new FileReader(otherref);
+                BufferedReader br = new BufferedReader(reffile); 
+                String line;
+                line = br.readLine();
+                while (line != null) {
+                    refstring = refstring + line;
+                }
+                br.close();
+                reffile.close();
+
+                System.out.println( refstring );
+
+                //Object obj = m_pORB.string_to_object(refstring);
+                //Manager mgr = ManagerHelper.narrow(obj);
+                //        if (mgr==null) return false;
+                //        mgr.set_child(m_mgrservant.getObjRef());
+                //        m_mgrservant.set_owner(mgr);
+            } catch (IOException e) {
+            }
+        }
+
+        return true;
+    }
+  
+    /**
+     *
+     */
+    ManagerServant m_mgrservant;
+
     /**
      * <p>プロパティファイルを読み込んで、指定されたPropertiesオブジェクトに設定します。</p>
      * 

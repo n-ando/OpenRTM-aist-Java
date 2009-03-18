@@ -30,18 +30,18 @@ public abstract class ExecutionContextBase extends
     }
     
     /**
-     * <p>  </p>
+     * <p> bindComponent </p>
      *
      * @param rtc RTObject
-     * @return
+     * @return ReturnCode_t
      * 
      */
     public abstract ReturnCode_t bindComponent(RTObject_impl rtc);
 
     /**
-     * <p>  </p>
+     * <p> getObjRef </p>
      *
-     * @return
+     * @return ExecutionContextService
      * 
      */
     public abstract ExecutionContextService getObjRef();

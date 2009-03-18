@@ -66,11 +66,11 @@ public class CORBA_SeqUtil {
     
 
     /**
-     * <p>  </p>
+     * <p> for_each </p>
      *
      * @param seq ExecutionContextServiceListHolder
      * @param func operatorFunc
-     * @return 
+     * @return operatorFunc
      *
      */
     public static operatorFunc for_each(ExecutionContextServiceListHolder seq, operatorFunc func) {
@@ -83,11 +83,11 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>  </p>
+     * <p> for_each </p>
      *
      * @param seq PortServiceListHolder
      * @param func operatorFunc
-     * @return 
+     * @return operatorFunc
      *
      */
     public static operatorFunc for_each(PortServiceListHolder seq, operatorFunc func) {
@@ -176,11 +176,11 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>  </p>
+     * <p> find </p>
      *
      * @param seq ExecutionContextServiceListHolder
      * @param f wqualFunc
-     * @return
+     * @return int
      */
     public static int find(final ExecutionContextServiceListHolder seq, equalFunctor f) {
         if( seq.value==null ) return -1;
@@ -366,7 +366,6 @@ public class CORBA_SeqUtil {
      *
      * @param seq ExecutionContextListHolder
      * @param elem ExecutionContext
-     * @return
      *
      */
     public static void push_back(ExecutionContextListHolder seq, ExecutionContext elem) {
@@ -389,7 +388,6 @@ public class CORBA_SeqUtil {
      *
      * @param seq SDOListHolder
      * @param elem SDO
-     * @return
      *
      */
     public static void push_back(SDOListHolder seq, SDO elem) {
@@ -412,7 +410,6 @@ public class CORBA_SeqUtil {
      *
      * @param seq ComponentProfileListHolder
      * @param elem ComponentProfile
-     * @return
      *
      */
     public static void push_back(ComponentProfileListHolder seq, ComponentProfile elem) {
@@ -435,7 +432,6 @@ public class CORBA_SeqUtil {
      *
      * @param seq RTCListHolder
      * @param elem RTObject
-     * @return
      *
      */
     public static void push_back(RTCListHolder seq, RTObject elem) {

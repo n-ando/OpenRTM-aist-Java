@@ -80,6 +80,7 @@ public class ModuleManager {
         }
     }
     public String load(final String moduleName) throws Exception {
+System.out.println( "ModuleManager::load--000--");
         String module_path = null;
 
         if(moduleName==null || moduleName.length()==0) {
@@ -119,7 +120,9 @@ public class ModuleManager {
             }
             if( target==null ) throw new ClassNotFoundException("Not implemented." + moduleName);
         }
+System.out.println( "ModuleManager::load--090--");
         m_modules.put(module_path, target);
+System.out.println( "ModuleManager::load--0e0--");
         return module_path;
     }
 
@@ -143,6 +146,7 @@ public class ModuleManager {
     public String load(final String moduleName, final String methodName)
             throws Exception {
         
+System.out.println( "ModuleManager::load--000--");
         if (moduleName == null || moduleName.length() == 0) {
             throw new IllegalArgumentException("moduleName is empty.:load()");
         }
@@ -213,7 +217,9 @@ public class ModuleManager {
 //            e.printStackTrace();
             throw e;
         }
+System.out.println( "ModuleManager::load--090--");
         m_modules.put(module_path, target);
+System.out.println( "ModuleManager::load--0e0--");
         
         return module_path;
     }
@@ -308,8 +314,8 @@ public class ModuleManager {
      * 
      * @return ロード可能なモジュールリスト
      */
-    public Vector<String> getLoadableModules() {
-        return new Vector<String>();
+    public Vector<Properties> getLoadableModules() {
+        return new Vector<Properties>();
     }
     
     /**

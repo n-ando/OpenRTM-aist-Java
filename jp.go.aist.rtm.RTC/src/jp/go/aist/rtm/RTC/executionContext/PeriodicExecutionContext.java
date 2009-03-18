@@ -67,9 +67,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     }
 
     /**
-     * <p>  </p>
+     * <p> __this() </p>
      *
-     * @retrun ExecutionContextService
+     * @return ExecutionContextService
      */
 
     public ExecutionContextService __this() {
@@ -95,9 +95,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_ref = ref;
     }
     /**
-     * <p>  </p>
+     * <p> getObjRef </p>
      * 
-     * @return
+     * @return ExecutionContextService
      */
     public ExecutionContextService getObjRef() {
 

@@ -18,6 +18,7 @@ import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.NotEmpty;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
+
 /**
  *
  * <p>CORBA Naming Service ヘルパークラスです。
@@ -144,6 +145,7 @@ public class CorbaNaming {
      */
     public void bind(final NameComponent[] name, Object obj, final boolean force)
         throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+System.out.println( "CorbaNamaing::bind--000--");
         try{
             if( isNamingContext(obj) ) {
                 m_rootContext.bind_context(name, NamingContextExtHelper.narrow(obj));
@@ -163,6 +165,7 @@ public class CorbaNaming {
                 throw ex;
             }
         }
+System.out.println( "CorbaNamaing::bind--0e0--");
      }
 
     /**
@@ -235,6 +238,7 @@ public class CorbaNaming {
      */
     public void bindRecursive(NamingContext context,final NameComponent[] name, Object obj)
         throws CannotProceed, InvalidName, AlreadyBound, NotFound {
+System.out.println( "CorbaNamaing::bindRecursive--000--");
         int len = name.length;
         NamingContext cxt = (NamingContext)context._duplicate();
     
@@ -255,6 +259,7 @@ public class CorbaNaming {
                 throw new CannotProceed(cxt, subName(name, intIdx));
             }
         }
+System.out.println( "CorbaNamaing::bindRecursive--0e0--");
         return;
     }
     
@@ -283,7 +288,8 @@ public class CorbaNaming {
         throws NotFound, CannotProceed, InvalidName {
         try {
             if( isNamingContext(obj) ) {
-                m_rootContext.rebind(name, NamingContextExtHelper.narrow(obj));
+//zxc                m_rootContext.rebind(name, NamingContextExtHelper.narrow(obj));
+                m_rootContext.rebind(name, NamingContextExtHelper.unchecked_narrow(obj));
             } else {
                 m_rootContext.rebind(name, obj);
             }
@@ -354,6 +360,7 @@ public class CorbaNaming {
      */
     public void rebindRecursive(NamingContext context, final NameComponent[] name, Object obj)
         throws CannotProceed, InvalidName, NotFound {
+System.out.println( "CorbaNamaing::rebindRecursive--000--");
         int len = name.length;
         NamingContext cxt = (NamingContext)context._duplicate();
         
@@ -377,6 +384,7 @@ public class CorbaNaming {
                 throw new CannotProceed(cxt, subName(name, intIdx));
             }
         }
+System.out.println( "CorbaNamaing::rebindRecursive--0e0--");
         return;
     }
 
@@ -1002,11 +1010,17 @@ public class CorbaNaming {
      * @return 判断結果
      */
     public boolean isNamingContext(Object obj) {
+System.out.println( "ManagerServant::isNamingContext(Object obj)--000--");
         try {
-            NamingContext nc= NamingContextExtHelper.narrow(obj);
-            if( nc!=null ) return true;
+//zxc            NamingContext nc= NamingContextExtHelper.narrow(obj);
+            NamingContext nc= NamingContextExtHelper.unchecked_narrow(obj);
+            if( nc!=null ) {
+System.out.println( "ManagerServant::isNamingContext(Object obj)--0e0--:true");
+                return true;
+            }
         } catch(Exception ex) {
         }
+System.out.println( "ManagerServant::isNamingContext(Object obj)--0e0--:false");
         return false;
     }
 
@@ -1021,6 +1035,7 @@ public class CorbaNaming {
      */
     public boolean isNamingContext(final NameComponent[] name) 
         throws NotFound, CannotProceed, InvalidName {
+System.out.println( "ManagerServant::isNamingContext(final NameComponent[] name)--000--");
         return isNamingContext(resolve(name));
     }
 

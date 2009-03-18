@@ -60,6 +60,24 @@ public class NamingManager implements NamingBase, CallbackFunction {
     }
 
     /**
+     * <p>  </p> 
+     *
+     * @param name 
+     * @param mgr
+     */
+    public void bindObject(final String name, final ManagerServant mgr) {
+        rtcout.println(rtcout.TRACE, "NamingManager::bindObject(" + name + ")");
+        synchronized (m_names) {
+            for(int intIdx=0;intIdx<m_names.size();++intIdx ) {
+                if( m_names.elementAt(intIdx).ns != null ) {
+                    m_names.elementAt(intIdx).ns.bindObject(name, mgr);
+                }
+            }
+            this.registerMgrName(name, mgr);
+        }
+    }
+
+    /**
      * <p>NameServerの情報を更新します。</p>
      */
     public void update(){
@@ -184,6 +202,23 @@ public class NamingManager implements NamingBase, CallbackFunction {
     }
 
     /**
+     * <p>  <p>
+     *
+     * @param name
+     * @param mgr
+     */
+    protected void registerMgrName(final String name, final ManagerServant mgr) {
+        for(int intIdx=0;intIdx<m_mgrNames.size();++intIdx ) {
+            if( m_mgrNames.elementAt(intIdx).name.equals(name) ) {
+                m_mgrNames.elementAt(intIdx).mgr = mgr;
+                return;
+            }
+        }
+        m_mgrNames.add(new Mgr(name, mgr));
+        return;
+    }
+
+    /**
      * <p>登録済みコンポーネントの登録を解除します。</p>
      * 
      * @param name 解除対象コンポーネントの名称
@@ -255,10 +290,39 @@ public class NamingManager implements NamingBase, CallbackFunction {
          */
         public RTObject_impl rtobj;
     }
+    
+    /**
+     * <p>  </p>
+     */
+    protected class Mgr {
+        /**
+         * <p>  </p>
+         * 
+         * @param n
+         * @param obj
+         */
+        public Mgr(final String n, final ManagerServant obj) {
+            name = new String(n);
+            mgr = obj;
+        }
+        /**
+         * <p>  </p>
+         */
+        public String name;
+        /**
+         * <p>  </p>
+         */
+        public ManagerServant mgr;
+    }
     /**
      * <p>登録されたコンポーネント</p>
      */
     protected Vector<Comps> m_compNames = new Vector<Comps>();
+
+    /**
+     * <p>  </p>
+     */
+    protected Vector<Mgr> m_mgrNames = new Vector<Mgr>();
 
     /**
      * <p>タイマーに登録されたリスナーから呼び出されるメソッドです。</p>
