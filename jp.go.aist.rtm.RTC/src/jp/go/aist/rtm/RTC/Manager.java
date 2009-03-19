@@ -16,6 +16,8 @@ import jp.go.aist.rtm.RTC.executionContext.ECFactoryJava;
 import jp.go.aist.rtm.RTC.executionContext.ExecutionContextBase;
 import jp.go.aist.rtm.RTC.executionContext.ExtTrigExecutionContext;
 import jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext;
+import jp.go.aist.rtm.RTC.executionContext.OpenHRPExecutionContext;
+import jp.go.aist.rtm.RTC.executionContext.PeriodicECSharedComposite;
 import jp.go.aist.rtm.RTC.log.LogStream;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.log.LogbufOn;
@@ -94,6 +96,7 @@ public class Manager {
                         manager.initORB();
                         manager.initNaming();
                         manager.initExecContext();
+                        manager.initComposite();
                         manager.initTimer();
                         manager.initManagerServant();
                         
@@ -124,6 +127,7 @@ public class Manager {
                         manager.initORB();
                         manager.initNaming();
                         manager.initExecContext();
+                        manager.initComposite();
                         manager.initTimer();
                         
                     } catch (Exception e) {
@@ -1400,10 +1404,22 @@ public class Manager {
         
         PeriodicExecutionContext.PeriodicExecutionContextInit(this);
         ExtTrigExecutionContext.ExtTrigExecutionContextInit(this);
+        OpenHRPExecutionContext.OpenHRPExecutionContextInit(this);
         
         return true;
     }
     
+    /**
+     * <p> intiComposite </p>
+     *
+     * @return boolan
+     */
+    protected boolean initComposite() {
+        rtcout.println(rtcout.TRACE, "Manager::initComposite()");
+        PeriodicECSharedComposite.PeriodicECSharedCompositeInit(this);
+
+        return true;
+    }
     /**
      * <p>Timerを初期化します。</p>
      */

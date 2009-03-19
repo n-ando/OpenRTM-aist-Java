@@ -100,6 +100,15 @@ public class PortAdmin {
     }
     
     /**
+     * <p> registerPort </p>
+     *
+     * @param port PortService
+     */
+    public void registerPort(PortService port) {
+        CORBA_SeqUtil.push_back(this.m_portRefs, port);
+    }
+    
+    /**
      * <p>指定されたPortサーバントの登録を解除します。</p>
      * 
      * @param port 登録解除するPortサーバントのオブジェクト
@@ -122,6 +131,29 @@ public class PortAdmin {
             ignored.printStackTrace();
         }
     }
+
+    /**
+     * <p> deletePort </p>
+     *
+     * @param port PortService
+     *
+     */
+    public void deletePort(PortService port) {
+        try {
+            // port.disconnect_all();
+            // port.shutdown();
+
+            final String tmp = port.get_port_profile().name;
+            CORBA_SeqUtil.erase_if(m_portRefs, new find_port_name(tmp));
+
+            // m_pPOA.deactivate_object(m_pPOA.servant_to_id(port));
+            // port.setPortRef(null);
+
+            // m_portServants.unregisterObject(new find_port_name(tmp));
+        } catch(Exception ignored) {
+            ignored.printStackTrace();
+        }
+  }
 
     /**
      * <p>指定されたポート名を持つPortサーバントの登録を解除します。</p>
