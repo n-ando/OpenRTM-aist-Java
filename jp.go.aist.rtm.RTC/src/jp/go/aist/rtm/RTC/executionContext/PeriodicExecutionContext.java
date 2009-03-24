@@ -9,6 +9,8 @@ import jp.go.aist.rtm.RTC.StateMachine;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
 import RTC.ExecutionContextProfile;
@@ -38,6 +40,13 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_profile.rate = 0.0;
         m_usec = 0;
         m_ref = (ExecutionContextService)this.__this();
+
+        Manager manager = Manager.instance();
+        rtcout = new Logbuf("Manager.PeriodicExecutionContext");
+        rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
+        rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
+        rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
+                   "enable", "disable", false));
     }
 
     /**
@@ -64,6 +73,13 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_usec = (long)(1000000/rate);
         if( m_usec==0 ) m_nowait = true;
         m_ref = (ExecutionContextService)this.__this();
+
+        Manager manager = Manager.instance();
+        rtcout = new Logbuf("Manager.PeriodicExecutionContext");
+        rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
+        rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
+        rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
+                   "enable", "disable", false));
     }
 
     /**
@@ -92,6 +108,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @param ref CORBAオブジェクト参照
      */
     public void setObjRef(final ExecutionContextService ref) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::setObjRef()");
+
         m_ref = ref;
     }
     /**
@@ -101,6 +120,8 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ExecutionContextService getObjRef() {
 
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::getObjRef()");
+
         return m_ref;
     }
     /**
@@ -109,6 +130,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return CORBAオブジェクト参照
      */
     public ExecutionContextService getRef() {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::getRef()");
+
         return m_ref;
     }
 
@@ -116,6 +140,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * <p>ExecutionContext用のスレッドを生成します。</p>
      */
     public int open() {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::open()");
+
         if(m_thread==null) {
             Thread t = new Thread(this, "PeriodicExecutionContext");
             t.start();
@@ -128,6 +155,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * 登録されたコンポーネントの処理を呼び出します。</p>
      */
     public int svc() {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::svc()");
+
         do {
             long millisec = m_usec / 1000;
             int  nanosec  = (int)((m_usec % 1000) * 1000);
@@ -156,6 +186,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * <p>スレッド実行関数です。</p>
      */
     public void run() {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::run()");
+
         this.svc();
     }
 
@@ -163,6 +196,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * <p>スレッド終了関数です。</p>
      */
     public int close(long flags) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::close()");
+
       // At this point, this component have to be finished.
       // Current state and Next state should be RTC_EXITING.
       //    delete this;
@@ -178,6 +214,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return 実行判定結果
      */
     public boolean is_running() {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::is_running()");
+
         return m_running;
     }
 
@@ -187,6 +226,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return 実行結果
      */
     public ReturnCode_t start() {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::start()");
+
         if( m_running ) return ReturnCode_t.PRECONDITION_NOT_MET;
 
 //zxc        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
@@ -216,6 +258,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return 実行結果
      */
     public ReturnCode_t stop(){
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::stop()");
+
         if( !m_running ) return ReturnCode_t.PRECONDITION_NOT_MET;
         //
         // invoke on_shutdown for each comps.
@@ -235,6 +280,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return 実行周期(Hz)
      */
     public double get_rate() {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::get_rate()");
+
         return m_profile.rate;
     }
 
@@ -244,6 +292,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @param rate 実行周期(Hz)
      */
     public ReturnCode_t set_rate(double rate) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::set_rate()");
+
         if( rate<=0.0 ) return ReturnCode_t.BAD_PARAMETER;
 
         m_profile.rate = rate;
@@ -263,6 +314,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return 実行結果
      */
     public ReturnCode_t activate_component(LightweightRTObject comp) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::activate_component()");
+
         // コンポーネントが参加者リストに無ければ BAD_PARAMETER を返す
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
@@ -289,6 +343,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return 実行結果
      */
     public ReturnCode_t deactivate_component(LightweightRTObject comp) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::deactivate_component()");
+
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
@@ -314,6 +371,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return 実行結果
      */
     public ReturnCode_t reset_component(LightweightRTObject comp){
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::reset_component()");
+
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
@@ -339,6 +399,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return コンポーネント状態
      */
     public LifeCycleState get_component_state(LightweightRTObject comp) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::get_component_state()");
+
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
@@ -354,6 +417,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return ExecutionKind
      */
     public ExecutionKind get_kind() {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::get_kind()");
+
         return m_profile.kind;
     }
 
@@ -365,6 +431,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return 実行結果
      */
     public ReturnCode_t add_component(LightweightRTObject comp) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::add_component()");
+
         if( comp==null ) return ReturnCode_t.BAD_PARAMETER;
         //
         try {
@@ -385,13 +454,16 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     }
 
     /**
-     * <p> </p>
+     * <p> bindComponent </p>
      *
-     * @param rtc
+     * @param rtc RTObject_impl
      *
      * @return the result of execution. 
      */
     public ReturnCode_t bindComponent(RTObject_impl rtc) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::bindComponent()");
+
         if (rtc == null) return ReturnCode_t.BAD_PARAMETER;
 
         LightweightRTObject comp = rtc.getObjRef();
@@ -413,6 +485,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return 実行結果
      */
     public ReturnCode_t remove_component(LightweightRTObject comp) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::remove_component()");
+
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
@@ -437,6 +512,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @return ExecutionContextProfile
      */
     public ExecutionContextProfile get_profile() {
+
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext::get_profile()");
+
         ExecutionContextProfileHolder p = new ExecutionContextProfileHolder(m_profile);
         return p.value;
     }
@@ -837,5 +915,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     public Object ECDeleteFunc(ExecutionContextBase comp) {
         return null;
     }
+
+    /**
+     * <p>Logging用フォーマットオブジェクト</p>
+     */
+    protected Logbuf rtcout;
 
 }

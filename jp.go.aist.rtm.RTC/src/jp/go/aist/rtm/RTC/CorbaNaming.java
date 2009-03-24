@@ -367,7 +367,8 @@ System.out.println( "CorbaNamaing::rebindRecursive--000--");
         for( int intIdx=0;intIdx<len;intIdx++ ) {
             if( intIdx==(len-1) ) {
                 if( isNamingContext(obj) ) {
-                    cxt.rebind_context(subName(name, intIdx, intIdx), NamingContextExtHelper.narrow(obj));
+//zxc                    cxt.rebind_context(subName(name, intIdx, intIdx), NamingContextExtHelper.narrow(obj));
+                    cxt.rebind_context(subName(name, intIdx, intIdx), NamingContextExtHelper.unchecked_narrow(obj));
                 } else {
                     cxt.rebind(subName(name, intIdx, intIdx), obj);
                 }
@@ -1010,17 +1011,17 @@ System.out.println( "CorbaNamaing::rebindRecursive--0e0--");
      * @return 判断結果
      */
     public boolean isNamingContext(Object obj) {
-System.out.println( "ManagerServant::isNamingContext(Object obj)--000--");
+System.out.println( "CorbaNaming::isNamingContext(Object obj)--000--");
         try {
 //zxc            NamingContext nc= NamingContextExtHelper.narrow(obj);
             NamingContext nc= NamingContextExtHelper.unchecked_narrow(obj);
             if( nc!=null ) {
-System.out.println( "ManagerServant::isNamingContext(Object obj)--0e0--:true");
+System.out.println( "CorbaNaming::isNamingContext(Object obj)--0e0--:true");
                 return true;
             }
         } catch(Exception ex) {
         }
-System.out.println( "ManagerServant::isNamingContext(Object obj)--0e0--:false");
+System.out.println( "CorbaNaming::isNamingContext(Object obj)--0e0--:false");
         return false;
     }
 

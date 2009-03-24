@@ -5,8 +5,10 @@ import java.util.UUID;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
+import jp.go.aist.rtm.RTC.util.POAUtil;
 
 import org.omg.CORBA.Any;
+import org.omg.CORBA.SystemException;
 
 import _SDOPackage.DependencyType;
 import _SDOPackage.InternalError;
@@ -14,6 +16,9 @@ import _SDOPackage.InvalidParameter;
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
 import _SDOPackage.NotAvailable;
+import _SDOPackage.OrganizationPOA;
+import _SDOPackage.Organization;
+import _SDOPackage.OrganizationHelper;
 import _SDOPackage.OrganizationProperty;
 import _SDOPackage.SDO;
 import _SDOPackage.SDOListHolder;
@@ -22,7 +27,8 @@ import _SDOPackage.SDOSystemElement;
 /**
 * <p>SDO Organizationの実装クラスです。</p>
 */
-public class Organization_impl {
+public class Organization_impl extends OrganizationPOA{
+//zxc public class Organization_impl {
 
     /**
      * <p>デフォルトコンストラクタです。</p>
@@ -30,6 +36,34 @@ public class Organization_impl {
     public Organization_impl() {
         m_pId = UUID.randomUUID().toString();
     }
+    /**
+     * <p>デフォルトコンストラクタです。</p>
+     */
+    public Organization_impl(SDOSystemElement sdo) {
+        m_pId = UUID.randomUUID().toString();
+        m_varOwner = sdo;
+        m_dependency = DependencyType.OWN;
+        m_objref = this._this();
+    }
+
+    /**
+     * <p> _this </p>
+     *
+     * @return a CORBA object reference 
+     */
+    public Organization _this() {
+        
+        if (this.m_objref == null) {
+            try {
+                this.m_objref = OrganizationHelper.narrow(POAUtil.getRef(this));
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        
+        return this.m_objref;
+    }
+
     /**
      * <p>[CORBA interface] Organization ID を取得します。</p>
      *
@@ -129,6 +163,25 @@ public class Organization_impl {
     }
 
     /**
+     * <p> add_organization_property </p>
+     *
+     * @param organization_property OrganizationProperty
+     *
+     */
+    public boolean add_organization_property(final OrganizationProperty organization_property) 
+            throws SystemException, InvalidParameter, NotAvailable, InternalError {
+        try {
+            if( m_orgProperty==null ) m_orgProperty = new OrganizationProperty();
+            synchronized (m_orgProperty) {
+                m_orgProperty = organization_property;
+                return true;
+            }
+        } catch (Exception ex) {
+            throw new InternalError("add_organization_property()");
+        }
+    }
+
+    /**
      * <p>[CORBA interface] OrganizationProperty の値を設定します。<br />
      *
      * OrganizationProperty の NVList に name と value のセットを更新もしくは
@@ -184,12 +237,12 @@ public class Organization_impl {
      */
     public boolean remove_organization_property(final String name)
                 throws InvalidParameter, NotAvailable, InternalError {
-        if(name==null || name.equals("")) throw new InvalidParameter("set_organization_property_value(): Enpty name.");
+        if(name==null || name.equals("")) throw new InvalidParameter("remove_organization_property(): Enpty name.");
         
         NVListHolder nvlist = new NVListHolder();
         nvlist.value = m_orgProperty.properties;
         int index = CORBA_SeqUtil.find(nvlist, new nv_name(name));
-        if( index<0 ) throw new InvalidParameter("set_organization_property_value(): Not found.");
+        if( index<0 ) throw new InvalidParameter("remove_organization_property(): Not found.");
         
         try{
             CORBA_SeqUtil.erase(nvlist, index);
@@ -402,6 +455,20 @@ public class Organization_impl {
         }
     }
     
+    /**
+     * <p> getObjRef </p>
+     *
+     * @return Organization
+     *
+     */
+    public Organization getObjRef() {
+        return m_objref;
+    };
+    /**
+     * <p>  </p>
+     */
+    protected Organization m_objref;
+
     /**
      * <p>Organization の識別子</p>
      */

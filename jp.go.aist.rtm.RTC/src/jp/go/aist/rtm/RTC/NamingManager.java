@@ -1,9 +1,10 @@
 package jp.go.aist.rtm.RTC;
 
 import java.util.Vector;
-
-import jp.go.aist.rtm.RTC.log.LogStream;
-import jp.go.aist.rtm.RTC.log.MedLogbuf;
+import java.util.logging.FileHandler;
+import java.util.logging.ConsoleHandler;
+import java.io.IOException;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 
@@ -19,12 +20,11 @@ public class NamingManager implements NamingBase, CallbackFunction {
      */
     public NamingManager(Manager manager) {
         m_manager = manager;
-        m_MedLogbuf = new MedLogbuf(manager.getLogbuf());
-        rtcout = new LogStream(m_MedLogbuf);
         
-        m_MedLogbuf.setSuffix("naming_svc");
-        m_MedLogbuf.setDateFmt(manager.getConfig().getProperty("logger.date_format"));
-        rtcout.setLogLevel(manager.getConfig().getProperty("logger.log_level"));
+        rtcout = new Logbuf("Manager.NamingManager");
+//        m_MedLogbuf.setSuffix("naming_svc");
+        rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
+        rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
         rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
                    "enable", "disable", false));
     }
@@ -60,7 +60,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
     }
 
     /**
-     * <p>  </p> 
+     * <p> bindObject </p> 
      *
      * @param name 
      * @param mgr
@@ -336,11 +336,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
      */
     protected Manager m_manager;
     /**
-     * <p>Logging用オブジェクト</p>
-     */
-    protected MedLogbuf m_MedLogbuf;
-    /**
      * <p>Logging用フォーマットオブジェクト</p>
      */
-    protected LogStream rtcout;
+    protected Logbuf rtcout;
 }

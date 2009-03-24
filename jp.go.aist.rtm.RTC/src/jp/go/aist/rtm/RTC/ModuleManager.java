@@ -52,14 +52,8 @@ public class ModuleManager {
             m_loadPath.add(loadPath[i].trim());
         }
         
-System.out.println( "ModuleManager::ModuleManager");
         m_absoluteAllowed = StringUtil.toBool(
                 properties.getProperty(ALLOW_ABSPATH), "yes", "no", false);
-if(m_absoluteAllowed){
-System.out.println( "ModuleManager::ModuleManager---m_absoluteAllowd is true.");
-} else {
-System.out.println( "ModuleManager::ModuleManager---m_absoluteAllowd is false.");
-}
         m_downloadAllowed = StringUtil.toBool(
                 properties.getProperty(ALLOW_URL), "yes", "no", false);
         
