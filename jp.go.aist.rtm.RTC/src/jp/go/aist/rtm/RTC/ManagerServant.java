@@ -36,11 +36,16 @@ public class ManagerServant extends RTM.ManagerPOA {
      */
     public ManagerServant() {
         m_mgr = jp.go.aist.rtm.RTC.Manager.instance();
-        this.m_objref = RTM.ManagerHelper.narrow(this._this()._duplicate());
+//        this.m_objref = RTM.ManagerHelper.narrow(this._this()._duplicate());
+//        this.m_objref = RTM.ManagerHelper.narrow(this._this());
+        this.m_objref = this._this();
     }
 
     /**
      * <p> _this </p>
+     *
+     * @return RTM.Manager
+     *
      */
     public RTM.Manager _this() {
         if (this.m_objref == null) {
@@ -58,9 +63,9 @@ public class ManagerServant extends RTM.ManagerPOA {
     /**
      * <p> load_module </p>
      *
-     * @param pathname
-     * @param initcunf
-     * @return
+     * @param pathname String
+     * @param initfunc String
+     * @return RTC.ReturnCode_t
      */
     public RTC.ReturnCode_t load_module(final String pathname, final String initfunc) {
         m_mgr.load(pathname, initfunc);
@@ -68,10 +73,10 @@ public class ManagerServant extends RTM.ManagerPOA {
     }
   
     /**
-     * <p>  </p>
+     * <p> unload_module </p>
      *
-     * @param pathname
-     * @return
+     * @param pathname String
+     * @return RTC.ReturnCode_t
      */
     public RTC.ReturnCode_t unload_module(final String pathname) {
       try {
@@ -84,7 +89,7 @@ public class ManagerServant extends RTM.ManagerPOA {
     /**
      * <p> get_loadable_modules </p>
      *
-     * @return
+     * @return RTM.ModuleProfile[]
      */
     public RTM.ModuleProfile[] get_loadable_modules() {
         ModuleProfileListHolder cprof = new ModuleProfileListHolder();
@@ -107,7 +112,7 @@ System.out.println( "ManagerServant::get_loadable_modules--000--prof.size():"+ p
     /**
      * <p> get_loaded_modules </p>
      *
-     * @return
+     * @return RTM.ModuleProfile[]
      */
     public RTM.ModuleProfile[] get_loaded_modules() {
         ModuleProfileListHolder cprof = new ModuleProfileListHolder();
@@ -130,7 +135,7 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
     /**
      * <p> get_factory_profiles </p>
      *
-     * @return
+     * @return RTM.ModuleProfile[]
      */
     public RTM.ModuleProfile[] get_factory_profiles() {
 
@@ -157,7 +162,7 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
      * <p> create_component </p>
      *
      * @param module_name
-     * @return
+     * @return RTC.RTObject
      *
      */
     public RTC.RTObject create_component(final String module_name) {
@@ -174,7 +179,7 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
      * <p> delete_component </p>
      *
      * @param instance_name
-     * @return
+     * @return RTC.ReturnCode_t
      *
      */
     public RTC.ReturnCode_t delete_component(final String instance_name) {
@@ -185,7 +190,7 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
     /**
      * <p> get_components </p>
      *
-     * @return
+     * @return RTC.RTObject[]
      */
     public RTC.RTObject[] get_components() {
         Vector<RTObject_impl> rtcs = m_mgr.getComponents();
@@ -202,7 +207,7 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
     /**
      * <p> get_component_profiles </p>
      *
-     * @return
+     * @return RTC.ComponentProfile[]
      */
     public RTC.ComponentProfile[] get_component_profiles() {
 
@@ -219,7 +224,7 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
     /**
      * <p> get_profile </p>
      *
-     * @return
+     * @return RTM.ManagerProfile
      */
     public RTM.ManagerProfile get_profile() {
         NVListHolder nvlist = new NVListHolder();
@@ -235,7 +240,7 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
     /**
      * <p> get_configuration </p>
      * 
-     * @return
+     * @return _SDOPackage.NameValue[]
      */
     public _SDOPackage.NameValue[] get_configuration() {
         NVListHolder nvlist = new NVListHolder();
@@ -248,7 +253,7 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
      *
      * @param name
      * @param value
-     * @return
+     * @return RTC.ReturnCode_t
      */
     public RTC.ReturnCode_t set_configuration(final String name, final String value) {
         m_mgr.getConfig().setProperty(name, value);
@@ -258,7 +263,7 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
     /**
      * <p> get_owner </p>
      *
-     * @return
+     * @return RTM.Manager
      */
     public RTM.Manager get_owner() {
         return null;
@@ -267,8 +272,8 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
     /**
      * <p> set_owner </p>
      *
-     * @param ngr
-     * @return
+     * @param mgr
+     * @return RTM.Manager
      *
      */
     public RTM.Manager set_owner(RTM.Manager mgr) {
@@ -278,7 +283,7 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
     /**
      * <p> get_child </p>
      *
-     * @return
+     * @return RTM.Manager
      */
     public RTM.Manager get_child() {
         return null;
@@ -330,6 +335,13 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
         return (RTM.Manager)m_objref._duplicate();
     }
 
+    /**
+     * <p> setObjRef </p>
+     */
+    public void setObjRef(final RTM.Manager rtobj) {
+
+        m_objref = rtobj;
+    }
     /**
      * <p></p>
      */
