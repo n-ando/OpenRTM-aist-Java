@@ -1,21 +1,12 @@
 package RTMExamples.SimpleIO;
 
 
-
-
-
-
-
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.RtcDeleteFunc;
 import jp.go.aist.rtm.RTC.RtcNewFunc;
 import jp.go.aist.rtm.RTC.RegisterModuleFunc;
 import jp.go.aist.rtm.RTC.util.Properties;
-
-
-
-
 
 public class ConsoleIn implements RtcNewFunc, RtcDeleteFunc, RegisterModuleFunc {
 

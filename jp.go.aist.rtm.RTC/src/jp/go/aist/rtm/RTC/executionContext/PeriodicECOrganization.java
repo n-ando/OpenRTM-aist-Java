@@ -158,7 +158,6 @@ public class PeriodicECOrganization extends Organization_impl {
      */
     public PeriodicECOrganization(RTObject_impl rtobj) {
         super(rtobj.getObjRef());
-System.out.println( "PeriodicECOrganization::PeriodicECOrganization--000--" );
         m_rtobj = rtobj;
         m_ec = null;
     }
