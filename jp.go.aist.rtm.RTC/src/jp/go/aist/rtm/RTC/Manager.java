@@ -41,6 +41,12 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
 import RTC.RTObject;
 import RTC.ReturnCode_t;
 
+//<+zxc
+import org.omg.CosNaming.NameComponent;
+import org.omg.CosNaming.NamingContext;
+import org.omg.CosNaming.NamingContextExt;
+import org.omg.CosNaming.NamingContextExtHelper;
+//+>
 /**
 * <p>各コンポーネントの管理を行うクラスです。</p>
 */
@@ -257,6 +263,11 @@ public class Manager {
             return false;
         }
         
+
+//        TestNamingContext();//zxc
+
+        bindManagerServant();
+
         preloadComponent();
 
         precreateComponent();
@@ -266,6 +277,152 @@ public class Manager {
         }
 
         return true;
+    }
+
+    /**
+     * :w
+     *
+     *
+     */
+    public void TestNamingContext() {
+
+        rtcout.println(rtcout.TRACE, "in  TestNamingContext");
+    try {
+        rtcout.println(rtcout.TRACE, "    logging 1");
+        ORB orb = Manager.instance().getORB(); 
+
+//      String args[] = m_config.getProperty("corba.args").split(" ");
+//      java.util.Properties props = new java.util.Properties();
+/*
+        props.put("org.omg.CORBA.ORBInitialPort", "9876");
+        props.put("org.omg.CORBA.ORBInitialHost", "localhost");
+        props.put("com.sun.CORBA.ORBServerPort", "9876");
+        props.put("com.sun.CORBA.ORBServerHost", "localhost");
+*/
+        rtcout.println(rtcout.TRACE, "    logging 1-1");
+//        ORB orb = ORB.init(args, props);
+//        ORB orb = ORB.init(args, null);
+
+        rtcout.println(rtcout.TRACE, "    logging 1-2");
+        POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
+
+        rtcout.println(rtcout.TRACE, "    logging 1-3");
+        rootpoa.the_POAManager().activate();
+
+        rtcout.println(rtcout.TRACE, "    logging 1-4");
+        org.omg.CORBA.Object foo = orb.resolve_initial_references("NameService");
+
+        rtcout.println(rtcout.TRACE, "    logging 1-5");
+        NamingContextExt ctx = NamingContextExtHelper.narrow(foo);
+        org.omg.CORBA.Object objref = ctx;
+
+        rtcout.println(rtcout.TRACE, "    logging 2");
+        NameComponent name1[] = ctx.to_name("plans");
+
+        try{
+            ctx.rebind(name1, objref);
+            rtcout.println(rtcout.TRACE, "    logging 2-1");
+        } catch(Exception e) {
+            rtcout.println(rtcout.TRACE, "    logging 2-1" + e);
+        }
+        try{
+            name1 = ctx.to_name("bar");
+            ctx.rebind(name1, objref);
+            rtcout.println(rtcout.TRACE, "    logging 2-2");
+        } catch(Exception e) {
+            rtcout.println(rtcout.TRACE, "    logging 2-2" + e);
+        }
+      
+        try{
+            name1 = ctx.to_name("lash/back");
+            ctx.rebind(name1, objref);
+            rtcout.println(rtcout.TRACE, "    logging 2-3");
+        } catch(Exception e) {
+            rtcout.println(rtcout.TRACE, "    logging 2-3" + e);
+        }
+
+        NamingContextExt ctxx;
+        try{
+            name1 = ctx.to_name("eri");
+            ctxx = NamingContextExtHelper.narrow(ctx.bind_new_context(name1));
+            rtcout.println(rtcout.TRACE, "    logging 2-4");
+        } catch(Exception e) {
+            rtcout.println(rtcout.TRACE, "    logging 2-4" + e);
+        }
+
+        try{
+            name1 = ctx.to_name("eri/foo");
+            rtcout.println(rtcout.TRACE, "    logging 2-5 length:"+ name1.length);
+            ctxx = NamingContextExtHelper.narrow(ctx.bind_new_context(name1));
+            rtcout.println(rtcout.TRACE, "    logging 2-5");
+        } catch(Exception e) {
+            rtcout.println(rtcout.TRACE, "    logging 2-5" + e);
+        }
+
+        try{
+            name1 = ctx.to_name("eri/foo/zxc");
+            rtcout.println(rtcout.TRACE, "    logging 2-6 length:"+ name1.length);
+            ctxx = NamingContextExtHelper.narrow(ctx.bind_new_context(name1));
+            rtcout.println(rtcout.TRACE, "    logging 2-6");
+        } catch(Exception e) {
+            rtcout.println(rtcout.TRACE, "    logging 2-6" + e);
+        }
+
+        try{
+            name1 = ctx.to_name("eri/foo/zxc/abc");
+            ctx.rebind(name1, objref);
+            rtcout.println(rtcout.TRACE, "    logging 2-7");
+        } catch(Exception e) {
+            rtcout.println(rtcout.TRACE, "    logging 2-7" + e);
+        }
+
+ 
+        NameComponent name2[] = ctx.to_name("Personal");
+        NamingContextExt ctx2 = NamingContextExtHelper.narrow(ctx.bind_new_context(name2));
+        rtcout.println(rtcout.TRACE, "    logging 3");
+
+        try{
+            rtcout.println(rtcout.TRACE, "    logging 4");
+            NameComponent name3[] = ctx.to_name("schedule");
+            ctx2.rebind(name3, objref);
+        } catch(Exception e) {
+            rtcout.println(rtcout.TRACE, "    logging 4" + e);
+        }
+
+        try{
+            NameComponent name4[] = ctx.to_name("calendar");
+            ctx2.rebind(name4, objref);
+            rtcout.println(rtcout.TRACE, "    logging 5");
+        } catch(Exception e) {
+            rtcout.println(rtcout.TRACE, "    logging 5" + e);
+        }
+
+        NameComponent name5[] = ctx.to_name("TestContext1");
+        NamingContextExt ctx5 = NamingContextExtHelper.narrow(ctx2.bind_new_context(name5));
+        rtcout.println(rtcout.TRACE, "    logging 6");
+
+        try{
+            NameComponent name6[] = ctx.to_name("TestObject");
+            ctx5.rebind(name6, objref);
+            rtcout.println(rtcout.TRACE, "    logging 7");
+        } catch(Exception e) {
+            rtcout.println(rtcout.TRACE, "    logging 7" + e);
+        }
+
+
+        try{
+            NameComponent name8[] = ctx.to_name("OnlyContext");
+            NamingContextExt ctx8 = NamingContextExtHelper.narrow(ctx2.bind_new_context(name8));
+            rtcout.println(rtcout.TRACE, "    logging 8");
+        } catch(Exception e) {
+            rtcout.println(rtcout.TRACE, "    logging 8" + e);
+        }
+
+      } catch(Exception e) {
+        rtcout.println(rtcout.TRACE, "    logging exception");
+        e.printStackTrace(System.err);
+      }
+      rtcout.println(rtcout.TRACE, "out TestNamingContext");
     }
 
     /**
@@ -351,7 +508,7 @@ public class Manager {
      */
     public String load(final String moduleFileName, final String initFunc) {
         
-        rtcout.println(rtcout.TRACE, "Manager.load()");
+        rtcout.println(rtcout.TRACE, "Manager.load("+moduleFileName+","+initFunc+")");
         
         try {
             return m_module.load(moduleFileName, initFunc);
@@ -371,7 +528,7 @@ public class Manager {
      */ 
     public void unload(final String moduleFileName) throws Exception {
         
-        rtcout.println(rtcout.TRACE, "Manager.unload()");
+        rtcout.println(rtcout.TRACE, "Manager.unload("+moduleFileName+")");
         
         m_module.unload(moduleFileName);
     }
@@ -522,7 +679,7 @@ public class Manager {
     /**
      * <p>RTコンポーネントを生成します。</p>
      * 
-     * @param moduleName モジュール名
+     * @param comp_args モジュール名
      * @return 生成されたRTコンポーネントオブジェクト
      */
     public RTObject_impl createComponent(final String comp_args) {
@@ -660,14 +817,14 @@ public class Manager {
      * @param comp_arg String
      * @param comp_id Properties
      * @param comp_conf Propertie
-     * @return
+     * @return boolean
      *
      */
     public boolean procComponentArgs(final String comp_arg,
                                      Properties comp_id,
                                      Properties comp_conf)
     {
-        rtcout.println(rtcout.TRACE, "Manager.procComponentArgs()");
+        rtcout.println(rtcout.TRACE, "Manager.procComponentArgs("+comp_arg+")");
 
         String[] id_and_conf = comp_arg.split("\\?");
         // arg should be "id?[conf]". id is mandatory, conf is optional
@@ -705,7 +862,7 @@ public class Manager {
         }
         for (int i = 1; i < 5; ++i) {
             comp_id.setProperty(prof[i], id[i].trim());
-            rtcout.println(rtcout.TRACE, "RTC basic propfile " + prof[i] + ":" + id[i]);
+            rtcout.println(rtcout.TRACE, "RTC basic propfile " + prof[i] + ":" + id[i].trim());
         }
 
         if (id_and_conf.length == 2) {
@@ -769,12 +926,12 @@ public class Manager {
     /**
      * <p> createContext </p>
      *
-     * @param ec_arrs String
-     * @return
+     * @param ec_args String
+     * @return ExecutionContextBase
      *
      */
     public ExecutionContextBase createContext(final String ec_args) {
-        rtcout.println(rtcout.TRACE, "Manager::createContext()");
+        rtcout.println(rtcout.TRACE, "Manager.createContext("+ec_args+")");
         rtcout.println(rtcout.TRACE, "ExecutionContext type: " + m_config.getProperty("exec_cxt.periodic.type") );
 
         StringBuffer ec_id = new StringBuffer();
@@ -796,17 +953,17 @@ public class Manager {
     /**
      * <p> procContextArgs </p>
      *
-     * @param ec_arrs String
+     * @param ec_args String
      * @param ec_id StringBuffer
      * @param ec_conf Properties
-     * @return
+     * @return boolean
      *
      */
     public boolean procContextArgs(final String ec_args,
                                    StringBuffer ec_id,
                                    Properties ec_conf) {
 
-        rtcout.println(rtcout.TRACE, "Manager::procContextArgs()");
+        rtcout.println(rtcout.TRACE, "Manager.procContextArgs("+ec_args+","+ec_id.toString()+")");
 
         String[] id_and_conf = ec_args.split("\\?");
         if (id_and_conf.length != 1 && id_and_conf.length != 2) {
@@ -828,6 +985,7 @@ public class Manager {
                 rtcout.println(rtcout.TRACE, "EC property "+ k[0] + ":" + k[1]);
              }
         }
+
         return true;
     }
     /**
@@ -1063,16 +1221,6 @@ public class Manager {
             rtcout.setLogLock(StringUtil.toBool(
                     m_config.getProperty("logger.stream_lock"), "enable", "disable", false));
 
-//<+[zxc424]
-rtcout.println(rtcout.FATAL, "This is used to confirm the operates of Logger. ---FATAL---");
-rtcout.println(rtcout.ERROR, "This is used to confirm the operates of Logger. ---ERROR---");
-rtcout.println(rtcout.WARN, "This is used to confirm the operates of Logeer. ---WARN---");
-rtcout.println(rtcout.INFO, "This is used to confirm the operates of Logger. ---INFO---");
-rtcout.println(rtcout.DEBUG, "This is used to confirm the operates of Logger. ---DEBUG---");
-rtcout.println(rtcout.TRACE, "This is used to confirm the operates of Logger. ---TRACE---");
-rtcout.println(rtcout.VERBOSE, "This is used to confirm the operates of Logger. ---VERBOSE---");
-rtcout.println(rtcout.PARANOID, "This is used to confirm the operates of Logger. ---PARANOID---");
-//+>
             rtcout.println(rtcout.INFO, m_config.getProperty("openrtm.version"));
             rtcout.println(rtcout.INFO, "Copyright (C) 2003-2008");
             rtcout.println(rtcout.INFO, "  Noriaki Ando");
@@ -1403,7 +1551,7 @@ rtcout.println(rtcout.PARANOID, "This is used to confirm the operates of Logger.
      */
     protected boolean initExecContext() {
         
-        rtcout.println(rtcout.TRACE, "Manager::initExecContext()");
+        rtcout.println(rtcout.TRACE, "Manager.initExecContext()");
         
         PeriodicExecutionContext.PeriodicExecutionContextInit(this);
         ExtTrigExecutionContext.ExtTrigExecutionContextInit(this);
@@ -1418,7 +1566,7 @@ rtcout.println(rtcout.PARANOID, "This is used to confirm the operates of Logger.
      * @return boolan
      */
     protected boolean initComposite() {
-        rtcout.println(rtcout.TRACE, "Manager::initComposite()");
+        rtcout.println(rtcout.TRACE, "Manager.initComposite()");
         PeriodicECSharedComposite.PeriodicECSharedCompositeInit(this);
 
         return true;
@@ -1431,11 +1579,29 @@ rtcout.println(rtcout.PARANOID, "This is used to confirm the operates of Logger.
     }
     
     /**
-     * <p>  </p>
+     * <p> initManagerServant </p>
+     *
+     * @return boolean
      *
      */
     protected boolean initManagerServant() {
         m_mgrservant = new ManagerServant();
+        return true;
+    }
+  
+    /**
+     * <p> bindManagerServant </p>
+     *
+     * @return boolean
+     *
+     */
+    protected boolean bindManagerServant() {
+
+        if( m_mgrservant == null) {
+            rtcout.println(rtcout.ERROR, "ManagerServant is not created.");
+            return false;
+        }
+
         Properties prop = (m_config.getNode("manager"));
         String[] names=prop.getProperty("naming_formats").split(",");
 
@@ -1479,7 +1645,7 @@ rtcout.println(rtcout.PARANOID, "This is used to confirm the operates of Logger.
 
         return true;
     }
-  
+
     /**
      *
      */

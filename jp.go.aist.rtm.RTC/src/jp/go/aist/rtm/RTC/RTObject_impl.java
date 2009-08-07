@@ -68,7 +68,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     /**
      * <p>RTコンポーネントのデフォルト・コンポーネント・プロファイルです。</p>
      * 
-     * @return デフォルト・コンポーネント・プロファイル
+     *
      */
     static final String default_conf[] = {
       "implementation_id", "",
@@ -101,7 +101,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_pPOA = manager.getPOA();
         m_portAdmin = new PortAdmin(manager.getORB(), manager.getPOA());
         m_created = true;
-//        m_alive = false;
         m_properties = new Properties(default_conf);
         m_configsets = new ConfigAdmin(m_properties.getNode("conf"));
         
@@ -139,10 +138,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_pPOA = poa;
         m_portAdmin = new PortAdmin(orb, poa);
         m_created = true;
-//        m_alive = false;
         m_properties = new Properties(default_conf);
         m_configsets = new ConfigAdmin(m_properties.getNode("conf"));
-//        
+        
         m_objref = this._this();
         m_pSdoConfigImpl = new Configuration_impl(m_configsets);
         m_pSdoConfig = m_pSdoConfigImpl.getObjRef();
@@ -165,7 +163,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     }
 
     /**
-     *  <p>  </p>
+     *  <p> _this </p>
      *
      *  @return DataFlowComponent
      *
@@ -189,6 +187,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onInitialize(){
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onInitialize()");
         return ReturnCode_t.RTC_OK;
     }
 
@@ -198,6 +197,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onFinalize() {
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onFinalize()");
         return ReturnCode_t.RTC_OK;
     }
 
@@ -209,6 +209,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onStartup(int ec_id) {
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onStartup("+ec_id+")");
         return ReturnCode_t.RTC_OK;
     }
 
@@ -220,6 +221,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onShutdown(int ec_id) {
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onShutdown("+ec_id+")");
         return ReturnCode_t.RTC_OK;        
     }
 
@@ -231,6 +233,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onActivated(int ec_id) {
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onActivated("+ec_id+")");
         return ReturnCode_t.RTC_OK;                
     }
 
@@ -242,6 +245,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onDeactivated(int ec_id) {
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onDeactivated("+ec_id+")");
         return ReturnCode_t.RTC_OK;
     }
 
@@ -253,6 +257,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onExecute(int ec_id) {
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onExecute("+ec_id+")");
         return ReturnCode_t.RTC_OK;
     }
 
@@ -264,6 +269,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onAborting(int ec_id) {
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onAborting("+ec_id+")");
         return ReturnCode_t.RTC_OK;
     }
 
@@ -275,6 +281,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onError(int ec_id) {
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onError("+ec_id+")");
         return ReturnCode_t.RTC_OK;        
     }
 
@@ -286,6 +293,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onReset(int ec_id) {
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onReset("+ec_id+")");
         return ReturnCode_t.RTC_OK;        
     }
 
@@ -298,6 +306,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onStateUpdate(int ec_id) {
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onStateUpdete("+ec_id+")");
         return ReturnCode_t.RTC_OK;
     }
 
@@ -309,6 +318,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return 実行結果
      */
     protected ReturnCode_t onRateChanged(int ec_id) {
+        rtcout.println(rtcout.TRACE, "RTObject_impl.onRateChanged("+ec_id+")");
         return ReturnCode_t.RTC_OK;        
     }
 
@@ -328,13 +338,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t initialize() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::initialize()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.initialize()");
 
         if( !m_created ) return ReturnCode_t.PRECONDITION_NOT_MET;
-       // at least one EC must be attached
-//zxc       if (m_ecMine.value.length == 0) {
-//           return ReturnCode_t.PRECONDITION_NOT_MET;
-//       }
 
         ReturnCode_t ret;
         ret = on_initialize();
@@ -346,7 +352,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         ec_args += m_properties.getProperty("exec_cxt.periodic.type");
         ec_args += "?";
         ec_args += "rate=" + m_properties.getProperty("exec_cxt.periodic.rate");
-        System.out.println( "ec_args: " + ec_args );
+
         ExecutionContextBase ec;
         ec = Manager.instance().createContext(ec_args);
         if (ec == null) return ReturnCode_t.RTC_ERROR;
@@ -356,14 +362,14 @@ public class RTObject_impl extends DataFlowComponentPOA {
         ExecutionContextService ecv;
         ecv = ec.getObjRef();
         if (ecv == null) return ReturnCode_t.RTC_ERROR;
-//        CORBA_SeqUtil.push_back(m_ecMine,
-//                                (ExecutionContextService)ecv._duplicate());
+
         ec.bindComponent(this);
 
         // -- entering alive state --
         // at least one EC must be attached
         if (m_ecMine.value.length == 0) return ReturnCode_t.PRECONDITION_NOT_MET;
         for(int intIdx=0;intIdx<m_ecMine.value.length;++intIdx) {
+            rtcout.println(rtcout.DEBUG, "EC[" +intIdx +"] starting");
             m_ecMine.value[intIdx].start();
         }
 
@@ -393,7 +399,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t _finalize()  throws SystemException {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::_finalize()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl._finalize()");
 
         if( m_created ) return ReturnCode_t.PRECONDITION_NOT_MET;
       
@@ -407,7 +413,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
       
         ReturnCode_t ret = on_finalize();
         shutdown();
-//        m_alive = false;
         return ret;
     }
 
@@ -430,7 +435,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t exit() throws SystemException {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::exit()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.exit()");
 
         if (m_created) return ReturnCode_t.PRECONDITION_NOT_MET;
 
@@ -470,7 +475,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return Alive状態判断結果
      */
     public boolean is_alive(ExecutionContext exec_context) throws SystemException {
-        rtcout.println(rtcout.TRACE, "RTObject_impl::is_alive()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.is_alive()");
 
         for(int i=0, len=m_ecMine.value.length; i < len; ++i) {
             if (exec_context._is_equivalent(m_ecMine.value[i]))
@@ -491,7 +496,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ExecutionContext[] get_owned_contexts() throws SystemException {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_owned_contexts()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_owned_contexts()");
 
         ExecutionContextListHolder execlist;
         execlist = new ExecutionContextListHolder();
@@ -511,7 +516,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ExecutionContext get_context(int ec_id) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_context()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_context(" +ec_id +")");
 
         ExecutionContext ec;
         // owned EC
@@ -544,7 +549,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *
      */ 
     public ExecutionContext[] get_participating_contexts() throws SystemException {
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_participating_contexts()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_participating_contexts()");
 
         ExecutionContextListHolder execlist;
         execlist = new ExecutionContextListHolder();
@@ -566,7 +571,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public int get_context_handle(ExecutionContext cxt) throws SystemException {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_context_handle()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_context_handle()");
 
         int ech;
         ech = 0;
@@ -592,7 +597,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public int bindContext(ExecutionContext exec_context)
     {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::bindContext()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.bindContext()");
 
         // ID: 0 - (offset-1) : owned ec
         // ID: offset -       : participating ec
@@ -609,7 +614,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         for(int i=0, len=m_ecMine.value.length; i < len; ++i) {
             if (m_ecMine.value[i]==null) {
                 m_ecMine.value[i] = (ExecutionContextService)ecs._duplicate();
-                return i + ECOTHER_OFFSET;
+                return i;
             }
         }
 
@@ -617,8 +622,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
         CORBA_SeqUtil.push_back(m_ecMine, 
                                 (ExecutionContextService)ecs._duplicate());
     
-        return (m_ecMine.value.length - 1) + ECOTHER_OFFSET;
-  }
+        return (m_ecMine.value.length - 1);
+    }
 
 
   //============================================================
@@ -632,7 +637,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ComponentProfile get_component_profile() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_component_profile()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_component_profile()");
 
         try {
             ComponentProfile profile = new ComponentProfile();
@@ -660,7 +665,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public PortService[] get_ports() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_ports()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_ports()");
 
         try {
             return m_portAdmin.getPortList().value;
@@ -679,7 +684,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public int attach_context(ExecutionContext exec_context) throws SystemException {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::attach_context()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.attach_context()");
 
         // ID: 0 - (offset-1) : owned ec
         // ID: offset -       : participating ec
@@ -715,7 +720,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t detach_context(int ec_id) throws SystemException {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::detach_context()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.detach_context(" +ec_id +")");
 
         int len = m_ecOther.value.length;
         // ID: 0 - (offset-1) : owned ec
@@ -743,10 +748,21 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_initialize() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_initialize()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_initialize()");
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            String active_config;
+            active_config = m_properties.getProperty("active_config");
+            if (active_config.length()==0 || active_config.equals("")){
+                m_configsets.update("default");
+            } else {
+                if (m_configsets.haveConfig(active_config)) {
+                    m_configsets.update(active_config);
+                } else {
+                    m_configsets.update("default");
+                }
+            }
             ret = onInitialize();
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
@@ -761,7 +777,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_finalize() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_finalize()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_finalize()");
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
@@ -782,7 +798,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_startup(int ec_id) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_startup()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_startup(" +ec_id +")");
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
@@ -803,7 +819,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_shutdown(int ec_id) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_shutdown()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_shutdown(" +ec_id +")");
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
@@ -824,7 +840,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_activated(int ec_id) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_activated()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_activated("+ec_id +")");
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
@@ -846,7 +862,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_deactivated(int ec_id) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_deactivated()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_deactivated(" +ec_id +")");
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
@@ -867,7 +883,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_aborting(int ec_id) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_aborting()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_aborting(" +ec_id +")");
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
@@ -888,7 +904,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_error(int ec_id) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_error()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_error(" +ec_id +")");
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
@@ -910,7 +926,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_reset(int ec_id) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_reset()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_reset(" +ec_id +")");
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
@@ -931,7 +947,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_execute(int ec_id) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_execute()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_execute(" +ec_id +")");
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
@@ -952,7 +968,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_state_update(int ec_id) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_state_update()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_state_update(" +ec_id +")");
 
         ReturnCode_t ret =ReturnCode_t.RTC_ERROR;
         try {
@@ -974,7 +990,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ReturnCode_t on_rate_changed(int ec_id) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::on_rate_changed()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.on_rate_changed("+ec_id+")");
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
@@ -996,7 +1012,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public Organization[] get_owned_organizations() throws NotAvailable {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_owned_organizations()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_owned_organizations()");
 
         try {
             return m_sdoOwnedOrganizations.value.clone();
@@ -1018,7 +1034,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public String get_sdo_id() throws NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_sdo_id()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_sdo_id()");
 
         try {
             String sdo_id = m_profile.instance_name;
@@ -1041,7 +1057,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public String get_sdo_type() throws NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_sdo_type()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_sdo_type()");
 
         try {
             String sdo_type = m_profile.description;
@@ -1064,7 +1080,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public DeviceProfile get_device_profile() throws NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_device_profile()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_device_profile()");
 
         try {
             DeviceProfile dprofile = m_pSdoConfigImpl.getDeviceProfile();
@@ -1088,7 +1104,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public ServiceProfile[] get_service_profiles() throws NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_service_profiles()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_service_profiles()");
 
         try {
             return m_pSdoConfigImpl.getServiceProfiles().value;
@@ -1112,7 +1128,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public ServiceProfile get_service_profile(String id) throws InvalidParameter, NotAvailable, InternalError {
 
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_service_profile()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_service_profile("+id +")");
 
         try {
             if( id==null || id.equals("") ) throw new InvalidParameter("get_service_profile(): Empty name.");
@@ -1144,7 +1160,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public SDOService get_sdo_service(String id) throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_sdo_service()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_sdo_service("+id +")");
 
         try {
             if( id==null || id.equals("") ) throw new InvalidParameter("get_service(): Empty name.");
@@ -1181,7 +1197,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public Configuration get_configuration() throws InterfaceNotImplemented, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_configuration()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_configuration()");
 
         if( m_pSdoConfig==null) throw new InterfaceNotImplemented();
         try {
@@ -1209,12 +1225,11 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public Monitoring get_monitoring() throws InterfaceNotImplemented, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_monitoring()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_monitoring()");
 
         throw new InterfaceNotImplemented();
 
 
-//zxc        return null;
     }
 
     /**
@@ -1232,7 +1247,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public Organization[] get_organizations() throws NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_organizations()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_organizations()");
 
         try {
             OrganizationListHolder orgList = new OrganizationListHolder(m_pSdoConfigImpl.getOrganizations().value);
@@ -1254,7 +1269,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public NameValue[] get_status_list() throws NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_status_list()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_status_list()");
 
         try {
             return m_sdoStatus.value.clone(); 
@@ -1279,7 +1294,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public Any get_status(String name) throws InvalidParameter, NotAvailable, InternalError {
 
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::get_status()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.get_status("+name+")");
 
         int index = CORBA_SeqUtil.find(m_sdoStatus, new nv_name(name));
         if( index<0 ) throw new InvalidParameter("get_status(): Not found");
@@ -1299,7 +1314,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public final String getInstanceName() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::getInstanceName()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.getInstanceName()");
 
         return m_profile.instance_name;
     }
@@ -1310,7 +1325,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void setInstanceName(final String instance_name) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::setInstanceName()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.setInstanceName(" + instance_name + ")");
 
         m_properties.setProperty("instance_name", instance_name);
         m_profile.instance_name = m_properties.getProperty("instance_name");
@@ -1322,7 +1337,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public final String getTypeName() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::getTypeName()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.getTypeName()");
 
         return m_profile.type_name;
     }
@@ -1333,7 +1348,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public final String getCategory() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::getCategory()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.getCategory()");
 
         return m_profile.category;
     }
@@ -1344,7 +1359,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public String[] getNamingNames() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::getNamingNames()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.getNamingNames()");
 
         return m_properties.getProperty("naming.names").split(",");
     }
@@ -1355,7 +1370,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void setObjRef(final RTObject rtobj) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::setObjRef()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.setObjRef()");
 
         m_objref = rtobj;
     }
@@ -1366,7 +1381,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public final RTObject getObjRef() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::getObjRef()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.getObjRef()");
 
         return (RTObject)m_objref._duplicate();
     }
@@ -1381,7 +1396,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void setProperties(final Properties prop) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::setProperties()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.setProperties()");
 
         m_properties.merge(prop);
         try {
@@ -1392,7 +1407,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     }
 
     /**
-     * <p> syncAttributesByProperties <\p>
+     * <p> syncAttributesByProperties </p>
      */
     protected void syncAttributesByProperties() throws Exception {
         // Properties --> DeviceProfile
@@ -1424,7 +1439,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public Properties getProperties() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::getProperties()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.getProperties()");
 
         return m_properties;
     }
@@ -1440,7 +1455,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public boolean bindParameter(final String param_name, ValueHolder var, final String def_val) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::bindParameter()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.bindParameter("+param_name+"," +def_val +")");
 
         m_configsets.bindParameter(param_name, var, def_val);
         return true;
@@ -1453,7 +1468,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void updateParameters(final String config_set) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::updateParameters()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.updateParameters("+config_set+")");
 
         m_configsets.update(config_set);
         return;
@@ -1474,7 +1489,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void registerPort(PortBase port) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::registerPort()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.registerPort()");
 
         m_portAdmin.registerPort(port);
         port.setOwner(this.getObjRef());
@@ -1490,7 +1505,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void registerPort(PortService port) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::registerPort()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.registerPort()");
 
         m_portAdmin.registerPort(port);
         return;
@@ -1508,7 +1523,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public <DataType, Buffer> void registerInPort(Class<DataType> DATA_TYPE_CLASS, 
                             final String name, InPort<DataType> inport) throws Exception {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::registerInPort()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.registerInPort()");
 
         String propkey = "port.dataport." + name + ".tcp_any";
         PortBase port = new DataInPort(DATA_TYPE_CLASS, name, inport, m_properties.getNode(propkey));
@@ -1527,7 +1542,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public <DataType, Buffer> void registerOutPort(Class<DataType> DATA_TYPE_CLASS, 
                           final String name, OutPort<DataType> outport) throws Exception {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::registerOutPort()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.registerOutPort()");
 
         String propkey = "port.dataport." + name + ".tcp_any";
         PortBase port = new DataOutPort(DATA_TYPE_CLASS, name, outport, m_properties.getNode(propkey));
@@ -1543,7 +1558,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void deletePort(PortBase port) {
 
-      rtcout.println(rtcout.TRACE, "RTObject_impl::deletePort()");
+      rtcout.println(rtcout.TRACE, "RTObject_impl.deletePort()");
 
       m_portAdmin.deletePort(port);
       return;
@@ -1556,7 +1571,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void deletePort(PortService port) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::deletePort()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.deletePort()");
 
       m_portAdmin.deletePort(port);
       return;
@@ -1569,7 +1584,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void deletePortByName(final String port_name) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::deletePortByNamed()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.deletePortByNamed("+port_name+")");
 
         m_portAdmin.deletePortByName(port_name);
         return;
@@ -1580,7 +1595,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void finalizePorts() {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl::finalizePorts()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.finalizePorts()");
 
         m_portAdmin.finalizePorts();
     }
@@ -1671,10 +1686,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * 生成済みフラグ
      */
     protected boolean m_created;
-    /**
-     * aliveフラグ
-     */
-//    protected boolean m_alive;
     /**
      * RTC のプロパティ
      */

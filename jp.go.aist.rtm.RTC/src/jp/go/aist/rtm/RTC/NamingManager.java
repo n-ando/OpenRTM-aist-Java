@@ -36,7 +36,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param name_server NameServer名称
      */
     public void registerNameServer(final String method, final String name_server) {
-        rtcout.println(rtcout.TRACE, "NamingManager::registerNameServer(" + method + ", " + name_server + ")");
+        rtcout.println(rtcout.TRACE, "NamingManager.registerNameServer(" + method + ", " + name_server + ")");
         NamingBase name = createNamingObj(method, name_server);
         m_names.add(new Names(method, name_server, name));
     }
@@ -48,7 +48,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param rtobj bind対象オブジェクト
      */
     public void bindObject(final String name, final RTObject_impl rtobj) {
-        rtcout.println(rtcout.TRACE, "NamingManager::bindObject(" + name + ")");
+        rtcout.println(rtcout.TRACE, "NamingManager.bindObject(" + name + ")");
         synchronized (m_names) {
             for(int intIdx=0;intIdx<m_names.size();++intIdx ) {
                 if( m_names.elementAt(intIdx).ns != null ) {
@@ -66,7 +66,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param mgr
      */
     public void bindObject(final String name, final ManagerServant mgr) {
-        rtcout.println(rtcout.TRACE, "NamingManager::bindObject(" + name + ")");
+        rtcout.println(rtcout.TRACE, "NamingManager.bindObject(" + name + ")");
         synchronized (m_names) {
             for(int intIdx=0;intIdx<m_names.size();++intIdx ) {
                 if( m_names.elementAt(intIdx).ns != null ) {
@@ -81,7 +81,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * <p>NameServerの情報を更新します。</p>
      */
     public void update(){
-        rtcout.println(rtcout.TRACE, "NamingManager::update()");
+        rtcout.println(rtcout.TRACE, "NamingManager.update()");
         
         synchronized (m_names) {
             for( int intIdx=0;intIdx<m_names.size(); ++intIdx ) {
@@ -109,7 +109,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param name unbind対象オブジェクト名
      */
     public void unbindObject(final String name) {
-        rtcout.println(rtcout.TRACE, "NamingManager::unbindObject(" + name + ")");
+        rtcout.println(rtcout.TRACE, "NamingManager.unbindObject(" + name + ")");
         //
         synchronized (m_names) {
             for( int intIdx=0;intIdx<m_names.size();++intIdx ) {
@@ -125,7 +125,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * <p>全てのオブジェクトをNameServerからunbindします。</p>
      */
     protected void unbindAll() {
-        rtcout.println(rtcout.TRACE, "NamingManager::unbindAll(): " + m_compNames.size() + " names.");
+        rtcout.println(rtcout.TRACE, "NamingManager.unbindAll(): " + m_compNames.size() + " names.");
         synchronized (m_compNames) {
             int compsnum = m_compNames.size();
             for(int intIdx=0;intIdx<compsnum;intIdx++) {
@@ -202,10 +202,10 @@ public class NamingManager implements NamingBase, CallbackFunction {
     }
 
     /**
-     * <p>  <p>
+     * <p> registerMgrName <p>
      *
-     * @param name
-     * @param mgr
+     * @param name String
+     * @param mgr ManagerServant
      */
     protected void registerMgrName(final String name, final ManagerServant mgr) {
         for(int intIdx=0;intIdx<m_mgrNames.size();++intIdx ) {
@@ -292,11 +292,11 @@ public class NamingManager implements NamingBase, CallbackFunction {
     }
     
     /**
-     * <p>  </p>
+     * <p> class Mgr </p>
      */
     protected class Mgr {
         /**
-         * <p>  </p>
+         * <p> constructor </p>
          * 
          * @param n
          * @param obj
