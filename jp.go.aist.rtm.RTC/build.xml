@@ -63,6 +63,17 @@
 		<antcall target="javaExamples" />
 		<antcall target="javaDoc" />
 	</target>
+	
+        <target name="buildTests">
+		<antcall target="idlCompile" />
+		<antcall target="idlCompileEtc" />
+		<antcall target="clean" />
+		<antcall target="compile" />
+		<antcall target="jar" />
+		<antcall target="javaExamples" />
+		<antcall target="compile_tests" />
+		<antcall target="junit" />
+	</target>
 
 	<target name="jar" description="jarファイルを作成します">
 		<mkdir dir="${dist.dir}" />
@@ -154,6 +165,37 @@
 		<javac srcdir="${source.main}:${source.examples}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
 	</target>
 
+	<target name="compile_tests" description="ソースをコンパイルします">
+		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}:${source.main}:${source.examples}:${source.test}:${source.tests.bind}" destdir="${build.dir.test}" classpath="lib/commons-cli-1.1.jar:${env.JUNIT_HOME}/junit.jar:" encoding="UTF-8" />
+	</target>
+
+	<target name="junit" description="junit ソースをコンパイルします">
+		<mkdir dir="${build.dir.test}/reports" />
+		<delete dir="${build.dir.test}/reports/*.xml" />
+		<delete dir="${build.dir.test}/reports/*.txt" />
+		<junit haltonfailure="No" >
+			<formatter type="xml" usefile="true" />
+			<classpath>
+				<pathelement path="bin:${env.JUNIT_HOME}/junit:${env.JUNIT_HOME}/junit/samples:${env.JUNIT_HOME}:${env.ANT_HOME}:${build.dir.test}"/>
+				<pathelement location="${env.JUNIT_HOME}/junit.jar"/>
+				<pathelement location="${env.ANT_HOME}/lib/ant-junit.jar"/>
+			</classpath>
+			<!--
+			<test name="jp.go.aist.rtm.RTC.FactoryTest"/>
+			<test name="jp.go.aist.rtm.RTC.StateMachineTests"/>
+			-->
+			<batchtest todir="${build.dir.test}/reports">
+				<fileSet dir="${build.dir.test}">
+					<include name="jp/go/aist/rtm/RTC/*Test.class" />
+					<include name="jp/go/aist/rtm/RTC/*Tests.class" />
+					<include name="jp/go/aist/rtm/RTC/**/*Test.class" />
+					<include name="jp/go/aist/rtm/RTC/**/*Tests.class" />
+					<exclude name="jp/go/aist/rtm/RTC/SampleTest.class" />
+				</fileSet>
+			</batchtest>
+		</junit>
+		<echo>All Test complete!</echo>
+	</target>
 	<target name="dist" description="ソースをエクスポートします">
 		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}.zip" />
