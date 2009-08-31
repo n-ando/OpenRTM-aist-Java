@@ -1,10 +1,17 @@
 package jp.go.aist.rtm.RTC.port.publisher;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
+import jp.go.aist.rtm.RTC.port.ReturnCode;
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.port.InPortConsumer;
+
 /**
  * <p>データ送出タイミングを管理して送出を駆動するPublisherのベース実装クラスです。</p>
  */
 public abstract class PublisherBase {
-
     /**
      * <p>送出タイミングを待つオブジェクトに、送出タイミングであることを通知します。</p>
      *
@@ -22,5 +29,55 @@ public abstract class PublisherBase {
      */
     public void destruct() {
     }
+
+    /**
+     * <p> init </p>
+     *
+     * @param prop
+     * @retrun ReturnCode
+     */
+    public abstract ReturnCode init(Properties prop);
+    /**
+     * <p> setConsumer </p>
+     *
+     * @param consumer
+     * @retrun ReturnCode
+     */
+    public abstract ReturnCode setConsumer(InPortConsumer consumer);
+    /**
+     * <p> setBuffer </p>
+     *
+     * @param buffer
+     * @retrun ReturnCode
+     */
+    public abstract ReturnCode setBuffer(BufferBase<OutputStream> buffer);
+    /**
+     * <p> write </p>
+     *
+     * @param data
+     * @param sec
+     * @param usec
+     * @retrun ReturnCode
+     */
+    public abstract ReturnCode write(final OutputStream data, long sec, long usec);
+    /**
+     * <p> isActive </p>
+     *
+     * @retrun boolean 
+     */
+    public abstract boolean isActive();
+    /**
+     * <p> activate </p>
+     *
+     * @retrun ReturnCode 
+     */
+    public abstract ReturnCode activate();
+    /**
+     * <p> deactivate </p>
+     *
+     * @retrun ReturnCode 
+     */
+    public abstract ReturnCode deactivate();
+
 
 }
