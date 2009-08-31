@@ -694,4 +694,30 @@ public class Properties {
         
         return out;
     }
+    public String _dump(String out, final Properties curr, int index) {
+        
+        String crlf = System.getProperty("line.separator");
+        if (index != 0) {
+            out = out +indent(index) + "- " + curr.name;
+        }
+        
+        if (curr.leaf.isEmpty()) {
+            if (curr.value.length() == 0) {
+                out = out + ": " + curr.default_value + crlf;
+            } else {
+                out = out + ": " + curr.value + crlf;
+            }
+            return out;
+        }
+
+        if (index != 0) {
+            out = out + crlf;
+        }
+        
+        for (int i = 0; i < curr.leaf.size(); i++) {
+            _dump(out, curr.leaf.get(i), index + 1);
+        }
+        
+        return out;
+    }
 }
