@@ -4,7 +4,7 @@ package jp.go.aist.rtm.RTC.util;
 * <p>時間を表現するクラスです。</p>
 */
 public class TimeValue {
-    private final int TIMEVALUE_ONE_SECOND_IN_MSECS =  1000000; // 1 [sec] = 1000000 [μsec]
+    private final int TIMEVALUE_ONE_SECOND_IN_USECS =  1000000; // 1 [sec] = 1000000 [μsec]
 
 
     /**
@@ -26,7 +26,26 @@ public class TimeValue {
         this.tv_sec = sec;
         this.tv_usec = usec;
     }
-
+    /**
+     * <p> TimeValue </p>
+     * 
+     * @param timeval
+     */
+    public TimeValue(double timeval) {
+        double dbHalfAdj;
+        if ( timeval >= 0 ) 
+        {
+            dbHalfAdj = +0.5;
+        }
+        else
+        {
+            dbHalfAdj = -0.5;
+        }
+        this.tv_sec = (int)timeval;
+        this.tv_usec = (long)((timeval - (double)this.tv_sec)*TIMEVALUE_ONE_SECOND_IN_USECS + dbHalfAdj );
+        normalize();
+    }
+  
     /**
      * <p>コピーコンストラクタです。</p>
      * 
@@ -112,8 +131,18 @@ public class TimeValue {
      * @return 時間変換結果
      */
     public TimeValue convert(double time) {
+        double dbHalfAdj;
+        if ( time >= 0 ) 
+        {
+            dbHalfAdj = +0.5;
+        }
+        else
+        {
+            dbHalfAdj = -0.5;
+        }
+
         this.tv_sec = (long)time;
-        this.tv_usec = (long)((time - this.tv_sec)*1000000+0.5);
+        this.tv_usec = (long)((time - (double)this.tv_sec)*TIMEVALUE_ONE_SECOND_IN_USECS + dbHalfAdj);
         normalize();
         return this;
     }
@@ -128,6 +157,18 @@ public class TimeValue {
         return this.tv_sec + this.tv_usec/1000000.0;
     }
     
+    /**
+     * <p> sec </p>
+     */
+    public long sec() {
+        return tv_sec;
+    }
+    /**
+     * <p> usec </p>
+     */
+    public long usec() {
+        return tv_usec;
+    }
     /**
      * <p>保持している内容の符号を判定する。</p>
      * 
@@ -146,24 +187,24 @@ public class TimeValue {
      * 
      */
     private void normalize() {
-        if( tv_usec >= TIMEVALUE_ONE_SECOND_IN_MSECS ) {
+        if( tv_usec >= TIMEVALUE_ONE_SECOND_IN_USECS ) {
             do {
                 ++tv_sec;
-                tv_usec -= TIMEVALUE_ONE_SECOND_IN_MSECS;
-            } while (tv_usec >= TIMEVALUE_ONE_SECOND_IN_MSECS);
-        } else if (tv_usec <= -TIMEVALUE_ONE_SECOND_IN_MSECS) {
+                tv_usec -= TIMEVALUE_ONE_SECOND_IN_USECS;
+            } while (tv_usec >= TIMEVALUE_ONE_SECOND_IN_USECS);
+        } else if (tv_usec <= -TIMEVALUE_ONE_SECOND_IN_USECS) {
             do {
                 --tv_sec;
-                tv_usec += TIMEVALUE_ONE_SECOND_IN_MSECS;
-            } while (tv_usec <= -TIMEVALUE_ONE_SECOND_IN_MSECS);
+                tv_usec += TIMEVALUE_ONE_SECOND_IN_USECS;
+            } while (tv_usec <= -TIMEVALUE_ONE_SECOND_IN_USECS);
         }
 
         if (tv_sec >= 1 && tv_usec < 0) {
             --tv_sec;
-            tv_usec += TIMEVALUE_ONE_SECOND_IN_MSECS;
+            tv_usec += TIMEVALUE_ONE_SECOND_IN_USECS;
         } else if (tv_sec < 0 && tv_usec > 0) {
             ++tv_sec;
-            tv_usec -= TIMEVALUE_ONE_SECOND_IN_MSECS;
+            tv_usec -= TIMEVALUE_ONE_SECOND_IN_USECS;
         }
     }
 
