@@ -1,12 +1,16 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
+import jp.go.aist.rtm.RTC.port.ReturnCode;
+
 import _SDOPackage.NVListHolder;
 
 /**
  * <p>入力ポートコンシューマが提供すべき機能のインタフェースです。</p>
  */
 public interface InPortConsumer {
-
     /**
      * <p>接続先のポートへデータを送り出します。</p>
      */
@@ -34,4 +38,21 @@ public interface InPortConsumer {
      */
     public void unsubscribeInterface(final NVListHolder properties);
     
+    /**
+     * <p> put </p>
+     * <p> Pure virtual function to send data to the destination port. <p>
+     *
+     */
+    public ReturnCode put(final OutputStream data);
+    /**
+     * <p> publishInterfaceProfile </p>
+     * <p> Publish interfaceProfile information. </p>
+     * <p> Check the dataport.interface_type value of the NameValue object </p>
+     * <p> specified by an argument in property information and get information</p>
+     * <p> only when the interface type of the specified port is matched. </p>
+     *
+     */
+    public void publishInterfaceProfile(NVListHolder properties);
+    
+
 }
