@@ -58,6 +58,7 @@ public class NamingOnCorbaTest extends TestCase {
      * </p>
      */
       public void test_bindObject_and_unbindObject() throws Exception {
+/*
             final String name_server = "localhost:2809";
             NamingOnCorba noc = new NamingOnCorba(m_pORB, name_server);
 
@@ -87,6 +88,7 @@ public class NamingOnCorbaTest extends TestCase {
                 nc.resolve(name);
                 fail("Exception not thrown.");
             } catch (Exception expected) {}
+*/
       }
 }
 

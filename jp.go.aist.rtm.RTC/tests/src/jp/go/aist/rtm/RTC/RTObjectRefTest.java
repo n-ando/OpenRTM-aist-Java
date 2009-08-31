@@ -39,7 +39,6 @@ public class RTObjectRefTest extends TestCase {
             e.printStackTrace();
             fail();
         }
-  
     }
 
     private RTObject_impl prepareRTObject() {
