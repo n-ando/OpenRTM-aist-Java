@@ -169,4 +169,17 @@ public class StringUtil {
         }
         return result;
     }
+    /**
+     * <p> normalize </p> 
+     * <p> Erase the head/tail blank and replace upper case to lower case </p>
+     * 
+     * @param  str
+     * @return String
+     */
+    public static String normalize(String str) {
+        str = str.trim();
+        str.toLowerCase();
+        return str;
+    }
+
 }
