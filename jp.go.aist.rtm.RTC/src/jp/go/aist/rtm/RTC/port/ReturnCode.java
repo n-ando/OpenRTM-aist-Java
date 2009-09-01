@@ -13,7 +13,7 @@ public enum ReturnCode {
     INVALID_ARGS,
     PRECONDITION_NOT_MET,
     CONNECTION_LOST,
-    UNKNOWN_ERROR
+    UNKNOWN_ERROR,
 }
 
 

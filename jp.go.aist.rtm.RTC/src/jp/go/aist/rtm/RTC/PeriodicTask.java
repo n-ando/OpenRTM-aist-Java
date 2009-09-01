@@ -4,6 +4,7 @@ import java.lang.Object;
 import java.lang.Thread;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.IllegalAccessException;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.TimeMeasure;
 /**
@@ -12,11 +13,7 @@ import jp.go.aist.rtm.RTC.TimeMeasure;
 public class PeriodicTask extends PeriodicTaskBase {
 
     /**
-     * @if jp
-     * @brief ctor
-     * @else
-     * @brief ctor
-     * @endif
+     * <p> ctor </p>
      */
     public PeriodicTask() {
 //        m_period(0.0);
@@ -39,7 +36,6 @@ public class PeriodicTask extends PeriodicTaskBase {
      * are already started or task function object is not set, 'FALSE'
      * will be returned.
      *
-     * @return true: normal start, false: already started  or task is not set
      *
      */
     public void activate() {
@@ -117,7 +113,9 @@ public class PeriodicTask extends PeriodicTaskBase {
     /**
      * <p> Setting task execution function </p>
      *
-     * @param func Set int (*)() type function pointer
+     * @param obj 
+     * @param delete_in_dtor
+     * @return boolean
      *
      */
 /*
@@ -139,7 +137,8 @@ public class PeriodicTask extends PeriodicTaskBase {
     /**
      * <p> Setting task execution function </p>
      *
-     * @param func Set int (*)() type function pointer
+     * @param obj Set int (*)() type function pointer
+     * @return boolean
      *
      */
 /*
@@ -205,7 +204,7 @@ public class PeriodicTask extends PeriodicTaskBase {
 
     /**
      * <p> This function can set the measurement of the execution time effective/invalidly.  </p>
-     * @param  true:effectuation
+     * @param  value true:effectuation
      */
     public void executionMeasure(boolean value) {
         m_execMeasure = value;
@@ -214,7 +213,7 @@ public class PeriodicTask extends PeriodicTaskBase {
     /**
      * <p> This function sets the cycle to measure the execution time.  </p>
      *
-     * @oaram n  Cycle frequency
+     * @param n  Cycle frequency
      */
     public void executionMeasureCount(int n) {
         m_execCountMax = n;
@@ -222,7 +221,7 @@ public class PeriodicTask extends PeriodicTaskBase {
     
     /**
      * <p> This function can set the measurement of the execution time effective/invalidly. </p> 
-     * @param  true:effectuation
+     * @param  value true:effectuation
      */
     public void periodicMeasure(boolean value) {
         m_periodMeasure = value;
@@ -231,7 +230,7 @@ public class PeriodicTask extends PeriodicTaskBase {
     /**
      * <p> This function sets the cycle to measure the execution time.  </p>
      *
-     * @oaram n  Cycle frequency
+     * @param n  Cycle frequency
      */
     public void periodicMeasureCount(int n) {
         m_periodCountMax = n;
@@ -290,15 +289,7 @@ public class PeriodicTask extends PeriodicTaskBase {
 
             // task execution
             if (m_execMeasure) { m_execTime.tick(); }
-            try {
-                m_func.svc();
-            }
-            catch(IllegalAccessException e ){
-            }
-            catch(IllegalArgumentException e ){
-            }
-            catch(InvocationTargetException e ){
-            }
+            m_func.svc();
             if (m_execMeasure) { m_execTime.tack(); }
     
             // wait for next period

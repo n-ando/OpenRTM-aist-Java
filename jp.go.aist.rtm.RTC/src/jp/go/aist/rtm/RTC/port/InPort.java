@@ -1,5 +1,6 @@
 package jp.go.aist.rtm.RTC.port;
 
+import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
@@ -12,7 +13,7 @@ import jp.go.aist.rtm.RTC.util.DataRef;
  * 
  * @param <DataType> データ型を指定します。
  */
-public class InPort<DataType> implements BufferBase<DataType> {
+public class InPort<DataType> extends InPortBase {
 
     private static final long TIMEOUT_TICK_USEC = 10;
     private static final long TIMEOUT_TICK_MSEC_PART = TIMEOUT_TICK_USEC / 1000;
@@ -21,7 +22,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
     /**
      * <p>コンストラクタです。</p>
      *
-     * @param superClass ポートに割り当てるバッファ
      * @param name ポート名称
      * @param value このポートにバインドされるDataType型の変数
      * @param read_block データ読み込み時に未読データがない場合に、データ受信までブロックする場合はtrue、さもなくばfalse
@@ -29,12 +29,12 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param read_timeout 非ブロック指定の場合の、データ読み取りのタイムアウト時間 (ミリ秒)
      * @param write_timeout 非ブロック指定の場合の、データ書き込みのタイムアウト時間 (ミリ秒)
      */
-    public InPort(BufferBase<DataType> superClass,
-            final String name, DataRef<DataType> value,
+    public InPort( final String name, DataRef<DataType> value,
             boolean read_block, boolean write_block,
             long read_timeout, long write_timeout) {
         
-        this.m_superClass = superClass;
+        super(name, value.toTypename());
+//        this.m_superClass = superClass;
         this.m_name = name;
         this.m_value = value;
         this.m_readBlock = read_block;
@@ -57,20 +57,23 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @param name ポート名称
      * @param value このポートにバインドされるDataType型の変数
      */
+/*
     public InPort(final String name, DataRef<DataType> value) {
-        this(new RingBuffer<DataType>(64), name, value);
+//        this(new RingBuffer<DataType>(64), name, value);
+        this(name, value);
     }
+*/
     
     /**
      * <p>コンストラクタです。
      * 読み取り・書き込みともに非ブロックモードとなり、タイムアウト時間は0で設定されます。</p>
      *
-     * @param superClass ポートに割り当てるバッファ
      * @param name ポート名称
      * @param value このポートにバインドされるDataType型の変数
      */
-    public InPort(BufferBase<DataType> superClass, final String name, DataRef<DataType> value) {
-        this(superClass, name, value, false, false, 0, 0);
+//    public InPort(BufferBase<DataType> superClass, final String name, DataRef<DataType> value) {
+    public InPort(final String name, DataRef<DataType> value) {
+        this( name, value, false, false, 0, 0);
     }
     
     /**
@@ -82,77 +85,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
         return this.m_name;
     }
     
-    /**
-     * <p>ポートに値を書き込みます。</p>
-     *
-     * <ul>
-     * <li>コールバックインタフェースOnWriteがセットされている場合は、
-     * ポートが保持するバッファにデータが書き込まれる前にOnWrite#run()が呼びだされます。</li>
-     * <li>ポートが保持するバッファがオーバーフローを検出できるバッファであり、
-     * かつ、書き込む際にバッファがオーバーフローを検出した場合は、
-     * コールバックインタフェースOnOverflowが呼び出されます。</li>
-     * <li>コールバックインタフェースOnWriteConvertがセットされている場合は、
-     * バッファ書き込み時に、OnWriteConvert#operator()の戻り値がバッファに書き込まれます。</li>
-     * <li>setWriteTimeout()により書き込み時のタイムアウトが設定されている場合は、
-     * タイムアウト時間だけバッファフル状態が解除するのを待ち、
-     * OnOverflowがセットされていれば、これを呼び出して戻ります。</li>
-     * </ul>
-     * 
-     * @param value 書き込むデータ
-     * @return 書き込みに成功した場合はtrueを、さもなくばfalseを返します。
-     */
-    public boolean write(final DataType value) {
-        
-        if (this.m_OnWrite != null) {
-            this.m_OnWrite.run(value);
-        }
-
-        long timeout = this.m_writeTimeout; // [usec]
-        long tm_pre = System.nanoTime(); // [nsec]
-        
-        // blocking and timeout wait
-        while (this.m_writeBlock && this.isFull()) {
-
-            if (this.m_writeTimeout < 0) {
-                try {
-                    Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                } catch (InterruptedException e) {
-                }
-                continue;
-            }
-
-            // timeout wait
-            long tm_cur = System.nanoTime(); // [nsec]
-            long tm_diff = tm_cur - tm_pre; // [nsec]
-            
-            timeout -= tm_diff / 1000; // [usec]
-            if (timeout < 0) {
-                break;
-            }
-            
-            tm_pre = tm_cur;
-            try {
-                Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-            } catch (InterruptedException e) {
-            }
-        }
-
-        if (isFull() ) {
-            if( this.m_OnOverflow != null ) {
-                this.m_OnOverflow.run(value);
-            }
-            return false;
-        }
-
-        if (this.m_OnWriteConvert == null) {
-            put(value);
-            
-        } else {
-            put(this.m_OnWriteConvert.run(value));
-        }
-        
-        return true;
-    }
     
     /**
      * <p>ポートからデータを読み出します。</p>
@@ -174,7 +106,7 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @return 読み出したデータ
      */
     public DataType read() {
-        
+/*
         if (this.m_OnRead != null) {
             this.m_OnRead.run();
         }
@@ -224,6 +156,7 @@ public class InPort<DataType> implements BufferBase<DataType> {
             return this.m_value.v;
         }
         this.m_value.v = this.m_OnReadConvert.run(get());
+*/
         return this.m_value.v;
     }
     
@@ -239,6 +172,8 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * ただし、あらかじめコンストラクタで、DataType型の変数がバインドされていなければなりません。<br />
      */
     public void update() {
+        this.read();
+/*
         
         try {
             this.m_value.v = get();
@@ -248,6 +183,7 @@ public class InPort<DataType> implements BufferBase<DataType> {
                 this.m_OnUnderflow.run();
             }
         }
+*/
     }
     
     /**
@@ -317,9 +253,11 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * 
      * @return バッファ長
      */
+/*
     public int length() {
         return this.m_superClass.length();
     }
+*/
 
     /**
      * <p>データを読み取ります。</p>
@@ -335,9 +273,11 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * 
      * @return バッファフルの場合はtrueを、さもなくばfalseを返します。
      */
+/*
     public boolean isFull() {
         return this.m_superClass.isFull();
     }
+*/
 
     /**
      * <p>バッファが空である、つまり読み取れるデータがないかどうかを取得します。</p>
@@ -345,7 +285,7 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @return バッファが空の場合はtrueを、さもなくばfalseを返します。
      */
     public boolean isEmpty() {
-        return this.m_superClass.isEmpty();
+        return true;
     }
 
     /**
@@ -353,9 +293,11 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * 
      * @param data 書き込むデータ
      */
+/*
     public void put(final DataType data) {
         this.m_superClass.put(data);
     }
+*/
 
     /**
      * <p>データを読み取ります。</p>
@@ -382,7 +324,7 @@ public class InPort<DataType> implements BufferBase<DataType> {
     private OnUnderflow<DataType> m_OnUnderflow;
 
     public boolean isNew() {
-        return m_superClass.isNew();
+        return true;
     }
     
 }

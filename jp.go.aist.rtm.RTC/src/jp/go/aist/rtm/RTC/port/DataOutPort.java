@@ -40,6 +40,7 @@ public class DataOutPort<DataType> extends PortBase {
             final String name, OutPort<DataType> outPort, Properties prop) throws Exception {
         
         super(name);
+/*
         this.m_outPort = outPort;
         
         // PortProfile::properties を設定
@@ -58,6 +59,7 @@ public class DataOutPort<DataType> extends PortBase {
 
         this.m_consumers.add(new InPortCorbaConsumer<DataType>(DATA_TYPE_CLASS, outPort));
         this.m_consumers.add(new InPortTcpSockConsumer<DataType>(DATA_TYPE_CLASS, outPort, prop));
+*/
     }
     
     /**
@@ -110,6 +112,7 @@ public class DataOutPort<DataType> extends PortBase {
      * @return ReturnCode_t 戻り値
      */
     protected ReturnCode_t subscribeInterfaces(final ConnectorProfileHolder connector_profile) {
+/*
         
         subscribe s = new subscribe(connector_profile.value);
         for (Iterator<InPortConsumer> it = this.m_consumers.iterator(); it.hasNext(); ) {
@@ -126,6 +129,7 @@ public class DataOutPort<DataType> extends PortBase {
 
         // Publisher を OutPort にアタッチ
         this.m_outPort.attach(connector_profile.value.connector_id, publisher);
+*/
 
         return ReturnCode_t.RTC_OK;
     }

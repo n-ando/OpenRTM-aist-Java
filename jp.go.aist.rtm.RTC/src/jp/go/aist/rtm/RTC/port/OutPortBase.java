@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import RTC.ConnectorProfile;
+import RTC.ConnectorProfileHolder;
+import RTC.ReturnCode_t;
+
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
 
 /**
  * <p>出力ポートのベース実装クラスです。
  * Publisherの登録やPublisherへのデータ更新通知などの実装を提供します。</p>
  */
-public class OutPortBase {
+public class OutPortBase extends PortBase {
 
     /**
      * <p>コンストラクタです。</p>
@@ -83,6 +87,7 @@ public class OutPortBase {
     /**
      * <p>登録されているすべてのPublisherオブジェクトに、データ更新を通知します。</p>
      */
+/*
     public void update() { // notifyメソッドはObjectクラスで使用されているので、メソッド名を変更した。
         try {
             for (Iterator<Publisher> it = this.m_publishers.iterator(); it.hasNext(); ) {
@@ -92,6 +97,7 @@ public class OutPortBase {
         } catch(Exception ex) {
         }
     }
+*/
     
     /**
      * <p>ポート名です。</p>
@@ -110,6 +116,15 @@ public class OutPortBase {
         public PublisherBase publisher;
     }
     
+    protected ReturnCode_t publishInterfaces(ConnectorProfileHolder connector_profile) {
+        return ReturnCode_t.RTC_OK;
+    }
+    protected ReturnCode_t subscribeInterfaces(
+            final ConnectorProfileHolder connector_profile) {
+        return ReturnCode_t.RTC_OK;
+    }
+    protected void unsubscribeInterfaces(final ConnectorProfile connector_profile) {
+   }
     /**
      * <p>データ更新通知先として登録されているPublisherオブジェクトのリストです。</p>
      */

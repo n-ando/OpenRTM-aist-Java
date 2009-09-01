@@ -99,7 +99,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * <p> pushAll </p>
      * <p> push all policy </p>
      *
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     protected ReturnCode pushAll() {
         rtcout.println(rtcout.TRACE, "pushAll()");
@@ -122,13 +122,13 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         catch (Exception e) {
             return ReturnCode.CONNECTION_LOST;
         }
-        return ReturnCode.PORT_ERROR;
+//        return ReturnCode.PORT_ERROR;
     }
     /**
      * <p> pushFifo </p>
      * <p> push "fifo" policy </p>
      *
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     protected ReturnCode pushFifo() {
         rtcout.println(rtcout.TRACE, "pushFifo()");
@@ -150,13 +150,13 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         catch (Exception e) {
             return ReturnCode.CONNECTION_LOST;
         }
-        return ReturnCode.PORT_ERROR;
+//        return ReturnCode.PORT_ERROR;
     }
     /**
      * <p> pushSkip </p>
      * <p> push "skip" policy </p>
      *
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     protected ReturnCode pushSkip() {
         rtcout.println(rtcout.TRACE, "pushSkip()");
@@ -193,13 +193,13 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         catch (Exception e) {
             return ReturnCode.CONNECTION_LOST;
         }
-        return ReturnCode.PORT_ERROR;
+//        return ReturnCode.PORT_ERROR;
     }
     /**
      * <p> pushNew </p>
      * <p> push "new" policy </p>
      *
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     protected ReturnCode pushNew() {
         rtcout.println(rtcout.TRACE, "pushNew()");
@@ -217,7 +217,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         catch (Exception e) {
             return ReturnCode.CONNECTION_LOST;
         }
-        return ReturnCode.PORT_ERROR;
+//        return ReturnCode.PORT_ERROR;
     }
 
     /**
@@ -273,7 +273,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * <p> initialization </p>
      *
      * @param prop
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode init(Properties prop) {
         rtcout.println(rtcout.TRACE, "init()");
@@ -377,7 +377,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * <p> Store InPort consumer </p>
      *
      * @param consumer
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode setConsumer(InPortConsumer consumer) {
         rtcout.println(rtcout.TRACE, "setConsumer()" );
@@ -395,7 +395,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * <p> Setting buffer </p>
      *
      * @param buffer
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
         rtcout.println(rtcout.TRACE, "setBuffer()" );
@@ -415,7 +415,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @param data
      * @param sec
      * @param usec
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode write(final OutputStream data, long sec, long usec) {
         rtcout.println(rtcout.PARANOID, "write()" );
@@ -450,7 +450,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
     /**
      * <p> write </p>
      *
-     * @retrun boolean 
+     * @return boolean 
      */
     public boolean isActive() {
         return m_active;
@@ -458,7 +458,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
     /**
      * <p> activate </p>
      *
-     * @retrun ReturnCode 
+     * @return ReturnCode 
      */
     public ReturnCode activate() {
         m_active = true;
@@ -467,7 +467,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
     /**
      * <p> deactivate </p>
      *
-     * @retrun ReturnCode 
+     * @return ReturnCode 
      */
     public ReturnCode deactivate() {
         m_active = false;
@@ -513,16 +513,12 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         switch (status) {
             case BUFFER_OK:
                 return ReturnCode.PORT_OK;
-                break;
             case BUFFER_EMPTY:
                 return ReturnCode.BUFFER_EMPTY;
-                break;
             case TIMEOUT:
                 return ReturnCode.BUFFER_TIMEOUT;
-                break;
             case PRECONDITION_NOT_MET:
                 return ReturnCode.PRECONDITION_NOT_MET;
-                break;
             default:
                 return ReturnCode.PORT_ERROR;
         }

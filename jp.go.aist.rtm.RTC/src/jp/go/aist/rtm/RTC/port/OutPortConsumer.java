@@ -10,7 +10,7 @@ public interface OutPortConsumer {
     /**
      * <p>接続先ポートからデータを受信します。</p>
      */
-    public void pull();
+//    public void pull();
 
     /**
      * <p>指定されたプロパティセットの内容に基づいて、データ受信通知の受け取りに登録します。</p>

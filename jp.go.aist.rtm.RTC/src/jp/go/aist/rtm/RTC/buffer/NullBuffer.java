@@ -8,7 +8,8 @@ import jp.go.aist.rtm.RTC.util.Properties;
  *
  * @param <DataType> バッファ内のデータ型を指定します。
  */
-public class NullBuffer<DataType> implements BufferBase<DataType> {
+//public class NullBuffer<DataType> implements BufferBase<DataType> {
+public class NullBuffer<DataType> {
 
     /**
      * <p>コンストラクタです。</p>
@@ -82,6 +83,7 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
      */
     public ReturnCode put(final DataType data) {
         this.m_data = data;
+        return ReturnCode.BUFFER_OK;
     }
 
     /**
@@ -105,7 +107,7 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
     /**
      * <p> get </p>
      * <p> This function is not implemented. </p>
-     * @param DataType
+     * @param value
      * @return ReturnCode
      */
     public ReturnCode get(DataType value) {
@@ -212,7 +214,6 @@ public class NullBuffer<DataType> implements BufferBase<DataType> {
     /**
      * <p> advanceRptr </p>
      * <p> This function is not implemented. </p>
-     * @param  n 
      * @return ReturnCode 
      */
     public ReturnCode advanceRptr()

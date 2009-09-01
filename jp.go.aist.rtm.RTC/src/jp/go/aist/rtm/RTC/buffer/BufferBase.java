@@ -21,7 +21,7 @@ public interface BufferBase<DataType> {
     /**
      * <p> reset </p>
      *
-     * @param ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode reset();
     /**
@@ -134,7 +134,7 @@ public interface BufferBase<DataType> {
      * <p>バッファにデータを書き込みます。</p>
      * 
      * @param data 書き込むデータ
-     * @retrun RetuenCode
+     * @return ReturnCode
      */
     public ReturnCode put(final DataType data);
 

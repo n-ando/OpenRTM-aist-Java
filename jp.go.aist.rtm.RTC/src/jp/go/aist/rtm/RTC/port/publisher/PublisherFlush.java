@@ -56,16 +56,18 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
     /**
      * <p>送出タイミング時に呼び出します。即座に同一スレッドにてコンシューマの送出処理が呼び出されます。</p>
      */
+/*
     public void update() {
         m_consumer.push();
     }
+*/
 
     /**
      * <p> init </p>
      * <p> initialization </p>
      *
      * @param prop
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode init(Properties prop) {
         return ReturnCode.PORT_OK;
@@ -75,7 +77,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      * <p> Store InPort consumer </p>
      *
      * @param consumer
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode setConsumer(InPortConsumer consumer) {
         if (consumer == null) {
@@ -89,7 +91,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      * <p> Setting buffer </p>
      *
      * @param buffer
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
         return ReturnCode.PORT_ERROR;
@@ -100,7 +102,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      * @param data
      * @param sec
      * @param usec
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode write(final OutputStream data, long sec, long usec) {
         if (m_consumer == null ) { return ReturnCode.PRECONDITION_NOT_MET; }
@@ -111,7 +113,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
     /**
      * <p> write </p>
      *
-     * @retrun boolean 
+     * @return boolean 
      */
     public boolean isActive() {
         return m_active;
@@ -119,7 +121,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
     /**
      * <p> activate </p>
      *
-     * @retrun ReturnCode 
+     * @return ReturnCode 
      */
     public ReturnCode activate() {
         m_active = true;
@@ -128,7 +130,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
     /**
      * <p> deactivate </p>
      *
-     * @retrun ReturnCode 
+     * @return ReturnCode 
      */
     public ReturnCode deactivate() {
         m_active = false;

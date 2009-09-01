@@ -110,7 +110,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * <p> pushAll </p>
      * <p> push all policy </p>
      *
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     protected ReturnCode pushAll() {
         rtcout.println(rtcout.TRACE, "pushAll()");
@@ -131,7 +131,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * <p> pushFifo </p>
      * <p> push "fifo" policy </p>
      *
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     protected ReturnCode pushFifo() {
         rtcout.println(rtcout.TRACE, "pushFifo()");
@@ -154,7 +154,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * <p> pushSkip </p>
      * <p> push "skip" policy </p>
      *
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     protected ReturnCode pushSkip() {
         rtcout.println(rtcout.TRACE, "pushSkip()");
@@ -187,7 +187,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * <p> pushNew </p>
      * <p> push "new" policy </p>
      *
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     protected ReturnCode pushNew() {
         rtcout.println(rtcout.TRACE, "pushNew()");
@@ -244,7 +244,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * <p> initialization </p>
      *
      * @param prop
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode init(Properties prop) {
         rtcout.println(rtcout.TRACE, "init()");
@@ -366,7 +366,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * <p> Store InPort consumer </p>
      *
      * @param consumer
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode setConsumer(InPortConsumer consumer) {
         rtcout.println(rtcout.TRACE, "setConsumer()" );
@@ -384,7 +384,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * <p> Setting buffer </p>
      *
      * @param buffer
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
         rtcout.println(rtcout.TRACE, "setBuffer()" );
@@ -404,7 +404,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * @param data
      * @param sec
      * @param usec
-     * @retrun ReturnCode
+     * @return ReturnCode
      */
     public ReturnCode write(final OutputStream data, long sec, long usec) {
         rtcout.println(rtcout.PARANOID, "write()" );
@@ -434,7 +434,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     /**
      * <p> write </p>
      *
-     * @retrun boolean 
+     * @return boolean 
      */
     public boolean isActive() {
         return m_active;
@@ -442,7 +442,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     /**
      * <p> activate </p>
      *
-     * @retrun ReturnCode 
+     * @return ReturnCode 
      */
     public ReturnCode activate() {
         if (m_task == null) { return ReturnCode.PRECONDITION_NOT_MET; }
@@ -454,7 +454,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     /**
      * <p> deactivate </p>
      *
-     * @retrun ReturnCode 
+     * @return ReturnCode 
      */
     public ReturnCode deactivate() {
         if (m_task == null) { return ReturnCode.PRECONDITION_NOT_MET; }
@@ -502,16 +502,12 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         switch (status) {
             case BUFFER_OK:
                 return ReturnCode.PORT_OK;
-                break;
             case BUFFER_EMPTY:
                 return ReturnCode.BUFFER_EMPTY;
-                break;
             case TIMEOUT:
                 return ReturnCode.BUFFER_TIMEOUT;
-                break;
             case PRECONDITION_NOT_MET:
                 return ReturnCode.PRECONDITION_NOT_MET;
-                break;
             default:
                 return ReturnCode.PORT_ERROR;
         }

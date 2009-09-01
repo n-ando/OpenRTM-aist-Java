@@ -14,14 +14,14 @@ public interface InPortConsumer {
     /**
      * <p>接続先のポートへデータを送り出します。</p>
      */
-    public void push();
+//    public void push();
 
     /**
      * <p>当該InPortConsumerオブジェクトを複製します。</p>
      * 
      * @return 複製されたInPortConsumerオブジェクト
      */
-    public InPortConsumer clone();
+//    public InPortConsumer clone();
     
     /**
      * <p>指定されたプロパティセットの内容に基づいて、データ送出通知の受け取りに登録します。</p>

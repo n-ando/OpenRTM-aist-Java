@@ -9,7 +9,8 @@ import _SDOPackage.NVListHolder;
  * <p>通信手段に TCP ソケットを利用した入力ポートコンシューマの実装クラスです。</p>
  */
 //TODO 未実装
-public class InPortTcpSockConsumer<DataType> implements InPortConsumer {
+//public class InPortTcpSockConsumer<DataType> implements InPortConsumer {
+public class InPortTcpSockConsumer<DataType> {
     
     public InPortTcpSockConsumer(Class<DataType> DATA_TYPE_CLASS,BufferBase<DataType> buffer, Properties prop) {
         this.DATA_TYPE_CLASS = DATA_TYPE_CLASS;

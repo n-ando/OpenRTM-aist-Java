@@ -27,6 +27,7 @@ public class DataInPort<DataType> extends PortBase {
      */
     public DataInPort(Class<DataType> DATA_TYPE_CLASS,
             final String name, InPort<DataType> inPort, Properties prop) throws Exception {
+/*
         super(name);
     
         // PortProfile::properties を設定
@@ -46,6 +47,7 @@ public class DataInPort<DataType> extends PortBase {
         // CORBA OutPort Consumer
         this.m_consumers.add(new OutPortCorbaConsumer<DataType>(DATA_TYPE_CLASS, inPort));
         this.m_dummy.add(Integer.valueOf(1));
+*/
     }
     
     /**

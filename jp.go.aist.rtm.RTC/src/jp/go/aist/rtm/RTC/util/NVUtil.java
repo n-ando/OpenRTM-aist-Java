@@ -363,7 +363,7 @@ public class NVUtil {
          * <p>指定されたNameValueオブジェクトの内容を元にPropertiesオブジェクトを作成します。
          * 作成されたPropertiesオブジェクトは、m_propメンバとして取得できます。</p>
          * 
-         * @param 作成元となるNameValueオブジェクト
+         * @param elem 作成元となるNameValueオブジェクト
          * 
          * @throws ClassCastException 指定されたオブジェクトがNameValueオブジェクトでない場合
          */
@@ -375,7 +375,7 @@ public class NVUtil {
          * <p>指定されたNameValueオブジェクトの内容を元にPropertiesオブジェクトを作成します。
          * 作成されたPropertiesオブジェクトは、m_propメンバとして取得できます。</p>
          * 
-         * @param 作成元となるNameValueオブジェクト
+         * @param nv 作成元となるNameValueオブジェクト
          */
         public void operator(final NameValue nv) {
             try {
@@ -395,5 +395,30 @@ public class NVUtil {
         
         public Properties m_prop = new Properties();
     }
-
+    /**
+     *
+     * <p> The content of NVList is made a character string. </p>
+     */
+    public static String toString(final NVListHolder nvlist) {
+        String crlf = System.getProperty("line.separator");
+        String str = new String();
+        for (int intIdx = 0; intIdx < nvlist.value.length; ++intIdx) {
+            final String name = nvlist.value[intIdx].name;
+            try {
+                Any anyVal = nvlist.value[intIdx].value;
+                String value = null;
+                if( anyVal.type().kind() == TCKind.tk_wstring ) {
+                    value = anyVal.extract_wstring();
+                } else if( anyVal.type().kind() == TCKind.tk_string ) {
+                    value = anyVal.extract_string();
+                } else {
+                    value = anyVal.extract_Value().toString();
+                }
+                str = str + name + ":" + value + crlf;
+            } catch (Exception ignored) {
+	        str = str + name + ": not a string value" + crlf;
+            }
+        }
+        return str;
+    }
 }

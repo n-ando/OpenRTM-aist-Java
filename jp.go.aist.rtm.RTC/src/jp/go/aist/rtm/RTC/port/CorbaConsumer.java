@@ -9,6 +9,12 @@ import org.omg.CORBA.Object;
 public class CorbaConsumer<OBJECT_TYPE> extends CorbaConsumerBase {
 
     /**
+     * <p>  </p>
+     */
+    public CorbaConsumer() {
+        
+    }
+    /**
      * <p>コンストラクタです。</p>
      */
     public CorbaConsumer(Class<OBJECT_TYPE> OBJECT_TYPE_CLASS) {

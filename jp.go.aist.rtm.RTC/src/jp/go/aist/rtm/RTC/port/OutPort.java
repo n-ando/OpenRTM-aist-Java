@@ -9,7 +9,7 @@ import jp.go.aist.rtm.RTC.util.DataRef;
  *
  * @param <DataType> データ型を指定します。
  */
-public class OutPort<DataType> extends OutPortBase implements BufferBase<DataType> {
+public class OutPort<DataType> extends OutPortBase {
 
     /**
      * <p>コンストラクタです。内部的にバッファが生成されて割り当てられます。</p>
@@ -67,7 +67,7 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @return データを書き込めた場合はtrueを、さもなくばfalseを返します。
      */
     public boolean write(final DataType value) {
-        
+/*        
         if (this.m_OnWrite != null) {
             this.m_OnWrite.run(value);
         }
@@ -126,7 +126,7 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
         }
         
         update();
-
+*/
         return true;
     }
     
@@ -136,72 +136,10 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @return データを書き込めた場合はtrueを、さもなくばfalseを返します。
      */
     public boolean write() {
-        return this.write(m_value.v);
-    }
-    
-    /**
-     * <p>データを読み出します。</p>
-     * 
-     * @param valueRef 読み出したデータを受け取るためのDataRefオブジェクト
-     * @return データを読み出せた場合はtrueを、さもなくばfalseを返します。
-     */
-    public boolean read(DataRef<DataType> valueRef) {
-        
-        if (this.m_OnRead != null) {
-            this.m_OnRead.run();
-        }
-
-        long timeout = this.m_readTimeout; // [usec]
-        long tm_pre = System.nanoTime();
-        
-        // blocking and timeout wait
-        long TIMEOUT_TICK_MSEC_PART = this.m_timeoutTick / 1000;
-        int TIMEOUT_TICK_NSEC_PART = ((int) (this.m_timeoutTick % 1000)) * 1000;
-        while (this.m_readBlock && isEmpty()) {
-
-            if (this.m_readTimeout < 0) {
-                try {
-                    Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                    
-                } catch (InterruptedException ignored) {
-                    ignored.printStackTrace();
-                }
-                
-                continue;
-            }
-            
-            // timeout wait
-            long tm_cur = System.nanoTime(); // [nsec]
-            long tm_diff = tm_cur - tm_pre; // [nsec]
-            
-            timeout -= tm_diff / 1000; // [usec]
-            if (timeout < 0) {
-                break;
-            }
-            
-            tm_pre = tm_cur;
-            try {
-                Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                
-            } catch (InterruptedException ignored) {
-                ignored.printStackTrace();
-            }
-        }
-        
-        if (isEmpty()) {
-            if (this.m_OnUnderflow != null) {
-                valueRef.v = this.m_OnUnderflow.run();
-            }
-            return false;
-        }
-
-        if (this.m_OnReadConvert == null) {
-            valueRef.v = get();
-        } else {
-            valueRef.v = this.m_OnReadConvert.run(get());
-        }
+//        return this.write(m_value.v);
         return true;
     }
+    
     
     /**
      * <p>データ読み出し時における、ブロック/非ブロックモードを指定します。<br />
@@ -308,27 +246,33 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * 
      * @return バッファ長
      */
+/*
     public int length() {
         return this.m_buffer.length();
     }
+*/
     
     /**
      * <p>バッファフルか否かを判定します。</p>
      * 
      * @return バッファフルの場合はtrueを、さもなくばfalseを返します。
      */
+/*
     public boolean isFull() {
         return this.m_buffer.isFull();
     }
+*/
     
     /**
      * <p>バッファが空か否かを判定します。</p>
      * 
      * @return バッファが空の場合はtrueを、さもなくばfalseを返します。
      */
+/*
     public boolean isEmpty() {
         return this.m_buffer.isEmpty();
     }
+*/
 
     /**
      * <p>内部に割り当てられているバッファに、データを直接書き込みます。<br />
@@ -336,9 +280,11 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * 
      * @param data 書き込むデータ
      */
+/*
     public void put(DataType data) {
         this.m_buffer.put(data);
     }
+*/
     
     /**
      * <p>内部に割り当てられているバッファから、データを直接読み出します。<br />
@@ -346,18 +292,22 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * 
      * @return 読み出したデータ
      */
+/*
     public DataType get() {
         return this.m_buffer.get();
     }
+*/
     
     /**
      * <p>バッファ内に、まだ読み出されていないデータが存在するかどうかを判定します。</p>
      * 
      * @return まだ読み出されていないデータがあればtrueを、さもなくばfalseを返します。
      */
+/*
     public boolean isNew() {
         return m_buffer.isNew();
     }
+*/
 
     private BufferBase<DataType> m_buffer;
     private DataRef<DataType> m_value;

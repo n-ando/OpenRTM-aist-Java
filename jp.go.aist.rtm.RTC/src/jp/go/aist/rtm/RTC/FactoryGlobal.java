@@ -169,7 +169,7 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
      * <p> addFactory </p>
      *
      * @param id         
-     * @param creater    creation function
+     * @param creator    creation function
      * @param destructor destruction function
      * @return The return code of ReturnCode type. 
      */

@@ -253,7 +253,7 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
     /**
      * <p> get </p>
      *
-     * @param DataType
+     * @param value 
      * @return ReturnCode
      */
     public ReturnCode get(DataType value) {
@@ -435,7 +435,6 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
     /**
      * <p> advanceRptr </p>
      * <p> This function advances the reading pointer.  </p>
-     * @param  n 
      * @return ReturnCode 
      */
     public ReturnCode advanceRptr()
