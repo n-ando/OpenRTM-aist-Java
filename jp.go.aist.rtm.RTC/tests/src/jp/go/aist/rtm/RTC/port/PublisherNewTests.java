@@ -2,6 +2,9 @@ package jp.go.aist.rtm.RTC.port;
 
 import java.util.Vector;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
 import jp.go.aist.rtm.RTC.port.publisher.PublisherNew;
 import jp.go.aist.rtm.RTC.util.Properties;
 import junit.framework.TestCase;
@@ -85,6 +88,11 @@ public class PublisherNewTests extends TestCase {
         
         protected void resetReturnStartTime() {
             _returnStartTime = 0;
+        }
+        public ReturnCode put(final OutputStream data) {
+            return ReturnCode.PORT_OK;
+        }
+        public void publishInterfaceProfile(NVListHolder properties) {
         }
     };
 

@@ -94,6 +94,7 @@ public class DataInOutPortTest extends TestCase {
 //    private POA m_pPOA;
     
     protected void setUp() throws Exception {
+/*
         super.setUp();
 
         this.m_orbRunner = new OrbRunner();
@@ -128,6 +129,7 @@ public class DataInOutPortTest extends TestCase {
         this.m_dataInPortBlock = new DataInPort<TimedFloat>(
                 TimedFloat.class, "DataInPort", this.m_inPortBlock, new Properties());
 //        this.m_inPortRefBlock = this.m_dataInPortBlock.get_port_profile().port_ref;
+*/
     }
     
     protected void tearDown() throws Exception {

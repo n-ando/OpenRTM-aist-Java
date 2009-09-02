@@ -1,8 +1,13 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.port.OutPortBase;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
 import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.Properties;
 import junit.framework.TestCase;
 
 /**
@@ -20,6 +25,27 @@ public class OutPortBaseTest extends TestCase {
         public void update() {
             this.m_str.v += "A";
         }
+        public ReturnCode init(Properties prop) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode setConsumer(InPortConsumer consumer) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode write(final OutputStream data, long sec, long usec) {
+            return ReturnCode.PORT_OK;
+        }
+        public boolean isActive() {
+            return true;
+        }
+        public ReturnCode activate() {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode deactivate() {
+            return ReturnCode.PORT_OK;
+        }
     }
 
     class PublisherB extends PublisherBase {
@@ -31,6 +57,27 @@ public class OutPortBaseTest extends TestCase {
         }
         public void update() {
             this.m_str.v += "B";
+        }
+        public ReturnCode init(Properties prop) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode setConsumer(InPortConsumer consumer) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode write(final OutputStream data, long sec, long usec) {
+            return ReturnCode.PORT_OK;
+        }
+        public boolean isActive() {
+            return true;
+        }
+        public ReturnCode activate() {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode deactivate() {
+            return ReturnCode.PORT_OK;
         }
     }
 
@@ -44,6 +91,27 @@ public class OutPortBaseTest extends TestCase {
         public void update() {
             this.m_str.v += "C";
         }
+        public ReturnCode init(Properties prop) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode setConsumer(InPortConsumer consumer) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode write(final OutputStream data, long sec, long usec) {
+            return ReturnCode.PORT_OK;
+        }
+        public boolean isActive() {
+            return true;
+        }
+        public ReturnCode activate() {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode deactivate() {
+            return ReturnCode.PORT_OK;
+        }
     }
 
     class PublisherD extends PublisherBase {
@@ -55,6 +123,27 @@ public class OutPortBaseTest extends TestCase {
         }
         public void update() {
             this.m_str.v += "D";
+        }
+        public ReturnCode init(Properties prop) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode setConsumer(InPortConsumer consumer) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode write(final OutputStream data, long sec, long usec) {
+            return ReturnCode.PORT_OK;
+        }
+        public boolean isActive() {
+            return true;
+        }
+        public ReturnCode activate() {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode deactivate() {
+            return ReturnCode.PORT_OK;
         }
     }
 
@@ -110,7 +199,7 @@ public class OutPortBaseTest extends TestCase {
         this.m_outport.attach("B", this.m_pubB);
         this.m_outport.attach("C", this.m_pubC);
         this.m_outport.attach("D", this.m_pubD);
-        this.m_outport.update();
+//        this.m_outport.update();
         
         assertEquals(this.m_str, "ABCD");
     }
@@ -125,7 +214,7 @@ public class OutPortBaseTest extends TestCase {
         this.m_outport.attach_back("B", this.m_pubB);
         this.m_outport.attach_back("C", this.m_pubC);
         this.m_outport.attach_back("D", this.m_pubD);
-        this.m_outport.update();
+//        this.m_outport.update();
 
         assertEquals(this.m_str, "ABCD");
     }
@@ -140,7 +229,7 @@ public class OutPortBaseTest extends TestCase {
         this.m_outport.attach_front("B", this.m_pubB);
         this.m_outport.attach_front("C", this.m_pubC);
         this.m_outport.attach_front("D", this.m_pubD);
-        this.m_outport.update();
+//        this.m_outport.update();
 
         assertEquals(this.m_str, "DCBA");
     }
@@ -155,7 +244,7 @@ public class OutPortBaseTest extends TestCase {
         this.m_outport.attach_back ("B", this.m_pubB); // AB
         this.m_outport.attach_front("C", this.m_pubC); // CAB
         this.m_outport.attach_front("D", this.m_pubD); // DCAB
-        this.m_outport.update();
+//        this.m_outport.update();
 
         assertEquals(this.m_str, "DCAB");
     }
@@ -172,30 +261,30 @@ public class OutPortBaseTest extends TestCase {
         this.m_outport.attach("C", m_pubC);
         this.m_outport.attach("D", m_pubD);
         
-        this.m_outport.update();
+//        this.m_outport.update();
         assertEquals(this.m_str, "ABCD");
         
         this.m_str.v = "";
         this.m_outport.detach("A");
-        this.m_outport.update();
+//        this.m_outport.update();
         
         assertEquals(this.m_str, "BCD");
         
         this.m_str.v = "";
         this.m_outport.detach("B");
-        this.m_outport.update();
+//        this.m_outport.update();
         
         assertEquals(this.m_str, "CD");
         
         this.m_str.v = "";
         this.m_outport.detach("D");
-        this.m_outport.update();
+//        this.m_outport.update();
         
         assertEquals(this.m_str, "C");
 
         this.m_str.v = "";
         this.m_outport.detach("C");
-        this.m_outport.update();
+//        this.m_outport.update();
         
         assertEquals(this.m_str, "");
     }

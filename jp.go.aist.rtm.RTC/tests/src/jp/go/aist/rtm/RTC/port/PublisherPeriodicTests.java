@@ -2,6 +2,9 @@ package jp.go.aist.rtm.RTC.port;
 
 import java.util.Vector;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
 import jp.go.aist.rtm.RTC.port.publisher.PublisherPeriodic;
 import jp.go.aist.rtm.RTC.util.Properties;
 import junit.framework.TestCase;
@@ -63,6 +66,11 @@ public class PublisherPeriodicTests extends TestCase {
         private boolean isLastTimeCleared() {
             return (_lastTime == 0);
         }
+        public ReturnCode put(final OutputStream data) {
+            return ReturnCode.PORT_OK;
+        }
+        public void publishInterfaceProfile(NVListHolder properties) {
+        }
     };
 
     class CounterConsumer implements InPortConsumer {
@@ -101,6 +109,11 @@ public class PublisherPeriodicTests extends TestCase {
 
         public int getCount() {
             return _count;
+        }
+        public ReturnCode put(final OutputStream data) {
+            return ReturnCode.PORT_OK;
+        }
+        public void publishInterfaceProfile(NVListHolder properties) {
         }
     
         private int _count;
