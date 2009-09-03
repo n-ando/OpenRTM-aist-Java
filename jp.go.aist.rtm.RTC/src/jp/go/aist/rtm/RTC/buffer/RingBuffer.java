@@ -215,9 +215,51 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
      * @param valueRef 読み込んだデータを受け取るためのDataRefオブジェクト
      * @return 読み込みに成功した場合はtrueを、さもなくばfalseを返します。
      */
-    public boolean read(DataRef<DataType> valueRef) {
+    public ReturnCode read(DataRef<DataType> valueRef) {
+/*
+        synchronized(m_empty.mutex){
+            if (empty()) {
+                boolean timedread = m_timedread;
+                boolean readback = m_readback;
+                if (!(sec < 0)) {// if second arg is set -> block mode
+                    timedread = true;
+                    readback  = false;
+                    sec = m_rtimeout.sec();
+                    nsec = m_rtimeout.usec() * 1000;
+                }
+                if (readback && !timedread) {      // "readback" mode
+                    advanceRptr(-1);
+                }
+                else if (!readback && !timedread) { // "do_notiong" mode
+                    return ReturnCode.BUFFER_EMPTY;
+                }
+                else if (!readback && timedread) { // "block" mode
+                    //  true: signaled, false: timeout
+                    if (!m_empty.cond.wait(sec, nsec)) {
+                        return ReturnCode.TIMEOUT;
+                    }
+                }
+                else {                                   // unknown condition
+                    return ReturnCode.PRECONDITION_NOT_MET;
+                }
+            }
+
+            boolean  full_ = full();
+      
+            get(valueRef);
+            advanceRptr();
+
+            if (full_) {
+                synchronized(m_full.mutex){
+                    m_full.cond.signal();
+                }
+            }
+      
+            return ReturnCode.BUFFER_OK;
+        }
+*/
         valueRef.v = get();
-        return true;
+        return ReturnCode.BUFFER_OK;
     }
 
     /**

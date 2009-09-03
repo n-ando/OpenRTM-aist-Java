@@ -1,6 +1,7 @@
 package jp.go.aist.rtm.RTC.port;
 
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
+import jp.go.aist.rtm.RTC.buffer.ReturnCode;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
@@ -108,7 +109,8 @@ public class OutPortCorbaConsumerTest extends TestCase {
         
         // バッファからデータを読み出して、テスト用に設定しておいたデータを読み取ったデータを比較し、正しく取得できたことを確認する
         DataRef<Float> readValue = new DataRef<Float>(0f);
-        assertTrue(buffer.read(readValue));
+        assertEquals(ReturnCode.BUFFER_OK,buffer.read(readValue));
+//        assertTrue(buffer.read(readValue));
         assertTrue( Math.abs(writeValue.doubleValue()-readValue.v) < 0.00001);
     }
     /**

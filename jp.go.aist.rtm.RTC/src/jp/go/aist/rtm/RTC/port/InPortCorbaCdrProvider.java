@@ -24,7 +24,8 @@ import jp.go.aist.rtm.RTC.util.Properties;
  *                 to this provider.
  *
  */
-public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvider  {
+//public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvider  {
+public class InPortCorbaCdrProvider extends InPortProviderImpl  {
     /*!
      * @brief Constructor
      *

@@ -249,7 +249,7 @@ public class InPort<DataType> extends InPortBase {
     }
     
     /**
-     * <p>ポート内のバッファ長を取得します。</p>
+     * <p> </p>
      * 
      * @return バッファ長
      */
@@ -265,8 +265,10 @@ public class InPort<DataType> extends InPortBase {
      * @param valueRef 読み取ったデータを受け取るためのDataRefオブジェクト
      */
     public boolean read(DataRef<DataType> valueRef) {
-        return this.m_superClass.read(valueRef);
+//        return this.m_superClass.read(valueRef);
+        return true;
     }
+
 
     /**
      * <p>バッファフルかどうかを取得します。</p>

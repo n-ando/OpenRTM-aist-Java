@@ -129,7 +129,7 @@ public interface BufferBase<DataType> {
      * @param valueRef 読み込んだデータを受け取るためのDataRefオブジェクト
      * @return 読み込みに成功した場合はtrueを、さもなくばfalseを返します。
      */
-    public boolean read(DataRef<DataType> valueRef);
+    public ReturnCode read(DataRef<DataType> valueRef);
     /**
      * <p>バッファにデータを書き込みます。</p>
      * 

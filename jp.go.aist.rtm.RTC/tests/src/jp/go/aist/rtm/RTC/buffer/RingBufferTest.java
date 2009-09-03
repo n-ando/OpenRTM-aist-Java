@@ -68,7 +68,7 @@ public class RingBufferTest extends TestCase {
         
         // (2) 最後にデータが読み取られた後、新しいデータが書き込みされていない場合、空と判定されるか？
         DataRef<Integer> readValue = new DataRef<Integer>(0);
-        assertTrue(buff.read(readValue));
+        assertEquals(ReturnCode.BUFFER_OK,buff.read(readValue));
 //        assertTrue(buff.isEmpty());
 
         // (3) 最後にデータが読み取られた後、新しいデータが書き込みされた場合、空ではないと判定されるか？
@@ -99,7 +99,8 @@ public class RingBufferTest extends TestCase {
         for (int i = 0; i < length - 1; i++) {
             // 正しく読み取れていることを確認する
             data.v = null; // 前回のデータが残らないようにクリアしておく
-            assertTrue(buff.read(data));
+            assertEquals(ReturnCode.BUFFER_OK,buff.read(data));
+//            assertTrue(buff.read(data));
             assertEquals(value, data.v);
             
             // まだ空ではないはず
@@ -108,7 +109,8 @@ public class RingBufferTest extends TestCase {
         
         // 最後の１データを読み取る
         data.v = null; // 前回のデータが残らないようにクリアしておく
-        assertTrue(buff.read(data));
+        assertEquals(ReturnCode.BUFFER_OK,buff.read(data));
+//        assertTrue(buff.read(data));
         assertEquals(value, data.v);
         
         // 空になったはず
