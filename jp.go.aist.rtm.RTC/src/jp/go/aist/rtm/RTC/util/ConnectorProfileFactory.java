@@ -4,8 +4,16 @@ import _SDOPackage.NameValue;
 import RTC.ConnectorProfile;
 import RTC.PortService;
 
+/**
+ * <p>Java用コネクタープロファイルファクトリの実装です。</p>
+ */
 public class ConnectorProfileFactory {
 
+    /**
+     * <p>コネクタープロファイルを生成します。</p>
+     * 
+     * @return 生成されたConnectorProfileオブジェクト
+     */
     public static ConnectorProfile create() {
 
         String name = new String();
@@ -16,6 +24,12 @@ public class ConnectorProfileFactory {
         return new ConnectorProfile(name, connector_id, ports, properties);
     }
     
+    /**
+     * <p>コネクタープロファイルの複製を生成します。</p>
+     * 
+     * @param rhs ConnectorProfileオブジェクト
+     * @return コピーされたConnectorProfileオブジェクト
+     */
     public static ConnectorProfile clone(final ConnectorProfile rhs) {
         
         if (rhs == null) {

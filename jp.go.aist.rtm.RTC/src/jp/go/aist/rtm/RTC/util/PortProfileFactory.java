@@ -7,8 +7,16 @@ import RTC.PortInterfaceProfile;
 import RTC.PortProfile;
 import RTC.RTObject;
 
+/**
+ * <p>Java用ポートプロファイルファクトリの実装です。</p>
+ */
 public class PortProfileFactory {
 
+    /**
+     * <p>ポートプロファイルを生成します。</p>
+     * 
+     * @return 生成されたPortProfileオブジェクト
+     */
     public static PortProfile create() {
         
         String name = new String();
@@ -21,6 +29,12 @@ public class PortProfileFactory {
         return new PortProfile(name, interfaces, port_ref, connector_profiles, owner, properties);
     }
     
+    /**
+     * <p>ポートプロファイルの複製を生成します。</p>
+     * 
+     * @param rhs PortProfileオブジェクト
+     * @return コピーされたPortProfileオブジェクト
+     */
     public static PortProfile clone(final PortProfile rhs) {
         
         if (rhs == null) {

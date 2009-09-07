@@ -3,13 +3,27 @@ package jp.go.aist.rtm.RTC.util;
 import RTC.PortService;
 import RTC.PortServiceListHolder;
 
+/**
+ * <p>Java用ポートサービスリストホルダーファクトリの実装です。</p>
+ */
 public class PortServiceListHolderFactory {
 
+    /**
+     * <p>ポートサービスリストホルダーを生成します。</p>
+     * 
+     * @return 生成されたPortServiceListHolderオブジェクト
+     */
     public static PortServiceListHolder create() {
         
         return new PortServiceListHolder(new PortService[0]);
     }
 
+    /**
+     * <p>ポートサービスリストホルダーの複製を生成します。</p>
+     * 
+     * @param rhs PortServiceListHolderオブジェクト
+     * @return コピーされたPortServiceListHolderオブジェクト
+     */
     public static PortServiceListHolder clone(PortServiceListHolder rhs) {
         
         PortService[] ports = new PortService[rhs.value.length];

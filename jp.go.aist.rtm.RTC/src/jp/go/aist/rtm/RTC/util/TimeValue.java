@@ -83,21 +83,21 @@ public class TimeValue {
      */
     public TimeValue minus(TimeValue tm) {
         TimeValue res = new TimeValue();
-        if( this.tv_sec>=tm.tv_sec) {
-            if( this.tv_usec>=tm.tv_usec ) {
+        if( this.tv_sec >= tm.tv_sec) {
+            if( this.tv_usec >= tm.tv_usec ) {
                 res.tv_sec = this.tv_sec - tm.tv_sec;
                 res.tv_usec = this.tv_usec - tm.tv_usec;
             } else {
                 res.tv_sec = this.tv_sec - tm.tv_sec - 1;
-                res.tv_usec = (this.tv_usec + 1000000) - tm.tv_usec;
+                res.tv_usec = (this.tv_usec + TIMEVALUE_ONE_SECOND_IN_USECS) - tm.tv_usec;
             }
         } else {
             if( tm.tv_usec >= this.tv_usec ) {
                 res.tv_sec = - (tm.tv_sec - this.tv_sec);
                 res.tv_usec = - (tm.tv_usec - this.tv_usec);
             } else {
-                res.tv_sec = -(tm.tv_sec - this.tv_sec - 1);
-                res.tv_usec = - (tm.tv_usec + 1000000) + this.tv_usec; 
+                res.tv_sec = - (tm.tv_sec - this.tv_sec - 1);
+                res.tv_usec = - (tm.tv_usec + TIMEVALUE_ONE_SECOND_IN_USECS) + this.tv_usec; 
             }
         }
         res.normalize();
@@ -115,9 +115,9 @@ public class TimeValue {
         TimeValue res = new TimeValue();
         res.tv_sec = this.tv_sec + tm.tv_sec;
         res.tv_usec = this.tv_usec + tm.tv_usec;
-        if( res.tv_usec > 1000000 ) {
+        if( res.tv_usec > TIMEVALUE_ONE_SECOND_IN_USECS ) {
             ++res.tv_sec;
-            res.tv_usec -= 1000000;
+            res.tv_usec -= TIMEVALUE_ONE_SECOND_IN_USECS;
         }
         res.normalize();
         return res;
@@ -154,7 +154,7 @@ public class TimeValue {
      */
     public double toDouble(){
         normalize();
-        return this.tv_sec + this.tv_usec/1000000.0;
+        return this.tv_sec + this.tv_usec/ (double)TIMEVALUE_ONE_SECOND_IN_USECS;
     }
     
     /**

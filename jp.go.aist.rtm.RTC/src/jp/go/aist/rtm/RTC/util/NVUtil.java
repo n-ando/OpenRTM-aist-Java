@@ -240,7 +240,7 @@ public class NVUtil {
         } catch (Exception e) {
             str_value = "";
         }
-        if( str_value==null ) return "";
+        if( str_value == null ) return "";
         
         return str_value;
     }
@@ -395,9 +395,16 @@ public class NVUtil {
         
         public Properties m_prop = new Properties();
     }
+
     /**
-     *
-     * <p> The content of NVList is made a character string. </p>
+     * <p>NVListHolderが内包するNameValueオブジェクトリストの中から、
+     * そのオブジェクトが持つ値を文字列型で取得します。</p>
+     * 
+     * @param nvlist NVListHolderオブジェクト
+     * 
+     * @return NameValueオブジェクトの文字列値を返します。<br />
+     * 
+     * @throws Exception 指定した名称のNameValueオブジェクトが見つからない場合
      */
     public static String toString(final NVListHolder nvlist) {
         String crlf = System.getProperty("line.separator");
@@ -414,9 +421,10 @@ public class NVUtil {
                 } else {
                     value = anyVal.extract_Value().toString();
                 }
+
                 str = str + name + ":" + value + crlf;
             } catch (Exception ignored) {
-	        str = str + name + ": not a string value" + crlf;
+                str = str + name + ": not a string value" + crlf;
             }
         }
         return str;
