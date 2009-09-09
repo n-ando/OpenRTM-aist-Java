@@ -1534,6 +1534,24 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @param name DataInPortの名称
      * @param inport InPortへの参照
      */
+    public <DataType, Buffer> void registerInPort(Class<DataType> DATA_TYPE_CLASS, 
+                            final String name, InPort<DataType> inport) throws Exception {
+
+        rtcout.println(rtcout.TRACE, "RTObject_impl.registerInPort()");
+
+        String propkey = "port.dataport." + name + ".tcp_any";
+        PortBase port = new DataInPort(DATA_TYPE_CLASS, name, inport, m_properties.getNode(propkey));
+        this.registerPort(port);
+    }
+
+    /**
+     * <p>[local interface] DataInPort を登録します。<br />
+     *
+     * RTC が保持するDataInPortを登録します。</p>
+     * 
+     * @param name DataInPortの名称
+     * @param inport InPortへの参照
+     */
     public void registerInPort(final String name, InPortBase inport) throws Exception {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerInPort()");
@@ -1550,13 +1568,31 @@ public class RTObject_impl extends DataFlowComponentPOA {
         inport.init();
         this.registerPort(inport);
     }
-    
+
     /**
      * <p>[local interface] DataOutPort を登録します。<br />
      *
      * RTC が保持するDataOutPortを登録します。</p>
      * 
      * @param DATA_TYPE_CLASS DataOutPortがやりとりするデータ型
+     * @param name DataOutPortの名称
+     * @param outport OutPortへの参照
+     */
+    public <DataType, Buffer> void registerOutPort(Class<DataType> DATA_TYPE_CLASS, 
+                          final String name, OutPort<DataType> outport) throws Exception {
+
+        rtcout.println(rtcout.TRACE, "RTObject_impl.registerOutPort()");
+
+        String propkey = "port.dataport." + name + ".tcp_any";
+        PortBase port = new DataOutPort(DATA_TYPE_CLASS, name, outport, m_properties.getNode(propkey));
+        this.registerPort(port);
+    }
+
+    /**
+     * <p>[local interface] DataOutPort を登録します。<br />
+     *
+     * RTC が保持するDataOutPortを登録します。</p>
+     * 
      * @param name DataOutPortの名称
      * @param outport OutPortへの参照
      */
