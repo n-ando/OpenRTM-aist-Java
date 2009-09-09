@@ -162,12 +162,8 @@ public class OutPortPushConnector extends OutPortConnector {
          m_publisher.deactivate();
      }
     
-    /*!
-     * @if jp
-     * @brief Publisherの生成
-     * @else
-     * @brief create publisher
-     * @endif
+    /**
+     * <p> create publisher </p>
      */
     protected PublisherBase createPublisher(Profile profile) {
         String pub_type;
@@ -179,12 +175,8 @@ public class OutPortPushConnector extends OutPortConnector {
         return factory.createObject(pub_type);
     }
 
-    /*!
-     * @if jp
-     * @brief Bufferの生成
-     * @else
-     * @brief create buffer
-     * @endif
+    /**
+     * <p> create buffer </p>
      */
     protected BufferBase<OutputStream> createBuffer(Profile profile) {
         String buf_type;
@@ -195,30 +187,18 @@ public class OutPortPushConnector extends OutPortConnector {
         return factory.createObject(buf_type);
     }
 
-    /*!
-     * @if jp
-     * @brief InPortConsumer へのポインタ
-     * @else
-     * @brief the pointer to the InPortConsumer
-     * @endif
+    /**
+     * <p> InPortConsumer </p>
      */
     private InPortConsumer m_consumer;
 
-    /*!
-     * @if jp
-     * @brief Publisher へのポインタ
-     * @else
-     * @brief the pointer to the publisher
-     * @endif
+    /**
+     * <p> publisher </p>
      */
     private PublisherBase m_publisher;
 
-    /*!
-     * @if jp
-     * @brief Buffer へのポインタ
-     * @else
-     * @brief the pointer to the buffer
-     * @endif
+    /**
+     * <p> the buffer </p>
      */
     private BufferBase<OutputStream> m_buffer;
 
