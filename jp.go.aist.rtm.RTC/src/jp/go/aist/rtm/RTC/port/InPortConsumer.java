@@ -4,6 +4,7 @@ import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
 import jp.go.aist.rtm.RTC.port.ReturnCode;
+import jp.go.aist.rtm.RTC.util.Properties;
 
 import _SDOPackage.NVListHolder;
 
@@ -11,6 +12,14 @@ import _SDOPackage.NVListHolder;
  * <p>入力ポートコンシューマが提供すべき機能のインタフェースです。</p>
  */
 public interface InPortConsumer {
+    /**
+     * <p> Initializing configuration </p>
+     *
+     * <p> This operation would be called to configure this consumer </p>
+     * <p> in initialization. </p>
+     *
+     */
+    public void init(Properties prop);
     /**
      * <p>接続先のポートへデータを送り出します。</p>
      */
