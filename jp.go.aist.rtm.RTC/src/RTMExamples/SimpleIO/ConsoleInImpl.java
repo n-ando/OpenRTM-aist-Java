@@ -28,7 +28,8 @@ public class ConsoleInImpl  extends DataFlowComponentBase {
         
         // Set OutPort buffer
         try {
-            registerOutPort(TimedLong.class, "out", m_outOut);
+//            registerOutPort(TimedLong.class, "out", m_outOut);  //v042
+            registerOutPort("out", m_outOut);
         } catch (Exception e) {
             e.printStackTrace();
         }

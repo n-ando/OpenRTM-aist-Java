@@ -51,6 +51,7 @@ public class SeqOutImpl  extends DataFlowComponentBase {
         // <rtc-template block="registration">
         // Set InPort buffers
         try {
+/*
             registerOutPort(TimedShort.class, "Short", m_ShortOut);
             registerOutPort(TimedLong.class, "Long", m_LongOut);
             registerOutPort(TimedFloat.class, "Float", m_FloatOut);
@@ -59,6 +60,17 @@ public class SeqOutImpl  extends DataFlowComponentBase {
             registerOutPort(TimedLongSeq.class, "LongSeq", m_LongSeqOut);
             registerOutPort(TimedFloatSeq.class, "FloatSeq", m_FloatSeqOut);
             registerOutPort(TimedDoubleSeq.class, "DoubleSeq", m_DoubleSeqOut);
+*/  //v042
+
+            registerOutPort("Short", m_ShortOut);
+            registerOutPort("Long", m_LongOut);
+            registerOutPort("Float", m_FloatOut);
+            registerOutPort("Double", m_DoubleOut);
+            registerOutPort("ShortSeq", m_ShortSeqOut);
+            registerOutPort("LongSeq", m_LongSeqOut);
+            registerOutPort("FloatSeq", m_FloatSeqOut);
+            registerOutPort("DoubleSeq", m_DoubleSeqOut);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

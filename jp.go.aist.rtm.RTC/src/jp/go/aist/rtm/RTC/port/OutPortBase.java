@@ -9,6 +9,7 @@ import RTC.ConnectorProfileHolder;
 import RTC.ReturnCode_t;
 
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
+import jp.go.aist.rtm.RTC.util.Properties;
 
 /**
  * <p>出力ポートのベース実装クラスです。
@@ -24,7 +25,14 @@ public class OutPortBase extends PortBase {
     public OutPortBase(final String name) {
         this.m_name = name;
     }
-    
+
+    /**
+     * <p>プロパティを取得する</p>
+     */
+    public Properties properties() {
+        return new Properties();
+    }
+
     /**
      * <p>ポート名を取得します。</p>
      * 

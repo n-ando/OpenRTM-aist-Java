@@ -33,9 +33,16 @@ public class GUIInImpl  extends DataFlowComponentBase {
         
         // Set OutPort buffer
         try {
+/*
             registerOutPort(TimedLong.class, "out1", m_out1Out);
             registerOutPort(TimedString.class, "out2", m_out2Out);
             registerOutPort(TimedDouble.class, "out3", m_out3Out);
+*/  //v042
+
+            registerOutPort("out1", m_out1Out);
+            registerOutPort("out2", m_out2Out);
+            registerOutPort("out3", m_out3Out);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

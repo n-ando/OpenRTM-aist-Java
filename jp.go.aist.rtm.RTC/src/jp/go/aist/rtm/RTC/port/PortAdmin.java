@@ -39,7 +39,24 @@ public class PortAdmin {
     public PortServiceListHolder getPortList() {
         return PortServiceListHolderFactory.clone(this.m_portRefs);
     }
-    
+    public PortServiceListHolder getPortServiceList() {
+        return PortServiceListHolderFactory.clone(this.m_portRefs);
+    }
+
+    /**
+     * <p>全ての Port のインターフェースを activates する。</p>
+     */
+    public void activatePorts() {
+        ;  //コンパイル用の仮です。
+    }
+
+    /**
+     * <p>全ての Port のインターフェースを deactivates する。</p>
+     */
+    public void deactivatePorts() {
+        ;  //コンパイル用の仮です。
+    }
+
     /**
      * <p>登録されているPortのリストを取得します。</p>
      * 

@@ -30,8 +30,10 @@ public class SinCosOutImpl  extends DataFlowComponentBase {
         
         // Set OutPort buffer
         try {
-            registerOutPort(TimedDouble.class, "out_sin", m_out1Out);
-            registerOutPort(TimedDouble.class, "out_cos", m_out2Out);
+//            registerOutPort(TimedDouble.class, "out_sin", m_out1Out);  //v042
+//            registerOutPort(TimedDouble.class, "out_cos", m_out2Out);  //v042
+            registerOutPort("out_sin", m_out1Out);
+            registerOutPort("out_cos", m_out2Out);
         } catch (Exception e) {
             e.printStackTrace();
         }
