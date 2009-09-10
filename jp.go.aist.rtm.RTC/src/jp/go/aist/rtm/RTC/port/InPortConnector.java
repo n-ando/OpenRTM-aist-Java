@@ -17,11 +17,11 @@ public abstract class InPortConnector extends ConnectorBase {
     /**
      * <p> Constructor </p>
      */
-public InPortConnector() {
-}
-
     public InPortConnector(ConnectorBase.Profile profile,
                     BufferBase<OutputStream> buffer) {
+        rtcout = new Logbuf("InPortConnector");
+        m_profile = profile;
+        m_buffer = buffer;
     }
 
 
@@ -32,6 +32,7 @@ public InPortConnector() {
      *
      */
     public final Profile profile() {
+        rtcout.println(rtcout.TRACE, "profile()");
         return m_profile;
     }
     /**
@@ -41,7 +42,8 @@ public InPortConnector() {
      *
      */
     public final String id() {
-        return "id";
+        rtcout.println(rtcout.TRACE, "id() = "+profile().id);
+        return profile().id;
     }
 
     /**
@@ -51,7 +53,8 @@ public InPortConnector() {
      *
      */
     public final String name() {
-        return "name";
+        rtcout.println(rtcout.TRACE, "name() = "+profile().name);
+        return profile().name;
     }
 
     /**

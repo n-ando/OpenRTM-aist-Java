@@ -130,6 +130,7 @@ public interface BufferBase<DataType> {
      * @return 読み込みに成功した場合はtrueを、さもなくばfalseを返します。
      */
     public ReturnCode read(DataRef<DataType> valueRef);
+    public ReturnCode read(DataRef<DataType> valueRef, int sec, int nsec);
     /**
      * <p>バッファにデータを書き込みます。</p>
      * 
@@ -144,6 +145,6 @@ public interface BufferBase<DataType> {
      * @return 読み込んだデータ
      */
     public DataType get();
-    public ReturnCode get(DataType value);
+    public ReturnCode get(DataRef<DataType> value);
 
 }

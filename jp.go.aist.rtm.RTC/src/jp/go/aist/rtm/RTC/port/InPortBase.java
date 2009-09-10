@@ -165,7 +165,9 @@ public class InPortBase extends PortBase {
     protected InPortConnector
     createConnector(ConnectorProfile cprof, Properties prop,
                     InPortProvider provider) {
-        return new InPortPushConnector();
+
+        InPortConnector connector = null;
+        return connector;
     }
     /**
      * <p> InPortPullConnector creation </p>
@@ -176,7 +178,8 @@ public class InPortBase extends PortBase {
     protected InPortConnector
     createConnector(final ConnectorProfile cprof, Properties prop,
                     OutPortConsumer consumer) {
-        return new InPortPushConnector();
+        InPortConnector connector = null;
+        return connector;
     }
     protected boolean m_singlebuffer;
     protected BufferBase<OutputStream> m_thebuffer;

@@ -216,7 +216,9 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
      * @return 読み込みに成功した場合はtrueを、さもなくばfalseを返します。
      */
     public ReturnCode read(DataRef<DataType> valueRef) {
-/*
+        return read(valueRef, -1, 0);
+    }
+    public ReturnCode read(DataRef<DataType> valueRef, int sec, int nsec) {
         synchronized(m_empty.mutex){
             if (empty()) {
                 boolean timedread = m_timedread;
@@ -224,8 +226,8 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
                 if (!(sec < 0)) {// if second arg is set -> block mode
                     timedread = true;
                     readback  = false;
-                    sec = m_rtimeout.sec();
-                    nsec = m_rtimeout.usec() * 1000;
+                    sec = (int)m_rtimeout.sec();
+                    nsec = (int)m_rtimeout.usec() * 1000;
                 }
                 if (readback && !timedread) {      // "readback" mode
                     advanceRptr(-1);
@@ -235,8 +237,13 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
                 }
                 else if (!readback && timedread) { // "block" mode
                     //  true: signaled, false: timeout
-                    if (!m_empty.cond.wait(sec, nsec)) {
+                    try {
+                        m_empty.wait((long)sec, nsec);
+                    }
+                    catch(IllegalArgumentException e) {
                         return ReturnCode.TIMEOUT;
+                    }
+                    catch(InterruptedException e) {
                     }
                 }
                 else {                                   // unknown condition
@@ -251,15 +258,12 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
 
             if (full_) {
                 synchronized(m_full.mutex){
-                    m_full.cond.signal();
+                    m_full.notify();
                 }
             }
       
             return ReturnCode.BUFFER_OK;
         }
-*/
-        valueRef.v = get();
-        return ReturnCode.BUFFER_OK;
     }
 
     /**
@@ -298,9 +302,9 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
      * @param value 
      * @return ReturnCode
      */
-    public ReturnCode get(DataType value) {
+    public ReturnCode get(DataRef<DataType> value) {
         synchronized (m_posmutex) {
-            value = m_buffer.get(m_rpos);
+            value.equals(m_buffer.get(m_rpos));
             return ReturnCode.BUFFER_OK;
         }
 

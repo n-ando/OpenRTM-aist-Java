@@ -1,6 +1,8 @@
 package jp.go.aist.rtm.RTC.port;
 
 import org.omg.CORBA.Object;
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
 
 import _SDOPackage.NVListHolder;
 
@@ -11,6 +13,9 @@ import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.TypeCast;
+import jp.go.aist.rtm.RTC.port.ReturnCode;
+import jp.go.aist.rtm.RTC.util.Properties;
+
 
 /**
  * <p>CORBAを通信手段とする出力ポートコンシューマの実装です。</p>
@@ -95,6 +100,13 @@ public class OutPortCorbaConsumer<DataType>
                 releaseObject();
             }
         }
+    }
+    public void init(Properties prop) {
+    }
+    public void setBuffer(BufferBase<OutputStream> buffer) {
+    }
+    public ReturnCode get(OutputStream data) {
+        return ReturnCode.PORT_OK;
     }
     
     private BufferBase<DataType> m_buffer;

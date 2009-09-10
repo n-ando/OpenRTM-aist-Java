@@ -1,11 +1,15 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.TypeCast;
+import jp.go.aist.rtm.RTC.util.Properties;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.Object;
@@ -110,6 +114,12 @@ public class InPortCorbaProvider<DataType>
     public void publishInterfaceProfile(NVListHolder properties) {
         this.m_inPortProvider.publishInterfaceProfile(properties);
     }
+    public void init(Properties prop) {
+    }
+
+    public void setBuffer(BufferBase<OutputStream> buffer) {
+    }
+
     
     private BufferBase<DataType> m_buffer;
     private InPortAny m_objref;

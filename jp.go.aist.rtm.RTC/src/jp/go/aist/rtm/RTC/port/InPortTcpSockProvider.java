@@ -1,5 +1,8 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
 import org.omg.CORBA.Any;
 
 import RTC.InPortAnyPOA;
@@ -9,6 +12,7 @@ import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.TypeCast;
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
 
 /**
  * <p>通信手段に TCP ソケットを利用した入力ポートプロバイダの実装クラスです。</p>
@@ -78,6 +82,12 @@ public class InPortTcpSockProvider<DataType>
 
     public void publishInterfaceProfile(NVListHolder properties) {
         this.m_inPortProvider.publishInterfaceProfile(properties);
+    }
+
+    public void init(Properties prop) {
+    }
+
+    public void setBuffer(BufferBase<OutputStream> buffer) {
     }
 
     public void put(Any data) {
