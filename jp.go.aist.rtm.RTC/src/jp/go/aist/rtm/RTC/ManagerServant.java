@@ -29,7 +29,7 @@ import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 /**
  * <p> ManagerServant </p>
  */
-public class ManagerServant extends RTM.ManagerPOA {
+public class ManagerServant extends ManagerPOA {
 
     /**
      * <p> Constructor </p>
@@ -50,13 +50,13 @@ public class ManagerServant extends RTM.ManagerPOA {
     public RTM.Manager _this() {
         if (this.m_objref == null) {
             try {
-                this.m_objref = RTM.ManagerHelper.narrow(POAUtil.getRef(this));
+                this.m_objref = ManagerHelper.narrow(POAUtil.getRef(this));
                 
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
         }
-        
+
         return this.m_objref;
     }
 
@@ -93,10 +93,10 @@ public class ManagerServant extends RTM.ManagerPOA {
      */
     public RTM.ModuleProfile[] get_loadable_modules() {
         ModuleProfileListHolder cprof = new ModuleProfileListHolder();
-        cprof.value = new ModuleProfile[0];
 
         NVListHolder nvlist = new NVListHolder();
         Vector<Properties> prof = m_mgr.getLoadableModules();
+        cprof.value = new ModuleProfile[prof.size()];
 
 //zxc        cprof.length(prof.size());
 System.out.println( "ManagerServant::get_loadable_modules--000--prof.size():"+ prof.size());
@@ -116,10 +116,10 @@ System.out.println( "ManagerServant::get_loadable_modules--000--prof.size():"+ p
      */
     public RTM.ModuleProfile[] get_loaded_modules() {
         ModuleProfileListHolder cprof = new ModuleProfileListHolder();
-        cprof.value = new ModuleProfile[0];
- 
+  
         NVListHolder nvlist = new NVListHolder();
         Vector<Properties> prof = m_mgr.getLoadedModules();
+        cprof.value = new ModuleProfile[prof.size()];
     
 //zxc        cprof.length(prof.size());
 System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ prof.size());
@@ -195,11 +195,11 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
     public RTC.RTObject[] get_components() {
         Vector<RTObject_impl> rtcs = m_mgr.getComponents();
         RTCListHolder crtcs = new RTCListHolder();
-        crtcs.value = new RTObject[0];
+        crtcs.value = new RTObject[rtcs.size()];
 //zxc        crtcs.length(rtcs.size());
         for (int i=0, len=rtcs.size(); i < len; ++i) {
-//            crtcs.value[i] = rtcs.elementAt(i).getObjRef();
-            CORBA_SeqUtil.push_back(crtcs, rtcs.elementAt(i).getObjRef());
+	    crtcs.value[i] = rtcs.elementAt(i).getObjRef();
+//            CORBA_SeqUtil.push_back(crtcs, rtcs.elementAt(i).getObjRef());
         }
         return crtcs.value;
     }
@@ -212,11 +212,13 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
     public RTC.ComponentProfile[] get_component_profiles() {
 
         ComponentProfileListHolder cprofs = new ComponentProfileListHolder();
-        cprofs.value = new ComponentProfile[0];
 
         Vector<RTObject_impl> rtcs = m_mgr.getComponents();
+        cprofs.value = new ComponentProfile[rtcs.size()];
+
         for (int i=0, len=rtcs.size(); i < len; ++i) {
-            CORBA_SeqUtil.push_back(cprofs, rtcs.elementAt(i).get_component_profile());
+            cprofs.value[i] = rtcs.elementAt(i).get_component_profile();
+	    //            CORBA_SeqUtil.push_back(cprofs, rtcs.elementAt(i).get_component_profile());
         }
         return cprofs.value;
     }
@@ -332,7 +334,7 @@ System.out.println( "ManagerServant::get_loaded_modules--000--prof.size():"+ pro
      */
     public RTM.Manager getObjRef() {
 //        return (RTM.Manager)m_objref._this()._duplicate();
-        return (RTM.Manager)m_objref._duplicate();
+        return (RTM.Manager)m_objref;
     }
 
     /**

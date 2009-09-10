@@ -90,7 +90,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     /*
      *
      */
-    final static int ECOTHER_OFFSET = 1000;
+    public static final int ECOTHER_OFFSET = 1000;
 
     /**
      * <p>コンストラクタです。</p>

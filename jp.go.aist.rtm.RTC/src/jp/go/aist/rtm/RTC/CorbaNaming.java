@@ -55,10 +55,10 @@ public class CorbaNaming {
 //<+zxc
         Manager manager = Manager.instance();
         rtcout = new Logbuf("Manager.CorbaNaming");
-        rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-                   "enable", "disable", false));
+        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
+        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
+        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
+        //           "enable", "disable", false));
 //+>
     }
 
@@ -86,10 +86,10 @@ public class CorbaNaming {
 //<+zxc
         Manager manager = Manager.instance();
         rtcout = new Logbuf("Manager.CorbaNaming");
-        rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-                   "enable", "disable", false));
+        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
+        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
+        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
+        //           "enable", "disable", false));
 rtcout.println(rtcout.TRACE, "CorbaNaming.CorbaNaming(" +name_server +")");//zxc
 //+>
     }
@@ -843,13 +843,14 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
     
             // no more binding -> do-while loop will be finished
             if( bi==null ) cont = false;
-            else 
+            else {
                 if( bi.value!=null ) {
                     if( bi.value.next_n(m_blLength, bl) == false )
                         return;
                 } else {
                     return;
                 }
+	    }
         }
       
       if( bi!=null ) bi.value.destroy();

@@ -19,6 +19,7 @@ import jp.go.aist.rtm.RTC.executionContext.ExtTrigExecutionContext;
 import jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext;
 import jp.go.aist.rtm.RTC.executionContext.OpenHRPExecutionContext;
 import jp.go.aist.rtm.RTC.executionContext.PeriodicECSharedComposite;
+import jp.go.aist.rtm.RTC.FactoryInit;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
@@ -95,6 +96,7 @@ public class Manager {
                         manager.initLogger();
                         manager.initORB();
                         manager.initNaming();
+			manager.initFactories();
                         manager.initExecContext();
                         manager.initComposite();
                         manager.initTimer();
@@ -126,6 +128,7 @@ public class Manager {
                         manager.initLogger();
                         manager.initORB();
                         manager.initNaming();
+			manager.initFactories();
                         manager.initExecContext();
                         manager.initComposite();
                         manager.initTimer();
@@ -199,7 +202,7 @@ public class Manager {
             }
             
             try {
-                Thread.sleep(1);
+                Thread.sleep(100);
                 
             } catch (InterruptedException e) {
                 rtcout.println(rtcout.DEBUG, "Exception: Caught InterruptedException in Manager.join().");
@@ -253,12 +256,11 @@ public class Manager {
                 rtcout.println(rtcout.ERROR, "Could not get POA manager.");
                 return false;
             }
-
             this.getPOAManager().activate();
-
-            
+	    rtcout.println(rtcout.TRACE, "POA Manager activated.");
         } catch (Exception e) {
             rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.activateManager().");
+            rtcout.println(rtcout.DEBUG, "POA Manager activation failed.");
             rtcout.println(rtcout.DEBUG, e.getMessage());
             return false;
         }
@@ -694,6 +696,10 @@ public class Manager {
         Properties comp_id = new Properties();
         if (!procComponentArgs(comp_args, comp_id, comp_prop)) return null;
 
+	if (!(comp_prop.getProperty("exported_ports")==null || comp_prop.getProperty("exported_ports").equals(""))) {
+	    comp_prop.setProperty("conf.default.exported_ports",comp_prop.getProperty("exported_ports"));
+	}
+
         //------------------------------------------------------------
         // Create Component
         RTObject_impl comp = null;
@@ -775,7 +781,7 @@ public class Manager {
         // [category].[instance_name].config_file = file_name
         configureComponent(comp, prop);
 
-        comp.setProperties(prop);
+        // comp.setProperties(prop);
 
         //------------------------------------------------------------
         // Component initialization
@@ -1073,6 +1079,29 @@ public class Manager {
     public void deleteComponent(final String instanceName) {
         
         rtcout.println(rtcout.TRACE, "Manager.deleteComponent(" + instanceName + ")");
+        RTObject_impl comp = null;
+	comp = m_compManager.find(new InstanceName(instanceName));
+	if (comp == null)
+	    return;
+
+	Properties comp_id = new Properties();
+	comp_id.setProperty("vendor", comp.getProperties().getProperty("vendor"));
+	comp_id.setProperty("category", comp.getProperties().getProperty("category"));
+	comp_id.setProperty("implementation_id", comp.getProperties().getProperty("implementation_id"));
+	comp_id.setProperty("version", comp.getProperties().getProperty("version"));
+
+	FactoryBase factory = (FactoryBase)m_factory.find(new FactoryPredicate(instanceName));
+    
+	ReturnCode_t ret = comp.exit();
+
+	if (factory == null)
+	    {
+	  return;
+	    }
+	else
+	    {
+		factory.destroy(comp);
+	    } 
     }
     
     /**
@@ -1525,9 +1554,9 @@ public class Manager {
         }
 
         // Merge Properties. type_prop is merged properties
+        comp.getProperties().merge(prop);
         type_prop.merge(name_prop);
         comp.getProperties().merge(type_prop);
-        comp.getProperties().merge(prop);
 
         // ------------------------------------------------------------
         // Format component's name for NameService
@@ -1571,6 +1600,18 @@ public class Manager {
 
         return true;
     }
+
+    /**
+     * <p> intiFactories </p>
+     *
+     * @return boolan
+     */
+    protected boolean initFactories() {
+        rtcout.println(rtcout.TRACE, "Manager.initFactories()");
+	FactoryInit.init();
+	return true;
+    }
+
     /**
      * <p>Timerを初期化します。</p>
      */

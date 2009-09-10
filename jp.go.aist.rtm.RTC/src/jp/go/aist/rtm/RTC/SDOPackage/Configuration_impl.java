@@ -98,11 +98,11 @@ public class Configuration_impl extends ConfigurationPOA {
         this.m_objref = this._this();
 
         Manager manager = Manager.instance();
-        rtcout = new Logbuf("Manager.Configuration_impl");
-        rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-                   "enable", "disable", false));
+        rtcout = new Logbuf("Configuration_impl");
+        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
+        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
+        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
+        //            "enable", "disable", false));
     }
 
     /**
@@ -142,8 +142,8 @@ public class Configuration_impl extends ConfigurationPOA {
      * @param prop　コピー元プロパティ
      */
     private void toConfigurationSet(ConfigurationSet conf, final Properties prop) {
-        conf.id = prop.getName();
-        conf.description = prop.getValue();
+        conf.description = new String(prop.getProperty("description"));
+        conf.id = new String(prop.getName());
         NVListHolder nvlist = new NVListHolder();
         NVUtil.copyFromProperties(nvlist, prop);
         conf.configuration_data = nvlist.value;
@@ -446,12 +446,12 @@ public class Configuration_impl extends ConfigurationPOA {
                 for(int intIdx=0; intIdx<cf.size(); ++intIdx) {
                     if( config_sets.value[intIdx]==null ) config_sets.value[intIdx] = new ConfigurationSet();
                     toConfigurationSet(config_sets.value[intIdx], cf.elementAt(intIdx));
-                    String id = config_sets.value[intIdx].id;
-                    if( m_configsetopts.get(id) != null ) {
-                        config_sets.value[intIdx].description = m_configsetopts.get(id).getProperty("description");
-                    } else {
-                        config_sets.value[intIdx].description = "";
-                    }
+                    //String id = config_sets.value[intIdx].id;
+                    //if( m_configsetopts.get(id) != null ) {
+                    //    config_sets.value[intIdx].description = m_configsetopts.get(id).getProperty("description");
+                    //} else {
+                    //    config_sets.value[intIdx].description = "";
+                    //}
                 }
                 return config_sets.value;
             }
@@ -487,10 +487,10 @@ public class Configuration_impl extends ConfigurationPOA {
         try{
             ConfigurationSet config = new ConfigurationSet();
             toConfigurationSet(config, configset);
-            String id = config.id;
-            if( m_configsetopts.get(id) != null ) {
-                config.description = m_configsetopts.get(id).getProperty("description");
-            }
+            //String id = config.id;
+            //if( m_configsetopts.get(id) != null ) {
+            //    config.description = m_configsetopts.get(id).getProperty("description");
+            //}
             return config;
         } catch (Exception ex) {
             throw new InternalError("Configuration::get_configuration_set()");
@@ -520,22 +520,23 @@ public class Configuration_impl extends ConfigurationPOA {
         try {
             Properties conf = new Properties(config_id);
             toProperties(conf, configuration_set);
-            if( m_configsets.setConfigurationSetValues(config_id, conf)) {
-                String description = configuration_set.description;
-                //
-                Properties prop = m_configsetopts.get(config_id);
-                if( prop==null ) {
-                    prop = new Properties();
-                    m_configsetopts.put(config_id, prop);
-                }
-                //
-                m_configsetopts.get(config_id).setProperty("description", description);
-                return true;
-            }
+	    return m_configsets.setConfigurationSetValues(config_id, conf);
+            //if( m_configsets.setConfigurationSetValues(config_id, conf)) {
+            //    String description = configuration_set.description;
+            //    //
+            //    Properties prop = m_configsetopts.get(config_id);
+            //    if( prop==null ) {
+            //        prop = new Properties();
+            //        m_configsetopts.put(config_id, prop);
+            //    }
+            //    //
+            //    m_configsetopts.get(config_id).setProperty("description", description);
+            //    return true;
+            //}
         } catch( Exception ex) {
             throw new InternalError("Configuration::set_configuration_set_values()");
         }
-        return false;
+	//        return false;
     }
 
     /**
@@ -569,10 +570,10 @@ public class Configuration_impl extends ConfigurationPOA {
             synchronized (m_configsets) {
                 ConfigurationSet config = new ConfigurationSet();
                 toConfigurationSet(config, m_configsets.getActiveConfigurationSet());
-                String id = config.id;
-                if( m_configsetopts.get(id) != null ) {
-                    config.description = m_configsetopts.get(id).getProperty("description");
-                }
+                //String id = config.id;
+                //if( m_configsetopts.get(id) != null ) {
+                //    config.description = m_configsetopts.get(id).getProperty("description");
+                //}
                 return config;
             }
         } catch (Exception ex) {
@@ -603,22 +604,23 @@ public class Configuration_impl extends ConfigurationPOA {
                 final String config_id = configuration_set.id;
                 Properties config = new Properties(config_id);
                 toProperties(config, configuration_set);
-                if( m_configsets.addConfigurationSet(config) ) {
-                    String description = configuration_set.description;
-                    Properties prop = m_configsetopts.get(config_id);
-                    if( prop==null ) {
-                        prop = new Properties();
-                        m_configsetopts.put(config_id, prop);
-                    }
-                    m_configsetopts.get(config_id).setProperty("description", description);
-                    return true;
-                }
+		return m_configsets.addConfigurationSet(config);
+                //if( m_configsets.addConfigurationSet(config) ) {
+                //    String description = configuration_set.description;
+                //    Properties prop = m_configsetopts.get(config_id);
+                //    if( prop==null ) {
+                //        prop = new Properties();
+                //        m_configsetopts.put(config_id, prop);
+                //    }
+                //    m_configsetopts.get(config_id).setProperty("description", description);
+                //    return true;
+                //}
 
             }
         } catch(Exception ex) {
             throw new InternalError("Configuration.add_configuration_set()"); 
         }
-        return true;
+	//        return true;
     }
 
     /**
@@ -645,15 +647,16 @@ public class Configuration_impl extends ConfigurationPOA {
             synchronized (m_configsets) {
                 if( !m_configsets.haveConfig(config_id) )
                     throw new InvalidParameter("No such ConfigurationSet");
-                if( m_configsets.removeConfigurationSet(config_id) ) {
-                    m_configsetopts.remove(config_id);
-                    return true;
-                }
+                return m_configsets.removeConfigurationSet(config_id);
+                //if( m_configsets.removeConfigurationSet(config_id) ) {
+                //    m_configsetopts.remove(config_id);
+                //    return true;
+                //}
             }
         } catch (Exception ex) {
             throw new InternalError("Configuration::remove_configuration_set()");
         }
-        return false;
+        // return false;
     }
 
     /**

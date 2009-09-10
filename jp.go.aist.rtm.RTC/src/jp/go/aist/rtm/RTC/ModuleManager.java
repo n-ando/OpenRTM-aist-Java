@@ -42,13 +42,13 @@ public class ModuleManager {
         
         m_configPath = new Vector<String>();
         String[] configPath = properties.getProperty(CONFIG_PATH).split(",");
-        for (int i = 0; i < configPath.length; i++) {
+        for (int i = 0; i < configPath.length; ++i) {
             m_configPath.add(configPath[i].trim());
         }
         
         m_loadPath = new Vector<String>();
         String[] loadPath = properties.getProperty(MOD_LOADPTH).split(",");
-        for (int i = 0; i < configPath.length; i++) {
+        for (int i = 0; i < loadPath.length; ++i) {
             m_loadPath.add(loadPath[i].trim());
         }
         
@@ -115,7 +115,7 @@ System.out.println( "ModuleManager::load--000--");
             }
         } else {
             if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
-            for (int i = 0; i < m_loadPath.size(); i++) {
+            for (int i = 0; i < m_loadPath.size(); ++i) {
                 String fullClassName = m_loadPath.elementAt(i) + "." + moduleName;
                 try {
                     target = Class.forName(fullClassName);
@@ -126,6 +126,10 @@ System.out.println( "ModuleManager::load--000--");
             }
             if( target==null ) throw new ClassNotFoundException("Not implemented." + moduleName);
         }
+        if(module_path==null || module_path.length()==0) {
+            throw new IllegalArgumentException("Invalid file name.");
+        }
+	
 System.out.println( "ModuleManager::load--090--");
         m_modules.put(module_path, target);
 System.out.println( "ModuleManager::load--0e0--");
@@ -152,81 +156,22 @@ System.out.println( "ModuleManager::load--0e0--");
     public String load(final String moduleName, final String methodName)
             throws Exception {
         
-System.out.println( "ModuleManager::load--000--");
         if (moduleName == null || moduleName.length() == 0) {
-System.out.println( "ModuleManager::load--0r0--");
             throw new IllegalArgumentException("moduleName is empty.:load()");
         }
         if (methodName == null || methodName.length() == 0) {
-System.out.println( "ModuleManager::load--0r1--");
             throw new IllegalArgumentException("methodName is empty.:load()");
         }
 
-        String module_path = null;
-        try {
-System.out.println( "ModuleManager::load--001--moduleName:" + moduleName);
-            new URL(moduleName);
-            if (! m_downloadAllowed) {
-System.out.println( "ModuleManager::load--0r1--");
-                throw new IllegalArgumentException("Downloading module is not allowed.");
-                
-            } else {
-                throw new IllegalArgumentException("Not implemented.");
-            }
-        } catch (MalformedURLException moduleName_is_not_URL) {
-System.out.println( "ModuleManager::load--0r2--");
-        }
+	String module_path = load(moduleName);
 
-        Class target = null;
-        if (m_absoluteAllowed) {
-            try {
-System.out.println( "ModuleManager::load--01?--moduleName:" + moduleName);
-                target = Class.forName(moduleName);
-System.out.println( "ModuleManager::load--011--moduleName:" + moduleName);
-                module_path = moduleName;
-            } catch (ClassNotFoundException e) {
-//                e.printStackTrace();
-System.out.println( "ModuleManager::load--0r3--");
-                throw new ClassNotFoundException("Not implemented.", e);
-            }
-        } else {
-System.out.println( "ModuleManager::load--010--m_loadPath.size:" + m_loadPath.size());
-            if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
-            for (int i = 0; i < m_loadPath.size(); i++) {
-                String fullClassName = m_loadPath.elementAt(i) + "." + moduleName ;
-                try {
-System.out.println( "ModuleManager::load--020--fullClassName:" + fullClassName);
-                    target = Class.forName(fullClassName);
-                    module_path = fullClassName;
-                } catch (ClassNotFoundException e) {
-//                    e.printStackTrace();
-                    // throw new ClassNotFoundException("Not implemented.", ex);
-System.out.println( "ModuleManager::load--0r4--");
-                }
-            }
-        }
-
-        Method initMethod;
-        try {
-System.out.println( "ModuleManager::load--030--methodName:" + methodName);
-if(target == null ) {
-System.out.println( "ModuleManager::load--030--target is null");
-} else {
-System.out.println( "ModuleManager::load--030--target is not null");
-}
-            initMethod = target.getMethod(methodName);
-System.out.println( "ModuleManager::load--040--");
-            
-        } catch (SecurityException e) {
-//            e.printStackTrace();
-System.out.println( "ModuleManager::load--0r5--");
-            throw e;
-            
-        } catch (NoSuchMethodException e) {
-//            e.printStackTrace();
-System.out.println( "ModuleManager::load--0r6--");
-            throw e;
-        }
+	Method initMethod = symbol(module_path,methodName);
+	Class target = null;
+	try {
+	    target = Class.forName(module_path);
+	} catch (ClassNotFoundException e) {
+	    throw new ClassNotFoundException("Not implemented." + moduleName, e);
+	}
 
         try {
 System.out.println( "ModuleManager::load--050--");
@@ -249,8 +194,6 @@ System.out.println( "ModuleManager::load--0r9--");
 System.out.println( "ModuleManager::load--0ra--");
             throw e;
         }
-System.out.println( "ModuleManager::load--090--");
-        m_modules.put(module_path, target);
 System.out.println( "ModuleManager::load--0e0--");
         
         return module_path;

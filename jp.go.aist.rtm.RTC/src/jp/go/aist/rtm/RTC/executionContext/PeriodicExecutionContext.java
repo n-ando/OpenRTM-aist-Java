@@ -34,6 +34,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     public PeriodicExecutionContext() {
         super();
         m_running = false;
+	m_svc = true;
         m_nowait = false;
         if( m_profile==null ) m_profile = new ExecutionContextProfile();
         m_profile.kind = ExecutionKind.PERIODIC;
@@ -43,10 +44,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
 
         Manager manager = Manager.instance();
         rtcout = new Logbuf("Manager.PeriodicExecutionContext");
-        rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-                   "enable", "disable", false));
+        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
+        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
+        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
+        //            "enable", "disable", false));
     }
 
     /**
@@ -66,6 +67,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     public PeriodicExecutionContext(DataFlowComponent owner, double rate) {
         super();
         m_running = false;
+        m_svc = true;
         m_nowait = false;
         m_profile.kind = ExecutionKind.PERIODIC;
         m_profile.rate = rate;
@@ -76,10 +78,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
 
         Manager manager = Manager.instance();
         rtcout = new Logbuf("Manager.PeriodicExecutionContext");
-        rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-                   "enable", "disable", false));
+        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
+        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
+        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
+        //            "enable", "disable", false));
     }
 
     /**
@@ -159,26 +161,30 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.svc()");
 
         do {
-            long millisec = m_usec / 1000;
-            int  nanosec  = (int)((m_usec % 1000) * 1000);
-            for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-                m_comps.elementAt(intIdx).invoke();
-            }
-            while( !m_running ) {
-                try {
-                    Thread.sleep(millisec, nanosec);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+	    synchronized (m_worker) {
+		while (!m_worker.running_) {
+                    try {
+                        m_worker.wait();
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+		}
+		if (m_worker.running_) {
+		    for (int intIdx=0; intIdx < m_comps.size(); ++intIdx) {
+			m_comps.elementAt(intIdx).invoke();
+		    }
+		}
+	    }
             if( !m_nowait ) {
+		long millisec = m_usec / 1000;
+		int  nanosec  = (int)((m_usec % 1000) * 1000);
                 try {
                     Thread.sleep(millisec, nanosec);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        } while( m_running );
+        } while( m_svc );
       return 0;
     }
 
@@ -262,15 +268,18 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.stop()");
 
         if( !m_running ) return ReturnCode_t.PRECONDITION_NOT_MET;
-        //
+
+        // change EC thread state
+        m_running = false;
+	synchronized (m_worker) {
+	    m_worker.running_ = false;
+	}
+
         // invoke on_shutdown for each comps.
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             m_comps.elementAt(intIdx).invoke_on_shutdown();
         }
-        //
-        // change EC thread state
-        m_running = false;
-        //
+
         return ReturnCode_t.RTC_OK;
     }
 
@@ -293,7 +302,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ReturnCode_t set_rate(double rate) {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.set_rate()");
+        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.set_rate("+rate+")");
 
         if( rate<=0.0 ) return ReturnCode_t.BAD_PARAMETER;
 
@@ -441,7 +450,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             if( dfp==null ) {
                 // Because the ExecutionKind of this context is PERIODIC,
                 // the RTC must be a data flow component.
-                return ReturnCode_t.PRECONDITION_NOT_MET;
+                return ReturnCode_t.BAD_PARAMETER;
             }
             //
             int id = dfp.attach_context(m_ref);
@@ -471,6 +480,11 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         dfp = DataFlowComponentHelper.narrow(comp);
 
         int id = rtc.bindContext(m_ref);
+	if (id < 0 || id > RTObject_impl.ECOTHER_OFFSET) {
+	    rtcout.println(rtcout.ERROR, "bindContext returns invalid id: "+id);
+	    return ReturnCode_t.RTC_ERROR;
+	}
+	rtcout.println(rtcout.DEBUG, "bindComponent() returns id = "+id);
         m_comps.add(new Comp((LightweightRTObject)comp._duplicate(),
                              (DataFlowComponent)dfp._duplicate(),
                              id));
@@ -860,6 +874,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * <p>ExecutionContextの実行状態です。</p>
      */
     protected boolean m_running;
+    /**
+     * <p>ExecutionContext のスレッド実行フラグです。</p>
+     */
+    private boolean m_svc;
 
     protected class Worker {
 

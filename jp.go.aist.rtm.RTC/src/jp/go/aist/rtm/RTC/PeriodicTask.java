@@ -7,10 +7,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.IllegalAccessException;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.TimeMeasure;
+import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.ObjectCreator;
+import jp.go.aist.rtm.RTC.ObjectDestructor;
 /**
 * <p>PeriodicTask</p>
 */
-public class PeriodicTask extends PeriodicTaskBase {
+public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<PeriodicTaskBase>, ObjectDestructor{
 
     /**
      * <p> ctor </p>
@@ -406,5 +409,37 @@ public class PeriodicTask extends PeriodicTaskBase {
     protected statistics_t      m_periodStat;
     protected TimeMeasure m_periodTime;
 
+    /**
+     * <p> creator_ </p>
+     * 
+     * @return Object Created instances
+     *
+     */
+    public PeriodicTaskBase creator_() {
+        return new PeriodicTask();
+    }
+    /**
+     * <p> destructor_ </p>
+     * 
+     * @param obj    The target instances for destruction
+     *
+     */
+    public void destructor_(Object obj) {
+        obj = null;
+    }
+
+    /**
+     * <p> PeriodicTaskInit </p>
+     *
+     */
+    public static void PeriodicTaskInit() {
+        final FactoryGlobal<PeriodicTaskBase,String> factory 
+            = FactoryGlobal.instance();
+
+        factory.addFactory("default",
+			   new PeriodicTask(),
+			   new PeriodicTask());
+    
+    }
 };
 

@@ -22,10 +22,10 @@ public class ExtTrigExecutionContext
 
         Manager manager = Manager.instance();
         rtcout = new Logbuf("Manager.ExtTrigExecutionContext");
-        rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-                   "enable", "disable", false));
+        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
+        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
+        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
+        //            "enable", "disable", false));
 
     }
     
@@ -63,7 +63,7 @@ public class ExtTrigExecutionContext
                 }
                 if (m_worker._called) {
                     m_worker._called = false;
-                    for (int intIdx = 0; intIdx < m_comps.size(); intIdx++) {
+                    for (int intIdx = 0; intIdx < m_comps.size(); ++intIdx) {
                         m_comps.elementAt(intIdx).invoke();
                     }
                     while (!m_running) {
