@@ -496,7 +496,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * <p> PublisherNewInit </p>
      *
      */
-    public void PublisherNewInit() {
+    public static void PublisherNewInit() {
         final FactoryGlobal<PublisherBase,String> factory 
             = FactoryGlobal.instance();
 
@@ -523,6 +523,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                 return ReturnCode.PORT_ERROR;
         }
     }
+
     /**
      * <p>  </p>
      */

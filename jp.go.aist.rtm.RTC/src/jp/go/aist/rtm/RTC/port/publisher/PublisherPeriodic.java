@@ -482,19 +482,6 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         obj = null;
     }
     /**
-     * <p> PublisherNewInit </p>
-     *
-     */
-    public void PublisherNewInit() {
-        final FactoryGlobal<PublisherBase,String> factory 
-            = FactoryGlobal.instance();
-
-        factory.addFactory("periodic",
-                    new PublisherPeriodic(),
-                    new PublisherPeriodic());
-    
-    }
-    /**
      * <p> convertReturn </p>
      *
      */
@@ -512,6 +499,20 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
                 return ReturnCode.PORT_ERROR;
         }
     }
+    /**
+     * <p> PublisherPeriodicInit </p>
+     *
+     */
+    public static void PublisherPeriodicInit() {
+        final FactoryGlobal<PublisherBase,String> factory 
+            = FactoryGlobal.instance();
+
+        factory.addFactory("periodic",
+                    new PublisherPeriodic(),
+                    new PublisherPeriodic());
+    
+    }
+
     /**
      * <p>  </p>
      */

@@ -158,7 +158,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      * <p> PublisherFlushInit </p>
      *
      */
-    public void PublisherFlushInit() {
+    public static void PublisherFlushInit() {
         final FactoryGlobal<PublisherBase,String> factory 
             = FactoryGlobal.instance();
 
@@ -167,9 +167,6 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
                     new PublisherFlush());
     
     }
-
-
-
 
     private InPortConsumer m_consumer;
     private boolean m_active;

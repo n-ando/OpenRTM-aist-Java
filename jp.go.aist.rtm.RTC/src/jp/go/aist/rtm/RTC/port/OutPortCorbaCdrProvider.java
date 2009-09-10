@@ -15,6 +15,9 @@ import OpenRTM.OutPortCdrOperations;
 import OpenRTM.PortStatus;
 
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.ObjectCreator;
+import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.ReturnCode;
 import jp.go.aist.rtm.RTC.util.Properties;
@@ -37,7 +40,7 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
  */
 //public class OutPortCorbaCdrProvider extends OutPortProviderImpl implements OutPortCdrOperations   {
 //public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortProvider   {
-public class OutPortCorbaCdrProvider extends OutPortProviderImpl   {
+public class OutPortCorbaCdrProvider extends OutPortProviderImpl implements ObjectCreator<OutPortProviderImpl>, ObjectDestructor {
     /**
      * <p> Constructor </p>
      *
@@ -173,6 +176,38 @@ public class OutPortCorbaCdrProvider extends OutPortProviderImpl   {
 
 
     
+    /**
+     * <p> creator_ </p>
+     * 
+     * @return Object Created instances
+     *
+     */
+    public OutPortProviderImpl creator_() {
+        return new OutPortCorbaCdrProvider();
+    }
+    /**
+     * <p> destructor_ </p>
+     * 
+     * @param obj    The target instances for destruction
+     *
+     */
+    public void destructor_(Object obj) {
+        obj = null;
+    }
+    /**
+     * <p> OutPortCorbaCdrProviderInit </p>
+     *
+     */
+    public static void OutPortCorbaCdrProviderInit() {
+        final FactoryGlobal<OutPortProviderImpl,String> factory 
+            = FactoryGlobal.instance();
+
+        factory.addFactory("corba_cdr",
+                    new OutPortCorbaCdrProvider(),
+                    new OutPortCorbaCdrProvider());
+    
+    }
+
     private Logbuf rtcout;
     private BufferBase<InputStream> m_buffer;
     private OpenRTM.OutPortCdr m_objref;

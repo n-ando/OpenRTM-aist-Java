@@ -6,6 +6,9 @@ import org.omg.CORBA.portable.OutputStream;
 import _SDOPackage.NVListHolder;
 import OpenRTM.CdrDataHolder;
 
+import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.ObjectCreator;
+import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.util.Properties;
@@ -21,7 +24,7 @@ import jp.go.aist.rtm.RTC.util.Properties;
  * @param DataType Data type for this port
  *
  */
-public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdrOperations > implements OutPortConsumer {
+public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdrOperations > implements OutPortConsumer, ObjectCreator<OutPortConsumer>, ObjectDestructor {
     /*!
      * @brief Constructor
      *
@@ -110,6 +113,38 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdrOp
     public void unsubscribeInterface(final NVListHolder properties) {
     }
     
+    /**
+     * <p> creator_ </p>
+     * 
+     * @return Object Created instances
+     *
+     */
+    public OutPortConsumer creator_() {
+        return new OutPortCorbaCdrConsumer();
+    }
+    /**
+     * <p> destructor_ </p>
+     * 
+     * @param obj    The target instances for destruction
+     *
+     */
+    public void destructor_(Object obj) {
+        obj = null;
+    }
+    /**
+     * <p> OutPortCorbaCdrConsumerInit </p>
+     *
+     */
+    public static void OutPortCorbaCdrConsumerInit() {
+        final FactoryGlobal<OutPortConsumer,String> factory 
+            = FactoryGlobal.instance();
+
+        factory.addFactory("corba_cdr",
+                    new OutPortCorbaCdrConsumer(),
+                    new OutPortCorbaCdrConsumer());
+    
+    }
+
     //    RTC::OutPortCdr_var m_outport;
     private BufferBase<OutputStream> m_buffer;
 
