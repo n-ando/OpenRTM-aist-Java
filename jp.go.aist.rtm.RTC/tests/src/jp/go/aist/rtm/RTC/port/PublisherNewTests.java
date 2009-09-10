@@ -26,6 +26,9 @@ public class PublisherNewTests extends TestCase {
             resetDelayStartTime();
         }
         
+	public void init(Properties prop) {
+	}
+
         public void push() {
             try {
                 Thread.sleep(_sleepTick);

@@ -21,6 +21,9 @@ public class PublisherPeriodicTests extends TestCase {
             clearLastTime();
         }
         
+	public void init(Properties prop) {
+	}
+
         public void push() {
             long now = System.currentTimeMillis();
             
@@ -75,19 +78,22 @@ public class PublisherPeriodicTests extends TestCase {
 
     class CounterConsumer implements InPortConsumer {
    
-       public CounterConsumer() {
-           this(null);
-       }
-
-       public CounterConsumer(CounterConsumer component) {
-           super();
-           _count = 0;
-           _component = component;
-       }
+	public CounterConsumer() {
+	    this(null);
+	}
+	
+	public CounterConsumer(CounterConsumer component) {
+	    super();
+	    _count = 0;
+	    _component = component;
+	}
         
-       public void push() {
-           _count++;
-           if( _component != null) {
+	public void init(Properties prop) {
+	}
+
+	public void push() {
+	    _count++;
+	    if( _component != null) {
                 _component.push();
             }
         }
@@ -98,7 +104,7 @@ public class PublisherPeriodicTests extends TestCase {
             clone._component = _component;
             return clone;
         }
-
+	
         public boolean subscribeInterface(NVListHolder holder) {
             return true;
         }

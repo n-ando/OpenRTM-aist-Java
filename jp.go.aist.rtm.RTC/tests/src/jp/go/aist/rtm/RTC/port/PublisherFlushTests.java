@@ -26,6 +26,9 @@ public class PublisherFlushTests extends TestCase {
             resetDelayStartTime();
         }
         
+	public void init(Properties prop) {
+	}
+
         public void push() {
             long now = System.currentTimeMillis();
             
