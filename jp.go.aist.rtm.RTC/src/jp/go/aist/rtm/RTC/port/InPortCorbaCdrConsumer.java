@@ -2,7 +2,7 @@ package jp.go.aist.rtm.RTC.port;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.Object;
+//import org.omg.CORBA.Object;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
@@ -12,6 +12,9 @@ import _SDOPackage.NVListHolder;
 import OpenRTM.CdrDataHolder;
 
 
+import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.ObjectCreator;
+import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.util.NVUtil;
@@ -24,7 +27,7 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
  * <p> that uses CORBA for means of communication. </p>
  */
 
-public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > implements InPortConsumer {
+public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > implements InPortConsumer, ObjectCreator<InPortConsumer>, ObjectDestructor {
     /**
      * <p> Constructor </p>
      * <p> buffer The buffer object that is attached to this Consumer </p>
@@ -157,7 +160,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
         }
     
         ORB orb = Manager.instance().getORB();
-        Object obj = orb.string_to_object(ior);
+        org.omg.CORBA.Object obj = orb.string_to_object(ior);
     
         if (obj==null) {
             rtcout.println(rtcout.ERROR, "invalid IOR string has been passed");
@@ -187,7 +190,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
             return false;
         }
     
-        Object obj;
+        org.omg.CORBA.Object obj;
         try {
             obj = properties.value[index].value.extract_Object();
         }
@@ -234,7 +237,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
         }
     
         ORB orb = Manager.instance().getORB();
-        Object var = orb.string_to_object(ior);
+        org.omg.CORBA.Object var = orb.string_to_object(ior);
         if (!(_ptr()._is_equivalent(var))) {
             rtcout.println(rtcout.ERROR, "connector property inconsistency");
             return false;
@@ -259,7 +262,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
             return false; 
         }
     
-        Object obj;
+        org.omg.CORBA.Object obj;
         try {
             obj = properties.value[index].value.extract_Object();
         }
@@ -295,6 +298,38 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
         }
     }
     
+    /**
+     * <p> creator_ </p>
+     * 
+     * @return Object Created instances
+     *
+     */
+    public InPortConsumer creator_() {
+        return new InPortCorbaCdrConsumer();
+    }
+    /**
+     * <p> destructor_ </p>
+     * 
+     * @param obj    The target instances for destruction
+     *
+     */
+    public void destructor_(Object obj) {
+        obj = null;
+    }
+    /**
+     * <p> InPortCorbaCdrConsumerInit </p>
+     *
+     */
+    public static void InPortCorbaCdrConsumerInit() {
+        final FactoryGlobal<InPortConsumer,String> factory 
+            = FactoryGlobal.instance();
+
+        factory.addFactory("corba_cdr",
+                    new InPortCorbaCdrConsumer(),
+                    new InPortCorbaCdrConsumer());
+    
+    }
+
     private Logbuf rtcout;
     private Properties m_properties;
 
