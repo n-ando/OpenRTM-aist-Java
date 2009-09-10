@@ -5,30 +5,17 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-//<+[zxc424]
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.IllegalFormatException;
-//+>
 
 /**
  * <p>ログ収集ON時のロギングクラスです。</p>
  */
 public class Logbuf {
-    
-//<+[zxc424]
-//    public static final int SILENT = 0;
-//    public static final int ERROR = 1;
-//    public static final int WARN = 2;
-//    public static final int INFO = 3;
-//    public static final int NORMAL = 4;
-//    public static final int DEBUG = 5;
-//    public static final int TRACE = 6;
-//    public static final int VERBOSE = 7;
-//    public static final int PARANOID = 8;
-//    public static final int MANDATORY = 9;
-    
+
     public static final int SILENT = 8;
     public static final int FATAL = 7;
     public static final int ERROR = 6;
@@ -38,39 +25,23 @@ public class Logbuf {
     public static final int TRACE = 2;
     public static final int VERBOSE = 1;
     public static final int PARANOID = 0;
-//+>
 
     public static final String SILENT_H     = "SILENT   :";
     public static final String FATAL_H      = "FATAL    :";
     public static final String ERROR_H      = "ERROR    :";
     public static final String WARN_H       = "WARN     :";
     public static final String INFO_H       = "INFO     :";
-//[zxc424]    public static final String NORMAL_H     = "NORMAL   :";
     public static final String DEBUG_H      = "DEBUG    :";
     public static final String TRACE_H      = "TRACE    :";
     public static final String VERBOSE_H    = "VERBOSE  :";
     public static final String PARANOID_H   = "PARANOID :";
-//[zxc424]    public static final String MANDATORY_H  = "MANDATORY:";
-    /**
-     * <p>ログレベルを表す文字列をコードに変換します。</p>
-     * 
-     * @param loglevel  ログレベル(文字列)
-     * 
-     * @return ログレベル・コード
-     */
-//<+[zxc424]
-//    public static int strToLogLevel(final String loglevel) {
-//        return LogStream.strToLogLevel(loglevel);
-//    }
-//+>
 
     /**
      * <p>デフォルトコンストラクタです。</p>
      */
-//<+[zxc424]
     public Logbuf(String name) {
         m_LogLock = false;
-//        m_Logger = Logger.getLogger("OpenRTM-aist.logging");
+        m_Suffix = name;
         String str = "OpenRTM-aist.logging." + name;
         m_Logger = Logger.getLogger(str);
 //        if(name.equals("Manager")) {
@@ -80,32 +51,13 @@ public class Logbuf {
 //        }
         m_Logger.setLevel(Level.ALL);
     }
-//+>
 
-    /**
-     * <p>ログファイルをオープンします。</p>
-     * 
-     * @param handler　ログハンドラー
-     */
-//<+[zxc4r274]
-//    public void open(Handler handler){
-//        m_Logger = Logger.getLogger("OpenRTM-aist.logging");
-//        handler.setFormatter(new OpenRTMFormatter());
-//        m_Logger.addHandler(handler);
-//        m_Logger.setLevel(Level.ALL);
-//        m_Logger.setUseParentHandlers(false);
-//    }
-//+>
     /**
      * <p>ログに出力します。</p>
      * 
-     * @param contents　ログ内容
+     * @param contents ログ内容
      */
     public void println(int level, String contents) {
-//<+[zxc424]
-//        if( m_LogLevel>=level) {
-//            m_MedLogBuf.log(logLevelToStr(level) + " " + contents);
-//        }
         StringBuilder sb = new StringBuilder();
         // Send all output to the Appendable object sb
         java.util.Formatter formatter = new java.util.Formatter(sb, java.util.Locale.US);
@@ -117,15 +69,15 @@ public class Logbuf {
         String str = logLevelToStr(level);
         Level rtm_level = new OpenRTMLevel(str, num);
         Level clevel = rtm_level.parse(str);
-        m_Logger.log(clevel, formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date) + " " + m_Suffix + " " + logLevelToStr(level) + " " + contents);
-//+>
+        m_Logger.log(clevel, 
+                    formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date) 
+                    + " " + m_Suffix + " " + logLevelToStr(level) + " " + contents);
     }
 
-//<+[zxc424]
     /**
-     * <p>  </p> 
+     * <p>RTM用ログレベルの設定</p> 
      *
-     * @param level
+     * @param level  ログレベル(数値)
      *
      * @return int
      *
@@ -166,8 +118,6 @@ public class Logbuf {
             return Logbuf.WARN;
         } else if( loglevel.equals("INFO") ) {
             return Logbuf.INFO;
-//[zxc424]        } else if( loglevel.equals("NORNAL") ) {
-//[zxc424]            return LogStream.NORMAL;
         } else if( loglevel.equals("DEBUG") ) {
             return Logbuf.DEBUG;
         } else if( loglevel.equals("TRACE") ) {
@@ -176,22 +126,24 @@ public class Logbuf {
             return Logbuf.VERBOSE;
         } else if( loglevel.equals("PARANOID") ) {
             return Logbuf.PARANOID;
-//[zxc424]        } else if( loglevel.equals("MANDATORY") ) {
-//[zxc424]            return LogStream.MANDATORY;
         } else {
             return Logbuf.SILENT;
         }
     }
-//+>
+
     /**
      * <p>ログ・ロックフラグ</p>
      */
     private boolean m_LogLock;
+
     /**
      * <p>ログクラス</p>
      */
     private Logger m_Logger;
 
+    /**
+     * <p>OpenRTMログフォーマット処理クラス</p>
+     */
     private class OpenRTMFormatter extends Formatter {
 
         @Override
@@ -200,7 +152,6 @@ public class Logbuf {
             buffer.append(formatMessage(record));
             buffer.append("\n");
             return buffer.toString();
-
         }
 
         @Override
@@ -212,22 +163,22 @@ public class Logbuf {
         public String getTail(Handler h) {
             return "";
         }
-        
     }
-//<+[zxc424]
+
+    /**
+     * <p>OpenRTMログレベルクラス</p>
+     */
     private class OpenRTMLevel  extends Level {
-        /**
-         * 
-         */
+
         public OpenRTMLevel(String str, int val) {
             super(str, val);
         }
     }
-//+>
+
     /**
-     * <p>Destructor </p>
+     * <p>ストリームを追加する。</p>
      *
-     * @param handler 
+     * @param handler 出力先ハンドラ
      * 
      */
     public void addStream(Handler handler) {
@@ -235,13 +186,14 @@ public class Logbuf {
         handler.setFormatter(new OpenRTMFormatter());
         m_Logger.addHandler(handler);
     }
-//<+[zxc424]
+
     /**
      * <p>ログ・ファイルをロックします。</p>
      *
-     * @param lock　ログフラグ
+     * @param lock ログフラグ
      */
     public void setLogLock(boolean lock) {
+//        m_LogLock = lock;
     }
     /**
      * <p>ログレベルを表す文字列をコードに変換します。</p>
@@ -274,7 +226,7 @@ public class Logbuf {
         }
     }
     /**
-     * <p> Set log level by string </p>
+     * <p> Set log level by int </p>
      *
      * @param level
      *
@@ -324,7 +276,7 @@ public class Logbuf {
     /**
      * <p>ログ・レベルを設定します。</p>
      *
-     * @param level　ログ・レベル
+     * @param level ログ・レベル
      * 
      * @return ログ・レベルを設定したバッファ
      */
@@ -332,13 +284,12 @@ public class Logbuf {
         return this;
     }
    /**
-    * <p>  </p>
+    * <p>設定されたログレベル・コード</p>
     */
-    private int m_LogLevel;
+//    private int m_LogLevel;
    /**
     * <p>ログに付加する日付形式の書式</p>
     */
-//   private String m_dateFormat = "yyyy/MM/dd HH:mm:ss";
    private String m_dateFormat = "%tb %td %tH:%tM:%tS";
    /**
     * <p>日付の後に付加するヘッダ</p>
