@@ -133,6 +133,27 @@ public class OutPortBase extends PortBase {
     }
     protected void unsubscribeInterfaces(final ConnectorProfile connector_profile) {
    }
+  /**
+   * <p> Activate all Port interfaces </p>
+   */
+  public void activateInterfaces() {
+/*
+    for (int i=0, len=m_connectors.size(); i < len; ++i) {
+        m_connectors[i].activate();
+    }
+*/
+  }
+  
+  /**
+   * <p> Deactivate all Port interfaces </p>
+   */
+  public void deactivateInterfaces() {
+/*
+    for (int i=0, leni=m_connectors.size(); i < len; ++i) {
+        m_connectors[i].deactivate();
+    }
+*/
+  }
     /**
      * <p>データ更新通知先として登録されているPublisherオブジェクトのリストです。</p>
      */

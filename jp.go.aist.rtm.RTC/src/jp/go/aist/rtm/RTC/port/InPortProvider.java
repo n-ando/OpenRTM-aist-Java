@@ -43,4 +43,6 @@ public interface InPortProvider {
      *
      */
     public void setBuffer(BufferBase<OutputStream> buffer);
+
+
 }

@@ -25,6 +25,7 @@ import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
 /**
@@ -38,9 +39,7 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
  *        provider
  *
  */
-//public class OutPortCorbaCdrProvider extends OutPortProviderImpl implements OutPortCdrOperations   {
-//public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortProvider   {
-public class OutPortCorbaCdrProvider extends OutPortProviderImpl implements ObjectCreator<OutPortProviderImpl>, ObjectDestructor {
+public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortProvider, ObjectCreator<OutPortProvider>, ObjectDestructor {
     /**
      * <p> Constructor </p>
      *
@@ -50,7 +49,7 @@ public class OutPortCorbaCdrProvider extends OutPortProviderImpl implements Obje
         rtcout = new Logbuf("OutPortCorbaCdrProvider");
         rtcout.setLevel("PARANOID");
         // PortProfile setting
-        super.setInterfaceType("corba_cdr");
+        setInterfaceType("corba_cdr");
     
         // ConnectorProfile setting
         m_objref = this._this();
@@ -58,11 +57,11 @@ public class OutPortCorbaCdrProvider extends OutPortProviderImpl implements Obje
         // set outPort's reference
         ORB orb = Manager.instance().getORB();
         CORBA_SeqUtil.
-        push_back(super.m_properties,
+        push_back(m_properties,
                   NVUtil.newNV("dataport.corba_cdr.outport_ior",
                               orb.object_to_string(m_objref)));
         CORBA_SeqUtil.
-        push_back(super.m_properties,
+        push_back(m_properties,
                   NVUtil.newNV("dataport.corba_cdr.outport_ref",
                                  m_objref, OpenRTM.OutPortCdr.class ));
     }
@@ -182,7 +181,7 @@ public class OutPortCorbaCdrProvider extends OutPortProviderImpl implements Obje
      * @return Object Created instances
      *
      */
-    public OutPortProviderImpl creator_() {
+    public OutPortProvider creator_() {
         return new OutPortCorbaCdrProvider();
     }
     /**
@@ -208,6 +207,98 @@ public class OutPortCorbaCdrProvider extends OutPortProviderImpl implements Obje
     
     }
 
+    /**
+     * <p> publishInterfaceProfile </p>
+     *
+     * @param properties 
+     *
+     */
+    public void publishInterfaceProfile(NVListHolder properties) {
+        
+        NVUtil.appendStringValue(properties, "dataport.data_type",
+                this.m_dataType);
+        NVUtil.appendStringValue(properties, "dataport.interface_type",
+                this.m_interfaceType);
+        NVUtil.appendStringValue(properties, "dataport.dataflow_type",
+                this.m_dataflowType);
+        NVUtil.appendStringValue(properties, "dataport.subscription_type",
+                this.m_subscriptionType);
+    }
+    /**
+     * <p> publishInterface </p>
+     *
+     * @param properties 
+     *
+     */
+    public void publishInterface(NVListHolder properties) {
+        
+        if (!NVUtil.isStringValue(properties,
+                "dataport.interface_type",
+                this.m_interfaceType)) {
+            return;
+        }
+        
+        NVUtil.append(properties, this.m_properties);
+    }
+    /**
+     * <p>インタフェースプロフィールのポートタイプを設定します。</p>
+     * 
+     * @param portType ポートタイプ
+     */
+    protected void setPortType(final String portType) {
+        
+        this.m_portType = portType;
+    }
+    
+    /**
+     * <p>インタフェースポロフィールのデータタイプを設定します。</p>
+     * 
+     * @param dataType データタイプ
+     */
+    protected void setDataType(final String dataType) {
+        
+        this.m_dataType = dataType;
+    }
+    
+    /**
+     * <p>インタフェースプロフィールのインタフェースタイプを設定します。<//p>
+     * 
+     * @param interfaceType インタフェースタイプ
+     */
+    protected void setInterfaceType(final String interfaceType) {
+        
+        this.m_interfaceType = interfaceType;
+    }
+    
+    /**
+     * <p>インタフェースプロフィールのデータフロータイプを設定します。</p>
+     * 
+     * @param dataFlowType データフロータイプ
+     */
+    protected void setDataFlowType(final String dataFlowType) {
+        
+        this.m_dataflowType = dataFlowType;
+    }
+    
+    /**
+     * <p>インタフェースプロフィールのサブスクリプションタイプを設定します。</p>
+     * 
+     * @param subscriptionType サブスクリプションタイプ
+     */
+    protected void setSubscriptionType(final String subscriptionType) {
+        
+        this.m_subscriptionType = subscriptionType;
+    }
+    /**
+     * <p>接続プロフィールを保持するメンバ変数です。</p>
+     */
+    protected NVListHolder m_properties = NVListHolderFactory.create();
+    
+    private String m_portType = new String();
+    private String m_dataType = new String();
+    private String m_interfaceType = new String();
+    private String m_dataflowType = new String();
+    private String m_subscriptionType = new String();
     private Logbuf rtcout;
     private BufferBase<InputStream> m_buffer;
     private OpenRTM.OutPortCdr m_objref;

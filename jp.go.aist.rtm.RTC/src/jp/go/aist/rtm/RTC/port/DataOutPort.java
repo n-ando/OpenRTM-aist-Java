@@ -38,9 +38,9 @@ public class DataOutPort<DataType> extends PortBase {
      */
     public DataOutPort(Class<DataType> DATA_TYPE_CLASS,
             final String name, OutPort<DataType> outPort, Properties prop) throws Exception {
+/*
         
         super(name);
-/*
         this.m_outPort = outPort;
         
         // PortProfile::properties を設定
@@ -185,4 +185,15 @@ public class DataOutPort<DataType> extends PortBase {
         private final ConnectorProfile m_prof;
         private InPortConsumer _consumer;
     }
+  /**
+   * <p> Activate all Port interfaces </p>
+   */
+  public void activateInterfaces() {
+  }
+  
+  /**
+   * <p> Deactivate all Port interfaces </p>
+   */
+  public void deactivateInterfaces() {
+  }
 }

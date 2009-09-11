@@ -279,5 +279,67 @@ public class CorbaPort extends PortBase {
         private Vector<Consumer> m_cons; // コンストラクタで必ず初期化されるので、ここではインスタンス生成しない。
         private int m_len;
     }
+  
+ 
+
+  /**
+   * <p> Activate all Port interfaces </p>
+   */
+  public void activateInterfaces() {
+/*
+    ServantMap.iterator it = m_servants.begin();
+    while(it != m_servants.end()) {
+        try {
+            Manager.instance().getPOA().activate_object_with_id(it.second.oid, it.second.servant);
+        }
+        catch(final org.omg.PortableServer.POAPackage.ServantAlreadyActive e) {
+        }
+        catch(final org.omg.PortableServer.POAPackage.ObjectAlreadyActive e) {
+        }
+	it++;
+      }
+*/
+  }
+  
+  /**
+   * <p> Deactivate all Port interfaces </p>
+   */
+  public void deactivateInterfaces() {
+/*
+    ServantMap.iterator it = m_servants.begin();
+    while(it != m_servants.end()) {
+        try {
+            Manager.instance().getPOA().deactivate_object(it.second.oid);
+        }
+        catch(const org.omg.PortableServer.POAPackage.ObjectNotActive e ) {
+        }
+	it++;
+      }
+*/
+  }
+  /**
+   * <p> The structure to be stored Provider's information. </p>
+   */
+/*
+  private class ProviderInfo
+    {
+      ProviderInfo(PortableServer.RefCountServantBase _servant, PortableServer.ObjectId _objectid) {
+          servant = _servant;
+	  oid = _objectid;
+      }
+      ProviderInfo(final ProviderInfo pinfo) {
+          servant = pinfo.servant;
+	  oid = pinfo.oid;
+      }
+      ProviderInfo operator(final ProviderInfo _pinfo) {
+        ProviderInfo pinfo = _pinfo;
+        return pinfo;
+      }
+      PortableServer.RefCountServantBase servant;
+      PortableServer.ObjectId oid;
+    };
+    Map<String, ProviderInfo> m_servants = new HashMap<String,ProviderInfo>();
+*/
+  
     
 }
