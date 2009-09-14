@@ -17,8 +17,9 @@ public interface InPortProvider {
      * <p>Interface情報を公開します。</p>
      * 
      * @param properties Interface情報を受け取るホルダオブジェクト
+     * @return boolean
      */
-    public void publishInterface(NVListHolder properties);
+    public boolean publishInterface(NVListHolder properties);
 
     /**
      * <p>InterfaceProfile情報を公開します。</p>

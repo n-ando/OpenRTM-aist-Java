@@ -1,5 +1,8 @@
 package jp.go.aist.rtm.RTC.util;
 
+import org.omg.CORBA.ORB;
+import java.util.Vector;
+
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
 import _SDOPackage.Organization;
@@ -25,6 +28,8 @@ import RTC.PortProfile;
 import RTC.PortProfileListHolder;
 import RTC.RTObject;
 import RTC.RTCListHolder;
+
+import jp.go.aist.rtm.RTC.Manager;
 
 /**
  * <p>CORBAシーケンスに対するユーティリティクラスです。各メソッドはスレッドセーフではないため、
@@ -752,5 +757,20 @@ public class CORBA_SeqUtil {
     public static void clear(NVListHolder seq) {
         seq.value = new NameValue[0];
     }
-    
+
+    /**
+     *  <p> refToVstring </p>
+     *  @param objlist
+     *  @return Vector<String>
+     */
+  public static <T> Vector<String> refToVstring(final T[] objlist)
+  {
+    Vector<String> iorlist = new Vector<String>();
+    ORB orb = Manager.instance().getORB();
+
+    for (int i=0, len=objlist.length; i < len; ++i) {
+        iorlist.add(orb.object_to_string((org.omg.CORBA.Object)objlist[i]));
+    }
+    return iorlist;
+  }
 }

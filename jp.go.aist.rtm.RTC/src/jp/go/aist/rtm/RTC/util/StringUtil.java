@@ -1,6 +1,7 @@
 package jp.go.aist.rtm.RTC.util;
 
 import java.util.Vector;
+import java.util.Iterator;
 
 public class StringUtil {
 
@@ -228,6 +229,33 @@ public class StringUtil {
         str = str.trim();
         str.toLowerCase();
         return str;
+    }
+    /**
+     *  <p> includes </p>
+     *  @param list
+     *  @param value
+     *  @param ignore_case
+     */
+    public static boolean includes(final Vector<String> list, String value, 
+                                   boolean ignore_case) {
+        Iterator it = list.iterator();
+        if(ignore_case){
+            while(it.hasNext()){
+                String str = (String)it.next();
+                if(str.compareToIgnoreCase(value)==0) {
+                    return true;
+                }
+            }
+        }
+        else {
+            while(it.hasNext()){
+                String str = (String)it.next();
+                if(str.compareTo(value) == 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

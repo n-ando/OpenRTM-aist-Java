@@ -1181,5 +1181,20 @@ public abstract class PortBase extends PortServicePOA {
         private String m_instance_name;
         private PortInterfacePolarity m_polarity;
     }
-    private Logbuf rtcout;
+    /**
+     * <p> Add NameValue data to PortProfile's properties </p>
+     *
+     * <p> Add NameValue data to PortProfile's properties.
+     * Type of additional data is specified by ValueType. </p>
+     *
+     * @param key The name of properties
+     * @param value The value of properties
+     *
+     */
+    protected void appendProperty(final String key, final String value) {
+        NVListHolder holder = new NVListHolder(this.m_profile.properties);
+        NVUtil.appendStringValue(holder, key, value);
+        this.m_profile.properties = holder.value;
+    }
+    protected Logbuf rtcout;
 }

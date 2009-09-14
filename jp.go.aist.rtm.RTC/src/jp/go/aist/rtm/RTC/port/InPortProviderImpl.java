@@ -39,15 +39,17 @@ public class InPortProviderImpl extends InPortCdrPOA implements InPortProvider {
      * 
      * @param properties Interface情報を受け取るホルダオブジェクト
      */
-    public void publishInterface(NVListHolder properties) {
+//    public void publishInterface(NVListHolder properties) {
+    public boolean publishInterface(NVListHolder properties) {
 
         if (! NVUtil.isStringValue(properties,
                 "dataport.interface_type",
                 this.m_interfaceType)) {
-            return;
+            return true;
         }
 
         NVUtil.append(properties, this.m_properties);
+        return true;
     }
     
     /**

@@ -69,15 +69,17 @@ public class InPortTcpSockProvider<DataType>
      * @param prop Interface情報を受け取るプロパティ
      *
      */
-    public void publishInterface(NVListHolder prop)  {
+//    public void publishInterface(NVListHolder prop)  {
+    public boolean publishInterface(NVListHolder prop)  {
         if( !NVUtil.isStringValue(prop,
                 "dataport.interface_type",
                 "TCP_Any"))
         {
-            return;
+            return true;
         }
         NVListHolder nv = new NVListHolder(m_properties.value);
         NVUtil.append(prop, nv);
+        return true;
     }
 
     public void publishInterfaceProfile(NVListHolder properties) {
