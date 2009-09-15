@@ -5,12 +5,68 @@ import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.ValueHolder;
+import jp.go.aist.rtm.RTC.util.OnUpdateCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnUpdateParamCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnAddConfigurationAddCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnRemoveConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnActivateSetCallbackFunc;
+import jp.go.aist.rtm.RTC.executionContext.PeriodicECOrganization;
 
 /**
 * <p>コンフィギュレーション情報を管理するクラスです。</p>
 */
 public class ConfigAdmin {
-    
+
+    /**
+     * OnUpdateCallbackクラス
+     */
+    class OnUpdateCallback implements OnUpdateCallbackFunc {
+        public void operator(String config_set) {
+        }
+    };
+
+    /**
+     * OnUpdateParamCallbackクラス
+     */
+    class OnUpdateParamCallback implements OnUpdateParamCallbackFunc {
+        public void operator(String config_set, String config_param) {
+        }
+    };
+
+    /**
+     * OnSetConfigurationSetCallbackクラス
+     */
+    class OnSetConfigurationSetCallback implements OnSetConfigurationSetCallbackFunc {
+        public void operator(Properties config_set) {
+        }
+    };
+
+    /**
+     * OnAddConfigurationAddCallbackクラス
+     */
+    class OnAddConfigurationAddCallback implements OnAddConfigurationAddCallbackFunc {
+        public void operator(Properties config_set) {
+        }
+    };
+
+    /**
+     * OnRemoveConfigurationSetCallbackクラス
+     */
+    class OnRemoveConfigurationSetCallback implements OnRemoveConfigurationSetCallbackFunc {
+        public void operator(String config_set) {
+        }
+    };
+
+    /**
+     * OnActivateSetCallbackクラス
+     */
+    class OnActivateSetCallback implements OnActivateSetCallbackFunc {
+        public void operator(String config_id) {
+        }
+    };
+
+
     /**
      * <p>コンストラクタです。</p>
      *
@@ -21,6 +77,13 @@ public class ConfigAdmin {
         this.m_activeId = "default";
         this.m_active = true;
         this.m_changed = false;
+
+        this.m_updateCb = null;
+        this.m_updateParamCb = null;
+        this.m_setConfigSetCb = null;
+        this.m_addConfigSetCb = null;
+        this.m_removeConfigSetCb = null;
+        this.m_activateSetCb = null;
     }
 
     /**
@@ -276,6 +339,123 @@ public class ConfigAdmin {
         return true;
     }
 
+
+    /**
+     * setOnUpdate
+     */
+    public void setOnUpdate(OnUpdateCallbackFunc cb) {
+//        if (m_updateCb != 0) {
+//            m_updateCb = null;
+//        }
+        m_updateCb = cb;
+    }
+
+    /**
+     * setOnUpdateParam
+     */
+    public void setOnUpdateParam(OnUpdateParamCallbackFunc cb) {
+//        if (m_updateParamCb != 0) {
+//            m_updateParamCb = null;
+//        }
+        m_updateParamCb = cb;
+    }
+
+    /**
+     * setOnSetConfigurationSet
+     */
+    public void setOnSetConfigurationSet(OnSetConfigurationSetCallbackFunc cb) {
+//        if (m_setConfigSetCb != 0) {
+//            m_setConfigSetCb = null;
+//      }
+        m_setConfigSetCb = cb;
+    }
+
+    /**
+     * setOnAddConfigurationSet
+     */
+    public void setOnAddConfigurationSet(OnAddConfigurationAddCallbackFunc cb) {
+//        if (m_addConfigSetCb != 0) {
+//            m_addConfigSetCb = null;
+//        }
+        m_addConfigSetCb = cb;
+    }
+
+    /**
+     * setOnRemoveConfigurationSet
+     */
+    public void setOnRemoveConfigurationSet(OnRemoveConfigurationSetCallbackFunc cb) {
+//        if (m_removeConfigSetCb != 0) {
+//            m_removeConfigSetCb = null;
+//        }
+        m_removeConfigSetCb = cb;
+    }
+
+    /**
+     * setOnActivateSet
+     */
+    public void setOnActivateSet(OnActivateSetCallbackFunc cb) {
+//        if (m_activateSetCb != 0) {
+//            m_activateSetCb = null;
+//        }
+        m_activateSetCb = cb;
+    }
+
+
+    /**
+     * onUpdate
+     */
+    public void onUpdate(String config_set) {
+        if (m_updateCb != null) {
+            m_updateCb.operator(config_set);
+        }
+    }
+
+    /**
+     * onUpdateParam
+     */
+    public void onUpdateParam(String config_set, String config_param) {
+        if (m_updateParamCb != null) {
+            m_updateParamCb.operator(config_set, config_param);
+        }
+    }
+
+    /**
+     * onSetConfigurationSet
+     */
+    public void onSetConfigurationSet(Properties config_set) {
+        if (m_setConfigSetCb != null) {
+            m_setConfigSetCb.operator(config_set);
+        }
+    }
+
+    /**
+     * onAddConfigurationSet
+     */
+    public void onAddConfigurationSet(Properties config_set) {
+        if (m_addConfigSetCb != null) {
+            m_addConfigSetCb.operator(config_set);
+        }
+    }
+
+    /**
+     * onRemoveConfigurationSet
+     */
+    public void onRemoveConfigurationSet(String config_id) {
+        if (m_removeConfigSetCb != null) {
+            m_removeConfigSetCb.operator(config_id);
+        }
+    }
+
+    /**
+     * onActivateSet
+     */
+    public void onActivateSet(String config_id) {
+        if (m_activateSetCb != null) {
+            m_activateSetCb.operator(config_id);
+        }
+    }
+
+
     /**
      * コピー・コンストラクタ
      *
@@ -285,34 +465,49 @@ public class ConfigAdmin {
     private ConfigAdmin(final ConfigAdmin ca) {
         m_configsets = ca.m_configsets;
     }
+
     /**
      * コンフィギュレーションセット・リスト
      */
+
     private Properties m_configsets = new Properties();
     /**
      * 空のダミーコンフィギュレーションセット
      */
+
     private Properties  m_emptyconf = new Properties(); 
     /**
      * バインド対象パラメータ・リスト
      */
+
     private Vector<ConfigBase> m_params = new Vector<ConfigBase>();
     /**
      * アクティブ・コンフィギュレーションセットID
      */
+
     private String m_activeId = new String();
     /**
      * アクティブ化フラグ
      */
+
     private boolean m_active;
     /**
      * 変更有無フラグ
      */
+
     private boolean m_changed;
     /**
      * 新規追加分コンフィギュレーションセット
      */
-    Vector<String> m_newConfig = new Vector<String>();
+    private Vector<String> m_newConfig = new Vector<String>();
+
+    private OnUpdateCallbackFunc m_updateCb;
+    private OnUpdateParamCallbackFunc m_updateParamCb;
+    private OnSetConfigurationSetCallbackFunc m_setConfigSetCb;
+    private OnAddConfigurationAddCallbackFunc m_addConfigSetCb;
+    private OnRemoveConfigurationSetCallbackFunc m_removeConfigSetCb;
+    private OnActivateSetCallbackFunc m_activateSetCb;
+
 }
 
 /**

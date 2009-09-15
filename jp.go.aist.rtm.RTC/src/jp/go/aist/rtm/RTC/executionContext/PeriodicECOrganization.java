@@ -13,7 +13,6 @@ import RTC.ExecutionContext;
 import RTC.ExecutionContextListHolder;
 import RTC.ExecutionContextService;
 
-
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
 
@@ -28,18 +27,20 @@ import _SDOPackage.NotAvailable;
 
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.SDOPackage.Organization_impl;
+import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.StringUtil;
 
 /**
- * <p> PeriodicECOrganization </p>
+ * <p> PeriodicECOrganizationクラス </p>
  */
 public class PeriodicECOrganization extends Organization_impl {
     /**
-     * <p></p>
+     * <p>RTコンポーネントオブジェクト</p>
      */
     protected RTObject_impl m_rtobj;
 
     /**
-     * <p></p>
+     * <p>ExecutionContextオブジェクト</p>
      */
     protected ExecutionContext m_ec;
     
@@ -51,7 +52,8 @@ public class PeriodicECOrganization extends Organization_impl {
          * <p> Constructor </p>
          */
         public Member(RTObject rtobj) {
-            rtobj_ = rtobj;
+//            rtobj_ = rtobj;
+            rtobj_ = (RTObject)rtobj._duplicate();
             profile_ = rtobj.get_component_profile();
             eclist_ = rtobj.get_owned_contexts();
             try {
@@ -72,14 +74,14 @@ public class PeriodicECOrganization extends Organization_impl {
          */
         public Member(final Member x) {
             rtobj_ = (RTObject)x.rtobj_._duplicate();
-            profile_ = new ComponentProfile();
+//            profile_ = new ComponentProfile();
             profile_ = x.profile_;
             eclist_ = x.eclist_;
             config_ = (Configuration)x.config_._duplicate();
         }
 
         /**
-         * <p></p>
+         * <p>operator</p>
          */
         public Member operator(final Member x) {
             Member tmp = x;
@@ -88,10 +90,10 @@ public class PeriodicECOrganization extends Organization_impl {
         }
 
         /**
-         * <p></p>
+         * <p>swap</p>
          */
         public void swap(Member x) {
-            RTObject rtobj= x.rtobj_;
+            RTObject rtobj = x.rtobj_;
             ComponentProfile profile = x.profile_;
             ExecutionContext[] eclist;
             eclist = x.eclist_;
@@ -109,84 +111,72 @@ public class PeriodicECOrganization extends Organization_impl {
          }
       
         /**
-         * <p></p>
+         * <p>RTObject</p>
          */
         public RTObject rtobj_;
         /**
-         * <p></p>
+         * <p>ComponentProfile</p>
          */
         public ComponentProfile profile_;
         /**
-         * <p></p>
+         * <p>ExecutionContext</p>
          */
         public ExecutionContext[] eclist_;
         /**
-         * <p></p>
+         * <p>Configuration</p>
          */
         public Configuration config_;
 
     };
 
     /**
-     * <p></p>
+     * <p>RTコンポーネントメンバー</p>
      */
     protected Vector<Member> m_rtcMembers = new Vector<Member>();
 
-
     /**
-     * <p></p>
+     * <p>ポートリスト</p>
      */
-    static final String periodicecsharedcomposite_spec[] = {
-        "implementation_id", "PeriodicECSharedComposite",
-        "type_name",         "PeriodicECSharedComposite",
-        "description",       "PeriodicECSharedComposite",
-        "version",           "1.0",
-        "vendor",            "jp.go.aist",
-        "category",          "composite.PeriodicECShared",
-        "activity_type",     "DataFlowComponent",
-        "max_instance",      "0",
-        "language",          "C++",
-        "lang_type",         "compile",
-        "exported_ports",    "",
-        "conf.default.members", "",
-        "conf.default.exported_ports", "",
-        ""
-      };
+    protected Vector<String> m_expPorts = new Vector<String>();
 
     /**
-     * <p></p>
+     * <p>Constructor</p>
      */
     public PeriodicECOrganization(RTObject_impl rtobj) {
         super(rtobj.getObjRef());
         m_rtobj = rtobj;
         m_ec = null;
+        rtcout = new Logbuf("PeriodicECOrganization");
     }
 
-
     /**
-     * <p></p>
+     * <p>Organizationメンバーを追加する。</p>
      */
      public boolean add_members(final SDO[] sdo_list) 
         throws SystemException, InvalidParameter, NotAvailable, InternalError {
 
+        rtcout.println(rtcout.DEBUG, "add_members()");
+        updateExportedPortsList();
+
         for (int i=0, len=sdo_list.length; i < len; ++i) {
             final SDO sdo = sdo_list[i];
- 
-            if (sdo == null) continue;
+            if (sdo == null) {
+                continue;
+            }
             // narrowing: SDO . RTC (DataFlowComponent)
             DataFlowComponent dfc = DataFlowComponentHelper.narrow(sdo);
-            if (dfc == null) continue;
-
+            if (dfc == null) {
+                continue;
+            }
             Member member = new Member((DataFlowComponent)dfc._duplicate());
             stopOwnedEC(member);
             addOrganizationToTarget(member);
             addParticipantToEC(member);
-            delegatePort(member);
+            addPort(member, m_expPorts);
             m_rtcMembers.add(member);
         }
 
         boolean result;
-//zxc        result = Organization_impl.add_members(sdo_list);
         try {
             result = super.add_members(sdo_list);
         } catch(InvalidParameter e) {
@@ -201,31 +191,34 @@ public class PeriodicECOrganization extends Organization_impl {
     }
 
     /**
-     * <p></p>
+     * <p>Organizationメンバーをセットする。</p>
      */
     public boolean set_members(final SDO[] sdo_list)
         throws SystemException, InvalidParameter, NotAvailable, InternalError {
 
-        m_rtcMembers.clear();
+        rtcout.println(rtcout.DEBUG, "set_members()");
+        removeAllMembers();
+        updateExportedPortsList();
 
         for (int i=0, len=sdo_list.length; i < len; ++i) {
             final SDO sdo  = sdo_list[i];
-
-            if (sdo == null) continue;
+            if (sdo == null) {
+                continue;
+            }
             // narrowing: SDO . RTC (DataFlowComponent)
             DataFlowComponent dfc = DataFlowComponentHelper.narrow(sdo);
-            if (dfc == null) continue;
-
+            if (dfc == null) {
+                continue;
+            }
             Member member = new Member((DataFlowComponent)dfc._duplicate());
             stopOwnedEC(member);
             addOrganizationToTarget(member);
             addParticipantToEC(member);
-            delegatePort(member);
+            addPort(member, m_expPorts);
             m_rtcMembers.add(member);
         }
-    
+
         boolean result;
-//        result = Organization_impl.set_members(sdo_list);
         try { 
             result = super.set_members(sdo_list);
         } catch(InvalidParameter e) {
@@ -240,20 +233,24 @@ public class PeriodicECOrganization extends Organization_impl {
       }
 
     /**
-     * <p></p>
+     * <p>Organizationメンバーを削除する。</p>
      */
     public boolean remove_member(final String id)
         throws SystemException, InvalidParameter, NotAvailable, InternalError {
-        for (Iterator it = m_rtcMembers.iterator();it.hasNext();) {
-            Member member = (Member)it.next();
-            if (member.profile_.instance_name.indexOf(id) != 0 ) continue;
 
-            removePort(member);
+        rtcout.println(rtcout.DEBUG, "remove_member()" + " id=(" + id + ")");
+        for (Iterator it = m_rtcMembers.iterator(); it.hasNext();) {
+            Member member = (Member)it.next();
+            if (member.profile_.instance_name.indexOf(id) != 0 ) {
+                continue;
+            }
+            removePort(member, m_expPorts);
+            m_rtobj.getProperties().setProperty("conf.default.exported_ports", StringUtil.flatten(m_expPorts));
             removeParticipantFromEC(member);
             removeOrganizationFromTarget(member);
             startOwnedEC(member);
             it.remove();
-         }
+        }
 
         boolean result;
         try {
@@ -270,12 +267,15 @@ public class PeriodicECOrganization extends Organization_impl {
 
   
     /**
-     * <p></p>
+     * <p>Organizationメンバーを全て削除する。</p>
      */
     public void removeAllMembers() {
-        for (Iterator it = m_rtcMembers.iterator();it.hasNext();) {
+        rtcout.println(rtcout.TRACE, "removeAllMembers()");
+        updateExportedPortsList();
+
+        for (Iterator it = m_rtcMembers.iterator(); it.hasNext();) {
             Member member = (Member)it.next();
-            removePort(member);
+            removePort(member, m_expPorts);
             removeParticipantFromEC(member);
             removeOrganizationFromTarget(member);
             startOwnedEC(member);
@@ -293,24 +293,30 @@ public class PeriodicECOrganization extends Organization_impl {
             it.remove();
         }
         m_rtcMembers.clear();
+        m_expPorts.clear();
     }
 
     /**
-     * <p></p>
+     * <p>SDOからDFCへの変換</p>
      */
     public boolean sdoToDFC(final SDO sdo, DataFlowComponent dfc) {
-        if (sdo == null) return false;
-    
+        if (sdo == null) {
+            return false;
+        }
         // narrowing: SDO . RTC (DataFlowComponent)
         dfc = DataFlowComponentHelper.narrow(sdo);
-        if (dfc == null) return false;
+        if (dfc == null) {
+            return false;
+        }
         return true;
     }
-  
+
     /**
-     * <p></p>
+     * <p>Owned ExecutionContext を停止させる。</p>
      */
     public void stopOwnedEC(Member member) {
+        rtcout.println(rtcout.DEBUG, "stopOwnedEC()");
+
         // stop target RTC's ExecutionContext
         ExecutionContextListHolder ecs = new ExecutionContextListHolder();
         ecs.value = member.eclist_;
@@ -321,9 +327,11 @@ public class PeriodicECOrganization extends Organization_impl {
      }
 
     /**
-     * <p></p>
+     * <p>Owned ExecutionContext を起動する。</p>
      */
     public void startOwnedEC(Member member) {
+        rtcout.println(rtcout.DEBUG, "startOwnedEC()");
+
         // start target RTC's ExecutionContext
         ExecutionContextListHolder ecs = new ExecutionContextListHolder();
         ecs.value  = member.eclist_;
@@ -334,13 +342,16 @@ public class PeriodicECOrganization extends Organization_impl {
     }
 
     /**
-     * <p></p>
+     * <p>DFC に Organization オブジェクトを与える。</p>
      */
     public void addOrganizationToTarget(Member member) {
+        rtcout.println(rtcout.DEBUG, "addOrganizationToTarget()");
+
         // get given RTC's configuration object
         Configuration conf = member.config_;
-        if (conf==null) return;
-    
+        if (conf == null) {
+            return;
+        }
         // set organization to target RTC's conf
         try {
             conf.add_organization((Organization)m_objref._duplicate());
@@ -356,16 +367,18 @@ public class PeriodicECOrganization extends Organization_impl {
     }
 
     /**
-     * <p></p>
+     * <p>Organization オブジェクトを DFCから削除する。</p>
      */
     public void removeOrganizationFromTarget(Member member) {
+        rtcout.println(rtcout.DEBUG, "removeOrganizationFromTarget()");
+
         // get given RTC's configuration object
         Configuration conf = member.config_;
-        if (conf == null) return;
-    
+        if (conf == null) {
+            return;
+        }
         // set organization to target RTC's conf
         try{
-//zxc        conf.remove_organization(string_dup(m_pId));
             String str = new String();
             str = m_pId;
             conf.remove_organization(str);
@@ -381,9 +394,11 @@ public class PeriodicECOrganization extends Organization_impl {
     }
 
     /**
-     * <p></p>
+     * <p>Composite の ExecutionContext を DFC にセットする。</p>
      */
     public void addParticipantToEC(Member member) {
+        rtcout.println(rtcout.DEBUG, "addParticipantToEC()");
+
         if (m_ec == null) {
             ExecutionContext[] ecs = m_rtobj.get_owned_contexts();
             if (ecs.length > 0) {
@@ -397,14 +412,17 @@ public class PeriodicECOrganization extends Organization_impl {
     }
 
     /**
-     * <p></p>
+     * <p>Composite の ExecutionContext から DFC を削除する。</p>
      */
     public void removeParticipantFromEC(Member member) { 
+        rtcout.println(rtcout.DEBUG, "removeParticipantFromEC()");
+
         if (m_ec == null) {
             ExecutionContext[] ecs = m_rtobj.get_owned_contexts();
             if (ecs.length > 0) {
                 m_ec = (ExecutionContext)ecs[0]._duplicate();
             } else {
+                rtcout.println(rtcout.FATAL, "removeParticipantFromEC() no owned EC");
                 return;
             }
         }
@@ -412,65 +430,136 @@ public class PeriodicECOrganization extends Organization_impl {
     }
 
     /**
-     * <p></p>
+     * <p>ポートを委譲する。</p>
      */
-    public void delegatePort(Member member) {
-        String exported_ports = new String(); 
-        exported_ports = m_rtobj.getProperties().getProperty("exported_ports");
-      
-        // get comp's/ports's profile
-        ComponentProfile cprof = new ComponentProfile();
-        cprof = member.profile_;
-        PortProfile[] plist = new PortProfile[cprof.port_profiles.length];
-        plist = cprof.port_profiles;
+    public void addPort(Member member, Vector<String> portlist) {
+        rtcout.println(rtcout.TRACE, "addPort() portlist=" + StringUtil.flatten(portlist));
+
+        if (portlist.size() == 0) {
+            return;
+        }
+        String comp_name = new String();
+        comp_name = member.profile_.instance_name;
+        PortProfile[] plist = new PortProfile[member.profile_.port_profiles.length];
+        plist = member.profile_.port_profiles;
 
         // port delegation
         for (int i=0, len=plist.length; i < len; ++i) {
             // port name . comp_name.port_name
-            String port_name = cprof.instance_name;
-            port_name.concat("\\."); 
+            String port_name = comp_name;
+            port_name.concat("."); 
             port_name.concat(plist[i].name);
 
-            int pos = exported_ports.indexOf(port_name);
-            if (pos == -1) continue;
-
+            rtcout.println(rtcout.DEBUG, "port_name: " + port_name + 
+                                         " is in " + StringUtil.flatten(portlist));
+            int pos = -1;
+            for (Iterator it = portlist.iterator(); it.hasNext();) {
+                String str = (String)it.next();
+                if (str.indexOf(port_name) != -1 ) {
+                    pos = 1;
+                    break;
+                }
+            }
+            if (pos == -1) {
+                rtcout.println(rtcout.DEBUG, "Not Found: " + port_name + 
+                                             " is in " + StringUtil.flatten(portlist));
+                continue;
+            }
+            rtcout.println(rtcout.DEBUG, "Found: " + port_name + 
+                                         " is in " + StringUtil.flatten(portlist));
             m_rtobj.registerPort(
                         (PortService)plist[i].port_ref._duplicate());
-
+            rtcout.println(rtcout.DEBUG, "Port " + port_name + " was delegated.");
         }
     }
 
     /**
-     * <p></p>
+     * <p>委譲したポートを削除する。</p>
      */
-    public void removePort(Member member) {
-        String exported_ports = new String(); 
-        exported_ports = m_rtobj.getProperties().getProperty("exported_ports");
-    
-        // get comp's/ports's profile
-        ComponentProfile cprof= new ComponentProfile();
-        cprof= member.profile_;
-        PortProfile[] plist = cprof.port_profiles;
-    
+    public void removePort(Member member, Vector<String> portlist) {
+        rtcout.println(rtcout.TRACE, "removePort() portlist=" + StringUtil.flatten(portlist));
+
+        if (portlist.size() == 0) {
+            return;
+        }
+        String comp_name = new String();
+        comp_name = member.profile_.instance_name;
+        PortProfile[] plist = new PortProfile[member.profile_.port_profiles.length];
+        plist = member.profile_.port_profiles;
+
         // port delegation
         for (int i=0, len=plist.length; i < len; ++i) {
             // port name . comp_name.port_name
-            String port_name = cprof.instance_name;
+            String port_name = comp_name;
             port_name.concat("."); 
             port_name.concat(plist[i].name);
-        
-            int pos = exported_ports.indexOf(port_name);
-            if (pos == -1) continue;
-        
+
+            rtcout.println(rtcout.DEBUG, "port_name: " + port_name + 
+                                         " is in " + StringUtil.flatten(portlist));
+            int pos = -1;
+            for (Iterator it = portlist.iterator(); it.hasNext();) {
+                String str = (String)it.next();
+                if (str.indexOf(port_name) != -1 ) {
+                    pos = 1;
+                    break;
+                }
+            }
+            if (pos == -1) {
+                rtcout.println(rtcout.DEBUG, "Not Found: " + port_name + 
+                                             " is in " + StringUtil.flatten(portlist));
+                continue;
+            }
+            rtcout.println(rtcout.DEBUG, "Found: " + port_name + 
+                                         " is in " + StringUtil.flatten(portlist));
             m_rtobj.deletePort(
                             (PortService)plist[i].port_ref._duplicate());
-        
+            rtcout.println(rtcout.DEBUG, "Port " + port_name + " was deleted.");
         }
      }
 
+    /**
+     * <p>ポートリストを更新する。</p>
+     */
+    private void updateExportedPortsList() {
+        rtcout.println(rtcout.DEBUG, "updateExportedPortsList()");
+
+        String plist = new String();
+        plist = m_rtobj.getProperties().getProperty("conf.default.exported_ports");
+        m_expPorts = StringUtil.split(plist, ",");
+    }
+
+    /**
+     * <p>委譲したポートを更新する。</p>
+     */
+    public void updateDelegatedPorts() {
+        rtcout.println(rtcout.DEBUG, "updateDelegatedPorts()");
+
+        Vector<String> oldPorts = new Vector<String>();
+        oldPorts = m_expPorts;
+
+        String plist = new String();
+        plist = m_rtobj.getProperties().getProperty("conf.default.exported_ports");
+        Vector<String> newPorts = new Vector<String>();
+        newPorts = StringUtil.split(plist, ",");
+
+        Vector<String> removedPorts = new Vector<String>(oldPorts);
+        Vector<String> createdPorts = new Vector<String>(newPorts);
+        removedPorts.removeAll(newPorts);
+        createdPorts.removeAll(oldPorts);
+
+        rtcout.println(rtcout.VERBOSE, "old    Ports: " + StringUtil.flatten(oldPorts));
+        rtcout.println(rtcout.VERBOSE, "new    Ports: " + StringUtil.flatten(newPorts));
+        rtcout.println(rtcout.VERBOSE, "remove Ports: " + StringUtil.flatten(removedPorts));
+        rtcout.println(rtcout.VERBOSE, "add    Ports: " + StringUtil.flatten(createdPorts));
+
+        for (int i=0, len=m_rtcMembers.size(); i < len; ++i) {
+            removePort(m_rtcMembers.elementAt(i), removedPorts);
+            addPort(m_rtcMembers.elementAt(i), createdPorts);
+        }
+        m_expPorts = newPorts;
+
+  }
+
+    protected Logbuf rtcout;
+
 };
-
-
-
-
-

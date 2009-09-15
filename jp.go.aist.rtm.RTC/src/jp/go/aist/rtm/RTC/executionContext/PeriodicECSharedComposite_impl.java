@@ -16,9 +16,14 @@ import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.ValueHolder;
 import jp.go.aist.rtm.RTC.util.StringHolder;
 import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnAddConfigurationAddCallbackFunc;
 import jp.go.aist.rtm.RTC.RtcDeleteFunc;
 import jp.go.aist.rtm.RTC.RtcNewFunc;
-import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.executionContext.PeriodicECOrganization;
+
 
 import _SDOPackage.Organization;
 import _SDOPackage.SDO;
@@ -31,53 +36,68 @@ import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
 
 /**
- * <p></p>
- */
+* <p>データフロー型RTコンポーネント基底クラスのインスタンスです。</p>
+*/
 public class PeriodicECSharedComposite_impl extends RTObject_impl {
 
     /**
-     * <p></p>
+     * <p>Callbackクラスの設定</p>
+     */
+    class setCallback implements OnSetConfigurationSetCallbackFunc {
+        public setCallback(PeriodicECOrganization org) {
+            m_org = org;
+        }
+        public void operator(Properties config_set) {
+            m_org.updateDelegatedPorts();
+        }
+        private PeriodicECOrganization m_org;
+    };
+
+    /**
+     * <p>Callbackクラスの追加</p>
+     */
+    class addCallback implements OnAddConfigurationAddCallbackFunc {
+        public addCallback(PeriodicECOrganization org) {
+            m_org = org;
+        }
+        public void operator(Properties config_set) {
+            m_org.updateDelegatedPorts();
+        }
+        private PeriodicECOrganization m_org;
+    };
+
+
+    /**
+     * <p>コンストラクタ</p>
+     * 
+     * @param manager Managerオブジェクト
      */
     public PeriodicECSharedComposite_impl(Manager manager) {
         super(manager);
-System.out.println( "PeriodicECSharedComposite_impl::PeriodicECSharedComposite_impl--000--" );
         m_ref = (DataFlowComponent)this._this()._duplicate();
-System.out.println( "PeriodicECSharedComposite_impl::PeriodicECSharedComposite_impl--010--" );
         m_objref = (RTObject)m_ref._duplicate();
-System.out.println( "PeriodicECSharedComposite_impl::PeriodicECSharedComposite_impl--020--" );
         m_org = new PeriodicECOrganization(this);
-System.out.println( "PeriodicECSharedComposite_impl::PeriodicECSharedComposite_impl--030--" );
 
-if(m_sdoOwnedOrganizations.value == null){
-System.out.println( "PeriodicECSharedComposite_impl::PeriodicECSharedComposite_impl--030--m_sdoOwnedOrganizations is null." );
-} else {
-System.out.println( "PeriodicECSharedComposite_impl::PeriodicECSharedComposite_impl--030--m_sdoOwnedOrganizations is not null." );
-}
-if(m_sdoOwnedOrganizations == null){
-System.out.println( "PeriodicECSharedComposite_impl::PeriodicECSharedComposite_impl--030--m_sdoOwnedOrganizations is null." );
-} else {
-System.out.println( "PeriodicECSharedComposite_impl::PeriodicECSharedComposite_impl--030--m_sdoOwnedOrganizations is not null." );
-}
         CORBA_SeqUtil.push_back(m_sdoOwnedOrganizations,
                               (Organization)m_org.getObjRef()._duplicate());
-System.out.println( "PeriodicECSharedComposite_impl::PeriodicECSharedComposite_impl--040--" );
-//zxc        bindParameter("members", m_members, "", stringToStrVec);
-        if( m_members==null ) {
+        if( m_members == null ) {
             m_members = new StringHolder();
             m_members.value = new String();
         }
+//        bindParameter("members", m_members, "", stringToStrVec);
         bindParameter("members", m_members, "");
-System.out.println( "PeriodicECSharedComposite_impl::PeriodicECSharedComposite_impl--0e0--" );
+        m_configsets.setOnSetConfigurationSet(new setCallback(m_org));
+        m_configsets.setOnAddConfigurationSet(new addCallback(m_org));
+//        rtcout = new Logbuf("PeriodicECSharedComposite_impl");
     }
 
 
     /**
-     * <p></p>
+     * <p>当該オブジェクトのCORBAオブジェクト参照を取得します。</p>
      *
-     * @return A CORBA object reference  
+     * @return 当該オブジェクトのCORBAオブジェクト参照
      */
     public DataFlowComponent _this() {
-        
         if (this.m_ref == null) {
             try {
                 this.m_ref = DataFlowComponentHelper.narrow(POAUtil.getRef(this));
@@ -85,59 +105,49 @@ System.out.println( "PeriodicECSharedComposite_impl::PeriodicECSharedComposite_i
                 throw new IllegalStateException(e);
             }
         }
-        
         return this.m_ref;
     }
+
     /**
-     * <p></p>
+     * <p>初期化処理用コールバック関数</p>
      */
     public ReturnCode_t onInitialize() {
-System.out.println( "PeriodicECSharedComposite::onInitialize--000--" );
+
+        rtcout.println(rtcout.TRACE, "PeriodicECSharedComposite_impl.onInitialize()");
         Manager mgr = Manager.instance();
 
         Vector<RTObject_impl> comps = mgr.getComponents();
-        for (int i=0, len=comps.size(); i < len; ++i) {
-            System.out.println( comps.elementAt(i).getInstanceName() );
-        }
-
-System.out.println( "PeriodicECSharedComposite::onInitialize--005--" );
         SDOListHolder sdos = new SDOListHolder();
-System.out.println( "PeriodicECSharedComposite::onInitialize--006--" );
+        String[] str = m_members.toString().split(",");
 
-	String[] str = m_members.toString().split(",");
-
-System.out.println( "PeriodicECSharedComposite::onInitialize--010--" + m_members.toString());
-//zxc        for (int i=0, len=m_members.size(); i < len; ++i) {
-//zxc            RTObject_impl rtc = mgr.getComponent(m_members.elementAt(i));
         for (int i=0, len=str.length; i < len; ++i) {
             RTObject_impl rtc = mgr.getComponent(str[i]);
             if (rtc == null) {
                 continue;
             }
 
-System.out.println( "PeriodicECSharedComposite::onInitialize--030--");
             SDO sdo;
             sdo = (SDO)rtc.getObjRef()._duplicate();
-            if (sdo == null) continue;
+            if (sdo == null) {
+                continue;
+            }
 
-System.out.println( "PeriodicECSharedComposite::onInitialize--040--");
             CORBA_SeqUtil.push_back(sdos, sdo);
-System.out.println( "PeriodicECSharedComposite::onInitialize--050--");
         }
-  
+
         try {
             m_org.set_members(sdos.value);
         } catch (Exception e) {
-System.out.println( "PeriodicECSharedComposite::onInitialize--0c1--" + e );
         }
-System.out.println( "PeriodicECSharedComposite::onInitialize--0e0--" );
         return ReturnCode_t.RTC_OK;
     }
 
     /**
-     * <p></p>
+     * <p>活性化処理用コールバック関数</p>
      */
     public ReturnCode_t onActivated(int exec_handle) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicECSharedComposite_impl.onActivated(" + Integer.toString(exec_handle) + ")");
         ExecutionContext[] ecs = get_owned_contexts();
         try {
             SDO[] sdos = m_org.get_members();
@@ -145,22 +155,21 @@ System.out.println( "PeriodicECSharedComposite::onInitialize--0e0--" );
                 RTObject rtc = RTObjectHelper.narrow(sdos[i]);
                 ecs[0].activate_component(rtc);
             }
+            rtcout.println(rtcout.DEBUG, Integer.toString(sdos.length) + " member RTC" + ((sdos.length == 1) ? " was" : "s were") );
         } catch(NotAvailable e) {
             ;
         } catch(InternalError e) {
             ;
         }
-
-	String[] str = m_members.toString().split(",");
-        System.out.println( "num of mem:" + str.length );
-//zxc        System.out.println( "num of mem:" + m_members.size() );
         return ReturnCode_t.RTC_OK;
     }
 
     /**
-     * <p></p>
+     * <p>非活性化処理用コールバック関数</p>
      */
     public ReturnCode_t onDeactivated(int exec_handle) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicECSharedComposite_impl.onDeactivated(" + Integer.toString(exec_handle) + ")");
         ExecutionContext[] ecs = get_owned_contexts();
         try { 
             SDO[] sdos = m_org.get_members();
@@ -173,18 +182,18 @@ System.out.println( "PeriodicECSharedComposite::onInitialize--0e0--" );
         } catch(InternalError e) {
             ;
         }
-
         return ReturnCode_t.RTC_OK;
      }
 
     /**
-     * <p></p>
+     * <p>リセット処理用コールバック関数</p>
      */
     public ReturnCode_t onReset(int exec_handle) {
+
+        rtcout.println(rtcout.TRACE, "PeriodicECSharedComposite_impl.onReset(" + Integer.toString(exec_handle) + ")");
         ExecutionContext[] ecs = get_owned_contexts();
         try { 
             SDO[] sdos = m_org.get_members();
-
             for (int i=0, len=sdos.length; i < len; ++i) {
                 RTObject rtc = RTObjectHelper.narrow(sdos[i]);
                 ecs[0].reset_component(rtc);
@@ -198,38 +207,18 @@ System.out.println( "PeriodicECSharedComposite::onInitialize--0e0--" );
     }
 
     /**
-     * <p></p>
+     * <p>終了処理用コールバック関数</p>
      */
     public ReturnCode_t onFinalize() {
-        System.out.println( "onFinalize" );
+
+        rtcout.println(rtcout.TRACE, "PeriodicECSharedComposite_impl.onFinalize()");
         m_org.removeAllMembers();
-        System.out.println( "onFinalize done" );
+        rtcout.println(rtcout.TRACE, "PeriodicECSharedComposite_impl.onFinalize() done");
         return ReturnCode_t.RTC_OK;
     }
-    /**
-     * <p></p>
-     */
-//    protected Vector<String> m_members = new Vector<String>;
-    protected StringHolder m_members;
-    /**
-     * <p></p>
-     */
-    protected DataFlowComponent m_ref;
-    /**
-     * <p></p>
-     */
-    protected PeriodicExecutionContext m_pec;
-    /**
-     * <p></p>
-     */
-    protected ExecutionContextService m_ecref;
-    /**
-     * <p></p>
-     */
-    protected PeriodicECOrganization m_org;
 
     /**
-     * <p></p>
+     * <p>string Vector<String>変換</p>
      */
     public boolean stringToStrVec(Vector<StringBuffer> v, final String is) {
         String s = is;
@@ -239,5 +228,36 @@ System.out.println( "PeriodicECSharedComposite::onInitialize--0e0--" );
         }
         return true;
     }
-};
 
+    /**
+     * <p>StringHolder</p>
+     */
+//    protected Vector<String> m_members = new Vector<String>;
+    protected StringHolder m_members;
+
+    /**
+     * <p>DataFlowComponent</p>
+     */
+    protected DataFlowComponent m_ref;
+
+    /**
+     * <p>PeriodicExecutionContext</p>
+     */
+    protected PeriodicExecutionContext m_pec;
+
+    /**
+     * <p>ExecutionContextService</p>
+     */
+    protected ExecutionContextService m_ecref;
+
+    /**
+     * <p>PeriodicECOrganization</p>
+     */
+    protected PeriodicECOrganization m_org;
+
+    /**
+     * <p>Logbuf</p>
+     */
+    protected Logbuf rtcout;
+
+};
