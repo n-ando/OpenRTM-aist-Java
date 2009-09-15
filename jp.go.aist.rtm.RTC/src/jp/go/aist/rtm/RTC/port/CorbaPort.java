@@ -1,15 +1,23 @@
 package jp.go.aist.rtm.RTC.port;
 
 import java.util.Vector;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
+import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.operatorFunc;
 
+import org.omg.CORBA.ORB;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.Object;
 import org.omg.CORBA.ObjectHelper;
+import org.omg.CORBA.Any;
+import org.omg.CORBA.TCKind;
 import org.omg.PortableServer.Servant;
 import org.omg.PortableServer.POAPackage.ObjectNotActive;
 import org.omg.PortableServer.POAPackage.ServantAlreadyActive;
@@ -37,6 +45,7 @@ public class CorbaPort extends PortBase {
         
         super(name);
         addProperty("port.port_type", "CorbaPort", String.class);
+        rtcout = new Logbuf("CorbaPort");
     }
     
     /**
@@ -51,21 +60,39 @@ public class CorbaPort extends PortBase {
      * @return 既に同名の instance_name が登録されていれば false を返します。
      */
     public boolean registerProvider(final String instance_name,
-            final String type_name, Servant provider)
-            throws ServantAlreadyActive, WrongPolicy, ObjectNotActive {
+				    final String type_name, Servant provider)
+	throws ServantAlreadyActive, WrongPolicy, ObjectNotActive {
 
+        rtcout.println(rtcout.TRACE, "registerProvider(instance="+instance_name+", type_name="+type_name+")");
         if (! this.appendInterface(instance_name, type_name,
-                PortInterfacePolarity.PROVIDED)) {
+				   PortInterfacePolarity.PROVIDED)) {
             return false;
         }
+        // byte[] oid = _default_POA().activate_object(provider);
+	byte[] oid = null;
+	try {
+	    oid = _default_POA().servant_to_id(provider);
+	}
+	catch (Exception e) {
+	}
 
-        byte[] oid = _default_POA().activate_object(provider);
+	try {
+	    _default_POA().activate_object(provider);
+	}
+	catch (org.omg.PortableServer.POAPackage.ServantAlreadyActive e) {
+	    return false;
+	}
+	
         Object obj = _default_POA().id_to_reference(oid);
 
         StringBuffer key = new StringBuffer("port");
         key.append(".").append(type_name).append(".").append(instance_name);
 
-        CORBA_SeqUtil.push_back(this.m_providers, NVUtil.newNV(key.toString(), obj, Object.class));
+        ORB orb = Manager.instance().getORB();
+	String ior = orb.object_to_string(obj);
+
+        CORBA_SeqUtil.push_back(this.m_providers, NVUtil.newNV(key.toString(), ior));
+	m_servants.put(instance_name, new ProviderInfo(provider, oid));
 
         return true;
     }
@@ -85,11 +112,12 @@ public class CorbaPort extends PortBase {
      * @return 既に同名の instance_name が登録されていれば false を返します。
      */
     public boolean registerConsumer(final String instance_name,
-            final String type_name,
-            CorbaConsumerBase consumer) {
+				    final String type_name,
+				    CorbaConsumerBase consumer) {
         
+        rtcout.println(rtcout.TRACE, "registerConsumer()");
         if (! appendInterface(instance_name, type_name,
-                PortInterfacePolarity.REQUIRED)) {
+			      PortInterfacePolarity.REQUIRED)) {
             return false;
         }
         
@@ -99,6 +127,54 @@ public class CorbaPort extends PortBase {
         return true;
     }
     
+    //============================================================
+    // Local operations
+    //============================================================
+    /**
+     * <p> Port の全てのインターフェースを activates する </p>
+     */
+    public void activateInterfaces() {
+	Set set = m_servants.keySet();
+
+	Iterator it = set.iterator();
+
+	java.lang.Object object;
+	while(it.hasNext()) {
+	    try {
+		object = it.next();
+		_default_POA().activate_object_with_id(m_servants.get(object).oid, m_servants.get(object).servant);
+	    }
+	    catch (org.omg.PortableServer.POAPackage.ServantAlreadyActive e) {
+	    }
+	    catch (org.omg.PortableServer.POAPackage.ObjectAlreadyActive e) {
+	    }
+	    catch (org.omg.PortableServer.POAPackage.WrongPolicy e) {
+	    }
+	}
+    }
+    
+    /**
+     * <p> 全ての Port のインターフェースを deactivates する </p>
+     */
+    public void deactivateInterfaces() {
+	Set set = m_servants.keySet();
+
+	Iterator it = set.iterator();
+
+	java.lang.Object object;
+	while(it.hasNext()) {
+	    try {
+		object = it.next();
+		_default_POA().deactivate_object(m_servants.get(object).oid);
+	    }
+	    catch (org.omg.PortableServer.POAPackage.ObjectNotActive e) {
+	    }
+	    catch (org.omg.PortableServer.POAPackage.WrongPolicy e) {
+	    }
+	}
+    }
+
+
     /**
      * <p>Interface情報を公開します。このPortが所有しているプロバイダ(Provider)に関する情報を、
      * ConnectorProfile#propertiesに代入します。代入する情報は、NameValueのnameとvalueとして
@@ -138,6 +214,7 @@ public class CorbaPort extends PortBase {
      */
     protected ReturnCode_t publishInterfaces(ConnectorProfileHolder connector_profile) {
         
+        rtcout.println(rtcout.TRACE, "publishInterfaces()");
         NVListHolder holder = new NVListHolder(connector_profile.value.properties);
         CORBA_SeqUtil.push_back_list(holder, this.m_providers);
         connector_profile.value.properties = holder.value;
@@ -181,8 +258,43 @@ public class CorbaPort extends PortBase {
      */
     protected ReturnCode_t subscribeInterfaces(final ConnectorProfileHolder connector_profile) {
 
+        rtcout.println(rtcout.TRACE, "subscribeInterfaces()");
         final NVListHolder nv = new NVListHolder(connector_profile.value.properties);
-        CORBA_SeqUtil.for_each(nv, new subscribe(this.m_consumers));
+
+        ORB orb = Manager.instance().getORB();
+
+        // CORBA_SeqUtil.for_each(nv, new subscribe(this.m_consumers));
+	int len = this.m_consumers.size();
+	for (int i = 0; i < len; ++i) {
+	    int index;
+	    index = NVUtil.find_index(nv, this.m_consumers.get(i).name);
+	    if (index < 0)
+		continue;
+
+	    Any anyVal = nv.value[index].value;
+	    String ior = null;
+	    if (anyVal.type().kind() == TCKind.tk_wstring) {
+		ior = anyVal.extract_wstring();
+	    }
+	    else if (anyVal.type().kind() == TCKind.tk_string) {
+		ior = anyVal.extract_string();
+	    }
+	    else {
+		ior = anyVal.extract_Value().toString();
+	    }
+
+	    Object obj = orb.string_to_object(ior);
+	    if (obj == null) {
+		rtcout.println(rtcout.ERROR, "Extracted object is nul reference");
+		continue;
+	    }
+	    
+	    boolean result = this.m_consumers.get(i).consumer.setObject(obj);
+	    if (!result) {
+		rtcout.println(rtcout.ERROR, "Cannot narrow reference");
+		continue;
+	    }
+	}
 
         return ReturnCode_t.RTC_OK;
     }
@@ -200,6 +312,7 @@ public class CorbaPort extends PortBase {
         connector_profile.properties = nv.value;
     }
     
+
     private NVListHolder m_providers = NVListHolderFactory.create();
 
     private class Consumer {
@@ -217,8 +330,8 @@ public class CorbaPort extends PortBase {
             this.consumer = cons.consumer;
         }
         
-        private String name;
-        private CorbaConsumerBase consumer;
+        public String name;
+        public CorbaConsumerBase consumer;
     }
     
     private Vector<Consumer> m_consumers = new Vector<Consumer>();
@@ -279,67 +392,25 @@ public class CorbaPort extends PortBase {
         private Vector<Consumer> m_cons; // コンストラクタで必ず初期化されるので、ここではインスタンス生成しない。
         private int m_len;
     }
-  
- 
 
-  /**
-   * <p> Activate all Port interfaces </p>
-   */
-  public void activateInterfaces() {
-/*
-    ServantMap.iterator it = m_servants.begin();
-    while(it != m_servants.end()) {
-        try {
-            Manager.instance().getPOA().activate_object_with_id(it.second.oid, it.second.servant);
-        }
-        catch(final org.omg.PortableServer.POAPackage.ServantAlreadyActive e) {
-        }
-        catch(final org.omg.PortableServer.POAPackage.ObjectAlreadyActive e) {
-        }
-	it++;
-      }
-*/
-  }
-  
-  /**
-   * <p> Deactivate all Port interfaces </p>
-   */
-  public void deactivateInterfaces() {
-/*
-    ServantMap.iterator it = m_servants.begin();
-    while(it != m_servants.end()) {
-        try {
-            Manager.instance().getPOA().deactivate_object(it.second.oid);
-        }
-        catch(const org.omg.PortableServer.POAPackage.ObjectNotActive e ) {
-        }
-	it++;
-      }
-*/
-  }
-  /**
-   * <p> The structure to be stored Provider's information. </p>
-   */
-/*
-  private class ProviderInfo
-    {
-      ProviderInfo(PortableServer.RefCountServantBase _servant, PortableServer.ObjectId _objectid) {
-          servant = _servant;
-	  oid = _objectid;
-      }
-      ProviderInfo(final ProviderInfo pinfo) {
-          servant = pinfo.servant;
-	  oid = pinfo.oid;
-      }
-      ProviderInfo operator(final ProviderInfo _pinfo) {
-        ProviderInfo pinfo = _pinfo;
-        return pinfo;
-      }
-      PortableServer.RefCountServantBase servant;
-      PortableServer.ObjectId oid;
-    };
-    Map<String, ProviderInfo> m_servants = new HashMap<String,ProviderInfo>();
-*/
-  
-    
+    /**
+     * <p> Providerの情報を格納するクラス </p>
+     */
+    private class ProviderInfo {
+	public ProviderInfo() {
+	}
+	public ProviderInfo(Servant servant, byte[] objectid) {
+	    servant = servant;
+	    oid = objectid;
+	}
+	public Servant servant = null;
+	public byte[] oid = null;
+    }
+    protected HashMap<String, ProviderInfo> m_servants = new HashMap<String, ProviderInfo>();
+
+
+    /**
+     * <p>Logging用フォーマットオブジェクト</p>
+     */
+    protected Logbuf rtcout;
 }

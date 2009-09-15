@@ -28,6 +28,7 @@ public class PortAdmin {
      * @param poa POAオブジェクト
      */
     public PortAdmin(ORB orb, POA poa) {
+	this.m_pORB = orb;
         this.m_pPOA = poa;
     }
     
@@ -47,14 +48,24 @@ public class PortAdmin {
      * <p>全ての Port のインターフェースを activates する。</p>
      */
     public void activatePorts() {
-        ;  //コンパイル用の仮です。
+	Vector<PortBase> ports;
+	ports = this.m_portServants.getObjects();
+	int len = ports.size();
+	for (int i = 0; i < len; ++i) {
+	    ports.get(i).activateInterfaces();
+	}
     }
 
     /**
      * <p>全ての Port のインターフェースを deactivates する。</p>
      */
     public void deactivatePorts() {
-        ;  //コンパイル用の仮です。
+	Vector<PortBase> ports;
+	ports = this.m_portServants.getObjects();
+	int len = ports.size();
+	for (int i = 0; i < len; ++i) {
+	    ports.get(i).deactivateInterfaces();
+	}
     }
 
     /**
@@ -199,6 +210,8 @@ public class PortAdmin {
     
     // POA へのポインタ
     private POA m_pPOA;
+    private ORB m_pORB;
+
     // PortのCORBAオブジェクト参照のリスト
     private PortServiceListHolder  m_portRefs = PortServiceListHolderFactory.create();
     
