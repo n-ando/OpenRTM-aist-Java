@@ -228,17 +228,18 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
      * <p> publishInterface </p>
      *
      * @param properties 
-     *
+     * @return boolean
      */
-    public void publishInterface(NVListHolder properties) {
+    public boolean publishInterface(NVListHolder properties) {
         
         if (!NVUtil.isStringValue(properties,
                 "dataport.interface_type",
                 this.m_interfaceType)) {
-            return;
+            return false;
         }
         
         NVUtil.append(properties, this.m_properties);
+        return true;
     }
     /**
      * <p>インタフェースプロフィールのポートタイプを設定します。</p>

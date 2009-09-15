@@ -25,8 +25,9 @@ public interface OutPortProvider {
      * <p>Interface情報を公開します。</p>
      * 
      * @param properties InterfaceProfile情報を受け取るホルダオブジェクト
+     * @return boolean
      */
-    public void publishInterface(NVListHolder properties);
+    public boolean publishInterface(NVListHolder properties);
     
     /**
      * <p> Initializing configuration </p>

@@ -51,6 +51,9 @@ public class OutPortTcpSockProvider<DataType>
         this.m_outPortProvider.publishInterfaceProfile(properties);
     }
     
+    public boolean publishInterface(NVListHolder properties) {
+        return true;
+    }
     private BufferBase<DataType> m_buffer;
     private Class<DataType> DATA_TYPE_CLASS;
     private TypeCast<DataType> TYPE_CAST;

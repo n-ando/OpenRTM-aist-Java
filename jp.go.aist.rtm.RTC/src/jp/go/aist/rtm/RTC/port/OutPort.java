@@ -42,7 +42,7 @@ public class OutPort<DataType> extends OutPortBase {
     public OutPort(BufferBase<DataType> buffer,
             final String name, DataRef<DataType> valueRef) {
         
-        super(name);
+        super(name,"object");
         
         this.m_buffer = buffer;
         this.m_value = valueRef;

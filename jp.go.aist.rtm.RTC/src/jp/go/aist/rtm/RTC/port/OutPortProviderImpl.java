@@ -27,15 +27,16 @@ public class OutPortProviderImpl extends OutPortCdrPOA implements OutPortProvide
                 this.m_subscriptionType);
     }
     
-    public void publishInterface(NVListHolder properties) {
+    public boolean publishInterface(NVListHolder properties) {
         
         if (!NVUtil.isStringValue(properties,
                 "dataport.interface_type",
                 this.m_interfaceType)) {
-            return;
+            return true;
         }
         
         NVUtil.append(properties, this.m_properties);
+        return true;
     }
     
     public void init(Properties prop) {

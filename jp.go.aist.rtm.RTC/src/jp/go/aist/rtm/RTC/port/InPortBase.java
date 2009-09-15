@@ -561,10 +561,10 @@ public class InPortBase extends PortBase {
     }
     protected boolean m_singlebuffer;
     protected BufferBase<OutputStream> m_thebuffer;
-    protected Properties m_properties;
-    protected Vector<String> m_providerTypes;
-    protected Vector<String> m_consumerTypes;
-    protected Vector<InPortConnector> m_connectors;
+    protected Properties m_properties = new Properties();
+    protected Vector<String> m_providerTypes = new Vector<String>();
+    protected Vector<String> m_consumerTypes = new Vector<String>();
+    protected Vector<InPortConnector> m_connectors = new Vector<InPortConnector>();
 
 }
 

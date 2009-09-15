@@ -149,11 +149,13 @@ public class DataOutPort<DataType> extends PortBase {
      * @param connector_profile 接続プロファイル情報
      */
     protected void unsubscribeInterfaces(final ConnectorProfile connector_profile) {
+/*
         
         PublisherBase publisher = this.m_outPort.detach(connector_profile.connector_id);
         if( publisher != null ) {
             this.m_pf.destroy(publisher);
         }
+*/
     }
     
     private Vector<OutPortProvider> m_providers = new Vector<OutPortProvider>();

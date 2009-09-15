@@ -99,9 +99,9 @@ public class OutPortCorbaProvider<DataType>
      * @param properties 接続プロファイルを受け取るNVListHolderオブジェクトを指定します。
      * あらかじめ、dataport.interface_typeにインタフェースタイプを設定しておく必要があります。
      */
-    public void publishInterface(NVListHolder properties) {
+    public boolean publishInterface(NVListHolder properties) {
 
-        this.m_outPortProvider.publishInterface(properties);
+        return this.m_outPortProvider.publishInterface(properties);
     }
     public void setBuffer(BufferBase<InputStream> buffer){
     }
