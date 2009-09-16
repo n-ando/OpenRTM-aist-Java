@@ -82,7 +82,8 @@ public class InPort<DataType> extends InPortBase {
      * @param read_timeout 非ブロック指定の場合の、データ読み取りのタイムアウト時間 (ミリ秒)
      * @param write_timeout 非ブロック指定の場合の、データ書き込みのタイムアウト時間 (ミリ秒)
      */
-    public InPort( final String name, DataRef<DataType> value,
+    public InPort(BufferBase<DataType> superClass,
+            final String name, DataRef<DataType> value,
             boolean read_block, boolean write_block,
             long read_timeout, long write_timeout) {
         
@@ -112,7 +113,7 @@ public class InPort<DataType> extends InPortBase {
      * @param value このポートにバインドされるDataType型の変数
      */
     public InPort(final String name, DataRef<DataType> value) {
-        this( name, value, false, false, 0, 0);
+        this( new RingBuffer<DataType>(8), name, value, false, false, 0, 0);
     }
     
     /**

@@ -1,8 +1,22 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.ClassNotFoundException;
+import java.lang.NoSuchFieldException;
+import java.lang.NoSuchMethodException;
+
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.TypeCast;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.TimeValue;
+import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
+
+import RTC.Time;
 
 /**
  * <p>出力ポートの実装です。さらに上位の出力ポートのベース実装として利用されます。</p>
@@ -11,6 +25,90 @@ import jp.go.aist.rtm.RTC.util.DataRef;
  */
 public class OutPort<DataType> extends OutPortBase {
 
+    /**
+     * <p> toTypeCdoe </p>
+     * <p> This function gets TypeCode of data. </p>
+     *
+     * @param value data
+     * @return TypeCdoe(String)
+     */
+    private static <DataType> String toTypeCdoe(DataRef<DataType> value) { 
+        DataType data = value.v;
+        Class cl = data.getClass();
+        String str = new String();
+        TypeCast<DataType> cast = new TypeCast<DataType>(cl);
+        org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
+        any = cast.castAny(value.v);
+        try {
+            str = any.type().name();
+        }
+        catch(org.omg.CORBA.TypeCodePackage.BadKind e){
+        }
+        return str;
+
+    }
+    /**
+     * <p> write_stream </p>
+     * <p> This function writes data from OutputStream.  </p>
+     *
+     * @param data  data   
+     * @param cdr   OutputStream
+     */
+    private void write_stream(DataType data,OutputStream cdr) {
+        Class cl = data.getClass();
+        String str = cl.getName();
+        try {
+            Class holder = Class.forName(str+"Holder",
+                                         true,
+                                         this.getClass().getClassLoader());
+            holder.getField("value").set(data.getClass(),data);
+            Method method = holder.getMethod("_write",
+                                   org.omg.CORBA.portable.OutputStream.class);
+            method.invoke( holder ,cdr);
+        }
+        catch(ClassNotFoundException e){
+            //forName throws
+        }
+        catch(NoSuchFieldException e){
+            //getField throws
+        }
+        catch(IllegalAccessException e){
+            //set throws
+        }
+        catch(NoSuchMethodException e){
+            //getMethod throws
+        }
+        catch(IllegalArgumentException e){
+            //invoke throws
+        }
+        catch(InvocationTargetException e){
+            //invoke throws
+        }
+         
+    }
+    /**
+     * <p> set_timestamp </p>
+     * <p> This function sets the timestamp.  </p>
+     *
+     * @param data  data   
+     */
+    private void set_timestamp(DataType data) {
+        long nanotime = System.nanoTime();
+        RTC.Time tm = new RTC.Time((int)nanotime/1000000000,
+                                   (int)nanotime%1000000000);
+        Class cl = data.getClass();
+        String str = cl.getName();
+        try {
+            cl.getField("tm").set(RTC.Time.class,tm);
+        }
+        catch(NoSuchFieldException e){
+            //getField throws
+        }
+        catch(IllegalAccessException e){
+            //set throws
+        }
+         
+    }
     /**
      * <p>コンストラクタです。内部的にバッファが生成されて割り当てられます。</p>
      * 
@@ -42,9 +140,8 @@ public class OutPort<DataType> extends OutPortBase {
     public OutPort(BufferBase<DataType> buffer,
             final String name, DataRef<DataType> valueRef) {
         
-        super(name,"object");
+        super(name,toTypeCdoe(valueRef));
         
-        this.m_buffer = buffer;
         this.m_value = valueRef;
         this.m_timeoutTick = 1000; // [usec]
         this.m_readBlock = false;
@@ -58,6 +155,7 @@ public class OutPort<DataType> extends OutPortBase {
         this.m_OnReadConvert = null;
         this.m_OnOverflow = null;
         this.m_OnUnderflow = null;
+
     }
     
     /**
@@ -67,67 +165,44 @@ public class OutPort<DataType> extends OutPortBase {
      * @return データを書き込めた場合はtrueを、さもなくばfalseを返します。
      */
     public boolean write(final DataType value) {
-/*        
-        if (this.m_OnWrite != null) {
-            this.m_OnWrite.run(value);
+        if (m_OnWrite != null) {
+	    m_OnWrite.run(value);
+	}
+
+        // check number of connectors
+        int conn_size = m_connectors.size();
+        if (!(conn_size > 0)) { 
+            return true; 
         }
         
-        long timeout = this.m_writeTimeout; // [usec]
-        long tm_pre = System.nanoTime(); // [nsec]
-        
-        // blocking and timeout wait
-        long TIMEOUT_TICK_MSEC_PART = this.m_timeoutTick / 1000;
-        int TIMEOUT_TICK_NSEC_PART = ((int) (this.m_timeoutTick % 1000)) * 1000;
-        long count = 0;
-        while (this.m_writeBlock && isFull()) {
-            
-            if (this.m_writeTimeout < 0) {
-                try {
-                    Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                    
-                } catch (InterruptedException ignored) {
-                    ignored.printStackTrace();
-                }
-                
-                continue;
-            }
+        // set timestamp
+        set_timestamp(value);
 
-            // timeout wait
-            long tm_cur = System.nanoTime(); // [nsec]
-            long tm_diff = tm_cur - tm_pre; // [nsec]
-            
-            timeout -= tm_diff / 1000; // [usec]
-            if (timeout < 0) {
-                break;
-            }
+        // data -> (conversion) -> CDR stream
+        org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
+        m_cdr = any.create_output_stream();
 
-            tm_pre = tm_cur;
-            try {
-                Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                
-            } catch (InterruptedException ignored) {
-                ignored.printStackTrace();
-            }
-            ++count;
-        }
 
-        if (isFull()) {
-            if (this.m_OnOverflow != null) {
-                this.m_OnOverflow.run(value);
-            }
-            return false;
-        }
-    
-        if (this.m_OnWriteConvert == null) {
-            put(value);
+        if (m_OnWriteConvert != null) {
+            DataType convervalue = m_OnWriteConvert.run(value);
+            write_stream(convervalue,m_cdr); 
         }
         else {
-            put(this.m_OnWriteConvert.run(value));
+            write_stream(value,m_cdr);
         }
-        
-        update();
-*/
-        return true;
+
+        boolean result = true;
+        for (int i=0, len=conn_size; i < len; ++i) {
+            ReturnCode ret;
+            ret = m_connectors.elementAt(i).write(m_cdr);
+            if (ret != ReturnCode.PORT_OK) {
+                result = false;
+                if (ret == ReturnCode.CONNECTION_LOST) {
+                    disconnect(m_connectors.elementAt(i).id());
+                }
+            }
+        }
+        return result;
     }
     
     /**
@@ -136,8 +211,7 @@ public class OutPort<DataType> extends OutPortBase {
      * @return データを書き込めた場合はtrueを、さもなくばfalseを返します。
      */
     public boolean write() {
-//        return this.write(m_value.v);
-        return true;
+        return this.write(m_value.v);
     }
     
     
@@ -241,73 +315,33 @@ public class OutPort<DataType> extends OutPortBase {
         this.m_OnUnderflow = onUnderflow;
     }
     
-    /**
-     * <p>内部に割り当てられているバッファ長を取得します。</p>
-     * 
-     * @return バッファ長
-     */
-/*
-    public int length() {
-        return this.m_buffer.length();
-    }
-*/
-    
-    /**
-     * <p>バッファフルか否かを判定します。</p>
-     * 
-     * @return バッファフルの場合はtrueを、さもなくばfalseを返します。
-     */
-/*
-    public boolean isFull() {
-        return this.m_buffer.isFull();
-    }
-*/
-    
-    /**
-     * <p>バッファが空か否かを判定します。</p>
-     * 
-     * @return バッファが空の場合はtrueを、さもなくばfalseを返します。
-     */
-/*
-    public boolean isEmpty() {
-        return this.m_buffer.isEmpty();
-    }
-*/
 
     /**
-     * <p>内部に割り当てられているバッファに、データを直接書き込みます。<br />
-     * バッファ状態のハンドリング、ブロッキング、タイムアウト、コールバック呼び出しなどは行われません。</p>
+     * <p> Set OnConnect callback </p>
      * 
-     * @param data 書き込むデータ
      */
-/*
-    public void put(DataType data) {
-        this.m_buffer.put(data);
+    public void setOnConnect(OnConnect on_connect) {
+        m_OnConnect = on_connect;
     }
-*/
-    
     /**
-     * <p>内部に割り当てられているバッファから、データを直接読み出します。<br />
-     * バッファ状態のハンドリング、ブロッキング、タイムアウト、コールバック呼び出しなどは行われません。</p>
+     * <p> Set OnDisConnect callback </p>
      * 
-     * @return 読み出したデータ
      */
-/*
-    public DataType get() {
-        return this.m_buffer.get();
+    public void setOnDisconnect(OnDisconnect on_disconnect) {
+        m_OnDisconnect = on_disconnect;
     }
-*/
-    
     /**
-     * <p>バッファ内に、まだ読み出されていないデータが存在するかどうかを判定します。</p>
      * 
-     * @return まだ読み出されていないデータがあればtrueを、さもなくばfalseを返します。
      */
-/*
-    public boolean isNew() {
-        return m_buffer.isNew();
+    public void onConnect(final String id, PublisherBase publisher) {
+        rtcout.println(rtcout.TRACE, "onConnect(id = "+id+")");
     }
-*/
+    /**
+     * 
+     */
+    public void onDisconnect(final String id) {
+        rtcout.println(rtcout.TRACE, "onDisconnect(id = "+id+")");
+    }
 
     private BufferBase<DataType> m_buffer;
     private DataRef<DataType> m_value;
@@ -324,4 +358,7 @@ public class OutPort<DataType> extends OutPortBase {
     private OnOverflow<DataType> m_OnOverflow;
     private OnUnderflow<DataType> m_OnUnderflow;
 
+    private OnConnect m_OnConnect;
+    private OnDisconnect m_OnDisconnect;
+    private OutputStream m_cdr;
 }
