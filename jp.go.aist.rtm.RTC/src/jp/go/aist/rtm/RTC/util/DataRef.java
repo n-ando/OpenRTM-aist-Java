@@ -51,20 +51,6 @@ public class DataRef<T> {
         
         return this.v.hashCode();
     }
-    
-    /**
-     *  
-     */
-    public String toTypename() {
-/*
-        Any any_var;
-        T   tmp_var;
-        any_var.insert_object(tmp_var);
-        return any_var.type().name();
-*/
-        
-        return "Object";
-    }
 
     /**
      * <p>当該オブジェクトが内包しているデータです。

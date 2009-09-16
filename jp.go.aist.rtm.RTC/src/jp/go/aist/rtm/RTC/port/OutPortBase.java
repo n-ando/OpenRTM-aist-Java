@@ -173,7 +173,7 @@ public class OutPortBase extends PortBase {
      *
      * @param id Connector ID
      * @param prof ConnectorProfile
-     * @return false ¡specified ID does not exit
+     * @return false specified ID does not exi
      *
      */
     public boolean getConnectorProfileById(final String id,

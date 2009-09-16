@@ -1,9 +1,19 @@
 package jp.go.aist.rtm.RTC.port;
 
+import java.lang.ClassCastException;
+import org.omg.CORBA.TypeCodePackage.BadKind;
+import java.io.IOException;
+
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
 import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.TypeCast;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+
 
 /**
  * <p>入力ポートのためのベース実装クラスです。
@@ -20,6 +30,49 @@ public class InPort<DataType> extends InPortBase {
     private static final int TIMEOUT_TICK_NSEC_PART = ((int) (TIMEOUT_TICK_USEC % 1000)) * 1000;
 
     /**
+     * <p> toTypeCdoe </p>
+     * <p> This function gets TypeCode of data. </p>
+     *
+     * @param value data
+     * @return TypeCdoe(String)
+     */
+    private static <DataType> String toTypeCdoe(DataRef<DataType> value) { 
+        DataType data = value.v;
+        Class cl = data.getClass();
+        String str = new String();
+        TypeCast<DataType> cast = new TypeCast<DataType>(cl);
+        org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
+        any = cast.castAny(value.v);
+        try {
+            str = any.type().name();
+        }
+        catch(org.omg.CORBA.TypeCodePackage.BadKind e){
+        }
+        return str;
+
+    }
+    /**
+     * <p> read_steram </p>
+     * <p> This function reads data from InputStream.  </p>
+     *
+     * @param data  The read data is stored.  
+     * @param cdr   InPutStream
+     * @return Read data
+     */
+    private DataType read_stream(DataRef<DataType> data,InputStream cdr) {
+
+        //Reads an Any from this input stream.
+        org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
+        any = cdr.read_any();
+        //Creates TypeCast.
+        Class cl = data.v.getClass();
+        TypeCast<DataType> cast = new TypeCast<DataType>(cl);
+        //Casts Any into DataType.
+        data.v = cast.castType(any);
+
+        return data.v;
+    }
+    /**
      * <p>コンストラクタです。</p>
      *
      * @param name ポート名称
@@ -33,8 +86,8 @@ public class InPort<DataType> extends InPortBase {
             boolean read_block, boolean write_block,
             long read_timeout, long write_timeout) {
         
-        super(name, value.toTypename());
-//        this.m_superClass = superClass;
+        super(name, toTypeCdoe(value));
+
         this.m_name = name;
         this.m_value = value;
         this.m_readBlock = read_block;
@@ -48,21 +101,8 @@ public class InPort<DataType> extends InPortBase {
         this.m_OnReadConvert = null;
         this.m_OnOverflow = null;
         this.m_OnUnderflow = null;
+
     }
-    
-    /**
-     * <p>コンストラクタです。デフォルトの設定でバッファが生成され割り当てられます。
-     * また、読み取り・書き込みともに非ブロックモードとなり、タイムアウト時間は0で設定されます。</p>
-     * 
-     * @param name ポート名称
-     * @param value このポートにバインドされるDataType型の変数
-     */
-/*
-    public InPort(final String name, DataRef<DataType> value) {
-//        this(new RingBuffer<DataType>(64), name, value);
-        this(name, value);
-    }
-*/
     
     /**
      * <p>コンストラクタです。
@@ -71,7 +111,6 @@ public class InPort<DataType> extends InPortBase {
      * @param name ポート名称
      * @param value このポートにバインドされるDataType型の変数
      */
-//    public InPort(BufferBase<DataType> superClass, final String name, DataRef<DataType> value) {
     public InPort(final String name, DataRef<DataType> value) {
         this( name, value, false, false, 0, 0);
     }
@@ -83,6 +122,33 @@ public class InPort<DataType> extends InPortBase {
      */
     public String name() {
         return this.m_name;
+    }
+    /**
+     * <p> Check whether the data is newest </p>
+     * 
+     * <p> Check whether the data stored at a current buffer position is newest.</p>
+     *
+     * @return Newest data check result
+     *         ( true:Newest data. Data has not been readout yet.
+     *          false:Past data Data has already been readout.)
+     * 
+     */
+    public boolean isNew() {
+
+        rtcout.println(rtcout.TRACE, "isNew()");
+
+        if (m_connectors.size() == 0) {
+            rtcout.println(rtcout.DEBUG, "no connectors");
+            return false;
+        }
+        int r = m_connectors.elementAt(0).getBuffer().readable();
+        if (r > 0) {
+            rtcout.println(rtcout.DEBUG, "isNew() = true, readable data: " + r);
+            return true;
+        }
+      
+        rtcout.println(rtcout.DEBUG, "isNew() = false, no readable data");
+        return false;
     }
     
     
@@ -106,65 +172,43 @@ public class InPort<DataType> extends InPortBase {
      * @return 読み出したデータ
      */
     public DataType read() {
-/*
-        if (this.m_OnRead != null) {
-            this.m_OnRead.run();
+        rtcout.println(rtcout.TRACE, "DataType read()");
+
+        if (m_OnRead != null) {
+            m_OnRead.run();
+            rtcout.println(rtcout.TRACE, "OnRead called");
         }
 
-        long timeout = this.m_readTimeout * 1000; // [usec] --> [nsec]
+        if (m_connectors.size() == 0) {
+            rtcout.println(rtcout.DEBUG, "no connectors");
+            return m_value.v;
+        }
 
-        long tm_cur;
-        long tm_pre = System.nanoTime();
+        org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
+        OutputStream cdr = any.create_output_stream();
 
-        // blocking and timeout wait
-        while (this.m_readBlock && this.isEmpty()) {
-            
-            if (this.m_readTimeout < 0) {
-                try {
-                    Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                    
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        ReturnCode ret = m_connectors.elementAt(0).read(cdr);
+        if (ret == ReturnCode.PORT_OK) {
+            rtcout.println(rtcout.DEBUG, "data read succeeded");
+            InputStream input_stream = cdr.create_input_stream();
+            m_value.v = read_stream(m_value,input_stream);
+            if (m_OnReadConvert != null) {
+                m_value.v = m_OnReadConvert.run(m_value.v);
+                rtcout.println(rtcout.DEBUG, "OnReadConvert called");
+                return m_value.v;
             }
-            
-            // timeout wait
-            tm_cur = System.nanoTime();
-            long tm_diff = tm_cur - tm_pre;
-            
-            timeout -= tm_diff;
-            if (timeout < 0) {
-                break;
-            }
-            
-            tm_pre = tm_cur;
-            try {
-                Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            return m_value.v;
         }
-
-        if (isEmpty() && this.m_OnUnderflow != null) {
-            this.m_value.v = this.m_OnUnderflow.run();
-            return this.m_value.v;
+        else if (ret == ReturnCode.BUFFER_EMPTY) {
+            rtcout.println(rtcout.WARN, "buffer empty");
+            return m_value.v;
         }
-        
-        if (this.m_OnReadConvert == null) {
-            this.m_value.v = get();
-            return this.m_value.v;
+        else if (ret == ReturnCode.BUFFER_TIMEOUT) {
+            rtcout.println(rtcout.WARN, "buffer read timeout");
+            return m_value.v;
         }
-        this.m_value.v = this.m_OnReadConvert.run(get());
-*/
-        return this.m_value.v;
-    }
-    
-    /**
-     * <p>当該ポートに割り当てられているバッファを、指定されたデータで埋め尽くします。</p>
-     */
-    public void init(DataType value) {
-        // 何もしない
+        rtcout.println(rtcout.ERROR, "unknown retern value from buffer.read()");
+        return m_value.v;
     }
     
     /**
@@ -173,17 +217,6 @@ public class InPort<DataType> extends InPortBase {
      */
     public void update() {
         this.read();
-/*
-        
-        try {
-            this.m_value.v = get();
-            
-        } catch (Exception e) {
-            if (this.m_OnUnderflow != null) {
-                this.m_OnUnderflow.run();
-            }
-        }
-*/
     }
     
     /**
@@ -248,38 +281,6 @@ public class InPort<DataType> extends InPortBase {
         this.m_OnUnderflow = onUnderflow;
     }
     
-    /**
-     * <p> </p>
-     * 
-     * @return バッファ長
-     */
-/*
-    public int length() {
-        return this.m_superClass.length();
-    }
-*/
-
-    /**
-     * <p>データを読み取ります。</p>
-     * 
-     * @param valueRef 読み取ったデータを受け取るためのDataRefオブジェクト
-     */
-    public boolean read(DataRef<DataType> valueRef) {
-//        return this.m_superClass.read(valueRef);
-        return true;
-    }
-
-
-    /**
-     * <p>バッファフルかどうかを取得します。</p>
-     * 
-     * @return バッファフルの場合はtrueを、さもなくばfalseを返します。
-     */
-/*
-    public boolean isFull() {
-        return this.m_superClass.isFull();
-    }
-*/
 
     /**
      * <p>バッファが空である、つまり読み取れるデータがないかどうかを取得します。</p>
@@ -287,27 +288,21 @@ public class InPort<DataType> extends InPortBase {
      * @return バッファが空の場合はtrueを、さもなくばfalseを返します。
      */
     public boolean isEmpty() {
-        return true;
-    }
+        rtcout.println(rtcout.TRACE, "isEmpty()");
 
-    /**
-     * <p>データを書き込みます。</p>
-     * 
-     * @param data 書き込むデータ
-     */
-/*
-    public void put(final DataType data) {
-        this.m_superClass.put(data);
-    }
-*/
-
-    /**
-     * <p>データを読み取ります。</p>
-     * 
-     * @return 読み取ったデータ
-     */
-    public DataType get() {
-        return this.m_superClass.get();
+        if (m_connectors.size() == 0) {
+            rtcout.println(rtcout.DEBUG, "no connectors");
+            return true;
+        }
+        int r = m_connectors.elementAt(0).getBuffer().readable();
+        if (r == 0) {
+            rtcout.println(rtcout.DEBUG, "isEmpty() = true, buffer is empty");
+            return true;
+        }
+      
+        rtcout.println(rtcout.DEBUG, 
+                       "isEmpty() = false, data exists in the buffer");
+        return false;
     }
     
     private BufferBase<DataType> m_superClass;
@@ -325,8 +320,5 @@ public class InPort<DataType> extends InPortBase {
     private OnOverflow<DataType> m_OnOverflow;
     private OnUnderflow<DataType> m_OnUnderflow;
 
-    public boolean isNew() {
-        return true;
-    }
     
 }

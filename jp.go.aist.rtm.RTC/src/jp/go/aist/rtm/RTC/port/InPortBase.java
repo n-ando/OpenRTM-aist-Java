@@ -44,6 +44,7 @@ public class InPortBase extends PortBase {
      */
     public InPortBase(final String name, final String data_type) {
         super(name);
+
         m_singlebuffer = true;
         m_thebuffer = null;
         // Set PortProfile::properties
