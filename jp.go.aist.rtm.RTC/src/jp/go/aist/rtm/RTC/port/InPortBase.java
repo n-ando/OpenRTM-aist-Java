@@ -32,15 +32,12 @@ import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
  */
 public class InPortBase extends PortBase {
 
-//    typedef std::vector<InPortConnector*> ConnectorList;
 
     /**
      *
      * <p> Constructor </p>
      * @param name Port name
-     * @param inport InPort object that is associated with this data input port.
-     *               Specify also the data type and the buffer type used in 
-     *               the InPort object.
+     * @param data_type Specify the data type used in the InPort object.
      */
     public InPortBase(final String name, final String data_type) {
         super(name);
@@ -514,8 +511,6 @@ public class InPortBase extends PortBase {
             rtcout.println(rtcout.ERROR,"InPortPushConnector creation failed");
             return null;
         }
-//        rtcout.println(rtcout.FATAL,"never comes here: createConnector()");
-//        return null;
     }
     /**
      * <p> InPortPullConnector creation </p>
@@ -557,8 +552,6 @@ public class InPortBase extends PortBase {
             rtcout.println(rtcout.ERROR,"InPortPullConnector creation failed");
             return null;
         }
-//        RTC_FATAL(("never comes here: createConnector()"));
-//        return null;
     }
     protected boolean m_singlebuffer;
     protected BufferBase<OutputStream> m_thebuffer;

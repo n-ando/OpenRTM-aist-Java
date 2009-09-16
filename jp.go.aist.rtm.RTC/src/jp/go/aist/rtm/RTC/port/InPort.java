@@ -7,6 +7,12 @@ import java.io.IOException;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.ClassNotFoundException;
+import java.lang.NoSuchFieldException;
+import java.lang.NoSuchMethodException;
+
 import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
@@ -61,6 +67,41 @@ public class InPort<DataType> extends InPortBase {
      */
     private DataType read_stream(DataRef<DataType> data,InputStream cdr) {
 
+        Class cl = data.getClass();
+        String str = cl.getName();
+        try {
+            Class holder = Class.forName(str+"Holder",
+                                         true,
+                                         this.getClass().getClassLoader());
+            Method method = holder.getMethod("_read",
+                                   org.omg.CORBA.portable.OutputStream.class);
+            method.invoke(holder ,cdr);
+            data.v = (DataType)holder.getField("value").get(data.v.getClass());
+        }
+        catch(ClassNotFoundException e){
+            //forName throws
+        }
+        catch(NoSuchFieldException e){
+            //getField throws
+        }
+        catch(IllegalAccessException e){
+            //set throws
+        }
+        catch(NoSuchMethodException e){
+            //getMethod throws
+        }
+        catch(IllegalArgumentException e){
+            //invoke throws
+        }
+        catch(InvocationTargetException e){
+            //invoke throws
+        }
+
+        return data.v;
+    }
+/* zxc Delete this function after the test ends.
+    private DataType read_stream(DataRef<DataType> data,InputStream cdr) {
+
         //Reads an Any from this input stream.
         org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
         any = cdr.read_any();
@@ -72,6 +113,7 @@ public class InPort<DataType> extends InPortBase {
 
         return data.v;
     }
+*/
     /**
      * <p>コンストラクタです。</p>
      *

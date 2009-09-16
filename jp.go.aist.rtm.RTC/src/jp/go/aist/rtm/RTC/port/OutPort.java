@@ -2,6 +2,7 @@ package jp.go.aist.rtm.RTC.port;
 
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.ClassNotFoundException;
