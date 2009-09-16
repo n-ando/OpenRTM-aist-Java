@@ -35,6 +35,10 @@ public class PortBaseTest extends TestCase {
         private Vector<String> _subscribeIfsTimes = new Vector<String>();
         private Vector<String> _unsubscribeIfsTimes = new Vector<String>();
 
+        public void activateInterfaces() {
+        }
+        public void deactivateInterfaces() {
+        }
         public PortBaseMock(PortProfile profile) {
             super();
             this.m_profile = profile;

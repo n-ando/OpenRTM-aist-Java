@@ -61,6 +61,10 @@ public class PortAdminTest extends TestCase {
 
     private class PortBaseMock extends PortBase {
         
+        public void activateInterfaces() {
+        }
+        public void deactivateInterfaces() {
+        }
         protected ReturnCode_t publishInterfaces(ConnectorProfileHolder connector_profile) {
             
             return ReturnCode_t.RTC_OK;

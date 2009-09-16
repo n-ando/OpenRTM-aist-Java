@@ -95,6 +95,10 @@ public class RTObjectTest extends TestCase {
     };
 
     class PortMock extends PortBase {
+        public void activateInterfaces() {
+        }
+        public void deactivateInterfaces() {
+        }
         protected ReturnCode_t publishInterfaces(ConnectorProfileHolder holder) {
             return ReturnCode_t.RTC_OK;
         }
