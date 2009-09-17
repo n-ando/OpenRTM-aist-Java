@@ -30,7 +30,7 @@ public class PropertiesTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
         
-        defaults_conf.put("rtc.openrtm.version", "0.4.0");
+        defaults_conf.put("rtc.openrtm.version", "1.0.0");
         defaults_conf.put("rtc.openrtm.release", "aist");
         defaults_conf.put("rtc.openrtm.vendor", "AIST");
         defaults_conf.put("rtc.openrtm.author", "Noriaki Ando");
@@ -219,7 +219,7 @@ public class PropertiesTest extends TestCase {
 	public void test_Properties_map() throws Exception {
 		
 		Map<String, String> propsMap = new HashMap<String, String>(); 
-		propsMap.put("rtc.openrtm.version", "0.4.0");
+		propsMap.put("rtc.openrtm.version", "1.0.0");
 		propsMap.put("rtc.openrtm.release", "aist");
 		propsMap.put("rtc.openrtm.vendor", "AIST");
 		propsMap.put("rtc.openrtm.author", "Noriaki Ando");
@@ -280,7 +280,7 @@ public class PropertiesTest extends TestCase {
     public void test_Properties_char() throws Exception {
     	
     	String[] props = {
-    			"rtc.openrtm.version", "0.4.0",
+    			"rtc.openrtm.version", "1.0.0",
     			"rtc.openrtm.release", "aist",
     			"rtc.openrtm.vendor", "AIST",
     			"rtc.openrtm.author", "Noriaki Ando",
@@ -553,7 +553,7 @@ public class PropertiesTest extends TestCase {
 
 		// getProperty()で得られる値の期待値リスト
 		Map<String, String> prof = new HashMap<String, String>();
-		prof.put("rtc.openrtm.version", "0.4.0");
+		prof.put("rtc.openrtm.version", "1.0.0");
 		prof.put("rtc.openrtm.release", "aist");
 		prof.put("rtc.openrtm.vendor", "AIST");
 		prof.put("rtc.openrtm.author", "Noriaki Ando");
@@ -580,7 +580,7 @@ public class PropertiesTest extends TestCase {
 
 		// getProperty()で得られる値の期待値リスト
 		Map<String, String> expectedProps = new HashMap<String, String>();
-		expectedProps.put("rtc.openrtm.version", "0.4.0");
+		expectedProps.put("rtc.openrtm.version", "1.0.0");
 		expectedProps.put("rtc.openrtm.release", "aist");
 		expectedProps.put("rtc.openrtm.vendor", "AIST");
 		expectedProps.put("rtc.openrtm.author", "Noriaki Ando");
@@ -643,7 +643,7 @@ public class PropertiesTest extends TestCase {
 
 		// getProperty()で得られる値の期待値リスト
 		Map<String, String> prof = new HashMap<String, String>();
-		prof.put("rtc.openrtm.version", "0.4.0");
+		prof.put("rtc.openrtm.version", "1.0.0");
 		prof.put("rtc.openrtm.release", "aist");
 		prof.put("rtc.openrtm.vendor", "AIST");
 		prof.put("rtc.openrtm.author", "Noriaki Ando");

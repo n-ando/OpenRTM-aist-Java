@@ -151,7 +151,7 @@ public class ManagerConfigTest extends TestCase {
         expected.put("rtc.openrtm.author", "Noriaki Ando");
         expected.put("rtc.openrtm.release", "aist");
         expected.put("rtc.openrtm.vendor", "AIST");
-        expected.put("rtc.openrtm.version", "0.4.0");
+        expected.put("rtc.openrtm.version", "1.0.0");
         
         String[] args = { "-f", "tests/fixtures/ManagerConfig/rtc.conf" };
         this.m_managerConfig.init(args);
