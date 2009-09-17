@@ -417,7 +417,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @param usec
      * @return ReturnCode
      */
-    public ReturnCode write(final OutputStream data, long sec, long usec) {
+    public ReturnCode write(final OutputStream data, int sec, int usec) {
         rtcout.println(rtcout.PARANOID, "write()" );
         if (m_consumer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_buffer == null) { return ReturnCode.PRECONDITION_NOT_MET; }

@@ -34,7 +34,7 @@ public class OutPortBaseTest extends TestCase {
         public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
             return ReturnCode.PORT_OK;
         }
-        public ReturnCode write(final OutputStream data, long sec, long usec) {
+        public ReturnCode write(final OutputStream data, int sec, int usec) {
             return ReturnCode.PORT_OK;
         }
         public boolean isActive() {
@@ -67,7 +67,7 @@ public class OutPortBaseTest extends TestCase {
         public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
             return ReturnCode.PORT_OK;
         }
-        public ReturnCode write(final OutputStream data, long sec, long usec) {
+        public ReturnCode write(final OutputStream data, int sec, int usec) {
             return ReturnCode.PORT_OK;
         }
         public boolean isActive() {
@@ -100,7 +100,7 @@ public class OutPortBaseTest extends TestCase {
         public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
             return ReturnCode.PORT_OK;
         }
-        public ReturnCode write(final OutputStream data, long sec, long usec) {
+        public ReturnCode write(final OutputStream data, int sec, int usec) {
             return ReturnCode.PORT_OK;
         }
         public boolean isActive() {
@@ -133,7 +133,7 @@ public class OutPortBaseTest extends TestCase {
         public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
             return ReturnCode.PORT_OK;
         }
-        public ReturnCode write(final OutputStream data, long sec, long usec) {
+        public ReturnCode write(final OutputStream data, int sec, int usec) {
             return ReturnCode.PORT_OK;
         }
         public boolean isActive() {

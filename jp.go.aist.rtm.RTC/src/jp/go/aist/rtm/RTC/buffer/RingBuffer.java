@@ -4,6 +4,7 @@ import java.util.Vector;
 import java.lang.Integer;
 import java.lang.Double;
 import java.lang.Thread;
+import java.lang.IllegalMonitorStateException; 
 
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.StringUtil;
@@ -19,22 +20,13 @@ import jp.go.aist.rtm.RTC.util.Properties;
  */
 public class RingBuffer<DataType> implements BufferBase<DataType> {
 
-private final int RINGBUFFER_DEFAULT_LENGTH = 8;
+private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
     /**
      * <p>コンストラクタです。</p>
      * 
      */
     public RingBuffer() {
-        int length = RINGBUFFER_DEFAULT_LENGTH;
-        this.m_length = (length < 2) ? 2 : length;
-        this.m_oldPtr = 0;
-        this.m_newPtr = (length < 2) ? 1 : length - 1;
-        this.m_buffer = new Vector<DataType>(this.m_length);
-/*
-        for (int i = 0; i < this.m_length; i++) {
-            this.m_buffer.add(new Data<DataType>());
-        }
-*/
+        this(RINGBUFFER_DEFAULT_LENGTH);
 
     }
     /**
@@ -47,32 +39,18 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
         this.m_oldPtr = 0;
         this.m_newPtr = (length < 2) ? 1 : length - 1;
         this.m_buffer = new Vector<DataType>(this.m_length);
-/*
-        for (int i = 0; i < this.m_length; i++) {
-            this.m_buffer.add(new Data<DataType>());
-        }
-*/
+        this.m_buffer.setSize(this.m_length);
+
         this.m_overwrite = true;
         this.m_readback = true;
         this.m_timedwrite = false;
         this.m_timedread = false;
-        this.m_wtimeout.convert(1.0);
-        this.m_rtimeout.convert(1.0);
+        this.m_wtimeout = new TimeValue(1.0);
+        this.m_rtimeout = new TimeValue(1.0);
         this.m_wpos = 0;
         this.m_rpos = 0;
         this.m_fillcount = 0;
         this.reset();
-    }
-
-    /**
-     * <p>バッファ全体を指定されたデータで埋めます。</p>
-     * 
-     * @param data バッファ全体に設定されるデータ
-     */
-    public void init(DataType data) {
-        for (int i = 0; i < this.m_length; i++) {
-            put(data);
-        }
     }
 
     /**
@@ -85,6 +63,11 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
             return this.m_length;
         }
     }
+    /**
+     * <p> sets the length of the buffer.  </p>
+     * @param length
+     * @return BUFFER_OK
+     */
     public ReturnCode length(int n) {
         m_buffer.setSize(n);
         m_length = n;
@@ -99,62 +82,12 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
      * @return 書き込みに成功した場合はtrueを、さもなくばfalseを返します。
      */
     public ReturnCode write(final DataType value) {
-        long sec = 1;
-        long nsec = 0;
-        synchronized (m_full.mutex) {
-      
-            if (full()) {
-                
-                boolean timedwrite = m_timedwrite;
-                boolean overwrite = m_overwrite;
-    
-                if (!(sec < 0)) { // if second arg is set -> block mode
-                    timedwrite = true;
-                    overwrite  = false;
-                }
-    
-                if (overwrite && !timedwrite) {      // "overwrite" mode
-                    advanceRptr();
-                }
-                else if (!overwrite && !timedwrite) { // "do_notiong" mode
-                    return ReturnCode.BUFFER_FULL;
-                }
-                else if (!overwrite && timedwrite) { // "block" mode
-                    if (sec < 0) {
-                        sec = m_wtimeout.sec();
-                        nsec = m_wtimeout.usec() * 1000;
-                      }
-                  //  true: signaled, false: timeout
-                      try {
-                          m_full.wait(sec*1000, (int)nsec);
-                          return ReturnCode.TIMEOUT;
-                      }
-                      catch(InterruptedException e ){
-                      }
-//                      if (!m_full.cond.wait(sec, nsec)) {
-//                        return ReturnCodeTIMEOUT;
-//                      }
-                }
-                else {                                   // unknown condition
-                    return ReturnCode.PRECONDITION_NOT_MET;
-                }
-            }
-          
-            boolean empty_ = empty();
-          
-            put(value);
-          
-            if (empty_) {
-                synchronized (m_empty.mutex) {
-//                    m_empty.cond.signal();
-                    m_empty.notify();
-                }
-            }
-            advanceWptr(1);
-            return ReturnCode.BUFFER_OK;
-        }
+        return this.write(value,-1,0);
     }
-    public ReturnCode write(final DataType value, long sec, long nsec) {
+    public ReturnCode write(final DataType value, int sec) {
+        return this.write(value,sec,0);
+    }
+    public ReturnCode write(final DataType value, int sec, int nsec) {
         synchronized (m_full.mutex) {
       
             if (full()) {
@@ -175,8 +108,8 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
                 }
                 else if (!overwrite && timedwrite) { // "block" mode
                     if (sec < 0) {
-                        sec = m_wtimeout.sec();
-                        nsec = m_wtimeout.usec() * 1000;
+                        sec = (int)m_wtimeout.sec();
+                        nsec = (int)m_wtimeout.usec() * 1000;
                       }
                   //  true: signaled, false: timeout
                       try {
@@ -184,6 +117,8 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
                           return ReturnCode.TIMEOUT;
                       }
                       catch(InterruptedException e ){
+                      }
+                      catch(IllegalMonitorStateException e) {
                       }
 //                      if (!m_full.cond.wait(sec, nsec)) {
 //                        return ReturnCode.TIMEOUT;
@@ -200,8 +135,11 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
           
             if (empty_) {
                 synchronized (m_empty.mutex) {
-//                    m_empty.cond.signal();
-                    m_empty.notify();
+                    try {
+                        m_empty.notify();
+                    }
+                    catch(IllegalMonitorStateException e) {
+                    }
                 }
             }
             advanceWptr(1);
@@ -217,6 +155,9 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
      */
     public ReturnCode read(DataRef<DataType> valueRef) {
         return read(valueRef, -1, 0);
+    }
+    public ReturnCode read(DataRef<DataType> valueRef, int sec) {
+        return read(valueRef, sec, 0);
     }
     public ReturnCode read(DataRef<DataType> valueRef, int sec, int nsec) {
         synchronized(m_empty.mutex){
@@ -243,6 +184,8 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
                     catch(IllegalArgumentException e) {
                         return ReturnCode.TIMEOUT;
                     }
+                    catch(IllegalMonitorStateException e) {
+                    }
                     catch(InterruptedException e) {
                     }
                 }
@@ -258,7 +201,11 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
 
             if (full_) {
                 synchronized(m_full.mutex){
-                    m_full.notify();
+                    try {
+                        m_full.notify();
+                    }
+                    catch(IllegalMonitorStateException e) {
+                    }
                 }
             }
       
@@ -294,7 +241,9 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
      * @return 読み込んだデータ
      */
     public DataType get() {
-        return this.m_buffer.get(this.m_newPtr);
+        synchronized (m_posmutex) {
+            return m_buffer.get(m_rpos);
+        }
     }
     /**
      * <p> get </p>
@@ -304,7 +253,7 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
      */
     public ReturnCode get(DataRef<DataType> value) {
         synchronized (m_posmutex) {
-            value.equals(m_buffer.get(m_rpos));
+            value.v = m_buffer.get(m_rpos);
             return ReturnCode.BUFFER_OK;
         }
 
@@ -371,8 +320,7 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
       //                 n'<= m_fillcount
       //                 n >= - m_fillcount
         if (n > 0 && n > (m_length - m_fillcount) ||
-          n < 0 && n < (-m_fillcount))
-        {
+          n < 0 && n < (-m_fillcount)) {
             return ReturnCode.PRECONDITION_NOT_MET;
         }
 
@@ -398,8 +346,7 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
       //                 n >= - m_fillcount
         int n = 1;
         if (n > 0 && n > (m_length - m_fillcount) ||
-          n < 0 && n < (-m_fillcount))
-        {
+          n < 0 && n < (-m_fillcount)) {
             return ReturnCode.PRECONDITION_NOT_MET;
         }
 
@@ -458,8 +405,7 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
      * @param  n 
      * @return ReturnCode 
      */
-    public ReturnCode advanceRptr(int n)
-    {
+    public ReturnCode advanceRptr(int n) {
         // n > 0 :
         //     n satisfies n <= readable elements
         //                 n <= m_fillcout
@@ -483,26 +429,8 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
      * <p> This function advances the reading pointer.  </p>
      * @return ReturnCode 
      */
-    public ReturnCode advanceRptr()
-    {
-        int n = 1;
-        // n > 0 :
-        //     n satisfies n <= readable elements
-        //                 n <= m_fillcout
-        // n < 0 : -n = n'
-        //     n satisfies n'<= m_length - m_fillcount
-        //                 n >= m_fillcount - m_length
-        if ((n > 0 && n > m_fillcount) ||
-            (n < 0 && n < (m_fillcount - m_length)))
-        {
-            return ReturnCode.PRECONDITION_NOT_MET;
-        }
-
-        synchronized(m_posmutex) {
-            m_rpos = (m_rpos + n + m_length) % m_length;
-            m_fillcount -= n;
-            return ReturnCode.BUFFER_OK;
-        }
+    public ReturnCode advanceRptr() {
+        return advanceRptr(1);
     }
     /**
      * <p> readable </p>
@@ -604,8 +532,7 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
     }
 
 
-
-/*
+/* zxc
     class Data<D> {
         
         public Data() {
@@ -657,6 +584,6 @@ private final int RINGBUFFER_DEFAULT_LENGTH = 8;
 //        coil::Condition<coil::Mutex> cond;
         public String mutex = new String();
     };
-    private condition m_empty;
-    private condition m_full;
+    private condition m_empty = new condition();
+    private condition m_full = new condition();
 }

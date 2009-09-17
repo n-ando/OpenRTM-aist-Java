@@ -21,9 +21,8 @@ public class PublisherPeriodicTests extends TestCase {
             clearLastTime();
         }
         
-	public void init(Properties prop) {
-	}
-
+        public void init(Properties prop) {
+        }
         public void push() {
             long now = System.currentTimeMillis();
             
@@ -88,14 +87,14 @@ public class PublisherPeriodicTests extends TestCase {
 	    _component = component;
 	}
         
-	public void init(Properties prop) {
-	}
-
-	public void push() {
-	    _count++;
-	    if( _component != null) {
-                _component.push();
-            }
+        public void init(Properties prop) {
+        }
+        
+        public void push() {
+            _count++;
+            if( _component != null) {
+                 _component.push();
+             }
         }
         
         public InPortConsumer clone() {

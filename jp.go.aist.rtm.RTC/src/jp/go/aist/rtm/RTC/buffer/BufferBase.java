@@ -120,7 +120,7 @@ public interface BufferBase<DataType> {
      */
     public ReturnCode write(final DataType value);
     public ReturnCode write(final DataType value,
-                             long sec, long nsec);
+                            int sec, int nsec);
 
 
     /**

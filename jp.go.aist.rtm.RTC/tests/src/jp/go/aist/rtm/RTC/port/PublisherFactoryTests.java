@@ -21,8 +21,8 @@ public class PublisherFactoryTests extends TestCase {
         public NullConsumer() {
             super();
         }
-	public void init(Properties prop) {
-	}
+        public void init(Properties prop) {
+        }
         public void push() {
         }
         public InPortConsumer clone() {
