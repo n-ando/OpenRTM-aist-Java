@@ -227,7 +227,7 @@ public class StringUtil {
      */
     public static String normalize(String str) {
         str = str.trim();
-        str.toLowerCase();
+        str = str.toLowerCase();
         return str;
     }
     /**
