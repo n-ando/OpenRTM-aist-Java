@@ -436,6 +436,19 @@ public class NVUtilTest extends TestCase {
         result = NVUtil.toString(nvlist, "short");
         setstr = "";
         assertEquals(result, setstr);
+
+        String result2;
+        NVListHolder nvlist2 = new NVListHolder();
+        nvlist2.value = new NameValue[1];
+        String str2 = new String("test2");
+        nvlist2.value[0] = new NameValue();
+        nvlist2.value[0].name = "string";
+        anyValue = ORBUtil.getOrb().create_any();
+        anyValue.insert_string(str2);
+        nvlist2.value[0].value = anyValue;
+        result2 = NVUtil.toString(nvlist2);
+        String setstr2 = "string:test2" + System.getProperty("line.separator");
+        assertEquals(result2, setstr2);
     }
     
     /**

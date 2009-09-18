@@ -30,6 +30,8 @@ public class TimeValueTest extends TestCase {
         TimeValue res1a = lhs1a.minus(rhs1a);
         assertEquals(1L, res1a.getSec());
         assertEquals(1L, res1a.getUsec());
+        assertEquals(1L, res1a.sec());
+        assertEquals(1L, res1a.usec());
         
         // (1b) 「左辺sec > 右辺sec」かつ「左辺usec < 右辺usec」の場合、正しく減算できるか？
         TimeValue lhs1b = new TimeValue(99, 999998);
