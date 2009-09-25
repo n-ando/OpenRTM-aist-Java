@@ -12,6 +12,7 @@ public class CorbaConsumer<OBJECT_TYPE> extends CorbaConsumerBase {
      * <p>  </p>
      */
     public CorbaConsumer() {
+        this.TYPE_CAST = new TypeCast<OBJECT_TYPE>(null);
         
     }
     /**

@@ -24,6 +24,7 @@ import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
 /**
@@ -57,7 +58,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         m_objref = this._this();
     
         // set InPort's reference
-        ORB orb = Manager.instance().getORB();
+        ORB orb = ORBUtil.getOrb();
         CORBA_SeqUtil.push_back(m_properties,
                 NVUtil.newNV("dataport.corba_cdr.inport_ior",
                               orb.object_to_string(m_objref)));

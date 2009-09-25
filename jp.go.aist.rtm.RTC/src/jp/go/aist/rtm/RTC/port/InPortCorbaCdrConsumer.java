@@ -19,7 +19,9 @@ import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+
 /**
  * <p> InPortCorbaCdrConsumer </p>
  * <p> InPortCorbaCdrConsumer class </p>
@@ -69,6 +71,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
         tmp.putInt(data.toString().length());
         tmp.put(data.toString().getBytes());
         tmp.putInt(0);
+        rtcout.println(rtcout.PARANOID, "byte:"+tmp.toString());
 
         try {
             return convertReturn(_ptr().put(tmp.array()));
@@ -101,6 +104,12 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      */
     public boolean subscribeInterface(final NVListHolder properties) {
         rtcout.println(rtcout.TRACE, "subscribeInterface()");
+        if(properties.value == null){
+            rtcout.println(rtcout.DEBUG, "NVListHolder is null.");
+            return false;
+        }
+        rtcout.println(rtcout.DEBUG, 
+                       "Length of NVListHolder:"+properties.value.length);
         rtcout.println(rtcout.DEBUG, NVUtil.toString(properties));
     
         // getting InPort's ref from IOR string
@@ -148,18 +157,21 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
             rtcout.println(rtcout.ERROR, "inport_ior not found");
             return false;
         }
+        rtcout.println(rtcout.DEBUG, "index:"+index);
     
         final String ior;
 
         try {
-            ior = properties.value[index].value.extract_string();
+            rtcout.println(rtcout.DEBUG, 
+                            "type:"+properties.value[index].value.type());
+            ior = properties.value[index].value.extract_wstring();
         }
         catch(BAD_OPERATION e) {
             rtcout.println(rtcout.ERROR, "inport_ior has no string");
             return false;
         }
     
-        ORB orb = Manager.instance().getORB();
+        ORB orb = ORBUtil.getOrb();
         org.omg.CORBA.Object obj = orb.string_to_object(ior);
     
         if (obj==null) {
@@ -236,7 +248,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
             return false;
         }
     
-        ORB orb = Manager.instance().getORB();
+        ORB orb = ORBUtil.getOrb();
         org.omg.CORBA.Object var = orb.string_to_object(ior);
         if (!(_ptr()._is_equivalent(var))) {
             rtcout.println(rtcout.ERROR, "connector property inconsistency");

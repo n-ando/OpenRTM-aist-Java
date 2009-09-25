@@ -65,7 +65,7 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
     }
     /**
      * <p> sets the length of the buffer.  </p>
-     * @param length
+     * @param n length
      * @return BUFFER_OK
      */
     public ReturnCode length(int n) {
@@ -532,32 +532,6 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
     }
 
 
-/* zxc
-    class Data<D> {
-        
-        public Data() {
-            this.data = null;
-            this.is_new = false;
-        }
-        
-        public void write(final D other) {
-            this.data = other;
-            this.is_new = true;
-        }
-        
-        public D read() {
-            this.is_new = false;
-            return this.data;
-        }
-        
-        public boolean isNew() {
-            return this.is_new;
-        }
-        
-        private D data;
-        private boolean is_new;
-    }
-*/
     
     private boolean m_overwrite;
     private boolean m_readback;

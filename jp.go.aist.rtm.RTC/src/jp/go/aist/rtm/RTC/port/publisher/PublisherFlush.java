@@ -105,7 +105,9 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      * @return ReturnCode
      */
     public ReturnCode write(final OutputStream data, int sec, int usec) {
-        if (m_consumer == null ) { return ReturnCode.PRECONDITION_NOT_MET; }
+        if (m_consumer == null ) { 
+            return ReturnCode.PRECONDITION_NOT_MET; 
+        }
 
         return m_consumer.put(data);
 
