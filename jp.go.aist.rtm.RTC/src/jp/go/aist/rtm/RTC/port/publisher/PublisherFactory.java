@@ -45,8 +45,8 @@ public class PublisherFactory {
      * @param publisher 破棄対象のPublisherオブジェクト
      */
     public void destroy(PublisherBase publisher) {
-        publisher.release();
-        publisher.destruct();
+//        publisher.release();
+//        publisher.destruct();
     }
 
 }
