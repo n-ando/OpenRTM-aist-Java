@@ -138,6 +138,12 @@ public abstract class PortBase extends PortServicePOA {
         this.m_profile.port_ref = this.m_objref;
         rtcout = new Logbuf(name);
         rtcout.setLevel("PARANOID");
+        m_onPublishInterfaces = null;
+        m_onSubscribeInterfaces = null;
+        m_onConnected = null;
+        m_onUnsubscribeInterfaces = null;
+        m_onDisconnected = null;
+        m_onConnectionLost = null;
     }
 
     /**
@@ -186,7 +192,7 @@ public abstract class PortBase extends PortServicePOA {
     }
     
     /**
-     * <p>PortProfileを取得します。</p>
+     * <p>[Local interface] PortProfileを取得します。</p>
      * 
      * @return 本ポートに関するPortProfile
      */
@@ -315,7 +321,8 @@ public abstract class PortBase extends PortServicePOA {
      * @param connector_profile 接続プロファイル
      * @return ReturnCode_t型の戻り値
      */
-    public ReturnCode_t notify_connect(ConnectorProfileHolder connector_profile) {
+    public ReturnCode_t 
+    notify_connect(ConnectorProfileHolder connector_profile) {
 
         rtcout.println(rtcout.TRACE, "notify_connect()");
 
@@ -328,6 +335,10 @@ public abstract class PortBase extends PortServicePOA {
             rtcout.println(rtcout.ERROR, 
                            "publishInterfaces() in notify_connect() failed.");
         }
+        if (m_onPublishInterfaces != null) {
+            m_onPublishInterfaces.run(connector_profile);
+        }
+    
 
         // call notify_connect() of the next Port
         retval[1] = connectNext(connector_profile);
@@ -337,6 +348,9 @@ public abstract class PortBase extends PortServicePOA {
         }
 
         // subscribe interface from the ConnectorProfile's information
+        if (m_onSubscribeInterfaces != null) {
+            m_onSubscribeInterfaces.run(connector_profile);
+        }
         retval[2] = subscribeInterfaces(connector_profile);
         if (! ReturnCode_t.RTC_OK.equals(retval[2])) {
             // cleanup this connection for downstream ports
@@ -372,6 +386,11 @@ public abstract class PortBase extends PortServicePOA {
             if (! ReturnCode_t.RTC_OK.equals(retval[i])) {
                 return retval[i];
             }
+        }
+
+        // connection established without errors
+        if (m_onConnected != null) {
+            m_onConnected.run(connector_profile);
         }
         return ReturnCode_t.RTC_OK;
     }
@@ -447,7 +466,11 @@ public abstract class PortBase extends PortServicePOA {
                                "Invalid connector id: "+connector_id);
 	         return ReturnCode_t.BAD_PARAMETER;
              }
-/* Please delete this processing if the unit test of this function is executed, and the problem doesn't occur.
+/* zxc
+ Please delete this processing 
+ if the unit test of this function is executed, 
+ and the problem doesn't occur.
+
             ConnectorProfile org_conn_prof 
                                = this.m_profile.connector_profiles[index];
             ConnectorProfile prof = new ConnectorProfile(
@@ -459,10 +482,23 @@ public abstract class PortBase extends PortServicePOA {
 
             ConnectorProfile prof = this.m_profile.connector_profiles[index];
             ReturnCode_t retval = disconnectNext(prof);
+            if (m_onUnsubscribeInterfaces != null) {
+                ConnectorProfileHolder holder 
+                    = new ConnectorProfileHolder(prof);
+                m_onUnsubscribeInterfaces.run(holder);
+                prof = holder.value;
+            }
             unsubscribeInterfaces(prof);
 
+            if (m_onDisconnected != null) {
+                ConnectorProfileHolder holder 
+                    = new ConnectorProfileHolder(prof);
+                m_onDisconnected.run(holder);
+                prof = holder.value;
+            }
+
             ConnectorProfileListHolder holder =
-                new ConnectorProfileListHolder(this.m_profile.connector_profiles);
+              new ConnectorProfileListHolder(this.m_profile.connector_profiles);
             CORBA_SeqUtil.erase(holder, index);
             this.m_profile.connector_profiles = holder.value;
         
@@ -572,6 +608,142 @@ public abstract class PortBase extends PortServicePOA {
             this.m_profile.owner = (RTObject)owner._duplicate();
         }
     }
+    //============================================================
+    // callbacks
+    //============================================================
+    /**
+     * <p> Setting callback called on publish interfaces </p>
+     *
+     * <p>This operation sets a functor that is called after publishing
+     * interfaces process when connecting between ports. </p>
+     *
+     * <p>Since the ownership of the callback functor object is owned by
+     * the caller, it has the responsibility of object destruction. </p>
+     * 
+     * <p>The callback functor is called after calling
+     * publishInterfaces() that is virtual member function of the
+     * PortBase class with an argument of ConnectorProfile type that
+     * is same as the argument of publishInterfaces() function.
+     * Although by using this functor, you can modify the ConnectorProfile
+     * published by publishInterfaces() function, the modification
+     * should be done carefully for fear of causing connection
+     * inconsistency.</p>
+     *
+     * @param on_publish ConnectionCallback's subclasses
+     *
+     */
+    public void setOnPublishInterfaces(ConnectionCallback on_publish) {
+        m_onPublishInterfaces = on_publish;
+    }
+
+    /**
+     * <p> Setting callback called on publish interfaces </p>
+     *
+     * <p>This operation sets a functor that is called before subscribing
+     * interfaces process when connecting between ports.</p>
+     *
+     * <p>Since the ownership of the callback functor object is owned by
+     * the caller, it has the responsibility of object destruction.</p>
+     * 
+     * <p>The callback functor is called before calling
+     * subscribeInterfaces() that is virtual member function of the
+     * PortBase class with an argument of ConnectorProfile type that
+     * is same as the argument of subscribeInterfaces() function.
+     * Although by using this functor, you can modify ConnectorProfile
+     * argument for subscribeInterfaces() function, the modification
+     * should be done carefully for fear of causing connection
+     * inconsistency.</p>
+     *
+     * @param on_subscribe ConnectionCallback's subclasses
+     *
+     */
+    public void setOnSubscribeInterfaces(ConnectionCallback on_subscribe) {
+        m_onSubscribeInterfaces = on_subscribe;
+    }
+
+    /**
+     * <p> Setting callback called on connection established </p>
+     *
+     * <p>This operation sets a functor that is called when connection
+     * between ports established.</p>
+     *
+     * <p>Since the ownership of the callback functor object is owned by
+     * the caller, it has the responsibility of object destruction.</p>
+     * 
+     * <p>The callback functor is called only when notify_connect()
+     * function successfully returns. In case of error, the functor
+     * will not be called.</p>
+     *
+     * <p>Since this functor is called with ConnectorProfile argument
+     * that is same as out-parameter of notify_connect() function, you
+     * can get all the information of published interfaces of related
+     * ports in the connection.  Although by using this functor, you
+     * can modify ConnectorProfile argument for out-paramter of
+     * notify_connect(), the modification should be done carefully for
+     * fear of causing connection inconsistency.</p>
+     *
+     * @param on_connected ConnectionCallback's subclasses
+     *
+     */
+    public void setOnConnected(ConnectionCallback on_connected) {
+        m_onConnected = on_connected;
+    }
+
+    /**
+     *
+     * <p> Setting callback called on unsubscribe interfaces </p>
+     *
+     * <p>This operation sets a functor that is called before unsubscribing
+     * interfaces process when disconnecting between ports.</p>
+     *
+     * <p>Since the ownership of the callback functor object is owned by
+     * the caller, it has the responsibility of object destruction.</p>
+     * 
+     * <p>The callback functor is called before calling
+     * unsubscribeInterfaces() that is virtual member function of the
+     * PortBase class with an argument of ConnectorProfile type that
+     * is same as the argument of unsubscribeInterfaces() function.
+     * Although by using this functor, you can modify ConnectorProfile
+     * argument for unsubscribeInterfaces() function, the modification
+     * should be done carefully for fear of causing connection
+     * inconsistency.</p>
+     *
+     * @param on_unsubscribe ConnectionCallback's subclasses
+     *
+     */
+    public void setOnUnsubscribeInterfaces(ConnectionCallback on_unsubscribe) {
+        m_onUnsubscribeInterfaces = on_unsubscribe;
+    }
+
+    /**
+     *
+     * <p> Setting callback called on disconnected </p>
+     *
+     * <p>This operation sets a functor that is called when connection
+     * between ports is destructed.</p>
+     *
+     * <p>Since the ownership of the callback functor object is owned by
+     * the caller, it has the responsibility of object destruction.</p>
+     * 
+     * <p>The callback functor is called just before notify_disconnect()
+     * that is disconnection execution function returns.</p>
+     *
+     * <p>This functor is called with argument of corresponding
+     * ConnectorProfile.  Since this ConnectorProfile will be
+     * destructed after calling this functor, modifications never
+     * affect others.</p>
+     *
+     * @param on_disconnected ConnectionCallback's subclasses
+     *
+     */
+    public void setOnDisconnected(ConnectionCallback on_disconnected){
+        m_onDisconnected = on_disconnected;
+    }
+
+    public void setOnConnectionLost(ConnectionCallback on_connection_lost) {
+        m_onConnectionLost = on_connection_lost;
+    }
+
 
     /**
      * <p>Interface情報を公開します。
@@ -1197,4 +1369,13 @@ public abstract class PortBase extends PortServicePOA {
         this.m_profile.properties = holder.value;
     }
     protected Logbuf rtcout;
+    /**
+     * <p>Callback functor objects</p>
+     */
+    protected ConnectionCallback m_onPublishInterfaces;
+    protected ConnectionCallback m_onSubscribeInterfaces;
+    protected ConnectionCallback m_onConnected;
+    protected ConnectionCallback m_onUnsubscribeInterfaces;
+    protected ConnectionCallback m_onDisconnected;
+    protected ConnectionCallback m_onConnectionLost;
 }
