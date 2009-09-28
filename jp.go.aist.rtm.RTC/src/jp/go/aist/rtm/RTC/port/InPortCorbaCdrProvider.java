@@ -73,9 +73,10 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         
         if (this.m_objref == null) {
             try {
-                this.m_objref = OpenRTM.InPortCdrHelper.narrow(POAUtil.getRef(this));
-                
+                this.m_objref = 
+                        OpenRTM.InPortCdrHelper.narrow(POAUtil.getRef(this));
             } catch (Exception e) {
+                rtcout.println(rtcout.WARN, "The exception was caught.");
                 throw new IllegalStateException(e);
             }
         }
@@ -112,17 +113,18 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         rtcout.println(rtcout.PARANOID, "put()");
 
         if (m_buffer == null) {
+            rtcout.println(rtcout.PARANOID, "m_buffer is null.");
             return OpenRTM.PortStatus.PORT_ERROR;
         }
 
         if (m_buffer.full()) {
-            rtcout.println(rtcout.WARN, "buffer full");
+            rtcout.println(rtcout.PARANOID, "buffer full");
             return OpenRTM.PortStatus.BUFFER_FULL;
         }
 
         rtcout.println(rtcout.PARANOID, "received data size: "+data.length);
 
-        ORB orb = Manager.instance().getORB();
+        ORB orb = ORBUtil.getOrb();
         Any any = orb.create_any();
         OutputStream cdr = any.create_output_stream();
         cdr.write_octet_array(data, 0, data.length);
@@ -142,35 +144,8 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
 
     public OpenRTM.PortStatus put(final OpenRTM.CdrDataHolder data)
       throws SystemException {
-        rtcout.println(rtcout.PARANOID, "put()");
+        return put(data.value);
 
-        if (m_buffer == null) {
-            return OpenRTM.PortStatus.PORT_ERROR;
-        }
-
-        if (m_buffer.full()) {
-            rtcout.println(rtcout.WARN, "buffer full");
-            return OpenRTM.PortStatus.BUFFER_FULL;
-        }
-
-        rtcout.println(rtcout.PARANOID, "received data size: "+data.value.length);
-
-        ORB orb = Manager.instance().getORB();
-        Any any = orb.create_any();
-        OutputStream cdr = any.create_output_stream();
-        cdr.write_octet_array(data.value, 0, data.value.length);
-
-        try {
-            InputStream in = cdr.create_input_stream();
-            int len = in.available();
-            rtcout.println(rtcout.PARANOID, "converted CDR data size: "+len);
-        }
-        catch (IOException e){
-            rtcout.println(rtcout.PARANOID, "An I/O error occurs");
-        }
-
-        jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
-        return convertReturn(ret);
     }
     /**
      * <p> convertReturn </p>
@@ -232,14 +207,9 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      */
     public void publishInterfaceProfile(NVListHolder properties) {
 
-        NVUtil.appendStringValue(properties, "dataport.data_type",
-                this.m_dataType);
         NVUtil.appendStringValue(properties, "dataport.interface_type",
                 this.m_interfaceType);
-        NVUtil.appendStringValue(properties, "dataport.dataflow_type",
-                this.m_dataflowType);
-        NVUtil.appendStringValue(properties, "dataport.subscription_type",
-                this.m_subscriptionType);
+        NVUtil.append(properties, this.m_properties);
     }
     
     /**
