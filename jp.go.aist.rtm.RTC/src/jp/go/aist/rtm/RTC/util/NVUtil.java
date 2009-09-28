@@ -13,7 +13,7 @@ import _SDOPackage.NameValue;
  * <p>NameValue操作用ユーティリティクラスです。</p>
  */
 public class NVUtil {
-    
+
     /**
      * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
      * 
@@ -240,8 +240,9 @@ public class NVUtil {
         } catch (Exception e) {
             str_value = "";
         }
-        if( str_value == null ) return "";
-        
+        if( str_value == null ) {
+            return "";
+        }
         return str_value;
     }
     
@@ -418,10 +419,11 @@ public class NVUtil {
                     value = anyVal.extract_wstring();
                 } else if( anyVal.type().kind() == TCKind.tk_string ) {
                     value = anyVal.extract_string();
-                } else {
+                } else if( anyVal.type().kind() == TCKind.tk_value ) {
                     value = anyVal.extract_Value().toString();
+                } else {
+                    value = " not a string value";
                 }
-
                 str = str + name + ":" + value + crlf;
             } catch (Exception ignored) {
                 str = str + name + ": not a string value" + crlf;
