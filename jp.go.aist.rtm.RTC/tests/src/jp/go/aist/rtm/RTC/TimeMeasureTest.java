@@ -1,4 +1,4 @@
-package jp.go.aist.rtm.RTC.util;
+package jp.go.aist.rtm.RTC;
 
 import junit.framework.TestCase;
 
