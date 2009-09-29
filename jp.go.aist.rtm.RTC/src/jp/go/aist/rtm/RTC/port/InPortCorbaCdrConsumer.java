@@ -5,7 +5,7 @@ import org.omg.CORBA.BAD_OPERATION;
 //import org.omg.CORBA.Object;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
-
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 import _SDOPackage.NVListHolder;
@@ -36,14 +36,10 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      *
      */
     public InPortCorbaCdrConsumer() {
+        super(OpenRTM.InPortCdr.class);
         rtcout = new Logbuf("InPortCorbaCdrConsumer");
         rtcout.setLevel("PARANOID");
     }
-/*
-    public InPortConsumer clone() {
-
-    }
-*/
     /**
      * <p> Initializing configuration </p>
      * <p> This operation would be called to configure this consumer </p>
@@ -61,22 +57,27 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      */
     public ReturnCode put(final OutputStream data) {
         rtcout.println(rtcout.PARANOID, "put");
+        
+        InputStream in = data.create_input_stream();
 
-        /*
-        OpenRTM.CdrDataHolder tmp(data.bufSize(), data.bufSize(),
-                               static_cast<CORBA::Octet*>(data.bufPtr()), 0);
-        */
-        java.nio.ByteBuffer tmp = ByteBuffer.allocate(64);
-        tmp.putInt(data.toString().length());
-        tmp.putInt(data.toString().length());
-        tmp.put(data.toString().getBytes());
-        tmp.putInt(0);
-        rtcout.println(rtcout.PARANOID, "byte:"+tmp.toString());
+        byte[] bs = new byte[256];
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            for(;;){
+                in.read_octet_array(bs,0,256);
+                baos.write(bs, 0, 256);
+            }
+        }
+        catch(Exception e) {
+                baos.write(bs, 0, 256);
+        }
 
         try {
-            return convertReturn(_ptr().put(tmp.array()));
+            OpenRTM.PortStatus ret = _ptr().put(baos.toByteArray());
+            return convertReturn(ret);
         }
         catch (Exception e) {
+            rtcout.println(rtcout.WARN, "caught exception.");
             return ReturnCode.CONNECTION_LOST;
         }
     }
@@ -300,13 +301,15 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
             case 0:
                 return ReturnCode.PORT_OK;
             case 1:
-                return ReturnCode.BUFFER_EMPTY;
-            case 3:
-                return ReturnCode.BUFFER_TIMEOUT;
-            case 4:
-                return ReturnCode.PRECONDITION_NOT_MET;
-            default:
                 return ReturnCode.PORT_ERROR;
+            case 2:
+                return ReturnCode.BUFFER_FULL;
+            case 3:
+                return ReturnCode.BUFFER_EMPTY;
+            case 4:
+                return ReturnCode.BUFFER_TIMEOUT;
+            default:
+                return ReturnCode.UNKNOWN_ERROR;
         }
     }
     

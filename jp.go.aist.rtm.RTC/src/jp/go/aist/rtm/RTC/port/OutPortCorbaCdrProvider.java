@@ -143,9 +143,10 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
         if (ret == jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK) {
             try {
                 int len = cdr.available();
-                rtcout.println(rtcout.PARANOID, "converted CDR data size: "+len);
                 data.value = new byte[len];
                 cdr.read_octet_array(data.value, 0, len);
+                rtcout.println(rtcout.PARANOID, 
+                               "converted CDR data size: "+len);
                 return convertReturn(ret);
             }
             catch (IOException e){

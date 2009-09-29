@@ -9,13 +9,6 @@ import org.omg.CORBA.Object;
 public class CorbaConsumer<OBJECT_TYPE> extends CorbaConsumerBase {
 
     /**
-     * <p>  </p>
-     */
-    public CorbaConsumer() {
-        this.TYPE_CAST = new TypeCast<OBJECT_TYPE>(null);
-        
-    }
-    /**
      * <p>コンストラクタです。</p>
      */
     public CorbaConsumer(Class<OBJECT_TYPE> OBJECT_TYPE_CLASS) {
