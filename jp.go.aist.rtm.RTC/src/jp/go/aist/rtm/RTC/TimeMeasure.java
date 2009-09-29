@@ -5,7 +5,7 @@ import java.lang.System;
 import java.lang.Math;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 /**
-* <p>PeriodicTask</p>
+* <p>TimeMeasure</p>
 */
   
   /*!
@@ -17,13 +17,20 @@ import jp.go.aist.rtm.RTC.util.TimeValue;
    */
 public class TimeMeasure {
     private final long ULLONG_MAX = 0xFFFFFFFFFFFFFFFFL;
-    public class Statistics
-    {
-      public double max_interval;
-      public double min_interval;
-      public double mean_interval;
-      public double std_deviation;
+
+    public class Statistics {
+        public Statistics() {
+            max_interval = 0.0;
+            min_interval = 0.0;
+            mean_interval = 0.0;
+            std_deviation = 0.0;
+        }
+        public double max_interval;
+        public double min_interval;
+        public double mean_interval;
+        public double std_deviation;
     };
+
     /*!
      * @brief Time statictics object for profiling.
      * 
@@ -41,6 +48,7 @@ public class TimeMeasure {
             m_record.add(new TimeValue(0, 0));
           }
     }
+
     /*!
      * @brief Time statictics object for profiling.
      * 
@@ -59,26 +67,25 @@ public class TimeMeasure {
             m_record.add(new TimeValue(0, 0));
           }
     }
-    
+
     /*!
      * @brief Begin time measurement for time statistics.
      *
      * Begin time measurement for time statistics
      */
     public void tick() {
-//        m_begin = gettimeofday(); // [TimeValue]
         m_begin.convert(System.currentTimeMillis()); // [TimeValue]
     }
-    
+
     /*!
      * @brief Finish time measurement for time statistics.
      *
      * End of time measurement for time statistics
      */
     public void tack() {
-        if (m_begin.sec() == 0) { return; }
-
-//        m_interval = gettimeofday() - m_begin;
+        if (m_begin.sec() == 0) {
+            return;
+        }
         m_interval.convert(System.currentTimeMillis() - m_begin.toDouble());
         m_record.set(m_count,m_interval);
         ++m_count;
@@ -121,33 +128,31 @@ public class TimeMeasure {
     /*!
      * @brief Get total statistics.
      * Get total statistics
-     * max_interval, min_interval, mean_interval [ns]
+     * s Statistics Class
      */
-    public boolean getStatistics(double max_interval,
-                       double min_interval,
-                       double mean_interval,
-                       double stddev) {
-        max_interval = (double)0;
-        min_interval = (double)ULLONG_MAX;
-
+    public boolean getStatistics(Statistics s) {
+        s.max_interval = (double)0;
+        s.min_interval = (double)ULLONG_MAX;
         double sum = 0;
         double sq_sum = 0;
         int len = count();
 
-        if (len == 0) return false;
+        if (len == 0) {
+            return false;
+        }
 
         for (int i = 0; i < len; ++i)
           {
             double trecord = m_record.get(i).toDouble();
             sum += trecord;
             sq_sum += trecord * trecord;
-        
-            if (trecord > max_interval) max_interval = trecord;
-            if (trecord < min_interval) min_interval = trecord;
+
+            if (trecord > s.max_interval) s.max_interval = trecord;
+            if (trecord < s.min_interval) s.min_interval = trecord;
           }
-    
-        mean_interval = sum / len;
-        stddev = Math.sqrt(sq_sum / len - (mean_interval * mean_interval));
+
+        s.mean_interval = sum / len;
+        s.std_deviation = Math.sqrt(sq_sum / len - (s.mean_interval * s.mean_interval));
 
         return true;
     }
@@ -158,19 +163,27 @@ public class TimeMeasure {
      */
     public Statistics getStatistics() {
         Statistics s = new Statistics();
-        getStatistics(s.max_interval, s.min_interval,
-                      s.mean_interval, s.std_deviation);
+        getStatistics(s);
+
+        return s;
+    }
+
+    /**
+     * <p> createStatistics </p>
+     *
+     */
+    public Statistics createStatistics() {
+        Statistics s = new Statistics();
         return s;
     }
 
     private Vector<TimeValue> m_record = new Vector<TimeValue>();
     private TimeValue m_begin = new TimeValue(0.0);
-    private TimeValue m_interval;
+    private TimeValue m_interval = new TimeValue(0.0);
 
     private int m_count;
     private int m_countMax;
     private long m_cpuClock;
 
     private boolean m_recurred;
-  };
-
+};
