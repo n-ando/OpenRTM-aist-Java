@@ -15,7 +15,7 @@ import java.util.IllegalFormatException;
  * <p>ログ収集ON時のロギングクラスです。</p>
  */
 public class Logbuf {
-
+/*  original */
     public static final int SILENT = 8;
     public static final int FATAL = 7;
     public static final int ERROR = 6;
@@ -49,7 +49,11 @@ public class Logbuf {
 //        } else {
 //            m_Logger.setUseParentHandlers(true);
 //        }
-        m_Logger.setLevel(Level.ALL);
+
+//        m_Logger.setLevel(Level.ALL);
+//        m_Logger.setLevel(Level.OFF);
+        this.setLevel(this.INFO);   //default log_level
+        m_Logger.setUseParentHandlers(false);
     }
 
     /**
@@ -87,10 +91,6 @@ public class Logbuf {
         int num;
         if( Logbuf.SILENT == level ) {
             rlevel = Level.OFF;
-            num = rlevel.intValue();
-        }
-        else if( Logbuf.PARANOID == level ) {
-            rlevel = Level.ALL;
             num = rlevel.intValue();
         } else {
             rlevel = Level.INFO;
@@ -195,6 +195,7 @@ public class Logbuf {
     public void setLogLock(boolean lock) {
 //        m_LogLock = lock;
     }
+
     /**
      * <p>ログレベルを表す文字列をコードに変換します。</p>
      * 
@@ -225,6 +226,7 @@ public class Logbuf {
             return Logbuf.SILENT_H;
         }
     }
+
     /**
      * <p> Set log level by int </p>
      *
@@ -239,6 +241,7 @@ public class Logbuf {
         m_Logger.setLevel(clevel);
 //        this.m_LogLevel = level;
     }
+
     /**
      * <p> Set log level by string </p>
      *
@@ -273,6 +276,7 @@ public class Logbuf {
             this.println(this.ERROR, "The specified format is illegal.");
         }
     }
+
     /**
      * <p>ログ・レベルを設定します。</p>
      *
@@ -283,17 +287,20 @@ public class Logbuf {
     public Logbuf level(int level){
         return this;
     }
+
    /**
     * <p>設定されたログレベル・コード</p>
     */
 //    private int m_LogLevel;
+
    /**
     * <p>ログに付加する日付形式の書式</p>
     */
    private String m_dateFormat = "%tb %td %tH:%tM:%tS";
+
    /**
     * <p>日付の後に付加するヘッダ</p>
     */
    private String m_Suffix = " ";
-//+>
+
 }
