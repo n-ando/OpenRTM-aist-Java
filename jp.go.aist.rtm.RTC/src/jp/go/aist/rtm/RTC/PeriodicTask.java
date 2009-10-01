@@ -1,5 +1,6 @@
 package jp.go.aist.rtm.RTC;
 
+
 import java.lang.Object;
 import java.lang.Thread;
 import java.lang.reflect.Method;
@@ -19,16 +20,20 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
      * <p> ctor </p>
      */
     public PeriodicTask() {
-//        m_period(0.0);
         m_nowait = false;
         m_func = null;
         m_deleteInDtor = true;
-//        m_alive = false;
-//        m_suspend = false;
         m_execCount = 0;
         m_execCountMax = 10;
         m_periodCount = 0;
         m_periodCountMax = 10;
+        m_execTime = new TimeMeasure();
+        m_execStat = new statistics_t();
+        m_execStat.stat = m_execTime.getStatistics();
+
+        m_periodTime = new TimeMeasure();
+        m_periodStat = new statistics_t();
+        m_periodStat.stat = m_periodTime.getStatistics();
     }
     
     /**
@@ -64,8 +69,11 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
         }
         synchronized (m_suspend.mutex) {
             m_suspend.suspend = false;
-//            m_suspend.cond.signal();
-            notify();
+            try {
+                m_suspend.mutex.notify();
+            }
+            catch(java.lang.IllegalMonitorStateException e) {
+            }
         }
     }
 
@@ -94,8 +102,11 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
 
         synchronized (m_suspend.mutex) {
             m_suspend.suspend = false;
-//            m_suspend.cond.signal();
-            notify();
+            try {
+                m_suspend.mutex.notify();
+            }
+            catch(java.lang.IllegalMonitorStateException e) {
+            }
         }
         return 0;
     }
@@ -108,8 +119,11 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
      */
     public void signal() {
         synchronized (m_suspend.mutex) {
-//            m_suspend.cond.signal();
-            notify();
+            try {
+                m_suspend.mutex.notify();
+            }
+            catch(java.lang.IllegalMonitorStateException e) {
+            }
         }
     }
 
@@ -121,20 +135,12 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
      * @return boolean
      *
      */
-/*
-//    public boolean setTask(TaskFuncBase func, boolean delete_in_dtor) {
-    public boolean setTask(Method func, boolean delete_in_dtor) {
-        if (func == null) { return false; }
+    public boolean setTask(Object obj, String func, boolean delete_in_dtor) {
+        if (obj == null) { 
+            return false; 
+        }
         m_deleteInDtor = delete_in_dtor;
-        m_func = func;
-        return true;
-    }
-*/
-    public boolean setTask(TaskFuncBase obj, boolean delete_in_dtor)
-    {
-        if (obj == null) { return false; }
-        m_deleteInDtor = delete_in_dtor;
-        m_func = obj;
+        m_func = new TaskFuncBase(obj,func);
         return true;
     }
     /**
@@ -144,31 +150,17 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
      * @return boolean
      *
      */
-/*
-//    public boolean setTask(TaskFuncBase func) {
-    public boolean setTask(Method func) {
-        boolean delete_in_dtor = true;
-        if (func == null) { return false; }
-        m_deleteInDtor = delete_in_dtor;
-        m_func = func;
-        return true;
+    public boolean setTask(Object obj) {
+        return setTask(obj, "svc", true);
     }
-*/
-    public boolean setTask(TaskFuncBase obj)
-    {
-        boolean delete_in_dtor = true;
-        if (obj == null) { return false; }
-        m_deleteInDtor = delete_in_dtor;
-        m_func = obj;
-        return true;
+
+    public boolean setTask(Object obj,  String func) {
+        return setTask(obj, func, true);
     }
-/*
-    template <class O, class F>
-    public boolean setTask(O obj, F fun)
-    {
-      return this.setTask(new TaskFunc<O, F>(obj, fun));
+
+    public boolean setTask(Object obj, boolean delete_in_dtor) {
+        return setTask(obj, "svc", delete_in_dtor);
     }
-*/
     /**
      * <p> Setting task execution period </p>
      *
@@ -187,7 +179,7 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
         return;
     }
 
-    /*!
+    /**
      * <p> Setting task execution period </p>
      *
      * @param period Execution period
@@ -267,16 +259,15 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
      * 
      */
     protected int svc() {
-        while (m_alive.value) // needs lock?
-          {
-            if (m_periodMeasure) { m_periodTime.tack(); }
+        while (m_alive.value){ // needs lock?
+            if (m_periodMeasure) { 
+                m_periodTime.tack(); 
+            }
             { // wait if suspended
               synchronized (m_suspend.mutex) {
-                  if (m_suspend.suspend)
-                    {
-//                      m_suspend.cond.wait();
+                  if (m_suspend.suspend) {
                       try {
-                          wait();
+                          m_suspend.mutex.wait();
                       }
                       catch(InterruptedException e ){
                       }
@@ -299,7 +290,7 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
             updateExecStat();
             sleep();
             updatePeriodStat();
-          }
+        }
         return 0;
     }
     /**
@@ -314,12 +305,11 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
      * 
      */
     protected void sleep() { 
-        if (m_nowait)
-          {
+        if (m_nowait) {
             return;
           }
-//        sleep(m_period - m_execTime.interval());
-        TimeValue tv = new TimeValue(m_period.toDouble() - m_execTime.interval().toDouble());
+        TimeValue tv = 
+           new TimeValue(m_period.toDouble()-m_execTime.interval().toDouble());
         try{
             sleep((long)(tv.toDouble()*1000));
         }
@@ -331,13 +321,12 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
      * 
      */
     protected void updateExecStat() {
-        if (m_execCount > m_execCountMax)
-          {
+        if (m_execCount > m_execCountMax) {
             synchronized (m_execStat.mutex) {
                 m_execStat.stat = m_execTime.getStatistics();
                 m_execCount = 0;
             }
-          }
+        }
         ++m_execCount;
     }
     /**
@@ -345,21 +334,18 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
      * 
      */
     protected void updatePeriodStat() {
-        if (m_periodCount > m_periodCountMax)
-          {
+        if (m_periodCount > m_periodCountMax) {
             synchronized (m_periodStat.mutex) {
                 m_periodStat.stat = m_periodTime.getStatistics();
                 m_periodCount = 0;
             }
-          }
+        }
         ++m_periodCount;
     }
 
     // execution period
     protected TimeValue m_period = new TimeValue(0.0);
     protected boolean m_nowait;
-//    protected TaskFuncBase m_func;
-//    protected Method m_func;
     protected TaskFuncBase m_func;
     protected boolean m_deleteInDtor;
 
@@ -379,12 +365,9 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     {
       public suspend_t(boolean sus){
           suspend = sus;
-//          mutex();
-//          cond(mutex); 
       }
       public boolean suspend;
       public String mutex = new String();
-//      public coil::Condition<coil::Mutex> cond;
     };
     protected suspend_t m_suspend = new suspend_t(false);
       
@@ -399,14 +382,14 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     protected boolean              m_execMeasure;
     protected int      m_execCount;
     protected int      m_execCountMax;
-    protected statistics_t      m_execStat;
+    protected statistics_t m_execStat;
     protected TimeMeasure m_execTime;
 
     // variables for period time measurement
     protected boolean              m_periodMeasure;
     protected int      m_periodCount;
     protected int      m_periodCountMax;
-    protected statistics_t      m_periodStat;
+    protected statistics_t m_periodStat;
     protected TimeMeasure m_periodTime;
 
     /**

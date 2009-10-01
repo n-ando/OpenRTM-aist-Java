@@ -20,7 +20,7 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
 /**
  * <p>一定時間おきにコンシューマの送出処理を呼び出すPublisherです。</p>
  */
-public class PublisherPeriodic extends PublisherBase implements Runnable, ObjectCreator<PublisherBase>, ObjectDestructor, TaskFuncBase{
+public class PublisherPeriodic extends PublisherBase implements Runnable, ObjectCreator<PublisherBase>, ObjectDestructor{
 
     /**
      * <p>コンストラクタです。</p>

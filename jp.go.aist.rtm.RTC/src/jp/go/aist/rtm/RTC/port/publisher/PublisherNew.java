@@ -24,7 +24,7 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
  * <p>Publisherの駆動は、データ送出のタイミングになるまでブロックされ、送出タイミングの通知を受けると、
  * 即座にコンシューマの送出処理を呼び出します。</p>
  */
-public class PublisherNew extends PublisherBase implements Runnable, ObjectCreator<PublisherBase>, ObjectDestructor, TaskFuncBase{
+public class PublisherNew extends PublisherBase implements Runnable, ObjectCreator<PublisherBase>, ObjectDestructor{
     /**
      * <p>コンストラクタです。</p>
      * 

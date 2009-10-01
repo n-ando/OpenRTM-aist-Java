@@ -19,17 +19,11 @@ public abstract class PeriodicTaskBase extends Thread {
     public abstract int _suspend();
     public abstract int _resume();
     public abstract void signal();
-//    public abstract boolean setTask(Method func, boolean delete_in_dtor);
-//    public abstract boolean setTask(Method func);
-    public abstract boolean setTask(TaskFuncBase obj, boolean delete_in_dtor);
-    public abstract boolean setTask(TaskFuncBase obj);
-/*
-    template <class O, class F>
-    public boolean setTask(O* obj, F fun)
-    {
-      return this.setTask(new TaskFunc<O, F>(obj, fun));
-    }
-*/
+    public abstract boolean setTask(Object obj, boolean delete_in_dtor);
+    public abstract boolean setTask(Object obj);
+    public abstract boolean setTask(Object obj,  String func); 
+    public abstract boolean setTask(Object obj, String func, boolean delete_in_dtor);
+
     public abstract void setPeriod(double period);
     public abstract void setPeriod(TimeValue period);
     public abstract void executionMeasure(boolean value);
