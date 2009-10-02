@@ -52,122 +52,122 @@ public class Properties {
      * @param key キー
      * @param value 値
      */
-	public Properties(final String key, final String value) {
+    public Properties(final String key, final String value) {
 		
-		this.name = key;
-		this.value = value;
-		this.default_value = "";
-		this.root = null;
+	this.name = key;
+	this.value = value;
+	this.default_value = "";
+	this.root = null;
 		
-		this.leaf.clear();
-	}
+	this.leaf.clear();
+    }
 	
-	/**
-	 * <p>コンストラクタです。指定されたデータでデフォルトが初期設定されます。</p>
+    /**
+     * <p>コンストラクタです。指定されたデータでデフォルトが初期設定されます。</p>
      * 
-	 * @param defaults デフォルトとなるキーと値を持つMapオブジェクト
-	 */
-	public Properties(Map<String, String> defaults) {
+     * @param defaults デフォルトとなるキーと値を持つMapオブジェクト
+     */
+    public Properties(Map<String, String> defaults) {
 		
-		this.name = "";
-		this.value = "";
-		this.default_value = "";
-		this.root = null;
+	this.name = "";
+	this.value = "";
+	this.default_value = "";
+	this.root = null;
 		
-		this.leaf.clear();
+	this.leaf.clear();
 		
-		Iterator<Map.Entry<String, String>> it = defaults.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, String> entry = it.next();
-			setDefault(entry.getKey(), entry.getValue());
-		}
+	Iterator<Map.Entry<String, String>> it = defaults.entrySet().iterator();
+	while (it.hasNext()) {
+	    Map.Entry<String, String> entry = it.next();
+	    setDefault(entry.getKey(), entry.getValue());
 	}
+    }
 	
-	/**
-	 * <p>コンストラクタです。指定されたデータでデフォルトが初期設定されます。</p>
+    /**
+     * <p>コンストラクタです。指定されたデータでデフォルトが初期設定されます。</p>
      * 
-	 * @param defaults デフォルト値を、キー・値の順に交互に並べたもの
-	 */
-	public Properties(final String[] defaults) {
+     * @param defaults デフォルト値を、キー・値の順に交互に並べたもの
+     */
+    public Properties(final String[] defaults) {
 		
-		this.name = "";
-		this.value = "";
-		this.default_value = "";
-		this.root = null;
+	this.name = "";
+	this.value = "";
+	this.default_value = "";
+	this.root = null;
 		
-		this.leaf.clear();
+	this.leaf.clear();
 		
-		setDefaults(defaults);
-	}
+	setDefaults(defaults);
+    }
 
-	/**
-	 * <p>コピーコンストラクタです。コピー元となるPropertiesオブジェクトと同内容を持つ
+    /**
+     * <p>コピーコンストラクタです。コピー元となるPropertiesオブジェクトと同内容を持つ
      * 別のPropertiesオブジェクトを新たに作成します。</p>
      * 
-	 * @param prop コピー元となるPropertiesオブジェクト
-	 */
-	public Properties(final Properties prop) {
+     * @param prop コピー元となるPropertiesオブジェクト
+     */
+    public Properties(final Properties prop) {
 		
-		this.name = prop.name;
-		this.value = prop.value;
-		this.default_value = prop.default_value;
-		this.root = null;
+	this.name = prop.name;
+	this.value = prop.value;
+	this.default_value = prop.default_value;
+	this.root = null;
 		
-		Vector<String> keys = prop.propertyNames();
-		for (int i = 0; i < keys.size(); i++) {
-			Properties node;
-			if ((node = prop.getNode(keys.get(i))) != null) {
-				setDefault(keys.get(i), node.default_value);
-				setProperty(keys.get(i), node.value);
-			}
-		}
+	Vector<String> keys = prop.propertyNames();
+	for (int i = 0; i < keys.size(); ++i) {
+	    Properties node;
+	    if ((node = prop.findNode(keys.get(i))) != null) {
+		setDefault(keys.get(i), node.default_value);
+		setProperty(keys.get(i), node.value);
+	    }
 	}
+    }
 
-	/**
-	 * <p>指定されたPropertiesオブジェクトの内容を、当該Propertiesオブジェクトに設定します。</p>
+    /**
+     * <p>指定されたPropertiesオブジェクトの内容を、当該Propertiesオブジェクトに設定します。</p>
      * 
-	 * @param prop コピー元となるPropertiesオブジェクト
-	 */
-	public void substitute(final Properties prop) {
+     * @param prop コピー元となるPropertiesオブジェクト
+     */
+    public void substitute(final Properties prop) {
 		
-		clear();
+	clear();
         this.name = prop.name;
         this.value = prop.value;
         this.default_value = prop.default_value;
 
         Vector<String> keys = prop.propertyNames();
-        for (int i = 0; i < keys.size(); i++) {
+        for (int i = 0; i < keys.size(); ++i) {
             Properties node;
-            if ((node = prop.getNode(keys.get(i))) != null) {
+            if ((node = prop.findNode(keys.get(i))) != null) {
                 setDefault(keys.get(i), node.default_value);
                 setProperty(keys.get(i), node.value);
             }
         }
-	}
+    }
 	
-	/**
-	 * <p>削除処理を行います。当該Propertiesオブジェクトの内容をクリアして、
+    /**
+     * <p>削除処理を行います。当該Propertiesオブジェクトの内容をクリアして、
      * 親ノードから切り離します。また、すべての子ノードについても削除処理を行います。</p>
-	 */
-	public void destruct() {
+     */
+    public void destruct() {
 		
-	    // Delete children
-		clear();
+	// Delete children
+	clear();
 		
-		// delete myself from parent
-		if (this.root != null) {
-			this.root.removeNode(this.name);
-		}
+	// delete myself from parent
+	if (this.root != null) {
+	    this.root.removeNode(this.name);
 	}
+    }
 	
-	protected void finalize() throws Throwable {
-		try {
-			destruct();
+    protected void finalize() throws Throwable {
+	try {
+	    destruct();
             
-		} finally {
-			super.finalize();
-		}
+	} finally {
+	    super.finalize();
 	}
+    }
 	
     /**
      * <p>当該Propertiesオブジェクトのキーを取得します。</p>
@@ -282,7 +282,7 @@ public class Properties {
         split(key, '.', keys);
         
         Properties curr = this;
-        for (int i = 0; i < keys.size(); i++) {
+        for (int i = 0; i < keys.size(); ++i) {
             Properties next = curr.hasKey(keys.get(i));
             if (next == null) {
                 next = new Properties(keys.get(i));
@@ -310,7 +310,7 @@ public class Properties {
         split(key, '.', keys);
         
         Properties curr = this;
-        for (int i = 0; i < keys.size(); i++) {
+        for (int i = 0; i < keys.size(); ++i) {
             Properties next = curr.hasKey(keys.get(i));
             if (next == null) {
                 next = new Properties(keys.get(i));
@@ -329,18 +329,18 @@ public class Properties {
      * 
      * @param defaults デフォルト値を、キー・値の順に交互に並べたもの
      */
-	public void setDefaults(final String[] defaults) {
+    public void setDefaults(final String[] defaults) {
 		
-		for (int i = 0; i + 1 < defaults.length; i += 2) {
-			String key = defaults[i];
-			String value = defaults[i + 1];
+	for (int i = 0; i + 1 < defaults.length; i += 2) {
+	    String key = defaults[i];
+	    String value = defaults[i + 1];
 			
-			key = key.trim();
-			value = value.trim();
+	    key = key.trim();
+	    value = value.trim();
 			
-			setDefault(key, value);
-		}
+	    setDefault(key, value);
 	}
+    }
 
     /**
      * <p>指定された出力ストリームに、当該Propertiesオブジェクトの内容を出力します。</p>
@@ -369,11 +369,11 @@ public class Properties {
             
             // line-end '\' continues entry
             if (tmp.charAt(tmp.length() - 1) == '\\' && !StringUtil.isEscaped(tmp, tmp.length() - 1))
-            {
-                tmp = tmp.substring(0, tmp.length() - 1);
-                pline += tmp;
-                continue;
-            }
+		{
+		    tmp = tmp.substring(0, tmp.length() - 1);
+		    pline += tmp;
+		    continue;
+		}
             pline += tmp;
             
             // Skip empty line (made of only ' ' or '\t')
@@ -429,7 +429,7 @@ public class Properties {
     public final Vector<String> propertyNames() {
         
         Vector<String> names = new Vector<String>();
-        for (int i = 0; i < leaf.size(); i++) {
+        for (int i = 0; i < leaf.size(); ++i) {
             _propertyNames(names, leaf.get(i).name, leaf.get(i));
         }
         
@@ -446,17 +446,29 @@ public class Properties {
     }
     
     /**
+     * <p>ノードを検索する</p>
+     */
+    public final Properties findNode(final String key) {
+	if (key.length() == 0) { return null; }
+	Vector<String> keys = new Vector<String>();
+	split(key, '.', keys);
+	return _getNode(keys, 0, this);
+    }
+
+    /**
      * <p>指定されたキーに対応する値を直接保持しているPropertiesオブジェクトを取得します。</p>
      * 
      * @param key キー
      * @return 指定されたキーに対応する値を直接保持しているPropertiesオブジェクト
      */
     public final Properties getNode(final String key) {
-        
-        Vector<String> keys = new Vector<String>();
-        split(key, '.', keys);
-        
-        return _getNode(keys, 0, this);
+	if (key.length() == 0) { return this; }
+	Properties leaf = findNode(key);
+	if (leaf != null) {
+	    return leaf;
+	}
+	this.createNode(key);
+        return findNode(key);
     }
     
     /**
@@ -467,12 +479,11 @@ public class Properties {
      * @return 指定されたキーがすでに存在していた場合はfalseを、さもなくばtrueを返します。
      */
     public boolean createNode(final String key) {
-        
-        Properties p = getNode(key);
-        if (p != null) {
-            return false;
-        }
-        
+	if (key.length() == 0) { return false; }
+
+	if (findNode(key) != null) {
+	    return false;
+	}
         this.setProperty(key, "");
         
         return true;
@@ -489,7 +500,7 @@ public class Properties {
     public Properties removeNode(String name) {
         
         Properties prop;
-        for (int i = 0; i < this.leaf.size(); i++) {
+        for (int i = 0; i < this.leaf.size(); ++i) {
             if (this.leaf.get(i).name.equals(name)) {
                 prop = this.leaf.get(i);
                 this.leaf.remove(i);
@@ -556,14 +567,14 @@ public class Properties {
      */
     protected Pair<String, String> splitKeyValue(final String str) {
         
-        for (int i = 0; i < str.length(); i++) {
+        for (int i = 0; i < str.length(); ++i) {
             if ((str.charAt(i) == ':' || str.charAt(i) == '=')
-                    && !StringUtil.isEscaped(str, i)) {
+		&& !StringUtil.isEscaped(str, i)) {
                 return new Pair<String, String>(str.substring(0, i).trim(), str.substring(i + 1).trim());
             }
         }
         
-        for (int i = 0; i < str.length(); i++) {
+        for (int i = 0; i < str.length(); ++i) {
             if ((str.charAt(i) == ' ') && StringUtil.isEscaped(str, i)) {
                 return new Pair<String, String>(str.substring(0, i).trim(), str.substring(i + 1).trim());
             }
@@ -602,7 +613,7 @@ public class Properties {
     
     protected String indent(int index) {
         StringBuffer spaces = new StringBuffer();
-        for (int i = 0; i < index - 1; i++) {
+        for (int i = 0; i < index - 1; ++i) {
             spaces.append("  ");
         }
         
@@ -626,7 +637,7 @@ public class Properties {
     protected void _propertyNames(Vector<String> names, String curr_name, final Properties curr) {
         
         if (!curr.leaf.isEmpty()) {
-            for (int i = 0; i < curr.leaf.size(); i++) {
+            for (int i = 0; i < curr.leaf.size(); ++i) {
                 String next_name = curr_name + '.' + curr.leaf.get(i).name;
                 _propertyNames(names, next_name, curr.leaf.get(i));
             }
@@ -638,7 +649,7 @@ public class Properties {
     protected void _store(OutputStream out, String curr_name, Properties curr) {
         
         if (!curr.leaf.isEmpty()) {
-            for (int i = 0; i < curr.leaf.size(); i++) {
+            for (int i = 0; i < curr.leaf.size(); ++i) {
                 String next_name;
                 if (curr_name.length() == 0) {
                     next_name = curr.leaf.get(i).name;
@@ -688,7 +699,7 @@ public class Properties {
             writer.println();
         }
         
-        for (int i = 0; i < curr.leaf.size(); i++) {
+        for (int i = 0; i < curr.leaf.size(); ++i) {
             _dump(out, curr.leaf.get(i), index + 1);
         }
         
@@ -714,7 +725,7 @@ public class Properties {
             out = out + crlf;
         }
         
-        for (int i = 0; i < curr.leaf.size(); i++) {
+        for (int i = 0; i < curr.leaf.size(); ++i) {
             _dump(out, curr.leaf.get(i), index + 1);
         }
         
