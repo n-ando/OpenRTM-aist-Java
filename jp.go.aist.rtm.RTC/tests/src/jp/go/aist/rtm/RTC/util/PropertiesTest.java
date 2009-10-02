@@ -953,31 +953,46 @@ public class PropertiesTest extends TestCase {
         prop.setProperty(key3, key3Value);
         
         // (1) デフォルト値が設定されており、かつ通常の値も設定されている場合に、当該キー名の新規ノード作成が、意図どおり失敗するか？
-        assertNotNull(prop.createNode(key1));
+        assertFalse(prop.createNode(key1));
         
         // (2) デフォルト値が設定されているが、通常の値は設定されていない場合に、当該キー名の新規ノード作成が、意図どおり失敗するか？
-        assertNotNull(prop.createNode(key2));
+        assertFalse(prop.createNode(key2));
         
         // (3) デフォルト値は設定されていないが、通常の値は設定されている場合に、当該キー名の新規ノード作成が、意図どおり失敗するか？
-        assertNotNull(prop.createNode(key3));
+        assertFalse(prop.createNode(key3));
         
         // (4) デフォルト値、通常の値のいずれも設定されていない場合に、新規ノード作成が成功するか？
         String keyNonExist = "key-non-exist";
         assertTrue(prop.createNode(keyNonExist));
 
+        // (5) ノード検索時、存在するノードを取得できるか？
         Properties prop2 = new Properties();
-        prop2 = prop.getNode(key3);
+        prop2 = prop.findNode(key3);
+        assertNotNull(prop2);
+
+        // (6) ノード検索時、存在しないノードを指定した場合に、nullを取得できるか？
+        prop2 = prop.findNode("key4");
+        assertNull(prop2);
+
+        // (7) ノード取得時、存在しないノードを指定した場合に、空文字列を取得できるか？
+        prop2 = prop.getNode("key4");
+        assertEquals("", prop2.getProperty("key4"));
+
+        // (8) 子ノード生成時、当該キー名の新規ノード作成が、意図どおり失敗するか？
         String key4 = "key4";
         String key4Value = "key4-value";
         prop.setProperty(key4, key4Value);
-        assertNotNull(prop.createNode(key4));
+        assertFalse(prop.createNode(key4));
 
+        // (9) ノード取得時、存在しないノードを指定した場合に、空文字列を取得できるか？
         Properties prop3 = new Properties();
         Properties prop4 = new Properties();
         prop3 = prop.removeNode(key4);
         prop4 = prop.getNode(key4);
-        assertNull(prop4);
+        assertNotNull(prop4);
+        assertEquals("", prop4.getProperty("key4"));
     }
+
     /**
      * <p>プロパティのノード生成　チェック
      * <ul>

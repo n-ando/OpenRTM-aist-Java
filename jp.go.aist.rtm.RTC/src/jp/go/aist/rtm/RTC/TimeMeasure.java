@@ -16,7 +16,6 @@ import jp.go.aist.rtm.RTC.util.TimeValue;
    * deviation time for code execution.
    */
 public class TimeMeasure {
-    private final long ULLONG_MAX = 0xFFFFFFFFFFFFFFFFL;
 
     public class Statistics {
         public Statistics() {
@@ -74,7 +73,9 @@ public class TimeMeasure {
      * Begin time measurement for time statistics
      */
     public void tick() {
-        m_begin.convert(System.currentTimeMillis()); // [TimeValue]
+        double dtm = (double)System.currentTimeMillis();
+        m_begin.convert(dtm/1000);          // [TimeValue]
+
     }
 
     /*!
@@ -86,7 +87,8 @@ public class TimeMeasure {
         if (m_begin.sec() == 0) {
             return;
         }
-        m_interval.convert(System.currentTimeMillis() - m_begin.toDouble());
+        double dtm = (double)System.currentTimeMillis();
+        m_interval.convert((dtm/1000) - m_begin.toDouble());
         m_record.set(m_count,m_interval);
         ++m_count;
         if (m_count == m_countMax)
@@ -132,11 +134,10 @@ public class TimeMeasure {
      */
     public boolean getStatistics(Statistics s) {
         s.max_interval = (double)0;
-        s.min_interval = (double)ULLONG_MAX;
+        s.min_interval = Double.MAX_VALUE;
         double sum = 0;
         double sq_sum = 0;
         int len = count();
-
         if (len == 0) {
             return false;
         }
@@ -145,14 +146,18 @@ public class TimeMeasure {
           {
             double trecord = m_record.get(i).toDouble();
             sum += trecord;
-            sq_sum += trecord * trecord;
 
             if (trecord > s.max_interval) s.max_interval = trecord;
             if (trecord < s.min_interval) s.min_interval = trecord;
           }
 
         s.mean_interval = sum / len;
-        s.std_deviation = Math.sqrt(sq_sum / len - (s.mean_interval * s.mean_interval));
+        for (int i = 0; i < len; ++i)
+          {
+            double trecord = m_record.get(i).toDouble();
+            sq_sum += (trecord - s.mean_interval) * (trecord - s.mean_interval);
+          }
+        s.std_deviation = Math.sqrt(sq_sum / len );
 
         return true;
     }
