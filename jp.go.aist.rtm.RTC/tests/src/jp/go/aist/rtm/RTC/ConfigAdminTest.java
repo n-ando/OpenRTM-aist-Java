@@ -1,5 +1,7 @@
 package jp.go.aist.rtm.RTC;
 
+import junit.framework.TestCase;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -12,7 +14,12 @@ import jp.go.aist.rtm.RTC.util.LongHolder;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.ShortHolder;
 import jp.go.aist.rtm.RTC.util.StringHolder;
-import junit.framework.TestCase;
+import jp.go.aist.rtm.RTC.util.OnUpdateCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnUpdateParamCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnAddConfigurationAddCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnRemoveConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnActivateSetCallbackFunc;
 
 /**
 * コンフィギュレーションクラス　テスト
@@ -22,11 +29,62 @@ public class ConfigAdminTest extends TestCase {
     
     private ConfigAdmin admin;
 
+    // OnUpdateCallback Mock
+    public class OnUpdateCallbackMock implements OnUpdateCallbackFunc {
+        public void operator(String config_set) {
+            m_config_set = config_set;
+        }
+        public String m_config_set = new String();
+    }
+
+    // OnUpdateParamCallback Mock
+    public class OnUpdateParamCallbackMock implements OnUpdateParamCallbackFunc {
+        public void operator(String config_set, String config_param) {
+            m_config_set = config_set;
+            m_config_param = config_param;
+        }
+        public String m_config_set = new String();
+        public String m_config_param = new String();
+    }
+
+    // OnSetConfigurationSetCallback Mock
+    public class OnSetConfigurationSetCallbackMock implements OnSetConfigurationSetCallbackFunc {
+        public void operator(Properties config_set) {
+            m_config_set = new Properties(config_set);
+        }
+        public Properties m_config_set;
+    }
+
+    // OnAddConfigurationAddCallback Mock
+    public class OnAddConfigurationAddCallbackMock implements OnAddConfigurationAddCallbackFunc {
+        public void operator(Properties config_set) {
+            m_config_set = new Properties(config_set);
+        }
+        public Properties m_config_set;
+    }
+
+    // OnRemoveConfigurationSetCallback Mock
+    public class OnRemoveConfigurationSetCallbackMock implements OnRemoveConfigurationSetCallbackFunc {
+        public void operator(String config_set) {
+            m_config_set = config_set;
+        }
+        public String m_config_set = new String();
+    }
+
+    // OnActivateSetCallback Mock
+    public class OnActivateSetCallbackMock implements OnActivateSetCallbackFunc {
+        public void operator(String config_set) {
+            m_config_set = config_set;
+        }
+        public String m_config_set = new String();
+    }
+
+
     protected void setUp() throws Exception {
         super.setUp();
 
         jp.go.aist.rtm.RTC.util.Properties props = new jp.go.aist.rtm.RTC.util.Properties("rtc"); 
-        props.setProperty("rtc.openrtm.version", "0.4.0");
+        props.setProperty("rtc.openrtm.version", "1.0.0");
         props.setProperty("rtc.openrtm.release", "aist");
         props.setProperty("rtc.openrtm.vendor", "AIST");
         props.setProperty("rtc.openrtm.author", "Noriaki Ando");
@@ -962,5 +1020,128 @@ public class ConfigAdminTest extends TestCase {
         return null; // not found
     }
 
+    /**
+     * <p>setOnUpdate()、onUpdate()メソッドのテスト
+     * <ul>
+     * <li>を指定した場合に、するか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_OnUpdate() {
+        Properties configSet = new Properties("config_id");
+        configSet.setProperty("config_id.key", "value");
+        ConfigAdmin configAdmin = new ConfigAdmin(configSet);
+
+        OnUpdateCallbackMock mock = new OnUpdateCallbackMock();
+        configAdmin.setOnUpdate(mock);
+        String str = new String("setNewString");
+
+        configAdmin.onUpdate(str);
+        assertEquals(str, mock.m_config_set);
+    }
+
+    /**
+     * <p>setOnUpdateParam()、onUpdateParam()メソッドのテスト
+     * <ul>
+     * <li>を指定した場合に、するか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_OnUpdateParam() {
+        Properties configSet = new Properties("config_id");
+        configSet.setProperty("config_id.key", "value");
+        ConfigAdmin configAdmin = new ConfigAdmin(configSet);
+
+        OnUpdateParamCallbackMock mock = new OnUpdateParamCallbackMock();
+        configAdmin.setOnUpdateParam(mock);
+        String str = new String("setNewString");
+        String str2 = new String("setNewString2");
+
+        configAdmin.onUpdateParam(str, str2);
+        assertEquals(str, mock.m_config_set);
+        assertEquals(str2, mock.m_config_param);
+    }
+
+    /**
+     * <p>setOnSetConfigurationSet()、onSetConfigurationSet()メソッドのテスト
+     * <ul>
+     * <li>を指定した場合に、するか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_OnSetConfigurationSet() {
+        Properties configSet = new Properties("config_id");
+        configSet.setProperty("key", "value");
+        ConfigAdmin configAdmin = new ConfigAdmin(configSet);
+
+        OnSetConfigurationSetCallbackMock mock = new OnSetConfigurationSetCallbackMock();
+        configAdmin.setOnSetConfigurationSet(mock);
+        Properties configSet2 = new Properties("id2");
+        configSet2.setProperty("key", "value2");
+
+        configAdmin.onSetConfigurationSet(configSet2);
+        assertEquals("value2", mock.m_config_set.getProperty("key"));
+    }
+
+    /**
+     * <p>setOnAddConfigurationSet()、onAddConfigurationSet()メソッドのテスト
+     * <ul>
+     * <li>を指定した場合に、するか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_OnAddConfigurationSet() {
+        Properties configSet = new Properties("config_id");
+        configSet.setProperty("key", "value");
+        ConfigAdmin configAdmin = new ConfigAdmin(configSet);
+
+        OnAddConfigurationAddCallbackMock mock = new OnAddConfigurationAddCallbackMock();
+        configAdmin.setOnAddConfigurationSet(mock);
+        Properties configSet2 = new Properties("id2");
+        configSet2.setProperty("key", "value2");
+
+        configAdmin.onAddConfigurationSet(configSet2);
+        assertEquals("value2", mock.m_config_set.getProperty("key"));
+    }
+
+    /**
+     * <p>setOnRemoveConfigurationSet()、onRemoveConfigurationSet()メソッドのテスト
+     * <ul>
+     * <li>を指定した場合に、するか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_OnRemoveConfigurationSet() {
+        Properties configSet = new Properties("config_id");
+        configSet.setProperty("config_id.key", "value");
+        ConfigAdmin configAdmin = new ConfigAdmin(configSet);
+
+        OnRemoveConfigurationSetCallbackMock mock = new OnRemoveConfigurationSetCallbackMock();
+        configAdmin.setOnRemoveConfigurationSet(mock);
+        String str = new String("setNewString");
+
+        configAdmin.onRemoveConfigurationSet(str);
+        assertEquals(str, mock.m_config_set);
+    }
+
+    /**
+     * <p>setOnActivateSet()、onActivateSet()メソッドのテスト
+     * <ul>
+     * <li>を指定した場合に、するか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_OnActivateSet() {
+        Properties configSet = new Properties("config_id");
+        configSet.setProperty("config_id.key", "value");
+        ConfigAdmin configAdmin = new ConfigAdmin(configSet);
+
+        OnActivateSetCallbackMock mock = new OnActivateSetCallbackMock();
+        configAdmin.setOnActivateSet(mock);
+        String str = new String("setNewString");
+
+        configAdmin.onActivateSet(str);
+        assertEquals(str, mock.m_config_set);
+    }
 
 }
