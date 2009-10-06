@@ -37,6 +37,9 @@ public class OutPortBaseTest extends TestCase {
         public ReturnCode write(final OutputStream data, int sec, int usec) {
             return ReturnCode.PORT_OK;
         }
+        public ReturnCode write(final OutputStream data) {
+            return ReturnCode.PORT_OK;
+        }
         public boolean isActive() {
             return true;
         }
@@ -68,6 +71,9 @@ public class OutPortBaseTest extends TestCase {
             return ReturnCode.PORT_OK;
         }
         public ReturnCode write(final OutputStream data, int sec, int usec) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode write(final OutputStream data) {
             return ReturnCode.PORT_OK;
         }
         public boolean isActive() {
@@ -103,6 +109,9 @@ public class OutPortBaseTest extends TestCase {
         public ReturnCode write(final OutputStream data, int sec, int usec) {
             return ReturnCode.PORT_OK;
         }
+        public ReturnCode write(final OutputStream data) {
+            return ReturnCode.PORT_OK;
+        }
         public boolean isActive() {
             return true;
         }
@@ -134,6 +143,9 @@ public class OutPortBaseTest extends TestCase {
             return ReturnCode.PORT_OK;
         }
         public ReturnCode write(final OutputStream data, int sec, int usec) {
+            return ReturnCode.PORT_OK;
+        }
+        public ReturnCode write(final OutputStream data) {
             return ReturnCode.PORT_OK;
         }
         public boolean isActive() {
