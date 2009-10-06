@@ -198,7 +198,7 @@ public class OutPort<DataType> extends OutPortBase {
             ret = m_connectors.elementAt(i).write(m_cdr);
             if (ret != ReturnCode.PORT_OK) {
                 result = false;
-                if (ret == ReturnCode.CONNECTION_LOST) {
+                if (ret.equals(ReturnCode.CONNECTION_LOST)) {
                     disconnect(m_connectors.elementAt(i).id());
                 }
             }

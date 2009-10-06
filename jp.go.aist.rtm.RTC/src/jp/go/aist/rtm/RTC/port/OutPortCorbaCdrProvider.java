@@ -140,7 +140,7 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
 
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret 
                           = m_buffer.read(new DataRef<InputStream>(cdr));
-        if (ret == jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK) {
+        if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
             try {
                 int len = cdr.available();
                 data.value = new byte[len];

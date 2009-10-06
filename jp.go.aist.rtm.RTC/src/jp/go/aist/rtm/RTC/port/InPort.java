@@ -231,7 +231,7 @@ public class InPort<DataType> extends InPortBase {
         OutputStream cdr = any.create_output_stream();
 
         ReturnCode ret = m_connectors.elementAt(0).read(cdr);
-        if (ret == ReturnCode.PORT_OK) {
+        if (ret.equals(ReturnCode.PORT_OK)) {
             rtcout.println(rtcout.DEBUG, "data read succeeded");
             InputStream input_stream = cdr.create_input_stream();
             m_value.v = read_stream(m_value,input_stream);
@@ -242,11 +242,11 @@ public class InPort<DataType> extends InPortBase {
             }
             return m_value.v;
         }
-        else if (ret == ReturnCode.BUFFER_EMPTY) {
+        else if (ret.equals(ReturnCode.BUFFER_EMPTY)) {
             rtcout.println(rtcout.WARN, "buffer empty");
             return m_value.v;
         }
-        else if (ret == ReturnCode.BUFFER_TIMEOUT) {
+        else if (ret.equals(ReturnCode.BUFFER_TIMEOUT)) {
             rtcout.println(rtcout.WARN, "buffer read timeout");
             return m_value.v;
         }

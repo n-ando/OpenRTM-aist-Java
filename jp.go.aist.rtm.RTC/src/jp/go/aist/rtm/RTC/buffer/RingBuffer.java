@@ -479,15 +479,15 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
     private void initWritePolicy(final Properties prop) {
         String policy = prop.getProperty("write.full_policy");
         StringUtil.normalize(policy);
-        if (policy == "overwrite") {
+        if (policy.equals("overwrite")) {
             m_overwrite = true;
             m_timedwrite = false;
         }
-        else if (policy == "do_nothing") {
+        else if (policy.equals("do_nothing")) {
             m_overwrite = false;
             m_timedwrite = false;
         }
-        else if (policy == "block") {
+        else if (policy.equals("block")) {
             m_overwrite = false;
             m_timedwrite = true;
 
@@ -509,15 +509,15 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
     private void initReadPolicy(final Properties prop) {
         String policy = prop.getProperty("read.empty_policy");
         StringUtil.normalize(policy);
-        if (policy == "readback") {
+        if (policy.equals("readback")) {
             m_readback = true;
             m_timedread = false;
         }
-        else if (policy == "do_nothing") {
+        else if (policy.equals("do_nothing")) {
             m_readback = false;
             m_timedread = false;
         }
-        else if (policy == "block") {
+        else if (policy.equals("block")) {
             m_readback = false;
             m_timedread = true;
 

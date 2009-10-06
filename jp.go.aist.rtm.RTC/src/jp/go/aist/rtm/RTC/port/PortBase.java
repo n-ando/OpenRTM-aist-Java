@@ -304,7 +304,7 @@ public abstract class PortBase extends PortServicePOA {
         try {
             ReturnCode_t ret 
            = connector_profile.value.ports[0].notify_connect(connector_profile);
-            if (ret != ReturnCode_t.RTC_OK) {
+            if (!ret.equals(ReturnCode_t.RTC_OK)) {
                 rtcout.println(rtcout.ERROR, "Connection failed. cleanup.");
                 disconnect(connector_profile.value.connector_id);
             }
@@ -525,7 +525,7 @@ public abstract class PortBase extends PortServicePOA {
         for (int i=0; i < len; ++i) {
             ReturnCode_t tmpret;
             tmpret = this.disconnect(plist.value[i].connector_id);
-            if (tmpret != ReturnCode_t.RTC_OK) { 
+            if (!tmpret.equals(ReturnCode_t.RTC_OK)) { 
                 retcode = tmpret;
             }
         }
@@ -1222,7 +1222,7 @@ public abstract class PortBase extends PortServicePOA {
             if( ! this.m_port_ref._is_equivalent((PortService)elem) ) {
                 ReturnCode_t retval;
                 retval = ((PortService)elem).notify_connect(this.m_connector_profile);
-                if( retval != ReturnCode_t.RTC_OK ) {
+                if( !retval.equals(ReturnCode_t.RTC_OK) ) {
                     this.m_return_code = retval;
                 }
             }
@@ -1266,7 +1266,7 @@ public abstract class PortBase extends PortServicePOA {
             if( ! this.m_port_ref._is_equivalent((PortService)elem) ) {
                 ReturnCode_t retval;
                 retval = ((PortService)elem).disconnect(this.m_connector_profile.value.connector_id);
-                if( retval != ReturnCode_t.RTC_OK ) {
+                if( !retval.equals(ReturnCode_t.RTC_OK) ) {
                     this.m_return_code = retval;
                 }
             }

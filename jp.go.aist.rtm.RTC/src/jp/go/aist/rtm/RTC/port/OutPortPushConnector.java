@@ -66,7 +66,8 @@ public class OutPortPushConnector extends OutPortConnector {
             throw new Exception("bad_alloc()");
         }
 
-        if (m_publisher.init(profile.properties) != ReturnCode.PORT_OK) {
+        ReturnCode ret = m_publisher.init(profile.properties);
+        if (!ret.equals(ReturnCode.PORT_OK)) {
             throw new Exception("bad_alloc()");
         }
         m_consumer.init(profile.properties);
