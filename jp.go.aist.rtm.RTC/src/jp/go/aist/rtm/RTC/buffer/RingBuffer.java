@@ -434,7 +434,8 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
     }
     /**
      * <p> readable </p>
-     * <p> This function returns the number of elements that can be read from the buffer.  </p>
+     * <p> This function returns the number of elements that can be read 
+     * from the buffer.  </p>
      * @return int 
      */
     public int readable() {

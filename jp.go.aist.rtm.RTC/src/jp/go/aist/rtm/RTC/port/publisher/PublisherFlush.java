@@ -112,6 +112,9 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
         return m_consumer.put(data);
 
     }
+    public ReturnCode write(final OutputStream data) {
+        return this.write(data, -1, 0);
+    }
     /**
      * <p> write </p>
      *

@@ -77,7 +77,6 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
             return convertReturn(ret);
         }
         catch (Exception e) {
-            rtcout.println(rtcout.WARN, "caught exception.");
             return ReturnCode.CONNECTION_LOST;
         }
     }

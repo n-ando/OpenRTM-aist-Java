@@ -43,37 +43,6 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         m_leftskip = 0;
         rtcout.setLevel("PARANOID");
     }
-    /**
-     * <p>コンストラクタです。</p>
-     * 
-     * <p>送出処理の呼び出し間隔を、Propertyオブジェクトのdataport.push_rateメンバに
-     * 設定しておく必要があります。間隔は、Hz単位の浮動小数文字列で指定します。
-     * たとえば、1000.0Hzの場合は、「1000.0」を設定します。</p>
-     * 
-     * @param consumer 送出の駆動を待つコンシューマ
-     * @param property 送出処理の呼び出し間隔を指定するPropertyオブジェクト
-     */
-    public PublisherPeriodic(InPortConsumer consumer, final Properties property) {
-        
-        m_consumer = consumer;
-        
-        String rate = property.getProperty("dataport.push_rate");
-        double hz;
-        if (!rate.equals("")) {
-            hz = Double.valueOf(rate).doubleValue();
-            if (hz == 0) {
-                hz = 1000.0;
-            }
-        } else {
-            hz = 1000.0;
-        }
-        
-        int usec = (int) (1000000.0 / hz);
-        m_millisec = usec / 1000;
-        m_nanosec = (usec % 1000) * 1000;
-        
-        this.open();
-    }
     
     /**
      * <p>本Publisher実装では、何も行いません。</p>
@@ -119,10 +88,10 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             final OutputStream cdr = m_buffer.get();
             ReturnCode ret = m_consumer.put(cdr);
 
-            if (ret != ReturnCode.PORT_OK) {
+            if (!ret.equals(ReturnCode.PORT_OK)) {
                 rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
                 return ret;
-             }
+            }
             m_buffer.advanceRptr();
         }
         return ReturnCode.PORT_OK;
@@ -142,7 +111,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         }
         final OutputStream cdr = m_buffer.get();
         ReturnCode ret = m_consumer.put(cdr);
-        if (ret != ReturnCode.PORT_OK) {
+        if (!ret.equals(ReturnCode.PORT_OK)) {
             rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
             return ret;
         }
@@ -171,7 +140,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             m_buffer.advanceRptr(postskip);
             final OutputStream cdr = m_buffer.get();
             ret = m_consumer.put(cdr);
-            if (ret != ReturnCode.PORT_OK) {
+            if (!ret.equals(ReturnCode.PORT_OK)) {
                 m_buffer.advanceRptr(-postskip);
                 rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
                 return ret;
@@ -261,16 +230,16 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         rtcout.println(rtcout.DEBUG, "skip_count: " + skip_count );
     
         StringUtil.normalize(push_policy);
-        if (push_policy == "all") {
+        if (push_policy.equals("all")) {
             m_pushPolicy = Policy.ALL;
           }
-        else if (push_policy == "fifo") {
+        else if (push_policy.equals("fifo")) {
             m_pushPolicy = Policy.FIFO;
           }
-        else if (push_policy == "skip") {
+        else if (push_policy.equals("skip")) {
             m_pushPolicy = Policy.SKIP;
           }
-        else if (push_policy == "new") {
+        else if (push_policy.equals("new")) {
             m_pushPolicy = Policy.NEW;
           }
         else {
@@ -307,7 +276,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
                            "Task creation failed: " 
                            + prop.getProperty("thread_type", "default"));
             return ReturnCode.INVALID_ARGS;
-          }
+        }
         rtcout.println(rtcout.PARANOID, "Task creation succeeded." );
     
         // setting task function
@@ -410,19 +379,16 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         rtcout.println(rtcout.PARANOID, "write()" );
         if (m_consumer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_buffer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
-        if (m_retcode == ReturnCode.CONNECTION_LOST) {
+        if (m_retcode.equals(ReturnCode.CONNECTION_LOST)) {
             rtcout.println(rtcout.DEBUG, "write(): connection lost." );
             return m_retcode;
         }
     
-        if (m_retcode == ReturnCode.BUFFER_FULL)
-          {
+        if (m_retcode.equals(ReturnCode.BUFFER_FULL)) {
             rtcout.println(rtcout.DEBUG, "write(): InPort buffer is full." );
-//            BufferBase<OutputStream>.ReturnCode ret = m_buffer.write(data, sec, usec);
-//            BufferBase<OutputStream>.ReturnCode ret;
             m_buffer.write(data, sec, usec);
             return ReturnCode.BUFFER_FULL;
-          }
+        }
     
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret;
         ret = m_buffer.write(data, sec, usec);
@@ -431,6 +397,10 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     
         return convertReturn(ret);
     }
+    public ReturnCode write(final OutputStream data) {
+        return this.write(data,-1,0);
+    }
+ 
     /**
      * <p> write </p>
      *

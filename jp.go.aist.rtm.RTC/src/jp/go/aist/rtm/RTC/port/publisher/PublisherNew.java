@@ -31,20 +31,15 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      */
     public PublisherNew() {
         rtcout = new Logbuf("Manager.PublisherNew");
+        m_consumer = null;
+        m_buffer = null;
+        m_task = null;
+        m_retcode = ReturnCode.PORT_OK;
+        m_pushPolicy = Policy.NEW;
+        m_skipn = 0;
+        m_active = false;
+        m_leftskip = 0;
         rtcout.setLevel("PARANOID");
-    }
-    /**
-     * <p>コンストラクタです。</p>
-     * 
-     * @param consumer 送出の駆動を待つコンシューマ
-     * @param property （本Publisherでは利用されません。）
-     */
-    public PublisherNew(InPortConsumer consumer, final Properties property) {
-        this.m_consumer = consumer;
-        this.m_running = true;
-        this.m_data = new NewData();
-        
-        open(null);
     }
     
     /**
@@ -108,10 +103,10 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                 OutputStream cdr = m_buffer.get();
                 ReturnCode ret = m_consumer.put(cdr);
             
-                if (ret == ReturnCode.SEND_FULL) {
+                if (ret.equals(ReturnCode.SEND_FULL)) {
                     return ReturnCode.SEND_FULL;
                 }
-                else if (ret != ReturnCode.PORT_OK) {
+                else if (!ret.equals(ReturnCode.PORT_OK)) {
                     return ret;
                 }
             
@@ -122,7 +117,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         catch (Exception e) {
             return ReturnCode.CONNECTION_LOST;
         }
-//        return ReturnCode.PORT_ERROR;
     }
     /**
      * <p> pushFifo </p>
@@ -136,10 +130,10 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             OutputStream cdr = m_buffer.get();
             ReturnCode ret = m_consumer.put(cdr);
         
-            if (ret == ReturnCode.SEND_FULL) {
+            if (ret.equals(ReturnCode.SEND_FULL)) {
                 return ReturnCode.SEND_FULL;
             }
-            else if (ret != ReturnCode.PORT_OK) {
+            else if (!ret.equals(ReturnCode.PORT_OK)) {
                 return ret;
             }
         
@@ -150,7 +144,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         catch (Exception e) {
             return ReturnCode.CONNECTION_LOST;
         }
-//        return ReturnCode.PORT_ERROR;
     }
     /**
      * <p> pushSkip </p>
@@ -193,7 +186,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         catch (Exception e) {
             return ReturnCode.CONNECTION_LOST;
         }
-//        return ReturnCode.PORT_ERROR;
     }
     /**
      * <p> pushNew </p>
@@ -209,7 +201,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             OutputStream cdr = m_buffer.get();
             ReturnCode ret = m_consumer.put(cdr);
 
-            if (ret == ReturnCode.PORT_OK) {
+            if (ret.equals(ReturnCode.PORT_OK)) {
                 m_buffer.advanceRptr();
             }
             return ret;
@@ -217,7 +209,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         catch (Exception e) {
             return ReturnCode.CONNECTION_LOST;
         }
-//        return ReturnCode.PORT_ERROR;
     }
 
     /**
@@ -290,16 +281,16 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         rtcout.println(rtcout.DEBUG, "skip_count: " + skip_count );
     
         StringUtil.normalize(push_policy);
-        if (push_policy == "all") {
+        if (push_policy.equals("all")) {
             m_pushPolicy = Policy.ALL;
           }
-        else if (push_policy == "fifo") {
+        else if (push_policy.equals("fifo")) {
             m_pushPolicy = Policy.FIFO;
           }
-        else if (push_policy == "skip") {
+        else if (push_policy.equals("skip")) {
             m_pushPolicy = Policy.SKIP;
           }
-        else if (push_policy == "new") {
+        else if (push_policy.equals("new")) {
             m_pushPolicy = Policy.NEW;
           }
         else {
@@ -336,7 +327,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                            "Task creation failed: " 
                            + prop.getProperty("thread_type", "default"));
             return ReturnCode.INVALID_ARGS;
-          }
+        }
         rtcout.println(rtcout.PARANOID, "Task creation succeeded." );
     
         Properties mprop = prop.getNode("measurement");
@@ -367,9 +358,9 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         catch(NumberFormatException e){
         }
     
-        m_task.suspend();
+        m_task._suspend();
         m_task.activate();
-        m_task.suspend();
+        m_task._suspend();
         return ReturnCode.PORT_OK;
     }
     /**
@@ -421,21 +412,18 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         rtcout.println(rtcout.PARANOID, "write()" );
         if (m_consumer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_buffer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
-        if (m_retcode == ReturnCode.CONNECTION_LOST) {
+        if (m_retcode.equals(ReturnCode.CONNECTION_LOST)) {
             rtcout.println(rtcout.DEBUG, "write(): connection lost." );
             return m_retcode;
         }
     
-        if (m_retcode == ReturnCode.BUFFER_FULL)
-          {
+        if (m_retcode.equals(ReturnCode.BUFFER_FULL)) {
             rtcout.println(rtcout.DEBUG, "write(): InPort buffer is full." );
-//            BufferBase<OutputStream>.ReturnCode ret = m_buffer.write(data, sec, usec);
-//            BufferBase<OutputStream>.ReturnCode ret;
             jp.go.aist.rtm.RTC.buffer.ReturnCode ret;
             ret  = m_buffer.write(data, sec, usec);
             m_task.signal();
             return ReturnCode.BUFFER_FULL;
-          }
+        }
     
         assert m_buffer != null;
     
@@ -446,6 +434,9 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         rtcout.println(rtcout.DEBUG, ret.name() +" = write()" );
     
         return convertReturn(ret);
+    }
+    public ReturnCode write(final OutputStream data) {
+        return this.write(data, -1, 0);
     }
     /**
      * <p> write </p>
@@ -543,7 +534,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
     private int m_skipn;
     private BufferBase<OutputStream> m_buffer;
     private PeriodicTaskBase m_task;
-//    private PublisherBase m_task;
     private ReturnCode m_retcode;
     private int m_leftskip;
     private String m_retmutex = new String();;

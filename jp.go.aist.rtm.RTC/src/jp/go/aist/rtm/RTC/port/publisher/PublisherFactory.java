@@ -22,6 +22,7 @@ public class PublisherFactory {
      * 情報が設定されているPropertyオブジェクト
      * @return 適切なPublisherを生成できた場合は、そのオブジェクトを返します。さもなくばnullを返します。
      */
+/*
     public PublisherBase create(InPortConsumer consumer, Properties property) {
         
         String pub_type = property.getProperty("dataport.subscription_type", "New");
@@ -38,6 +39,7 @@ public class PublisherFactory {
         
         return null;
     }
+*/
 
     /**
      * <p>指定されたPublisherを破棄します。</p>
