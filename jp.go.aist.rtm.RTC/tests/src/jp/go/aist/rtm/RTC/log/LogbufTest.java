@@ -38,7 +38,7 @@ public class LogbufTest extends TestCase {
 
         // STDOUT
         // Junit出力ファイル*.xmlの <system-err>の欄に出力される
-        System.err.println("\n--- test_case0() setLevel() Not Set ---");
+        System.err.println("\n\n--- test_case0() setLevel() Not Set ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT 0");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT 0");
         rtcout.println(rtcout.TRACE, "TRACE string to STDOUT 0");
@@ -48,7 +48,8 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT 0");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT 0");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT 0");
-        // rtcout.println()の内容が、defaultのINFO以下が出力されればOK.
+        // addStream()していないので、printlnの文字列が出力されなければOK.
+        // "Logbuf.println() destination handler was not registered."の出力あればOK.
 
         rtcout.setLevel("PARANOID");    //全て
         System.err.println("--- test_case0() setLevel(PARANOID), addStream(STDOUT) Not set ---");
@@ -61,7 +62,8 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT 1");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT 1");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT 1");
-        // setLevel()以下の内容が、出力されればOK.
+        // addStream()していないので、printlnの文字列が出力されなければOK.
+        // "Logbuf.println() destination handler was not registered."の出力あればOK.
 
         rtcout.addStream(new ConsoleHandler());
         System.err.println("--- test_case0() addStream(STDOUT) set ---");
@@ -90,8 +92,8 @@ public class LogbufTest extends TestCase {
         // Junit出力ファイル*.xmlの <system-err>の欄に出力される
         rtcout.addStream(new ConsoleHandler());
 
-        rtcout.setLevel("PARANOID");    //全て出力する
-        System.err.println("--- setLevel:PARANOID check ---");
+        rtcout.setLevel("PARANOID");
+        System.err.println("\n\n--- setLevel:PARANOID check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
         rtcout.println(rtcout.TRACE, "TRACE string to STDOUT");
@@ -101,8 +103,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel("VERBOSE");     //これ以下が出力される
+        rtcout.setLevel("VERBOSE");
         System.err.println("--- setLevel:VERBOSE check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -113,8 +116,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel("TRACE");       //これ以下が出力される
+        rtcout.setLevel("TRACE");
         System.err.println("--- setLevel:TRACE check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -125,8 +129,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel("DEBUG");       //これ以下が出力される
+        rtcout.setLevel("DEBUG");
         System.err.println("--- setLevel:DEBUG check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -137,8 +142,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel("INFO");        //これ以下が出力される
+        rtcout.setLevel("INFO");
         System.err.println("--- setLevel:INFO check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -149,8 +155,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel("WARN");        //これ以下が出力される
+        rtcout.setLevel("WARN");
         System.err.println("--- setLevel:WARN check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -161,8 +168,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel("ERROR");       //これ以下が出力される
+        rtcout.setLevel("ERROR");
         System.err.println("--- setLevel:ERROR check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -173,8 +181,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel("FATAL");       //これ以下が出力される
+        rtcout.setLevel("FATAL");
         System.err.println("--- setLevel:FATAL check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -185,8 +194,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel("SILENT");      //全て出力しない
+        rtcout.setLevel("SILENT");
         System.err.println("--- setLevel:SILENT check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -197,8 +207,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // 何も出力されなければOK.
 
-        rtcout.setLevel("other");      //全て出力しない
+        rtcout.setLevel("other");
         System.err.println("--- setLevel:other check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -209,6 +220,7 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // 何も出力されなければOK.
 
     }
 
@@ -224,8 +236,8 @@ public class LogbufTest extends TestCase {
         // Junit出力ファイル*.xmlの <system-err>の欄に出力される
         rtcout.addStream(new ConsoleHandler());
 
-        rtcout.setLevel(rtcout.PARANOID);    //全て出力する
-        System.err.println("--- setLevel:int PARANOID check ---");
+        rtcout.setLevel(rtcout.PARANOID);
+        System.err.println("\n\n--- setLevel:int PARANOID check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
         rtcout.println(rtcout.TRACE, "TRACE string to STDOUT");
@@ -235,8 +247,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel(rtcout.VERBOSE);     //これ以下が出力される
+        rtcout.setLevel(rtcout.VERBOSE);
         System.err.println("--- setLevel:int VERBOSE check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -247,8 +260,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel(rtcout.TRACE);       //これ以下が出力される
+        rtcout.setLevel(rtcout.TRACE);
         System.err.println("--- setLevel:int TRACE check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -259,8 +273,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel(rtcout.DEBUG);       //これ以下が出力される
+        rtcout.setLevel(rtcout.DEBUG);
         System.err.println("--- setLevel:int DEBUG check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -271,8 +286,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel(rtcout.INFO);        //これ以下が出力される
+        rtcout.setLevel(rtcout.INFO);
         System.err.println("--- setLevel:int INFO check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -283,8 +299,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel(rtcout.WARN);        //これ以下が出力される
+        rtcout.setLevel(rtcout.WARN);
         System.err.println("--- setLevel:int WARN check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -295,8 +312,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel(rtcout.ERROR);       //これ以下が出力される
+        rtcout.setLevel(rtcout.ERROR);
         System.err.println("--- setLevel:int ERROR check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -307,8 +325,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel(rtcout.FATAL);       //これ以下が出力される
+        rtcout.setLevel(rtcout.FATAL);
         System.err.println("--- setLevel:int FATAL check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -319,8 +338,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel(rtcout.SILENT);      //全て出力しない
+        rtcout.setLevel(rtcout.SILENT);
         System.err.println("--- setLevel:int SILENT check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -331,8 +351,9 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // 何も出力されなければOK.
 
-        rtcout.setLevel(999);      //全て出力しない
+        rtcout.setLevel(999);
         System.err.println("--- setLevel:int 999 check ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT");
@@ -343,16 +364,17 @@ public class LogbufTest extends TestCase {
         rtcout.println(rtcout.ERROR, "ERROR string to STDOUT");
         rtcout.println(rtcout.FATAL, "FATAL string to STDOUT");
         rtcout.println(rtcout.SILENT, "SILENT string to STDOUT");
+        // 何も出力されなければOK.
 
     }
 
     /**
     *
     * ファイル出力のテスト
-    *
+    * setLevel毎に出力内容が制限されているか？
     */
     public void test_fileout_PARANOID() {
-        Logbuf rtcout = new Logbuf("TEST1");
+        Logbuf rtcout = new Logbuf("TESTFILE1");
 
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
@@ -365,7 +387,7 @@ public class LogbufTest extends TestCase {
         } catch(IOException ex) {
             System.err.println("Error: cannot open logfile: " + logfile );
         }
-        rtcout.setLevel("PARANOID");        //全て出力される
+        rtcout.setLevel("PARANOID");
         rtcout.println(rtcout.PARANOID, "PARANOID string to rtc.log");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to rtc.log");
         rtcout.println(rtcout.TRACE, "TRACE string to rtc.log");
@@ -404,10 +426,11 @@ public class LogbufTest extends TestCase {
     /**
     *
     * ファイル出力のテスト
+    * setLevel毎に出力内容が制限されているか？
     *
     */
     public void test_fileout_VERBOSE() {
-        Logbuf rtcout = new Logbuf("TEST2");
+        Logbuf rtcout = new Logbuf("TESTFILE2");
 
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
@@ -420,7 +443,7 @@ public class LogbufTest extends TestCase {
         } catch(IOException ex) {
             System.err.println("Error: cannot open logfile: " + logfile );
         }
-        rtcout.setLevel("VERBOSE");     //これ以下が出力される
+        rtcout.setLevel("VERBOSE");
         rtcout.println(rtcout.PARANOID, "PARANOID string to rtc.log");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to rtc.log");
         rtcout.println(rtcout.TRACE, "TRACE string to rtc.log");
@@ -459,10 +482,11 @@ public class LogbufTest extends TestCase {
     /**
     *
     * ファイル出力のテスト
+    * setLevel毎に出力内容が制限されているか？
     *
     */
     public void test_fileout_TRACE() {
-        Logbuf rtcout = new Logbuf("TEST3");
+        Logbuf rtcout = new Logbuf("TESTFILE3");
 
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
@@ -475,7 +499,7 @@ public class LogbufTest extends TestCase {
         } catch(IOException ex) {
             System.err.println("Error: cannot open logfile: " + logfile );
         }
-        rtcout.setLevel("TRACE");       //これ以下が出力される
+        rtcout.setLevel("TRACE");
         rtcout.println(rtcout.PARANOID, "PARANOID string to rtc.log");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to rtc.log");
         rtcout.println(rtcout.TRACE, "TRACE string to rtc.log");
@@ -513,10 +537,11 @@ public class LogbufTest extends TestCase {
     /**
     *
     * ファイル出力のテスト
+    * setLevel毎に出力内容が制限されているか？
     *
     */
     public void test_fileout_DEBUG() {
-        Logbuf rtcout = new Logbuf("TEST4");
+        Logbuf rtcout = new Logbuf("TESTFILE4");
 
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
@@ -529,7 +554,7 @@ public class LogbufTest extends TestCase {
         } catch(IOException ex) {
             System.err.println("Error: cannot open logfile: " + logfile );
         }
-        rtcout.setLevel("DEBUG");       //これ以下が出力される
+        rtcout.setLevel("DEBUG");
         rtcout.println(rtcout.PARANOID, "PARANOID string to rtc.log");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to rtc.log");
         rtcout.println(rtcout.TRACE, "TRACE string to rtc.log");
@@ -567,10 +592,11 @@ public class LogbufTest extends TestCase {
     /**
     *
     * ファイル出力のテスト
+    * setLevel毎に出力内容が制限されているか？
     *
     */
     public void test_fileout_INFO() {
-        Logbuf rtcout = new Logbuf("TEST5");
+        Logbuf rtcout = new Logbuf("TESTFILE5");
 
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
@@ -583,7 +609,7 @@ public class LogbufTest extends TestCase {
         } catch(IOException ex) {
             System.err.println("Error: cannot open logfile: " + logfile );
         }
-        rtcout.setLevel("INFO");        //これ以下が出力される
+        rtcout.setLevel("INFO");
         rtcout.println(rtcout.PARANOID, "PARANOID string to rtc.log");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to rtc.log");
         rtcout.println(rtcout.TRACE, "TRACE string to rtc.log");
@@ -621,10 +647,11 @@ public class LogbufTest extends TestCase {
     /**
     *
     * ファイル出力のテスト
+    * setLevel毎に出力内容が制限されているか？
     *
     */
     public void test_fileout_WARN() {
-        Logbuf rtcout = new Logbuf("TEST6");
+        Logbuf rtcout = new Logbuf("TESTFILE6");
 
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
@@ -637,7 +664,7 @@ public class LogbufTest extends TestCase {
         } catch(IOException ex) {
             System.err.println("Error: cannot open logfile: " + logfile );
         }
-        rtcout.setLevel("WARN");        //これ以下が出力される
+        rtcout.setLevel("WARN");
         rtcout.println(rtcout.PARANOID, "PARANOID string to rtc.log");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to rtc.log");
         rtcout.println(rtcout.TRACE, "TRACE string to rtc.log");
@@ -675,10 +702,11 @@ public class LogbufTest extends TestCase {
     /**
     *
     * ファイル出力のテスト
+    * setLevel毎に出力内容が制限されているか？
     *
     */
     public void test_fileout_ERROR() {
-        Logbuf rtcout = new Logbuf("TEST7");
+        Logbuf rtcout = new Logbuf("TESTFILE7");
 
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
@@ -691,7 +719,7 @@ public class LogbufTest extends TestCase {
         } catch(IOException ex) {
             System.err.println("Error: cannot open logfile: " + logfile );
         }
-        rtcout.setLevel("ERROR");       //これ以下が出力される
+        rtcout.setLevel("ERROR");
         rtcout.println(rtcout.PARANOID, "PARANOID string to rtc.log");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to rtc.log");
         rtcout.println(rtcout.TRACE, "TRACE string to rtc.log");
@@ -729,10 +757,11 @@ public class LogbufTest extends TestCase {
     /**
     *
     * ファイル出力のテスト
+    * setLevel毎に出力内容が制限されているか？
     *
     */
     public void test_fileout_FATAL() {
-        Logbuf rtcout = new Logbuf("TEST8");
+        Logbuf rtcout = new Logbuf("TESTFILE8");
 
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
@@ -745,7 +774,7 @@ public class LogbufTest extends TestCase {
         } catch(IOException ex) {
             System.err.println("Error: cannot open logfile: " + logfile );
         }
-        rtcout.setLevel("FATAL");       //これ以下が出力される
+        rtcout.setLevel("FATAL");
         rtcout.println(rtcout.PARANOID, "PARANOID string to rtc.log");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to rtc.log");
         rtcout.println(rtcout.TRACE, "TRACE string to rtc.log");
@@ -783,10 +812,11 @@ public class LogbufTest extends TestCase {
     /**
     *
     * ファイル出力のテスト
+    * setLevel毎に出力内容が制限されているか？
     *
     */
     public void test_fileout_SILENT() {
-        Logbuf rtcout = new Logbuf("TEST9");
+        Logbuf rtcout = new Logbuf("TESTFILE9");
 
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
@@ -799,7 +829,7 @@ public class LogbufTest extends TestCase {
         } catch(IOException ex) {
             System.err.println("Error: cannot open logfile: " + logfile );
         }
-        rtcout.setLevel("SILENT");      //これ以下が出力される
+        rtcout.setLevel("SILENT");
         rtcout.println(rtcout.PARANOID, "PARANOID string to rtc.log");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to rtc.log");
         rtcout.println(rtcout.TRACE, "TRACE string to rtc.log");
@@ -838,14 +868,15 @@ public class LogbufTest extends TestCase {
     /**
     *
     * strToLogLevel()テスト
-    *
+    * ログレベルを表す文字列コード変換が正しく行えるか？
     */
     public void test_strToLogLevel() {
+        System.err.println("\n\n--- test_strToLogLevel() check ---");
+
         Logbuf rtcout = new Logbuf("test_strToLogLevel");
         rtcout.addStream(new ConsoleHandler());
         rtcout.setLevel("PARANOID");
 
-        System.err.println("--- test_strToLogLevel() check ---");
         int lv = 0;
         lv = rtcout.strToLogLevel("SILENT");
         assertEquals(rtcout.SILENT, lv);
@@ -883,15 +914,16 @@ public class LogbufTest extends TestCase {
     /**
     *
     * setDateFormat()テスト
-    * 引数 int
+    * 日付形式の書式設定が正しく行えるか？
     */
     public void test_setDateFormat() {
+        System.err.println("\n\n--- test_setDateFormat() check ---");
+
         Logbuf rtcout = new Logbuf("test_setDateFormat");
         rtcout.addStream(new ConsoleHandler());
         rtcout.setLevel("PARANOID");
         String format = new String();
 
-        System.err.println("--- test_setDateFormat() check ---");
         // default
         // "logger.date_format",     "%b %d %H:%M:%S",
         format = "%b %d %H:%M:%S";
@@ -920,14 +952,147 @@ public class LogbufTest extends TestCase {
         "logger.master_logger",   "",
     ***/
 
+    /**
+    *
+    * 親子ノードのテスト
+    * 親ノードで作成したログに、子ノードで作成したログが正しく出力されるか？
+    */
+    public void test_manager_logbuf() {
+        System.err.println("\n\n--- test_manager_logbuf() start ---");
+
+        int cnt = 0;
+        Logbuf rtcout = new Logbuf("Manager");
+        cnt = rtcout.getStreamCount();
+        assertEquals(0, cnt);
+
+        ConsoleHandler stdout = new ConsoleHandler();
+        rtcout.addStream(stdout);
+
+        String logfile = "./rtc10.log";
+        try {
+            rtcout.addStream(new FileHandler(logfile));
+        } catch(IOException ex) {
+            System.err.println("Error: cannot open logfile: " + logfile );
+        }
+        cnt = rtcout.getStreamCount();
+        assertEquals(2, cnt);
+
+        rtcout.setLevel("INFO");
+        System.err.println("--- Logbuf(Manager) set ---");
+        rtcout.println(rtcout.INFO, "--- setLevel(INFO), addStream(STDOUT) set ---");
+        rtcout.println(rtcout.PARANOID, "PARANOID string 1");
+        rtcout.println(rtcout.VERBOSE, "VERBOSE string 1");
+        rtcout.println(rtcout.TRACE, "TRACE string 1");
+        rtcout.println(rtcout.DEBUG, "DEBUG string 1");
+        rtcout.println(rtcout.INFO, "INFO string 1");
+        rtcout.println(rtcout.WARN, "WARN string 1");
+        rtcout.println(rtcout.ERROR, "ERROR string 1");
+        rtcout.println(rtcout.FATAL, "FATAL string 1");
+        rtcout.println(rtcout.SILENT, "SILENT string 1");
+        // setLevel(INFO)以下の内容が、出力されればOK.
+
+
+        Logbuf rtcout2 = new Logbuf("Manager.hoge1");
+        System.err.println("--- Logbuf(Manager.hoge1) set ---");
+        rtcout2.println(rtcout2.INFO, "--- setLevel(INFO) Not set ---");
+        rtcout2.println(rtcout2.PARANOID, "PARANOID string 2");
+        rtcout2.println(rtcout2.VERBOSE, "VERBOSE string 2");
+        rtcout2.println(rtcout2.TRACE, "TRACE string 2");
+        rtcout2.println(rtcout2.DEBUG, "DEBUG string 2");
+        rtcout2.println(rtcout2.INFO, "INFO string 2");
+        rtcout2.println(rtcout2.WARN, "WARN string 2");
+        rtcout2.println(rtcout2.ERROR, "ERROR string 2");
+        rtcout2.println(rtcout2.FATAL, "FATAL string 2");
+        rtcout2.println(rtcout2.SILENT, "SILENT string 2");
+        // setLevel(INFO)以下の内容が、出力されればOK.
+
+        rtcout2.setLevel("PARANOID");
+        System.err.println("--- Logbuf(Manager.hoge1) set ---");
+        rtcout2.println(rtcout2.INFO, "--- setLevel(PARANOID) set ---");
+        rtcout2.println(rtcout2.PARANOID, "PARANOID string 3");
+        rtcout2.println(rtcout2.VERBOSE, "VERBOSE string 3");
+        rtcout2.println(rtcout2.TRACE, "TRACE string 3");
+        rtcout2.println(rtcout2.DEBUG, "DEBUG string 3");
+        rtcout2.println(rtcout2.INFO, "INFO string 3");
+        rtcout2.println(rtcout2.WARN, "WARN string 3");
+        rtcout2.println(rtcout2.ERROR, "ERROR string 3");
+        rtcout2.println(rtcout2.FATAL, "FATAL string 3");
+        rtcout2.println(rtcout2.SILENT, "SILENT string 3");
+        // setLevel(PARANOID)以下の内容が、出力されればOK.
+
+        Logbuf rtcout3 = new Logbuf("hoge2");
+        System.err.println("--- Logbuf(hoge2) set ---");
+        rtcout3.println(rtcout3.INFO, "--- setLevel(INFO) Not set ---");
+        rtcout3.println(rtcout3.PARANOID, "PARANOID string 4");
+        rtcout3.println(rtcout3.VERBOSE, "VERBOSE string 4");
+        rtcout3.println(rtcout3.TRACE, "TRACE string 4");
+        rtcout3.println(rtcout3.DEBUG, "DEBUG string 4");
+        rtcout3.println(rtcout3.INFO, "INFO string 4");
+        rtcout3.println(rtcout3.WARN, "WARN string 4");
+        rtcout3.println(rtcout3.ERROR, "ERROR string 4");
+        rtcout3.println(rtcout3.FATAL, "FATAL string 4");
+        rtcout3.println(rtcout3.SILENT, "SILENT string 4");
+        // setLevel(INFO)以下の内容が、出力されればOK.
+
+        rtcout3.setLevel("PARANOID");
+        System.err.println("--- Logbuf(hoge2) set ---");
+        rtcout3.println(rtcout3.INFO, "--- setLevel(PARANOID) set ---");
+        rtcout3.println(rtcout3.PARANOID, "PARANOID string 5");
+        rtcout3.println(rtcout3.VERBOSE, "VERBOSE string 5");
+        rtcout3.println(rtcout3.TRACE, "TRACE string 5");
+        rtcout3.println(rtcout3.DEBUG, "DEBUG string 5");
+        rtcout3.println(rtcout3.INFO, "INFO string 5");
+        rtcout3.println(rtcout3.WARN, "WARN string 5");
+        rtcout3.println(rtcout3.ERROR, "ERROR string 5");
+        rtcout3.println(rtcout3.FATAL, "FATAL string 5");
+        rtcout3.println(rtcout3.SILENT, "SILENT string 5");
+        // setLevel(PARANOID)以下の内容が、出力されればOK.
+
+
+        // 引数２個のコンストラクタ
+        Logbuf rtcout4 = new Logbuf("hoge3", "Manager");
+        System.err.println("--- Logbuf(Manager.hoge3) set ---");
+        rtcout4.println(rtcout4.INFO, "--- setLevel(INFO) Not set ---");
+        rtcout4.println(rtcout4.PARANOID, "PARANOID string 6");
+        rtcout4.println(rtcout4.VERBOSE, "VERBOSE string 6");
+        rtcout4.println(rtcout4.TRACE, "TRACE string 6");
+        rtcout4.println(rtcout4.DEBUG, "DEBUG string 6");
+        rtcout4.println(rtcout4.INFO, "INFO string 6");
+        rtcout4.println(rtcout4.WARN, "WARN string 6");
+        rtcout4.println(rtcout4.ERROR, "ERROR string 6");
+        rtcout4.println(rtcout4.FATAL, "FATAL string 6");
+        rtcout4.println(rtcout4.SILENT, "SILENT string 6");
+        // setLevel(INFO)以下の内容が、出力されればOK.
+
+        rtcout4.setLevel("PARANOID");
+        System.err.println("--- Logbuf(Manager.hoge3) set ---");
+        rtcout4.println(rtcout4.INFO, "--- setLevel(PARANOID) set ---");
+        rtcout4.println(rtcout4.PARANOID, "PARANOID string 7");
+        rtcout4.println(rtcout4.VERBOSE, "VERBOSE string 7");
+        rtcout4.println(rtcout4.TRACE, "TRACE string 7");
+        rtcout4.println(rtcout4.DEBUG, "DEBUG string 7");
+        rtcout4.println(rtcout4.INFO, "INFO string 7");
+        rtcout4.println(rtcout4.WARN, "WARN string 7");
+        rtcout4.println(rtcout4.ERROR, "ERROR string 7");
+        rtcout4.println(rtcout4.FATAL, "FATAL string 7");
+        rtcout4.println(rtcout4.SILENT, "SILENT string 7");
+        // setLevel(PARANOID)以下の内容が、出力されればOK.
+
+        rtcout.removeStream(stdout);
+        cnt = rtcout.getStreamCount();
+        assertEquals(1, cnt);
+        System.err.println("--- test_manager_logbuf() end ---");
+
+    }
 
     /**
     *
     * Managerのインスタンステスト
     * Managerが管理しているLogbufを取得しログ出力が行えるか？
     */
-    public void test_manager_logbuf() {
-        System.err.println("--- test_manager_logbuf() start ---");
+    public void test_manager_logbuf2() {
+        System.err.println("\n\n--- test_manager_logbuf2() start ---");
+        // Managerのインスタンスでロガー生成
         Manager manager = Manager.instance();
         manager.activateManager();
 
@@ -942,68 +1107,108 @@ public class LogbufTest extends TestCase {
         // "Manager INFO     : Manager starting."
         // "Manager INFO     : Starting local logging."
 
-//        Logbuf rtcout = new Logbuf("test_manager_logbuf");
-        Logbuf rtcout = new Logbuf("Manager");  //Manager 出力ファイルに出力される
-//        Logbuf rtcout = new Logbuf("Manager.test");  //これは、以下のファイル出力なし
+        Logbuf rtcout = new Logbuf("FileOuttest");
+        System.err.println("--- Logbuf(FileOuttest) set ---");
+        rtcout.println(rtcout.INFO, "--- setLevel(INFO) Not set ---");
+        rtcout.println(rtcout.PARANOID, "PARANOID string 10");
+        rtcout.println(rtcout.VERBOSE, "VERBOSE string 10");
+        rtcout.println(rtcout.TRACE, "TRACE string 10");
+        rtcout.println(rtcout.DEBUG, "DEBUG string 10");
+        rtcout.println(rtcout.INFO, "INFO string 10");
+        rtcout.println(rtcout.WARN, "WARN string 10");
+        rtcout.println(rtcout.ERROR, "ERROR string 10");
+        rtcout.println(rtcout.FATAL, "FATAL string 10");
+        rtcout.println(rtcout.SILENT, "SILENT string 10");
+        // setLevel(INFO)以下の内容が、出力されればOK.
 
-        // STDOUT
-        // Junit出力ファイル*.xmlの <system-err>の欄に出力される
-        System.err.println("--- test_manager_logbuf() setLevel() Not Set ---");
-        rtcout.println(rtcout.INFO, "--- setLevel() Not Set ---");
-        rtcout.println(rtcout.PARANOID, "PARANOID string 0");
-        rtcout.println(rtcout.VERBOSE, "VERBOSE string 0");
-        rtcout.println(rtcout.TRACE, "TRACE string 0");
-        rtcout.println(rtcout.DEBUG, "DEBUG string 0");
-        rtcout.println(rtcout.INFO, "INFO string 0");
-        rtcout.println(rtcout.WARN, "WARN string 0");
-        rtcout.println(rtcout.ERROR, "ERROR string 0");
-        rtcout.println(rtcout.FATAL, "FATAL string 0");
-        rtcout.println(rtcout.SILENT, "SILENT string 0");
-        // rtcout.println()の内容が、defaultのINFO以下が出力されればOK.
-
-        rtcout.setLevel("INFO");    //default
-        System.err.println("--- setLevel(INFO), addStream(STDOUT) Not set ---");
-        rtcout.println(rtcout.INFO, "--- setLevel(INFO), addStream(STDOUT) Not set ---");
-        rtcout.println(rtcout.PARANOID, "PARANOID string 1");
-        rtcout.println(rtcout.VERBOSE, "VERBOSE string 1");
-        rtcout.println(rtcout.TRACE, "TRACE string 1");
-        rtcout.println(rtcout.DEBUG, "DEBUG string 1");
-        rtcout.println(rtcout.INFO, "INFO string 1");
-        rtcout.println(rtcout.WARN, "WARN string 1");
-        rtcout.println(rtcout.ERROR, "ERROR string 1");
-        rtcout.println(rtcout.FATAL, "FATAL string 1");
-        rtcout.println(rtcout.SILENT, "SILENT string 1");
+        rtcout.setLevel("PARANOID");
+        System.err.println("--- Logbuf(Manager.FileOuttest) set ---");
+        rtcout.println(rtcout.INFO, "--- setLevel(PARANOID) set ---");
+        rtcout.println(rtcout.PARANOID, "PARANOID string 11");
+        rtcout.println(rtcout.VERBOSE, "VERBOSE string 11");
+        rtcout.println(rtcout.TRACE, "TRACE string 11");
+        rtcout.println(rtcout.DEBUG, "DEBUG string 11");
+        rtcout.println(rtcout.INFO, "INFO string 11");
+        rtcout.println(rtcout.WARN, "WARN string 11");
+        rtcout.println(rtcout.ERROR, "ERROR string 11");
+        rtcout.println(rtcout.FATAL, "FATAL string 11");
+        rtcout.println(rtcout.SILENT, "SILENT string 11");
         // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.setLevel("PARANOID");    //全て
-        System.err.println("--- setLevel(PARANOID), addStream(STDOUT) Not set ---");
-        rtcout.println(rtcout.INFO, "--- setLevel(PARANOID), addStream(STDOUT) Not set ---");
-        rtcout.println(rtcout.PARANOID, "PARANOID string 2");
-        rtcout.println(rtcout.VERBOSE, "VERBOSE string 2");
-        rtcout.println(rtcout.TRACE, "TRACE string 2");
-        rtcout.println(rtcout.DEBUG, "DEBUG string 2");
-        rtcout.println(rtcout.INFO, "INFO string 2");
-        rtcout.println(rtcout.WARN, "WARN string 2");
-        rtcout.println(rtcout.ERROR, "ERROR string 2");
-        rtcout.println(rtcout.FATAL, "FATAL string 2");
-        rtcout.println(rtcout.SILENT, "SILENT string 2");
+
+        // 引数２個のコンストラクタ
+        Logbuf rtcout2 = new Logbuf("PortBase", "");
+        int cnt = rtcout2.getStreamCount();
+        assertEquals(0, cnt);
+
+        ConsoleHandler stdout = new ConsoleHandler();
+        rtcout2.addStream(stdout);
+
+        String logfile = "./rtc11.log";
+        try {
+            rtcout2.addStream(new FileHandler(logfile));
+        } catch(IOException ex) {
+            System.err.println("Error: cannot open logfile: " + logfile );
+        }
+        cnt = rtcout2.getStreamCount();
+//        assertEquals(1, cnt);
+
+        rtcout2.setLevel("INFO");
+        System.err.println("--- Logbuf(PortBase) set ---");
+        rtcout2.println(rtcout2.INFO, "--- setLevel(INFO) Not set ---");
+        rtcout2.println(rtcout2.PARANOID, "PARANOID string 20");
+        rtcout2.println(rtcout2.VERBOSE, "VERBOSE string 20");
+        rtcout2.println(rtcout2.TRACE, "TRACE string 20");
+        rtcout2.println(rtcout2.DEBUG, "DEBUG string 20");
+        rtcout2.println(rtcout2.INFO, "INFO string 20");
+        rtcout2.println(rtcout2.WARN, "WARN string 20");
+        rtcout2.println(rtcout2.ERROR, "ERROR string 20");
+        rtcout2.println(rtcout2.FATAL, "FATAL string 20");
+        rtcout2.println(rtcout2.SILENT, "SILENT string 20");
         // setLevel()以下の内容が、出力されればOK.
 
-        rtcout.addStream(new ConsoleHandler());
-        System.err.println("--- addStream(STDOUT) set ---");
-        rtcout.println(rtcout.INFO, "--- addStream(STDOUT) set ---");
-        rtcout.println(rtcout.PARANOID, "PARANOID string 3");
-        rtcout.println(rtcout.VERBOSE, "VERBOSE string 3");
-        rtcout.println(rtcout.TRACE, "TRACE string 3");
-        rtcout.println(rtcout.DEBUG, "DEBUG string 3");
-        rtcout.println(rtcout.INFO, "INFO string 3");
-        rtcout.println(rtcout.WARN, "WARN string 3");
-        rtcout.println(rtcout.ERROR, "ERROR string 3");
-        rtcout.println(rtcout.FATAL, "FATAL string 3");
-        rtcout.println(rtcout.SILENT, "SILENT string 3");
-        // setLevel()以下の内容が、STDOUTに出力されればOK.
+        rtcout2.setLevel("PARANOID");
+        System.err.println("--- Logbuf(PortBase) set ---");
+        rtcout2.println(rtcout2.INFO, "--- setLevel(PARANOID) set ---");
+        rtcout2.println(rtcout2.PARANOID, "PARANOID string 21");
+        rtcout2.println(rtcout2.VERBOSE, "VERBOSE string 21");
+        rtcout2.println(rtcout2.TRACE, "TRACE string 21");
+        rtcout2.println(rtcout2.DEBUG, "DEBUG string 21");
+        rtcout2.println(rtcout2.INFO, "INFO string 21");
+        rtcout2.println(rtcout2.WARN, "WARN string 21");
+        rtcout2.println(rtcout2.ERROR, "ERROR string 21");
+        rtcout2.println(rtcout2.FATAL, "FATAL string 21");
+        rtcout2.println(rtcout2.SILENT, "SILENT string 21");
+        // setLevel()以下の内容が、出力されればOK.
 
-        System.err.println("--- test_manager_logbuf() end ---");
+        Logbuf rtcout3 = new Logbuf("PublisherFlush", "PortBase");
+        System.err.println("--- Logbuf(PortBase.PublisherFlush) set ---");
+        rtcout3.println(rtcout3.PARANOID, "PARANOID string 22");
+        rtcout3.println(rtcout3.VERBOSE, "VERBOSE string 22");
+        rtcout3.println(rtcout3.TRACE, "TRACE string 22");
+        rtcout3.println(rtcout3.DEBUG, "DEBUG string 22");
+        rtcout3.println(rtcout3.INFO, "INFO string 22");
+        rtcout3.println(rtcout3.WARN, "WARN string 22");
+        rtcout3.println(rtcout3.ERROR, "ERROR string 22");
+        rtcout3.println(rtcout3.FATAL, "FATAL string 22");
+        rtcout3.println(rtcout3.SILENT, "SILENT string 22");
+        // setLevel()以下の内容が、出力されればOK.
+
+        rtcout3.setLevel("PARANOID");
+        System.err.println("--- Logbuf(PortBase.PublisherFlush) set ---");
+        rtcout3.println(rtcout3.INFO, "--- setLevel(PARANOID) set ---");
+        rtcout3.println(rtcout3.PARANOID, "PARANOID string 23");
+        rtcout3.println(rtcout3.VERBOSE, "VERBOSE string 23");
+        rtcout3.println(rtcout3.TRACE, "TRACE string 23");
+        rtcout3.println(rtcout3.DEBUG, "DEBUG string 23");
+        rtcout3.println(rtcout3.INFO, "INFO string 23");
+        rtcout3.println(rtcout3.WARN, "WARN string 23");
+        rtcout3.println(rtcout3.ERROR, "ERROR string 23");
+        rtcout3.println(rtcout3.FATAL, "FATAL string 23");
+        rtcout3.println(rtcout3.SILENT, "SILENT string 23");
+        // setLevel()以下の内容が、出力されればOK.
+
+        System.err.println("--- test_manager_logbuf2() end ---");
 
     }
 

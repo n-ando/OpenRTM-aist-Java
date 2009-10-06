@@ -5,6 +5,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.Vector;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,7 +16,7 @@ import java.util.IllegalFormatException;
  * <p>ログ収集ON時のロギングクラスです。</p>
  */
 public class Logbuf {
-/*  original */
+
     public static final int SILENT = 8;
     public static final int FATAL = 7;
     public static final int ERROR = 6;
@@ -38,34 +39,69 @@ public class Logbuf {
 
     /**
      * <p>デフォルトコンストラクタです。</p>
+     * Manager.* としてロガーを作成する。
+     * 
+     * @param name サフィックス名称
+     * 
      */
     public Logbuf(String name) {
         m_LogLock = false;
         m_Suffix = name;
-        String str = "OpenRTM-aist.logging." + name;
+        int parent = name.indexOf("Manager.");
+        String str;
+        if(name.equals("Manager")) {
+            str = "OpenRTM-aist.logging." + name;
+        } else if(parent >= 0) {
+            m_Suffix = this.getLastName(name);
+            str = "OpenRTM-aist.logging.Manager." + m_Suffix;
+        } else {
+            str = "OpenRTM-aist.logging.Manager." + name;
+        }
         m_Logger = Logger.getLogger(str);
-//        if(name.equals("Manager")) {
-//            m_Logger.setUseParentHandlers(false);
-//        } else {
-//            m_Logger.setUseParentHandlers(true);
-//        }
+    }
 
-//        m_Logger.setLevel(Level.ALL);
-//        m_Logger.setLevel(Level.OFF);
-        this.setLevel(this.INFO);   //default log_level
-        m_Logger.setUseParentHandlers(false);
+    /**
+     * <p>コンストラクタです。</p>
+     * 親子ノードを指定してロガーを作成する。
+     * 親ノード名称が空文字列かnullの場合、子ノード名称を親ノードとして作成する。
+     * 
+     * 使用方法 Logbuf("hoge","") の場合、"hoge"でロガーを作成。
+     *          Logbuf("hoge","Manager") の場合、"Manager.hoge"でロガーを作成。
+     * 
+     * @param name 子ノード名称（サフィックス名称）
+     * @param parent 親ノード名称
+     * 
+     */
+    public Logbuf(String name, String parent) {
+        m_LogLock = false;
+        m_Suffix = name;
+        String str;
+        if((parent.length() == 0) || (parent == null)) {
+            str = "OpenRTM-aist.logging." + name;
+        } else {
+            str = "OpenRTM-aist.logging." + parent + "." + name;
+        }
+        m_Logger = Logger.getLogger(str);
     }
 
     /**
      * <p>ログに出力します。</p>
      * 
+     * @param level ログレベル(数値)
      * @param contents ログ内容
      */
     public void println(int level, String contents) {
+        boolean bret = this.getPrintFlag();
+        // print check
+        if(!bret) {
+            System.err.println("Logbuf.println() destination handler was not registered.");
+            return;
+        }
         StringBuilder sb = new StringBuilder();
+
         // Send all output to the Appendable object sb
         java.util.Formatter formatter = new java.util.Formatter(sb, java.util.Locale.US);
-        //
+
         // Explicit argument indices may be used to re-order output.
         Date date = new Date();
 
@@ -185,6 +221,80 @@ public class Logbuf {
         m_Logger.setUseParentHandlers(false);
         handler.setFormatter(new OpenRTMFormatter());
         m_Logger.addHandler(handler);
+
+        Handler[] h = m_Logger.getHandlers();
+        m_HandlerCount = h.length;
+    }
+
+    /**
+     * <p>ストリームを削除する。</p>
+     *
+     * @param handler 出力先ハンドラ
+     * 
+     */
+     public void removeStream(Handler handler) {
+        m_Logger.removeHandler(handler);
+
+        Handler[] h = m_Logger.getHandlers();
+        m_HandlerCount = h.length;
+     }
+
+    /**
+     * <p>ハンドラの数を取得する。</p>
+     *
+     * @return int
+     * 
+     */
+     public int getStreamCount() {
+        Handler[] h = m_Logger.getHandlers();
+        int ret = h.length;
+        return ret;
+    }
+
+    /**
+     * <p>出力判定結果を取得する。</p>
+     *
+     * @return boolean
+     * true:出力可能、false:出力不可能
+     * 親ロガー送信:true、出力先登録:なし、このロガーの親ロガー名称:nullの場合、
+     * 出力不可能と判定する。
+     */
+     private boolean getPrintFlag() {
+        boolean ret = true;
+        boolean retUseParentHandlers = m_Logger.getUseParentHandlers();
+        Logger parentLogger = m_Logger.getParent();
+        String parentName = parentLogger.getName();
+        if(retUseParentHandlers && (m_HandlerCount == 0) && (parentName.length() == 0)) {
+            ret = false;
+        }
+        return ret;
+    }
+
+    /**
+     * <p>Suffix文字を取得する。</p>
+     * 文字列にドット区切りがある場合、最後のドット区切り以降を文字列として返す。
+     *
+     * @param input ドット区切りなし文字列、ドット区切り文字列
+     *
+     * @return String
+     * 
+     */
+     private String getLastName(final String input) {
+        String ret;
+        Vector<String> result = new Vector<String>();
+        String[] splitted = input.split("\\.");
+        int len = splitted.length;
+        for(int i=0; i < len; ++i) {
+            if( !splitted[i].trim().equals("") ) {
+                result.add(splitted[i].trim());
+            }
+        }
+        if( len == 0 ) {
+            ret = new String("");
+        } else {
+            ret = new String(result.get(len-1).toString());
+        }
+        return ret;
     }
 
     /**
@@ -230,7 +340,7 @@ public class Logbuf {
     /**
      * <p> Set log level by int </p>
      *
-     * @param level
+     * @param level ログレベル(数値)
      *
      */
     public void setLevel(int level) {
@@ -245,7 +355,7 @@ public class Logbuf {
     /**
      * <p> Set log level by string </p>
      *
-     * @param level
+     * @param level ログレベル(文字列)
      *
      */
     public void setLevel(final String level) {
@@ -261,7 +371,7 @@ public class Logbuf {
     /**
      * <p> Set date/time format for adding the header </p>
      *
-     * @param format
+     * @param format 日付形式の書式
      *
      */
     public void setDateFormat(final String format) {
@@ -302,5 +412,10 @@ public class Logbuf {
     * <p>日付の後に付加するヘッダ</p>
     */
    private String m_Suffix = " ";
+
+   /**
+    * <p>出力先ハンドラの数</p>
+    */
+    private int m_HandlerCount = 0;
 
 }
