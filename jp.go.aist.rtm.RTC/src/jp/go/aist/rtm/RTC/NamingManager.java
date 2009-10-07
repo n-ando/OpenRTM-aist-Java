@@ -46,7 +46,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
     public void bindObject(final String name, final RTObject_impl rtobj) {
         rtcout.println(rtcout.TRACE, "NamingManager.bindObject(" + name + ")");
         synchronized (m_names) {
-            for(int intIdx=0;intIdx<m_names.size();++intIdx ) {
+            int len = m_names.size();
+            for(int intIdx=0; intIdx < len; ++intIdx ) {
                 if( m_names.elementAt(intIdx).ns != null ) {
                     m_names.elementAt(intIdx).ns.bindObject(name, rtobj);
                 }
@@ -64,7 +65,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
     public void bindObject(final String name, final ManagerServant mgr) {
         rtcout.println(rtcout.TRACE, "NamingManager.bindObject(" + name + ")");
         synchronized (m_names) {
-            for(int intIdx=0;intIdx<m_names.size();++intIdx ) {
+            int len = m_names.size();
+            for(int intIdx=0; intIdx < len; ++intIdx ) {
                 if( m_names.elementAt(intIdx).ns != null ) {
                     m_names.elementAt(intIdx).ns.bindObject(name, mgr);
                 }
@@ -82,8 +84,9 @@ public class NamingManager implements NamingBase, CallbackFunction {
         boolean rebind = StringUtil.toBool(m_manager.getConfig().getProperty("naming.update.rebind"), 
                             "YES", "NO", false);
         synchronized (m_names) {
-            for( int intIdx=0;intIdx<m_names.size(); ++intIdx ) {
-                if( m_names.elementAt(intIdx).ns == null ) { // if ns==NULL
+            int len = m_names.size();
+            for( int intIdx=0; intIdx < len; ++intIdx ) {
+                if( m_names.elementAt(intIdx).ns == null ) {
                     // recreate NamingObj
                     NamingBase nsobj = createNamingObj(m_names.elementAt(intIdx).method,
                                                         m_names.elementAt(intIdx).nsname);
@@ -113,7 +116,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
         rtcout.println(rtcout.TRACE, "NamingManager.unbindObject(" + name + ")");
         //
         synchronized (m_names) {
-            for( int intIdx=0;intIdx<m_names.size();++intIdx ) {
+            int len = m_names.size();
+            for( int intIdx=0; intIdx < len; ++intIdx ) {
                 if( m_names.elementAt(intIdx).ns != null ) {
                     m_names.elementAt(intIdx).ns.unbindObject(name);
                 }
@@ -127,16 +131,16 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * <p>全てのオブジェクトをNameServerからunbindします。</p>
      */
     protected void unbindAll() {
-        rtcout.println(rtcout.TRACE, "NamingManager.unbindAll(): " + m_compNames.size() + " names.");
+        rtcout.println(rtcout.TRACE, "NamingManager.unbindAll(): m_compNames=" + Integer.toString(m_compNames.size()) + " m_mgrNames=" + Integer.toString(m_mgrNames.size()));
         synchronized (m_compNames) {
-            int compsnum = m_compNames.size();
-            for(int intIdx=0;intIdx<compsnum;intIdx++) {
+            int len = m_compNames.size();
+            for(int intIdx=len-1; intIdx >= 0; --intIdx) {
                 unbindObject(m_compNames.elementAt(intIdx).name);
             }
         }
         synchronized (m_mgrNames) {
-            int mgrsnum = m_mgrNames.size();
-            for(int intIdx=0;intIdx<mgrsnum;intIdx++) {
+            int len = m_mgrNames.size();
+            for(int intIdx=len-1; intIdx >= 0; --intIdx) {
                 unbindObject(m_mgrNames.elementAt(intIdx).name);
             }
         }
@@ -149,7 +153,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
      */
     protected synchronized Vector<RTObject_impl> getObjects() {
         Vector<RTObject_impl> comps = new Vector<RTObject_impl>();
-        for(int intIdx=0;intIdx<m_compNames.size();++intIdx) {
+        int len = m_compNames.size();
+        for(int intIdx=0; intIdx < len; ++intIdx) {
             comps.add(m_compNames.elementAt(intIdx).rtobj);
         }
         return comps;
@@ -169,7 +174,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
             try {
                 NamingOnCorba nameb = new NamingOnCorba(m_manager.getORB(), name_server);
                 NamingBase name = nameb;
-                if( name==null ) return null;
+                if( name == null ) return null;
                 rtcout.println(rtcout.INFO, "NameServer connection succeeded: " + method + "/" + name_server);
                 return name;
             } catch (Exception ex) {
@@ -186,7 +191,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param ns bind対象オブジェクト
      */
     protected void bindCompsTo(NamingBase ns) {
-        for( int intIdx=0;intIdx<m_compNames.size(); ++intIdx) {
+        int len = m_compNames.size();
+        for( int intIdx=0; intIdx < len; ++intIdx) {
             ns.bindObject(m_compNames.elementAt(intIdx).name, m_compNames.elementAt(intIdx).rtobj);
         }
     }
@@ -199,7 +205,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param rtobj bind対象オブジェクト
      */
     protected void registerCompName(final String name, final RTObject_impl rtobj) {
-        for(int intIdx=0;intIdx<m_compNames.size();++intIdx ) {
+        int len = m_compNames.size();
+        for(int intIdx=0; intIdx < len; ++intIdx ) {
             if( m_compNames.elementAt(intIdx).name.equals(name) ) {
                 m_compNames.elementAt(intIdx).rtobj = rtobj;
                 return;
@@ -217,7 +224,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param mgr bind対象マネージャサーバント
      */
     protected void registerMgrName(final String name, final ManagerServant mgr) {
-        for(int intIdx=0;intIdx<m_mgrNames.size();++intIdx ) {
+        int len = m_mgrNames.size();
+        for(int intIdx=0; intIdx < len; ++intIdx ) {
             if( m_mgrNames.elementAt(intIdx).name.equals(name) ) {
                 m_mgrNames.elementAt(intIdx).mgr = mgr;
                 return;
@@ -233,7 +241,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param name 解除対象コンポーネントの名称
      */
     protected void unregisterCompName(final String name) {
-        for( int intIdx=0;intIdx<m_compNames.size();++intIdx ) {
+        int len = m_compNames.size();
+        for( int intIdx=0; intIdx < len; ++intIdx ) {
             if( m_compNames.elementAt(intIdx).name.equals(name)) {
                 m_compNames.remove(m_compNames.elementAt(intIdx));
                 return;
@@ -248,7 +257,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param name 解除対象マネージャサーバントの名称
      */
     protected void unregisterMgrName(final String name) {
-        for( int intIdx=0;intIdx<m_mgrNames.size();++intIdx ) {
+        int len = m_mgrNames.size();
+        for( int intIdx=0; intIdx < len; ++intIdx ) {
             if( m_mgrNames.elementAt(intIdx).name.equals(name)) {
                 m_mgrNames.remove(m_mgrNames.elementAt(intIdx));
                 return;
@@ -326,8 +336,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
          * @param obj
          */
         public Mgr(final String n, final ManagerServant obj) {
-            name = new String(n);
-//            name = n;
+            name = n;
             mgr = obj;
         }
         /**
