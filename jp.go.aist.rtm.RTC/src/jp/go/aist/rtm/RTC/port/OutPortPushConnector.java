@@ -18,9 +18,9 @@ public class OutPortPushConnector extends OutPortConnector {
     /**
      * <p> Constructor </p>
      *
-     * <p> OutPortPushConnector assume ownership of InPortConsumer. </p>
-     * <p> Therefore, InPortConsumer will be deleted when OutPortPushConnector </p>
-     * <p> is destructed. </p>
+     * <p> OutPortPushConnector assume ownership of InPortConsumer. 
+     * Therefore, InPortConsumer will be deleted when OutPortPushConnector
+     * is destructed. </p>
      * @param profile ConnectorProfile
      * @param consumer InPortConsumer
      *
@@ -55,7 +55,6 @@ public class OutPortPushConnector extends OutPortConnector {
         m_consumer = consumer;
         m_publisher = null;
         m_buffer = buffer;
-        rtcout.setLevel("PARANOID");
 
         // publisher/buffer creation. This may throw std::bad_alloc;
         m_publisher = createPublisher(profile);
@@ -63,6 +62,15 @@ public class OutPortPushConnector extends OutPortConnector {
             m_buffer = createBuffer(profile);
         }
         if (m_publisher == null || m_buffer == null || m_consumer == null) { 
+            if (m_publisher == null) { 
+                rtcout.println(rtcout.PARANOID, "m_publisher is null");
+            }
+            if (m_buffer == null) { 
+                rtcout.println(rtcout.PARANOID, "m_buffer is null");
+            }
+            if (m_consumer == null) { 
+                rtcout.println(rtcout.PARANOID, "m_consumer is null");
+            }
             throw new Exception("bad_alloc()");
         }
 
@@ -171,7 +179,7 @@ public class OutPortPushConnector extends OutPortConnector {
         pub_type = profile.properties.getProperty("subscription_type",
                                               "flush");
         StringUtil.normalize(pub_type);
-        FactoryGlobal<PublisherBase,String> factory 
+        FactoryGlobal<PublisherBase,String> factory  
                 = FactoryGlobal.instance();
         return factory.createObject(pub_type);
     }
@@ -203,9 +211,5 @@ public class OutPortPushConnector extends OutPortConnector {
      */
     private BufferBase<OutputStream> m_buffer;
 
-    /**
-     * <p>Logging用フォーマットオブジェクト</p>
-     */
-    protected Logbuf rtcout;
 }
 

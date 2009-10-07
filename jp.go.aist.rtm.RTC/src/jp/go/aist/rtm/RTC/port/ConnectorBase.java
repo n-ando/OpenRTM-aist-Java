@@ -23,7 +23,7 @@ public abstract class ConnectorBase {
      *
      * <p> ConnectorProfile struct for ConnectorBase and its subclasses. </p>
      */
-    static class Profile {
+    public static class Profile {
         public Profile(final String name_, final String id_,
               Vector<String> ports_, Properties properties_) {
             name = name_;

@@ -763,14 +763,13 @@ public class CORBA_SeqUtil {
      *  @param objlist
      *  @return Vector<String>
      */
-  public static <T> Vector<String> refToVstring(final T[] objlist)
-  {
-    Vector<String> iorlist = new Vector<String>();
-    ORB orb = Manager.instance().getORB();
+    public static <T> Vector<String> refToVstring(final T[] objlist) {
+        Vector<String> iorlist = new Vector<String>();
+        ORB orb = ORBUtil.getOrb();
 
-    for (int i=0, len=objlist.length; i < len; ++i) {
-        iorlist.add(orb.object_to_string((org.omg.CORBA.Object)objlist[i]));
+        for (int i=0, len=objlist.length; i < len; ++i) {
+            iorlist.add(orb.object_to_string((org.omg.CORBA.Object)objlist[i]));
+        }
+        return iorlist;
     }
-    return iorlist;
-  }
 }
