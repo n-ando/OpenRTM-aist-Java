@@ -16,7 +16,7 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
     /**
      * <p> FactoryGlobal constructor </p>
      */
-    private FactoryGlobal() {
+    protected FactoryGlobal() {
         m_New = null;
         m_Delete = null;
         m_policy = null;
@@ -78,6 +78,7 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
 
         return factory_global;
     }
+
     /**
      * <p>コンポーネントを生成します。</p>
      * 
@@ -137,11 +138,11 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
     /**
      *  <p> mutex </p>
      */
-    protected static String factory_global_mutex = new String();
+    private static String factory_global_mutex = new String();
     /**
      *  <p> object </p>
      */
-    protected static FactoryGlobal factory_global;
+    private static FactoryGlobal factory_global;
     /**
      *  <p> Map of FactoryEntry </p>
      */
