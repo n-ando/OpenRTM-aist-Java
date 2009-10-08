@@ -27,13 +27,13 @@ import RTC.Time;
 public class OutPort<DataType> extends OutPortBase {
 
     /**
-     * <p> toTypeCdoe </p>
+     * <p> toTypeCode </p>
      * <p> This function gets TypeCode of data. </p>
      *
      * @param value data
      * @return TypeCdoe(String)
      */
-    private static <DataType> String toTypeCdoe(DataRef<DataType> value) { 
+    private static <DataType> String toTypeCode(DataRef<DataType> value) { 
         DataType data = value.v;
         Class cl = data.getClass();
         String str = new String();
@@ -100,7 +100,7 @@ public class OutPort<DataType> extends OutPortBase {
         Class cl = data.getClass();
         String str = cl.getName();
         try {
-            cl.getField("tm").set(RTC.Time.class,tm);
+            cl.getField("tm").set(data,tm);
         }
         catch(NoSuchFieldException e){
             //getField throws
@@ -141,7 +141,7 @@ public class OutPort<DataType> extends OutPortBase {
     public OutPort(BufferBase<DataType> buffer,
             final String name, DataRef<DataType> valueRef) {
         
-        super(name,toTypeCdoe(valueRef));
+        super(name,toTypeCode(valueRef));
         
         this.m_value = valueRef;
         this.m_timeoutTick = 1000; // [usec]

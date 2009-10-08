@@ -327,10 +327,13 @@ public class InPortBase extends PortBase {
                            "dataflow_type push is supported");
             appendProperty("dataport.dataflow_type", "push");
             appendProperty("dataport.interface_type",
-                           provider_types.toString());
+                           StringUtil.flatten(provider_types));
         }
 
-        m_providerTypes = (Vector<String>)provider_types;
+	Iterator it = provider_types.iterator();
+	while(it.hasNext()) {
+	    m_providerTypes.add((String)it.next());
+	}
     }
 
     /**
@@ -344,7 +347,7 @@ public class InPortBase extends PortBase {
             = OutPortProviderFactory.instance();
         Set consumer_types = factory.getIdentifiers();
         rtcout.println(rtcout.DEBUG, 
-                       "available consumer: " + consumer_types.toString());
+                       "available consumer: " + StringUtil.flatten(consumer_types));
 
 //#ifndef RTC_NO_DATAPORTIF_ACTIVATION_OPTION
         String string_normalize = StringUtil.normalize(m_properties.getProperty("consumer_types"));
@@ -378,10 +381,13 @@ public class InPortBase extends PortBase {
                            "dataflow_type pull is supported");
             appendProperty("dataport.dataflow_type", "pull");
             appendProperty("dataport.interface_type",
-                           consumer_types.toString());
+                           StringUtil.flatten(consumer_types));
         }
 
-        m_consumerTypes = (Vector<String>)consumer_types;
+	Iterator it = consumer_types.iterator();
+	while(it.hasNext()) {
+	    m_consumerTypes.add((String)it.next());
+	}
     }
 
     /**
@@ -422,6 +428,7 @@ public class InPortBase extends PortBase {
                 factory.deleteObject(provider);
                 return null;
             }
+	    cprof.value.properties = nvlist.value;
             return provider;
         }
 

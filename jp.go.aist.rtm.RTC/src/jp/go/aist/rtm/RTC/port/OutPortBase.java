@@ -40,6 +40,7 @@ public class OutPortBase extends PortBase {
      * @param data_type
      */
     public OutPortBase(final String name,final String data_type) {
+	super(name);
         this.m_name = name;
 
         rtcout.setLevel("PARANOID");
@@ -56,7 +57,7 @@ public class OutPortBase extends PortBase {
         // publisher list
         PublisherBaseFactory<PublisherBase,String> factory 
             = PublisherBaseFactory.instance();
-        String pubs = factory.getIdentifiers().toString();
+        String pubs = StringUtil.flatten(factory.getIdentifiers());
 
         // blank characters are deleted for RTSE's bug
         pubs = pubs.trim();
@@ -582,10 +583,13 @@ public class OutPortBase extends PortBase {
                            "dataflow_type pull is supported");
             appendProperty("dataport.dataflow_type", "push");
             appendProperty("dataport.interface_type",
-                           provider_types.toString());
+                           StringUtil.flatten((Set)provider_types));
         }
 
-        m_providerTypes = (Vector<String>)provider_types;
+	Iterator it = provider_types.iterator();
+	while(it.hasNext()) {
+	    m_providerTypes.add((String)it.next());
+	}
     }
 
     /**
@@ -633,10 +637,13 @@ public class OutPortBase extends PortBase {
                            "dataflow_type pull is supported");
             appendProperty("dataport.dataflow_type", "puish");
             appendProperty("dataport.interface_type",
-                           consumer_types.toString());
+                           StringUtil.flatten(consumer_types));
         }
 
-        m_consumerTypes = (Vector<String>)consumer_types;
+	Iterator it = consumer_types.iterator();
+	while(it.hasNext()) {
+	    m_consumerTypes.add((String)it.next());
+	}
 
     }
     /**
@@ -675,6 +682,7 @@ public class OutPortBase extends PortBase {
                 factory.deleteObject(provider);
                 return null;
             }
+	    cprof.value.properties = nvlist.value;
             return provider;
         }
 

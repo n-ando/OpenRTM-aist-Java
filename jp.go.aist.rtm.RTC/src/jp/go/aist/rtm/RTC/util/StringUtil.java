@@ -1,7 +1,9 @@
 package jp.go.aist.rtm.RTC.util;
 
+import java.util.Set;
 import java.util.Vector;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 public class StringUtil {
 
@@ -188,6 +190,31 @@ public class StringUtil {
             str.append(sv.elementAt(intIdx) + ", ");
         }
         str.append(sv.lastElement());
+        return str.toString();
+    }
+
+    /**
+     * <p> 与えられた文字列リストからCSVを生成する。 </p> 
+     *
+     * 引数で与えられた文字列リストの各要素を並べたCSVを生成する。
+     * 文字列リストが空の場合には空白文字を返す。
+     *
+     * @param  sv CSV変換対象文字列リスト
+     * @return CSV変換結果文字列
+     */
+    public static String flatten(Set sv) {
+        if( sv.size() == 0) return "";
+
+        StringBuffer str = new StringBuffer();
+
+	ArrayList svlist = new ArrayList(sv);
+	
+	int intIdx;
+        for(intIdx=0; intIdx < svlist.size()-1; ++intIdx) {
+            str.append(svlist.get(intIdx) + ", ");
+        }
+        str.append(svlist.get(intIdx));
+
         return str.toString();
     }
 
