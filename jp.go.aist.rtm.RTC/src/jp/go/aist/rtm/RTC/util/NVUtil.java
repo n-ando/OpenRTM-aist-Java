@@ -104,8 +104,16 @@ public class NVUtil {
                     value = anyVal.extract_wstring();
                 } else if( anyVal.type().kind() == TCKind.tk_string ) {
                     value = anyVal.extract_string();
-                } else {
-                    value = anyVal.extract_Value().toString();
+                } else if( anyVal.type().kind() == TCKind.tk_objref ) {
+		    org.omg.CORBA.Object obj = anyVal.extract_Object();
+		    if (obj != null) {
+			value = obj.toString();
+		    }
+		    else {
+			value = "";
+		    }
+		} else {
+		    value = anyVal.extract_Value().toString();
                 }
                 final String name = nvlist.value[intIdx].name;
                 prop.setProperty(name, value);
