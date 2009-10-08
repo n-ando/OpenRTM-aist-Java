@@ -6,6 +6,7 @@ import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 
 import _SDOPackage.NVListHolder;
 import OpenRTM.CdrDataHelper;
@@ -14,7 +15,6 @@ import OpenRTM.OutPortCdrPOA;
 import OpenRTM.OutPortCdrOperations;
 import OpenRTM.PortStatus;
 
-import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
@@ -24,6 +24,7 @@ import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.log.Logbuf;
@@ -55,7 +56,7 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
         m_objref = this._this();
     
         // set outPort's reference
-        ORB orb = Manager.instance().getORB();
+        ORB orb = ORBUtil.getOrb();
         CORBA_SeqUtil.
         push_back(m_properties,
                   NVUtil.newNV("dataport.corba_cdr.outport_ior",
@@ -127,31 +128,34 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
     public OpenRTM.PortStatus get(OpenRTM.CdrDataHolder data) {
         rtcout.println(rtcout.PARANOID, "get()");
 
-        data = new OpenRTM.CdrDataHolder();
         if (m_buffer == null) {
+            rtcout.println(rtcout.PARANOID, "m_buffer is null.");
             return OpenRTM.PortStatus.UNKNOWN_ERROR;
         }
 
         if (m_buffer.empty()) {
+            rtcout.println(rtcout.PARANOID, "m_buffer is empty.");
             return OpenRTM.PortStatus.BUFFER_EMPTY;
         }
 
         InputStream cdr = null;
 
+        DataRef<InputStream> cdr_ref = new DataRef<InputStream>(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret 
-                          = m_buffer.read(new DataRef<InputStream>(cdr));
+                          = m_buffer.read(cdr_ref);
         if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
+            byte[] bs = new byte[256];
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
-                int len = cdr.available();
-                data.value = new byte[len];
-                cdr.read_octet_array(data.value, 0, len);
-                rtcout.println(rtcout.PARANOID, 
-                               "converted CDR data size: "+len);
-                return convertReturn(ret);
+                for(;;){
+                    cdr_ref.v.read_octet_array(bs,0,data.value.length);
+                    baos.write(bs, 0, 256);
+                }
             }
-            catch (IOException e){
-                return OpenRTM.PortStatus.BUFFER_EMPTY;
+            catch(Exception e) {
+                    baos.write(bs, 0, 256);
             }
+            data.value = baos.toByteArray();
         }
         return convertReturn(ret);
     }
