@@ -3,7 +3,7 @@ package jp.go.aist.rtm.RTC.port;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
@@ -70,8 +70,8 @@ public class InPortPullConnector extends InPortConnector {
         String buf_type;
         buf_type = profile.properties.getProperty("buffer_type",
                                               "ring_buffer");
-        FactoryGlobal<BufferBase<OutputStream>,String> factory 
-                = FactoryGlobal.instance();
+        BufferFactory<BufferBase<OutputStream>,String> factory 
+                = BufferFactory.instance();
         return factory.createObject(buf_type);
     }
     

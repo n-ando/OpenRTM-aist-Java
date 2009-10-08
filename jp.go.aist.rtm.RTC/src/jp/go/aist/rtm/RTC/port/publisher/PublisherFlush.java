@@ -7,7 +7,7 @@ import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.port.InPortConsumer;
 import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 
@@ -164,8 +164,8 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      *
      */
     public static void PublisherFlushInit() {
-        final FactoryGlobal<PublisherBase,String> factory 
-            = FactoryGlobal.instance();
+        final PublisherBaseFactory<PublisherBase,String> factory 
+            = PublisherBaseFactory.instance();
 
         factory.addFactory("flush",
                     new PublisherFlush(),

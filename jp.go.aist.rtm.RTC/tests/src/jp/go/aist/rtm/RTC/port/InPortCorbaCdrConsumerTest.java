@@ -9,7 +9,7 @@ import org.omg.PortableServer.POA;
 
 import _SDOPackage.NVListHolder;
 
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.buffer.CdrRingBuffer;
@@ -121,8 +121,8 @@ public class InPortCorbaCdrConsumerTest extends TestCase {
         assertEquals(ReturnCode.PORT_ERROR, retcode);
 
         RingBuffer<OutputStream> buffer;
-        final FactoryGlobal<RingBuffer<OutputStream>,String> factory 
-            = FactoryGlobal.instance();
+        final BufferFactory<RingBuffer<OutputStream>,String> factory 
+            = BufferFactory.instance();
         factory.addFactory("ring_buffer",
                     new CdrRingBuffer(),
                     new CdrRingBuffer());
@@ -249,8 +249,8 @@ public class InPortCorbaCdrConsumerTest extends TestCase {
         
 
         RingBuffer<OutputStream> buffer;
-        final FactoryGlobal<RingBuffer<OutputStream>,String> factory 
-            = FactoryGlobal.instance();
+        final BufferFactory<RingBuffer<OutputStream>,String> factory 
+            = BufferFactory.instance();
         factory.addFactory("ring_buffer",
                     new CdrRingBuffer(),
                     new CdrRingBuffer());

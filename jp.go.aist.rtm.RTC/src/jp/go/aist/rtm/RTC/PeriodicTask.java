@@ -6,11 +6,15 @@ import java.lang.Thread;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.IllegalAccessException;
+
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.TimeMeasure;
-import jp.go.aist.rtm.RTC.FactoryGlobal;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
+import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
+
+
+
 /**
 * <p>PeriodicTask</p>
 */
@@ -198,7 +202,8 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
 
     /**
-     * <p> This function can set the measurement of the execution time effective/invalidly.  </p>
+     * <p> This function can set the measurement of the execution time 
+     * effective/invalidly.  </p>
      * @param  value true:effectuation
      */
     public void executionMeasure(boolean value) {
@@ -215,7 +220,8 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
     
     /**
-     * <p> This function can set the measurement of the execution time effective/invalidly. </p> 
+     * <p> This function can set the measurement of the execution time i
+     * effective/invalidly. </p> 
      * @param  value true:effectuation
      */
     public void periodicMeasure(boolean value) {
@@ -232,7 +238,8 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
     
     /**
-     * <p> This function acquires the measurement result of the execution time.  </p> 
+     * <p> This function acquires the measurement result of the execution 
+     * time.  </p> 
      * @return TimeMeasure.Statistics
      */
     public TimeMeasure.Statistics getExecStat() {
@@ -242,7 +249,8 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
     
     /**
-     * <p> This function acquires the measurement result at time of the cycle.  </p>
+     * <p> This function acquires the measurement result at time of the 
+     * cycle.  </p>
      * @return TimeMeasure.Statistics
      */
     public TimeMeasure.Statistics getPeriodStat() {
@@ -310,6 +318,9 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
           }
         TimeValue tv = 
            new TimeValue(m_period.toDouble()-m_execTime.interval().toDouble());
+        if (tv.toDouble()<0) {
+            return;
+        } 
         try{
             sleep((long)(tv.toDouble()*1000));
         }
@@ -416,8 +427,8 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
      *
      */
     public static void PeriodicTaskInit() {
-        final FactoryGlobal<PeriodicTaskBase,String> factory 
-            = FactoryGlobal.instance();
+        final PeriodicTaskFactory<PeriodicTaskBase,String> factory 
+            = PeriodicTaskFactory.instance();
 
         factory.addFactory("default",
 			   new PeriodicTask(),

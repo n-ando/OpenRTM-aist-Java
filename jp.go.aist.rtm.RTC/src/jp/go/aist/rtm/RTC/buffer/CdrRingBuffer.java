@@ -3,7 +3,7 @@ package jp.go.aist.rtm.RTC.buffer;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 
@@ -37,8 +37,8 @@ public class CdrRingBuffer implements ObjectCreator<BufferBase<OutputStream>>, O
      *
      */
     public static void CdrRingBufferInit() {
-        final FactoryGlobal<RingBuffer<OutputStream>,String> factory 
-            = FactoryGlobal.instance();
+        final BufferFactory<RingBuffer<OutputStream>,String> factory 
+            = BufferFactory.instance();
 
         factory.addFactory("ring_buffer",
                     new CdrRingBuffer(),

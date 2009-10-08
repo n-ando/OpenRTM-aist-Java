@@ -15,7 +15,7 @@ import OpenRTM.InPortCdrPOA;
 import OpenRTM.PortStatus;
 
 import jp.go.aist.rtm.RTC.Manager;
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.InPortProviderFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
@@ -192,8 +192,8 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      *
      */
     public static void InPortCorbaCdrProviderInit() {
-        final FactoryGlobal<InPortProviderImpl,String> factory 
-            = FactoryGlobal.instance();
+        final InPortProviderFactory<InPortProvider,String> factory 
+            = InPortProviderFactory.instance();
 
         factory.addFactory("corba_cdr",
                     new InPortCorbaCdrProvider(),

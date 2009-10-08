@@ -11,7 +11,7 @@ import OpenRTM.CdrDataHolder;
 import OpenRTM.PortStatus;
 
 import jp.go.aist.rtm.RTC.Manager;
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
@@ -225,8 +225,8 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      *
      */
     public static void OutPortCorbaCdrConsumerInit() {
-        final FactoryGlobal<OutPortConsumer,String> factory 
-            = FactoryGlobal.instance();
+        final OutPortConsumerFactory<OutPortConsumer,String> factory 
+            = OutPortConsumerFactory.instance();
 
         factory.addFactory("corba_cdr",
                     new OutPortCorbaCdrConsumer(),

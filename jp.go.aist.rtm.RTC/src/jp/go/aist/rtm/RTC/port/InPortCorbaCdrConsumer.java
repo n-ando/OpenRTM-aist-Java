@@ -12,7 +12,7 @@ import _SDOPackage.NVListHolder;
 import OpenRTM.CdrDataHolder;
 
 
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.InPortConsumerFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.Manager;
@@ -335,8 +335,8 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      *
      */
     public static void InPortCorbaCdrConsumerInit() {
-        final FactoryGlobal<InPortConsumer,String> factory 
-            = FactoryGlobal.instance();
+        final InPortConsumerFactory<InPortConsumer,String> factory 
+            = InPortConsumerFactory.instance();
 
         factory.addFactory("corba_cdr",
                     new InPortCorbaCdrConsumer(),

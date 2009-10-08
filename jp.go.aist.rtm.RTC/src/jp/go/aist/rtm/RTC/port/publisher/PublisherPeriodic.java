@@ -5,7 +5,8 @@ import org.omg.CORBA.portable.OutputStream;
 import java.util.Vector;
 import java.util.Set;
 
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
+import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.PeriodicTaskBase;
@@ -262,8 +263,8 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             m_skipn = 0;           // default skip count
         }
     
-        FactoryGlobal<PeriodicTaskBase,String> factory 
-            = FactoryGlobal.instance();
+        PeriodicTaskFactory<PeriodicTaskBase,String> factory 
+            = PeriodicTaskFactory.instance();
     
         Set hs = factory.getIdentifiers();
         rtcout.println(rtcout.DEBUG, 
@@ -474,8 +475,8 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      *
      */
     public static void PublisherPeriodicInit() {
-        final FactoryGlobal<PublisherBase,String> factory 
-            = FactoryGlobal.instance();
+        final PublisherBaseFactory<PublisherBase,String> factory 
+            = PublisherBaseFactory.instance();
 
         factory.addFactory("periodic",
                     new PublisherPeriodic(),

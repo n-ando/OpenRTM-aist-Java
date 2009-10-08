@@ -5,7 +5,9 @@ import org.omg.CORBA.portable.OutputStream;
 
 import java.io.IOException;
 
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.PublisherBaseFactory;
+import jp.go.aist.rtm.RTC.InPortConsumerFactory;
+import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.log.Logbuf;
@@ -114,8 +116,8 @@ public class OutPortPushConnector extends OutPortConnector {
         // delete publisher
         if (m_publisher != null) {
             rtcout.println(rtcout.DEBUG, "delete publisher");
-            FactoryGlobal<PublisherBase,String> pfactory 
-                = FactoryGlobal.instance();
+            PublisherBaseFactory<PublisherBase,String> pfactory 
+                = PublisherBaseFactory.instance();
             pfactory.deleteObject(m_publisher);
         }
         m_publisher = null;
@@ -123,8 +125,8 @@ public class OutPortPushConnector extends OutPortConnector {
         // delete consumer
         if (m_consumer != null) {
             rtcout.println(rtcout.DEBUG, "delete consumer");
-            FactoryGlobal<InPortConsumer,String> cfactory 
-                = FactoryGlobal.instance();
+            InPortConsumerFactory<InPortConsumer,String> cfactory 
+                = InPortConsumerFactory.instance();
             cfactory.deleteObject(m_consumer);
         }
         m_consumer = null;
@@ -132,8 +134,8 @@ public class OutPortPushConnector extends OutPortConnector {
         // delete buffer
         if (m_buffer != null) {
             rtcout.println(rtcout.DEBUG, "delete buffer");
-            FactoryGlobal<BufferBase<OutputStream>,String> bfactory 
-                = FactoryGlobal.instance();
+            BufferFactory<BufferBase<OutputStream>,String> bfactory 
+                = BufferFactory.instance();
             bfactory.deleteObject(m_buffer);
         }
         m_buffer = null;
@@ -179,8 +181,8 @@ public class OutPortPushConnector extends OutPortConnector {
         pub_type = profile.properties.getProperty("subscription_type",
                                               "flush");
         StringUtil.normalize(pub_type);
-        FactoryGlobal<PublisherBase,String> factory  
-                = FactoryGlobal.instance();
+        PublisherBaseFactory<PublisherBase,String> factory  
+                = PublisherBaseFactory.instance();
         return factory.createObject(pub_type);
     }
 
@@ -191,8 +193,8 @@ public class OutPortPushConnector extends OutPortConnector {
         String buf_type;
         buf_type = profile.properties.getProperty("buffer_type",
                                               "ring_buffer");
-        FactoryGlobal<BufferBase<OutputStream>,String> factory 
-                = FactoryGlobal.instance();
+        BufferFactory<BufferBase<OutputStream>,String> factory 
+                = BufferFactory.instance();
         return factory.createObject(buf_type);
     }
 

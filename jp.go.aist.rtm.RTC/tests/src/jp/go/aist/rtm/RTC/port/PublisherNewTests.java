@@ -10,7 +10,7 @@ import org.omg.CORBA.portable.OutputStream;
 import junit.framework.TestCase;
 import _SDOPackage.NVListHolder;
 
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
 import jp.go.aist.rtm.RTC.PeriodicTask;
 import jp.go.aist.rtm.RTC.PeriodicTaskBase;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherNew;
@@ -42,8 +42,8 @@ public class PublisherNewTests extends TestCase {
         m_fh = new FileHandler(logfile);
         rtcout.addStream(m_fh);
         rtcout.setLevel("TRACE");
-        FactoryGlobal<PeriodicTaskBase,String> factory 
-            = FactoryGlobal.instance();
+        PeriodicTaskFactory<PeriodicTaskBase,String> factory 
+            = PeriodicTaskFactory.instance();
         factory.addFactory("default",
 			   new PeriodicTask(),
 			   new PeriodicTask());

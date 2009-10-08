@@ -15,7 +15,7 @@ import OpenRTM.OutPortCdrOperations;
 import OpenRTM.PortStatus;
 
 import jp.go.aist.rtm.RTC.Manager;
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
@@ -199,8 +199,8 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
      *
      */
     public static void OutPortCorbaCdrProviderInit() {
-        final FactoryGlobal<OutPortProviderImpl,String> factory 
-            = FactoryGlobal.instance();
+        final OutPortProviderFactory<OutPortProvider,String> factory 
+            = OutPortProviderFactory.instance();
 
         factory.addFactory("corba_cdr",
                     new OutPortCorbaCdrProvider(),

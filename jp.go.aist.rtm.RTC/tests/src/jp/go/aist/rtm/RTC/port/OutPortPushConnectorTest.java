@@ -14,7 +14,9 @@ import org.omg.PortableServer.POA;
 import _SDOPackage.NVListHolder;
 import RTC.PortService;
 
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.BufferFactory;
+import jp.go.aist.rtm.RTC.PublisherBaseFactory;
+import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.PeriodicTask;
@@ -387,28 +389,28 @@ public class OutPortPushConnectorTest extends TestCase {
           rtcout.setLevel("SILENT");
 
           rtcout.println(rtcout.TRACE, "IN  test_OutPortPushConnector.log");
-          final FactoryGlobal<PublisherBase,String> factory0 
-              = FactoryGlobal.instance();
+          final PublisherBaseFactory<PublisherBase,String> factory0 
+              = PublisherBaseFactory.instance();
 
           factory0.addFactory("flush",
                       new PublisherFlushMock(),
                       new PublisherFlushMock());
 
-          final FactoryGlobal<PublisherBase,String> factory1
-              = FactoryGlobal.instance();
+          final PublisherBaseFactory<PublisherBase,String> factory1
+              = PublisherBaseFactory.instance();
 
           factory1.addFactory("new",
                       new PublisherNewMock(),
                       new PublisherNewMock());
 
-          final FactoryGlobal<RingBuffer<OutputStream>,String> factoryB 
-              = FactoryGlobal.instance();
+          final BufferFactory<RingBuffer<OutputStream>,String> factoryB 
+              = BufferFactory.instance();
           factoryB.addFactory("ring_buffer",
                       new CdrRingBuffer(),
                       new CdrRingBuffer());
 
-          FactoryGlobal<PeriodicTaskBase,String> factoryP
-              = FactoryGlobal.instance();
+          PeriodicTaskFactory<PeriodicTaskBase,String> factoryP
+              = PeriodicTaskFactory.instance();
           factoryP.addFactory("default",
                       new PeriodicTask(),
                       new PeriodicTask());
