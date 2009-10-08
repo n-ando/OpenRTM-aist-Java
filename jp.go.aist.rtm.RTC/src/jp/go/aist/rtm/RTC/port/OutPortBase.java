@@ -16,7 +16,10 @@ import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
 import RTC.ReturnCode_t;
 
-import jp.go.aist.rtm.RTC.FactoryGlobal;
+import jp.go.aist.rtm.RTC.PublisherBaseFactory;
+import jp.go.aist.rtm.RTC.InPortProviderFactory;
+import jp.go.aist.rtm.RTC.OutPortProviderFactory;
+import jp.go.aist.rtm.RTC.InPortConsumerFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
 import jp.go.aist.rtm.RTC.util.Properties;
@@ -51,8 +54,8 @@ public class OutPortBase extends PortBase {
         addProperty("dataport.data_type", data_type, String.class);
 
         // publisher list
-        FactoryGlobal<PublisherBase,String> factory 
-            = FactoryGlobal.instance();
+        PublisherBaseFactory<PublisherBase,String> factory 
+            = PublisherBaseFactory.instance();
         String pubs = factory.getIdentifiers().toString();
 
         // blank characters are deleted for RTSE's bug
@@ -183,7 +186,7 @@ public class OutPortBase extends PortBase {
 
         String sid = id;
         for (int i=0, len=m_connectors.size(); i < len; ++i) {
-            if (sid  == m_connectors.elementAt(i).id()) {
+            if (sid.equals(m_connectors.elementAt(i).id())) {
                 prof = m_connectors.elementAt(i).profile();
                 return true;
             }
@@ -207,7 +210,7 @@ public class OutPortBase extends PortBase {
 
         String sname = name;
         for (int i=0, len=m_connectors.size(); i < len; ++i) {
-            if (sname  == m_connectors.elementAt(i).name()) {
+            if (sname.equals(m_connectors.elementAt(i).name())) {
                 prof = m_connectors.elementAt(i).profile();
                 return true;
               }
@@ -375,12 +378,12 @@ public class OutPortBase extends PortBase {
         StringUtil.normalize(dflow_type);
 
 
-        if (dflow_type == "push") {
+        if (dflow_type.equals("push")) {
             rtcout.println(rtcout.DEBUG, 
                            "dataflow_type = push .... do nothing");
             return ReturnCode_t.RTC_OK;
         }
-        else if (dflow_type == "pull") {
+        else if (dflow_type.equals("pull")) {
             rtcout.println(rtcout.DEBUG, 
                            "dataflow_type = pull .... create PushConnector");
             OutPortProvider provider=createProvider(cprof, prop);
@@ -438,7 +441,7 @@ public class OutPortBase extends PortBase {
          */
         String dflow_type = prop.getProperty("dataflow_type");
         StringUtil.normalize(dflow_type);
-        if (dflow_type == "push") {
+        if (dflow_type.equals("push")) {
             rtcout.println(rtcout.DEBUG, 
                            "dataflow_type = push .... create PushConnector");
 
@@ -458,7 +461,7 @@ public class OutPortBase extends PortBase {
                            "publishInterface() successfully finished.");
             return ReturnCode_t.RTC_OK;
         }
-        else if (dflow_type == "pull") {
+        else if (dflow_type.equals("pull")) {
             rtcout.println(rtcout.DEBUG, 
                            "dataflow_type = pull .... do nothing.");
             return ReturnCode_t.RTC_OK;
@@ -492,7 +495,7 @@ public class OutPortBase extends PortBase {
         Iterator it = m_connectors.iterator();
         while (it.hasNext()) {
             InPortConnector connector = (InPortConnector)it.next();
-            if (id == connector.id()) {
+            if (id.equals(connector.id())) {
                 // Connector's dtor must call disconnect()
                 it.remove();
                 rtcout.println(rtcout.TRACE, "delete connector: " + id);
@@ -541,16 +544,16 @@ public class OutPortBase extends PortBase {
         rtcout.println(rtcout.TRACE, "initProviders()");
 
         // create OutPort providers
-        FactoryGlobal<OutPortProvider,String> factory 
-            = FactoryGlobal.instance();
+        OutPortProviderFactory<OutPortProvider,String> factory 
+            = OutPortProviderFactory.instance();
         Set provider_types = factory.getIdentifiers();
         rtcout.println(rtcout.DEBUG, 
                        "available providers: " + provider_types.toString());
 
 //#ifndef RTC_NO_DATAPORTIF_ACTIVATION_OPTION
+        String string_normalize = StringUtil.normalize(m_properties.getProperty("provider_types"));
         if (m_properties.hasKey("provider_types")!=null &&
-           StringUtil.normalize(m_properties.getProperty("provider_types")) 
-           != "all") {
+           !string_normalize.equals("all")) {
             rtcout.println(rtcout.DEBUG, 
                        "allowed providers: " 
                        + m_properties.getProperty("provider_types"));
@@ -592,16 +595,16 @@ public class OutPortBase extends PortBase {
         rtcout.println(rtcout.TRACE, "initConsumers()");
 
         // create InPort consumers
-        FactoryGlobal<InPortProvider,String> factory 
-            = FactoryGlobal.instance();
+        InPortProviderFactory<InPortProvider,String> factory 
+            = InPortProviderFactory.instance();
         Set consumer_types = factory.getIdentifiers();
         rtcout.println(rtcout.DEBUG, 
                        "available InPortConsumer: "+consumer_types.toString());
 
 //#ifndef RTC_NO_DATAPORTIF_ACTIVATION_OPTION
+        String string_normalize = StringUtil.normalize(m_properties.getProperty("consumer_types"));
         if (m_properties.hasKey("consumer_types")!=null &&
-            StringUtil.normalize(m_properties.getProperty("consumer_types")) 
-            != "all") {
+            !string_normalize.equals("all")) {
             rtcout.println(rtcout.DEBUG, 
                        "allowed consumers: " 
                        + m_properties.getProperty("consumer_types"));
@@ -657,8 +660,8 @@ public class OutPortBase extends PortBase {
         rtcout.println(rtcout.DEBUG, 
                        "interface_type:  "+prop.getProperty("interface_type"));
         OutPortProvider provider;
-        FactoryGlobal<OutPortProvider,String> factory 
-            = FactoryGlobal.instance();
+        OutPortProviderFactory<OutPortProvider,String> factory 
+            = OutPortProviderFactory.instance();
         provider = factory.createObject(prop.getProperty("interface_type"));
     
         if (provider != null) {
@@ -700,8 +703,8 @@ public class OutPortBase extends PortBase {
         rtcout.println(rtcout.DEBUG, 
                        "interface_type:  "+prop.getProperty("interface_type"));
         InPortConsumer consumer;
-        FactoryGlobal<InPortConsumer,String> factory 
-            = FactoryGlobal.instance();
+        InPortConsumerFactory<InPortConsumer,String> factory 
+            = InPortConsumerFactory.instance();
         consumer = factory.createObject(prop.getProperty("interface_type"));
     
         if (consumer != null) {
