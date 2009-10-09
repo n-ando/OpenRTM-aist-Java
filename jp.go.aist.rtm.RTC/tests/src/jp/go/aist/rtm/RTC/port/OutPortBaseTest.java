@@ -972,4 +972,106 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
 
         portAdmin.deletePort(outport);
     }
+    /**
+     * <p> initProviders() </p>
+     * 
+     */
+    public void test_initProviders2()
+    {
+     
+        if( InPortConsumerFactory.instance().hasFactory("corba_cdr") )
+        {
+            InPortConsumerFactory.instance().removeFactory("corba_cdr");
+        }
+
+    
+        if( OutPortProviderFactory.instance().hasFactory("corba_cdr") )
+        {
+            OutPortProviderFactory.instance().removeFactory("corba_cdr");
+        }
+
+        OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
+                                "TimedFloat");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outport); 
+
+        //InPortCorbaCdrConsumerMock is registred in "corba_cdr".
+        InPortConsumerFactory.instance().
+        addFactory("corba_cdr",
+                    new InPortCorbaCdrConsumerMock(),
+                    new InPortCorbaCdrConsumerMock());
+
+        RTC.PortProfile profile = outport.getPortProfile();
+        _SDOPackage.NVListHolder holder = new _SDOPackage.NVListHolder(profile.properties);
+        Properties prop = NVUtil.toProperties(holder);
+        profile.properties = holder.value;
+        String str = prop.getProperty("dataport.dataflow_type");
+        assertTrue(str.equals(""));
+        str = prop.getProperty("dataport.interface_type");
+        assertTrue(str.equals(""));
+
+        Vector<String> cstr = outport.get_m_providerTypes();
+        assertEquals(0, cstr.size());
+
+        outport.initProviders_public();
+
+        profile = outport.getPortProfile();
+        holder = new _SDOPackage.NVListHolder(profile.properties);
+        prop = NVUtil.toProperties(holder);
+        profile.properties = holder.value;
+
+        //Following are added to porpeties of getPortProfile.
+        str = prop.getProperty("dataport.dataflow_type");
+        assertTrue(str.equals(""));
+        str = prop.getProperty("dataport.interface_type");
+        assertTrue(str.equals(""));
+ 
+        //ProviderTypes,ConsumerTypes
+        cstr = outport.get_m_providerTypes();
+        assertTrue(0== cstr.size());
+
+        portAdmin.deletePort(outport);
+    }
+    /**
+     * <p> init() properties() </p>
+     * 
+     */
+    public void test_init_properties()
+    {
+        OutPortBaseMock outPort = new OutPortBaseMock("OutPortBaseTest", 
+                                "TimedDouble");
+
+        Properties prop = new Properties();
+        prop.setProperty("dataport.interface_type","corba_cdr");
+        prop.setProperty("dataport.dataflow_type", "pull");
+        prop.setProperty("dataport.subscription_type","new");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outPort); 
+
+        outPort.init(prop);
+
+        Properties prop2 = outPort.get_m_properties();
+        assertEquals(prop.size(), prop2.size());
+          
+        String str = prop.getProperty("dataport.interface_type");
+        assertTrue(str.equals(prop.getProperty("dataport.interface_type")));
+        str = prop.getProperty("dataport.dataflow_type");
+        assertTrue(str.equals(prop.getProperty("dataport.dataflow_type")));
+        str = prop.getProperty("dataport.subscription_type");
+        assertTrue(str.equals(prop.getProperty("dataport.subscription_type")));
+
+        prop2 = outPort.properties();
+        assertEquals(prop.size(), prop2.size());
+          
+        str = prop.getProperty("dataport.interface_type");
+        assertTrue(str.equals(prop.getProperty("dataport.interface_type")));
+        str = prop.getProperty("dataport.dataflow_type");
+        assertTrue(str.equals(prop.getProperty("dataport.dataflow_type")));
+        str = prop.getProperty("dataport.subscription_type");
+        assertTrue(str.equals(prop.getProperty("dataport.subscription_type")));
+
+        portAdmin.deletePort(outPort);
+    }
 }
