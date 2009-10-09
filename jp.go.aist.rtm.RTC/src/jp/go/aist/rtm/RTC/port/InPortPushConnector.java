@@ -35,20 +35,25 @@ public class InPortPushConnector extends InPortConnector {
             m_deleteBuffer = false;
         }
         rtcout = new Logbuf("InPortPushConnector");
-        rtcout.setLevel("PARANOID");
 
         // publisher/buffer creation. This may throw std::bad_alloc;
         if (m_buffer == null) {
             m_buffer = createBuffer(profile);
         }
         if (m_buffer == null || m_provider==null) {
+            if(m_buffer == null){
+                rtcout.println(rtcout.PARANOID, "    m_buffer is null.");
+            }
+            if(m_provider == null){
+                rtcout.println(rtcout.PARANOID, "    m_provider is null.");
+            }
+
             throw new Exception("bad_alloc()");
         }
 
         m_provider.init(profile.properties);
         m_provider.setBuffer(m_buffer);
     }
-
     /**
      *
      * <p> Reading data </p>
