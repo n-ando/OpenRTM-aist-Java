@@ -43,8 +43,6 @@ public class OutPortBase extends PortBase {
 	super(name);
         this.m_name = name;
 
-        rtcout.setLevel("PARANOID");
-
         rtcout.println(rtcout.PARANOID, "Port name: "+name);
         rtcout.println(rtcout.PARANOID, "setting port.port_type: DataOutPort");
 
@@ -599,8 +597,8 @@ public class OutPortBase extends PortBase {
         rtcout.println(rtcout.TRACE, "initConsumers()");
 
         // create InPort consumers
-        InPortProviderFactory<InPortProvider,String> factory 
-            = InPortProviderFactory.instance();
+        InPortConsumerFactory<InPortConsumer,String> factory 
+            = InPortConsumerFactory.instance();
         Set consumer_types = factory.getIdentifiers();
         rtcout.println(rtcout.DEBUG, 
                        "available InPortConsumer: "+consumer_types.toString());
@@ -635,7 +633,7 @@ public class OutPortBase extends PortBase {
         if (consumer_types.size() > 0) {
             rtcout.println(rtcout.DEBUG, 
                            "dataflow_type pull is supported");
-            appendProperty("dataport.dataflow_type", "puish");
+            appendProperty("dataport.dataflow_type", "push");
             appendProperty("dataport.interface_type",
                            StringUtil.flatten(consumer_types));
         }
