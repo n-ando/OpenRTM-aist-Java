@@ -42,12 +42,6 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
 import RTC.RTObject;
 import RTC.ReturnCode_t;
 
-//<+zxc
-import org.omg.CosNaming.NameComponent;
-import org.omg.CosNaming.NamingContext;
-import org.omg.CosNaming.NamingContextExt;
-import org.omg.CosNaming.NamingContextExtHelper;
-//+>
 /**
 * <p>各コンポーネントの管理を行うクラスです。</p>
 */
@@ -96,7 +90,7 @@ public class Manager {
                         manager.initLogger();
                         manager.initORB();
                         manager.initNaming();
-			manager.initFactories();
+                        manager.initFactories();
                         manager.initExecContext();
                         manager.initComposite();
                         manager.initTimer();
@@ -128,7 +122,7 @@ public class Manager {
                         manager.initLogger();
                         manager.initORB();
                         manager.initNaming();
-			manager.initFactories();
+                        manager.initFactories();
                         manager.initExecContext();
                         manager.initComposite();
                         manager.initTimer();
@@ -212,11 +206,10 @@ public class Manager {
         }
     }
 
-
     /**
      * <p>マネージャのコンフィギュレーションを取得します。</p>
      *
-　   * @return マネージャコンフィギュレーション
+     * @return マネージャコンフィギュレーション
      */ 
     public Properties getConfig() {
         return m_config;
@@ -252,21 +245,18 @@ public class Manager {
         rtcout.println(rtcout.TRACE, "Manager.activateManager()");
         
         try {
-            if(this.getPOAManager()==null) {
+            if(this.getPOAManager() == null) {
                 rtcout.println(rtcout.ERROR, "Could not get POA manager.");
                 return false;
             }
             this.getPOAManager().activate();
-	    rtcout.println(rtcout.TRACE, "POA Manager activated.");
+            rtcout.println(rtcout.TRACE, "POA Manager activated.");
         } catch (Exception e) {
             rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.activateManager().");
             rtcout.println(rtcout.DEBUG, "POA Manager activation failed.");
             rtcout.println(rtcout.DEBUG, e.getMessage());
             return false;
         }
-        
-
-//        TestNamingContext();//zxc
 
         bindManagerServant();
 
@@ -279,152 +269,6 @@ public class Manager {
         }
 
         return true;
-    }
-
-    /**
-     * :w
-     *
-     *
-     */
-    public void TestNamingContext() {
-
-        rtcout.println(rtcout.TRACE, "in  TestNamingContext");
-    try {
-        rtcout.println(rtcout.TRACE, "    logging 1");
-        ORB orb = Manager.instance().getORB(); 
-
-//      String args[] = m_config.getProperty("corba.args").split(" ");
-//      java.util.Properties props = new java.util.Properties();
-/*
-        props.put("org.omg.CORBA.ORBInitialPort", "9876");
-        props.put("org.omg.CORBA.ORBInitialHost", "localhost");
-        props.put("com.sun.CORBA.ORBServerPort", "9876");
-        props.put("com.sun.CORBA.ORBServerHost", "localhost");
-*/
-        rtcout.println(rtcout.TRACE, "    logging 1-1");
-//        ORB orb = ORB.init(args, props);
-//        ORB orb = ORB.init(args, null);
-
-        rtcout.println(rtcout.TRACE, "    logging 1-2");
-        POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
-
-        rtcout.println(rtcout.TRACE, "    logging 1-3");
-        rootpoa.the_POAManager().activate();
-
-        rtcout.println(rtcout.TRACE, "    logging 1-4");
-        org.omg.CORBA.Object foo = orb.resolve_initial_references("NameService");
-
-        rtcout.println(rtcout.TRACE, "    logging 1-5");
-        NamingContextExt ctx = NamingContextExtHelper.narrow(foo);
-        org.omg.CORBA.Object objref = ctx;
-
-        rtcout.println(rtcout.TRACE, "    logging 2");
-        NameComponent name1[] = ctx.to_name("plans");
-
-        try{
-            ctx.rebind(name1, objref);
-            rtcout.println(rtcout.TRACE, "    logging 2-1");
-        } catch(Exception e) {
-            rtcout.println(rtcout.TRACE, "    logging 2-1" + e);
-        }
-        try{
-            name1 = ctx.to_name("bar");
-            ctx.rebind(name1, objref);
-            rtcout.println(rtcout.TRACE, "    logging 2-2");
-        } catch(Exception e) {
-            rtcout.println(rtcout.TRACE, "    logging 2-2" + e);
-        }
-      
-        try{
-            name1 = ctx.to_name("lash/back");
-            ctx.rebind(name1, objref);
-            rtcout.println(rtcout.TRACE, "    logging 2-3");
-        } catch(Exception e) {
-            rtcout.println(rtcout.TRACE, "    logging 2-3" + e);
-        }
-
-        NamingContextExt ctxx;
-        try{
-            name1 = ctx.to_name("eri");
-            ctxx = NamingContextExtHelper.narrow(ctx.bind_new_context(name1));
-            rtcout.println(rtcout.TRACE, "    logging 2-4");
-        } catch(Exception e) {
-            rtcout.println(rtcout.TRACE, "    logging 2-4" + e);
-        }
-
-        try{
-            name1 = ctx.to_name("eri/foo");
-            rtcout.println(rtcout.TRACE, "    logging 2-5 length:"+ name1.length);
-            ctxx = NamingContextExtHelper.narrow(ctx.bind_new_context(name1));
-            rtcout.println(rtcout.TRACE, "    logging 2-5");
-        } catch(Exception e) {
-            rtcout.println(rtcout.TRACE, "    logging 2-5" + e);
-        }
-
-        try{
-            name1 = ctx.to_name("eri/foo/zxc");
-            rtcout.println(rtcout.TRACE, "    logging 2-6 length:"+ name1.length);
-            ctxx = NamingContextExtHelper.narrow(ctx.bind_new_context(name1));
-            rtcout.println(rtcout.TRACE, "    logging 2-6");
-        } catch(Exception e) {
-            rtcout.println(rtcout.TRACE, "    logging 2-6" + e);
-        }
-
-        try{
-            name1 = ctx.to_name("eri/foo/zxc/abc");
-            ctx.rebind(name1, objref);
-            rtcout.println(rtcout.TRACE, "    logging 2-7");
-        } catch(Exception e) {
-            rtcout.println(rtcout.TRACE, "    logging 2-7" + e);
-        }
-
- 
-        NameComponent name2[] = ctx.to_name("Personal");
-        NamingContextExt ctx2 = NamingContextExtHelper.narrow(ctx.bind_new_context(name2));
-        rtcout.println(rtcout.TRACE, "    logging 3");
-
-        try{
-            rtcout.println(rtcout.TRACE, "    logging 4");
-            NameComponent name3[] = ctx.to_name("schedule");
-            ctx2.rebind(name3, objref);
-        } catch(Exception e) {
-            rtcout.println(rtcout.TRACE, "    logging 4" + e);
-        }
-
-        try{
-            NameComponent name4[] = ctx.to_name("calendar");
-            ctx2.rebind(name4, objref);
-            rtcout.println(rtcout.TRACE, "    logging 5");
-        } catch(Exception e) {
-            rtcout.println(rtcout.TRACE, "    logging 5" + e);
-        }
-
-        NameComponent name5[] = ctx.to_name("TestContext1");
-        NamingContextExt ctx5 = NamingContextExtHelper.narrow(ctx2.bind_new_context(name5));
-        rtcout.println(rtcout.TRACE, "    logging 6");
-
-        try{
-            NameComponent name6[] = ctx.to_name("TestObject");
-            ctx5.rebind(name6, objref);
-            rtcout.println(rtcout.TRACE, "    logging 7");
-        } catch(Exception e) {
-            rtcout.println(rtcout.TRACE, "    logging 7" + e);
-        }
-
-
-        try{
-            NameComponent name8[] = ctx.to_name("OnlyContext");
-            NamingContextExt ctx8 = NamingContextExtHelper.narrow(ctx2.bind_new_context(name8));
-            rtcout.println(rtcout.TRACE, "    logging 8");
-        } catch(Exception e) {
-            rtcout.println(rtcout.TRACE, "    logging 8" + e);
-        }
-
-      } catch(Exception e) {
-        rtcout.println(rtcout.TRACE, "    logging exception");
-        e.printStackTrace(System.err);
-      }
-      rtcout.println(rtcout.TRACE, "out TestNamingContext");
     }
 
     /**
@@ -448,7 +292,6 @@ public class Manager {
             } catch (Exception ex) {
                 rtcout.println(rtcout.ERROR, "Unknown Exception");
             }
-
         }
     }
 
@@ -462,7 +305,7 @@ public class Manager {
             if ( comp[i].length() == 0) {
                 continue;
             }
-	    this.createComponent(comp[i]);
+            this.createComponent(comp[i]);
         }
     }
 
@@ -490,7 +333,6 @@ public class Manager {
             
             m_runner = new OrbRunner(m_pORB);
             m_runner.open("");
-            
         } else {
             rtcout.println(rtcout.TRACE, "Manager.runManager(): blocking mode");
             
@@ -548,14 +390,12 @@ public class Manager {
     /**
      * <p>ロード済みのモジュール名リストを取得します。</p>
      * 
-　   * @return ロード済みモジュール名リスト
+     * @return ロード済みモジュール名リスト
      */
     public Vector<Properties> getLoadedModules() {
         
         rtcout.println(rtcout.TRACE, "Manager.getLoadedModules()");
-        
-//zxc        return new Vector<String>(m_module.getLoadedModules().keySet());
-//        return m_module.getLoadedModules();
+
         Set<String> key = m_module.getLoadedModules().keySet();
         Iterator it = key.iterator();
         Vector<Properties> props = new Vector<Properties>();
@@ -569,7 +409,7 @@ public class Manager {
     /**
      * <p>ロード可能なモジュール名リストを取得します。</p>
      *
-　   * @return ロード可能モジュール名リスト
+     * @return ロード可能モジュール名リスト
      */
     public Vector<Properties> getLoadableModules() {
         
@@ -585,7 +425,7 @@ public class Manager {
      * @param new_func コンポーネント生成オブジェクト 
      * @param delete_func コンポーネント削除オブジェクト 
      *
-　   * @return 登録に成功した場合はtrueを、さもなくばfalseを返します。
+     * @return 登録に成功した場合はtrueを、さもなくばfalseを返します。
      */
     public boolean registerFactory(Properties profile, RtcNewFunc new_func,
             RtcDeleteFunc delete_func) {
@@ -633,7 +473,9 @@ public class Manager {
         
         try {
             ECFactoryBase factory = new ECFactoryJava(name);
-            if( factory==null ) return false;
+            if( factory == null ) {
+                return false;
+            }
             if( !m_ecfactory.registerObject(factory, new ECFactoryPredicate(factory))) {
                 factory = null;
                 return false;
@@ -657,7 +499,7 @@ public class Manager {
         rtcout.println(rtcout.TRACE, "Manager.getModulesFactories()");
 
         Vector<String> factoryIds = new Vector<String>();
-        for (int i = 0; i < m_factory.m_objects.size(); i++) {
+        for (int i=0, len=m_factory.m_objects.size(); i < len; ++i) {
             factoryIds.add(m_factory.m_objects.elementAt(i).profile().getProperty("implementation_id"));
         }
         
@@ -688,33 +530,39 @@ public class Manager {
         
         rtcout.println(rtcout.TRACE, "Manager.createComponent(" + comp_args + ")");
         
-        if( comp_args==null || comp_args.equals("")) return null;
+        if( comp_args == null || comp_args.equals("") ) {
+            return null;
+        }
 
         //------------------------------------------------------------
         // extract "comp_type" and "comp_prop" from comp_arg
         Properties comp_prop = new Properties();
         Properties comp_id = new Properties();
-        if (!procComponentArgs(comp_args, comp_id, comp_prop)) return null;
+        if (!procComponentArgs(comp_args, comp_id, comp_prop)) {
+            return null;
+        }
 
-	if (!(comp_prop.getProperty("exported_ports")==null || comp_prop.getProperty("exported_ports").equals(""))) {
-	    comp_prop.setProperty("conf.default.exported_ports",comp_prop.getProperty("exported_ports"));
-	}
+        if (!(comp_prop.getProperty("exported_ports") == null || 
+              comp_prop.getProperty("exported_ports").equals(""))) {
+            comp_prop.setProperty("conf.default.exported_ports",comp_prop.getProperty("exported_ports"));
+        }
 
         //------------------------------------------------------------
         // Create Component
         RTObject_impl comp = null;
         Properties prop = new Properties();
-        int i;
-        for (i = 0; i < m_factory.m_objects.size(); i++) {
+        int i,len;
+        for (i=0, len=m_factory.m_objects.size(); i < len; ++i) {
             FactoryBase factory = m_factory.m_objects.elementAt(i);
-            if (factory == null) return null;
-            
+            if (factory == null) {
+                return null;
+            }
+
             if (factory.m_Profile.getProperty("implementation_id").equals(comp_id.getProperty("implementation_id"))) {
                 prop = factory.profile();
 
-
                 Vector<String> keyval = comp_prop.propertyNames();
-                for (int ic=0, len=comp_prop.size(); ic < len; ++ic) {
+                for (int ic=0, lenc=comp_prop.size(); ic < lenc; ++ic) {
                     prop.setProperty(keyval.get(ic) , comp_prop.getProperty(keyval.get(ic)));
                 }
 
@@ -744,35 +592,16 @@ public class Manager {
                 }
                 rtcout.println(rtcout.TRACE, "RTC Created: " + comp_id.getProperty("implementaion_id"));
                 break;
-//zxc                
-//                try {
-//                    m_objManager.activate(comp);
-//                    
-//                } catch (ServantAlreadyActive e) {
-//                    rtcout.println(rtcout.DEBUG, "Exception: Caught ServantAlreadyActive Exception in Manager.createComponent().");
-//                    rtcout.println(rtcout.DEBUG, e.getMessage());
-//                    e.printStackTrace();
-//                    
-//                } catch (WrongPolicy e) {
-//                    rtcout.println(rtcout.DEBUG, "Exception: Caught WrongPolicy Exception in Manager.createComponent().");
-//                    rtcout.println(rtcout.DEBUG, e.getMessage());
-//                    e.printStackTrace();
-//                    
-//                } catch (ObjectNotActive e) {
-//                    rtcout.println(rtcout.DEBUG, "Exception: Caught ObjectNotActive Exception in Manager.createComponent().");
-//                    rtcout.println(rtcout.DEBUG, e.getMessage());
-//                    e.printStackTrace();
-//                }
-//                
-//                rtcout.println(rtcout.TRACE, "RTC Created: " + moduleName);
             }
         }
         if(i == m_factory.m_objects.size()) {
             rtcout.println(rtcout.ERROR, "Factory not found: " + comp_id.getProperty("implementaion_id"));
             return null;
         } 
-        if( comp == null ) return null;
-        
+        if( comp == null ) {
+            return null;
+        }
+
         //------------------------------------------------------------
         // Load configuration file specified in "rtc.conf"
         //
@@ -791,17 +620,11 @@ public class Manager {
             return null;
         }
         rtcout.println(rtcout.TRACE, "RTC initialization succeeded: " + comp_id.getProperty("implementaion_id"));
-        
-        // Component initialization
-//zxc        if( !bindExecutionContext(comp) ) {
-//            rtcout.println(rtcout.TRACE, "RTC EC-binding failed: " + moduleName);
-//            return null;
-//        }
 
         //------------------------------------------------------------
         // Bind component to naming service
         registerComponent(comp);
-        
+
         return comp;
     }
     
@@ -862,7 +685,7 @@ public class Manager {
           "version"
         };
 
-        if (id[0].trim().equals(prof[0])==false) {
+        if (id[0].trim().equals(prof[0]) == false) {
             rtcout.println(rtcout.ERROR, "Invalid id type: " + id[0]);
             return false;
         }
@@ -918,7 +741,7 @@ public class Manager {
         
         // NamingManager のみで代用可能
         m_compManager.unregisterObject(new InstanceName(comp));
-      
+        
         String[] names = comp.getNamingNames();
         for (int i = 0; i < names.length; ++i) {
             rtcout.println(rtcout.TRACE, "Unbind name: " + names[i]);
@@ -942,11 +765,13 @@ public class Manager {
 
         StringBuffer ec_id = new StringBuffer();
         Properties ec_prop = new Properties();
-        if (!procContextArgs(ec_args, ec_id, ec_prop)) return null;
+        if (!procContextArgs(ec_args, ec_id, ec_prop)) {
+            return null;
+        }
 
         ECFactoryBase factory = (ECFactoryBase)m_ecfactory.find(new ECFactoryPredicate(ec_id.toString()));
 
-        if(factory  == null) {
+        if(factory == null) {
             rtcout.println(rtcout.ERROR, "Factory not found: " + ec_id);
             return null;
         }
@@ -980,9 +805,8 @@ public class Manager {
             rtcout.println(rtcout.ERROR, "Empty ExecutionContext's name");
             return false;
         }
-//zxc        ec_id =id_and_conf[0];
         ec_id.append(id_and_conf[0]);
-    
+
         if (id_and_conf.length == 2) {
             String[] conf = id_and_conf[1].split("&");
             for (int i=0, len=conf.length; i < len; ++i) {
@@ -1014,7 +838,9 @@ public class Manager {
             final String ectype = m_config.getProperty("exec_cxt.periodic.type");
 
             ECFactoryBase ecfactory = (ECFactoryBase)(m_ecfactory.find(new ECFactoryPredicate(ectype)));
-            if( ecfactory==null ) return false;
+            if( ecfactory == null ) {
+                return false;
+            }
             exec_cxt = ecfactory.create();
             
             try {
@@ -1080,28 +906,27 @@ public class Manager {
         
         rtcout.println(rtcout.TRACE, "Manager.deleteComponent(" + instanceName + ")");
         RTObject_impl comp = null;
-	comp = m_compManager.find(new InstanceName(instanceName));
-	if (comp == null)
-	    return;
+        comp = m_compManager.find(new InstanceName(instanceName));
+        if (comp == null) {
+            return;
+        }
 
-	Properties comp_id = new Properties();
-	comp_id.setProperty("vendor", comp.getProperties().getProperty("vendor"));
-	comp_id.setProperty("category", comp.getProperties().getProperty("category"));
-	comp_id.setProperty("implementation_id", comp.getProperties().getProperty("implementation_id"));
-	comp_id.setProperty("version", comp.getProperties().getProperty("version"));
+        Properties comp_id = new Properties();
+        comp_id.setProperty("vendor", comp.getProperties().getProperty("vendor"));
+        comp_id.setProperty("category", comp.getProperties().getProperty("category"));
+        comp_id.setProperty("implementation_id", comp.getProperties().getProperty("implementation_id"));
+        comp_id.setProperty("version", comp.getProperties().getProperty("version"));
 
-	FactoryBase factory = (FactoryBase)m_factory.find(new FactoryPredicate(instanceName));
-    
-	ReturnCode_t ret = comp.exit();
+        FactoryBase factory = (FactoryBase)m_factory.find(new FactoryPredicate(instanceName));
 
-	if (factory == null)
-	    {
-	  return;
-	    }
-	else
-	    {
-		factory.destroy(comp);
-	    } 
+        ReturnCode_t ret = comp.exit();
+
+        if (factory == null) {
+            return;
+        }
+        else {
+            factory.destroy(comp);
+        }
     }
     
     /**
@@ -1222,23 +1047,21 @@ public class Manager {
             for (int i=0; i < logouts.length; ++i) {
                 String logfile = logouts[i].trim();
                 if (logfile == null) continue;
-	
+
                 // Open logfile
                 if (logfile.equals("STDOUT") || logfile.equals("stdout")) {
 
                     rtcout.addStream(new ConsoleHandler());
                     continue;
                 }
-        
+                
                 try {
                     rtcout.addStream(new FileHandler(logfile));
                 }
                 catch(IOException ex) {
-                    System.err.println("Error: cannot open logfile: " + logfile );
                     continue;
                 }
-              }
-
+            }
             
             // Set date format for log entry header
             rtcout.setDateFormat(m_config.getProperty("logger.date_format"));
@@ -1323,8 +1146,10 @@ public class Manager {
 
     protected java.util.Properties createORBProperties() {
         String endpoint = m_config.getProperty("corba.endpoint");
-        if(endpoint==null || (endpoint.indexOf(":")<0))  return null;
-        
+        if(endpoint == null || (endpoint.indexOf(":")<0))  {
+            return null;
+        }
+
         java.util.Properties result = new java.util.Properties();
         String[] endPointInfo = endpoint.split(":");
         if( !endPointInfo[0].equals("") ) {
@@ -1458,7 +1283,7 @@ public class Manager {
     protected void shutdownNaming() {
         
         rtcout.println(rtcout.TRACE, "Manager.shutdownNaming()");
-      
+        
         m_namingManager.unbindAll();
     }
     
@@ -1470,7 +1295,7 @@ public class Manager {
         rtcout.println(rtcout.TRACE, "Manager.shutdownComponents()");
         
         Vector<RTObject_impl> comps = m_namingManager.getObjects();
-        for (int i = 0; i < comps.size(); ++i) {
+        for (int i=0, len=comps.size(); i < len; ++i) {
             try {
                 comps.elementAt(i).exit();
                 Properties p = new Properties(comps.elementAt(i).getInstanceName());
@@ -1483,7 +1308,7 @@ public class Manager {
             }
         }
         
-        for (int i = 0; i < m_ecs.size(); ++i) {
+        for (int i=0, len=m_ecs.size(); i < len; ++i) {
             try {
                 m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_ecs.elementAt(i)));
                 
@@ -1505,13 +1330,13 @@ public class Manager {
         String category = comp.getCategory();
         String type_name = comp.getTypeName();
         String inst_name = comp.getInstanceName();
-      
+        
         String type_conf = category + "." + type_name + ".config_file";
         String name_conf = category + "." + inst_name + ".config_file";
-      
+        
         Properties type_prop = new Properties();
         Properties name_prop = new Properties();
-      
+        
         // Load "category.instance_name.config_file"
         if (!(m_config.getProperty(name_conf) == null
                 || m_config.getProperty(name_conf).length() == 0)) {
@@ -1608,8 +1433,8 @@ public class Manager {
      */
     protected boolean initFactories() {
         rtcout.println(rtcout.TRACE, "Manager.initFactories()");
-	FactoryInit.init();
-	return true;
+        FactoryInit.init();
+        return true;
     }
 
     /**
@@ -1629,7 +1454,7 @@ public class Manager {
         m_mgrservant = new ManagerServant();
         return true;
     }
-  
+    
     /**
      * <p> bindManagerServant </p>
      *
@@ -1666,8 +1491,7 @@ public class Manager {
                 FileReader reffile = new FileReader(otherref);
                 BufferedReader br = new BufferedReader(reffile); 
                 String line;
-                line = br.readLine();
-                while (line != null) {
+                while ((line = br.readLine()) != null) {
                     refstring = refstring + line;
                 }
                 br.close();
@@ -1688,7 +1512,7 @@ public class Manager {
     }
 
     /**
-     *
+     * ManagerServant
      */
     ManagerServant m_mgrservant;
 
@@ -1743,27 +1567,27 @@ public class Manager {
         StringBuffer str = new StringBuffer();
         int count = 0;
 
-        for (int i = 0; i < namingFormat.length(); i++) {
+        for (int i = 0; i < namingFormat.length(); ++i) {
             char c = namingFormat.charAt(i);
             if (c == '%') {
                 ++count;
                 if ((count % 2) == 0) {
                     str.append(c);
                 }
-	     } else if (c == '$') {
-	        count = 0;
-	        ++i;
-	        if (namingFormat.charAt(i) == '{' || namingFormat.charAt(i) == '(') {
-		    ++i;
-		    String env = "";
-		    for ( ; i < namingFormat.length() && namingFormat.charAt(i) != '}' && namingFormat.charAt(i) != ')'; ++i) {
-		        env += namingFormat.charAt(i);
-		    }
+            } else if (c == '$') {
+                count = 0;
+                ++i;
+                if (namingFormat.charAt(i) == '{' || namingFormat.charAt(i) == '(') {
+                    ++i;
+                    String env = "";
+                    for ( ; i < namingFormat.length() && namingFormat.charAt(i) != '}' && namingFormat.charAt(i) != ')'; ++i) {
+                        env += namingFormat.charAt(i);
+                    }
                     String envval = System.getenv(env);
-		    if (envval != null) str.append(envval);
-	        } else {
-		    str.append(c);
-	        }
+                    if (envval != null) str.append(envval);
+                } else {
+                    str.append(c);
+                }
             } else {
                 if (count > 0 && (count % 2) != 0) {
                     count = 0;
