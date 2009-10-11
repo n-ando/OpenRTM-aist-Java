@@ -11,6 +11,7 @@ import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.operatorFunc;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.BAD_OPERATION;
@@ -74,21 +75,29 @@ public class CorbaPort extends PortBase {
 	    oid = _default_POA().servant_to_id(provider);
 	}
 	catch (Exception e) {
+            rtcout.println(rtcout.WARN, 
+                "Exception caught."+e.toString());
 	}
 
 	try {
-	    _default_POA().activate_object(provider);
+            _default_POA().activate_object_with_id(oid,provider);
 	}
 	catch (org.omg.PortableServer.POAPackage.ServantAlreadyActive e) {
-	    return false;
+            rtcout.println(rtcout.WARN, 
+                "Exception caught."+e.toString());
+//	    return false;
 	}
+	catch (org.omg.PortableServer.POAPackage.ObjectAlreadyActive e) {
+            rtcout.println(rtcout.WARN, 
+                "Exception caught."+e.toString());
+        }
 	
         Object obj = _default_POA().id_to_reference(oid);
 
         StringBuffer key = new StringBuffer("port");
         key.append(".").append(type_name).append(".").append(instance_name);
 
-        ORB orb = Manager.instance().getORB();
+        ORB orb = ORBUtil.getOrb();
 	String ior = orb.object_to_string(obj);
 
         CORBA_SeqUtil.push_back(this.m_providers, NVUtil.newNV(key.toString(), ior));
