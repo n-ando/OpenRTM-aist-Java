@@ -62,30 +62,43 @@ public class OutPort<DataType> extends OutPortBase {
             Class holder = Class.forName(str+"Holder",
                                          true,
                                          this.getClass().getClassLoader());
-            holder.getField("value").set(data.getClass(),data);
+            Object obj = holder.newInstance();
+            holder.getField("value").set(obj,data);
             Method method = holder.getMethod("_write",
                                    org.omg.CORBA.portable.OutputStream.class);
-            method.invoke( holder ,cdr);
+            method.invoke( obj ,cdr);
+
         }
+        catch(java.lang.InstantiationException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+         }
+
         catch(ClassNotFoundException e){
-            //forName throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
         catch(NoSuchFieldException e){
-            //getField throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
         catch(IllegalAccessException e){
-            //set throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
         catch(NoSuchMethodException e){
-            //getMethod throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
         catch(IllegalArgumentException e){
-            //invoke throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
         catch(InvocationTargetException e){
-            //invoke throws
-        }
-         
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+         }
+
     }
     /**
      * <p> set_timestamp </p>

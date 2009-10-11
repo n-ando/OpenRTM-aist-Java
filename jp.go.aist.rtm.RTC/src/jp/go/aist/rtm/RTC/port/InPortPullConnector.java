@@ -46,11 +46,11 @@ public class InPortPullConnector extends InPortConnector {
      * <p> The read function to read data from buffer to InPort </p>
      *
      */
-    public ReturnCode read(OutputStream data){
+    public ReturnCode read(DataRef<OutputStream> data){
         if (m_buffer == null) {
             return ReturnCode.PORT_ERROR;
         }
-        m_buffer.write(data);
+        m_buffer.read(data);
         return ReturnCode.PORT_OK;
     }
     /**

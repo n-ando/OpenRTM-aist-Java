@@ -67,34 +67,51 @@ public class InPort<DataType> extends InPortBase {
      */
     private DataType read_stream(DataRef<DataType> data,InputStream cdr) {
 
-        Class cl = data.getClass();
+        Class cl = data.v.getClass();
         String str = cl.getName();
         try {
             Class holder = Class.forName(str+"Holder",
                                          true,
                                          this.getClass().getClassLoader());
+            Object obj = holder.newInstance();
             Method method = holder.getMethod("_read",
-                                   org.omg.CORBA.portable.OutputStream.class);
-            method.invoke(holder ,cdr);
-            data.v = (DataType)holder.getField("value").get(data.v.getClass());
+                                   org.omg.CORBA.portable.InputStream.class);
+            method.invoke(obj ,cdr);
+            data.v = (DataType)holder.getField("value").get(obj);
+        }
+        catch(java.lang.InstantiationException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
         catch(ClassNotFoundException e){
             //forName throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
         catch(NoSuchFieldException e){
             //getField throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
         catch(IllegalAccessException e){
             //set throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
         catch(NoSuchMethodException e){
             //getMethod throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
         catch(IllegalArgumentException e){
             //invoke throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
         catch(InvocationTargetException e){
             //invoke throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
         }
 
         return data.v;
@@ -230,7 +247,9 @@ public class InPort<DataType> extends InPortBase {
         org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
         OutputStream cdr = any.create_output_stream();
 
-        ReturnCode ret = m_connectors.elementAt(0).read(cdr);
+        DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+        ReturnCode ret = m_connectors.elementAt(0).read(dataref);
+        cdr = dataref.v;
         if (ret.equals(ReturnCode.PORT_OK)) {
             rtcout.println(rtcout.DEBUG, "data read succeeded");
             InputStream input_stream = cdr.create_input_stream();

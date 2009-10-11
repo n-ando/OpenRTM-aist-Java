@@ -340,25 +340,26 @@ public class InPortPushConnectorTest extends TestCase {
         connector = new InPortPushConnector(profile_new, provider, pbuffer);
 
         OutputStream cdr = null;
+        DataRef<OutputStream> cdrref = new DataRef<OutputStream>(cdr);
         int read_counter =  RingBufferMock.m_mock_logger.countLog("RingBufferMock.read");
-        ReturnCode read_ret = connector.read(cdr);
+        ReturnCode read_ret = connector.read(cdrref);
         assertEquals("1:",read_counter+1, 
                RingBufferMock.m_mock_logger.countLog("RingBufferMock.read"));
 
         ReturnCode ret;
         pbuffer.set_read_return_value(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK);
-        ret = connector.read(cdr);
+        ret = connector.read(cdrref);
         assertTrue("2:",ret.equals(ReturnCode.PORT_OK));
 
         pbuffer.set_read_return_value(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_EMPTY);
-        ret = connector.read(cdr);
+        ret = connector.read(cdrref);
         assertTrue("3:",ret.equals(ReturnCode.BUFFER_EMPTY));
 
         pbuffer.set_read_return_value(jp.go.aist.rtm.RTC.buffer.ReturnCode.TIMEOUT);
-        ret = connector.read(cdr);
+        ret = connector.read(cdrref);
         assertTrue("4:",ret.equals(ReturnCode.BUFFER_TIMEOUT));
         pbuffer.set_read_return_value(jp.go.aist.rtm.RTC.buffer.ReturnCode.PRECONDITION_NOT_MET);
-        ret = connector.read(cdr);
+        ret = connector.read(cdrref);
         assertTrue("5:",ret.equals(ReturnCode.PRECONDITION_NOT_MET));
 
 
@@ -401,7 +402,8 @@ public class InPortPushConnectorTest extends TestCase {
 
         connector.disconnect();
         OutputStream cdr = null;
-        ReturnCode ret = connector.read(cdr);
+        DataRef<OutputStream> cdrref = new DataRef<OutputStream>(cdr);
+        ReturnCode ret = connector.read(cdrref);
         assertTrue("1:"+"PRECONDITION_NOT_MET"+"read="+ret,ret.equals(ReturnCode.PRECONDITION_NOT_MET)); 
 
         rtcout.println(rtcout.PARANOID, "OUT test_disconnect()");

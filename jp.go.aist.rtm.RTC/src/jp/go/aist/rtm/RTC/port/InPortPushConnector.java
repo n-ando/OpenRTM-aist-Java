@@ -63,7 +63,7 @@ public class InPortPushConnector extends InPortConnector {
      * @param data
      * @return ReturnCode
      */
-    public ReturnCode read(OutputStream data) {
+    public ReturnCode read(DataRef<OutputStream> data) {
         rtcout.println(rtcout.TRACE, "read()");
         /*
          * buffer returns
@@ -75,8 +75,9 @@ public class InPortPushConnector extends InPortConnector {
         if (m_buffer == null) {
             return ReturnCode.PRECONDITION_NOT_MET;
         }
-        DataRef<OutputStream> dataref = new DataRef<OutputStream>(data);
-        jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.read(dataref, 0, 0);
+        
+        jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.read(data, 0, 0);
+
         return convertReturn(ret);
     }
     /**

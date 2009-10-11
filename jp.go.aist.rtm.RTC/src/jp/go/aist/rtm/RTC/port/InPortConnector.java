@@ -6,6 +6,7 @@ import org.omg.CORBA.portable.OutputStream;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.DataRef;
 
 /**
  * <p> InPortConnector </p>
@@ -83,7 +84,7 @@ public abstract class InPortConnector extends ConnectorBase {
      * <p> The read function to read data from buffer to InPort </p>
      *
      */
-    public abstract ReturnCode read(OutputStream data);
+    public abstract ReturnCode read(DataRef<OutputStream> data);
 
     protected Logbuf rtcout;
     protected Profile m_profile;
