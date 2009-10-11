@@ -108,8 +108,8 @@ public class OutPort<DataType> extends OutPortBase {
      */
     private void set_timestamp(DataType data) {
         long nanotime = System.nanoTime();
-        RTC.Time tm = new RTC.Time((int)nanotime/1000000000,
-                                   (int)nanotime%1000000000);
+        RTC.Time tm = new RTC.Time((int)(nanotime/1000000000),
+                                   (int)(nanotime%1000000000));
         Class cl = data.getClass();
         String str = cl.getName();
         try {
