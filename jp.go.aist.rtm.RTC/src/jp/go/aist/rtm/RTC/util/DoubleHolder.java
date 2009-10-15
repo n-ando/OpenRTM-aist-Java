@@ -65,4 +65,14 @@ public class DoubleHolder implements ValueHolder, Serializable {
     public String toString() {
         return String.valueOf(value);
     }
+    public void _read (org.omg.CORBA.portable.InputStream i)
+    {
+        double data = i.read_double();
+        value = new Double(data);
+    }
+
+    public void _write (org.omg.CORBA.portable.OutputStream o)
+    {
+        o.write_double(value.doubleValue());
+    }
 }

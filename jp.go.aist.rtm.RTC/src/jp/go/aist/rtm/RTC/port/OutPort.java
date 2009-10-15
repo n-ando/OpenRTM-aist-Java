@@ -1,5 +1,6 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.Streamable;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
@@ -8,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.ClassNotFoundException;
 import java.lang.NoSuchFieldException;
 import java.lang.NoSuchMethodException;
+import java.lang.reflect.Field;
 
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
@@ -56,37 +58,13 @@ public class OutPort<DataType> extends OutPortBase {
      * @param cdr   OutputStream
      */
     private void write_stream(DataType data,OutputStream cdr) {
-        Class cl = data.getClass();
-        String str = cl.getName();
         try {
-            Class holder = Class.forName(str+"Holder",
-                                         true,
-                                         this.getClass().getClassLoader());
-            Object obj = holder.newInstance();
-            holder.getField("value").set(obj,data);
-            Method method = holder.getMethod("_write",
-                                   org.omg.CORBA.portable.OutputStream.class);
-            method.invoke( obj ,cdr);
+            m_field.set(m_object,data);
+            m_method.invoke( m_object ,cdr);
+//            m_streamable._write(cdr);
 
-        }
-        catch(java.lang.InstantiationException e){
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
-         }
-
-        catch(ClassNotFoundException e){
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
-        }
-        catch(NoSuchFieldException e){
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
         }
         catch(IllegalAccessException e){
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
-        }
-        catch(NoSuchMethodException e){
             rtcout.println(rtcout.WARN, 
                    "Exception caught."+e.toString());
         }
@@ -122,6 +100,18 @@ public class OutPort<DataType> extends OutPortBase {
             //set throws
         }
          
+    }
+    /**
+     * <p> set_timestamp </p>
+     * <p> This function sets the timestamp.  </p>
+     *
+     * @return RTC.Time
+     */
+    public static RTC.Time get_timestamp() {
+        long nanotime = System.nanoTime();
+        RTC.Time tm = new RTC.Time((int)(nanotime/1000000000),
+                                   (int)(nanotime%1000000000));
+        return tm; 
     }
     /**
      * <p>コンストラクタです。内部的にバッファが生成されて割り当てられます。</p>
@@ -170,6 +160,44 @@ public class OutPort<DataType> extends OutPortBase {
         this.m_OnOverflow = null;
         this.m_OnUnderflow = null;
 
+        Class cl = valueRef.v.getClass();
+        String str = cl.getName();
+        try {
+            Class holder = Class.forName(str+"Holder",
+                                         true,
+                                         this.getClass().getClassLoader());
+            m_streamable = (Streamable)holder.newInstance();
+            m_object = holder.newInstance();
+            m_field = holder.getField("value");
+            m_method = holder.getMethod("_write",
+                                   org.omg.CORBA.portable.OutputStream.class);
+
+        }
+        catch(java.lang.InstantiationException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+         }
+
+        catch(ClassNotFoundException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(NoSuchFieldException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(IllegalAccessException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(NoSuchMethodException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(IllegalArgumentException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
     }
     
     /**
@@ -190,7 +218,7 @@ public class OutPort<DataType> extends OutPortBase {
         }
         
         // set timestamp
-        set_timestamp(value);
+//        set_timestamp(value);
 
         // data -> (conversion) -> CDR stream
         org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
@@ -375,4 +403,9 @@ public class OutPort<DataType> extends OutPortBase {
     private OnConnect m_OnConnect;
     private OnDisconnect m_OnDisconnect;
     private OutputStream m_cdr;
+
+    private Streamable m_streamable = null;
+    private Object m_object = null;
+    private Field m_field = null;
+    private Method m_method = null;
 }

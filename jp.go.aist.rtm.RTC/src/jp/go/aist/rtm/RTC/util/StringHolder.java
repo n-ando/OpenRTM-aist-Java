@@ -46,4 +46,13 @@ public class StringHolder implements ValueHolder, Serializable {
     public String toString(){
         return value;
     }
+    public void _read (org.omg.CORBA.portable.InputStream i)
+    {
+        value = i.read_string();
+    }
+
+    public void _write (org.omg.CORBA.portable.OutputStream o)
+    {
+        o.write_string(value.toString());
+    }
 }

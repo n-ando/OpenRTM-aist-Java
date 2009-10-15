@@ -64,4 +64,16 @@ public class IntegerHolder implements ValueHolder, Serializable {
     public String toString(){
         return String.valueOf(value);
     }
+
+    public void _read (org.omg.CORBA.portable.InputStream i)
+    {
+        int data = i.read_long ();
+        value = new Integer(data);
+    }
+
+    public void _write (org.omg.CORBA.portable.OutputStream o)
+    {
+        o.write_long(value.intValue());
+    }
+
 }

@@ -64,4 +64,14 @@ public class LongHolder implements ValueHolder, Serializable {
         return String.valueOf(value);
     }
 
+    public void _read (org.omg.CORBA.portable.InputStream i)
+    {
+        long data = i.read_longlong();
+        value = new Long(data);
+    }
+
+    public void _write (org.omg.CORBA.portable.OutputStream o)
+    {
+        o.write_longlong(value.longValue());
+    }
 }

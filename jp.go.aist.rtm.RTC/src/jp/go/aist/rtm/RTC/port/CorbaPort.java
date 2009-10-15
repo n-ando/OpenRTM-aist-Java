@@ -12,6 +12,7 @@ import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.operatorFunc;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.equalFunctor;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.BAD_OPERATION;
@@ -85,14 +86,13 @@ public class CorbaPort extends PortBase {
 	catch (org.omg.PortableServer.POAPackage.ServantAlreadyActive e) {
             rtcout.println(rtcout.WARN, 
                 "Exception caught."+e.toString());
-//	    return false;
 	}
 	catch (org.omg.PortableServer.POAPackage.ObjectAlreadyActive e) {
             rtcout.println(rtcout.WARN, 
                 "Exception caught."+e.toString());
         }
 	
-        Object obj = _default_POA().id_to_reference(oid);
+        org.omg.CORBA.Object obj = _default_POA().id_to_reference(oid);
 
         StringBuffer key = new StringBuffer("port");
         key.append(".").append(type_name).append(".").append(instance_name);
@@ -292,7 +292,7 @@ public class CorbaPort extends PortBase {
 		ior = anyVal.extract_Value().toString();
 	    }
 
-	    Object obj = orb.string_to_object(ior);
+	    org.omg.CORBA.Object obj = orb.string_to_object(ior);
 	    if (obj == null) {
 		rtcout.println(rtcout.ERROR, "Extracted object is nul reference");
 		continue;
@@ -363,7 +363,7 @@ public class CorbaPort extends PortBase {
             for (int i = 0; i < this.m_len; ++i) {
                 if (this.m_cons.get(i).name.equals(nv.name)) {
                     try {
-                        Object obj = ObjectHelper.extract(nv.value);
+                        org.omg.CORBA.Object obj = ObjectHelper.extract(nv.value);
                         if( obj != null ) {
                             this.m_cons.get(i).consumer.setObject(obj);
                         }

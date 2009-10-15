@@ -63,4 +63,15 @@ public class FloatHolder implements ValueHolder, Serializable {
         return String.valueOf(value);
     }
 
+    public void _read (org.omg.CORBA.portable.InputStream i)
+    {
+        float data = i.read_float();
+        value = new Float(data);
+    }
+
+    public void _write (org.omg.CORBA.portable.OutputStream o)
+    {
+        o.write_float(value.floatValue());
+    }
+
 }

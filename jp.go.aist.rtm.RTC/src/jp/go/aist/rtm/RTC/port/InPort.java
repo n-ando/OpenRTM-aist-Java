@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.ClassNotFoundException;
 import java.lang.NoSuchFieldException;
 import java.lang.NoSuchMethodException;
+import java.lang.reflect.Field;
 
 import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
@@ -67,39 +68,12 @@ public class InPort<DataType> extends InPortBase {
      */
     private DataType read_stream(DataRef<DataType> data,InputStream cdr) {
 
-        Class cl = data.v.getClass();
-        String str = cl.getName();
         try {
-            Class holder = Class.forName(str+"Holder",
-                                         true,
-                                         this.getClass().getClassLoader());
-            Object obj = holder.newInstance();
-            Method method = holder.getMethod("_read",
-                                   org.omg.CORBA.portable.InputStream.class);
-            method.invoke(obj ,cdr);
-            data.v = (DataType)holder.getField("value").get(obj);
-        }
-        catch(java.lang.InstantiationException e){
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
-        }
-        catch(ClassNotFoundException e){
-            //forName throws
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
-        }
-        catch(NoSuchFieldException e){
-            //getField throws
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
+            m_method.invoke(m_object ,cdr);
+            data.v = (DataType)m_field.get(m_object);
         }
         catch(IllegalAccessException e){
             //set throws
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
-        }
-        catch(NoSuchMethodException e){
-            //getMethod throws
             rtcout.println(rtcout.WARN, 
                    "Exception caught."+e.toString());
         }
@@ -162,6 +136,46 @@ public class InPort<DataType> extends InPortBase {
         this.m_OnOverflow = null;
         this.m_OnUnderflow = null;
 
+        Class cl = value.v.getClass();
+        String str = cl.getName();
+        try {
+            Class holder = Class.forName(str+"Holder",
+                                         true,
+                                         this.getClass().getClassLoader());
+            m_object = holder.newInstance();
+            m_method = holder.getMethod("_read",
+                                   org.omg.CORBA.portable.InputStream.class);
+            m_field = holder.getField("value");
+        }
+        catch(NoSuchFieldException e){
+            //getField throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(java.lang.InstantiationException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(ClassNotFoundException e){
+            //forName throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(IllegalAccessException e){
+            //set throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(NoSuchMethodException e){
+            //getMethod throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(IllegalArgumentException e){
+            //invoke throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
     }
     
     /**
@@ -382,5 +396,8 @@ public class InPort<DataType> extends InPortBase {
     private OnOverflow<DataType> m_OnOverflow;
     private OnUnderflow<DataType> m_OnUnderflow;
 
+    private Object m_object = null;
+    private Method m_method = null;
+    private Field m_field = null;
     
 }
