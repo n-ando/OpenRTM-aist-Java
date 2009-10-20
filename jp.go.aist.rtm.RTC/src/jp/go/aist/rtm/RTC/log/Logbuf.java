@@ -14,6 +14,9 @@ import java.util.IllegalFormatException;
 
 /**
  * <p>ログ収集ON時のロギングクラスです。</p>
+ *  ログ出力の可否は、デフォルトで無効とし、
+ *  コンフィグ設定の logger.enable:YES なら有効、logger.enable:NO なら無効とする。
+ *  
  */
 public class Logbuf {
 
@@ -91,10 +94,14 @@ public class Logbuf {
      * @param contents ログ内容
      */
     public void println(int level, String contents) {
+        // logger.enable check
+        if(!m_Enabled) {
+            return;
+        }
         boolean bret = this.getPrintFlag();
         // print check
         if(!bret) {
-            System.err.println("Logbuf.println() destination handler was not registered.");
+//            System.err.println("Logbuf.println() destination handler was not registered.");
             return;
         }
         StringBuilder sb = new StringBuilder();
@@ -398,6 +405,22 @@ public class Logbuf {
         return this;
     }
 
+    /**
+     * <p>ログ出力有効を設定します。</p>
+     *
+     */
+    public void setEnabled() {
+        this.m_Enabled = true;
+    }
+
+    /**
+     * <p>ログ出力無効を設定します。</p>
+     *
+     */
+    public void setDisabled() {
+        this.m_Enabled = false;
+    }
+
    /**
     * <p>設定されたログレベル・コード</p>
     */
@@ -417,5 +440,11 @@ public class Logbuf {
     * <p>出力先ハンドラの数</p>
     */
     private int m_HandlerCount = 0;
+
+   /**
+    * <p>ログ出力の設定</p>
+    *    true:有効  false:無効
+    */
+    private static boolean m_Enabled = false;
 
 }

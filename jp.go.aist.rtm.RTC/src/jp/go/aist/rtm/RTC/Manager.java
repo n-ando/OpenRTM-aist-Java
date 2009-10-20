@@ -1043,6 +1043,7 @@ public class Manager {
         
         if (StringUtil.toBool(m_config.getProperty("logger.enable"), "YES", "NO", true)) {
             
+            rtcout.setEnabled();
             String[] logouts = m_config.getProperty("logger.file_name").split(",");
             for (int i=0; i < logouts.length; ++i) {
                 String logfile = logouts[i].trim();
@@ -1081,6 +1082,7 @@ public class Manager {
             rtcout.println(rtcout.INFO, "Manager starting.");
             rtcout.println(rtcout.INFO, "Starting local logging.");
         } else {
+            rtcout.setDisabled();
             m_config.setProperty("logger.log_level","SILENT");
         }
         

@@ -67,6 +67,21 @@ public class LogbufTest extends TestCase {
 
         rtcout.addStream(new ConsoleHandler());
         System.err.println("--- test_case0() addStream(STDOUT) set ---");
+
+        rtcout.setDisabled();
+        rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT 2");
+        rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT 2");
+        rtcout.println(rtcout.TRACE, "TRACE string to STDOUT 2");
+        rtcout.println(rtcout.DEBUG, "DEBUG string to STDOUT 2");
+        rtcout.println(rtcout.INFO, "INFO string to STDOUT 2");
+        rtcout.println(rtcout.WARN, "WARN string to STDOUT 2");
+        rtcout.println(rtcout.ERROR, "ERROR string to STDOUT 2");
+        rtcout.println(rtcout.FATAL, "FATAL string to STDOUT 2");
+        rtcout.println(rtcout.SILENT, "SILENT string to STDOUT 2");
+        // 何も出力されなければOK.
+
+        rtcout.setEnabled();
+        System.err.println("--- test_case0() addStream(STDOUT) set ---");
         rtcout.println(rtcout.PARANOID, "PARANOID string to STDOUT 2");
         rtcout.println(rtcout.VERBOSE, "VERBOSE string to STDOUT 2");
         rtcout.println(rtcout.TRACE, "TRACE string to STDOUT 2");
