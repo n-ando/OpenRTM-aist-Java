@@ -17,6 +17,7 @@ import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.TypeCast;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.TimeValue;
+import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
 
 import RTC.Time;
@@ -37,17 +38,8 @@ public class OutPort<DataType> extends OutPortBase {
      */
     private static <DataType> String toTypeCode(DataRef<DataType> value) { 
         DataType data = value.v;
-        Class cl = data.getClass();
-        String str = new String();
-        TypeCast<DataType> cast = new TypeCast<DataType>(cl);
-        org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
-        any = cast.castAny(value.v);
-        try {
-            str = any.type().name();
-        }
-        catch(org.omg.CORBA.TypeCodePackage.BadKind e){
-        }
-        return str;
+        String typeName = value.v.getClass().getSimpleName();
+        return typeName;
 
     }
     /**
@@ -59,9 +51,9 @@ public class OutPort<DataType> extends OutPortBase {
      */
     private void write_stream(DataType data,OutputStream cdr) {
         try {
-            m_field.set(m_object,data);
-            m_method.invoke( m_object ,cdr);
-//            m_streamable._write(cdr);
+
+            m_field.set(m_streamable,data);
+            m_streamable._write(cdr);
 
         }
         catch(IllegalAccessException e){
@@ -72,10 +64,6 @@ public class OutPort<DataType> extends OutPortBase {
             rtcout.println(rtcout.WARN, 
                    "Exception caught."+e.toString());
         }
-        catch(InvocationTargetException e){
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
-         }
 
     }
     /**
@@ -167,10 +155,7 @@ public class OutPort<DataType> extends OutPortBase {
                                          true,
                                          this.getClass().getClassLoader());
             m_streamable = (Streamable)holder.newInstance();
-            m_object = holder.newInstance();
-            m_field = holder.getField("value");
-            m_method = holder.getMethod("_write",
-                                   org.omg.CORBA.portable.OutputStream.class);
+            m_field = m_streamable.getClass().getField("value");
 
         }
         catch(java.lang.InstantiationException e){
@@ -187,10 +172,6 @@ public class OutPort<DataType> extends OutPortBase {
                    "Exception caught."+e.toString());
         }
         catch(IllegalAccessException e){
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
-        }
-        catch(NoSuchMethodException e){
             rtcout.println(rtcout.WARN, 
                    "Exception caught."+e.toString());
         }
@@ -405,7 +386,5 @@ public class OutPort<DataType> extends OutPortBase {
     private OutputStream m_cdr;
 
     private Streamable m_streamable = null;
-    private Object m_object = null;
     private Field m_field = null;
-    private Method m_method = null;
 }

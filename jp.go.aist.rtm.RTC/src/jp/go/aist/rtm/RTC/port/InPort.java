@@ -4,6 +4,7 @@ import java.lang.ClassCastException;
 import org.omg.CORBA.TypeCodePackage.BadKind;
 import java.io.IOException;
 
+import org.omg.CORBA.portable.Streamable;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
@@ -37,25 +38,16 @@ public class InPort<DataType> extends InPortBase {
     private static final int TIMEOUT_TICK_NSEC_PART = ((int) (TIMEOUT_TICK_USEC % 1000)) * 1000;
 
     /**
-     * <p> toTypeCdoe </p>
+     * <p> toTypeCode </p>
      * <p> This function gets TypeCode of data. </p>
      *
      * @param value data
      * @return TypeCdoe(String)
      */
-    private static <DataType> String toTypeCdoe(DataRef<DataType> value) { 
+    private static <DataType> String toTypeCode(DataRef<DataType> value) { 
         DataType data = value.v;
-        Class cl = data.getClass();
-        String str = new String();
-        TypeCast<DataType> cast = new TypeCast<DataType>(cl);
-        org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
-        any = cast.castAny(value.v);
-        try {
-            str = any.type().name();
-        }
-        catch(org.omg.CORBA.TypeCodePackage.BadKind e){
-        }
-        return str;
+        String typeName = value.v.getClass().getSimpleName();
+        return typeName;
 
     }
     /**
@@ -69,8 +61,8 @@ public class InPort<DataType> extends InPortBase {
     private DataType read_stream(DataRef<DataType> data,InputStream cdr) {
 
         try {
-            m_method.invoke(m_object ,cdr);
-            data.v = (DataType)m_field.get(m_object);
+            m_streamable._read(cdr);
+            data.v = (DataType)m_field.get(m_streamable);
         }
         catch(IllegalAccessException e){
             //set throws
@@ -82,29 +74,9 @@ public class InPort<DataType> extends InPortBase {
             rtcout.println(rtcout.WARN, 
                    "Exception caught."+e.toString());
         }
-        catch(InvocationTargetException e){
-            //invoke throws
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
-        }
 
         return data.v;
     }
-/* zxc Delete this function after the test ends.
-    private DataType read_stream(DataRef<DataType> data,InputStream cdr) {
-
-        //Reads an Any from this input stream.
-        org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
-        any = cdr.read_any();
-        //Creates TypeCast.
-        Class cl = data.v.getClass();
-        TypeCast<DataType> cast = new TypeCast<DataType>(cl);
-        //Casts Any into DataType.
-        data.v = cast.castType(any);
-
-        return data.v;
-    }
-*/
     /**
      * <p>コンストラクタです。</p>
      *
@@ -120,7 +92,7 @@ public class InPort<DataType> extends InPortBase {
             boolean read_block, boolean write_block,
             long read_timeout, long write_timeout) {
         
-        super(name, toTypeCdoe(value));
+        super(name, toTypeCode(value));
 
         this.m_name = name;
         this.m_value = value;
@@ -142,10 +114,8 @@ public class InPort<DataType> extends InPortBase {
             Class holder = Class.forName(str+"Holder",
                                          true,
                                          this.getClass().getClassLoader());
-            m_object = holder.newInstance();
-            m_method = holder.getMethod("_read",
-                                   org.omg.CORBA.portable.InputStream.class);
-            m_field = holder.getField("value");
+            m_streamable = (Streamable)holder.newInstance();
+            m_field = m_streamable.getClass().getField("value");
         }
         catch(NoSuchFieldException e){
             //getField throws
@@ -163,11 +133,6 @@ public class InPort<DataType> extends InPortBase {
         }
         catch(IllegalAccessException e){
             //set throws
-            rtcout.println(rtcout.WARN, 
-                   "Exception caught."+e.toString());
-        }
-        catch(NoSuchMethodException e){
-            //getMethod throws
             rtcout.println(rtcout.WARN, 
                    "Exception caught."+e.toString());
         }
@@ -396,8 +361,7 @@ public class InPort<DataType> extends InPortBase {
     private OnOverflow<DataType> m_OnOverflow;
     private OnUnderflow<DataType> m_OnUnderflow;
 
-    private Object m_object = null;
-    private Method m_method = null;
+    private Streamable m_streamable = null;
     private Field m_field = null;
     
 }
