@@ -285,4 +285,19 @@ public class StringUtil {
         return false;
     }
 
+    /**
+     * <p> 与えられた文字列が絶対パスかどうかを判断する </p>
+     * @param str
+     */
+    public static boolean isAbsolutePath(final String str) {
+	// UNIX absolute path is begun from '/'
+	if (str.charAt(0) == '/') return true;
+	// Windows absolute path is begun from '[a-zA-Z]:\'
+	if (Character.isLetter(str.charAt(0)) && (str.charAt(1) == ':') && str.charAt(2) == '\\') return true;
+	// Windows network file path is begun from '\\'
+	if (str.charAt(0) == '\\' && str.charAt(1) == '\\') return true;
+    
+	return false;
+    }
+
 }
