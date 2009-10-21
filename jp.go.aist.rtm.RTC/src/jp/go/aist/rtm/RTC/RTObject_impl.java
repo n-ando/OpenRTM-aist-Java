@@ -1539,9 +1539,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerInPort()");
 
-        String propkey = "port.dataport." + name + ".tcp_any";
-        PortBase port = new DataInPort(DATA_TYPE_CLASS, name, inport, m_properties.getNode(propkey));
-        this.registerPort(port);
+        this.registerInPort(name, inport);
+//        String propkey = "port.dataport." + name + ".tcp_any";
+//        PortBase port = new DataInPort(DATA_TYPE_CLASS, name, inport, m_properties.getNode(propkey));
+//        this.registerPort(port);
     }
 
     /**
@@ -1584,9 +1585,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerOutPort()");
 
-	String propkey = "port.dataport." + name;
-        PortBase port = new DataOutPort(DATA_TYPE_CLASS, name, outport, m_properties.getNode(propkey));
-        this.registerPort(port);
+        this.registerOutPort(name, outport);
+//	String propkey = "port.dataport." + name;
+//        PortBase port = new DataOutPort(DATA_TYPE_CLASS, name, outport, m_properties.getNode(propkey));
+//        this.registerPort(port);
     }
 
     /**
