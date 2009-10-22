@@ -408,8 +408,8 @@ public class CorbaPort extends PortBase {
     private class ProviderInfo {
 	public ProviderInfo() {
 	}
-	public ProviderInfo(Servant servant, byte[] objectid) {
-	    servant = servant;
+	public ProviderInfo(Servant svt, byte[] objectid) {
+	    servant = svt;
 	    oid = objectid;
 	}
 	public Servant servant = null;
