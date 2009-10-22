@@ -336,12 +336,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
         if( !m_created ) {
             return ReturnCode_t.PRECONDITION_NOT_MET;
         }
-        ReturnCode_t ret;
-        ret = on_initialize();
-        if( ret!=ReturnCode_t.RTC_OK ) {
-            return ret;
-        }
-        m_created = false;
       
         String ec_args = new String();
 
@@ -362,6 +356,13 @@ public class RTObject_impl extends DataFlowComponentPOA {
             return ReturnCode_t.RTC_ERROR;
         }
         ec.bindComponent(this);
+
+        ReturnCode_t ret;
+        ret = on_initialize();
+        if( ret!=ReturnCode_t.RTC_OK ) {
+            return ret;
+        }
+        m_created = false;
 
         // -- entering alive state --
         // at least one EC must be attached

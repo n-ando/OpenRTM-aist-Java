@@ -121,6 +121,7 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
         String[] str = m_members.toString().split(",");
 
         for (int i=0, len=str.length; i < len; ++i) {
+	    str[i] = str[i].trim();
             RTObject_impl rtc = mgr.getComponent(str[i]);
             if (rtc == null) {
                 continue;
@@ -139,6 +140,7 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
             m_org.set_members(sdos.value);
         } catch (Exception e) {
         }
+
         return ReturnCode_t.RTC_OK;
     }
 
@@ -258,6 +260,6 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
     /**
      * <p>Logbuf</p>
      */
-    protected Logbuf rtcout;
+    //    protected Logbuf rtcout;
 
 };

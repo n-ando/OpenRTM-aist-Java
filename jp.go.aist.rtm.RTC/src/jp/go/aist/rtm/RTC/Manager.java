@@ -281,6 +281,7 @@ public class Manager {
             if ( mods[i].length() == 0) {
                 continue;
             }
+	    mods[i] = mods[i].trim();
             String[] str = mods[i].split("\\.");
             try {
                 m_module.load(mods[i], "registerModule");
@@ -305,6 +306,7 @@ public class Manager {
             if ( comp[i].length() == 0) {
                 continue;
             }
+	    comp[i] = comp[i].trim();
             this.createComponent(comp[i]);
         }
     }

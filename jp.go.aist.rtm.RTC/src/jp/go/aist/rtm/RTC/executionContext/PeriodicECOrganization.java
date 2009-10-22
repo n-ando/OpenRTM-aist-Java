@@ -153,7 +153,7 @@ public class PeriodicECOrganization extends Organization_impl {
      * <p>Organizationメンバーを追加する。</p>
      */
      public boolean add_members(final SDO[] sdo_list) 
-        throws SystemException, InvalidParameter, NotAvailable, InternalError {
+	 throws SystemException, InvalidParameter, NotAvailable, InternalError {
 
         rtcout.println(rtcout.DEBUG, "add_members()");
         updateExportedPortsList();
@@ -447,8 +447,8 @@ public class PeriodicECOrganization extends Organization_impl {
         for (int i=0, len=plist.length; i < len; ++i) {
             // port name . comp_name.port_name
             String port_name = comp_name;
-            port_name.concat("."); 
-            port_name.concat(plist[i].name);
+            port_name = port_name.concat("."); 
+            port_name = port_name.concat(plist[i].name);
 
             rtcout.println(rtcout.DEBUG, "port_name: " + port_name + 
                                          " is in " + StringUtil.flatten(portlist));
@@ -513,6 +513,8 @@ public class PeriodicECOrganization extends Organization_impl {
                                          " is in " + StringUtil.flatten(portlist));
             m_rtobj.deletePort(
                             (PortService)plist[i].port_ref._duplicate());
+
+	    portlist.remove(pos);
             rtcout.println(rtcout.DEBUG, "Port " + port_name + " was deleted.");
         }
      }
@@ -526,6 +528,9 @@ public class PeriodicECOrganization extends Organization_impl {
         String plist = new String();
         plist = m_rtobj.getProperties().getProperty("conf.default.exported_ports");
         m_expPorts = StringUtil.split(plist, ",");
+	for (int i=0; i<m_expPorts.size(); ++i) {
+	    m_expPorts.set(i,m_expPorts.get(i).trim());
+	}
     }
 
     /**
@@ -533,7 +538,6 @@ public class PeriodicECOrganization extends Organization_impl {
      */
     public void updateDelegatedPorts() {
         rtcout.println(rtcout.DEBUG, "updateDelegatedPorts()");
-
         Vector<String> oldPorts = new Vector<String>();
         oldPorts = m_expPorts;
 
@@ -547,6 +551,7 @@ public class PeriodicECOrganization extends Organization_impl {
         removedPorts.removeAll(newPorts);
         createdPorts.removeAll(oldPorts);
 
+
         rtcout.println(rtcout.VERBOSE, "old    Ports: " + StringUtil.flatten(oldPorts));
         rtcout.println(rtcout.VERBOSE, "new    Ports: " + StringUtil.flatten(newPorts));
         rtcout.println(rtcout.VERBOSE, "remove Ports: " + StringUtil.flatten(removedPorts));
@@ -556,7 +561,13 @@ public class PeriodicECOrganization extends Organization_impl {
             removePort(m_rtcMembers.elementAt(i), removedPorts);
             addPort(m_rtcMembers.elementAt(i), createdPorts);
         }
-        m_expPorts = newPorts;
+	//        m_expPorts = newPorts;
+	int size = newPorts.size();
+	m_expPorts.clear();
+	
+	for (int i=0; i<size; ++i) {
+	    m_expPorts.add(newPorts.elementAt(i));
+	}
 
   }
 

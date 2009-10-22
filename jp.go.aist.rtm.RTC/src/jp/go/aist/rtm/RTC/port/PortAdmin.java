@@ -78,9 +78,12 @@ public class PortAdmin {
         port_profs.value = new PortProfile[0]; 
         port_prof_collect p = new port_prof_collect(port_profs);
         //
-        for( PortBase port : m_portServants.getObjects()) {
+	//        for( PortBase port : m_portServants.getObjects()) {
+        for( PortService port : m_portRefs.value) {
             p.operator(port);
         }
+
+	System.out.println("PortAdmin.getPortProfileList.length: "+port_profs.value.length);
         return port_profs;
     }
     
@@ -133,6 +136,9 @@ public class PortAdmin {
      * @param port PortService
      */
     public void registerPort(PortService port) {
+	if (port == null) {
+	    System.out.println("registerPort() port is null.");
+	}
         CORBA_SeqUtil.push_back(this.m_portRefs, port);
     }
     
@@ -236,8 +242,13 @@ public class PortAdmin {
         public port_prof_collect(PortProfileListHolder p){
             m_p = p;
         }
+	/*
         public void operator(final PortBase port) {
             CORBA_SeqUtil.push_back(m_p, port.getPortProfile() );
+        }
+	*/
+        public void operator(final PortService port) {
+            CORBA_SeqUtil.push_back(m_p, port.get_port_profile() );
         }
         private PortProfileListHolder m_p;
     }

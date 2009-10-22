@@ -86,13 +86,11 @@ public class ModuleManager {
      * 
      */
     public String load(final String moduleName) throws Exception {
-System.out.println( "ModuleManager::load--000--");
         String module_path = null;
 
         if(moduleName==null || moduleName.length()==0) {
             throw new IllegalArgumentException("moduleName is empty.:load()");
         }
-
         try {
             new URL(moduleName);
             if (! m_downloadAllowed) {
@@ -105,12 +103,17 @@ System.out.println( "ModuleManager::load--000--");
 
         // Find local file from load path or absolute directory
         Class target = null;
-        if (m_absoluteAllowed) {
+        if (StringUtil.isAbsolutePath(moduleName)) {
             try {
-                target = Class.forName(moduleName);
-                module_path = moduleName;
-            } catch (ClassNotFoundException e) {
-//                e.printStackTrace();
+		if(!m_absoluteAllowed) {
+		    throw new IllegalArgumentException("Absolute path is not allowed");
+		}
+		else {
+		    target = Class.forName(moduleName);
+		    module_path = moduleName;
+		}
+	    } catch (ClassNotFoundException e) {
+		//                e.printStackTrace();
                 throw new ClassNotFoundException("Not implemented." + moduleName, e);
             }
         } else {
@@ -130,9 +133,7 @@ System.out.println( "ModuleManager::load--000--");
             throw new IllegalArgumentException("Invalid file name.");
         }
 	
-System.out.println( "ModuleManager::load--090--");
         m_modules.put(module_path, target);
-System.out.println( "ModuleManager::load--0e0--");
         return module_path;
     }
 
@@ -174,27 +175,20 @@ System.out.println( "ModuleManager::load--0e0--");
 	}
 
         try {
-System.out.println( "ModuleManager::load--050--");
             initMethod.invoke(target.newInstance());
-System.out.println( "ModuleManager::load--060--");
         } catch (IllegalArgumentException e) {
 //            e.printStackTrace();
-System.out.println( "ModuleManager::load--0r7--");
             throw e;
         } catch (IllegalAccessException e) {
 //            e.printStackTrace();
-System.out.println( "ModuleManager::load--0r8--");
             throw e;
         } catch (InvocationTargetException e) {
 //            e.printStackTrace();
-System.out.println( "ModuleManager::load--0r9--");
             throw e;
         } catch (InstantiationException e) {
 //            e.printStackTrace();
-System.out.println( "ModuleManager::load--0ra--");
             throw e;
         }
-System.out.println( "ModuleManager::load--0e0--");
         
         return module_path;
     }
@@ -297,7 +291,6 @@ System.out.println( "ModuleManager::load--0e0--");
      * <p>モジュールのフルクラス名指定を指定します。</p>
      */
     public void allowAbsolutePath() {
-System.out.println( "ModuleManager::allowAbsolutePath");
         m_absoluteAllowed = true;
     }
     
@@ -305,7 +298,6 @@ System.out.println( "ModuleManager::allowAbsolutePath");
      * <p>モジュールのフルクラス名指定解除を指定します。</p>
      */
     public void disallowAbsolutePath() {
-System.out.println( "ModuleManager::disallowAbsolutePath");
         m_absoluteAllowed = false;
     }
     
