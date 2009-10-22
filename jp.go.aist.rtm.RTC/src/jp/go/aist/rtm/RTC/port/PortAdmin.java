@@ -83,7 +83,6 @@ public class PortAdmin {
             p.operator(port);
         }
 
-	System.out.println("PortAdmin.getPortProfileList.length: "+port_profs.value.length);
         return port_profs;
     }
     
