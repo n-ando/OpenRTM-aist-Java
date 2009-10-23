@@ -89,6 +89,15 @@ public class SeqOutImpl  extends DataFlowComponentBase {
         m_FloatSeq.v.data = new float[10];
         m_LongSeq.v.data = new int[10];
         m_ShortSeq.v.data = new short[10];
+
+        m_Double.v.tm = new RTC.Time(0,0);
+        m_Float.v.tm = new RTC.Time(0,0);
+        m_Long.v.tm = new RTC.Time(0,0);
+        m_Short.v.tm = new RTC.Time(0,0);
+        m_DoubleSeq.v.tm = new RTC.Time(0,0);
+        m_FloatSeq.v.tm = new RTC.Time(0,0);
+        m_LongSeq.v.tm = new RTC.Time(0,0);
+        m_ShortSeq.v.tm = new RTC.Time(0,0);
     }
 
     // The initialize action (on CREATED->ALIVE transition)

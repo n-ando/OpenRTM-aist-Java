@@ -17,7 +17,7 @@ public class ConsoleInImpl  extends DataFlowComponentBase {
     public ConsoleInImpl(Manager manager) {
         super(manager);
         // <rtc-template block="initializer">
-        m_out_val = new TimedLong();
+        m_out_val = new TimedLong(new RTC.Time(0,0),0);
         m_out = new DataRef<TimedLong>(m_out_val);
         m_outOut = new OutPort<TimedLong>("out", m_out);
         // </rtc-template>
@@ -101,6 +101,9 @@ public class ConsoleInImpl  extends DataFlowComponentBase {
         }
         System.out.println("Sending to subscriber: "  + m_out_val.data);
         m_outOut.write();
+RTC.Time tm = new RTC.Time(0,0);
+RTC.TimedLong tl = new RTC.TimedLong(tm,108);
+m_outOut.write(tl);
 
         return ReturnCode_t.RTC_OK;
     }
