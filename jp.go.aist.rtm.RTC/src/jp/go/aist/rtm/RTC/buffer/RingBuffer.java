@@ -111,18 +111,14 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                         sec = (int)m_wtimeout.sec();
                         nsec = (int)m_wtimeout.usec() * 1000;
                       }
-                  //  true: signaled, false: timeout
                       try {
-                          m_full.wait(sec*1000, (int)nsec);
+                          m_full.mutex.wait(sec*1000, (int)nsec);
                           return ReturnCode.TIMEOUT;
                       }
                       catch(InterruptedException e ){
                       }
                       catch(IllegalMonitorStateException e) {
                       }
-//                      if (!m_full.cond.wait(sec, nsec)) {
-//                        return ReturnCode.TIMEOUT;
-//                      }
                 }
                 else {                                   // unknown condition
                     return ReturnCode.PRECONDITION_NOT_MET;
@@ -136,7 +132,7 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
             if (empty_) {
                 synchronized (m_empty.mutex) {
                     try {
-                        m_empty.notify();
+                        m_empty.mutex.notify();
                     }
                     catch(IllegalMonitorStateException e) {
                     }
@@ -160,6 +156,8 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
         return read(valueRef, sec, 0);
     }
     public ReturnCode read(DataRef<DataType> valueRef, int sec, int nsec) {
+        long local_msec = 0;
+        int local_nsec = 0;
         synchronized(m_empty.mutex){
             if (empty()) {
                 boolean timedread = m_timedread;
@@ -167,8 +165,8 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                 if (!(sec < 0)) {// if second arg is set -> block mode
                     timedread = true;
                     readback  = false;
-                    sec = (int)m_rtimeout.sec();
-                    nsec = (int)m_rtimeout.usec() * 1000;
+                    local_msec = m_rtimeout.sec()*1000+m_rtimeout.usec()/1000;
+                    local_nsec = (int)(m_rtimeout.usec() % 1000)*1000;
                 }
                 if (readback && !timedread) {      // "readback" mode
                     advanceRptr(-1);
@@ -179,14 +177,19 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                 else if (!readback && timedread) { // "block" mode
                     //  true: signaled, false: timeout
                     try {
-                        m_empty.wait((long)sec, nsec);
+                        m_empty.mutex.wait(local_msec, local_nsec);
+                        if (empty()) {
+                            return ReturnCode.TIMEOUT;
+                        }
                     }
                     catch(IllegalArgumentException e) {
-                        return ReturnCode.TIMEOUT;
+                        throw new RuntimeException(e.toString()); 
                     }
                     catch(IllegalMonitorStateException e) {
+                        throw new RuntimeException(e.toString()); 
                     }
                     catch(InterruptedException e) {
+                        throw new RuntimeException(e.toString()); 
                     }
                 }
                 else {                                   // unknown condition
@@ -202,7 +205,7 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
             if (full_) {
                 synchronized(m_full.mutex){
                     try {
-                        m_full.notify();
+                        m_full.mutex.notify();
                     }
                     catch(IllegalMonitorStateException e) {
                     }
@@ -552,11 +555,9 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
     private int m_fillcount;
     private static String m_posmutex = new String();
 
-    class condition extends Thread {
+    protected class condition {
         public condition() {
-//            cond = mutex
         }
-//        coil::Condition<coil::Mutex> cond;
         public String mutex = new String();
     };
     private condition m_empty = new condition();
