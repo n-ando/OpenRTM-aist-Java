@@ -3,10 +3,14 @@ package jp.go.aist.rtm.RTC.port;
 import java.lang.ClassCastException;
 import org.omg.CORBA.TypeCodePackage.BadKind;
 import java.io.IOException;
+import com.sun.corba.se.spi.ior.iiop.GIOPVersion;
 
+import org.omg.CORBA.ORB;
 import org.omg.CORBA.portable.Streamable;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
+import com.sun.corba.se.impl.encoding.EncapsInputStream; 
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -51,7 +55,7 @@ public class InPort<DataType> extends InPortBase {
 
     }
     /**
-     * <p> read_steram </p>
+     * <p> read_stream </p>
      * <p> This function reads data from InputStream.  </p>
      *
      * @param data  The read data is stored.  
@@ -107,6 +111,9 @@ public class InPort<DataType> extends InPortBase {
         this.m_OnReadConvert = null;
         this.m_OnOverflow = null;
         this.m_OnUnderflow = null;
+
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        m_orb = ORBUtil.getOrb();
 
         Class cl = value.v.getClass();
         String str = cl.getName();
@@ -223,15 +230,27 @@ public class InPort<DataType> extends InPortBase {
             return m_value.v;
         }
 
-        org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
-        OutputStream cdr = any.create_output_stream();
+//        OutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+//                                                  isLittleEndian());
+        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+                                                        isLittleEndian());
+
+System.out.println("islittleendian:"+isLittleEndian());
 
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
         ReturnCode ret = m_connectors.elementAt(0).read(dataref);
-        cdr = dataref.v;
+
+        cdr = (EncapsOutputStream)dataref.v;
         if (ret.equals(ReturnCode.PORT_OK)) {
             rtcout.println(rtcout.DEBUG, "data read succeeded");
-            InputStream input_stream = cdr.create_input_stream();
+//            InputStream input_stream = cdr.create_input_stream();
+            byte[] ch = cdr.toByteArray();
+            InputStream input_stream = new EncapsInputStream(m_orb, 
+                                                             ch, 
+                                                             ch.length,
+                                                             isLittleEndian(),
+                                                             GIOPVersion.V1_2);
+
             m_value.v = read_stream(m_value,input_stream);
             if (m_OnReadConvert != null) {
                 m_value.v = m_OnReadConvert.run(m_value.v);
@@ -364,4 +383,6 @@ public class InPort<DataType> extends InPortBase {
     private Streamable m_streamable = null;
     private Field m_field = null;
     
+    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
+    private ORB m_orb;
 }

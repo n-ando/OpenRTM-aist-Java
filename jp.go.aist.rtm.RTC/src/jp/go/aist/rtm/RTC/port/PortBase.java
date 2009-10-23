@@ -29,6 +29,7 @@ import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.PortProfileFactory;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.util.operatorFunc;
+import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
 
@@ -300,7 +301,24 @@ public abstract class PortBase extends PortServicePOA {
 	        }
             }
         }
-
+        //
+        NVListHolder nvholder = 
+                new NVListHolder(connector_profile.value.properties);
+            
+        Properties prop = new Properties();
+        NVUtil.copyToProperties(prop,nvholder);
+        if(null != prop.findNode("dataport")){
+//<+zxc
+//Delete two lines as follows, when the test ends.
+            CORBA_SeqUtil.push_back(nvholder, 
+                NVUtil.newNV("dataport.serializer.cdr.endian", "big,zxc"));
+//Add two lines as follows, when the test ends.
+//            CORBA_SeqUtil.push_back(nvholder, 
+//                NVUtil.newNV("dataport.serializer.cdr.endian", "little,big"));
+//zxc+>
+            connector_profile.value.properties = nvholder.value;
+        }
+        
         try {
             ReturnCode_t ret 
            = connector_profile.value.ports[0].notify_connect(connector_profile);

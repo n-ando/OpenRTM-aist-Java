@@ -3,6 +3,7 @@ package jp.go.aist.rtm.RTC.port;
 import org.omg.CORBA.portable.Streamable;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -148,6 +149,8 @@ public class OutPort<DataType> extends OutPortBase {
         this.m_OnOverflow = null;
         this.m_OnUnderflow = null;
 
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+
         Class cl = valueRef.v.getClass();
         String str = cl.getName();
         try {
@@ -202,9 +205,7 @@ public class OutPort<DataType> extends OutPortBase {
 //        set_timestamp(value);
 
         // data -> (conversion) -> CDR stream
-        org.omg.CORBA.Any any = ORBUtil.getOrb().create_any();
-        m_cdr = any.create_output_stream();
-
+        m_cdr = new EncapsOutputStream(m_spi_orb,isLittleEndian());
 
         if (m_OnWriteConvert != null) {
             DataType convervalue = m_OnWriteConvert.run(value);
@@ -387,4 +388,5 @@ public class OutPort<DataType> extends OutPortBase {
 
     private Streamable m_streamable = null;
     private Field m_field = null;
+    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
 }

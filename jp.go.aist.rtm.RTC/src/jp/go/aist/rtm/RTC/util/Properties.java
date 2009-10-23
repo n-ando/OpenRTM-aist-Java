@@ -726,7 +726,7 @@ public class Properties {
         }
         
         for (int i = 0; i < curr.leaf.size(); ++i) {
-            _dump(out, curr.leaf.get(i), index + 1);
+            out = _dump(out, curr.leaf.get(i), index + 1);
         }
         
         return out;

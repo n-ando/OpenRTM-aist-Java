@@ -5,6 +5,7 @@ import org.omg.CORBA.ORB;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 import org.omg.CORBA.SystemException;
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 import java.io.IOException;
 
@@ -65,6 +66,9 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         CORBA_SeqUtil.push_back(m_properties,
                 NVUtil.newNV("dataport.corba_cdr.inport_ref",
                               m_objref, OpenRTM.InPortCdr.class ));
+
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+
     }
     /**
      * 
@@ -124,19 +128,14 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
 
         rtcout.println(rtcout.PARANOID, "received data size: "+data.length);
 
-        ORB orb = ORBUtil.getOrb();
-        Any any = orb.create_any();
-        OutputStream cdr = any.create_output_stream();
+
+        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb,true);
+//zxc
+//      EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb,false);
         cdr.write_octet_array(data, 0, data.length);
 
-        try {
-            InputStream in = cdr.create_input_stream();
-            int len = in.available();
-            rtcout.println(rtcout.PARANOID, "converted CDR data size: "+len);
-        }
-        catch (IOException e){
-            rtcout.println(rtcout.PARANOID, "An I/O error occurs");
-        }
+        int len = cdr.toByteArray().length;
+        rtcout.println(rtcout.PARANOID, "converted CDR data size: "+len);
 
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
         return convertReturn(ret);
@@ -287,5 +286,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
 
     private BufferBase<OutputStream> m_buffer;
     private OpenRTM.InPortCdr m_objref;
+
+    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
 
 }

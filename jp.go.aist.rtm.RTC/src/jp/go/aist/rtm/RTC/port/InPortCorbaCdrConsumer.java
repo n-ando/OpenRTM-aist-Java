@@ -2,11 +2,11 @@ package jp.go.aist.rtm.RTC.port;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.BAD_OPERATION;
-//import org.omg.CORBA.Object;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 import _SDOPackage.NVListHolder;
 import OpenRTM.CdrDataHolder;
@@ -37,6 +37,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      */
     public InPortCorbaCdrConsumer() {
         super(OpenRTM.InPortCdr.class);
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
         rtcout = new Logbuf("InPortCorbaCdrConsumer");
         rtcout.setLevel("PARANOID");
     }
@@ -58,22 +59,11 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
     public ReturnCode put(final OutputStream data) {
         rtcout.println(rtcout.PARANOID, "put");
         
-        InputStream in = data.create_input_stream();
-
-        byte[] bs = new byte[256];
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            for(;;){
-                in.read_octet_array(bs,0,256);
-                baos.write(bs, 0, 256);
-            }
-        }
-        catch(Exception e) {
-                baos.write(bs, 0, 256);
-        }
+        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, true);
+        cdr = (EncapsOutputStream)data;
 
         try {
-            OpenRTM.PortStatus ret = _ptr().put(baos.toByteArray());
+            OpenRTM.PortStatus ret = _ptr().put(cdr.toByteArray());
             return convertReturn(ret);
         }
         catch (Exception e) {
@@ -346,6 +336,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
 
     private Logbuf rtcout;
     private Properties m_properties;
+    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
 
 }
 

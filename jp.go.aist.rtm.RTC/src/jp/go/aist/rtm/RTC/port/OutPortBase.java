@@ -42,6 +42,7 @@ public class OutPortBase extends PortBase {
     public OutPortBase(final String name,final String data_type) {
 	super(name);
         this.m_name = name;
+        m_endian = "litlle";
 
         rtcout.println(rtcout.PARANOID, "Port name: "+name);
         rtcout.println(rtcout.PARANOID, "setting port.port_type: DataOutPort");
@@ -366,7 +367,59 @@ public class OutPortBase extends PortBase {
             NVUtil.copyToProperties(conn_prop, nvlist);
             prop.merge(conn_prop.getNode("dataport")); //merge ConnectorProfile
         }
-
+        //
+       NVListHolder holder = new NVListHolder(cprof.value.properties);
+       try{ 
+            org.omg.CORBA.Any anyVal = NVUtil.find(holder,
+                                           "dataport.serializer.cdr.endian");
+            String endian_type = anyVal.extract_wstring();
+            endian_type = StringUtil.normalize(endian_type);
+System.out.println("endian = "+endian_type);
+            String[] endian = endian_type.split(",");
+            endian_type = "";
+            for(int ic=0;ic<endian.length;++ic){
+                String str = endian[ic].trim();
+                if(str.equals("big") || str.equals("little")){
+                    if(endian_type.length()!=0){
+                        endian_type = endian_type + ","+ str;
+                    }
+                    else{
+                        endian_type = endian_type + str;
+                    }
+                }
+            }
+System.out.println("endian_type:"+endian_type);
+//            prop.setProperty("serializer.cdr.endian",endian_type);
+            int index = NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
+            holder.value[index].value.insert_wstring(endian_type);
+//            CORBA_SeqUtil.push_back(holder, 
+//                NVUtil.newNV("dataport.serializer.cdr.endian", endian_type));
+NVUtil.dump(holder);
+            cprof.value.properties = holder.value;
+       }
+       catch(Exception e){
+            ;
+       }
+/*
+        String endian_type = prop.getProperty("serializer.cdr.endian");
+        if(endian_type!=null){
+            StringUtil.normalize(endian_type);
+            String[] endian = endian_type.split(",");
+            endian_type = "";
+            for(int ic=0;ic<endian.length;++ic){
+                String str = endian[ic].trim();
+                if(str.equals("big") || str.equals("little")){
+                    if(endian_type.length()!=0){
+                        endian_type = endian_type + ","+ str;
+                    }
+                    else{
+                        endian_type = endian_type + str;
+                    }
+                }
+            }
+            prop.setProperty("serializer.cdr.endian",endian_type);
+        }
+*/
 
         /*
          * Because properties of ConnectorProfileHolder was merged, 
@@ -433,6 +486,49 @@ public class OutPortBase extends PortBase {
             prop.merge(conn_prop.getNode("dataport")); //merge ConnectorProfile
         }
 
+        //
+       NVListHolder holder = new NVListHolder(cprof.value.properties);
+       try{ 
+            org.omg.CORBA.Any anyVal = NVUtil.find(holder,
+                                           "dataport.serializer.cdr.endian");
+            String endian_type = anyVal.extract_wstring();
+            endian_type = StringUtil.normalize(endian_type);
+System.out.println("endian = "+endian_type);
+            String[] endian = endian_type.split(",");
+            String str = endian[0].trim();
+            if(str.length()==0){
+                return ReturnCode_t.UNSUPPORTED;
+            }
+            if(str.equals("little")||str.equals("big")){
+                m_endian = str;
+            }
+            else {
+                m_endian = "little";
+            }
+       }
+       catch(Exception e){
+            m_endian = "little";
+       }
+/*zxc
+        String endian_type = prop.getProperty("serializer.cdr.endian");
+        if(endian_type!=null){
+            StringUtil.normalize(endian_type);
+            String[] endian = endian_type.split(",");
+            endian_type = "";
+            String str = endian[0].trim();
+            if(str.equals("little")||str.equals("big")){
+                m_endian = str;
+            }
+            else {
+                m_endian = "little";
+            }
+        }
+        else{
+            m_endian = "little";
+        }
+*/
+System.out.println("endian = "+m_endian);
+        rtcout.println(rtcout.TRACE, "endian = "+m_endian);
         /*
          * Because properties of ConnectorProfileHolder was merged, 
          * the accesses such as prop["dataflow_type"] and 
@@ -799,6 +895,15 @@ public class OutPortBase extends PortBase {
             return null;
         }
     }
+    /**
+     * 
+     */
+    public boolean isLittleEndian(){
+        if(m_endian.equals("little")){
+            return true;
+        }
+        return false;
+    }
     protected List<Publisher> m_publishers = new ArrayList<Publisher>();
     protected Properties m_properties = new Properties();
     protected Vector<OutPortConnector> m_connectors = new Vector<OutPortConnector>();
@@ -807,4 +912,5 @@ public class OutPortBase extends PortBase {
     protected Vector<String> m_consumerTypes = new Vector<String>();
     protected Vector<OutPortProvider> m_providers = new Vector<OutPortProvider>();
     
+    private String m_endian = new String();
 }
