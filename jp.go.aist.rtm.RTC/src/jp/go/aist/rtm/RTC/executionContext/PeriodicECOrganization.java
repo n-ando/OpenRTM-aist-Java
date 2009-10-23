@@ -491,8 +491,8 @@ public class PeriodicECOrganization extends Organization_impl {
         for (int i=0, len=plist.length; i < len; ++i) {
             // port name . comp_name.port_name
             String port_name = comp_name;
-            port_name.concat("."); 
-            port_name.concat(plist[i].name);
+            port_name = port_name.concat("."); 
+            port_name = port_name.concat(plist[i].name);
 
             rtcout.println(rtcout.DEBUG, "port_name: " + port_name + 
                                          " is in " + StringUtil.flatten(portlist));
@@ -514,7 +514,7 @@ public class PeriodicECOrganization extends Organization_impl {
             m_rtobj.deletePort(
                             (PortService)plist[i].port_ref._duplicate());
 
-	    portlist.remove(pos);
+	    // portlist.remove(pos);
             rtcout.println(rtcout.DEBUG, "Port " + port_name + " was deleted.");
         }
      }
@@ -561,14 +561,17 @@ public class PeriodicECOrganization extends Organization_impl {
             removePort(m_rtcMembers.elementAt(i), removedPorts);
             addPort(m_rtcMembers.elementAt(i), createdPorts);
         }
-	//        m_expPorts = newPorts;
+
+	m_expPorts = newPorts;
+
+	/*
 	int size = newPorts.size();
 	m_expPorts.clear();
 	
 	for (int i=0; i<size; ++i) {
 	    m_expPorts.add(newPorts.elementAt(i));
 	}
-
+	*/
   }
 
     protected Logbuf rtcout;
