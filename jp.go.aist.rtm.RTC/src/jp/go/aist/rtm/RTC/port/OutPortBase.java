@@ -589,7 +589,7 @@ System.out.println("endian = "+m_endian);
 
         Iterator it = m_connectors.iterator();
         while (it.hasNext()) {
-            InPortConnector connector = (InPortConnector)it.next();
+            OutPortConnector connector = (OutPortConnector)it.next();
             if (id.equals(connector.id())) {
                 // Connector's dtor must call disconnect()
                 it.remove();
