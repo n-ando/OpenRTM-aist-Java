@@ -284,7 +284,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         m_task.setTask(this);
 
         // Task execution rate
-        String rate = prop.getProperty("publisher.push_rate");
+        String rate = prop.getProperty("push_rate");
         double hz;
         if (!rate.equals("")) {
             hz = Double.valueOf(rate).doubleValue();

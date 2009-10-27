@@ -108,17 +108,23 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                 }
                 else if (!overwrite && timedwrite) { // "block" mode
                     if (sec < 0) {
-                        sec = (int)m_wtimeout.sec();
-                        nsec = (int)m_wtimeout.usec() * 1000;
-                      }
-                      try {
-                          m_full.mutex.wait(sec*1000, (int)nsec);
-                          return ReturnCode.TIMEOUT;
-                      }
-                      catch(InterruptedException e ){
-                      }
-                      catch(IllegalMonitorStateException e) {
-                      }
+                        sec = 
+                            (int)(m_rtimeout.sec()*1000+m_rtimeout.usec()/1000);
+                        nsec = (int)(m_rtimeout.usec() % 1000)*1000;
+                    }
+                    try {
+                        if(sec==0 && nsec==0){
+                            return ReturnCode.TIMEOUT;
+                        }
+                        m_full.mutex.wait(sec, (int)nsec);
+                        return ReturnCode.TIMEOUT;
+                    }
+                    catch(InterruptedException e ){
+                        throw new RuntimeException(e.toString()); 
+                    }
+                    catch(IllegalMonitorStateException e) {
+                        throw new RuntimeException(e.toString()); 
+                    }
                 }
                 else {                                   // unknown condition
                     return ReturnCode.PRECONDITION_NOT_MET;
