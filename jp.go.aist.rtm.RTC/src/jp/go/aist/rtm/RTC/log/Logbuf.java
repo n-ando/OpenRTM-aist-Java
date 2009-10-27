@@ -61,6 +61,7 @@ public class Logbuf {
             str = "OpenRTM-aist.logging.Manager." + name;
         }
         m_Logger = Logger.getLogger(str);
+        _constructor();
     }
 
     /**
@@ -85,8 +86,17 @@ public class Logbuf {
             str = "OpenRTM-aist.logging." + parent + "." + name;
         }
         m_Logger = Logger.getLogger(str);
+        _constructor();
     }
 
+
+    private void _constructor(){
+        for(int ic=PARANOID;ic<=SILENT;++ic){
+            int num = RTMLevelToLogLevel(ic);
+            String str = logLevelToStr(ic);
+            Level rtm_level = new OpenRTMLevel(str, num);
+        }
+    }
     /**
      * <p>ログに出力します。</p>
      * 
@@ -112,10 +122,8 @@ public class Logbuf {
         // Explicit argument indices may be used to re-order output.
         Date date = new Date();
 
-        int num = RTMLevelToLogLevel(level);
         String str = logLevelToStr(level);
-        Level rtm_level = new OpenRTMLevel(str, num);
-        Level clevel = rtm_level.parse(str);
+        Level clevel = Level.parse(str);
         m_Logger.log(clevel, 
                     formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date) 
                     + " " + m_Suffix + " " + logLevelToStr(level) + " " + contents);
@@ -351,10 +359,8 @@ public class Logbuf {
      *
      */
     public void setLevel(int level) {
-        int num = RTMLevelToLogLevel(level);
         String str = logLevelToStr(level);
-        Level rtm_level = new OpenRTMLevel(str, num);
-        Level clevel = rtm_level.parse(str);
+        Level clevel = Level.parse(str);
         m_Logger.setLevel(clevel);
 //        this.m_LogLevel = level;
     }
@@ -367,10 +373,8 @@ public class Logbuf {
      */
     public void setLevel(final String level) {
         int lv = this.strToLogLevel(level);
-        int num = RTMLevelToLogLevel(lv);
         String str = logLevelToStr(lv);
-        Level rtm_level = new OpenRTMLevel(str, num);
-        Level clevel = rtm_level.parse(str);
+        Level clevel = Level.parse(str);
         m_Logger.setLevel(clevel);
 //        this.m_LogLevel = this.strToLogLevel(level);
     }

@@ -36,6 +36,7 @@ public class LogbufTest extends TestCase {
     public void test_case0() {
         Logbuf rtcout = new Logbuf("test0");
 
+        rtcout.setEnabled();
         // STDOUT
         // Junit出力ファイル*.xmlの <system-err>の欄に出力される
         System.err.println("\n\n--- test_case0() setLevel() Not Set ---");
@@ -103,6 +104,7 @@ public class LogbufTest extends TestCase {
     public void test_stdout1() {
         Logbuf rtcout = new Logbuf("test1");
 
+        rtcout.setEnabled();
         // STDOUT
         // Junit出力ファイル*.xmlの <system-err>の欄に出力される
         rtcout.addStream(new ConsoleHandler());
@@ -247,6 +249,7 @@ public class LogbufTest extends TestCase {
     public void test_stdout2() {
         Logbuf rtcout = new Logbuf("test2");
 
+        rtcout.setEnabled();
         // STDOUT
         // Junit出力ファイル*.xmlの <system-err>の欄に出力される
         rtcout.addStream(new ConsoleHandler());
@@ -391,6 +394,7 @@ public class LogbufTest extends TestCase {
     public void test_fileout_PARANOID() {
         Logbuf rtcout = new Logbuf("TESTFILE1");
 
+        rtcout.setEnabled();
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
         //-----------------------------------------------------------------
@@ -447,6 +451,7 @@ public class LogbufTest extends TestCase {
     public void test_fileout_VERBOSE() {
         Logbuf rtcout = new Logbuf("TESTFILE2");
 
+        rtcout.setEnabled();
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
         //-----------------------------------------------------------------
@@ -503,6 +508,7 @@ public class LogbufTest extends TestCase {
     public void test_fileout_TRACE() {
         Logbuf rtcout = new Logbuf("TESTFILE3");
 
+        rtcout.setEnabled();
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
         //-----------------------------------------------------------------
@@ -558,6 +564,7 @@ public class LogbufTest extends TestCase {
     public void test_fileout_DEBUG() {
         Logbuf rtcout = new Logbuf("TESTFILE4");
 
+        rtcout.setEnabled();
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
         //-----------------------------------------------------------------
@@ -613,6 +620,7 @@ public class LogbufTest extends TestCase {
     public void test_fileout_INFO() {
         Logbuf rtcout = new Logbuf("TESTFILE5");
 
+        rtcout.setEnabled();
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
         //-----------------------------------------------------------------
@@ -668,6 +676,7 @@ public class LogbufTest extends TestCase {
     public void test_fileout_WARN() {
         Logbuf rtcout = new Logbuf("TESTFILE6");
 
+        rtcout.setEnabled();
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
         //-----------------------------------------------------------------
@@ -723,6 +732,7 @@ public class LogbufTest extends TestCase {
     public void test_fileout_ERROR() {
         Logbuf rtcout = new Logbuf("TESTFILE7");
 
+        rtcout.setEnabled();
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
         //-----------------------------------------------------------------
@@ -778,6 +788,7 @@ public class LogbufTest extends TestCase {
     public void test_fileout_FATAL() {
         Logbuf rtcout = new Logbuf("TESTFILE8");
 
+        rtcout.setEnabled();
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
         //-----------------------------------------------------------------
@@ -833,6 +844,7 @@ public class LogbufTest extends TestCase {
     public void test_fileout_SILENT() {
         Logbuf rtcout = new Logbuf("TESTFILE9");
 
+        rtcout.setEnabled();
         // FileOut
         // ファイルは /RELENG_1_0_0/jp.go.aist.rtm.RTC/ 配下に作成される
         //-----------------------------------------------------------------
@@ -976,9 +988,11 @@ public class LogbufTest extends TestCase {
         System.err.println("\n\n--- test_manager_logbuf() start ---");
 
         int cnt = 0;
+        int cnt2 = 0;
         Logbuf rtcout = new Logbuf("Manager");
+        rtcout.setEnabled();
         cnt = rtcout.getStreamCount();
-        assertEquals(0, cnt);
+//        assertEquals(0, cnt);
 
         ConsoleHandler stdout = new ConsoleHandler();
         rtcout.addStream(stdout);
@@ -989,8 +1003,8 @@ public class LogbufTest extends TestCase {
         } catch(IOException ex) {
             System.err.println("Error: cannot open logfile: " + logfile );
         }
-        cnt = rtcout.getStreamCount();
-        assertEquals(2, cnt);
+        cnt2 = rtcout.getStreamCount();
+        assertEquals(cnt+2, cnt2);
 
         rtcout.setLevel("INFO");
         System.err.println("--- Logbuf(Manager) set ---");
@@ -1008,6 +1022,7 @@ public class LogbufTest extends TestCase {
 
 
         Logbuf rtcout2 = new Logbuf("Manager.hoge1");
+        rtcout2.setEnabled();
         System.err.println("--- Logbuf(Manager.hoge1) set ---");
         rtcout2.println(rtcout2.INFO, "--- setLevel(INFO) Not set ---");
         rtcout2.println(rtcout2.PARANOID, "PARANOID string 2");
@@ -1036,6 +1051,7 @@ public class LogbufTest extends TestCase {
         // setLevel(PARANOID)以下の内容が、出力されればOK.
 
         Logbuf rtcout3 = new Logbuf("hoge2");
+        rtcout3.setEnabled();
         System.err.println("--- Logbuf(hoge2) set ---");
         rtcout3.println(rtcout3.INFO, "--- setLevel(INFO) Not set ---");
         rtcout3.println(rtcout3.PARANOID, "PARANOID string 4");
@@ -1066,6 +1082,7 @@ public class LogbufTest extends TestCase {
 
         // 引数２個のコンストラクタ
         Logbuf rtcout4 = new Logbuf("hoge3", "Manager");
+        rtcout4.setEnabled();
         System.err.println("--- Logbuf(Manager.hoge3) set ---");
         rtcout4.println(rtcout4.INFO, "--- setLevel(INFO) Not set ---");
         rtcout4.println(rtcout4.PARANOID, "PARANOID string 6");
@@ -1094,8 +1111,8 @@ public class LogbufTest extends TestCase {
         // setLevel(PARANOID)以下の内容が、出力されればOK.
 
         rtcout.removeStream(stdout);
-        cnt = rtcout.getStreamCount();
-        assertEquals(1, cnt);
+        cnt2 = rtcout.getStreamCount();
+        assertEquals(cnt+1, cnt2);
         System.err.println("--- test_manager_logbuf() end ---");
 
     }
