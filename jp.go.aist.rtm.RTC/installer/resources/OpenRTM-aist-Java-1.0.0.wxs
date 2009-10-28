@@ -46,16 +46,16 @@
 							<File Id="JavaExampleCONFIG_1_BAT" Name="CONFIG_1.BAT" LongName="ConfigSample.bat" DiskId="1" Compressed="yes" Source="Source\examples\ConfigSample.bat">
 								<Shortcut Id="JavaExampleCONFIG_1_BATSC" Name="ConfigSa" LongName="ConfigSample.bat" Directory="ExpMenuFolder" WorkingDirectory="JavaExample"/>
 							</File>
-							<File Id="JavaExampleCONNEC_1_BAT" Name="CONNEC_1.BAT" LongName="Connector.bat" DiskId="1" Compressed="yes" Source="Source\examples\Connector.bat">
+							<!-- <File Id="JavaExampleCONNEC_1_BAT" Name="CONNEC_1.BAT" LongName="Connector.bat" DiskId="1" Compressed="yes" Source="Source\examples\Connector.bat">
 								<Shortcut Id="JavaExampleCONNEC_1_BATSC" Name="Connecto" LongName="Connector.bat" Directory="ExpMenuFolder" WorkingDirectory="JavaExample"/>
-							</File>
+							</File> -->
 							<File Id="JavaExampleCONSOL_1_BAT" Name="CONSOL_1.BAT" LongName="ConsoleIn.bat" DiskId="1" Compressed="yes" Source="Source\examples\ConsoleIn.bat">
 								<Shortcut Id="JavaExampleCONSOL_1_BATSC" Name="ConsoleI" LongName="ConsoleIn.bat" Directory="ExpMenuFolder" WorkingDirectory="JavaExample"/>
 							</File>
 							<File Id="JavaExampleCONSOL_2_BAT" Name="CONSOL_2.BAT" LongName="ConsoleOut.bat" DiskId="1" Compressed="yes" Source="Source\examples\ConsoleOut.bat">
 								<Shortcut Id="JavaExampleCONSOL_2_BATSC" Name="ConsoleO" LongName="ConsoleOut.bat" Directory="ExpMenuFolder" WorkingDirectory="JavaExample"/>
 							</File>
-							<File Id="JavaExampleEXTCON_1_BAT" Name="EXTCON_1.BAT" LongName="ExtConnector.bat" DiskId="1" Compressed="yes" Source="Source\examples\ExtConnector.bat">
+							<!-- <File Id="JavaExampleEXTCON_1_BAT" Name="EXTCON_1.BAT" LongName="ExtConnector.bat" DiskId="1" Compressed="yes" Source="Source\examples\ExtConnector.bat">
 								<Shortcut Id="JavaExampleEXTCON_1_BATSC" Name="ExtConne" LongName="ExtConnector.bat" Directory="ExpMenuFolder" WorkingDirectory="JavaExample"/>
 							</File>
 							<File Id="JavaExampleEXTCON_2_BAT" Name="EXTCON_2.BAT" LongName="ExtConsoleIn.bat" DiskId="1" Compressed="yes" Source="Source\examples\ExtConsoleIn.bat">
@@ -63,7 +63,7 @@
 							</File>
 							<File Id="JavaExampleEXTCON_3_BAT" Name="EXTCON_3.BAT" LongName="ExtConsoleOut.bat" DiskId="1" Compressed="yes" Source="Source\examples\ExtConsoleOut.bat">
 								<Shortcut Id="JavaExampleEXTCON_3_BATSC" Name="ExtConso" LongName="ExtConsoleOut.bat" Directory="ExpMenuFolder" WorkingDirectory="JavaExample"/>
-							</File>
+							</File> -->
 							<File Id="JavaExampleGUIIn_bat" Name="GUIIn.bat" LongName="GUIIn.bat" DiskId="1" Compressed="yes" Source="Source\examples\GUIIn.bat">
 								<Shortcut Id="JavaExampleGUIIn_batSC" Name="GUIIn.ba" LongName="GUIIn.bat" Directory="ExpMenuFolder" WorkingDirectory="JavaExample"/>
 							</File>
@@ -101,7 +101,7 @@
 									<File Id="JavaExampleRTMEXA_1CONFIG_1VECTOR_1_JAV" Name="VECTOR_1.JAV" LongName="VectorHolder.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\ConfigSample\VectorHolder.java"/>
 								</Component>
 							</Directory>
-							<Directory Id="JavaExampleRTMEXA_1EXTTRI_1" Name="EXTTRI_1" LongName="ExtTrigger">
+							<!-- <Directory Id="JavaExampleRTMEXA_1EXTTRI_1" Name="EXTTRI_1" LongName="ExtTrigger">
 								<Component Id="JavaExamplesRTMEXA_1EXTTRI_1" Guid="E95CA4E6-75AE-4D6B-8D49-825E5372DAC6">
 									<File Id="JavaExampleRTMEXA_1EXTTRI_1CONNEC_1_CLA" Name="CONNEC_1.CLA" LongName="ConnectorComp.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\ExtTrigger\ConnectorComp.class"/>
 									<File Id="JavaExampleRTMEXA_1EXTTRI_1CONNEC_1_JAV" Name="CONNEC_1.JAV" LongName="ConnectorComp.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\ExtTrigger\ConnectorComp.java"/>
@@ -119,7 +119,7 @@
 									<File Id="JavaExampleRTMEXA_1EXTTRI_1CO9281_1_JAV" Name="CO9281_1.JAV" LongName="ConsoleOutImpl.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\ExtTrigger\ConsoleOutImpl.java"/>
 									<File Id="JavaExampleRTMEXA_1EXTTRI_1RTC_1_CON" Name="RTC_1.CON" LongName="rtc.conf" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\ExtTrigger\rtc.conf"/>
 								</Component>
-							</Directory>
+							</Directory> -->
 							<Directory Id="JavaExampleRTMEXA_1GUIIn" Name="GUIIn">
 								<Component Id="JavaExamplesRTMEXA_1GUIIn" Guid="24122610-CE89-4F22-95BF-2193FCF5E934">
 									<File Id="JavaExampleRTMEXA_1GUIInGUIIN_1_CLA" Name="GUIIN_1.CLA" LongName="GUIIn.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\GUIIn\GUIIn.class"/>
@@ -187,7 +187,7 @@
 										<File Id="JavaExampleRTMEXA_1SeqIOviewSEQINA_1_CLA" Name="SEQINA_1.CLA" LongName="SeqInApp$Updater.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SeqIO\view\SeqInApp$Updater.class"/>
 										<File Id="JavaExampleRTMEXA_1SeqIOviewSEQINA_2_CLA" Name="SEQINA_2.CLA" LongName="SeqInApp.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SeqIO\view\SeqInApp.class"/>
 										-->
-										<File Id="JavaExampleRTMEXA_1SeqIOviewSEQINV_1_CLA" Name="SEQINV_1.CLA" LongName="SeqInView.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SeqIO\view\SeqView.class"/>
+										<File Id="JavaExampleRTMEXA_1SeqIOviewSEQINV_1_CLA" Name="SEQINV_1.CLA" LongName="SeqView.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SeqIO\view\SeqView.class"/>
 										<!--
 										<File Id="JavaExampleRTMEXA_1SeqIOviewSEQINV_2_CLA" Name="SEQINV_2.CLA" LongName="SeqInView2.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SeqIO\view\SeqInView2.class"/>
 										-->
@@ -201,8 +201,8 @@
 							</Directory>
 							<Directory Id="JavaExampleRTMEXA_1SimpleIO" Name="SimpleIO">
 								<Component Id="JavaExamplesRTMEXA_1SimpleIO" Guid="17652714-08BD-4896-8241-66E3205C0578">
-									<File Id="JavaExampleRTMEXA_1SimpleIOCONNEC_1_CLA" Name="CONNEC_1.CLA" LongName="ConnectorComp.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SimpleIO\ConnectorComp.class"/>
-									<File Id="JavaExampleRTMEXA_1SimpleIOCONNEC_1_JAV" Name="CONNEC_1.JAV" LongName="ConnectorComp.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SimpleIO\ConnectorComp.java"/>
+									<!-- <File Id="JavaExampleRTMEXA_1SimpleIOCONNEC_1_CLA" Name="CONNEC_1.CLA" LongName="ConnectorComp.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SimpleIO\ConnectorComp.class"/>
+									<File Id="JavaExampleRTMEXA_1SimpleIOCONNEC_1_JAV" Name="CONNEC_1.JAV" LongName="ConnectorComp.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SimpleIO\ConnectorComp.java"/> -->
 									<File Id="JavaExampleRTMEXA_1SimpleIOCONSOL_1_CLA" Name="CONSOL_1.CLA" LongName="ConsoleIn.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SimpleIO\ConsoleIn.class"/>
 									<File Id="JavaExampleRTMEXA_1SimpleIOCONSOL_1_JAV" Name="CONSOL_1.JAV" LongName="ConsoleIn.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SimpleIO\ConsoleIn.java"/>
 									<File Id="JavaExampleRTMEXA_1SimpleIOCONSOL_2_CLA" Name="CONSOL_2.CLA" LongName="ConsoleInComp.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SimpleIO\ConsoleInComp.class"/>
@@ -1249,7 +1249,7 @@
 									</Component>
 								</Directory>
 							</Directory>
-							<Directory Id="JavaDocsRTMEXA_1EXTTRI_1" Name="EXTTRI_1" LongName="ExtTrigger">
+							<!-- <Directory Id="JavaDocsRTMEXA_1EXTTRI_1" Name="EXTTRI_1" LongName="ExtTrigger">
 								<Component Id="JavaDocumentsRTMEXA_1EXTTRI_1" Guid="5563756A-0FCF-4F90-9003-9C08A33FA280">
 									<File Id="JavaDocsRTMEXA_1EXTTRI_1CONNEC_1_HTM" Name="CONNEC_1.HTM" LongName="ConnectorComp.html" DiskId="1" Compressed="yes" Source="Source\JavaDoc\RTMExamples\ExtTrigger\ConnectorComp.html"/>
 									<File Id="JavaDocsRTMEXA_1EXTTRI_1CONSOL_1_HTM" Name="CONSOL_1.HTM" LongName="ConsoleIn.html" DiskId="1" Compressed="yes" Source="Source\JavaDoc\RTMExamples\ExtTrigger\ConsoleIn.html"/>
@@ -1274,7 +1274,7 @@
 										<File Id="JavaDocsRTMEXA_1EXTTRI_1CLASS__1CO4AC2_1_HTM" Name="CO4AC2_1.HTM" LongName="ConsoleOutImpl.html" DiskId="1" Compressed="yes" Source="Source\JavaDoc\RTMExamples\ExtTrigger\class-use\ConsoleOutImpl.html"/>
 									</Component>
 								</Directory>
-							</Directory>
+							</Directory> -->
 							<Directory Id="JavaDocsRTMEXA_1GUIIn" Name="GUIIn">
 								<Component Id="JavaDocumentsRTMEXA_1GUIIn" Guid="04FCAD98-E1BD-44E3-9C7B-CDBB40BEDDB9">
 									<File Id="JavaDocsRTMEXA_1GUIInGUIIN_1_HTM" Name="GUIIN_1.HTM" LongName="GUIIn.html" DiskId="1" Compressed="yes" Source="Source\JavaDoc\RTMExamples\GUIIn\GUIIn.html"/>
@@ -2789,7 +2789,7 @@
 		<Feature Id="JavaExamples" Level="1">
 			<ComponentRef Id="JavaExamples"/>
 			<ComponentRef Id="JavaExamplesRTMEXA_1CONFIG_1"/>
-			<ComponentRef Id="JavaExamplesRTMEXA_1EXTTRI_1"/>
+			<!-- <ComponentRef Id="JavaExamplesRTMEXA_1EXTTRI_1"/> -->
 			<ComponentRef Id="JavaExamplesRTMEXA_1GUIIn"/>
 			<ComponentRef Id="JavaExamplesRTMEXA_1GUIIncontrol"/>
 			<ComponentRef Id="JavaExamplesRTMEXA_1GUIInmodel"/>
@@ -2827,8 +2827,8 @@
 			<ComponentRef Id="JavaDocumentsRTCCLASS__1"/>
 			<ComponentRef Id="JavaDocumentsRTMEXA_1CONFIG_1"/>
 			<ComponentRef Id="JavaDocumentsRTMEXA_1CONFIG_1CLASS__1"/>
-			<ComponentRef Id="JavaDocumentsRTMEXA_1EXTTRI_1"/>
-			<ComponentRef Id="JavaDocumentsRTMEXA_1EXTTRI_1CLASS__1"/>
+			<!-- <ComponentRef Id="JavaDocumentsRTMEXA_1EXTTRI_1"/>
+			<ComponentRef Id="JavaDocumentsRTMEXA_1EXTTRI_1CLASS__1"/> -->
 			<ComponentRef Id="JavaDocumentsRTMEXA_1GUIIn"/>
 			<ComponentRef Id="JavaDocumentsRTMEXA_1GUIInCLASS__1"/>
 			<ComponentRef Id="JavaDocumentsRTMEXA_1GUIIncontrol"/>
