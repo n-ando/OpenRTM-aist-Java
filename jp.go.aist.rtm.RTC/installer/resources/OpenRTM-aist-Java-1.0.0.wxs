@@ -82,6 +82,9 @@
 							<File Id="JavaExampleSINCOS_1_BAT" Name="SINCOS_1.BAT" LongName="SinCosOut.bat" DiskId="1" Compressed="yes" Source="Source\examples\SinCosOut.bat">
 								<Shortcut Id="JavaExampleSINCOS_1_BATSC" Name="SinCosOu" LongName="SinCosOut.bat" Directory="ExpMenuFolder" WorkingDirectory="JavaExample"/>
 							</File>
+							<File Id="JavaExampleComposite_bat" Name="Composit.bat" LongName="Composite.bat" DiskId="1" Compressed="yes" Source="Source\examples\Composite.bat">
+								<Shortcut Id="JavaExampleComposite_batSC" Name="Composit" LongName="Composite.bat" Directory="ExpMenuFolder" WorkingDirectory="JavaExample"/>
+							</File>
 						</Component>
 						<Directory Id="JavaExampleRTMEXA_1" Name="RTMEXA_1" LongName="RTMExamples">
 							<Directory Id="JavaExampleRTMEXA_1CONFIG_1" Name="CONFIG_1" LongName="ConfigSample">
@@ -264,6 +267,32 @@
 									<File Id="JavaExampleRTMEXA_1SINCOS_1SINCOS_2_JAV" Name="SINCOS_2.JAV" LongName="SinCosOutComp.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SinCosOut\SinCosOutComp.java"/>
 									<File Id="JavaExampleRTMEXA_1SINCOS_1SINCOS_3_CLA" Name="SINCOS_3.CLA" LongName="SinCosOutImpl.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SinCosOut\SinCosOutImpl.class"/>
 									<File Id="JavaExampleRTMEXA_1SINCOS_1SINCOS_3_JAV" Name="SINCOS_3.JAV" LongName="SinCosOutImpl.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\SinCosOut\SinCosOutImpl.java"/>
+								</Component>
+							</Directory>
+							<Directory Id="JavaExampleRTMEXA_1Composite" Name="Composit" LongName="Composite">
+								<Component Id="JavaExamplesRTMEXA_1Composite" Guid="17652714-08BD-4896-8241-66E3205C0578">
+									<File Id="JavaExampleRTMEXA_1CompositeCOMPOSITE_CLA" Name="COMPOSIT.CLA" LongName="Composite.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\Composite.class"/>
+									<File Id="JavaExampleRTMEXA_1CompositeCOMPOSITE_JAV" Name="COMPOSIT.JAV" LongName="Composite.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\Composite.java"/>
+									<File Id="JavaExampleRTMEXA_1CompositeCONTROLL_1_CLA" Name="CONTRO_1.CLA" LongName="Controller.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\Controller.class"/>
+									<File Id="JavaExampleRTMEXA_1CompositeCONTROLL_1_JAV" Name="CONTRO_1.JAV" LongName="Controller.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\Controller.java"/>
+									<File Id="JavaExampleRTMEXA_1CompositeCONTROLL_2_CLA" Name="CONTRO_2.CLA" LongName="ControllerComp.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\ControllerComp.class"/>
+									<File Id="JavaExampleRTMEXA_1CompositeCONTROLL_2_JAV" Name="CONTRO_2.JAV" LongName="ControllerComp.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\ControllerComp.java"/>
+									<File Id="JavaExampleRTMEXA_1CompositeCONTROLL_3_CLA" Name="CONTRO_3.CLA" LongName="ControllerImpl.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\ControllerImpl.class"/>
+									<File Id="JavaExampleRTMEXA_1CompositeCONTROLL_3_JAV" Name="CONTRO_3.JAV" LongName="ControllerImpl.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\ControllerImpl.java"/>
+									<File Id="JavaExampleRTMEXA_1CompositeMOTOR_1_CLA" Name="MOTOR_1.CLA" LongName="Motor.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\Motor.class"/>
+									<File Id="JavaExampleRTMEXA_1CompositeMOTOR_1_JAV" Name="MOTOR_1.JAV" LongName="Motor.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\Motor.java"/>
+									<File Id="JavaExampleRTMEXA_1CompositeMOTOR_2_CLA" Name="MOTOR_2.CLA" LongName="MotorComp.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\MotorComp.class"/>
+									<File Id="JavaExampleRTMEXA_1CompositeMOTOR_2_JAV" Name="MOTOR_2.JAV" LongName="MotorComp.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\MotorComp.java"/>
+									<File Id="JavaExampleRTMEXA_1CompositeMOTOR_3_CLA" Name="MOTOR_3.CLA" LongName="MotorImpl.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\MotorImpl.class"/>
+									<File Id="JavaExampleRTMEXA_1CompositeMOTOR_3_JAV" Name="MOTOR_3.JAV" LongName="MotorImpl.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\MotorImpl.java"/>
+									<File Id="JavaExampleRTMEXA_1CompositeSENSOR_1_CLA" Name="SENSOR_1.CLA" LongName="Sensor.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\Sensor.class"/>
+									<File Id="JavaExampleRTMEXA_1CompositeSENSOR_1_JAV" Name="SENSOR_1.JAV" LongName="Sensor.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\Sensor.java"/>
+									<File Id="JavaExampleRTMEXA_1CompositeSENSOR_2_CLA" Name="SENSOR_2.CLA" LongName="SensorComp.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\SensorComp.class"/>
+									<File Id="JavaExampleRTMEXA_1CompositeSENSOR_2_JAV" Name="SENSOR_2.JAV" LongName="SensorComp.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\SensorComp.java"/>
+									<File Id="JavaExampleRTMEXA_1CompositeSENSOR_3_CLA" Name="SENSOR_3.CLA" LongName="SensorImpl.class" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\SensorImpl.class"/>
+									<File Id="JavaExampleRTMEXA_1CompositeSENSOR_3_JAV" Name="SENSOR_3.JAV" LongName="SensorImpl.java" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\SensorImpl.java"/>
+									<File Id="JavaExampleRTMEXA_1CompositeRTC_1_CON" Name="RTC_1.CON" LongName="rtc.conf" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\rtc.conf"/>
+									<File Id="JavaExampleRTMEXA_1CompositeRTC_2_CON" Name="RTC_2.CON" LongName="composite.conf" DiskId="1" Compressed="yes" Source="Source\examples\RTMExamples\Composite\composite.conf"/>
 								</Component>
 							</Directory>
 						</Directory>
@@ -2770,6 +2799,7 @@
 			<ComponentRef Id="JavaExamplesRTMEXA_1SimpleIO"/>
 			<ComponentRef Id="JavaExamplesRTMEXA_1SIMPLE_1"/>
 			<ComponentRef Id="JavaExamplesRTMEXA_1SINCOS_1"/>
+			<ComponentRef Id="JavaExamplesRTMEXA_1Composite"/>
 		</Feature>
 		<Feature Id="JavaDocuments" Level="1">
 			<ComponentRef Id="JavaDocuments"/>
