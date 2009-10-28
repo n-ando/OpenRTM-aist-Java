@@ -213,9 +213,10 @@
 		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 
 		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4" />
-		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4" />
+		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0" />
+		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0" />
 		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar.zip" />
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4/jar" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/jar" >
 			<fileset dir="installer/resources/Source/jar">
 				<include name="*${version}.jar" />
 				<include name="commons-cli-1.1.jar" />
@@ -224,17 +225,17 @@
 				<include name="License.txt" />
 			</fileset>
 		</copy>
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4/examples" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/examples" >
 			<fileset dir="installer/resources/Source/examples">
 				<include name="*.bat" />
 				<include name="*.sh" />
 				<include name="*.vbs" />
 			</fileset>
 		</copy>
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4/examples/RTMExamples" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/examples/RTMExamples" >
 			<fileset dir="installer/resources/Source/examples/RTMExamples" />
 		</copy>
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4/JavaDoc" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/JavaDoc" >
 			<fileset dir="installer/resources/Source/JavaDoc" />
 		</copy>
 		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar" />
