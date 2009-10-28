@@ -112,6 +112,18 @@ public class NVUtil {
 		    else {
 			value = "";
 		    }
+                } else if( anyVal.type().kind() == TCKind.tk_char ) {
+		    value =  Character.toString(anyVal.extract_char());
+                } else if( anyVal.type().kind() == TCKind.tk_double ) {
+		    value =  Double.toString(anyVal.extract_double());
+                } else if( anyVal.type().kind() == TCKind.tk_float ) {
+		    value =  Float.toString(anyVal.extract_float());
+                } else if( anyVal.type().kind() == TCKind.tk_long ) {
+		    value =  Integer.toString(anyVal.extract_long());
+                } else if( anyVal.type().kind() == TCKind.tk_longlong ) {
+		    value =  Long.toString(anyVal.extract_longlong());
+                } else if( anyVal.type().kind() == TCKind.tk_octet ) {
+		    value =  Byte.toString(anyVal.extract_octet());
 		} else {
 		    value = anyVal.extract_Value().toString();
                 }
