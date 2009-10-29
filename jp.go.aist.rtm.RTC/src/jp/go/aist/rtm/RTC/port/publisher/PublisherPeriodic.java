@@ -326,9 +326,9 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         catch(NumberFormatException e){
         }
     
-        m_task.suspend();
+        m_task._suspend();
         m_task.activate();
-        m_task.suspend();
+        m_task._suspend();
         return ReturnCode.PORT_OK;
     }
     /**
@@ -394,7 +394,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret;
         ret = m_buffer.write(data, sec, usec);
         rtcout.println(rtcout.DEBUG, ret.name() +" = write()" );
-        m_task.resume();
+        m_task._resume();
     
         return convertReturn(ret);
     }
@@ -419,7 +419,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         if (m_task == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_buffer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         m_active = true;
-        m_task.resume();
+        m_task._resume();
         return ReturnCode.PORT_OK;
     }
     /**
@@ -430,7 +430,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     public ReturnCode deactivate() {
         if (m_task == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         m_active = false;
-        m_task.suspend();
+        m_task._suspend();
         return ReturnCode.PORT_OK;
     }
 
