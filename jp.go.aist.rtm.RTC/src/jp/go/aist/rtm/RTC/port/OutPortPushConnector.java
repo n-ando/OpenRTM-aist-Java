@@ -180,7 +180,7 @@ public class OutPortPushConnector extends OutPortConnector {
         String pub_type;
         pub_type = profile.properties.getProperty("subscription_type",
                                               "flush");
-        StringUtil.normalize(pub_type);
+        pub_type = StringUtil.normalize(pub_type);
         PublisherBaseFactory<PublisherBase,String> factory  
                 = PublisherBaseFactory.instance();
         return factory.createObject(pub_type);

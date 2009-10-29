@@ -184,7 +184,7 @@ NVUtil.dump(holder);
 /*
         String endian_type = prop.getProperty("serializer.cdr.endian");
         if(endian_type!=null){
-            StringUtil.normalize(endian_type);
+            endian_type = StringUtil.normalize(endian_type);
             String[] endian = endian_type.split(",");
             endian_type = "";
             for(int ic=0;ic<endian.length;++ic){
@@ -208,7 +208,7 @@ System.out.println("endian_type:"+endian_type);
          * prop["interface_type"] become possible here.
          */
         String dflow_type = prop.getProperty("dataflow_type");
-        StringUtil.normalize(dflow_type);
+        dflow_type = StringUtil.normalize(dflow_type);
 
         if (dflow_type.equals("push")) {
             rtcout.println(rtcout.DEBUG, 
@@ -316,7 +316,7 @@ System.out.println("endian = "+m_endian);
          * prop["interface_type"] become possible here.
          */
         String dflow_type = prop.getProperty("dataflow_type");
-        StringUtil.normalize(dflow_type);
+        dflow_type = StringUtil.normalize(dflow_type);
 
         if (dflow_type.equals("push")) {
             rtcout.println(rtcout.DEBUG, 

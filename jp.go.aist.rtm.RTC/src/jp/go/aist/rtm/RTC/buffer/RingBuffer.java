@@ -487,7 +487,7 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
      */
     private void initWritePolicy(final Properties prop) {
         String policy = prop.getProperty("write.full_policy");
-        StringUtil.normalize(policy);
+        policy = StringUtil.normalize(policy);
         if (policy.equals("overwrite")) {
             m_overwrite = true;
             m_timedwrite = false;
@@ -517,7 +517,7 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
      */
     private void initReadPolicy(final Properties prop) {
         String policy = prop.getProperty("read.empty_policy");
-        StringUtil.normalize(policy);
+        policy= StringUtil.normalize(policy);
         if (policy.equals("readback")) {
             m_readback = true;
             m_timedread = false;

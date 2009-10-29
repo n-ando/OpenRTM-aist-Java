@@ -230,7 +230,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         String skip_count = prop.getProperty("publisher.skip_count", "0");
         rtcout.println(rtcout.DEBUG, "skip_count: " + skip_count );
     
-        StringUtil.normalize(push_policy);
+        push_policy = StringUtil.normalize(push_policy);
         if (push_policy.equals("all")) {
             m_pushPolicy = Policy.ALL;
           }
