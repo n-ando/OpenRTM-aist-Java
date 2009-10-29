@@ -12,6 +12,7 @@
 	<property name="source.samples.class" value="bin/RTMExamples"/>
 	<property name="source.samples.java" value="src/RTMExamples"/>
 	<property name="source.samples.java.SimpleService" value="${source.samples.java}/SimpleService"/>
+	<property name="source.samples.java.AutoTest" value="${source.samples.java}/AutoTest"/>
 	<property name="source.test" value="tests/src"/>
 	<property name="source.tests.bind" value="${source.test}/jp/go/aist/rtm/bind"/>
 
@@ -41,6 +42,7 @@
 	<property name="idl.test.CorbaPort" value="${idl.path.tests}/CorbaPort/MyService.idl" />
 	<property name="idl.test.TypeCast" value="${idl.path.tests}/TypeCast/Mock.idl" />
 	<property name="idl.sample" value="${source.samples.java}/MyService.idl" />
+	<property name="idl.autotest" value="${source.samples.java}/AutoTestService.idl" />
 
 	<target name="buildAll">
 		<antcall target="idlCompile" />
@@ -149,7 +151,13 @@
 			<fileset dir="${source.samples.java.SimpleService}" excludes="**.idl,MyServiceConsumer**.java,MyServiceProvider**.java,MyServiceSVC_impl.java,rtc.conf" />
 		</delete>
 		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-fall -td ${source} -pkgPrefix SimpleService RTMExamples ${idl.sample}"/>
+			<arg line="-v -fall -td ${source} -pkgPrefix SimpleService RTMExamples ${idl.sample}"/>
+		</exec>
+		<delete includeEmptyDirs="true">
+			<fileset dir="${source.samples.java.AutoTest}" excludes="**.idl,AutoTest**.java,MyServiceSVC_impl.java,**.conf" />
+		</delete>
+		<exec executable="${java.home}\..\bin\idlj">
+			<arg line="-v -fall -td ${source} -pkgPrefix AutoTest RTMExamples ${idl.autotest}"/>
 		</exec>
 	</target>
 
