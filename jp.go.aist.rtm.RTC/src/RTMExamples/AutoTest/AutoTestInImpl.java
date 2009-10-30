@@ -201,7 +201,7 @@ public class AutoTestInImpl extends DataFlowComponentBase {
 	    if (m_msg.equals("")) 
 		m_msg = m_myservice0.get_echo_message();
 
-	    if (m_inIn.isNew() && m_seqinIn.isNew() && !m_msg.equals(null)) {
+	    if (m_inIn.isNew() && m_seqinIn.isNew() && !m_msg.equals("")) {
 		// read TimedFloat data.
 		m_inIn.read();
 		// read TimedFloatSeq data.
