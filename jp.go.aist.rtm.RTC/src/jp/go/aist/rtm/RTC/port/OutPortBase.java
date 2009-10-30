@@ -131,8 +131,10 @@ public class OutPortBase extends PortBase {
                        "getConnectorProfiles(): size = "+m_connectors.size());
         Vector<ConnectorBase.Profile> profs 
             = new Vector<ConnectorBase.Profile>();
-        for (int i=0, len=m_connectors.size(); i < len; ++i) {
-            profs.add(m_connectors.elementAt(i).profile());
+        synchronized (m_connectors){
+            for (int i=0, len=m_connectors.size(); i < len; ++i) {
+                profs.add(m_connectors.elementAt(i).profile());
+            }
         }
         return profs;
     }
@@ -145,8 +147,10 @@ public class OutPortBase extends PortBase {
      */
     public Vector<String> getConnectorIds(){
         Vector<String> ids = new Vector<String>();
-        for (int i=0, len=m_connectors.size(); i < len; ++i) {
-            ids.add(m_connectors.elementAt(i).id());
+        synchronized (m_connectors){
+            for (int i=0, len=m_connectors.size(); i < len; ++i) {
+                ids.add(m_connectors.elementAt(i).id());
+            }
         }
         rtcout.println(rtcout.TRACE, 
                        "getConnectorIds(): "+ids.toString());
@@ -162,8 +166,10 @@ public class OutPortBase extends PortBase {
      */
     public Vector<String> getConnectorNames(){
         Vector<String> names = new Vector<String>();
-        for (int i=0, len=m_connectors.size(); i < len; ++i) {
-            names.add(m_connectors.elementAt(i).name());
+        synchronized (m_connectors){
+            for (int i=0, len=m_connectors.size(); i < len; ++i) {
+                names.add(m_connectors.elementAt(i).name());
+            }
         }
         rtcout.println(rtcout.TRACE, 
                        "getConnectorNames(): "+names.toString());
@@ -185,10 +191,12 @@ public class OutPortBase extends PortBase {
                        "getConnectorProfileById(id = "+id+")");
 
         String sid = id;
-        for (int i=0, len=m_connectors.size(); i < len; ++i) {
-            if (sid.equals(m_connectors.elementAt(i).id())) {
-                prof = m_connectors.elementAt(i).profile();
-                return true;
+        synchronized (m_connectors){
+            for (int i=0, len=m_connectors.size(); i < len; ++i) {
+                if (sid.equals(m_connectors.elementAt(i).id())) {
+                    prof = m_connectors.elementAt(i).profile();
+                    return true;
+                }
             }
         }
         return false;
@@ -209,12 +217,14 @@ public class OutPortBase extends PortBase {
                        "getConnectorProfileByNmae(name = "+name+")");
 
         String sname = name;
-        for (int i=0, len=m_connectors.size(); i < len; ++i) {
-            if (sname.equals(m_connectors.elementAt(i).name())) {
-                prof = m_connectors.elementAt(i).profile();
-                return true;
-              }
-          }
+        synchronized (m_connectors){
+            for (int i=0, len=m_connectors.size(); i < len; ++i) {
+                if (sname.equals(m_connectors.elementAt(i).name())) {
+                    prof = m_connectors.elementAt(i).profile();
+                    return true;
+                  }
+            }
+        }
         return false;
     }
     /** 
@@ -587,14 +597,16 @@ System.out.println("endian = "+m_endian);
         String id = connector_profile.connector_id;
         rtcout.println(rtcout.PARANOID, "connector_id: " + id);
 
-        Iterator it = m_connectors.iterator();
-        while (it.hasNext()) {
-            OutPortConnector connector = (OutPortConnector)it.next();
-            if (id.equals(connector.id())) {
-                // Connector's dtor must call disconnect()
-                it.remove();
-                rtcout.println(rtcout.TRACE, "delete connector: " + id);
-                return;
+        synchronized (m_connectors){
+            Iterator it = m_connectors.iterator();
+            while (it.hasNext()) {
+                OutPortConnector connector = (OutPortConnector)it.next();
+                if (id.equals(connector.id())) {
+                    // Connector's dtor must call disconnect()
+                    it.remove();
+                    rtcout.println(rtcout.TRACE, "delete connector: " + id);
+                    return;
+                }
             }
         }
         rtcout.println(rtcout.ERROR, "specified connector not found: " + id);
@@ -606,9 +618,11 @@ System.out.println("endian = "+m_endian);
    * ports.</p>
    */
   public void activateInterfaces() {
-      for (int i=0, len=m_connectors.size(); i < len; ++i) {
-          m_connectors.elementAt(i).activate();
-      }
+        synchronized (m_connectors){
+            for (int i=0, len=m_connectors.size(); i < len; ++i) {
+                m_connectors.elementAt(i).activate();
+            }
+        }
   }
   
   /**
@@ -617,9 +631,11 @@ System.out.println("endian = "+m_endian);
    * ports. </p>
    */
   public void deactivateInterfaces() {
-      for (int i=0, len=m_connectors.size(); i < len; ++i) {
-          m_connectors.elementAt(i).deactivate();
-      }
+        synchronized (m_connectors){
+            for (int i=0, len=m_connectors.size(); i < len; ++i) {
+                m_connectors.elementAt(i).deactivate();
+            }
+        }
   }
     /**
      * <p>データ更新通知先として登録されているPublisherオブジェクトのリストです。</p>
@@ -842,24 +858,28 @@ System.out.println("endian = "+m_endian);
                                   CORBA_SeqUtil.refToVstring(cprof.value.ports),
                                   prop); 
         OutPortConnector connector = null;
-        try {
-            BufferBase<OutputStream> buffer = null;
-            connector = new OutPortPushConnector(profile, consumer, buffer);
+        synchronized (m_connectors){
+            try {
+                BufferBase<OutputStream> buffer = null;
+                connector = new OutPortPushConnector(profile, consumer, buffer);
 
-            if (connector == null) {
-                rtcout.println(rtcout.ERROR, "old compiler? new returned 0;");
+                if (connector == null) {
+                    rtcout.println(rtcout.ERROR, 
+                                   "old compiler? new returned 0;");
+                    return null;
+                }
+                rtcout.println(rtcout.TRACE, "OutPortPushConnector create");
+    
+                m_connectors.add(connector);
+                rtcout.println(rtcout.PARANOID, 
+                               "connector push backed: "+m_connectors.size());
+                return connector;
+            }
+            catch (Exception e) {
+                rtcout.println(rtcout.ERROR,
+                               "OutPortPullConnector creation failed");
                 return null;
             }
-            rtcout.println(rtcout.TRACE, "OutPortPushConnector create");
-
-            m_connectors.add(connector);
-            rtcout.println(rtcout.PARANOID, 
-                           "connector push backed: "+m_connectors.size());
-            return connector;
-        }
-        catch (Exception e) {
-            rtcout.println(rtcout.ERROR,"OutPortPullConnector creation failed");
-            return null;
         }
     }
     /**
@@ -875,24 +895,28 @@ System.out.println("endian = "+m_endian);
                                  CORBA_SeqUtil.refToVstring(cprof.value.ports),
                                  prop); 
         OutPortConnector connector = null;
-        try {
-            BufferBase<OutputStream> buffer = null;
-            connector = new OutPortPullConnector(profile, provider, buffer);
+        synchronized (m_connectors){
+            try {
+                BufferBase<OutputStream> buffer = null;
+                connector = new OutPortPullConnector(profile, provider, buffer);
 
-            if (connector == null) {
-                rtcout.println(rtcout.ERROR, "old compiler? new returned 0;");
+                if (connector == null) {
+                    rtcout.println(rtcout.ERROR, 
+                                   "old compiler? new returned 0;");
+                    return null;
+                }
+                rtcout.println(rtcout.TRACE, "OutPortPushConnector create");
+    
+                m_connectors.add(connector);
+                rtcout.println(rtcout.PARANOID, 
+                           "connector push backed: "+m_connectors.size());
+                return connector;
+            }
+            catch (Exception e) {
+                rtcout.println(rtcout.ERROR,
+                               "OutPortPullConnector creation failed");
                 return null;
             }
-            rtcout.println(rtcout.TRACE, "OutPortPushConnector create");
-
-            m_connectors.add(connector);
-            rtcout.println(rtcout.PARANOID, 
-                           "connector push backed: "+m_connectors.size());
-            return connector;
-        }
-        catch (Exception e) {
-            rtcout.println(rtcout.ERROR,"OutPortPullConnector creation failed");
-            return null;
         }
     }
     /**

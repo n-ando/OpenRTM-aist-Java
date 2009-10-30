@@ -93,14 +93,16 @@ public class InPortBase extends PortBase {
     public void activateInterfaces() {
         rtcout.println(rtcout.TRACE, "activateInterfaces()");
 
-        for (int i=0, len=m_connectors.size(); i < len; ++i) {
-            m_connectors.elementAt(i).activate();
-            rtcout.println(rtcout.DEBUG, 
-                           "activate connector: "
-                                + m_connectors.elementAt(i).name()
-                                +" "
-                                +m_connectors.elementAt(i).id());
-          }
+        synchronized (m_connectors){
+            for (int i=0, len=m_connectors.size(); i < len; ++i) {
+                m_connectors.elementAt(i).activate();
+                rtcout.println(rtcout.DEBUG, 
+                               "activate connector: "
+                                    + m_connectors.elementAt(i).name()
+                                    +" "
+                                    +m_connectors.elementAt(i).id());
+            }
+        }
     }
 
     /**
@@ -114,13 +116,15 @@ public class InPortBase extends PortBase {
     public void deactivateInterfaces() {
         rtcout.println(rtcout.TRACE, "deactivateInterfaces()");
 
-        for (int i=0, len=m_connectors.size(); i < len; ++i) {
-            m_connectors.elementAt(i).deactivate();
-            rtcout.println(rtcout.DEBUG, 
-                           "deactivate connector: "
-                                + m_connectors.elementAt(i).name()
-                                +" "
-                                +m_connectors.elementAt(i).id());
+        synchronized (m_connectors){
+            for (int i=0, len=m_connectors.size(); i < len; ++i) {
+                m_connectors.elementAt(i).deactivate();
+                rtcout.println(rtcout.DEBUG, 
+                               "deactivate connector: "
+                                    + m_connectors.elementAt(i).name()
+                                    +" "
+                                    +m_connectors.elementAt(i).id());
+            }
         }
     }
 
@@ -366,18 +370,22 @@ System.out.println("endian = "+m_endian);
         String id = connector_profile.connector_id;
         rtcout.println(rtcout.PARANOID, "connector_id: " + id);
 
-        Iterator it = m_connectors.iterator();
-        while (it.hasNext()) {
-            InPortConnector connector = (InPortConnector)it.next();
-            if (id.equals(connector.id())) {
-                // Connector's dtor must call disconnect()
-                it.remove();
-                rtcout.println(rtcout.TRACE, "delete connector: " + id);
-                return;
+
+        synchronized (m_connectors){
+            Iterator it = m_connectors.iterator();
+            while (it.hasNext()) {
+                InPortConnector connector = (InPortConnector)it.next();
+                if (id.equals(connector.id())) {
+                    // Connector's dtor must call disconnect()
+                    it.remove();
+                    rtcout.println(rtcout.TRACE, "delete connector: " + id);
+                    return;
+                }
             }
+            rtcout.println(rtcout.ERROR, 
+                           "specified connector not found: " + id);
+            return;
         }
-        rtcout.println(rtcout.ERROR, "specified connector not found: " + id);
-        return;
     }
 
 
@@ -595,30 +603,35 @@ System.out.println("endian = "+m_endian);
                                  CORBA_SeqUtil.refToVstring(cprof.value.ports),
                                  prop); 
         InPortConnector connector = null;
-        try {
-            if (m_singlebuffer) {
-                connector = new InPortPushConnector(profile, provider,
-                                                m_thebuffer);
+        synchronized (m_connectors){
+            try {
+                if (m_singlebuffer) {
+                    connector = new InPortPushConnector(profile, provider,
+                                                    m_thebuffer);
+                }
+                else {
+                    BufferBase<OutputStream> buffer = null;
+                    connector = new InPortPushConnector(profile, provider, 
+                                                        buffer);
+                }
+    
+                if (connector == null) {
+                    rtcout.println(rtcout.ERROR, 
+                                   "old compiler? new returned 0;");
+                    return null;
+                }
+                rtcout.println(rtcout.TRACE, "InPortPushConnector create");
+    
+                m_connectors.add(connector);
+                rtcout.println(rtcout.PARANOID, 
+                               "connector push backed: "+m_connectors.size());
+                return connector;
             }
-            else {
-                BufferBase<OutputStream> buffer = null;
-                connector = new InPortPushConnector(profile, provider, buffer);
-            }
-
-            if (connector == null) {
-                rtcout.println(rtcout.ERROR, "old compiler? new returned 0;");
+            catch (Exception e) {
+                rtcout.println(rtcout.ERROR,
+                               "InPortPushConnector creation failed");
                 return null;
             }
-            rtcout.println(rtcout.TRACE, "InPortPushConnector create");
-
-            m_connectors.add(connector);
-            rtcout.println(rtcout.PARANOID, 
-                           "connector push backed: "+m_connectors.size());
-            return connector;
-        }
-        catch (Exception e) {
-            rtcout.println(rtcout.ERROR,"InPortPushConnector creation failed");
-            return null;
         }
     }
     /**
@@ -636,30 +649,35 @@ System.out.println("endian = "+m_endian);
                                   CORBA_SeqUtil.refToVstring(cprof.value.ports),
                                   prop); 
         InPortConnector connector = null;
-        try {
-            if (m_singlebuffer) {
-                connector = new InPortPullConnector(profile, consumer,
-                                                    m_thebuffer);
-            }
-            else {
-                BufferBase<OutputStream> buffer = null;
-                connector = new InPortPullConnector(profile, consumer, buffer);
-            }
+        synchronized (m_connectors){
+            try {
+                if (m_singlebuffer) {
+                    connector = new InPortPullConnector(profile, consumer,
+                                                        m_thebuffer);
+                }
+                else {
+                    BufferBase<OutputStream> buffer = null;
+                    connector = new InPortPullConnector(profile, consumer, 
+                                                        buffer);
+                }
 
-            if (connector == null) {
-                rtcout.println(rtcout.ERROR, "old compiler? new returned 0;");
+                if (connector == null) {
+                    rtcout.println(rtcout.ERROR, 
+                                   "old compiler? new returned 0;");
+                    return null;
+                }
+                rtcout.println(rtcout.TRACE, "InPortPushConnector create");
+
+                m_connectors.add(connector);
+                rtcout.println(rtcout.PARANOID, 
+                               "connector push backed: "+m_connectors.size());
+                return connector;
+            }
+            catch (Exception e) {
+                rtcout.println(rtcout.ERROR,
+                               "InPortPullConnector creation failed");
                 return null;
             }
-            rtcout.println(rtcout.TRACE, "InPortPushConnector create");
-
-            m_connectors.add(connector);
-            rtcout.println(rtcout.PARANOID, 
-                           "connector push backed: "+m_connectors.size());
-            return connector;
-        }
-        catch (Exception e) {
-            rtcout.println(rtcout.ERROR,"InPortPullConnector creation failed");
-            return null;
         }
     }
     /**

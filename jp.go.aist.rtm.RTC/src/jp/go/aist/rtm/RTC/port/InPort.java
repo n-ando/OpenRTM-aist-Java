@@ -183,18 +183,21 @@ public class InPort<DataType> extends InPortBase {
 
         rtcout.println(rtcout.TRACE, "isNew()");
 
-        if (m_connectors.size() == 0) {
-            rtcout.println(rtcout.DEBUG, "no connectors");
+        synchronized (m_connectors){
+            if (m_connectors.size() == 0) {
+                rtcout.println(rtcout.DEBUG, "no connectors");
+                return false;
+            }
+            int r = m_connectors.elementAt(0).getBuffer().readable();
+            if (r > 0) {
+                rtcout.println(rtcout.DEBUG, 
+                               "isNew() = true, readable data: " + r);
+                return true;
+            }
+      
+            rtcout.println(rtcout.DEBUG, "isNew() = false, no readable data");
             return false;
         }
-        int r = m_connectors.elementAt(0).getBuffer().readable();
-        if (r > 0) {
-            rtcout.println(rtcout.DEBUG, "isNew() = true, readable data: " + r);
-            return true;
-        }
-      
-        rtcout.println(rtcout.DEBUG, "isNew() = false, no readable data");
-        return false;
     }
     
     
@@ -220,55 +223,60 @@ public class InPort<DataType> extends InPortBase {
     public DataType read() {
         rtcout.println(rtcout.TRACE, "DataType read()");
 
-        if (m_OnRead != null) {
-            m_OnRead.run();
-            rtcout.println(rtcout.TRACE, "OnRead called");
-        }
 
-        if (m_connectors.size() == 0) {
-            rtcout.println(rtcout.DEBUG, "no connectors");
-            return m_value.v;
-        }
+        synchronized (m_connectors){
 
-//        OutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+            if (m_OnRead != null) {
+                m_OnRead.run();
+                rtcout.println(rtcout.TRACE, "OnRead called");
+            }
+
+            if (m_connectors.size() == 0) {
+                rtcout.println(rtcout.DEBUG, "no connectors");
+                return m_value.v;
+            }
+
+//            OutputStream cdr = new EncapsOutputStream(m_spi_orb, 
 //                                                  isLittleEndian());
-        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+            EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
                                                         isLittleEndian());
 
-System.out.println("islittleendian:"+isLittleEndian());
 
-        DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
-        ReturnCode ret = m_connectors.elementAt(0).read(dataref);
+            DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+            ReturnCode ret = m_connectors.elementAt(0).read(dataref);
 
-        cdr = (EncapsOutputStream)dataref.v;
-        if (ret.equals(ReturnCode.PORT_OK)) {
-            rtcout.println(rtcout.DEBUG, "data read succeeded");
-//            InputStream input_stream = cdr.create_input_stream();
-            byte[] ch = cdr.toByteArray();
-            InputStream input_stream = new EncapsInputStream(m_orb, 
+            cdr = (EncapsOutputStream)dataref.v;
+            if (ret.equals(ReturnCode.PORT_OK)) {
+                rtcout.println(rtcout.DEBUG, "data read succeeded");
+//                InputStream input_stream = cdr.create_input_stream();
+                byte[] ch = cdr.toByteArray();
+                InputStream input_stream = new EncapsInputStream(m_orb, 
                                                              ch, 
                                                              ch.length,
                                                              isLittleEndian(),
                                                              GIOPVersion.V1_2);
 
-            m_value.v = read_stream(m_value,input_stream);
-            if (m_OnReadConvert != null) {
-                m_value.v = m_OnReadConvert.run(m_value.v);
-                rtcout.println(rtcout.DEBUG, "OnReadConvert called");
+                m_value.v = read_stream(m_value,input_stream);
+                if (m_OnReadConvert != null) {
+                    m_value.v = m_OnReadConvert.run(m_value.v);
+                    rtcout.println(rtcout.DEBUG, "OnReadConvert called");
+                    return m_value.v;
+                }
                 return m_value.v;
             }
+            else if (ret.equals(ReturnCode.BUFFER_EMPTY)) {
+                rtcout.println(rtcout.WARN, "buffer empty");
+                return m_value.v;
+            }
+            else if (ret.equals(ReturnCode.BUFFER_TIMEOUT)) {
+                rtcout.println(rtcout.WARN, "buffer read timeout");
+                return m_value.v;
+            }
+            rtcout.println(rtcout.ERROR, 
+                           "unknown retern value from buffer.read()");
             return m_value.v;
+
         }
-        else if (ret.equals(ReturnCode.BUFFER_EMPTY)) {
-            rtcout.println(rtcout.WARN, "buffer empty");
-            return m_value.v;
-        }
-        else if (ret.equals(ReturnCode.BUFFER_TIMEOUT)) {
-            rtcout.println(rtcout.WARN, "buffer read timeout");
-            return m_value.v;
-        }
-        rtcout.println(rtcout.ERROR, "unknown retern value from buffer.read()");
-        return m_value.v;
     }
     
     /**
@@ -350,19 +358,22 @@ System.out.println("islittleendian:"+isLittleEndian());
     public boolean isEmpty() {
         rtcout.println(rtcout.TRACE, "isEmpty()");
 
-        if (m_connectors.size() == 0) {
-            rtcout.println(rtcout.DEBUG, "no connectors");
-            return true;
-        }
-        int r = m_connectors.elementAt(0).getBuffer().readable();
-        if (r == 0) {
-            rtcout.println(rtcout.DEBUG, "isEmpty() = true, buffer is empty");
-            return true;
-        }
+        synchronized (m_connectors){
+            if (m_connectors.size() == 0) {
+                rtcout.println(rtcout.DEBUG, "no connectors");
+                return true;
+            }
+            int r = m_connectors.elementAt(0).getBuffer().readable();
+            if (r == 0) {
+                rtcout.println(rtcout.DEBUG, 
+                               "isEmpty() = true, buffer is empty");
+                return true;
+            }
       
-        rtcout.println(rtcout.DEBUG, 
-                       "isEmpty() = false, data exists in the buffer");
-        return false;
+            rtcout.println(rtcout.DEBUG, 
+                           "isEmpty() = false, data exists in the buffer");
+            return false;
+        }
     }
     
     private BufferBase<DataType> m_superClass;

@@ -191,42 +191,45 @@ public class OutPort<DataType> extends OutPortBase {
      * @return データを書き込めた場合はtrueを、さもなくばfalseを返します。
      */
     public boolean write(final DataType value) {
-        if (m_OnWrite != null) {
-	    m_OnWrite.run(value);
-	}
+        rtcout.println(rtcout.TRACE, "DataType write()");
+        synchronized (m_connectors){
+            if (m_OnWrite != null) {
+                m_OnWrite.run(value);
+            }
 
-        // check number of connectors
-        int conn_size = m_connectors.size();
-        if (!(conn_size > 0)) { 
-            return true; 
-        }
+            // check number of connectors
+            int conn_size = m_connectors.size();
+            if (!(conn_size > 0)) { 
+                return true; 
+            }
         
-        // set timestamp
-//        set_timestamp(value);
+            // set timestamp
+//            set_timestamp(value);
 
-        // data -> (conversion) -> CDR stream
-        m_cdr = new EncapsOutputStream(m_spi_orb,isLittleEndian());
+            // data -> (conversion) -> CDR stream
+            m_cdr = new EncapsOutputStream(m_spi_orb,isLittleEndian());
 
-        if (m_OnWriteConvert != null) {
-            DataType convervalue = m_OnWriteConvert.run(value);
-            write_stream(convervalue,m_cdr); 
-        }
-        else {
-            write_stream(value,m_cdr);
-        }
+            if (m_OnWriteConvert != null) {
+                DataType convervalue = m_OnWriteConvert.run(value);
+                write_stream(convervalue,m_cdr); 
+            }
+            else {
+                write_stream(value,m_cdr);
+            }
 
-        boolean result = true;
-        for (int i=0, len=conn_size; i < len; ++i) {
-            ReturnCode ret;
-            ret = m_connectors.elementAt(i).write(m_cdr);
-            if (ret != ReturnCode.PORT_OK) {
-                result = false;
-                if (ret.equals(ReturnCode.CONNECTION_LOST)) {
-                    disconnect(m_connectors.elementAt(i).id());
+            boolean result = true;
+            for (int i=0, len=conn_size; i < len; ++i) {
+                ReturnCode ret;
+                ret = m_connectors.elementAt(i).write(m_cdr);
+                if (ret != ReturnCode.PORT_OK) {
+                    result = false;
+                    if (ret.equals(ReturnCode.CONNECTION_LOST)) {
+                        disconnect(m_connectors.elementAt(i).id());
+                    }
                 }
             }
+            return result;
         }
-        return result;
     }
     
     /**
