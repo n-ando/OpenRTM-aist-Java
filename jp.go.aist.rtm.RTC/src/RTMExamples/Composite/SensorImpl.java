@@ -26,7 +26,7 @@ public class SensorImpl extends DataFlowComponentBase {
         m_in_val = new TimedLong();
         m_in = new DataRef<TimedLong>(m_in_val);
         m_inIn = new InPort<TimedLong>("in", m_in);
-        m_out_val = new TimedFloat();
+        m_out_val = new TimedFloat(new RTC.Time(0,0),0);
         m_out = new DataRef<TimedFloat>(m_out_val);
         m_outOut = new OutPort<TimedFloat>("out", m_out);
         // </rtc-template>

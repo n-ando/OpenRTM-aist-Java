@@ -25,7 +25,7 @@ public class ControllerImpl extends DataFlowComponentBase {
         m_in_val = new TimedFloat();
         m_in = new DataRef<TimedFloat>(m_in_val);
         m_inIn = new InPort<TimedFloat>("in", m_in);
-        m_out_val = new TimedFloat();
+        m_out_val = new TimedFloat(new RTC.Time(0,0),0);
         m_out = new DataRef<TimedFloat>(m_out_val);
         m_outOut = new OutPort<TimedFloat>("out", m_out);
         // </rtc-template>

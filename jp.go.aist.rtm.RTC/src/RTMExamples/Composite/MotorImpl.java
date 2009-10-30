@@ -26,7 +26,7 @@ public class MotorImpl extends DataFlowComponentBase {
         m_in_val = new TimedFloat();
         m_in = new DataRef<TimedFloat>(m_in_val);
         m_inIn = new InPort<TimedFloat>("in", m_in);
-        m_out_val = new TimedLong();
+        m_out_val = new TimedLong(new RTC.Time(0,0),0);
         m_out = new DataRef<TimedLong>(m_out_val);
         m_outOut = new OutPort<TimedLong>("out", m_out);
         // </rtc-template>
