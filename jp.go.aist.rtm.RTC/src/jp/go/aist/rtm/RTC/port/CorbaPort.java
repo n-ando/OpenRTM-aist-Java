@@ -100,7 +100,7 @@ public class CorbaPort extends PortBase {
         ORB orb = ORBUtil.getOrb();
 	String ior = orb.object_to_string(obj);
 
-        CORBA_SeqUtil.push_back(this.m_providers, NVUtil.newNV(key.toString(), ior));
+	CORBA_SeqUtil.push_back(this.m_providers, NVUtil.newNVString(key.toString(), ior));
 	m_servants.put(instance_name, new ProviderInfo(provider, oid));
 
         return true;
