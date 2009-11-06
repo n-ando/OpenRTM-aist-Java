@@ -32,6 +32,22 @@ public class NVUtil {
         nv.value = cast.castAny(value);
         return nv;
     }
+    /**
+     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
+     * 
+     * @param name オブジェクトに設定する名称
+     * @param value オブジェクトに設定する値(String)
+     * 
+     * @return 作成されたNameValueオブジェクト
+     */
+    public static NameValue newNVString(final String name, String value) {
+        NameValue nv = new NameValue();
+        nv.name = name;
+        Any any = ORBUtil.getOrb().create_any();
+        any.insert_string(value);
+        nv.value = any;
+        return nv;
+    }
     
     /**
      * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
