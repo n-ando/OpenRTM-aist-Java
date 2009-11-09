@@ -25,7 +25,7 @@ public class MyServiceSVC_impl extends MyServicePOA{
         // TODO "Code missing in function <String echo(String msg)>"
 	m_msg = msg;
 	m_isNew = true;
-        return null;
+        return msg;
     }
 
     public String[] get_echo_history() {
