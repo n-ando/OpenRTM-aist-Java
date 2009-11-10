@@ -89,12 +89,16 @@ public class Logbuf {
         _constructor();
     }
 
+    private static Level rtm_level=null;
 
     private void _constructor(){
-        for(int ic=PARANOID;ic<=SILENT;++ic){
-            int num = RTMLevelToLogLevel(ic);
-            String str = logLevelToStr(ic);
-            Level rtm_level = new OpenRTMLevel(str, num);
+
+        if(rtm_level==null){
+            for(int ic=PARANOID;ic<=SILENT;++ic){
+                int num = RTMLevelToLogLevel(ic);
+                String str = logLevelToStr(ic);
+                rtm_level = new OpenRTMLevel(str, num);
+            }
         }
     }
     /**

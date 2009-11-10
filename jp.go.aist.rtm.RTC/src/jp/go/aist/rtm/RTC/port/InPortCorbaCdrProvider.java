@@ -51,7 +51,6 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
     public InPortCorbaCdrProvider() {
         m_buffer = null; 
         rtcout = new Logbuf("InPortCorbaCdrProvider");
-        rtcout.setLevel("PARANOID");
         // PortProfile setting
         setInterfaceType("corba_cdr");
     
@@ -183,6 +182,13 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      *
      */
     public void destructor_(Object obj) {
+        try{
+            byte[] oid = _default_POA().servant_to_id((InPortCorbaCdrProvider)obj);
+            _default_POA().deactivate_object(oid);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        } 
         obj = null;
     }
 
@@ -232,7 +238,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         return true;
 
     }
-    
+
     /**
      * <p>データタイプを設定します。</p>
      * 

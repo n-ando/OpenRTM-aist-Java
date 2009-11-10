@@ -404,7 +404,6 @@ System.out.println("endian_type:"+endian_type);
             holder.value[index].value.insert_wstring(endian_type);
 //            CORBA_SeqUtil.push_back(holder, 
 //                NVUtil.newNV("dataport.serializer.cdr.endian", endian_type));
-NVUtil.dump(holder);
             cprof.value.properties = holder.value;
        }
        catch(Exception e){
@@ -603,6 +602,7 @@ System.out.println("endian = "+m_endian);
                 OutPortConnector connector = (OutPortConnector)it.next();
                 if (id.equals(connector.id())) {
                     // Connector's dtor must call disconnect()
+                    connector.disconnect();
                     it.remove();
                     rtcout.println(rtcout.TRACE, "delete connector: " + id);
                     return;

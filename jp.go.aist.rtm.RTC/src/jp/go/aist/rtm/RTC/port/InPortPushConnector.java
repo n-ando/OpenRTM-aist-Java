@@ -34,7 +34,6 @@ public class InPortPushConnector extends InPortConnector {
         else {
             m_deleteBuffer = false;
         }
-        rtcout = new Logbuf("InPortPushConnector");
 
         // publisher/buffer creation. This may throw std::bad_alloc;
         if (m_buffer == null) {
@@ -146,6 +145,5 @@ public class InPortPushConnector extends InPortConnector {
 
     private boolean m_deleteBuffer;
 
-    private Logbuf rtcout;
 
 }

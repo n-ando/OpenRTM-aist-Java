@@ -196,6 +196,13 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
      *
      */
     public void destructor_(Object obj) {
+        try{
+            byte[] oid = _default_POA().servant_to_id((InPortCorbaCdrProvider)obj);
+            _default_POA().deactivate_object(oid);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        } 
         obj = null;
     }
     /**

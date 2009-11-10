@@ -377,6 +377,7 @@ System.out.println("endian = "+m_endian);
                 InPortConnector connector = (InPortConnector)it.next();
                 if (id.equals(connector.id())) {
                     // Connector's dtor must call disconnect()
+                    connector.disconnect();
                     it.remove();
                     rtcout.println(rtcout.TRACE, "delete connector: " + id);
                     return;
