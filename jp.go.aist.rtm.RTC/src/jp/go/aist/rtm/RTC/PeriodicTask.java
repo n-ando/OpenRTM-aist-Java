@@ -419,6 +419,14 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
      *
      */
     public void destructor_(Object obj) {
+        PeriodicTaskBase task = (PeriodicTaskBase)obj;
+        task._finalize();
+        try{
+            task.join();
+        }
+        catch(java.lang.InterruptedException e){
+            ;
+        }
         obj = null;
     }
 

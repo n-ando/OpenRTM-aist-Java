@@ -40,7 +40,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         m_skipn = 0;
         m_active = false;
         m_leftskip = 0;
-        rtcout.setLevel("PARANOID");
     }
     
     /**
@@ -482,6 +481,12 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      *
      */
     public void destructor_(Object obj) {
+        PublisherNew pb = (PublisherNew)obj; 
+        if (pb.m_task != null) {
+            PeriodicTaskFactory<PeriodicTaskBase,String> factory 
+                = PeriodicTaskFactory.instance();
+            factory .deleteObject(pb.m_task);
+        }
         obj = null;
     }
     /**
