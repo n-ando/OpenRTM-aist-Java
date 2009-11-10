@@ -4,6 +4,8 @@ import org.omg.CORBA.ORB;
 import org.omg.CORBA.BAD_OPERATION;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
+import org.omg.CORBA.TCKind;
+
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
@@ -154,7 +156,12 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
         try {
             rtcout.println(rtcout.DEBUG, 
                             "type:"+properties.value[index].value.type());
-            ior = properties.value[index].value.extract_wstring();
+            if( properties.value[index].value.type().kind() == 
+                TCKind.tk_wstring ) {
+                ior = properties.value[index].value.extract_wstring();
+            } else {
+                ior = properties.value[index].value.extract_string();
+            }
         }
         catch(BAD_OPERATION e) {
             rtcout.println(rtcout.ERROR, "inport_ior has no string");
@@ -231,7 +238,12 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
     
         final String ior;
         try {
-            ior = properties.value[index].value.extract_string();
+            if( properties.value[index].value.type().kind() == 
+                TCKind.tk_wstring ) {
+                ior = properties.value[index].value.extract_wstring();
+            } else {
+                ior = properties.value[index].value.extract_string();
+            }
         }
         catch(BAD_OPERATION e) {
             rtcout.println(rtcout.ERROR, "inport_ior has no string");
