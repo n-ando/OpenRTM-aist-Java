@@ -237,6 +237,9 @@ public class OutPortPushConnectorTest extends TestCase {
             m_logger = logger;
         }
         private Logger m_logger;
+        public String getName(){
+            return "flush";
+        }
     }
     /**
      * 
@@ -361,6 +364,9 @@ public class OutPortPushConnectorTest extends TestCase {
             m_logger = logger;
         }
         private Logger m_logger;
+        public String getName(){
+            return "new";
+        }
     };
     public static Logger m_mock_logger = null;
   

@@ -333,6 +333,9 @@ public class OutPortBaseTest extends TestCase {
         public ReturnCode deactivate() {
             return ReturnCode.PORT_OK;
         }
+        public String getName(){
+            return "A";
+        }
     }
 
     class PublisherB extends PublisherBase {
@@ -368,6 +371,9 @@ public class OutPortBaseTest extends TestCase {
         }
         public ReturnCode deactivate() {
             return ReturnCode.PORT_OK;
+        }
+        public String getName(){
+            return "B";
         }
     }
 
@@ -405,6 +411,9 @@ public class OutPortBaseTest extends TestCase {
         public ReturnCode deactivate() {
             return ReturnCode.PORT_OK;
         }
+        public String getName(){
+            return "C";
+        }
     }
 
     class PublisherD extends PublisherBase {
@@ -440,6 +449,9 @@ public class OutPortBaseTest extends TestCase {
         }
         public ReturnCode deactivate() {
             return ReturnCode.PORT_OK;
+        }
+        public String getName(){
+            return "D";
         }
     }
 

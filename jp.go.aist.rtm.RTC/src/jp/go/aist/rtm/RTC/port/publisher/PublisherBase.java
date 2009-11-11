@@ -68,6 +68,12 @@ public abstract class PublisherBase {
      * @return ReturnCode 
      */
     public abstract ReturnCode deactivate();
+    /**
+     * <p> getName </p>
+     *
+     * @return String 
+     */
+    public abstract String getName();
 
 
 }

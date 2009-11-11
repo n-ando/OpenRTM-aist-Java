@@ -118,7 +118,7 @@ public class OutPortPushConnector extends OutPortConnector {
             rtcout.println(rtcout.DEBUG, "delete publisher");
             PublisherBaseFactory<PublisherBase,String> pfactory 
                 = PublisherBaseFactory.instance();
-            pfactory.deleteObject(m_publisher);
+            pfactory.deleteObject(m_publisher.getName(),m_publisher);
         }
         m_publisher = null;
     

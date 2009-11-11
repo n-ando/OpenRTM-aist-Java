@@ -483,11 +483,19 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         final PublisherBaseFactory<PublisherBase,String> factory 
             = PublisherBaseFactory.instance();
 
-        factory.addFactory("periodic",
+        factory.addFactory(id_name,
                     new PublisherPeriodic(),
                     new PublisherPeriodic());
     
     }
+    /**
+     * <p> getName </p>
+     *
+     */
+    public String getName() {
+        return id_name;
+    }
+    private static final String id_name = "periodic";
 
     /**
      * <p>  </p>

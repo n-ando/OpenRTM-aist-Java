@@ -497,7 +497,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         final PublisherBaseFactory<PublisherBase,String> factory 
             = PublisherBaseFactory.instance();
 
-        factory.addFactory("new",
+        factory.addFactory(id_name,
                     new PublisherNew(),
                     new PublisherNew());
     
@@ -520,6 +520,15 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                 return ReturnCode.PORT_ERROR;
         }
     }
+
+    /**
+     * <p> getName </p>
+     *
+     */
+    public String getName() {
+        return id_name;
+    }
+    private static final String id_name = "new";
 
     /**
      * <p>  </p>

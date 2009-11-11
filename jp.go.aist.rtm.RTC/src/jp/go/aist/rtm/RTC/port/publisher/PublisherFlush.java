@@ -167,13 +167,20 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
         final PublisherBaseFactory<PublisherBase,String> factory 
             = PublisherBaseFactory.instance();
 
-        factory.addFactory("flush",
+        factory.addFactory(id_name,
                     new PublisherFlush(),
                     new PublisherFlush());
     
     }
+    /**
+     * <p> getName </p>
+     *
+     */
+    public String getName() {
+        return id_name;
+    }
+    private static final String id_name = "flush";
 
     private InPortConsumer m_consumer;
     private boolean m_active;
-
 }
