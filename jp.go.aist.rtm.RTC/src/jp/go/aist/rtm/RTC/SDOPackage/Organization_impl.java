@@ -8,6 +8,7 @@ import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
 import org.omg.CORBA.Any;
@@ -31,19 +32,13 @@ import _SDOPackage.SDOSystemElement;
 * <p>SDO Organizationの実装クラスです。</p>
 */
 public class Organization_impl extends OrganizationPOA{
-//zxc public class Organization_impl {
 
     /**
      * <p>デフォルトコンストラクタです。</p>
      */
     public Organization_impl() {
         m_pId = UUID.randomUUID().toString();
-        Manager manager = Manager.instance();
         rtcout = new Logbuf("Organization_impl");
-        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-	//				    "enable", "disable", false));
     }
     /**
      * <p>デフォルトコンストラクタです。</p>
@@ -54,12 +49,7 @@ public class Organization_impl extends OrganizationPOA{
         m_dependency = DependencyType.OWN;
         m_objref = this._this();
 
-        Manager manager = Manager.instance();
         rtcout = new Logbuf("Organization_impl");
-        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-	//				    "enable", "disable", false));
     }
 
     /**
@@ -107,13 +97,22 @@ public class Organization_impl extends OrganizationPOA{
      */
     public synchronized OrganizationProperty get_organization_property() 
                                             throws NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.get_organization_property()");
+        rtcout.println(rtcout.TRACE, 
+                       "Organization_impl.get_organization_property()");
         try {
-	    OrganizationProperty prop = new OrganizationProperty(m_orgProperty.properties);
+	    OrganizationProperty prop;
+            if(m_orgProperty.properties == null){
+                NVListHolder holder  = new NVListHolder();
+                CORBA_SeqUtil.push_back(holder, 
+                                        NVUtil.newNV("", "", String.class));
+                prop = new OrganizationProperty(holder.value);
+            }
+            else{
+   	        prop = new OrganizationProperty(m_orgProperty.properties);
+            }
 	    return prop;
         } catch (Exception ex) {
-            return null;
-//            throw new InternalError("get_organization_property()");
+            throw new InternalError("get_organization_property()");
         }
     }
     /**
@@ -558,7 +557,7 @@ public class Organization_impl extends OrganizationPOA{
      *
      * @member property NVList
      */
-    OrganizationProperty m_orgProperty;
+    OrganizationProperty m_orgProperty = new OrganizationProperty();
     /**
      * <p>Organization プロパティ検索用ヘルパークラス</p>
      */

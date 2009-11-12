@@ -97,12 +97,10 @@ public class Configuration_impl extends ConfigurationPOA {
         this.m_configsets = configsets;
         this.m_objref = this._this();
 
-        Manager manager = Manager.instance();
         rtcout = new Logbuf("Configuration_impl");
-        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-        //            "enable", "disable", false));
+        m_organizations = new OrganizationListHolder(); 
+        m_organizations.value = new Organization[0];
+
     }
 
     /**
