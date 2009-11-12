@@ -100,6 +100,8 @@ public class Configuration_impl extends ConfigurationPOA {
         rtcout = new Logbuf("Configuration_impl");
         m_organizations = new OrganizationListHolder(); 
         m_organizations.value = new Organization[0];
+        m_serviceProfiles = new ServiceProfileListHolder();
+        m_serviceProfiles.value = new ServiceProfile[0];
 
     }
 
