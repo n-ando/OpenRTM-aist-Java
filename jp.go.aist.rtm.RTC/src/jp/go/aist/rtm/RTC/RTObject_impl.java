@@ -19,6 +19,7 @@ import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.util.operatorFunc;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.executionContext.ExecutionContextBase;
 
@@ -122,6 +123,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
 
         rtcout = new Logbuf("RTObject_impl");
+         
     }
 
     /**
@@ -1285,10 +1287,22 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.get_status_list()");
 
-        try {
-            return m_sdoStatus.value.clone(); 
-        } catch(Exception ex) {
-            throw new InternalError("get_status_list()");
+        if(m_sdoStatus.value==null){
+            NVListHolder holder  = new NVListHolder();
+            CORBA_SeqUtil.push_back(holder, 
+                                    NVUtil.newNV("", "", String.class));
+            try {
+                return holder.value.clone(); 
+            } catch(Exception ex) {
+                throw new InternalError("get_status_list()");
+            }
+        }
+        else{
+            try {
+                return m_sdoStatus.value.clone(); 
+            } catch(Exception ex) {
+                throw new InternalError("get_status_list()");
+            }
         }
     }
 
