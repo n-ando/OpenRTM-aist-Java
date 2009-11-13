@@ -43,6 +43,8 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         if( m_profile==null ) m_profile = new ExecutionContextProfile();
         m_profile.kind = ExecutionKind.PERIODIC;
         m_profile.rate = 0.0;
+        m_profile.owner = (RTC.RTObject)null;
+        m_profile.participants = new RTC.RTObject[0];
         m_usec = 0;
         m_ref = (ExecutionContextService)this.__this();
 
@@ -82,6 +84,12 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_ref = (ExecutionContextService)this.__this();
 
         rtcout = new Logbuf("Manager.PeriodicExecutionContext");
+
+        m_profile.participants = new RTC.RTObject[0];
+        NVListHolder holder  = new NVListHolder(m_profile.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                NVUtil.newNV("", "", String.class));
+        m_profile.properties = holder.value;
     }
 
     /**
