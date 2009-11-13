@@ -372,7 +372,6 @@ public class Organization_impl extends OrganizationPOA{
         } catch(Exception ex) {
             throw new InternalError("set_members()");
         }
-//        return false;
     }
 
     /**
@@ -425,7 +424,7 @@ public class Organization_impl extends OrganizationPOA{
         rtcout.println(rtcout.TRACE, "Organization_impl.remove_member("+id+")");
         if(id==null || id.equals("") )
             throw new InvalidParameter("remove_member(): Enpty name.");
-        
+       
         for(int index=0; index<m_memberList.length; index++ ){
             if( id.equals(m_memberList[index].get_sdo_id()) ) {
                 SDOListHolder sdoList = new SDOListHolder();
@@ -506,7 +505,7 @@ public class Organization_impl extends OrganizationPOA{
     /**
      * <p>Organization に関連付けられた SDO メンバのリスト</p>
      */
-    protected SDO[] m_memberList;
+    protected SDO[] m_memberList = new SDO[0];
     /**
      * <p>Organization の owner</p>
      */   

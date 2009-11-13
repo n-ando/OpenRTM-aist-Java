@@ -10,6 +10,8 @@ import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
@@ -21,6 +23,8 @@ import RTC.ExecutionKind;
 import RTC.LifeCycleState;
 import RTC.LightweightRTObject;
 import RTC.ReturnCode_t;
+import RTC.RTCListHolder;
+import _SDOPackage.NVListHolder;
 
 /**
  * <p>Periodic Sampled Data Processing(周期実行用)ExecutionContextクラスです。</p>
@@ -42,12 +46,12 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_usec = 0;
         m_ref = (ExecutionContextService)this.__this();
 
-        Manager manager = Manager.instance();
         rtcout = new Logbuf("Manager.PeriodicExecutionContext");
-        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-        //            "enable", "disable", false));
+
+        NVListHolder holder  = new NVListHolder(m_profile.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                NVUtil.newNV("", "", String.class));
+        m_profile.properties = holder.value;
     }
 
     /**
@@ -71,17 +75,13 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_nowait = false;
         m_profile.kind = ExecutionKind.PERIODIC;
         m_profile.rate = rate;
+        m_profile.owner = owner;
         if( rate==0 ) rate = 0.0000001;
         m_usec = (long)(1000000/rate);
         if( m_usec==0 ) m_nowait = true;
         m_ref = (ExecutionContextService)this.__this();
 
-        Manager manager = Manager.instance();
         rtcout = new Logbuf("Manager.PeriodicExecutionContext");
-        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-        //            "enable", "disable", false));
     }
 
     /**
@@ -146,8 +146,8 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.open()");
 
         if(m_thread==null) {
-            Thread t = new Thread(this, "PeriodicExecutionContext");
-            t.start();
+            m_thread = new Thread(this, "PeriodicExecutionContext");
+            m_thread.start();
         }
         return 0;
     }
@@ -905,7 +905,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     protected ExecutionContextService m_ref;
     protected boolean m_nowait;
-    protected ThreadGroup m_thread = null;
+    protected Thread m_thread = null;
 
     /**
      * <p>このExecutionContextを生成するFactoryクラスを
