@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
+import org.omg.CORBA.TCKind;
 
 import _SDOPackage.NVListHolder;
 import RTC.ConnectorProfile;
@@ -157,9 +158,14 @@ public class InPortBase extends PortBase {
        try{ 
             org.omg.CORBA.Any anyVal = NVUtil.find(holder,
                                            "dataport.serializer.cdr.endian");
-            String endian_type = anyVal.extract_wstring();
+            String endian_type;
+            if( anyVal.type().kind() == TCKind.tk_wstring ) {
+                endian_type = anyVal.extract_wstring();
+            } else {
+                endian_type = anyVal.extract_string();
+            }
+
             endian_type = StringUtil.normalize(endian_type);
-System.out.println("endian = "+endian_type);
             String[] endian = endian_type.split(",");
             endian_type = "";
             for(int ic=0;ic<endian.length;++ic){
@@ -173,39 +179,16 @@ System.out.println("endian = "+endian_type);
                     }
                 }
             }
-System.out.println("endian_type:"+endian_type);
 //            prop.setProperty("serializer.cdr.endian",endian_type);
             int index = NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
-            holder.value[index].value.insert_wstring(endian_type);
+            holder.value[index].value.insert_string(endian_type);
 //            CORBA_SeqUtil.push_back(holder, 
 //                NVUtil.newNV("dataport.serializer.cdr.endian", endian_type));
-NVUtil.dump(holder);
             cprof.value.properties = holder.value;
        }
        catch(Exception e){
             ;
        }
-/*
-        String endian_type = prop.getProperty("serializer.cdr.endian");
-        if(endian_type!=null){
-            endian_type = StringUtil.normalize(endian_type);
-            String[] endian = endian_type.split(",");
-            endian_type = "";
-            for(int ic=0;ic<endian.length;++ic){
-                String str = endian[ic].trim();
-                if(str.equals("big") || str.equals("little")){
-                    if(endian_type.length()!=0){
-                        endian_type = endian_type + ","+ str;
-                    }
-                    else{
-                        endian_type = endian_type + str;
-                    }
-                }
-            }
-System.out.println("endian_type:"+endian_type);
-            prop.setProperty("serializer.cdr.endian",endian_type);
-        }
-*/
         /*
          * Because properties of ConnectorProfileHolder was merged, 
          * the accesses such as prop["dataflow_type"] and 
@@ -275,9 +258,14 @@ System.out.println("endian_type:"+endian_type);
        try{ 
             org.omg.CORBA.Any anyVal = NVUtil.find(holder,
                                            "dataport.serializer.cdr.endian");
-            String endian_type = anyVal.extract_wstring();
+            String endian_type;
+            if( anyVal.type().kind() == TCKind.tk_wstring ) {
+                endian_type = anyVal.extract_wstring();
+            } else {
+                endian_type = anyVal.extract_string();
+            }
+
             endian_type = StringUtil.normalize(endian_type);
-System.out.println("endian = "+endian_type);
             String[] endian = endian_type.split(",");
             String str = endian[0].trim();
             if(str.length()==0){
@@ -293,25 +281,6 @@ System.out.println("endian = "+endian_type);
        catch(Exception e){
             m_endian = "little";
        }
-/*zxc
-        String endian_type = prop.getProperty("serializer.cdr.endian");
-        if(endian_type!=null){
-            endian_type = StringUtil.normalize(endian_type);
-            String[] endian = endian_type.split(",");
-            endian_type = "";
-            String str = endian[0].trim();
-            if(str.equals("little")||str.equals("big")){
-                m_endian = str;
-            }
-            else {
-                m_endian = "little";
-            }
-        }
-        else{
-            m_endian = "little";
-        }
-*/
-System.out.println("endian = "+m_endian);
         rtcout.println(rtcout.TRACE, "endian = "+m_endian);
 
         /*
