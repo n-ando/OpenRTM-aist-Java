@@ -93,6 +93,25 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     }
 
     /**
+     * <p>終了処理用関数</p>
+     */
+    public boolean finalizeExecutionContext() {
+        synchronized (m_worker) {
+            m_worker.running_ = true;
+            m_worker.notifyAll();
+        }
+	m_svc = false;
+	try {
+	    m_thread.join();
+	}
+	catch   (InterruptedException e) {
+	    System.out.println(e);
+	}
+	
+	return true;
+    }
+
+    /**
      * <p> __this() </p>
      *
      * @return ExecutionContextService
