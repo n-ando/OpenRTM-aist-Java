@@ -420,8 +420,8 @@ public class InPortBase extends PortBase {
         rtcout.println(rtcout.TRACE, "iinitConsumers()");
 
         // create OuPort consumers
-        OutPortProviderFactory<OutPortProvider,String> factory 
-            = OutPortProviderFactory.instance();
+        OutPortConsumerFactory<OutPortProvider,String> factory 
+            = OutPortConsumerFactory.instance();
         Set consumer_types = factory.getIdentifiers();
         rtcout.println(rtcout.DEBUG, 
                        "available consumer: " + StringUtil.flatten(consumer_types));
