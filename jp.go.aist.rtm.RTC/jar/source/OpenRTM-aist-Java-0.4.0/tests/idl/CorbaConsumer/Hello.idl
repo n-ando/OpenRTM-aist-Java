@@ -1,0 +1,8 @@
+module CorbaConsumer {
+
+interface hello
+{
+  void hello_world();
+};
+
+};
