@@ -1,11 +1,15 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.TypeCast;
+import jp.go.aist.rtm.RTC.util.Properties;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.Object;
@@ -95,9 +99,13 @@ public class OutPortCorbaProvider<DataType>
      * @param properties 接続プロファイルを受け取るNVListHolderオブジェクトを指定します。
      * あらかじめ、dataport.interface_typeにインタフェースタイプを設定しておく必要があります。
      */
-    public void publishInterface(NVListHolder properties) {
+    public boolean publishInterface(NVListHolder properties) {
 
-        this.m_outPortProvider.publishInterface(properties);
+        return this.m_outPortProvider.publishInterface(properties);
+    }
+    public void setBuffer(BufferBase<InputStream> buffer){
+    }
+    public void init(Properties prop) {
     }
 
     private BufferBase<DataType> m_buffer;

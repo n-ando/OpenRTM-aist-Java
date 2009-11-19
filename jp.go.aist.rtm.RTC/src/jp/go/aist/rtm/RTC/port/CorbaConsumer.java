@@ -37,18 +37,20 @@ public class CorbaConsumer<OBJECT_TYPE> extends CorbaConsumerBase {
         if (super.setObject(obj)) {
             
             try {
-                this.m_var = TYPE_CAST.castType(this.m_objref._duplicate());
+                this.m_var = TYPE_CAST.castType(this.m_objref);
                 
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
 
-            if (this.m_var != null) {
-                return true;
+            if (this.m_var == null) {
+		this.releaseObject();
+                return false;
             }
+	    return true;
         }
-        
+        this.releaseObject();
         return false; // object is null
     }
 

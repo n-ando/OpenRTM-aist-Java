@@ -5,12 +5,68 @@ import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.ValueHolder;
+import jp.go.aist.rtm.RTC.util.OnUpdateCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnUpdateParamCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnAddConfigurationAddCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnRemoveConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnActivateSetCallbackFunc;
+import jp.go.aist.rtm.RTC.executionContext.PeriodicECOrganization;
 
 /**
 * <p>コンフィギュレーション情報を管理するクラスです。</p>
 */
 public class ConfigAdmin {
-    
+
+    /**
+     * OnUpdateCallbackクラス
+     */
+    class OnUpdateCallback implements OnUpdateCallbackFunc {
+        public void operator(String config_set) {
+        }
+    };
+
+    /**
+     * OnUpdateParamCallbackクラス
+     */
+    class OnUpdateParamCallback implements OnUpdateParamCallbackFunc {
+        public void operator(String config_set, String config_param) {
+        }
+    };
+
+    /**
+     * OnSetConfigurationSetCallbackクラス
+     */
+    class OnSetConfigurationSetCallback implements OnSetConfigurationSetCallbackFunc {
+        public void operator(Properties config_set) {
+        }
+    };
+
+    /**
+     * OnAddConfigurationAddCallbackクラス
+     */
+    class OnAddConfigurationAddCallback implements OnAddConfigurationAddCallbackFunc {
+        public void operator(Properties config_set) {
+        }
+    };
+
+    /**
+     * OnRemoveConfigurationSetCallbackクラス
+     */
+    class OnRemoveConfigurationSetCallback implements OnRemoveConfigurationSetCallbackFunc {
+        public void operator(String config_set) {
+        }
+    };
+
+    /**
+     * OnActivateSetCallbackクラス
+     */
+    class OnActivateSetCallback implements OnActivateSetCallbackFunc {
+        public void operator(String config_id) {
+        }
+    };
+
+
     /**
      * <p>コンストラクタです。</p>
      *
@@ -21,6 +77,13 @@ public class ConfigAdmin {
         this.m_activeId = "default";
         this.m_active = true;
         this.m_changed = false;
+
+        this.m_updateCb = null;
+        this.m_updateParamCb = null;
+        this.m_setConfigSetCb = null;
+        this.m_addConfigSetCb = null;
+        this.m_removeConfigSetCb = null;
+        this.m_activateSetCb = null;
     }
 
     /**
@@ -52,7 +115,7 @@ public class ConfigAdmin {
      * @param param_name　設定対象パラメータ名
      * @param var　設定対象値
      * @param def_val　デフォルト値
-　   * @return 設定結果
+     * @return 設定結果
      */
     public boolean bindParameter(final String param_name, ValueHolder var, final String def_val) {
         if(isExist(param_name)) return false;
@@ -77,6 +140,7 @@ public class ConfigAdmin {
         for(int intIdx=0; intIdx<m_params.size(); ++intIdx) {
             if( prop.hasKey(m_params.elementAt(intIdx).name) != null ) {
                 m_params.elementAt(intIdx).update(prop.getProperty(m_params.elementAt(intIdx).name));
+                onUpdate(config_set);
             }
         }
     }
@@ -107,6 +171,7 @@ public class ConfigAdmin {
             ConfigBase configbase = iterator.next();
             if( new find_conf(config_param).equalof(configbase) ) {
                 configbase.update(m_configsets.getProperty(key));
+                onUpdateParam(config_set, config_param);
                 return;
             }
         }
@@ -116,7 +181,7 @@ public class ConfigAdmin {
      * <p>指定したパラメータが存在するか確認します。</p>
      * 
      * @param param_name 確認対象パラメータ名
-　   * @return 存在確認結果
+     * @return 存在確認結果
      */
     public boolean isExist(final String param_name) {
         Iterator<ConfigBase> iterator = m_params.iterator();
@@ -131,7 +196,7 @@ public class ConfigAdmin {
     /**
      * <p>パラメータが変更されているか確認します。</p>
      * 
-　   * @return 変更有無確認結果
+     * @return 変更有無確認結果
      */
     public boolean isChanged() {
         return m_changed;
@@ -140,7 +205,7 @@ public class ConfigAdmin {
     /**
      * <p>現在アクティブなコンフィギュレーションセットのIDを取得します。</p>
      * 
-　   * @return アクティブ・コンフィギュレーションセットID
+     * @return アクティブ・コンフィギュレーションセットID
      */
     public final String getActiveId(){
         return m_activeId;
@@ -150,7 +215,7 @@ public class ConfigAdmin {
      * <p>指定したコンフィギュレーションが存在するか確認します。</p>
      * 
      * @param config_id 確認対象コンフィギュレーションID
-　   * @return 存在確認結果
+     * @return 存在確認結果
      */
     public final boolean haveConfig(final String config_id) {
       return (m_configsets.hasKey(config_id) == null) ? false : true;
@@ -160,7 +225,7 @@ public class ConfigAdmin {
     /**
      * <p>コンフィギュレーションセットがアクティブとなっているか確認します。</p>
      * 
-　   * @return 確認結果
+     * @return 確認結果
      */
     public boolean isActive() {
         return m_active;
@@ -169,7 +234,7 @@ public class ConfigAdmin {
     /**
      * <p>設定されている全コンフィギュレーションセットを取得します。</p>
      * 
-　   * @return 全コンフィギュレーションセット
+     * @return 全コンフィギュレーションセット
      */
     public final Vector<Properties> getConfigurationSets() {
         return m_configsets.getLeaf();
@@ -180,11 +245,11 @@ public class ConfigAdmin {
      * 存在しない場合は空のコンフィギュレーションセットを返します。</p>
      * 
      * @param config_id 取得対象コンフィギュレーションセットID
-　   * @return コンフィギュレーションセット
+     * @return コンフィギュレーションセット
      */
     public final Properties getConfigurationSet(final String config_id) {
         Properties p = new Properties(m_configsets.getNode(config_id));
-        if( p==null ) return m_emptyconf;
+        if( p == null ) return m_emptyconf;
         return p;
     }
 
@@ -193,16 +258,17 @@ public class ConfigAdmin {
      * 
      * @param config_id 追加対象コンフィギュレーションセットID
      * @param config_set 追加対象設定値
-　   * @return 追加結果
+     * @return 追加結果
      */
     public boolean setConfigurationSetValues(final String config_id, final Properties config_set) {
         if( !config_id.equals(config_set.getName())) return false;
-        if( m_configsets.hasKey(config_id)==null )  return false;
+        if( m_configsets.hasKey(config_id) == null )  return false;
         
         m_configsets.getNode(config_id).merge(config_set);
         
         m_changed = true;
         m_active = true;
+        onSetConfigurationSet(config_set);
         return true;
     }
     
@@ -211,13 +277,13 @@ public class ConfigAdmin {
      * アクティブなコンフィギュレーションセットが存在しない場合は，
      * 空のコンフィギュレーションセットを返します。</p>
      * 
-　   * @return アクティブ・コンフィギュレーションセット
+     * @return アクティブ・コンフィギュレーションセット
      */
     public final Properties getActiveConfigurationSet(){
         Properties prop = m_configsets.getNode(m_activeId);
-        if( prop==null ) return m_emptyconf;
+        if( prop == null ) return m_emptyconf;
         Properties p = new Properties(prop);
-        if( p==null ) return m_emptyconf;
+        if( p == null ) return m_emptyconf;
         return p;
     }
 
@@ -225,19 +291,20 @@ public class ConfigAdmin {
      * <p>コンフィギュレーションセットに設定値を追加します。</p>
      * 
      * @param configset 追加対象コンフィギュレーションセット
-　   * @return 追加結果
+     * @return 追加結果
      */
-    public boolean addConfigurationSet(final Properties configset) {
-        if( m_configsets.hasKey(configset.getName())!=null ) return false;
+    public boolean addConfigurationSet(final Properties config_set) {
+        if( m_configsets.hasKey(config_set.getName()) != null ) return false;
         
-        String node = configset.getName();
+        String node = config_set.getName();
         m_configsets.createNode(node);
         
-        m_configsets.getNode(node).merge(configset);
+        m_configsets.getNode(node).merge(config_set);
         m_newConfig.add(node);
         
         m_changed = true;
         m_active = false;
+        onAddConfigurationSet(config_set);
         return true;
     }
 
@@ -245,16 +312,17 @@ public class ConfigAdmin {
      * <p>指定したコンフィギュレーションセットを削除します。</p>
      * 
      * @param config_id 削除対象コンフィギュレーションセットID
-　   * @return 削除結果
+     * @return 削除結果
      */
     public boolean removeConfigurationSet(final String config_id) {
-        for(int intIdx=0; intIdx<m_newConfig.size(); intIdx++ ) {
+        for(int intIdx=0; intIdx<m_newConfig.size(); ++intIdx ) {
             if( m_newConfig.elementAt(intIdx).equals(config_id) ) {
                 Properties p = new Properties(m_configsets.getNode(config_id));
-                if( p!=null ) m_configsets.removeNode(p.getName());
+                if( p != null ) m_configsets.removeNode(p.getName());
                 m_newConfig.remove(intIdx);
                 m_changed= true;
                 m_active = false;
+                onRemoveConfigurationSet(config_id);
                 return true;
             }
         }
@@ -265,16 +333,134 @@ public class ConfigAdmin {
      * <p>指定したコンフィギュレーションセットをアクティブにします。</p>
      * 
      * @param config_id アクティブにするコンフィギュレーションセットID
-　   * @return Activate結果
+     * @return Activate結果
      */
     public boolean activateConfigurationSet(final String config_id) {
         if( config_id == null ) return false;
-        if( m_configsets.hasKey(config_id)==null ) return false;
+        if( m_configsets.hasKey(config_id) == null ) return false;
         m_activeId = config_id;
         m_active = true;
         m_changed = true;
+        onActivateSet(config_id);
         return true;
     }
+
+
+    /**
+     * setOnUpdate
+     */
+    public void setOnUpdate(OnUpdateCallbackFunc cb) {
+//        if (m_updateCb != 0) {
+//            m_updateCb = null;
+//        }
+        m_updateCb = cb;
+    }
+
+    /**
+     * setOnUpdateParam
+     */
+    public void setOnUpdateParam(OnUpdateParamCallbackFunc cb) {
+//        if (m_updateParamCb != 0) {
+//            m_updateParamCb = null;
+//        }
+        m_updateParamCb = cb;
+    }
+
+    /**
+     * setOnSetConfigurationSet
+     */
+    public void setOnSetConfigurationSet(OnSetConfigurationSetCallbackFunc cb) {
+//        if (m_setConfigSetCb != 0) {
+//            m_setConfigSetCb = null;
+//      }
+        m_setConfigSetCb = cb;
+    }
+
+    /**
+     * setOnAddConfigurationSet
+     */
+    public void setOnAddConfigurationSet(OnAddConfigurationAddCallbackFunc cb) {
+//        if (m_addConfigSetCb != 0) {
+//            m_addConfigSetCb = null;
+//        }
+        m_addConfigSetCb = cb;
+    }
+
+    /**
+     * setOnRemoveConfigurationSet
+     */
+    public void setOnRemoveConfigurationSet(OnRemoveConfigurationSetCallbackFunc cb) {
+//        if (m_removeConfigSetCb != 0) {
+//            m_removeConfigSetCb = null;
+//        }
+        m_removeConfigSetCb = cb;
+    }
+
+    /**
+     * setOnActivateSet
+     */
+    public void setOnActivateSet(OnActivateSetCallbackFunc cb) {
+//        if (m_activateSetCb != 0) {
+//            m_activateSetCb = null;
+//        }
+        m_activateSetCb = cb;
+    }
+
+
+    /**
+     * onUpdate
+     */
+    public void onUpdate(String config_set) {
+        if (m_updateCb != null) {
+            m_updateCb.operator(config_set);
+        }
+    }
+
+    /**
+     * onUpdateParam
+     */
+    public void onUpdateParam(String config_set, String config_param) {
+        if (m_updateParamCb != null) {
+            m_updateParamCb.operator(config_set, config_param);
+        }
+    }
+
+    /**
+     * onSetConfigurationSet
+     */
+    public void onSetConfigurationSet(Properties config_set) {
+        if (m_setConfigSetCb != null) {
+            m_setConfigSetCb.operator(config_set);
+        }
+    }
+
+    /**
+     * onAddConfigurationSet
+     */
+    public void onAddConfigurationSet(Properties config_set) {
+        if (m_addConfigSetCb != null) {
+            m_addConfigSetCb.operator(config_set);
+        }
+    }
+
+    /**
+     * onRemoveConfigurationSet
+     */
+    public void onRemoveConfigurationSet(String config_id) {
+        if (m_removeConfigSetCb != null) {
+            m_removeConfigSetCb.operator(config_id);
+        }
+    }
+
+    /**
+     * onActivateSet
+     */
+    public void onActivateSet(String config_id) {
+        if (m_activateSetCb != null) {
+            m_activateSetCb.operator(config_id);
+        }
+    }
+
 
     /**
      * コピー・コンストラクタ
@@ -285,34 +471,49 @@ public class ConfigAdmin {
     private ConfigAdmin(final ConfigAdmin ca) {
         m_configsets = ca.m_configsets;
     }
+
     /**
      * コンフィギュレーションセット・リスト
      */
+
     private Properties m_configsets = new Properties();
     /**
      * 空のダミーコンフィギュレーションセット
      */
+
     private Properties  m_emptyconf = new Properties(); 
     /**
      * バインド対象パラメータ・リスト
      */
+
     private Vector<ConfigBase> m_params = new Vector<ConfigBase>();
     /**
      * アクティブ・コンフィギュレーションセットID
      */
+
     private String m_activeId = new String();
     /**
      * アクティブ化フラグ
      */
+
     private boolean m_active;
     /**
      * 変更有無フラグ
      */
+
     private boolean m_changed;
     /**
      * 新規追加分コンフィギュレーションセット
      */
-    Vector<String> m_newConfig = new Vector<String>();
+    private Vector<String> m_newConfig = new Vector<String>();
+
+    private OnUpdateCallbackFunc m_updateCb;
+    private OnUpdateParamCallbackFunc m_updateParamCb;
+    private OnSetConfigurationSetCallbackFunc m_setConfigSetCb;
+    private OnAddConfigurationAddCallbackFunc m_addConfigSetCb;
+    private OnRemoveConfigurationSetCallbackFunc m_removeConfigSetCb;
+    private OnActivateSetCallbackFunc m_activateSetCb;
+
 }
 
 /**

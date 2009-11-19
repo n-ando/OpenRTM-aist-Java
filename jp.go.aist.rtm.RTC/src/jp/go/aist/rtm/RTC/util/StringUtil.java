@@ -1,9 +1,19 @@
 package jp.go.aist.rtm.RTC.util;
 
+import java.util.Set;
 import java.util.Vector;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 public class StringUtil {
 
+    /**
+     * <p> 文字列がエスケープされているか判断する。 </p> 
+     *
+     * @param  str エスケープされているかどうか判断する文字を含む文字列
+     * @param  pos エスケープされているかどうか判断する文字の位置
+     * @return 指定した文字がエスケープされていれば true, それ以外は false
+     */
     public static boolean isEscaped(final String str, int pos) {
         
         --pos;
@@ -31,7 +41,7 @@ public class StringUtil {
         
         StringBuffer escapedStr = new StringBuffer();
         
-        for (int i = 0; i < str.length(); i++) {
+        for (int i = 0; i < str.length(); ++i) {
             char c = str.charAt(i);
 
             switch (c) {
@@ -88,7 +98,7 @@ public class StringUtil {
         StringBuffer unescaped_str = new StringBuffer();
 
         int count = 0;
-        for (int i = 0; i < str.length(); i++) {
+        for (int i = 0; i < str.length(); ++i) {
             
             char c = str.charAt(i);
             
@@ -125,6 +135,16 @@ public class StringUtil {
         return unescaped_str.toString();
     }
 
+    /**
+     * <p> 与えられた文字列をbool値に変換する。 </p> 
+     * <p> Erase the head/tail blank and replace upper case to lower case </p>
+     * 
+     * @param  target 判断対象文字列値
+     * @param  yes true表現文字列
+     * @param  no false表現文字列
+     * @param  default_value デフォルト値
+     * @return 比較結果を返す。true表現文字列、false表現文字列のどちらとも一致しない場合は、デフォルト値を返す。
+     */
     public static boolean toBool(String target, String yes, String no, boolean default_value) {
         if( target.toUpperCase().contains(yes.toUpperCase()) ) {
             return true;
@@ -135,38 +155,149 @@ public class StringUtil {
         }
     }
 
+    /**
+     * <p> 与えられた文字列リストから重複を削除する。 </p> 
+     *
+     * 引数で与えられた文字列リストから重複を削除したリストを作成する。
+     *
+     * @param  sv 確認元文字列リスト
+     * @return 重複削除処理結果リスト
+     */
     public static Vector<String> unique_sv(String[] sv) {
         Vector<String> str = new Vector<String>();
-        for( int intIdx=0;intIdx<sv.length;intIdx++ ) {
-            if( !sv[intIdx].trim().equals("") && !str.contains(sv[intIdx]) ) {
-                str.add(sv[intIdx]);
+        for( int intIdx=0; intIdx < sv.length; ++intIdx ) {
+            if( !sv[intIdx].trim().equals("") && !str.contains(sv[intIdx].trim()) ) {
+                str.add(sv[intIdx].trim());
             }
         }
       return str;
     }
 
+    /**
+     * <p> 与えられた文字列リストからCSVを生成する。 </p> 
+     *
+     * 引数で与えられた文字列リストの各要素を並べたCSVを生成する。
+     * 文字列リストが空の場合には空白文字を返す。
+     *
+     * @param  sv CSV変換対象文字列リスト
+     * @return CSV変換結果文字列
+     */
     public static String flatten(Vector<String> sv) {
-        if( sv.size()==0) return "";
+        if( sv.size() == 0) return "";
 
         StringBuffer str = new StringBuffer();
-        for( int intIdx=0;intIdx<sv.size()-1;++intIdx) {
+        for( int intIdx=0; intIdx < sv.size()-1; ++intIdx) {
             str.append(sv.elementAt(intIdx) + ", ");
         }
         str.append(sv.lastElement());
         return str.toString();
     }
 
+    /**
+     * <p> 与えられた文字列リストからCSVを生成する。 </p> 
+     *
+     * 引数で与えられた文字列リストの各要素を並べたCSVを生成する。
+     * 文字列リストが空の場合には空白文字を返す。
+     *
+     * @param  sv CSV変換対象文字列リスト
+     * @return CSV変換結果文字列
+     */
+    public static String flatten(Set sv) {
+        if( sv.size() == 0) return "";
+
+        StringBuffer str = new StringBuffer();
+
+	ArrayList svlist = new ArrayList(sv);
+	
+	int intIdx;
+        for(intIdx=0; intIdx < svlist.size()-1; ++intIdx) {
+            str.append(svlist.get(intIdx) + ", ");
+        }
+        str.append(svlist.get(intIdx));
+
+        return str.toString();
+    }
+
+    /**
+     * <p> 文字列を分割文字で分割する。 </p> 
+     *
+     * 設定された文字列を与えられたデリミタで分割する。
+     *
+     * @param  input 分割対象文字列
+     * @param  delimiter 分割文字列(デリミタ)
+     * @return 文字列分割結果リスト
+     */
     public static Vector<String> split(final String input, final String delimiter) {
         Vector<String> result = new Vector<String>();
-        if( input==null || input.equals("") ) return result;
+        if( input == null || input.equals("") ) return result;
         
         String[] splitted = input.split(escape(delimiter));
         
-        for(int intIdx=0;intIdx<splitted.length;intIdx++) {
+        for(int intIdx=0; intIdx < splitted.length; ++intIdx) {
             if( !splitted[intIdx].trim().equals("") ) {
                 result.add(splitted[intIdx].trim());
             }
         }
         return result;
     }
+
+    /**
+     * <p> 文字列を正規化する。 </p> 
+     *
+     * 与えられた文字列の先頭および末尾に存在する空白文字を削除し、
+     * 英字をすべて小文字に変換する。
+     *
+     * <p> Erase the head/tail blank and replace upper case to lower case </p>
+     * 
+     * @param  str 処理対象文字列
+     * @return 変換後の文字列
+     */
+    public static String normalize(String str) {
+        str = str.trim();
+        str = str.toLowerCase();
+        return str;
+    }
+    /**
+     *  <p> includes </p>
+     *  @param list
+     *  @param value
+     *  @param ignore_case
+     */
+    public static boolean includes(final Vector<String> list, String value, 
+                                   boolean ignore_case) {
+        Iterator it = list.iterator();
+        if(ignore_case){
+            while(it.hasNext()){
+                String str = (String)it.next();
+                if(str.compareToIgnoreCase(value)==0) {
+                    return true;
+                }
+            }
+        }
+        else {
+            while(it.hasNext()){
+                String str = (String)it.next();
+                if(str.compareTo(value) == 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * <p> 与えられた文字列が絶対パスかどうかを判断する </p>
+     * @param str
+     */
+    public static boolean isAbsolutePath(final String str) {
+	// UNIX absolute path is begun from '/'
+	if (str.charAt(0) == '/') return true;
+	// Windows absolute path is begun from '[a-zA-Z]:\'
+	if (Character.isLetter(str.charAt(0)) && (str.charAt(1) == ':') && str.charAt(2) == '\\') return true;
+	// Windows network file path is begun from '\\'
+	if (str.charAt(0) == '\\' && str.charAt(1) == '\\') return true;
+    
+	return false;
+    }
+
 }

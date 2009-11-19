@@ -1,11 +1,15 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.TypeCast;
+import jp.go.aist.rtm.RTC.util.Properties;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.Object;
@@ -79,10 +83,11 @@ public class InPortCorbaProvider<DataType>
      * 
      * @param properties Interface情報を受け取るホルダオブジェクト
      */
-    public void publishInterface(NVListHolder properties) {
+//    public void publishInterface(NVListHolder properties) {
+    public boolean publishInterface(NVListHolder properties) {
         
         if (! NVUtil.isStringValue(properties, "dataport.interface_type", "CORBA_Any")) {
-            return;
+            return true;
         }
 
         NVListHolder nv = NVListHolderFactory.clone(this.m_inPortProvider.m_properties);
@@ -91,6 +96,7 @@ public class InPortCorbaProvider<DataType>
                         InPortAnyHelper.narrow(this.m_objref._duplicate()), Object.class));
         
         NVUtil.append(properties, nv);
+        return true;
     }
     
     /**
@@ -110,6 +116,12 @@ public class InPortCorbaProvider<DataType>
     public void publishInterfaceProfile(NVListHolder properties) {
         this.m_inPortProvider.publishInterfaceProfile(properties);
     }
+    public void init(Properties prop) {
+    }
+
+    public void setBuffer(BufferBase<OutputStream> buffer) {
+    }
+
     
     private BufferBase<DataType> m_buffer;
     private InPortAny m_objref;

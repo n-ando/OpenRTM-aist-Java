@@ -1,5 +1,6 @@
 package jp.go.aist.rtm.RTC.util;
 
+import org.omg.CORBA.Any;
 /**
  * <p>データ参照を表現するクラスです。
  * あるメソッドに対してデータを引数で渡した際に、データオブジェクトそのものを操作して
@@ -50,7 +51,7 @@ public class DataRef<T> {
         
         return this.v.hashCode();
     }
-    
+
     /**
      * <p>当該オブジェクトが内包しているデータです。
      * アクセスを容易にするためにpublicメンバとなっています。</p>

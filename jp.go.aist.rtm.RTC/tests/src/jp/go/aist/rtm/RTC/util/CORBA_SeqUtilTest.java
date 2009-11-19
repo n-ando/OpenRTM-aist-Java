@@ -2,17 +2,44 @@ package jp.go.aist.rtm.RTC.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import junit.framework.TestCase;
 
 import org.omg.CORBA.Any;
 
+import RTC.ComponentProfile;
+import RTC.ComponentProfileListHolder;
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileListHolder;
+import RTC.ConnectorProfileHolder;
+import RTC.ExecutionContext;
+import RTC.ExecutionContextHelper;
+import RTC.ExecutionContextListHolder;
+import RTC.ExecutionContextService;
+import RTC.ExecutionContextServiceListHolder;
+import RTC.PortService;
+import RTC.PortInterfaceProfile;
+import RTC.PortInterfaceProfileListHolder;
+import RTC.PortServiceListHolder;
+import RTC.PortProfile;
+import RTC.PortProfileListHolder;
+import RTC.RTObject;
+import RTC.RTCListHolder;
+
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
+import _SDOPackage.Organization;
+import _SDOPackage.OrganizationListHolder;
+import _SDOPackage.SDO;
+import _SDOPackage.SDOListHolder;
 import _SDOPackage.ServiceProfile;
 import _SDOPackage.ServiceProfileListHolder;
+
+import jp.go.aist.rtm.RTC.port.PortAdmin;
+import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.executionContext.ExecutionContextBase;
+
 
 /**
 * CORBA ユーティリティクラス　テスト
@@ -23,6 +50,12 @@ public class CORBA_SeqUtilTest extends TestCase {
     private NVListHolder nvlist = new NVListHolder();
     ConnectorProfileListHolder connectors = new ConnectorProfileListHolder();
     ServiceProfileListHolder services = new ServiceProfileListHolder();
+    PortServiceListHolder Pservices = new PortServiceListHolder();
+    PortInterfaceProfileListHolder PIprofiles = new PortInterfaceProfileListHolder();
+    ExecutionContextServiceListHolder ECservices = new ExecutionContextServiceListHolder();
+    SDOListHolder SDOs = new SDOListHolder();
+    OrganizationListHolder Orgs = new OrganizationListHolder();
+
     private short  st, rst;
     private int   lg, rlg;
     private float  ft, rft;
@@ -123,21 +156,205 @@ public class CORBA_SeqUtilTest extends TestCase {
         
     }
 
+    protected void setUpPortServiceList() {
+        PortService[] pservice0 = new PortService[1];
+        PortService[] pservice1 = new PortService[1];
+        PortService[] pservice2 = new PortService[1];
+        PortService[] pservice3 = new PortService[1];
+        Pservices.value = new PortService[4];
+
+        Pservices.value[0] = pservice0[0];
+        Pservices.value[1] = pservice1[0];
+        Pservices.value[2] = pservice2[0];
+        Pservices.value[3] = pservice3[0];
+    }
+
+    protected void setUpPortInterfaceProfileList() {
+        PortInterfaceProfile piservice0 = new PortInterfaceProfile();
+        PortInterfaceProfile piservice1 = new PortInterfaceProfile();
+        PortInterfaceProfile piservice2 = new PortInterfaceProfile();
+        PortInterfaceProfile piservice3 = new PortInterfaceProfile();
+        PIprofiles.value = new PortInterfaceProfile[4];
+
+        piservice0.instance_name = "id0";
+        piservice0.type_name = "tpname0";
+        piservice0.polarity = null;
+        PIprofiles.value[0] = piservice0;
+        
+        piservice1.instance_name = "id1";
+        piservice1.type_name = "tpname1";
+        piservice1.polarity = null;
+        PIprofiles.value[1] = piservice1;
+        
+        piservice2.instance_name = "id2";
+        piservice2.type_name = "tpname2";
+        piservice2.polarity = null;
+        PIprofiles.value[2] = piservice2;
+        
+        piservice3.instance_name = "id3";
+        piservice3.type_name = "tpname3";
+        piservice3.polarity = null;
+        PIprofiles.value[3] = piservice3;
+    }
+
+    protected void setUpExecutionContextServiceList() {
+        ExecutionContextService[] ecservice0 = new ExecutionContextService[1];
+        ExecutionContextService[] ecservice1 = new ExecutionContextService[1];
+        ExecutionContextService[] ecservice2 = new ExecutionContextService[1];
+        ExecutionContextService[] ecservice3 = new ExecutionContextService[1];
+        ECservices.value = new ExecutionContextService[4];
+
+        ECservices.value[0] = ecservice0[0];
+        ECservices.value[1] = ecservice1[0];
+        ECservices.value[2] = ecservice2[0];
+        ECservices.value[3] = ecservice3[0];
+    }
+
+    protected void setUpSDOList() {
+        SDO[] sdo0 = new SDO[1];
+        SDO[] sdo1 = new SDO[1];
+        SDO[] sdo2 = new SDO[1];
+        SDO[] sdo3 = new SDO[1];
+        SDOs.value = new SDO[4];
+
+        SDOs.value[0] = sdo0[0];
+        SDOs.value[1] = sdo1[0];
+        SDOs.value[2] = sdo2[0];
+        SDOs.value[3] = sdo3[0];
+    }
+
+    protected void setUpOrganizationList() {
+        Organization[] org0 = new Organization[1];
+        Organization[] org1 = new Organization[1];
+        Organization[] org2 = new Organization[1];
+        Organization[] org3 = new Organization[1];
+        Orgs.value = new Organization[4];
+
+        Orgs.value[0] = org0[0];
+        Orgs.value[1] = org1[0];
+        Orgs.value[2] = org2[0];
+        Orgs.value[3] = org3[0];
+    }
+
     protected void tearDown() throws Exception {
         super.tearDown();
     }
 
     /**
-     * <p>シーケンスからのオブジェクト取得チェック
+     * <p>ExecutionContextServiceオブジェクトシーケンスからのオブジェクト取得チェック
      * <ul>
-     * <li>指定した名称のオブジェクトを取得できるか？</li>
+     * <li>指定した名称のExecutionContextServiceオブジェクトを取得できるか？</li>
+     * </ul>
+     * </p>
+     */
+/*
+    public void test_find_ExecutionContextService() {
+        setUpExecutionContextServiceList();
+        int index;
+
+        index = CORBA_SeqUtil.find(ECservices, new findFuncECservice(ECservices.value[3]));
+        assertEquals(3, index);
+        index = CORBA_SeqUtil.find(ECservices, new findFuncECservice(ECservices.value[2]));
+        assertEquals(2, index);
+        index = CORBA_SeqUtil.find(ECservices, new findFuncECservice(ECservices.value[1]));
+        assertEquals(1, index);
+        index = CORBA_SeqUtil.find(ECservices, new findFuncECservice(ECservices.value[0]));
+        assertEquals(0, index);
+
+        ExecutionContextServiceListHolder lh = new ExecutionContextServiceListHolder();
+        lh.value = new ExecutionContextService[1];
+        ExecutionContextService[] obj0 = new ExecutionContextService[1];
+        lh.value[0] = obj0[0];
+        index = CORBA_SeqUtil.find(ECservices, new findFuncECservice(lh.value[0]));
+        assertEquals(-1, index);
+    }
+*/
+    /**
+     * <p>ConnectorProfileオブジェクトシーケンスからのオブジェクト取得チェック
+     * <ul>
+     * <li>指定した名称のConnectorProfileオブジェクトを取得できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_find_ConnectorProfile() {
+        setUpConnectorList();
+        int index;
+
+        index = CORBA_SeqUtil.find(connectors, new findFuncConnectorProfile("id3"));
+        assertEquals(3, index);
+        index = CORBA_SeqUtil.find(connectors, new findFuncConnectorProfile("id2"));
+        assertEquals(2, index);
+        index = CORBA_SeqUtil.find(connectors, new findFuncConnectorProfile("id1"));
+        assertEquals(1, index);
+        index = CORBA_SeqUtil.find(connectors, new findFuncConnectorProfile("id0"));
+        assertEquals(0, index);
+        index = CORBA_SeqUtil.find(connectors, new findFuncConnectorProfile("id"));
+        assertEquals(-1, index);
+    }
+
+    /**
+     * <p>PortInterfaceProfileオブジェクトシーケンスからのオブジェクト取得チェック
+     * <ul>
+     * <li>指定した名称のPortInterfaceProfileオブジェクトを取得できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_find_PortInterfaceProfile() {
+        setUpPortInterfaceProfileList();
+        int index;
+
+        index = CORBA_SeqUtil.find(PIprofiles, new findFuncInstance_name("id3"));
+        assertEquals(3, index);
+        index = CORBA_SeqUtil.find(PIprofiles, new findFuncInstance_name("id2"));
+        assertEquals(2, index);
+        index = CORBA_SeqUtil.find(PIprofiles, new findFuncInstance_name("id1"));
+        assertEquals(1, index);
+        index = CORBA_SeqUtil.find(PIprofiles, new findFuncInstance_name("id0"));
+        assertEquals(0, index);
+        index = CORBA_SeqUtil.find(PIprofiles, new findFuncInstance_name("id"));
+        assertEquals(-1, index);
+    }
+
+    /**
+     * <p>PortServiceオブジェクトシーケンスからのオブジェクト取得チェック
+     * <ul>
+     * <li>指定した名称のPortServiceオブジェクトを取得できるか？</li>
+     * </ul>
+     * </p>
+     */
+/*
+    public void test_find_PortService() {
+        setUpPortServiceList();
+        int index;
+
+        index = CORBA_SeqUtil.find(Pservices, new findFuncPortService(Pservices.value[3]));
+        assertEquals(3, index);
+        index = CORBA_SeqUtil.find(Pservices, new findFuncPortService(Pservices.value[2]));
+        assertEquals(2, index);
+        index = CORBA_SeqUtil.find(Pservices, new findFuncPortService(Pservices.value[1]));
+        assertEquals(1, index);
+        index = CORBA_SeqUtil.find(Pservices, new findFuncPortService(Pservices.value[0]));
+        assertEquals(0, index);
+
+        PortServiceListHolder lh = new PortServiceListHolder();
+        lh.value = new PortService[1];
+        PortService[] obj0 = new PortService[1];
+        lh.value[0] = obj0[0];
+        index = CORBA_SeqUtil.find(Pservices, new findFuncPortService(lh.value[0]));
+        assertEquals(-1, index);
+    }
+*/
+    /**
+     * <p>NameValueオブジェクトシーケンスからのオブジェクト取得チェック
+     * <ul>
+     * <li>指定した名称のNameValueオブジェクトを取得できるか？</li>
      * </ul>
      * </p>
      */
     public void test_find() {
         setUpNVList();
         int index;
-        
+
         index = CORBA_SeqUtil.find(nvlist, new findFuncStr("double"));
         assertEquals(3, index);
         index = CORBA_SeqUtil.find(nvlist, new findFuncStr("float"));
@@ -202,7 +419,217 @@ public class CORBA_SeqUtilTest extends TestCase {
             assertEquals(st2, rst2);
         }
     }
-    
+
+    /**
+     * <p>RTObjectオブジェクトの追加チェック
+     * <ul>
+     * <li>RTObjectオブジェクトをシーケンスに追加できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_push_back_RTObject() {
+        RTCListHolder lh = new RTCListHolder();
+        lh.value = new RTObject[2];
+
+        RTObject[] obj0 = new RTObject[1];
+        lh.value[0] = obj0[0];
+        RTObject[] obj1 = new RTObject[1];
+        lh.value[1] = obj1[0];
+        RTObject[] obj2 = new RTObject[1];
+        CORBA_SeqUtil.push_back(lh, obj2[0]);
+
+        assertEquals( 3, lh.value.length);
+    }
+
+    /**
+     * <p>ComponentProfileオブジェクトの追加チェック
+     * <ul>
+     * <li>ComponentProfileオブジェクトをシーケンスに追加できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_push_back_ComponentProfile() {
+        ComponentProfileListHolder lh = new ComponentProfileListHolder();
+        lh.value = new ComponentProfile[2];
+
+        ComponentProfile obj0 = new ComponentProfile();
+        lh.value[0] = obj0;
+        ComponentProfile obj1 = new ComponentProfile();
+        lh.value[1] = obj1;
+        ComponentProfile obj2 = new ComponentProfile();
+        CORBA_SeqUtil.push_back(lh, obj2);
+
+        assertEquals( 3, lh.value.length);
+    }
+
+    /**
+     * <p>SDOオブジェクトの追加チェック
+     * <ul>
+     * <li>SDOオブジェクトをシーケンスに追加できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_push_back_SDO() {
+        SDOListHolder lh = new SDOListHolder();
+        lh.value = new SDO[2];
+
+        SDO[] obj0 = new SDO[1];
+        lh.value[0] = obj0[0];
+        SDO[] obj1 = new SDO[1];
+        lh.value[1] = obj1[0];
+        SDO[] obj2 = new SDO[1];
+        CORBA_SeqUtil.push_back(lh, obj2[0]);
+
+        assertEquals( 3, lh.value.length);
+    }
+
+    /**
+     * <p>ExecutionContextオブジェクトの追加チェック
+     * <ul>
+     * <li>ExecutionContextオブジェクトをシーケンスに追加できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_push_back_ExecutionContext() {
+        ExecutionContextListHolder lh = new ExecutionContextListHolder();
+        lh.value = new ExecutionContext[2];
+
+        ExecutionContext[] obj0 = new ExecutionContext[1];
+        lh.value[0] = obj0[0];
+        ExecutionContext[] obj1 = new ExecutionContext[1];
+        lh.value[1] = obj1[0];
+        ExecutionContext[] obj2 = new ExecutionContext[1];
+        CORBA_SeqUtil.push_back(lh, obj2[0]);
+
+        assertEquals( 3, lh.value.length);
+    }
+
+    /**
+     * <p>PortProfileオブジェクトの追加チェック
+     * <ul>
+     * <li>PortProfileオブジェクトをシーケンスに追加できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_push_back_PortProfile() {
+        PortProfileListHolder lh = new PortProfileListHolder();
+        lh.value = new PortProfile[2];
+
+        PortProfile obj0 = new PortProfile();
+        lh.value[0] = obj0;
+        PortProfile obj1 = new PortProfile();
+        lh.value[1] = obj1;
+        PortProfile obj2 = new PortProfile();
+        CORBA_SeqUtil.push_back(lh, obj2);
+
+        assertEquals( 3, lh.value.length);
+    }
+
+    /**
+     * <p>PortInterfaceProfileオブジェクトの追加チェック
+     * <ul>
+     * <li>PortInterfaceProfileオブジェクトをシーケンスに追加できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_push_back_PortInterfaceProfile() {
+        PortInterfaceProfileListHolder lh = new PortInterfaceProfileListHolder();
+        lh.value = new PortInterfaceProfile[2];
+
+        PortInterfaceProfile obj0 = new PortInterfaceProfile();
+        lh.value[0] = obj0;
+        PortInterfaceProfile obj1 = new PortInterfaceProfile();
+        lh.value[1] = obj1;
+        PortInterfaceProfile obj2 = new PortInterfaceProfile();
+        CORBA_SeqUtil.push_back(lh, obj2);
+
+        assertEquals( 3, lh.value.length);
+    }
+
+    /**
+     * <p>ConnectorProfileオブジェクトの追加チェック
+     * <ul>
+     * <li>ConnectorProfileオブジェクトをシーケンスに追加できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_push_back_ConnectorProfile() {
+        ConnectorProfileListHolder lh = new ConnectorProfileListHolder();
+        lh.value = new ConnectorProfile[2];
+
+        ConnectorProfile obj0 = new ConnectorProfile();
+        lh.value[0] = obj0;
+        ConnectorProfile obj1 = new ConnectorProfile();
+        lh.value[1] = obj1;
+        ConnectorProfile obj2 = new ConnectorProfile();
+        CORBA_SeqUtil.push_back(lh, obj2);
+
+        assertEquals( 3, lh.value.length);
+    }
+
+    /**
+     * <p>PortServiceオブジェクトの追加チェック
+     * <ul>
+     * <li>PortServiceオブジェクトをシーケンスに追加できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_push_back_PortService() {
+        PortServiceListHolder lh = new PortServiceListHolder();
+        lh.value = new PortService[2];
+
+        PortService[] obj0 = new PortService[1];
+        lh.value[0] = obj0[0];
+        PortService[] obj1 = new PortService[1];
+        lh.value[1] = obj1[0];
+        PortService[] obj2 = new PortService[1];
+        CORBA_SeqUtil.push_back(lh, obj2[0]);
+
+        assertEquals( 3, lh.value.length);
+    }
+
+    /**
+     * <p>ExecutionContextServiceオブジェクトの追加チェック
+     * <ul>
+     * <li>ExecutionContextServiceオブジェクトをシーケンスに追加できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_push_back_ExecutionContextService() {
+        ExecutionContextServiceListHolder lh = new ExecutionContextServiceListHolder();
+        lh.value = new ExecutionContextService[2];
+
+        ExecutionContextService[] obj0 = new ExecutionContextService[1];
+        lh.value[0] = obj0[0];
+        ExecutionContextService[] obj1 = new ExecutionContextService[1];
+        lh.value[1] = obj1[0];
+        ExecutionContextService[] obj2 = new ExecutionContextService[1];
+        CORBA_SeqUtil.push_back(lh, obj2[0]);
+
+        assertEquals( 3, lh.value.length);
+    }
+
+    /**
+     * <p>Organizationオブジェクトの追加チェック
+     * <ul>
+     * <li>Organizationオブジェクトをシーケンスに追加できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_push_back_Organization() {
+        OrganizationListHolder lh = new OrganizationListHolder();
+        lh.value = new Organization[2];
+
+        Organization[] obj0 = new Organization[1];
+        lh.value[0] = obj0[0];
+        Organization[] obj1 = new Organization[1];
+        lh.value[1] = obj1[0];
+        Organization[] obj2 = new Organization[1];
+        CORBA_SeqUtil.push_back(lh, obj2[0]);
+
+        assertEquals( 3, lh.value.length);
+    }
+
     /**
      * <p>サービス・オブジェクトの追加チェック
      * <ul>
@@ -238,6 +665,27 @@ public class CORBA_SeqUtilTest extends TestCase {
         assertEquals("provided", sph.value[1].interface_type);
         assertEquals("sp2name", sph.value[2].id);
         assertEquals("provided2", sph.value[2].interface_type);
+    }
+
+    /**
+     * <p>_SDOPackage.SDOオブジェクトの追加チェック
+     * <ul>
+     * <li>_SDOPackage.SDOオブジェクトをシーケンスに追加できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_push_back_list_SDO() {
+        setUpSDOList();
+        SDOListHolder sdos2 = new SDOListHolder();
+        sdos2.value = new SDO[2];
+
+        SDO[] obj0 = new SDO[1];
+        SDO[] obj1 = new SDO[1];
+        sdos2.value[0] = obj0[0];
+        sdos2.value[1] = obj1[0];
+        CORBA_SeqUtil.push_back_list(SDOs, sdos2);
+
+        assertEquals( 6, SDOs.value.length);
     }
 
     /**
@@ -554,9 +1002,141 @@ public class CORBA_SeqUtilTest extends TestCase {
             assertEquals(retval, dl);
         }
     }
-    
+
     /**
-     * <p>シーケンスからのオブジェクト削除チェック
+     * <p>ExecutionContextServiceオブジェクトシーケンスからのオブジェクト削除チェック
+     * <ul>
+     * <li>インデックスを指定してシーケンスから先頭のオブジェクトを削除できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_erase_ExecutionContextService() {
+        setUpExecutionContextServiceList();
+        int index, cnt;
+
+        //before count
+        cnt = ECservices.value.length;
+
+        //erase
+        index = 0;
+        CORBA_SeqUtil.erase(ECservices, index);
+
+        //after count
+        assertEquals( (cnt-1), ECservices.value.length);
+    }
+
+    /**
+     * <p>PortInterfaceProfileオブジェクトシーケンスからのオブジェクト削除チェック
+     * <ul>
+     * <li>インデックスを指定してシーケンスから先頭のオブジェクトを削除できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_erase_PortInterfaceProfile() {
+        setUpPortInterfaceProfileList();
+        int index, cnt;
+
+        //before count
+        cnt = PIprofiles.value.length;
+
+        //erase
+        index = 0;
+        CORBA_SeqUtil.erase(PIprofiles, index);
+
+        //after count
+        assertEquals( (cnt-1), PIprofiles.value.length);
+    }
+
+    /**
+     * <p>PortServiceオブジェクトシーケンスからのオブジェクト削除チェック
+     * <ul>
+     * <li>インデックスを指定してシーケンスから先頭のオブジェクトを削除できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_erase_PortService() {
+        setUpPortServiceList();
+        int index, cnt;
+
+        //before count
+        cnt = Pservices.value.length;
+
+        //erase
+        index = 0;
+        CORBA_SeqUtil.erase(Pservices, index);
+
+        //after count
+        assertEquals( (cnt-1), Pservices.value.length);
+    }
+
+    /**
+     * <p>Organizationオブジェクトシーケンスからのオブジェクト削除チェック
+     * <ul>
+     * <li>インデックスを指定してシーケンスから先頭のオブジェクトを削除できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_erase_Organization() {
+        setUpOrganizationList();
+        int index, cnt;
+
+        //before count
+        cnt = Orgs.value.length;
+
+        //erase
+        index = 0;
+        CORBA_SeqUtil.erase(Orgs, index);
+
+        //after count
+        assertEquals( (cnt-1), Orgs.value.length);
+    }
+
+    /**
+     * <p>ServiceProfileオブジェクトシーケンスからのオブジェクト削除チェック
+     * <ul>
+     * <li>インデックスを指定してシーケンスから先頭のオブジェクトを削除できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_erase_ServiceProfile() {
+        setUpServiceList();
+        int index, cnt;
+
+        //before count
+        cnt = services.value.length;
+
+        //erase
+        index = 0;
+        CORBA_SeqUtil.erase(services, index);
+
+        //after count
+        assertEquals( (cnt-1), services.value.length);
+    }
+
+    /**
+     * <p>_SDOPackage.SDOオブジェクトシーケンスからのオブジェクト削除チェック
+     * <ul>
+     * <li>インデックスを指定してシーケンスから先頭のオブジェクトを削除できるか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_erase_SDO() {
+        setUpSDOList();
+        int index, cnt;
+
+        //before count
+        cnt = SDOs.value.length;
+
+        //erase
+        index = 0;
+        CORBA_SeqUtil.erase(SDOs, index);
+
+        //after count
+        assertEquals( (cnt-1), SDOs.value.length);
+    }
+
+    /**
+     * <p>NameValueオブジェクトシーケンスからのオブジェクト削除チェック
      * <ul>
      * <li>インデックスを指定してシーケンスから先頭のオブジェクトを削除できるか？</li>
      * </ul>
@@ -733,7 +1313,37 @@ public class CORBA_SeqUtilTest extends TestCase {
     }
     
     /**
-     * <p>シーケンスからのオブジェクト削除チェック
+     * <p>PortServiceオブジェクトシーケンスからのオブジェクト削除チェック
+     * <ul>
+     * <li>該当しない条件を指定した場合，シーケンスからオブジェクトが削除されないか？</li>
+     * <li>条件を指定してシーケンスからオブジェクトを削除できるか？</li>
+     * </ul>
+     * </p>
+     */
+/*
+    public void test_erase_if_PortService() {
+        setUpPortServiceList();
+        int index, cnt;
+
+        //before count
+        cnt = Pservices.value.length;
+        // 何も削除されない。
+        PortServiceListHolder lh = new PortServiceListHolder();
+        lh.value = new PortService[1];
+        PortService[] obj0 = new PortService[1];
+        lh.value[0] = obj0[0];
+        CORBA_SeqUtil.erase_if(Pservices, new findFuncPortService(lh.value[0]));
+        //after count
+        assertEquals( cnt, Pservices.value.length);
+
+        // 1件目を削除。
+        CORBA_SeqUtil.erase_if(Pservices, new findFuncPortService(Pservices.value[0]));
+        //after count
+        assertEquals( (cnt-1), Pservices.value.length);
+    }
+*/
+    /**
+     * <p>NameValueオブジェクトシーケンスからのオブジェクト削除チェック
      * <ul>
      * <li>該当しない名称を指定した場合，シーケンスからオブジェクトが削除されないか？</li>
      * <li>名称を指定してシーケンスからオブジェクトを削除できるか？</li>
@@ -824,6 +1434,111 @@ public class CORBA_SeqUtilTest extends TestCase {
         setUpNVList();
         CORBA_SeqUtil.clear(nvlist);
         assertEquals(0, nvlist.value.length);
+    }
+
+    /**
+     * <p>for_each()メソッドのテスト
+     * <ul>
+     * <li>引数で指定されたPortServiceList内のすべての要素について、正しい順序でファンクタが呼び出されるか？</li>
+     * <li>ファンクタ呼出時に引数で渡されるPortServiceは正しいものか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_for_each_PortService() {
+        PortServiceListHolder lh = new PortServiceListHolder();
+        lh.value = new PortService[4];
+
+        PortService[] obj0 = new PortService[1];
+        PortService[] obj1 = new PortService[1];
+        PortService[] obj2 = new PortService[1];
+        PortService[] obj3 = new PortService[1];
+
+        lh.value[0] = obj0[0];
+        lh.value[1] = obj1[0];
+        lh.value[2] = obj2[0];
+        lh.value[3] = obj3[0];
+
+        // for_each()を呼び出す
+        List<PortService> receivedNameValues = new ArrayList<PortService>();
+        CORBA_SeqUtil.for_each(lh, new foreachFunc4(receivedNameValues));
+        
+        // ファンクタが呼び出された時に内部に記録したNameValueのベクタを取得し、期待値と比較する
+        assertEquals(4, (int) receivedNameValues.size());
+    }
+
+    /**
+     * <p>for_each()メソッドのテスト
+     * <ul>
+     * <li>引数で指定されたExecutionContextServiceList内のすべての要素について、正しい順序でファンクタが呼び出されるか？</li>
+     * <li>ファンクタ呼出時に引数で渡されるExecutionContextServiceは正しいものか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_for_each_ExecutionContextService() {
+        ExecutionContextServiceListHolder lh = new ExecutionContextServiceListHolder();
+        lh.value = new ExecutionContextService[4];
+
+        ExecutionContextService[] obj0 = new ExecutionContextService[1];
+        ExecutionContextService[] obj1 = new ExecutionContextService[1];
+        ExecutionContextService[] obj2 = new ExecutionContextService[1];
+        ExecutionContextService[] obj3 = new ExecutionContextService[1];
+
+        lh.value[0] = obj0[0];
+        lh.value[1] = obj1[0];
+        lh.value[2] = obj2[0];
+        lh.value[3] = obj3[0];
+
+        // for_each()を呼び出す
+        List<ExecutionContextService> receivedNameValues = new ArrayList<ExecutionContextService>();
+        CORBA_SeqUtil.for_each(lh, new foreachFunc3(receivedNameValues));
+        
+        // ファンクタが呼び出された時に内部に記録したNameValueのベクタを取得し、期待値と比較する
+        assertEquals(4, (int) receivedNameValues.size());
+    }
+
+    /**
+     * <p>for_each()メソッドのテスト
+     * <ul>
+     * <li>引数で指定されたConnectorProfileList内のすべての要素について、正しい順序でファンクタが呼び出されるか？</li>
+     * <li>ファンクタ呼出時に引数で渡されるConnectorProfileは正しいものか？</li>
+     * </ul>
+     * </p>
+     */
+    public void test_for_each_ConnectorProfile() {
+        ConnectorProfileListHolder lh = new ConnectorProfileListHolder();
+        lh.value = new ConnectorProfile[4];
+
+        ConnectorProfile obj0 = new ConnectorProfile();
+        ConnectorProfile obj1 = new ConnectorProfile();
+        ConnectorProfile obj2 = new ConnectorProfile();
+        ConnectorProfile obj3 = new ConnectorProfile();
+
+        obj0.connector_id = "id0";
+        obj0.name = "name0";
+        lh.value[0] = obj0;
+        
+        obj1.connector_id = "id1";
+        obj1.name = "name1";
+        lh.value[1] = obj1;
+
+        obj2.connector_id = "id2";
+        obj2.name = "name2";
+        lh.value[2] = obj2;
+
+        obj3.connector_id = "id3";
+        obj3.name = "name3";
+        lh.value[3] = obj3;
+
+        // for_each()を呼び出す
+        List<ConnectorProfile> receivedNameValues = new ArrayList<ConnectorProfile>();
+        CORBA_SeqUtil.for_each(lh, new foreachFunc2(receivedNameValues));
+        
+        // ファンクタが呼び出された時に内部に記録したNameValueのベクタを取得し、期待値と比較する
+        assertEquals(4, (int) receivedNameValues.size());
+        assertEquals(lh.value[0].name, receivedNameValues.get(0).name);
+        assertEquals(lh.value[1].name, receivedNameValues.get(1).name);
+        assertEquals(lh.value[2].name, receivedNameValues.get(2).name);
+        assertEquals(lh.value[3].name, receivedNameValues.get(3).name);
     }
 
     /**
@@ -1491,7 +2206,80 @@ public class CORBA_SeqUtilTest extends TestCase {
         }
         private String m_name;
     }
-    
+
+/*
+    class findFuncPortService implements equalFunctor {
+        public findFuncPortService(final PortService obj) {
+            m_obj = obj;
+        }
+        public boolean equalof(final Object obj) {
+            return m_obj.equals(((PortServiceListHolder)obj).value);
+        }
+        private PortService m_obj;
+    }
+*/
+/*
+    class findFuncECservice implements equalFunctor {
+        public findFuncECservice(final ExecutionContextService obj) {
+            m_obj = obj;
+        }
+        public boolean equalof(final Object obj) {
+            return m_obj.equals(((ExecutionContextService)obj).value);
+        }
+        private ExecutionContextService m_obj;
+    }
+*/
+    class findFuncInstance_name implements equalFunctor {
+        public findFuncInstance_name(final String name) {
+            m_name = name;
+        }
+        public boolean equalof(final Object obj) {
+            return m_name.equals(((PortInterfaceProfile)obj).instance_name);
+        }
+        private String m_name;
+    }
+
+    class findFuncConnectorProfile implements equalFunctor {
+        public findFuncConnectorProfile(final String name) {
+            m_name = name;
+        }
+        public boolean equalof(final Object obj) {
+            return m_name.equals(((ConnectorProfile)obj).connector_id);
+        }
+        private String m_name;
+    }
+
+    class foreachFunc4 implements operatorFunc {
+        public foreachFunc4(final List<PortService> receivedNameValues) {
+            _receivedNameValues = receivedNameValues;
+        }
+        public void operator(Object elem) {
+            _receivedNameValues.add((PortService)elem);
+        }
+        private List<PortService> _receivedNameValues;
+    }
+
+    class foreachFunc3 implements operatorFunc {
+        public foreachFunc3(final List<ExecutionContextService> receivedNameValues) {
+            _receivedNameValues = receivedNameValues;
+        }
+        public void operator(Object elem) {
+            _receivedNameValues.add((ExecutionContextService)elem);
+        }
+        private List<ExecutionContextService> _receivedNameValues;
+    }
+
+
+    class foreachFunc2 implements operatorFunc {
+        public foreachFunc2(final List<ConnectorProfile> receivedNameValues) {
+            _receivedNameValues = receivedNameValues;
+        }
+        public void operator(Object elem) {
+            _receivedNameValues.add((ConnectorProfile)elem);
+        }
+        private List<ConnectorProfile> _receivedNameValues;
+    }
+
     class foreachFunc implements operatorFunc {
         public foreachFunc(final List<NameValue> receivedNameValues) {
             _receivedNameValues = receivedNameValues;
@@ -1501,4 +2289,32 @@ public class CORBA_SeqUtilTest extends TestCase {
         }
         private List<NameValue> _receivedNameValues;
     }
+
+    /**
+     * <p>refToVstring()メソッドのテスト
+     * <ul>
+     * <li>オブジェクトリストからIORリストを変換して返されるか?</li>
+     * </ul>
+     * </p>
+     */
+    public void test_refToVstring() {
+        Manager manager = Manager.instance();
+        PortAdmin pa = new PortAdmin(manager.getORB(), manager.getPOA());
+
+        ConnectorProfile connProfile = new ConnectorProfile();
+        connProfile.name = "name0";
+        connProfile.connector_id = "id0";
+        connProfile.ports = new PortService[1];
+        connProfile.ports[0] = pa.getPortRef("name0");
+        connProfile.properties = new NameValue[1];
+        connProfile.properties[0] = new NameValue();
+        connProfile.properties[0].name = "prop_id0";
+        connProfile.properties[0].value = ORBUtil.getOrb().create_any();
+        ConnectorProfileHolder cprof = new ConnectorProfileHolder(connProfile);
+
+        Vector<String> vs = CORBA_SeqUtil.refToVstring(cprof.value.ports);
+        assertEquals(1, (int) vs.size());
+        assertNotNull((String)vs.get(0));
+    }
+
 }

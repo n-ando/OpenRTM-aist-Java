@@ -35,6 +35,20 @@ class NamingOnCorba implements NamingBase {
     }
 
     /**
+     * <p> bindObject </p>
+     *
+     * @param name bind時の名称
+     * @param mgr bind対象マネージャサーバント
+     *
+     */
+    public void bindObject(final String name, final ManagerServant mgr) {
+        try{
+            m_cosnaming.rebindByString(name, mgr.getObjRef(), true);
+        } catch ( Exception ex ) {
+        }
+    }
+
+    /**
      * <p>オブジェクトをNameServerからunbindします。</p>
      * 
      * @param name unbind対象オブジェクト名

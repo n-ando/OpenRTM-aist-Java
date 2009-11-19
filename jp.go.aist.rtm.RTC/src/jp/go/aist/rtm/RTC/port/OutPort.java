@@ -1,16 +1,107 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.Streamable;
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
+
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.ClassNotFoundException;
+import java.lang.NoSuchFieldException;
+import java.lang.NoSuchMethodException;
+import java.lang.reflect.Field;
+
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.TypeCast;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.TimeValue;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
+
+import RTC.Time;
 
 /**
  * <p>出力ポートの実装です。さらに上位の出力ポートのベース実装として利用されます。</p>
  *
  * @param <DataType> データ型を指定します。
  */
-public class OutPort<DataType> extends OutPortBase implements BufferBase<DataType> {
+public class OutPort<DataType> extends OutPortBase {
 
+    /**
+     * <p> toTypeCode </p>
+     * <p> This function gets TypeCode of data. </p>
+     *
+     * @param value data
+     * @return TypeCdoe(String)
+     */
+    private static <DataType> String toTypeCode(DataRef<DataType> value) { 
+        DataType data = value.v;
+        String typeName = value.v.getClass().getSimpleName();
+        return typeName;
+
+    }
+    /**
+     * <p> write_stream </p>
+     * <p> This function writes data from OutputStream.  </p>
+     *
+     * @param data  data   
+     * @param cdr   OutputStream
+     */
+    private void write_stream(DataType data,OutputStream cdr) {
+        try {
+
+            m_field.set(m_streamable,data);
+            m_streamable._write(cdr);
+
+        }
+        catch(IllegalAccessException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(IllegalArgumentException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+
+    }
+    /**
+     * <p> set_timestamp </p>
+     * <p> This function sets the timestamp.  </p>
+     *
+     * @param data  data   
+     */
+    private void set_timestamp(DataType data) {
+        long nanotime = System.nanoTime();
+        RTC.Time tm = new RTC.Time((int)(nanotime/1000000000),
+                                   (int)(nanotime%1000000000));
+        Class cl = data.getClass();
+        String str = cl.getName();
+        try {
+            cl.getField("tm").set(data,tm);
+        }
+        catch(NoSuchFieldException e){
+            //getField throws
+        }
+        catch(IllegalAccessException e){
+            //set throws
+        }
+         
+    }
+    /**
+     * <p> set_timestamp </p>
+     * <p> This function sets the timestamp.  </p>
+     *
+     * @return RTC.Time
+     */
+    public static RTC.Time get_timestamp() {
+        long nanotime = System.nanoTime();
+        RTC.Time tm = new RTC.Time((int)(nanotime/1000000000),
+                                   (int)(nanotime%1000000000));
+        return tm; 
+    }
     /**
      * <p>コンストラクタです。内部的にバッファが生成されて割り当てられます。</p>
      * 
@@ -42,9 +133,8 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
     public OutPort(BufferBase<DataType> buffer,
             final String name, DataRef<DataType> valueRef) {
         
-        super(name);
+        super(name,toTypeCode(valueRef));
         
-        this.m_buffer = buffer;
         this.m_value = valueRef;
         this.m_timeoutTick = 1000; // [usec]
         this.m_readBlock = false;
@@ -58,6 +148,40 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
         this.m_OnReadConvert = null;
         this.m_OnOverflow = null;
         this.m_OnUnderflow = null;
+
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+
+        Class cl = valueRef.v.getClass();
+        String str = cl.getName();
+        try {
+            Class holder = Class.forName(str+"Holder",
+                                         true,
+                                         this.getClass().getClassLoader());
+            m_streamable = (Streamable)holder.newInstance();
+            m_field = m_streamable.getClass().getField("value");
+
+        }
+        catch(java.lang.InstantiationException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+         }
+
+        catch(ClassNotFoundException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(NoSuchFieldException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(IllegalAccessException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(IllegalArgumentException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
     }
     
     /**
@@ -67,67 +191,45 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
      * @return データを書き込めた場合はtrueを、さもなくばfalseを返します。
      */
     public boolean write(final DataType value) {
+        rtcout.println(rtcout.TRACE, "DataType write()");
+        synchronized (m_connectors){
+            if (m_OnWrite != null) {
+                m_OnWrite.run(value);
+            }
+
+            // check number of connectors
+            int conn_size = m_connectors.size();
+            if (!(conn_size > 0)) { 
+                return true; 
+            }
         
-        if (this.m_OnWrite != null) {
-            this.m_OnWrite.run(value);
-        }
-        
-        long timeout = this.m_writeTimeout; // [usec]
-        long tm_pre = System.nanoTime(); // [nsec]
-        
-        // blocking and timeout wait
-        long TIMEOUT_TICK_MSEC_PART = this.m_timeoutTick / 1000;
-        int TIMEOUT_TICK_NSEC_PART = ((int) (this.m_timeoutTick % 1000)) * 1000;
-        long count = 0;
-        while (this.m_writeBlock && isFull()) {
-            
-            if (this.m_writeTimeout < 0) {
-                try {
-                    Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                    
-                } catch (InterruptedException ignored) {
-                    ignored.printStackTrace();
+            // set timestamp
+//            set_timestamp(value);
+
+            // data -> (conversion) -> CDR stream
+            m_cdr = new EncapsOutputStream(m_spi_orb,isLittleEndian());
+
+            if (m_OnWriteConvert != null) {
+                DataType convervalue = m_OnWriteConvert.run(value);
+                write_stream(convervalue,m_cdr); 
+            }
+            else {
+                write_stream(value,m_cdr);
+            }
+
+            boolean result = true;
+            for (int i=0, len=conn_size; i < len; ++i) {
+                ReturnCode ret;
+                ret = m_connectors.elementAt(i).write(m_cdr);
+                if (ret != ReturnCode.PORT_OK) {
+                    result = false;
+                    if (ret.equals(ReturnCode.CONNECTION_LOST)) {
+                        disconnect(m_connectors.elementAt(i).id());
+                    }
                 }
-                
-                continue;
             }
-
-            // timeout wait
-            long tm_cur = System.nanoTime(); // [nsec]
-            long tm_diff = tm_cur - tm_pre; // [nsec]
-            
-            timeout -= tm_diff / 1000; // [usec]
-            if (timeout < 0) {
-                break;
-            }
-
-            tm_pre = tm_cur;
-            try {
-                Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                
-            } catch (InterruptedException ignored) {
-                ignored.printStackTrace();
-            }
-            ++count;
+            return result;
         }
-
-        if (isFull()) {
-            if (this.m_OnOverflow != null) {
-                this.m_OnOverflow.run(value);
-            }
-            return false;
-        }
-    
-        if (this.m_OnWriteConvert == null) {
-            put(value);
-        }
-        else {
-            put(this.m_OnWriteConvert.run(value));
-        }
-        
-        update();
-
-        return true;
     }
     
     /**
@@ -139,69 +241,6 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
         return this.write(m_value.v);
     }
     
-    /**
-     * <p>データを読み出します。</p>
-     * 
-     * @param valueRef 読み出したデータを受け取るためのDataRefオブジェクト
-     * @return データを読み出せた場合はtrueを、さもなくばfalseを返します。
-     */
-    public boolean read(DataRef<DataType> valueRef) {
-        
-        if (this.m_OnRead != null) {
-            this.m_OnRead.run();
-        }
-
-        long timeout = this.m_readTimeout; // [usec]
-        long tm_pre = System.nanoTime();
-        
-        // blocking and timeout wait
-        long TIMEOUT_TICK_MSEC_PART = this.m_timeoutTick / 1000;
-        int TIMEOUT_TICK_NSEC_PART = ((int) (this.m_timeoutTick % 1000)) * 1000;
-        while (this.m_readBlock && isEmpty()) {
-
-            if (this.m_readTimeout < 0) {
-                try {
-                    Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                    
-                } catch (InterruptedException ignored) {
-                    ignored.printStackTrace();
-                }
-                
-                continue;
-            }
-            
-            // timeout wait
-            long tm_cur = System.nanoTime(); // [nsec]
-            long tm_diff = tm_cur - tm_pre; // [nsec]
-            
-            timeout -= tm_diff / 1000; // [usec]
-            if (timeout < 0) {
-                break;
-            }
-            
-            tm_pre = tm_cur;
-            try {
-                Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                
-            } catch (InterruptedException ignored) {
-                ignored.printStackTrace();
-            }
-        }
-        
-        if (isEmpty()) {
-            if (this.m_OnUnderflow != null) {
-                valueRef.v = this.m_OnUnderflow.run();
-            }
-            return false;
-        }
-
-        if (this.m_OnReadConvert == null) {
-            valueRef.v = get();
-        } else {
-            valueRef.v = this.m_OnReadConvert.run(get());
-        }
-        return true;
-    }
     
     /**
      * <p>データ読み出し時における、ブロック/非ブロックモードを指定します。<br />
@@ -303,60 +342,32 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
         this.m_OnUnderflow = onUnderflow;
     }
     
-    /**
-     * <p>内部に割り当てられているバッファ長を取得します。</p>
-     * 
-     * @return バッファ長
-     */
-    public int length() {
-        return this.m_buffer.length();
-    }
-    
-    /**
-     * <p>バッファフルか否かを判定します。</p>
-     * 
-     * @return バッファフルの場合はtrueを、さもなくばfalseを返します。
-     */
-    public boolean isFull() {
-        return this.m_buffer.isFull();
-    }
-    
-    /**
-     * <p>バッファが空か否かを判定します。</p>
-     * 
-     * @return バッファが空の場合はtrueを、さもなくばfalseを返します。
-     */
-    public boolean isEmpty() {
-        return this.m_buffer.isEmpty();
-    }
 
     /**
-     * <p>内部に割り当てられているバッファに、データを直接書き込みます。<br />
-     * バッファ状態のハンドリング、ブロッキング、タイムアウト、コールバック呼び出しなどは行われません。</p>
+     * <p> Set OnConnect callback </p>
      * 
-     * @param data 書き込むデータ
      */
-    public void put(DataType data) {
-        this.m_buffer.put(data);
+    public void setOnConnect(OnConnect on_connect) {
+        m_OnConnect = on_connect;
     }
-    
     /**
-     * <p>内部に割り当てられているバッファから、データを直接読み出します。<br />
-     * バッファ状態のハンドリング、ブロッキング、タイムアウト、コールバック呼び出しなどは行われません。</p>
+     * <p> Set OnDisConnect callback </p>
      * 
-     * @return 読み出したデータ
      */
-    public DataType get() {
-        return this.m_buffer.get();
+    public void setOnDisconnect(OnDisconnect on_disconnect) {
+        m_OnDisconnect = on_disconnect;
     }
-    
     /**
-     * <p>バッファ内に、まだ読み出されていないデータが存在するかどうかを判定します。</p>
      * 
-     * @return まだ読み出されていないデータがあればtrueを、さもなくばfalseを返します。
      */
-    public boolean isNew() {
-        return m_buffer.isNew();
+    public void onConnect(final String id, PublisherBase publisher) {
+        rtcout.println(rtcout.TRACE, "onConnect(id = "+id+")");
+    }
+    /**
+     * 
+     */
+    public void onDisconnect(final String id) {
+        rtcout.println(rtcout.TRACE, "onDisconnect(id = "+id+")");
     }
 
     private BufferBase<DataType> m_buffer;
@@ -374,4 +385,11 @@ public class OutPort<DataType> extends OutPortBase implements BufferBase<DataTyp
     private OnOverflow<DataType> m_OnOverflow;
     private OnUnderflow<DataType> m_OnUnderflow;
 
+    private OnConnect m_OnConnect;
+    private OnDisconnect m_OnDisconnect;
+    private OutputStream m_cdr;
+
+    private Streamable m_streamable = null;
+    private Field m_field = null;
+    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
 }

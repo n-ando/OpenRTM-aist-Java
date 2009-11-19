@@ -5,12 +5,15 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
+import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.ConfigAdmin;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 
 import org.omg.CORBA.Any;
 
@@ -93,6 +96,13 @@ public class Configuration_impl extends ConfigurationPOA {
     public Configuration_impl(ConfigAdmin configsets){
         this.m_configsets = configsets;
         this.m_objref = this._this();
+
+        rtcout = new Logbuf("Configuration_impl");
+        m_organizations = new OrganizationListHolder(); 
+        m_organizations.value = new Organization[0];
+        m_serviceProfiles = new ServiceProfileListHolder();
+        m_serviceProfiles.value = new ServiceProfile[0];
+
     }
 
     /**
@@ -132,8 +142,8 @@ public class Configuration_impl extends ConfigurationPOA {
      * @param prop　コピー元プロパティ
      */
     private void toConfigurationSet(ConfigurationSet conf, final Properties prop) {
-        conf.id = prop.getName();
-        conf.description = prop.getValue();
+        conf.description = new String(prop.getProperty("description"));
+        conf.id = new String(prop.getName());
         NVListHolder nvlist = new NVListHolder();
         NVUtil.copyFromProperties(nvlist, prop);
         conf.configuration_data = nvlist.value;
@@ -155,6 +165,9 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public boolean set_device_profile(final DeviceProfile dProfile)
             throws InvalidParameter, NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.set_device_profile()");
+
         try {
             if(m_deviceProfile == null) m_deviceProfile = new DeviceProfile();
             synchronized (m_deviceProfile) {
@@ -184,8 +197,11 @@ public class Configuration_impl extends ConfigurationPOA {
      * @exception NotAvailable SDOは存在するが応答がない。
      * @exception InternalError 内部的エラーが発生した。
      */
-    public boolean set_service_profile(final ServiceProfile sProfile)
+    public boolean add_service_profile(final ServiceProfile sProfile)
             throws InvalidParameter, NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.add_service_profile()");
+
         try{
             if( m_serviceProfiles==null ) {
                 m_serviceProfiles = new ServiceProfileListHolder();
@@ -206,7 +222,7 @@ public class Configuration_impl extends ConfigurationPOA {
             CORBA_SeqUtil.push_back(m_serviceProfiles, sProfile);
             return true;
         } catch (Exception ex) {
-            throw new InternalError("Configuration::set_service_profile"); 
+            throw new InternalError("Configuration::add_service_profile"); 
         }
     }
 
@@ -224,6 +240,9 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public boolean add_organization(Organization org) 
             throws InvalidParameter, NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.add_organization()");
+
         try {
             if( m_organizations==null ){
                 m_organizations = new OrganizationListHolder(); 
@@ -253,6 +272,9 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public boolean remove_service_profile(final String id) 
             throws InvalidParameter, NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.remove_service_profile("+id+")");
+
         try {
             for(int index=0; index<m_serviceProfiles.value.length; index++ ) {
                 if(id.equals(m_serviceProfiles.value[index].id)) {
@@ -281,6 +303,9 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public boolean remove_organization(String organization_id)
             throws InvalidParameter, NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.remove_organization("+organization_id+")");
+
         try {
             synchronized (m_organizations) {
                 for(int index=0; index<m_organizations.value.length; index++ ) {
@@ -310,6 +335,9 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public Parameter[] get_configuration_parameters()
             throws NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.get_configurations()");
+
         try{
             if( m_parameters==null ) {
                 m_parameters = new ParameterListHolder();
@@ -337,6 +365,9 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public synchronized NameValue[] get_configuration_parameter_values()
             throws NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.get_configuration_parameter_values()");
+
         NVListHolder nvlist = new NVListHolder();
         nvlist.value = new NameValue[0];
         return nvlist.value;
@@ -357,6 +388,9 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public Any get_configuration_parameter_value(String name)
             throws InvalidParameter, NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.get_configuration_parameter_value("+name+")");
+
         if( name==null || name.equals("") ) throw new InvalidParameter("Name is empty.");
         
         Any value = ORBUtil.getOrb().create_any();
@@ -380,6 +414,9 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public boolean set_configuration_parameter(String name, Any value)
             throws InvalidParameter, NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.set_configuration_parameter("+name+")");
+
         return true;
     }
 
@@ -396,6 +433,9 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public ConfigurationSet[] get_configuration_sets() 
                 throws NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.get_configuration_sets()");
+
         try {
             synchronized (m_configsets) {
                 ConfigurationSetListHolder config_sets = new ConfigurationSetListHolder();
@@ -406,12 +446,12 @@ public class Configuration_impl extends ConfigurationPOA {
                 for(int intIdx=0; intIdx<cf.size(); ++intIdx) {
                     if( config_sets.value[intIdx]==null ) config_sets.value[intIdx] = new ConfigurationSet();
                     toConfigurationSet(config_sets.value[intIdx], cf.elementAt(intIdx));
-                    String id = config_sets.value[intIdx].id;
-                    if( m_configsetopts.get(id) != null ) {
-                        config_sets.value[intIdx].description = m_configsetopts.get(id).getProperty("description");
-                    } else {
-                        config_sets.value[intIdx].description = "";
-                    }
+                    //String id = config_sets.value[intIdx].id;
+                    //if( m_configsetopts.get(id) != null ) {
+                    //    config_sets.value[intIdx].description = m_configsetopts.get(id).getProperty("description");
+                    //} else {
+                    //    config_sets.value[intIdx].description = "";
+                    //}
                 }
                 return config_sets.value;
             }
@@ -434,6 +474,9 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public synchronized ConfigurationSet get_configuration_set(String config_id)
             throws NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.get_configuration_set("+config_id+")");
+
         if( config_id==null || config_id.equals("") ) throw new InternalError("ID is empty");
         // Originally getConfigurationSet raises InvalidParameter according to the
         // SDO specification. However, SDO's IDL lacks InvalidParameter.
@@ -444,10 +487,10 @@ public class Configuration_impl extends ConfigurationPOA {
         try{
             ConfigurationSet config = new ConfigurationSet();
             toConfigurationSet(config, configset);
-            String id = config.id;
-            if( m_configsetopts.get(id) != null ) {
-                config.description = m_configsetopts.get(id).getProperty("description");
-            }
+            //String id = config.id;
+            //if( m_configsetopts.get(id) != null ) {
+            //    config.description = m_configsetopts.get(id).getProperty("description");
+            //}
             return config;
         } catch (Exception ex) {
             throw new InternalError("Configuration::get_configuration_set()");
@@ -459,37 +502,41 @@ public class Configuration_impl extends ConfigurationPOA {
      *
      * このオペレーションは指定された id の ConfigurationSet を更新します。</p>
      *
-     * @param config_id 変更する ConfigurationSet の ID。
      * @param configuration_set 変更する ConfigurationSet そのもの。
-     * @return ConfigurationSet が正常に更新できた場合は true。
-     *         そうでなければ false を返す。
-     *
+     * @return boolean 
+     *         
+     *         
      * @exception InvalidParameter config_id が null か ConfigurationSet
      * @exception NotAvailable SDOは存在するが応答がない。
      * @exception InternalError 内部的エラーが発生した。
      */
-    public boolean set_configuration_set_values(String config_id, ConfigurationSet configuration_set) 
+    public boolean set_configuration_set_values(ConfigurationSet configuration_set) 
             throws InvalidParameter, NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.set_configuration_set_values()");
+
+        String config_id = configuration_set.id; 
         if( config_id==null || config_id.equals("") ) throw new InvalidParameter("ID is empty.");
         try {
             Properties conf = new Properties(config_id);
             toProperties(conf, configuration_set);
-            if( m_configsets.setConfigurationSetValues(config_id, conf)) {
-                String description = configuration_set.description;
-                //
-                Properties prop = m_configsetopts.get(config_id);
-                if( prop==null ) {
-                    prop = new Properties();
-                    m_configsetopts.put(config_id, prop);
-                }
-                //
-                m_configsetopts.get(config_id).setProperty("description", description);
-                return true;
-            }
+	    return m_configsets.setConfigurationSetValues(config_id, conf);
+            //if( m_configsets.setConfigurationSetValues(config_id, conf)) {
+            //    String description = configuration_set.description;
+            //    //
+            //    Properties prop = m_configsetopts.get(config_id);
+            //    if( prop==null ) {
+            //        prop = new Properties();
+            //        m_configsetopts.put(config_id, prop);
+            //    }
+            //    //
+            //    m_configsetopts.get(config_id).setProperty("description", description);
+            //    return true;
+            //}
         } catch( Exception ex) {
             throw new InternalError("Configuration::set_configuration_set_values()");
         }
-        return false;
+	//        return false;
     }
 
     /**
@@ -514,16 +561,19 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public ConfigurationSet get_active_configuration_set() 
         throws NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.get_active_configuration_set()");
+
         if( !m_configsets.isActive() ) throw new NotAvailable();
         
         try {
             synchronized (m_configsets) {
                 ConfigurationSet config = new ConfigurationSet();
                 toConfigurationSet(config, m_configsets.getActiveConfigurationSet());
-                String id = config.id;
-                if( m_configsetopts.get(id) != null ) {
-                    config.description = m_configsetopts.get(id).getProperty("description");
-                }
+                //String id = config.id;
+                //if( m_configsetopts.get(id) != null ) {
+                //    config.description = m_configsetopts.get(id).getProperty("description");
+                //}
                 return config;
             }
         } catch (Exception ex) {
@@ -546,27 +596,31 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public boolean add_configuration_set(ConfigurationSet configuration_set)
             throws InvalidParameter, NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl::add_configuration_set()");
+
         try{
             synchronized (m_configsets) {
                 final String config_id = configuration_set.id;
                 Properties config = new Properties(config_id);
                 toProperties(config, configuration_set);
-                if( m_configsets.addConfigurationSet(config) ) {
-                    String description = configuration_set.description;
-                    Properties prop = m_configsetopts.get(config_id);
-                    if( prop==null ) {
-                        prop = new Properties();
-                        m_configsetopts.put(config_id, prop);
-                    }
-                    m_configsetopts.get(config_id).setProperty("description", description);
-                    return true;
-                }
+		return m_configsets.addConfigurationSet(config);
+                //if( m_configsets.addConfigurationSet(config) ) {
+                //    String description = configuration_set.description;
+                //    Properties prop = m_configsetopts.get(config_id);
+                //    if( prop==null ) {
+                //        prop = new Properties();
+                //        m_configsetopts.put(config_id, prop);
+                //    }
+                //    m_configsetopts.get(config_id).setProperty("description", description);
+                //    return true;
+                //}
 
             }
         } catch(Exception ex) {
-            throw new InternalError("Configuration::add_configuration_set()"); 
+            throw new InternalError("Configuration.add_configuration_set()"); 
         }
-        return true;
+	//        return true;
     }
 
     /**
@@ -584,21 +638,25 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public boolean remove_configuration_set(String config_id)
             throws InvalidParameter, NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.remove_configuration_set("+config_id+")");
+
         if( config_id==null || config_id.equals(""))
             throw new InvalidParameter("ID is empty.");
         try {
             synchronized (m_configsets) {
                 if( !m_configsets.haveConfig(config_id) )
                     throw new InvalidParameter("No such ConfigurationSet");
-                if( m_configsets.removeConfigurationSet(config_id) ) {
-                    m_configsetopts.remove(config_id);
-                    return true;
-                }
+                return m_configsets.removeConfigurationSet(config_id);
+                //if( m_configsets.removeConfigurationSet(config_id) ) {
+                //    m_configsetopts.remove(config_id);
+                //    return true;
+                //}
             }
         } catch (Exception ex) {
             throw new InternalError("Configuration::remove_configuration_set()");
         }
-        return false;
+        // return false;
     }
 
     /**
@@ -622,6 +680,9 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     public boolean activate_configuration_set(String config_id)
             throws InvalidParameter, NotAvailable, InternalError {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.activate_configuration_set("+config_id+")");
+
         if( config_id==null || config_id.equals(""))
             throw new InvalidParameter("ID is empty.");
         if( !m_configsets.haveConfig(config_id) )
@@ -639,6 +700,9 @@ public class Configuration_impl extends ConfigurationPOA {
      * @return オブジェクト参照
      */
     public Configuration getObjRef() {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.getObjRef()");
+
         return m_objref;
     }
 
@@ -648,6 +712,9 @@ public class Configuration_impl extends ConfigurationPOA {
      * @return SDOのDeviceProfile。
      */
     public final DeviceProfile getDeviceProfile() {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.getDeviceProfile()");
+
       return m_deviceProfile;
     }
 
@@ -657,6 +724,9 @@ public class Configuration_impl extends ConfigurationPOA {
      * @return SDOのDeviceProfile。
      */
     public final ServiceProfileListHolder getServiceProfiles() {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.getServiceProfiles()");
+
       return m_serviceProfiles;
     }
 
@@ -668,6 +738,9 @@ public class Configuration_impl extends ConfigurationPOA {
      * @return SDOのServiceProfile
      */
     public final ServiceProfile getServiceProfile(final String id) {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.getServiceProfile("+id+")");
+
         if( m_serviceProfiles==null || m_serviceProfiles.value==null ) return null;
         for(int index=0; index<m_serviceProfiles.value.length; index++ ) {
             if(id.equals(m_serviceProfiles.value[index].id)) {
@@ -683,6 +756,9 @@ public class Configuration_impl extends ConfigurationPOA {
      * @return Organizationリスト
      */
     public final OrganizationListHolder getOrganizations() {
+
+        rtcout.println(rtcout.TRACE, "Configuration_impl.getOrganizations()");
+
       return m_organizations;
     }
     /**
@@ -710,4 +786,8 @@ public class Configuration_impl extends ConfigurationPOA {
      * <p>Organization リスト</p>
      */
     protected OrganizationListHolder m_organizations;
+    /**
+     * <p>Logging用フォーマットオブジェクト</p>
+     */
+    protected Logbuf rtcout;
 }

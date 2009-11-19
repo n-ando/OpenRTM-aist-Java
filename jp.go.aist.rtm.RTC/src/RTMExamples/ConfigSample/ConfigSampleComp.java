@@ -4,6 +4,7 @@ import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.ModuleInitProc;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.util.Properties;
+import RTC.ExecutionContextListHolder;
 import RTC.ExecutionContextServiceListHolder;
 
 public class ConfigSampleComp implements ModuleInitProc {
@@ -29,8 +30,8 @@ public class ConfigSampleComp implements ModuleInitProc {
 //            e.printStackTrace(); 
 //        }
 
-        ExecutionContextServiceListHolder ecs = new ExecutionContextServiceListHolder();
-        ecs.value = comp.get_execution_context_services();
+        ExecutionContextListHolder ecs = new ExecutionContextListHolder();
+        ecs.value = comp.get_owned_contexts();
         ecs.value[0].activate_component(comp.getObjRef());
         System.out.println("");
     }

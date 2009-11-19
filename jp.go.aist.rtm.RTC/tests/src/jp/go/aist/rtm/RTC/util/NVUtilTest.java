@@ -436,6 +436,43 @@ public class NVUtilTest extends TestCase {
         result = NVUtil.toString(nvlist, "short");
         setstr = "";
         assertEquals(result, setstr);
+
+
+        String result2;
+        NVListHolder nvlist2 = new NVListHolder();
+        nvlist2.value = new NameValue[1];
+        String str2 = new String("test2");
+        nvlist2.value[0] = new NameValue();
+        nvlist2.value[0].name = "string";
+        anyValue = ORBUtil.getOrb().create_any();
+        anyValue.insert_string(str2);
+        nvlist2.value[0].value = anyValue;
+        result2 = NVUtil.toString(nvlist2);
+        String setstr2 = "string:test2" + System.getProperty("line.separator");
+        assertEquals(result2, setstr2);
+
+
+        String result3;
+        NVListHolder nvlist3 = new NVListHolder();
+        nvlist3.value = new NameValue[2];
+
+        short setst2 = 1;
+        nvlist3.value[0] = new NameValue();
+        nvlist3.value[0].name = "short";
+        anyValue = ORBUtil.getOrb().create_any();
+        anyValue.insert_short(setst2);
+        nvlist3.value[0].value = anyValue;
+
+        String str3 = new String("test2");
+        nvlist3.value[1] = new NameValue();
+        nvlist3.value[1].name = "string";
+        anyValue = ORBUtil.getOrb().create_any();
+        anyValue.insert_string(str3);
+        nvlist3.value[1].value = anyValue;
+        result3 = NVUtil.toString(nvlist3);
+        String setstr3 = "short: not a string value" + System.getProperty("line.separator")
+                        + "string:test2" + System.getProperty("line.separator");
+        assertEquals(result3, setstr3);
     }
     
     /**

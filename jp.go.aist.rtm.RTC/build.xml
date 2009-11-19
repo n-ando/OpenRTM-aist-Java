@@ -1,15 +1,18 @@
-<project name="OpenRTM-aist-0.4.2" default="jar">
-	<property name="version" value="0.4.2"/>
-	<property name="target.name" value="OpenRTM-aist-0.4.2"/>
+<project name="OpenRTM-aist-1.0.0" default="jar">
+	<property name="version" value="1.0.0"/>
+	<property name="target.name" value="OpenRTM-aist-1.0.0"/>
 
 	<property name="source" value="src"/>
 	<property name="source.sdo" value="src/_SDOPackage"/>
 	<property name="source.rtc" value="src/RTC"/>
+	<property name="source.rtm" value="src/RTM"/>
+	<property name="source.openrtm" value="src/OpenRTM"/>
 	<property name="source.examples" value="src/RTMExamples"/>
 	<property name="source.main" value="src/jp"/>
 	<property name="source.samples.class" value="bin/RTMExamples"/>
 	<property name="source.samples.java" value="src/RTMExamples"/>
 	<property name="source.samples.java.SimpleService" value="${source.samples.java}/SimpleService"/>
+	<property name="source.samples.java.AutoTest" value="${source.samples.java}/AutoTest"/>
 	<property name="source.test" value="tests/src"/>
 	<property name="source.tests.bind" value="${source.test}/jp/go/aist/rtm/bind"/>
 
@@ -31,6 +34,7 @@
 
 	<property name="idl.path" value="idl" />
 	<property name="idl.path.tests" value="tests/idl" />
+	<property name="idl.Manager" value="${idl.path}/Manager.idl" />
 	<property name="idl.OpenRTM" value="${idl.path}/OpenRTM.idl" />
 	<property name="idl.DataPort" value="${idl.path}/DataPort.idl" />
 	<property name="idl.BasicDataType" value="${idl.path}/BasicDataType.idl" />
@@ -38,6 +42,7 @@
 	<property name="idl.test.CorbaPort" value="${idl.path.tests}/CorbaPort/MyService.idl" />
 	<property name="idl.test.TypeCast" value="${idl.path.tests}/TypeCast/Mock.idl" />
 	<property name="idl.sample" value="${source.samples.java}/MyService.idl" />
+	<property name="idl.autotest" value="${source.samples.java}/AutoTestService.idl" />
 
 	<target name="buildAll">
 		<antcall target="idlCompile" />
@@ -59,6 +64,17 @@
 		<antcall target="jar" />
 		<antcall target="javaExamples" />
 		<antcall target="javaDoc" />
+	</target>
+	
+        <target name="buildTests">
+		<antcall target="idlCompile" />
+		<antcall target="idlCompileEtc" />
+		<antcall target="clean" />
+		<antcall target="compile" />
+		<antcall target="jar" />
+		<antcall target="javaExamples" />
+		<antcall target="compile_tests" />
+		<antcall target="junit" />
 	</target>
 
 	<target name="jar" description="jarファイルを作成します">
@@ -86,7 +102,7 @@
 		<delete dir="${build.doc}" />
 
 		<javadoc sourcepath="${source}" destdir="${build.doc}"
-			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*" encoding="UTF-8"
+			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" encoding="UTF-8"
 			author="true" doctitle="OpenRTM-aist Java" 
 			nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" 
 			package="yes" source="1.5" splitindex="true" use="true" version="true"/>
@@ -94,16 +110,21 @@
 
 	<target name="javaInstaller"  description="インストーラを作成します">
 		<exec dir="${installer.dir}" executable="${wix.dir}\candle.exe">
-			<arg line="OpenRTM-aist-Java-0.4.2.wxs"/>
+			<arg line="OpenRTM-aist-Java-1.0.0.wxs"/>
 		</exec>
 		<exec dir="${installer.dir}" executable="${wix.dir}\light.exe">
-			<arg line="OpenRTM-aist-Java-0.4.2.wixobj -out OpenRTM-aist-Java-0.4.2.msi ${wix.dir}\wixui.wixlib -loc wixui_ja-jp.wxl"/>
+			<arg line="OpenRTM-aist-Java-1.0.0.wixobj -out OpenRTM-aist-Java-1.0.0.msi ${wix.dir}\wixui.wixlib -loc wixui_ja-jp.wxl"/>
 		</exec>
 	</target>
 
 	<target name="idlCompile" description="IDLファイルをコンパイルします">
 		<delete dir="src/_SDOPackage" />
 		<delete dir="src/RTC" />
+		<delete dir="src/OpenRTM" />
+		<delete dir="src/RTM" />
+		<exec executable="${java.home}\..\bin\idlj">
+			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.Manager}"/>
+		</exec>
 		<exec executable="${java.home}\..\bin\idlj">
 			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.OpenRTM}"/>
 		</exec>
@@ -130,7 +151,13 @@
 			<fileset dir="${source.samples.java.SimpleService}" excludes="**.idl,MyServiceConsumer**.java,MyServiceProvider**.java,MyServiceSVC_impl.java,rtc.conf" />
 		</delete>
 		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-fall -td ${source} -pkgPrefix SimpleService RTMExamples ${idl.sample}"/>
+			<arg line="-v -fall -td ${source} -pkgPrefix SimpleService RTMExamples ${idl.sample}"/>
+		</exec>
+		<delete includeEmptyDirs="true">
+			<fileset dir="${source.samples.java.AutoTest}" excludes="**.idl,AutoTest**.java,MyServiceSVC_impl.java,**.conf" />
+		</delete>
+		<exec executable="${java.home}\..\bin\idlj">
+			<arg line="-v -fall -td ${source} -pkgPrefix AutoTest RTMExamples ${idl.autotest}"/>
 		</exec>
 	</target>
 
@@ -142,10 +169,41 @@
 	</target>
 
 	<target name="compile" description="ソースをコンパイルします">
-		<javac srcdir="${source.sdo}:${source.rtc}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="Shift-JIS" />
+		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="Shift-JIS" />
 		<javac srcdir="${source.main}:${source.examples}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
 	</target>
 
+	<target name="compile_tests" description="ソースをコンパイルします">
+		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}:${source.main}:${source.examples}:${source.test}:${source.tests.bind}" destdir="${build.dir.test}" classpath="lib/commons-cli-1.1.jar:${env.JUNIT_HOME}/junit.jar:" encoding="UTF-8" />
+	</target>
+
+	<target name="junit" description="junit ソースをコンパイルします">
+		<mkdir dir="${build.dir.test}/reports" />
+		<delete dir="${build.dir.test}/reports/*.xml" />
+		<delete dir="${build.dir.test}/reports/*.txt" />
+		<junit haltonfailure="No" >
+			<formatter type="xml" usefile="true" />
+			<classpath>
+				<pathelement path="bin:${env.JUNIT_HOME}/junit:${env.JUNIT_HOME}/junit/samples:${env.JUNIT_HOME}:${env.ANT_HOME}:${build.dir.test}"/>
+				<pathelement location="${env.JUNIT_HOME}/junit.jar"/>
+				<pathelement location="${env.ANT_HOME}/lib/ant-junit.jar"/>
+			</classpath>
+			<!--
+			<test name="jp.go.aist.rtm.RTC.FactoryTest"/>
+			<test name="jp.go.aist.rtm.RTC.StateMachineTests"/>
+			-->
+			<batchtest todir="${build.dir.test}/reports">
+				<fileSet dir="${build.dir.test}">
+					<include name="jp/go/aist/rtm/RTC/*Test.class" />
+					<include name="jp/go/aist/rtm/RTC/*Tests.class" />
+					<include name="jp/go/aist/rtm/RTC/**/*Test.class" />
+					<include name="jp/go/aist/rtm/RTC/**/*Tests.class" />
+					<exclude name="jp/go/aist/rtm/RTC/SampleTest.class" />
+				</fileSet>
+			</batchtest>
+		</junit>
+		<echo>All Test complete!</echo>
+	</target>
 	<target name="dist" description="ソースをエクスポートします">
 		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}.zip" />
@@ -163,9 +221,10 @@
 		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 
 		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4" />
-		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4" />
+		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0" />
+		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0" />
 		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar.zip" />
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4/jar" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/jar" >
 			<fileset dir="installer/resources/Source/jar">
 				<include name="*${version}.jar" />
 				<include name="commons-cli-1.1.jar" />
@@ -174,17 +233,17 @@
 				<include name="License.txt" />
 			</fileset>
 		</copy>
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4/examples" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/examples" >
 			<fileset dir="installer/resources/Source/examples">
 				<include name="*.bat" />
 				<include name="*.sh" />
 				<include name="*.vbs" />
 			</fileset>
 		</copy>
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4/examples/RTMExamples" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/examples/RTMExamples" >
 			<fileset dir="installer/resources/Source/examples/RTMExamples" />
 		</copy>
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4/JavaDoc" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/JavaDoc" >
 			<fileset dir="installer/resources/Source/JavaDoc" />
 		</copy>
 		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar" />

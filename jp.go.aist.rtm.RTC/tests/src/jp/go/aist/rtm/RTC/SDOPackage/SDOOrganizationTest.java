@@ -27,7 +27,9 @@ public class SDOOrganizationTest extends TestCase {
     
     protected void setUp() throws Exception {
         super.setUp();
+/*
         m_p01 = new Organization_impl();
+*/
     }
 
     protected void tearDown() throws Exception {
@@ -41,6 +43,7 @@ public class SDOOrganizationTest extends TestCase {
      *</pre> 
      */
     public void test_get_organization_id() {
+/*
         try {
             m_id = m_p01.get_organization_id();
         } catch (InvalidParameter e) {
@@ -53,6 +56,7 @@ public class SDOOrganizationTest extends TestCase {
             e.printStackTrace();
             fail();
         }
+*/
     }
 
     /**
@@ -65,6 +69,7 @@ public class SDOOrganizationTest extends TestCase {
      *</pre>
      */
     public void test_set_get_organization_property() {
+/*
         OrganizationProperty get_prop;
         OrganizationProperty set_prop = new OrganizationProperty();
         boolean ret;
@@ -204,6 +209,7 @@ public class SDOOrganizationTest extends TestCase {
             ex.getStackTrace();
             fail();
         }
+*/
     }   
 
     /**
@@ -215,6 +221,7 @@ public class SDOOrganizationTest extends TestCase {
      *</pre>
      */
     public void test_set_get_organization_property_value() {
+/*
         OrganizationProperty set_prop = new OrganizationProperty();
         boolean ret;
         short st;
@@ -325,6 +332,7 @@ public class SDOOrganizationTest extends TestCase {
             ex.getStackTrace();
             fail();
         }
+*/
     }
 
     /**
@@ -335,6 +343,7 @@ public class SDOOrganizationTest extends TestCase {
      *</pre>
      */
     public void test_set_get_organization_property_value_multi() {
+/*
         OrganizationProperty set_prop = new OrganizationProperty();
         boolean ret;
         short st;
@@ -424,6 +433,7 @@ public class SDOOrganizationTest extends TestCase {
             e.printStackTrace();
             fail();
         }
+*/
     }
     /**
      *<pre>
@@ -432,6 +442,7 @@ public class SDOOrganizationTest extends TestCase {
      *</pre>
      */
     public void test_remove_organization_property() {
+/*
         boolean ret;
         NVListHolder nvList = new NVListHolder();
         OrganizationProperty get_prop;
@@ -493,6 +504,7 @@ public class SDOOrganizationTest extends TestCase {
             ex.getStackTrace();
             fail();
         }
+*/
     }
 
     /**

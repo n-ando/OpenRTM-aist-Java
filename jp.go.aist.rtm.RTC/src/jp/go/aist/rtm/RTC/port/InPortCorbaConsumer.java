@@ -18,8 +18,9 @@ import jp.go.aist.rtm.RTC.util.TypeCast;
  *
  * @param <DataType> データ型を指定します。
  */
-public class InPortCorbaConsumer<DataType>
-    extends CorbaConsumer<InPortAny> implements InPortConsumer {
+//public class InPortCorbaConsumer<DataType>
+//    extends CorbaConsumer<InPortAny> implements InPortConsumer {
+public class InPortCorbaConsumer<DataType> {
     
     /**
      * <p>コンストラクタです。</p>
@@ -29,10 +30,12 @@ public class InPortCorbaConsumer<DataType>
      */
     public InPortCorbaConsumer(Class<DataType> DATA_TYPE_CLASS,
             BufferBase<DataType> buffer) {
+/*
         
         super(InPortAny.class);
         this.TYPE_CAST = new TypeCast<DataType>(DATA_TYPE_CLASS);
         this.m_buffer = buffer;
+*/
     }
     
     /**
@@ -42,9 +45,12 @@ public class InPortCorbaConsumer<DataType>
      */
     public InPortCorbaConsumer(final InPortCorbaConsumer<DataType> consumer) {
         
+/*
         super(consumer);
         this.TYPE_CAST = consumer.TYPE_CAST;
         this.m_buffer = consumer.m_buffer;
+
+*/
     }
     
     /**
@@ -52,13 +58,16 @@ public class InPortCorbaConsumer<DataType>
      * 
      * @param data 書き込むデータ
      */
+/*
     public void put(DataType data) {
         _ptr().put(TYPE_CAST.castAny(data));
     }
+*/
     
     /**
      * <p>バッファ内のデータを取り出して送出します。</p>
      */
+/*
     public void push() {
         
         DataRef<DataType> data = new DataRef<DataType>(null);
@@ -77,6 +86,7 @@ public class InPortCorbaConsumer<DataType>
             return;
         }
     }
+*/
     
     /**
      * <p>当該InPortCorbaConsumerオブジェクトの複製を生成します。</p>
@@ -93,6 +103,7 @@ public class InPortCorbaConsumer<DataType>
      * @param properties 登録時に参照される情報
      * @return 登録された場合にはtrueを、さもなくばfalseを返します。
      */
+/*
     public boolean subscribeInterface(final NVListHolder properties) {
         
         if (! NVUtil.isStringValue(properties,
@@ -113,6 +124,7 @@ public class InPortCorbaConsumer<DataType>
         
         return false;
     }
+*/
     
     /**
      * <p>データ送出通知の受け取り登録を解除します。</p>

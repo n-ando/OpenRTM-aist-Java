@@ -13,7 +13,7 @@ import _SDOPackage.NameValue;
  * <p>NameValue操作用ユーティリティクラスです。</p>
  */
 public class NVUtil {
-    
+
     /**
      * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
      * 
@@ -30,6 +30,22 @@ public class NVUtil {
         NameValue nv = new NameValue();
         nv.name = name;
         nv.value = cast.castAny(value);
+        return nv;
+    }
+    /**
+     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
+     * 
+     * @param name オブジェクトに設定する名称
+     * @param value オブジェクトに設定する値(String)
+     * 
+     * @return 作成されたNameValueオブジェクト
+     */
+    public static NameValue newNVString(final String name, String value) {
+        NameValue nv = new NameValue();
+        nv.name = name;
+        Any any = ORBUtil.getOrb().create_any();
+        any.insert_string(value);
+        nv.value = any;
         return nv;
     }
     
@@ -104,8 +120,28 @@ public class NVUtil {
                     value = anyVal.extract_wstring();
                 } else if( anyVal.type().kind() == TCKind.tk_string ) {
                     value = anyVal.extract_string();
-                } else {
-                    value = anyVal.extract_Value().toString();
+                } else if( anyVal.type().kind() == TCKind.tk_objref ) {
+		    org.omg.CORBA.Object obj = anyVal.extract_Object();
+		    if (obj != null) {
+			value = obj.toString();
+		    }
+		    else {
+			value = "";
+		    }
+                } else if( anyVal.type().kind() == TCKind.tk_char ) {
+		    value =  Character.toString(anyVal.extract_char());
+                } else if( anyVal.type().kind() == TCKind.tk_double ) {
+		    value =  Double.toString(anyVal.extract_double());
+                } else if( anyVal.type().kind() == TCKind.tk_float ) {
+		    value =  Float.toString(anyVal.extract_float());
+                } else if( anyVal.type().kind() == TCKind.tk_long ) {
+		    value =  Integer.toString(anyVal.extract_long());
+                } else if( anyVal.type().kind() == TCKind.tk_longlong ) {
+		    value =  Long.toString(anyVal.extract_longlong());
+                } else if( anyVal.type().kind() == TCKind.tk_octet ) {
+		    value =  Byte.toString(anyVal.extract_octet());
+		} else {
+		    value = anyVal.extract_Value().toString();
                 }
                 final String name = nvlist.value[intIdx].name;
                 prop.setProperty(name, value);
@@ -240,8 +276,9 @@ public class NVUtil {
         } catch (Exception e) {
             str_value = "";
         }
-        if( str_value==null ) return "";
-        
+        if( str_value == null ) {
+            return "";
+        }
         return str_value;
     }
     
@@ -363,7 +400,7 @@ public class NVUtil {
          * <p>指定されたNameValueオブジェクトの内容を元にPropertiesオブジェクトを作成します。
          * 作成されたPropertiesオブジェクトは、m_propメンバとして取得できます。</p>
          * 
-         * @param 作成元となるNameValueオブジェクト
+         * @param elem 作成元となるNameValueオブジェクト
          * 
          * @throws ClassCastException 指定されたオブジェクトがNameValueオブジェクトでない場合
          */
@@ -375,7 +412,7 @@ public class NVUtil {
          * <p>指定されたNameValueオブジェクトの内容を元にPropertiesオブジェクトを作成します。
          * 作成されたPropertiesオブジェクトは、m_propメンバとして取得できます。</p>
          * 
-         * @param 作成元となるNameValueオブジェクト
+         * @param nv 作成元となるNameValueオブジェクト
          */
         public void operator(final NameValue nv) {
             try {
@@ -396,4 +433,38 @@ public class NVUtil {
         public Properties m_prop = new Properties();
     }
 
+    /**
+     * <p>NVListHolderが内包するNameValueオブジェクトリストの中から、
+     * そのオブジェクトが持つ値を文字列型で取得します。</p>
+     * 
+     * @param nvlist NVListHolderオブジェクト
+     * 
+     * @return NameValueオブジェクトの文字列値を返します。<br />
+     * 
+     * @throws Exception 指定した名称のNameValueオブジェクトが見つからない場合
+     */
+    public static String toString(final NVListHolder nvlist) {
+        String crlf = System.getProperty("line.separator");
+        String str = new String();
+        for (int intIdx = 0; intIdx < nvlist.value.length; ++intIdx) {
+            final String name = nvlist.value[intIdx].name;
+            try {
+                Any anyVal = nvlist.value[intIdx].value;
+                String value = null;
+                if( anyVal.type().kind() == TCKind.tk_wstring ) {
+                    value = anyVal.extract_wstring();
+                } else if( anyVal.type().kind() == TCKind.tk_string ) {
+                    value = anyVal.extract_string();
+                } else if( anyVal.type().kind() == TCKind.tk_value ) {
+                    value = anyVal.extract_Value().toString();
+                } else {
+                    value = " not a string value";
+                }
+                str = str + name + ":" + value + crlf;
+            } catch (Exception ignored) {
+                str = str + name + ": not a string value" + crlf;
+            }
+        }
+        return str;
+    }
 }

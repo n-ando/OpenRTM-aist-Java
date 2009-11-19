@@ -1,8 +1,8 @@
 package jp.go.aist.rtm.RTC;
 
 import jp.go.aist.rtm.RTC.util.POAUtil;
-import RTC.DataFlowComponent;
-import RTC.DataFlowComponentHelper;
+import OpenRTM.DataFlowComponent;
+import OpenRTM.DataFlowComponentHelper;
 
 /**
  * <p>データフローコンポーネントのベースクラスです。

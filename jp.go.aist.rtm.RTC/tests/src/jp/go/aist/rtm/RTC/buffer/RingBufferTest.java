@@ -2,6 +2,7 @@ package jp.go.aist.rtm.RTC.buffer;
 
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.Properties;
 import junit.framework.TestCase;
 
 /**
@@ -54,6 +55,7 @@ public class RingBufferTest extends TestCase {
      * </ul>
      * </p>
      */
+/*
     public void test_isEmpty2() throws Exception {
 
         int length = 10;
@@ -61,19 +63,46 @@ public class RingBufferTest extends TestCase {
         
         RingBuffer<Integer> buff = new RingBuffer<Integer>(length);
         // (1) バッファ初期化直後、空ではないと判定されるか？
-        buff.init(value);
+        for (int i=0; i < buff.length(); ++i) {
+            buff.write(value);
+        }
         assertFalse(buff.isEmpty());            
 
         DataRef<Integer> data = new DataRef<Integer>(0);
         
         // (2) 最後にデータが読み取られた後、新しいデータが書き込みされていない場合、空と判定されるか？
         DataRef<Integer> readValue = new DataRef<Integer>(0);
-        assertTrue(buff.read(readValue));
+        assertEquals(ReturnCode.BUFFER_OK,buff.read(readValue));
         assertTrue(buff.isEmpty());
 
         // (3) 最後にデータが読み取られた後、新しいデータが書き込みされた場合、空ではないと判定されるか？
-        assertTrue(buff.write(98765));
+        assertEquals(ReturnCode.BUFFER_OK,buff.write(98765));
         assertFalse(buff.isEmpty());
+
+    }
+*/
+    public void test_empty2() {
+        			
+        int length = 10;
+        RingBuffer<Integer> buff = new RingBuffer<Integer>(length);
+
+        // Check immediately after initialization
+        int initialValue = 12345;
+        for (int i=0; i < buff.length(); ++i) {
+            buff.write(initialValue);
+        }
+        assertEquals(false, buff.empty());			
+			
+        
+        // Check after data is read
+        DataRef<Integer> readValue = new DataRef<Integer>(0);
+        assertEquals(ReturnCode.BUFFER_OK, buff.read(readValue));
+        assertEquals(false, buff.empty());
+			
+        // Check after data is written
+        int writeValue = 98765;
+        assertEquals(ReturnCode.BUFFER_OK, buff.write(writeValue));
+        assertEquals(false, buff.empty());
     }
     /**
      * <p>isEmpty()メソッドのテスト
@@ -85,13 +114,16 @@ public class RingBufferTest extends TestCase {
      * </ul>
      * </p>
      */
+/*
     public void test_isEmpty() throws Exception {
 
         int length = 10;
         Integer value = new Integer(123);
         
         RingBuffer<Integer> buff = new RingBuffer<Integer>(length);
-        buff.init(value);
+        for (int i=0; i < buff.length(); ++i) {
+            buff.write(value);
+        }
 
         DataRef<Integer> data = new DataRef<Integer>(0);
         
@@ -99,6 +131,7 @@ public class RingBufferTest extends TestCase {
         for (int i = 0; i < length - 1; i++) {
             // 正しく読み取れていることを確認する
             data.v = null; // 前回のデータが残らないようにクリアしておく
+            assertEquals(ReturnCode.BUFFER_OK,buff.read(data));
             assertTrue(buff.read(data));
             assertEquals(value, data.v);
             
@@ -108,64 +141,46 @@ public class RingBufferTest extends TestCase {
         
         // 最後の１データを読み取る
         data.v = null; // 前回のデータが残らないようにクリアしておく
+        assertEquals(ReturnCode.BUFFER_OK,buff.read(data));
         assertTrue(buff.read(data));
         assertEquals(value, data.v);
         
         // 空になったはず
         assertTrue(buff.isEmpty());
     }
+*/
+    public void test_empty() throws Exception {
+
+        int length = 10;
+        Integer value = new Integer(123);
+        
+        RingBuffer<Integer> buff = new RingBuffer<Integer>(length);
+        for (int i=0; i < buff.length(); ++i) {
+            buff.write(value);
+        }
+
+        DataRef<Integer> data = new DataRef<Integer>(0);
+        
+        // 最後の１データを残して読み取る
+        for (int i = 0; i < length - 1; i++) {
+            // 正しく読み取れていることを確認する
+            data.v = null; // 前回のデータが残らないようにクリアしておく
+            assertEquals(ReturnCode.BUFFER_OK,buff.read(data));
+            assertEquals(value.intValue(), data.v.intValue());
+            
+            // まだ空ではないはず
+            assertFalse(buff.empty());
+        }
+        
+        // 最後の１データを読み取る
+        data.v = null; // 前回のデータが残らないようにクリアしておく
+        assertEquals(ReturnCode.BUFFER_OK,buff.read(data));
+        assertEquals(value, data.v);
+        
+        // 空になったはず
+        assertTrue(buff.empty());
+    }
     
-    /**
-     * <p>バッファ初期化チェック
-     * <ul>
-     * <li>バッファの初期化が正常に行われるか？(double型データ)</li>
-     * </ul>
-     * </p>
-     */
-    public void test_init_double() throws Exception {
-        
-        // 初期化前なので isNew() == false のはず
-        assertFalse(this.m_double.isNew());
-        
-        double data = 3.14159265;
-        this.m_double.init(data);
-        
-        // 初期化後なので isNew() == true のはず
-        assertTrue(this.m_double.isNew());
-        
-        DataRef<Double> dvar = new DataRef<Double>(0d);
-        this.m_double.read(dvar);
-        assertEquals(data, dvar.v);
-        
-        // read()後なので isNew() == false のはず
-        assertFalse(this.m_double.isNew());
-    }
-
-    /**
-     * <p>バッファ初期化チェック
-     * <ul>
-     * <li>バッファの初期化が正常に行われるか？(string型データ)</li>
-     * </ul>
-     * </p>
-     */
-    public void test_init_string() throws Exception {
-        
-        // 初期化前なので isNew() == false のはず
-        assertFalse(this.m_string.isNew());
-
-        String data = "3.14159265";
-        this.m_string.init(data);
-        
-        // 初期化後なので isNew() == true のはず
-        assertTrue(this.m_string.isNew());
-        
-        DataRef<String> dvar = new DataRef<String>("");
-        this.m_string.read(dvar);
-        assertEquals(data, dvar.v);
-        
-        // read()後なので isNew() == false のはず
-        assertFalse(this.m_string.isNew());
-    }
 
     /**
      * <p>データ書き込み/読み込みチェック
@@ -178,7 +193,7 @@ public class RingBufferTest extends TestCase {
         
         for (int i = 0; i < ITNUM; i++) {
             // データを書き込む
-            assertTrue(this.m_double.write((double) i));
+            assertEquals(ReturnCode.BUFFER_OK,this.m_double.write((double) i));
             
             // データを読み出して、書き込んだデータと一致することを確認する
             DataRef<Double> dvar = new DataRef<Double>(null);
@@ -202,7 +217,7 @@ public class RingBufferTest extends TestCase {
             str.append("Hogehoge").append(i);
             
             // String型データを書き込む
-            assertTrue(this.m_string.write(str.toString()));
+            assertEquals(ReturnCode.BUFFER_OK,this.m_string.write(str.toString()));
             
             // データを読み出して、書き込んだデータと一致することを確認する
             DataRef<String> strvar = new DataRef<String>(null);
@@ -223,7 +238,7 @@ public class RingBufferTest extends TestCase {
         for (int i = 0; i < ITNUM; i++) {
             
             // データ書き込みが成功することを確認する
-            assertTrue(this.m_double_s.write((double) i));
+            assertEquals(ReturnCode.BUFFER_OK,this.m_double_s.write((double) i));
             
             // データを読み出して、書き込んだデータと一致することを確認する
             DataRef<Double> dvar = new DataRef<Double>(0d);
@@ -247,7 +262,7 @@ public class RingBufferTest extends TestCase {
             str.append("Hogehoge").append(i);
             
             // データ書き込みが成功することを確認する
-            assertTrue(this.m_string_s.write(str.toString()));
+            assertEquals(ReturnCode.BUFFER_OK,this.m_string_s.write(str.toString()));
             
             // データを読み出して、書き込んだデータと一致することを確認する
             DataRef<String> strvar = new DataRef<String>("");
@@ -275,31 +290,35 @@ public class RingBufferTest extends TestCase {
             
             if ((i % 13) == 0) {
                 // 書き込んだばかりなので、isNew() == trueのはず
-                assertTrue(this.m_double.isNew());
+//                assertTrue(this.m_double.isNew());
 
                 // 書き込んだデータを正しく読み出せることを確認する
                 DataRef<Double> dvar = new DataRef<Double>(0d);
                 this.m_double.read(dvar);
-                assertEquals(data, dvar.v);
+                assertEquals("case 1:"+i+":",data, dvar.v.doubleValue());
             }
             
-            if ((i % 7) == 0) {
+            else if ((i % 7) == 0) {
                 
                 DataRef<Double> dvar = new DataRef<Double>(0d);
 
                 // 書き込んだデータを正しく読み出せることを確認する
                 this.m_double.read(dvar);
-                assertEquals(data, dvar.v);
+                assertEquals("case 2:"+i+":",data, dvar.v.doubleValue());
 
                 // 読み出し後なので、isNew() == false のはず
-                assertFalse(this.m_double.isNew());
+//                assertFalse(this.m_double.isNew());
                 this.m_double.read(dvar);
-                assertEquals(data, dvar.v);
+                assertEquals("case 3:"+i+":",data, dvar.v.doubleValue());
 
                 // さらに読み出し可能だが、読み出し後なので、isNew() == false のはず
-                assertFalse(this.m_double.isNew());
+//                assertFalse(this.m_double.isNew());
                 this.m_double.read(dvar);
-                assertEquals(data, dvar.v);
+                assertEquals("case 4:"+i+":",data, dvar.v.doubleValue());
+            }
+            else {
+                DataRef<Double> dvar = new DataRef<Double>(0d);
+                this.m_double.read(dvar);
             }
         }
     }
@@ -324,30 +343,34 @@ public class RingBufferTest extends TestCase {
             
             if ((i % 13) == 0) {
                 // 書き込んだばかりなので、isNew() == trueのはず
-                assertTrue(this.m_string.isNew());
+//                assertTrue(this.m_string.isNew());
                 
                 // 書き込んだデータを正しく読み出せることを確認する
                 DataRef<String> strvar = new DataRef<String>("");
                 this.m_string.read(strvar);
-                assertEquals(str.toString(), strvar.v);
+                assertEquals("case 1:"+i+":",str.toString(), strvar.v);
             }
 
-            if ((i % 7) == 0) {
+            else if ((i % 7) == 0) {
                 DataRef<String> strvar = new DataRef<String>("");
 
                 // 書き込んだデータを正しく読み出せることを確認する
                 this.m_string.read(strvar);
-                assertEquals(str.toString(), strvar.v);
+                assertEquals("case 2:"+i+":",str.toString(), strvar.v);
   
                 // 読み出し後なので、isNew() == false のはず
-                assertFalse(this.m_string.isNew());
+//                assertFalse(this.m_string.isNew());
                 this.m_string.read(strvar);
-                assertEquals(str.toString(), strvar.v);
+                assertEquals("case 3:"+i+":",str.toString(), strvar.v);
                 
                 // さらに読み出し可能だが、読み出し後なので、isNew() == false のはず
-                assertFalse(this.m_string.isNew());
+//                assertFalse(this.m_string.isNew());
                 this.m_string.read(strvar);
-                assertEquals(str.toString(), strvar.v);
+                assertEquals("case 4:"+i+":",str.toString(), strvar.v);
+            }
+            else {
+                DataRef<String> strvar = new DataRef<String>("");
+                this.m_string.read(strvar);
             }
         }
     }
@@ -360,6 +383,7 @@ public class RingBufferTest extends TestCase {
      * </ul>
      * </p>
      */
+/*
     public void test_isFull() {
         // (1) バッファが空の場合、フル判定は偽となるか？
         int length1 = 10;
@@ -382,6 +406,29 @@ public class RingBufferTest extends TestCase {
         }
         assertFalse(buff3.isFull());
     }
+*/
+    public void test_full() {
+        // (1) バッファが空の場合、フル判定は偽となるか？
+        int length1 = 10;
+        RingBuffer<Integer> buff1 = new RingBuffer<Integer>(length1);
+        assertFalse(buff1.full());
+        
+        // (2) 全バッファにデータが書き込まれている状態でも、フル判定は偽となるか？
+        int length2 = 10;
+        RingBuffer<Integer> buff2 = new RingBuffer<Integer>(length2);
+        for (int i = 0; i < length2; i++) {
+            buff2.write(i);
+        }
+        assertTrue(buff2.full());
+        
+        // (3) バッファに幾分データが書き込まれている状態で、フル判定は偽となるか？
+        int length3 = 10;
+        RingBuffer<Integer> buff3 = new RingBuffer<Integer>(length3);
+        for (int i = 0; i < length3 / 2; i++) {
+            buff3.write(i);
+        }
+        assertFalse(buff3.full());
+    }
     /**
      * <p>init()メソッドのテスト
      * <ul>
@@ -395,7 +442,9 @@ public class RingBufferTest extends TestCase {
         RingBuffer<Integer> buff = new RingBuffer<Integer>(length);
         
         int value = 12345;
-        buff.init(value);
+        for (int i=0; i < buff.length(); ++i) {
+            buff.write(value);
+        }
         
         // 設定したデータを正しく読み出せるか？
         int expected = 12345;
@@ -415,32 +464,83 @@ public class RingBufferTest extends TestCase {
      * </p>
      */
     public void test_write_read() {
-        // (1) バッファ空状態で１データ書込・読出を行い、書き込んだデータを正しく読み出せるか？
-        // バッファ作成し、空のままにする
-        int length1 = 10;
+        // (1) In an empty state of the buffer, 
+        // can one written data be correctly read?
+        // The buffer is made, and it does like being empty.
+        int length1 = 3;
         RingBuffer<Integer> buff1 = new RingBuffer<Integer>(length1);
-        DataRef<Integer> readValue = new DataRef<Integer>(0);
-        
-        // １データ書込・読出を行う
-        for (int writeValue = 0; writeValue < 100; writeValue++) {
-            // 書込み
-            buff1.write(writeValue);
-            
-            // 読出し
+        int length = 3;
+        Properties prop = new Properties();
+        prop.setProperty("write.full_policy","block");
+        prop.setProperty("write.timeout","5.0");
+        prop.setProperty("read.empty_policy","block");
+        prop.setProperty("read.timeout","5.0");
+
+        buff1.init(prop);
+        // One data is written, and one data is read. 
+//        for (int writeValue = 0; writeValue < 100; writeValue++) {
+        for (int writeValue = 0; writeValue < 10; writeValue++) {
+            // Writing
+            if (buff1.full()) {
+                System.out.println("### FULL ###");
+                DataRef<Integer> readValue = new DataRef<Integer>(0);
+
+                if (writeValue % 5 == 0) {
+                    while (!buff1.empty()) {
+                        System.out.println("read timeout: 5");
+                        buff1.read(readValue, 5);
+                        System.out.println("readt: "+readValue);
+                    }
+                    System.out.println("read timeout: 5");
+                    System.out.println("waiting 5 sec");
+                    System.out.println("read ret: "+buff1.read(readValue, 5));
+                    System.out.println("read: "+readValue);
+                }
+                else {
+                    buff1.read(readValue);
+                    System.out.println("read: "+readValue);
+                }
+
+                if (buff1.full()) {
+                    System.out.println("??? still full");
+                }
+                else {
+                    System.out.println("buffer full was blown over.");
+                }
+            }
+            if (buff1.empty()) {
+                System.out.println("### EMPTY ###");
+            }
+
+            System.out.println("write ret: "
+                               + buff1.write(writeValue,writeValue));
+            // Reading
+            DataRef<Integer> readValue = new DataRef<Integer>(0);
+	    buff1.get(readValue);
+			
+            System.out.println(writeValue+" == "+readValue.v.intValue());
+
             buff1.read(readValue);
-            
-            // 書き込んだデータを正しく読み出せたか？
+            //Was the written data able to be read correctly?
             assertEquals(writeValue, readValue.v.intValue());
+            try {
+                Thread.sleep(1000);
+            }
+            catch(InterruptedException e) {
+            }
         }
-        
-        // (2) 全バッファにデータが書き込まれている状態で１データ書込・読出を行い、書き込んだデータを正しく読み出せるか？
-        // バッファ作成し、フル状態にする
+        return;
+    }
+    public void test_write_read2() {
+        //(2)Can the buffer correctly read one written data 
+        //in the state of full?
         int length2 = 10;
         RingBuffer<Integer> buff2 = new RingBuffer<Integer>(length2);
+        DataRef<Integer> readValue = new DataRef<Integer>(0);
         for (int i = 0; i < length2; i++) {
             buff2.write(i + 123);
         }
-        
+			
         // １データ書込・読出を行う
         for (int writeValue = 0; writeValue < 100; writeValue++) {
             // 書込み
@@ -450,9 +550,18 @@ public class RingBufferTest extends TestCase {
             buff2.read(readValue);
             
             // 書き込んだデータを正しく読み出せたか？
-            assertEquals(writeValue, readValue.v.intValue());
+            if(writeValue<9){
+                assertEquals("1:"+writeValue+":",
+                             writeValue+123+1, 
+                             readValue.v.intValue());
+            }
+            else {
+                assertEquals("1:"+writeValue+":",
+                             writeValue-9, 
+                             readValue.v.intValue());
+            }
         }
-        
+			
         // (3) バッファに幾分データが書き込まれている状態で１データ書込・読出を行い、書き込んだデータを正しく読み出せるか？
         int length3 = 10;
         RingBuffer<Integer> buff3 = new RingBuffer<Integer>(length3);
@@ -469,7 +578,16 @@ public class RingBufferTest extends TestCase {
             buff3.read(readValue);
             
             // 書き込んだデータを正しく読み出せたか？
-            assertEquals(writeValue, readValue.v.intValue());
+            if(writeValue<(length3 / 2)) {
+                assertEquals("2:"+writeValue+":",
+                             writeValue+123, 
+                             readValue.v.intValue());
+            }
+            else {
+                assertEquals("2:"+writeValue+":",
+                             writeValue-(length3 / 2), 
+                             readValue.v.intValue());
+            }
         }
     }
     /**
@@ -497,36 +615,70 @@ public class RingBufferTest extends TestCase {
             buff1.read(readValue);
             
             // 書き込んだデータを正しく読み出せたか？
-            assertEquals(writeValue, readValue.v.intValue());
+            assertEquals("(1)",writeValue, readValue.v.intValue());
         }
-        
+			
         // (2) 全バッファにデータが書き込まれている状態で１データ書込・読出を行い、書き込んだデータを正しく読み出せるか？
         // バッファ作成し、フル状態にする
         int length2 = 2;
         RingBuffer<Integer> buff2 = new RingBuffer<Integer>(length2);
+        Properties prop = new Properties();
+        prop.setProperty("write.full_policy","overwrite");
+        buff2.init(prop);
+
         for (int i = 0; i < length2; i++) {
             buff2.write(i + 123);
         }
         
         // １データ書込・読出を行う
-        for (int writeValue = 0; writeValue < 100; writeValue++) {
-            // 書込み
-            buff2.write(writeValue);
+//        for (int writeValue = 0; writeValue < 100; writeValue++) {
+//            // 書込み
+//            buff2.write(writeValue);
+//            
+//            // 読出し
+//            buff2.read(readValue);
             
-            // 読出し
-            buff2.read(readValue);
-            
-            // 書き込んだデータを正しく読み出せたか？
-            assertEquals(writeValue, readValue.v.intValue());
-        }
-        
+//            // 書き込んだデータを正しく読み出せたか？
+//            assertEquals("(2)-1",writeValue, readValue.v.intValue());
+//        }
+			
+        //Writing
+        //When Policy writes it with Overwrite in the state of Full,
+        //Old data is overwrited, 
+        //and the increment does the pointer on the reading side.
+	buff2.write(0);
+				
+        assertEquals("(2)-2",true, buff2.full());
+        //Readinfg
+        // Because it reads out data from the reading side and 
+        // the number of pointers is increased, 
+        // the buffer is not in the state of full.
+	buff2.read(readValue);
+
+        assertEquals("(2)-3",false, buff2.full());
+        // Can the written data be correctly read?
+	assertEquals("(2)-4",1+123, readValue.v.intValue());
+			
         // (3) バッファに幾分データが書き込まれている状態で１データ書込・読出を行い、書き込んだデータを正しく読み出せるか？
         int length3 = 2;
         RingBuffer<Integer> buff3 = new RingBuffer<Integer>(length3);
+        Properties prop3 = new Properties();
+        prop3.setProperty("write.full_policy", "overwrite");
+        buff3.init(prop3);
         for (int i = 0; i < 1; i++) {
             buff3.write(i + 123);
         }
         
+        {	
+            //Writing
+	    buff3.write(-1);
+				
+	    // Reading
+	    buff3.read(readValue);
+				
+            // Can the written data be correctly read?
+	    assertEquals("(3)-1",123, readValue.v.intValue());
+        }
         // １データ書込・読出を行う
         for (int writeValue = 0; writeValue < 100; writeValue++) {
             // 書込み
@@ -536,7 +688,7 @@ public class RingBufferTest extends TestCase {
             buff3.read(readValue);
             
             // 書き込んだデータを正しく読み出せたか？
-            assertEquals(writeValue, readValue.v.intValue());
+            assertEquals("(3)-2",writeValue-1, readValue.v.intValue());
         }
     }
     /**
@@ -550,6 +702,7 @@ public class RingBufferTest extends TestCase {
      * </ul>
      * </p>
      */
+/*
     public void test_isNew() {
         // (1) バッファが空の状態で、isNew判定が偽になるか？
         int length1 = 10;
@@ -583,11 +736,154 @@ public class RingBufferTest extends TestCase {
             // (4) ...データ書込後のisNew判定が真になるか？
             int writeValue = i + 123;
             buff3.write(writeValue);
-            assertTrue(buff3.isNew());
+//            assertTrue(buff3.isNew());
             
             // (5) ...データ書込し、そのデータ読出を行った後のisNew判定が偽になるか？
             buff3.read(readValue);
-            assertFalse(buff3.isNew());
+//            assertFalse(buff3.isNew());
         }
+    }
+*/
+    /**
+     *  <p> Test of reset() method .</p>
+     */
+    public void test_reset() {
+        int[] idata = {123,456,789,321,654,987,1234,3456,5678,7890};
+        RingBuffer<Integer> buff = new RingBuffer<Integer>(10);
+
+        for(int ic=0;ic<8;++ic) {
+            buff.put(idata[ic]);
+            buff.advanceWptr();
+        }
+        buff.advanceRptr(3);
+        assertEquals(buff.get().intValue(), idata[3]);
+        assertEquals(buff.readable(), 5);
+
+        buff.reset();
+        assertTrue(buff.empty());
+        assertEquals(buff.get().intValue(), idata[0]);
+        buff.put(idata[9]);
+        assertEquals(buff.get().intValue(), idata[9]);
+        assertEquals(buff.readable(), 0);
+    }
+    /**
+     *  <p> Test of wptr() and put(). </p>
+     * 
+     */
+    public void test_wptr_put() {
+        int[] idata = {123,456,789,321,654,987,1234,3456,5678,7890};
+        RingBuffer<Integer> buff = new RingBuffer<Integer>(10);
+        for(int ic=0;ic<10;++ic) {
+            buff.put(idata[ic]);
+            buff.advanceWptr();
+        }
+        buff.reset();
+        for(int ic=0;ic<10;++ic) {
+            assertEquals(idata[ic],buff.wptr(ic).intValue());
+        }
+        for(int ic=0;ic<10;++ic) {
+            assertEquals(idata[(-ic+10)%10],buff.wptr(-ic).intValue());
+        }
+        buff.advanceWptr(5);
+        for(int ic=0;ic<10;++ic) {
+            assertEquals(idata[(5+ic)%10],buff.wptr(ic).intValue());
+        }
+        for(int ic=0;ic<10;++ic) {
+            assertEquals(idata[(5-ic+10)%10],buff.wptr(-ic).intValue());
+        }
+    }
+    /**
+     *  <p> Test of advanceWptr(). </p>
+     * 
+     */
+    public void test_advanceWptr() {
+        int[] idata = {123,456,789,321,654,987,1234,3456,5678,7890};
+        RingBuffer<Integer> buff = new RingBuffer<Integer>(10);
+
+        assertEquals(buff.advanceWptr(-5),ReturnCode.PRECONDITION_NOT_MET);
+        assertEquals(buff.advanceWptr(5),ReturnCode.BUFFER_OK);
+        assertEquals(buff.advanceWptr(8),ReturnCode.PRECONDITION_NOT_MET);
+        assertEquals(buff.advanceWptr(-5),ReturnCode.BUFFER_OK);
+        buff.reset();
+        for(int ic=0;ic<10;++ic) {
+            buff.put(idata[ic]);
+            buff.advanceWptr();
+        }
+        buff.reset();
+        assertEquals(buff.advanceWptr(5),ReturnCode.BUFFER_OK);
+        buff.advanceRptr(5);
+        assertEquals(buff.advanceWptr(-5),ReturnCode.PRECONDITION_NOT_MET);
+        assertEquals(buff.advanceWptr(8),ReturnCode.BUFFER_OK);
+        assertEquals(idata[3],buff.wptr().intValue());
+        assertEquals(8,buff.readable());
+        assertEquals(buff.advanceWptr(-5),ReturnCode.BUFFER_OK);
+        assertEquals(idata[8],buff.wptr().intValue());
+        assertEquals(3,buff.readable());
+    }
+    /**
+     *  <p> Test of rptr() and get(). </p>
+     * 
+     */
+    public void test_rptr_get() {
+        int[] idata = {123,456,789,321,654,987,1234,3456,5678,7890};
+        RingBuffer<Integer> buff = new RingBuffer<Integer>(10);
+
+        for(int ic=0;ic<10;++ic) {  
+            buff.put(idata[ic]);
+            buff.advanceWptr();
+        }
+        buff.reset();
+        for(int ic=0;ic<10;++ic) {
+            assertEquals(idata[ic],buff.rptr(ic).intValue());
+        }
+        for(int ic=0;ic<10;++ic) { 
+            assertEquals(idata[(-ic+10)%10],buff.rptr(-ic).intValue());
+        }
+        buff.advanceWptr(5);
+        buff.advanceRptr(5);
+        for(int ic=0;ic<10;++ic) {
+            assertEquals(idata[(5+ic)%10],buff.rptr(ic).intValue());
+        }
+        for(int ic=0;ic<10;++ic) {
+            assertEquals(idata[(5-ic+10)%10],buff.rptr(-ic).intValue());
+        }
+        buff.reset();
+        buff.advanceWptr(10);
+        for(int ic=0;ic<10;++ic) {
+            assertEquals(idata[ic],buff.get().intValue());
+            DataRef<Integer> ret = new DataRef<Integer>(0);
+            buff.get(ret);
+            assertEquals(idata[ic],ret.v.intValue());
+            buff.advanceRptr();
+        }
+
+    }
+    /**
+     *  <p> Test of advanceRptr(). </p>
+     * 
+     */
+    public void test_advanceRptr() {
+        int[] idata = {123,456,789,321,654,987,1234,3456,5678,7890};
+        RingBuffer<Integer> buff = new RingBuffer<Integer>(10);
+
+        buff.advanceWptr(5);
+        assertEquals(buff.advanceRptr(-6),ReturnCode.PRECONDITION_NOT_MET);
+        assertEquals(buff.advanceRptr(5),ReturnCode.BUFFER_OK);
+        assertEquals(buff.advanceRptr(8),ReturnCode.PRECONDITION_NOT_MET);
+        assertEquals(buff.advanceRptr(-5),ReturnCode.BUFFER_OK);
+        buff.reset();
+        buff.advanceWptr(5);
+        buff.advanceRptr(5);
+        for(int ic=0;ic<10;++ic) {
+            buff.put(idata[ic]);
+            buff.advanceWptr();
+        }
+        assertEquals(buff.advanceRptr(-6),ReturnCode.PRECONDITION_NOT_MET);
+        assertEquals(buff.advanceRptr(8),ReturnCode.BUFFER_OK);
+        assertEquals(idata[8],buff.rptr().intValue());
+        assertEquals(8,buff.writable());
+        assertEquals(buff.advanceRptr(-5),ReturnCode.BUFFER_OK);
+        assertEquals(idata[3],buff.rptr().intValue());
+        assertEquals(3,buff.writable());
     }
 }

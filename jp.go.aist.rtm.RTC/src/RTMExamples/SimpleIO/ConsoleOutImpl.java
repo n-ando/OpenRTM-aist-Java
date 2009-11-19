@@ -22,7 +22,8 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
         // <rtc-template block="registration">
         // Set InPort buffers
         try {
-            registerInPort(TimedLong.class, "in", m_inIn);
+//            registerInPort(TimedLong.class, "in", m_inIn);  //v042
+            registerInPort("in", m_inIn);
         } catch (Exception e) {
             e.printStackTrace();
         }

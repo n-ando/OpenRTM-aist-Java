@@ -65,8 +65,10 @@ public class CorbaConsumerTest extends TestCase {
 
         CorbaConsumer<hello> cons = new CorbaConsumer<hello>(hello.class);
         org.omg.CORBA.Object obj = this.m_poa.id_to_reference(oid);
-        cons.setObject(obj);
+        assertEquals(true,cons.setObject(obj));
         hello helloRef = cons._ptr();
+        assertNotNull("_ptr() is null.",helloRef);
+        
         helloRef.hello_world();
     }
     

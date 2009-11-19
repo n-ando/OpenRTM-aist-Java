@@ -11,6 +11,15 @@ public interface NamingBase {
      * @param rtobj bind対象オブジェクト
      */
     public void bindObject(final String name, final RTObject_impl rtobj);
+
+    /**
+     * <p>オブジェクトをNameServerにbindします。</p>
+     *
+     * @param name bind時の名称
+     * @param mgr bind対象マネージャサーバント
+     */
+    public void bindObject(final String name, final ManagerServant mgr);
+
     /**
      * <p>オブジェクトをNameServerからunbindします。</p>
      * 

@@ -1,8 +1,31 @@
 package jp.go.aist.rtm.RTC.port;
 
+import java.lang.ClassCastException;
+import org.omg.CORBA.TypeCodePackage.BadKind;
+import java.io.IOException;
+import com.sun.corba.se.spi.ior.iiop.GIOPVersion;
+
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.portable.Streamable;
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+import com.sun.corba.se.impl.encoding.EncapsInputStream; 
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
+
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.ClassNotFoundException;
+import java.lang.NoSuchFieldException;
+import java.lang.NoSuchMethodException;
+import java.lang.reflect.Field;
+
+import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.TypeCast;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+
 
 /**
  * <p>入力ポートのためのベース実装クラスです。
@@ -12,16 +35,55 @@ import jp.go.aist.rtm.RTC.util.DataRef;
  * 
  * @param <DataType> データ型を指定します。
  */
-public class InPort<DataType> implements BufferBase<DataType> {
+public class InPort<DataType> extends InPortBase {
 
     private static final long TIMEOUT_TICK_USEC = 10;
     private static final long TIMEOUT_TICK_MSEC_PART = TIMEOUT_TICK_USEC / 1000;
     private static final int TIMEOUT_TICK_NSEC_PART = ((int) (TIMEOUT_TICK_USEC % 1000)) * 1000;
 
     /**
+     * <p> toTypeCode </p>
+     * <p> This function gets TypeCode of data. </p>
+     *
+     * @param value data
+     * @return TypeCdoe(String)
+     */
+    private static <DataType> String toTypeCode(DataRef<DataType> value) { 
+        DataType data = value.v;
+        String typeName = value.v.getClass().getSimpleName();
+        return typeName;
+
+    }
+    /**
+     * <p> read_stream </p>
+     * <p> This function reads data from InputStream.  </p>
+     *
+     * @param data  The read data is stored.  
+     * @param cdr   InPutStream
+     * @return Read data
+     */
+    private DataType read_stream(DataRef<DataType> data,InputStream cdr) {
+
+        try {
+            m_streamable._read(cdr);
+            data.v = (DataType)m_field.get(m_streamable);
+        }
+        catch(IllegalAccessException e){
+            //set throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(IllegalArgumentException e){
+            //invoke throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+
+        return data.v;
+    }
+    /**
      * <p>コンストラクタです。</p>
      *
-     * @param superClass ポートに割り当てるバッファ
      * @param name ポート名称
      * @param value このポートにバインドされるDataType型の変数
      * @param read_block データ読み込み時に未読データがない場合に、データ受信までブロックする場合はtrue、さもなくばfalse
@@ -34,7 +96,8 @@ public class InPort<DataType> implements BufferBase<DataType> {
             boolean read_block, boolean write_block,
             long read_timeout, long write_timeout) {
         
-        this.m_superClass = superClass;
+        super(name, toTypeCode(value));
+
         this.m_name = name;
         this.m_value = value;
         this.m_readBlock = read_block;
@@ -48,29 +111,54 @@ public class InPort<DataType> implements BufferBase<DataType> {
         this.m_OnReadConvert = null;
         this.m_OnOverflow = null;
         this.m_OnUnderflow = null;
-    }
-    
-    /**
-     * <p>コンストラクタです。デフォルトの設定でバッファが生成され割り当てられます。
-     * また、読み取り・書き込みともに非ブロックモードとなり、タイムアウト時間は0で設定されます。</p>
-     * 
-     * @param name ポート名称
-     * @param value このポートにバインドされるDataType型の変数
-     */
-    public InPort(final String name, DataRef<DataType> value) {
-        this(new RingBuffer<DataType>(64), name, value);
+
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        m_orb = ORBUtil.getOrb();
+
+        Class cl = value.v.getClass();
+        String str = cl.getName();
+        try {
+            Class holder = Class.forName(str+"Holder",
+                                         true,
+                                         this.getClass().getClassLoader());
+            m_streamable = (Streamable)holder.newInstance();
+            m_field = m_streamable.getClass().getField("value");
+        }
+        catch(NoSuchFieldException e){
+            //getField throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(java.lang.InstantiationException e){
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(ClassNotFoundException e){
+            //forName throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(IllegalAccessException e){
+            //set throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        catch(IllegalArgumentException e){
+            //invoke throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
     }
     
     /**
      * <p>コンストラクタです。
      * 読み取り・書き込みともに非ブロックモードとなり、タイムアウト時間は0で設定されます。</p>
      *
-     * @param superClass ポートに割り当てるバッファ
      * @param name ポート名称
      * @param value このポートにバインドされるDataType型の変数
      */
-    public InPort(BufferBase<DataType> superClass, final String name, DataRef<DataType> value) {
-        this(superClass, name, value, false, false, 0, 0);
+    public InPort(final String name, DataRef<DataType> value) {
+        this( new RingBuffer<DataType>(8), name, value, false, false, 0, 0);
     }
     
     /**
@@ -81,78 +169,37 @@ public class InPort<DataType> implements BufferBase<DataType> {
     public String name() {
         return this.m_name;
     }
-    
     /**
-     * <p>ポートに値を書き込みます。</p>
-     *
-     * <ul>
-     * <li>コールバックインタフェースOnWriteがセットされている場合は、
-     * ポートが保持するバッファにデータが書き込まれる前にOnWrite#run()が呼びだされます。</li>
-     * <li>ポートが保持するバッファがオーバーフローを検出できるバッファであり、
-     * かつ、書き込む際にバッファがオーバーフローを検出した場合は、
-     * コールバックインタフェースOnOverflowが呼び出されます。</li>
-     * <li>コールバックインタフェースOnWriteConvertがセットされている場合は、
-     * バッファ書き込み時に、OnWriteConvert#operator()の戻り値がバッファに書き込まれます。</li>
-     * <li>setWriteTimeout()により書き込み時のタイムアウトが設定されている場合は、
-     * タイムアウト時間だけバッファフル状態が解除するのを待ち、
-     * OnOverflowがセットされていれば、これを呼び出して戻ります。</li>
-     * </ul>
+     * <p> Check whether the data is newest </p>
      * 
-     * @param value 書き込むデータ
-     * @return 書き込みに成功した場合はtrueを、さもなくばfalseを返します。
+     * <p> Check whether the data stored at a current buffer position is newest.</p>
+     *
+     * @return Newest data check result
+     *         ( true:Newest data. Data has not been readout yet.
+     *          false:Past data Data has already been readout.)
+     * 
      */
-    public boolean write(final DataType value) {
-        
-        if (this.m_OnWrite != null) {
-            this.m_OnWrite.run(value);
-        }
+    public boolean isNew() {
 
-        long timeout = this.m_writeTimeout; // [usec]
-        long tm_pre = System.nanoTime(); // [nsec]
-        
-        // blocking and timeout wait
-        while (this.m_writeBlock && this.isFull()) {
+        rtcout.println(rtcout.TRACE, "isNew()");
 
-            if (this.m_writeTimeout < 0) {
-                try {
-                    Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                } catch (InterruptedException e) {
-                }
-                continue;
+        synchronized (m_connectors){
+            if (m_connectors.size() == 0) {
+                rtcout.println(rtcout.DEBUG, "no connectors");
+                return false;
             }
-
-            // timeout wait
-            long tm_cur = System.nanoTime(); // [nsec]
-            long tm_diff = tm_cur - tm_pre; // [nsec]
-            
-            timeout -= tm_diff / 1000; // [usec]
-            if (timeout < 0) {
-                break;
+            int r = m_connectors.elementAt(0).getBuffer().readable();
+            if (r > 0) {
+                rtcout.println(rtcout.DEBUG, 
+                               "isNew() = true, readable data: " + r);
+                return true;
             }
-            
-            tm_pre = tm_cur;
-            try {
-                Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-            } catch (InterruptedException e) {
-            }
-        }
-
-        if (isFull() ) {
-            if( this.m_OnOverflow != null ) {
-                this.m_OnOverflow.run(value);
-            }
+      
+            rtcout.println(rtcout.DEBUG, "isNew() = false, no readable data");
             return false;
         }
-
-        if (this.m_OnWriteConvert == null) {
-            put(value);
-            
-        } else {
-            put(this.m_OnWriteConvert.run(value));
-        }
-        
-        return true;
     }
+    
     
     /**
      * <p>ポートからデータを読み出します。</p>
@@ -174,64 +221,62 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @return 読み出したデータ
      */
     public DataType read() {
-        
-        if (this.m_OnRead != null) {
-            this.m_OnRead.run();
-        }
+        rtcout.println(rtcout.TRACE, "DataType read()");
 
-        long timeout = this.m_readTimeout * 1000; // [usec] --> [nsec]
 
-        long tm_cur;
-        long tm_pre = System.nanoTime();
+        synchronized (m_connectors){
 
-        // blocking and timeout wait
-        while (this.m_readBlock && this.isEmpty()) {
-            
-            if (this.m_readTimeout < 0) {
-                try {
-                    Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                    
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            if (m_OnRead != null) {
+                m_OnRead.run();
+                rtcout.println(rtcout.TRACE, "OnRead called");
+            }
+
+            if (m_connectors.size() == 0) {
+                rtcout.println(rtcout.DEBUG, "no connectors");
+                return m_value.v;
+            }
+
+//            OutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+//                                                  isLittleEndian());
+            EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+                                                        isLittleEndian());
+
+
+            DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+            ReturnCode ret = m_connectors.elementAt(0).read(dataref);
+
+            cdr = (EncapsOutputStream)dataref.v;
+            if (ret.equals(ReturnCode.PORT_OK)) {
+                rtcout.println(rtcout.DEBUG, "data read succeeded");
+//                InputStream input_stream = cdr.create_input_stream();
+                byte[] ch = cdr.toByteArray();
+                InputStream input_stream = new EncapsInputStream(m_orb, 
+                                                             ch, 
+                                                             ch.length,
+                                                             isLittleEndian(),
+                                                             GIOPVersion.V1_2);
+
+                m_value.v = read_stream(m_value,input_stream);
+                if (m_OnReadConvert != null) {
+                    m_value.v = m_OnReadConvert.run(m_value.v);
+                    rtcout.println(rtcout.DEBUG, "OnReadConvert called");
+                    return m_value.v;
                 }
+                return m_value.v;
             }
-            
-            // timeout wait
-            tm_cur = System.nanoTime();
-            long tm_diff = tm_cur - tm_pre;
-            
-            timeout -= tm_diff;
-            if (timeout < 0) {
-                break;
+            else if (ret.equals(ReturnCode.BUFFER_EMPTY)) {
+                rtcout.println(rtcout.WARN, "buffer empty");
+                return m_value.v;
             }
-            
-            tm_pre = tm_cur;
-            try {
-                Thread.sleep(TIMEOUT_TICK_MSEC_PART, TIMEOUT_TICK_NSEC_PART);
-                
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            else if (ret.equals(ReturnCode.BUFFER_TIMEOUT)) {
+                rtcout.println(rtcout.WARN, "buffer read timeout");
+                return m_value.v;
             }
-        }
+            rtcout.println(rtcout.ERROR, 
+                           "unknown retern value from buffer.read()");
+            return m_value.v;
 
-        if (isEmpty() && this.m_OnUnderflow != null) {
-            this.m_value.v = this.m_OnUnderflow.run();
-            return this.m_value.v;
         }
-        
-        if (this.m_OnReadConvert == null) {
-            this.m_value.v = get();
-            return this.m_value.v;
-        }
-        this.m_value.v = this.m_OnReadConvert.run(get());
-        return this.m_value.v;
-    }
-    
-    /**
-     * <p>当該ポートに割り当てられているバッファを、指定されたデータで埋め尽くします。</p>
-     */
-    public void init(DataType value) {
-        // 何もしない
     }
     
     /**
@@ -239,15 +284,7 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * ただし、あらかじめコンストラクタで、DataType型の変数がバインドされていなければなりません。<br />
      */
     public void update() {
-        
-        try {
-            this.m_value.v = get();
-            
-        } catch (Exception e) {
-            if (this.m_OnUnderflow != null) {
-                this.m_OnUnderflow.run();
-            }
-        }
+        this.read();
     }
     
     /**
@@ -312,32 +349,6 @@ public class InPort<DataType> implements BufferBase<DataType> {
         this.m_OnUnderflow = onUnderflow;
     }
     
-    /**
-     * <p>ポート内のバッファ長を取得します。</p>
-     * 
-     * @return バッファ長
-     */
-    public int length() {
-        return this.m_superClass.length();
-    }
-
-    /**
-     * <p>データを読み取ります。</p>
-     * 
-     * @param valueRef 読み取ったデータを受け取るためのDataRefオブジェクト
-     */
-    public boolean read(DataRef<DataType> valueRef) {
-        return this.m_superClass.read(valueRef);
-    }
-
-    /**
-     * <p>バッファフルかどうかを取得します。</p>
-     * 
-     * @return バッファフルの場合はtrueを、さもなくばfalseを返します。
-     */
-    public boolean isFull() {
-        return this.m_superClass.isFull();
-    }
 
     /**
      * <p>バッファが空である、つまり読み取れるデータがないかどうかを取得します。</p>
@@ -345,25 +356,24 @@ public class InPort<DataType> implements BufferBase<DataType> {
      * @return バッファが空の場合はtrueを、さもなくばfalseを返します。
      */
     public boolean isEmpty() {
-        return this.m_superClass.isEmpty();
-    }
+        rtcout.println(rtcout.TRACE, "isEmpty()");
 
-    /**
-     * <p>データを書き込みます。</p>
-     * 
-     * @param data 書き込むデータ
-     */
-    public void put(final DataType data) {
-        this.m_superClass.put(data);
-    }
-
-    /**
-     * <p>データを読み取ります。</p>
-     * 
-     * @return 読み取ったデータ
-     */
-    public DataType get() {
-        return this.m_superClass.get();
+        synchronized (m_connectors){
+            if (m_connectors.size() == 0) {
+                rtcout.println(rtcout.DEBUG, "no connectors");
+                return true;
+            }
+            int r = m_connectors.elementAt(0).getBuffer().readable();
+            if (r == 0) {
+                rtcout.println(rtcout.DEBUG, 
+                               "isEmpty() = true, buffer is empty");
+                return true;
+            }
+      
+            rtcout.println(rtcout.DEBUG, 
+                           "isEmpty() = false, data exists in the buffer");
+            return false;
+        }
     }
     
     private BufferBase<DataType> m_superClass;
@@ -381,8 +391,9 @@ public class InPort<DataType> implements BufferBase<DataType> {
     private OnOverflow<DataType> m_OnOverflow;
     private OnUnderflow<DataType> m_OnUnderflow;
 
-    public boolean isNew() {
-        return m_superClass.isNew();
-    }
+    private Streamable m_streamable = null;
+    private Field m_field = null;
     
+    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
+    private ORB m_orb;
 }

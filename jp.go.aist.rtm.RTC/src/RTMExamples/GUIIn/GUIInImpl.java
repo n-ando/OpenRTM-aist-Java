@@ -16,13 +16,13 @@ public class GUIInImpl  extends DataFlowComponentBase {
     public GUIInImpl(Manager manager) {
         super(manager);
         // <rtc-template block="initializer">
-        m_out1_val = new TimedLong();
+        m_out1_val = new TimedLong(new RTC.Time(0,0),0);
         m_out1 = new DataRef<TimedLong>(m_out1_val);
         m_out1Out = new OutPort<TimedLong>("out1", m_out1);
-        m_out2_val = new TimedString();
+        m_out2_val = new TimedString(new RTC.Time(0,0),"");
         m_out2 = new DataRef<TimedString>(m_out2_val);
         m_out2Out = new OutPort<TimedString>("out2", m_out2);
-        m_out3_val = new TimedDouble();
+        m_out3_val = new TimedDouble(new RTC.Time(0,0),0.0);
         m_out3 = new DataRef<TimedDouble>(m_out3_val);
         m_out3Out = new OutPort<TimedDouble>("out3", m_out3);
         // </rtc-template>
@@ -33,9 +33,16 @@ public class GUIInImpl  extends DataFlowComponentBase {
         
         // Set OutPort buffer
         try {
+/*
             registerOutPort(TimedLong.class, "out1", m_out1Out);
             registerOutPort(TimedString.class, "out2", m_out2Out);
             registerOutPort(TimedDouble.class, "out3", m_out3Out);
+*/  //v042
+
+            registerOutPort("out1", m_out1Out);
+            registerOutPort("out2", m_out2Out);
+            registerOutPort("out3", m_out3Out);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

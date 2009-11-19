@@ -2,11 +2,17 @@ package jp.go.aist.rtm.RTC.SDOPackage;
 
 import java.util.UUID;
 
+import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
+import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 
 import org.omg.CORBA.Any;
+import org.omg.CORBA.SystemException;
 
 import _SDOPackage.DependencyType;
 import _SDOPackage.InternalError;
@@ -14,6 +20,9 @@ import _SDOPackage.InvalidParameter;
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
 import _SDOPackage.NotAvailable;
+import _SDOPackage.OrganizationPOA;
+import _SDOPackage.Organization;
+import _SDOPackage.OrganizationHelper;
 import _SDOPackage.OrganizationProperty;
 import _SDOPackage.SDO;
 import _SDOPackage.SDOListHolder;
@@ -22,14 +31,45 @@ import _SDOPackage.SDOSystemElement;
 /**
 * <p>SDO Organizationの実装クラスです。</p>
 */
-public class Organization_impl {
+public class Organization_impl extends OrganizationPOA{
 
     /**
      * <p>デフォルトコンストラクタです。</p>
      */
     public Organization_impl() {
         m_pId = UUID.randomUUID().toString();
+        rtcout = new Logbuf("Organization_impl");
     }
+    /**
+     * <p>デフォルトコンストラクタです。</p>
+     */
+    public Organization_impl(SDOSystemElement sdo) {
+        m_pId = UUID.randomUUID().toString();
+        m_varOwner = sdo;
+        m_dependency = DependencyType.OWN;
+        m_objref = this._this();
+
+        rtcout = new Logbuf("Organization_impl");
+    }
+
+    /**
+     * <p> _this </p>
+     *
+     * @return a CORBA object reference 
+     */
+    public Organization _this() {
+        
+        if (this.m_objref == null) {
+            try {
+                this.m_objref = OrganizationHelper.narrow(POAUtil.getRef(this));
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        
+        return this.m_objref;
+    }
+
     /**
      * <p>[CORBA interface] Organization ID を取得します。</p>
      *
@@ -40,6 +80,7 @@ public class Organization_impl {
      * @exception InternalError 内部的エラーが発生した
      */
     public String get_organization_id() throws InvalidParameter, NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.get_organization_id() = " + m_pId);
         return m_pId;
     }
     /**
@@ -56,12 +97,22 @@ public class Organization_impl {
      */
     public synchronized OrganizationProperty get_organization_property() 
                                             throws NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, 
+                       "Organization_impl.get_organization_property()");
         try {
-            OrganizationProperty prop = new OrganizationProperty(m_orgProperty.properties);
-            return prop;
+	    OrganizationProperty prop;
+            if(m_orgProperty.properties == null){
+                NVListHolder holder  = new NVListHolder();
+                CORBA_SeqUtil.push_back(holder, 
+                                        NVUtil.newNV("", "", String.class));
+                prop = new OrganizationProperty(holder.value);
+            }
+            else{
+   	        prop = new OrganizationProperty(m_orgProperty.properties);
+            }
+	    return prop;
         } catch (Exception ex) {
-            return null;
-//            throw new InternalError("get_organization_property()");
+            throw new InternalError("get_organization_property()");
         }
     }
     /**
@@ -81,6 +132,7 @@ public class Organization_impl {
      * @exception InternalError 内部的エラーが発生した
      */
     public Any get_organization_property_value(final String name) throws InvalidParameter, NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.get_organization_property_value("+name+")");
         if( name==null || name.equals("") ) throw new InvalidParameter("Rmpty name.");
         NVListHolder nvlist = new NVListHolder();
         nvlist.value = m_orgProperty.properties;
@@ -116,6 +168,7 @@ public class Organization_impl {
     //       ※ addOrganizationProperty に対応か？
     public boolean set_organization_property(final OrganizationProperty organization_property) 
             throws InvalidParameter, NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.set_organization_property()");
         try {
             if( m_orgProperty==null ) m_orgProperty = new OrganizationProperty();
             synchronized (m_orgProperty) {
@@ -126,6 +179,26 @@ public class Organization_impl {
             throw new InternalError("set_organization_property()");
         }
 //        return false;
+    }
+
+    /**
+     * <p> add_organization_property </p>
+     *
+     * @param organization_property OrganizationProperty
+     *
+     */
+    public boolean add_organization_property(final OrganizationProperty organization_property) 
+            throws SystemException, InvalidParameter, NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.add_organization_property()");
+        try {
+            if( m_orgProperty==null ) m_orgProperty = new OrganizationProperty();
+            synchronized (m_orgProperty) {
+                m_orgProperty = organization_property;
+                return true;
+            }
+        } catch (Exception ex) {
+            throw new InternalError("add_organization_property()");
+        }
     }
 
     /**
@@ -148,6 +221,7 @@ public class Organization_impl {
      */
     public boolean set_organization_property_value(final String name, Any value)
                 throws InvalidParameter, NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.set_organization_property_value(name="+name+")");
         if( name==null || name.equals("") ) {
             throw new InvalidParameter("set_organization_property_value(): Enpty name.");
         }
@@ -184,12 +258,13 @@ public class Organization_impl {
      */
     public boolean remove_organization_property(final String name)
                 throws InvalidParameter, NotAvailable, InternalError {
-        if(name==null || name.equals("")) throw new InvalidParameter("set_organization_property_value(): Enpty name.");
+        rtcout.println(rtcout.TRACE, "Organization_impl.remove_organization_property(name="+name+")");
+        if(name==null || name.equals("")) throw new InvalidParameter("remove_organization_property(): Enpty name.");
         
         NVListHolder nvlist = new NVListHolder();
         nvlist.value = m_orgProperty.properties;
         int index = CORBA_SeqUtil.find(nvlist, new nv_name(name));
-        if( index<0 ) throw new InvalidParameter("set_organization_property_value(): Not found.");
+        if( index<0 ) throw new InvalidParameter("remove_organization_property(): Not found.");
         
         try{
             CORBA_SeqUtil.erase(nvlist, index);
@@ -214,6 +289,7 @@ public class Organization_impl {
      */
     public SDOSystemElement get_owner() 
             throws NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.get_owner()");
         return m_varOwner;
     }
 
@@ -235,6 +311,7 @@ public class Organization_impl {
      */
     public boolean set_owner(SDOSystemElement sdo) 
                 throws InvalidParameter, NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.set_owner()");
         if(sdo==null) throw new InvalidParameter("set_owner()");
         try {
             m_varOwner = sdo;
@@ -258,6 +335,7 @@ public class Organization_impl {
      * @exception InternalError 内部的エラーが発生した。
      */
     public SDO[] get_members() throws NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.get_members()");
         try{
             SDOListHolder sdos = new SDOListHolder(m_memberList);
             return sdos.value;
@@ -285,6 +363,7 @@ public class Organization_impl {
      */
     public boolean set_members(SDO[] sdos)
                     throws InvalidParameter, NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.set_members()");
         if( sdos==null || sdos.length==0 ) 
             throw new InvalidParameter("set_members(): SDOList is empty.");
         try{
@@ -293,7 +372,6 @@ public class Organization_impl {
         } catch(Exception ex) {
             throw new InternalError("set_members()");
         }
-//        return false;
     }
 
     /**
@@ -313,6 +391,7 @@ public class Organization_impl {
      */
     public boolean add_members(SDO[] sdo_list)
             throws InvalidParameter, NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.add_members()");
         try{
             SDOListHolder sdoList1 = new SDOListHolder();
             sdoList1.value = m_memberList;
@@ -342,9 +421,10 @@ public class Organization_impl {
      */
     public boolean remove_member(final String id)
                 throws InvalidParameter, NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.remove_member("+id+")");
         if(id==null || id.equals("") )
             throw new InvalidParameter("remove_member(): Enpty name.");
-        
+       
         for(int index=0; index<m_memberList.length; index++ ){
             if( id.equals(m_memberList[index].get_sdo_id()) ) {
                 SDOListHolder sdoList = new SDOListHolder();
@@ -372,6 +452,7 @@ public class Organization_impl {
      *
      */
     public DependencyType get_dependency() throws NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.get_dependency()");
         return m_dependency;
     }
 
@@ -394,6 +475,7 @@ public class Organization_impl {
      */
     public boolean set_dependency(DependencyType dependency)
             throws NotAvailable, InternalError {
+        rtcout.println(rtcout.TRACE, "Organization_impl.set_dependency()");
         try {
             m_dependency = dependency;
             return true;
@@ -403,13 +485,27 @@ public class Organization_impl {
     }
     
     /**
+     * <p> getObjRef </p>
+     *
+     * @return Organization
+     *
+     */
+    public Organization getObjRef() {
+        return m_objref;
+    };
+    /**
+     * <p>  </p>
+     */
+    protected Organization m_objref;
+
+    /**
      * <p>Organization の識別子</p>
      */
     protected String m_pId = new String();
     /**
      * <p>Organization に関連付けられた SDO メンバのリスト</p>
      */
-    protected SDO[] m_memberList;
+    protected SDO[] m_memberList = new SDO[0];
     /**
      * <p>Organization の owner</p>
      */   
@@ -460,7 +556,7 @@ public class Organization_impl {
      *
      * @member property NVList
      */
-    OrganizationProperty m_orgProperty;
+    OrganizationProperty m_orgProperty = new OrganizationProperty();
     /**
      * <p>Organization プロパティ検索用ヘルパークラス</p>
      */
@@ -473,4 +569,6 @@ public class Organization_impl {
         }
         private String m_name;
     }
+
+    protected Logbuf rtcout;
 }

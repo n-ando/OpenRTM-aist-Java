@@ -62,4 +62,14 @@ public class ByteHolder implements ValueHolder, Serializable {
     public String toString(){
         return String.valueOf(value);
     }
+    public void _read (org.omg.CORBA.portable.InputStream i)
+    {
+        byte data = i.read_octet();
+        value = new Byte(data);
+    }
+
+    public void _write (org.omg.CORBA.portable.OutputStream o)
+    {
+        o.write_octet(value.byteValue());
+    }
 }

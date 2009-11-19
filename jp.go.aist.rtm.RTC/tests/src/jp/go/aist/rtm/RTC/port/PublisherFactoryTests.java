@@ -1,5 +1,8 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherFactory;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherFlush;
@@ -18,6 +21,8 @@ public class PublisherFactoryTests extends TestCase {
         public NullConsumer() {
             super();
         }
+        public void init(Properties prop) {
+        }
         public void push() {
         }
         public InPortConsumer clone() {
@@ -27,6 +32,11 @@ public class PublisherFactoryTests extends TestCase {
             return true;
         }
         public void unsubscribeInterface(NVListHolder holder) {
+        }
+        public ReturnCode put(final OutputStream data) {
+            return ReturnCode.PORT_OK;
+        }
+        public void publishInterfaceProfile(NVListHolder properties) {
         }
     };
 

@@ -1,13 +1,19 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
+import OpenRTM.OutPortCdrPOA;
 import _SDOPackage.NVListHolder;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
 
 /**
  * <p>OutPortProviderインタフェースのベース実装クラスです。<p>
  */
-public class OutPortProviderImpl implements OutPortProvider {
+public class OutPortProviderImpl extends OutPortCdrPOA implements OutPortProvider {
 
     public void publishInterfaceProfile(NVListHolder properties) {
         
@@ -21,17 +27,36 @@ public class OutPortProviderImpl implements OutPortProvider {
                 this.m_subscriptionType);
     }
     
-    public void publishInterface(NVListHolder properties) {
+    public boolean publishInterface(NVListHolder properties) {
         
         if (!NVUtil.isStringValue(properties,
                 "dataport.interface_type",
                 this.m_interfaceType)) {
-            return;
+            return true;
         }
         
         NVUtil.append(properties, this.m_properties);
+        return true;
     }
     
+    public void init(Properties prop) {
+    }
+
+    public void setBuffer(BufferBase<InputStream> buffer) {
+    }
+
+    /**
+     * <p> [CORBA interface] Get data from the buffer </p>
+     *
+     * <p> Get data from the internal buffer. </p>
+     *
+     * @param data
+     * @return Data got from the buffer.
+     *
+     */
+    public OpenRTM.PortStatus get(final OpenRTM.CdrDataHolder data) {
+         return OpenRTM.PortStatus.PORT_OK;
+    }
     /**
      * <p>インタフェースプロフィールのポートタイプを設定します。</p>
      * 

@@ -16,10 +16,10 @@ public class SinCosOutImpl  extends DataFlowComponentBase {
     public SinCosOutImpl(Manager manager) {
         super(manager);
         // <rtc-template block="initializer">
-        m_out1_val = new TimedDouble();
+        m_out1_val = new TimedDouble(new RTC.Time(0,0),0);
         m_out1 = new DataRef<TimedDouble>(m_out1_val);
         m_out1Out = new OutPort<TimedDouble>("out_sin", m_out1);
-        m_out2_val = new TimedDouble();
+        m_out2_val = new TimedDouble(new RTC.Time(0,0),0.0);
         m_out2 = new DataRef<TimedDouble>(m_out2_val);
         m_out2Out = new OutPort<TimedDouble>("out_cos", m_out2);
         // </rtc-template>
@@ -30,8 +30,10 @@ public class SinCosOutImpl  extends DataFlowComponentBase {
         
         // Set OutPort buffer
         try {
-            registerOutPort(TimedDouble.class, "out_sin", m_out1Out);
-            registerOutPort(TimedDouble.class, "out_cos", m_out2Out);
+//            registerOutPort(TimedDouble.class, "out_sin", m_out1Out);  //v042
+//            registerOutPort(TimedDouble.class, "out_cos", m_out2Out);  //v042
+            registerOutPort("out_sin", m_out1Out);
+            registerOutPort("out_cos", m_out2Out);
         } catch (Exception e) {
             e.printStackTrace();
         }

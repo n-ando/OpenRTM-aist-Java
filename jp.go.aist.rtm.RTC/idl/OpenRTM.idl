@@ -2,7 +2,7 @@
 /*!
  * @file OpenRTM.idl
  * @brief OpenRTM interface definition
- * @date $Date: 2007/10/02 10:14:28 $
+ * @date $Date: 2007-09-21 09:19:33 $
  * @author Noriaki Ando <n-ando@aist.go.jp>
  *
  * Copyright (C) 2007
@@ -12,17 +12,7 @@
  *         Advanced Industrial Science and Technology (AIST), Japan
  *     All rights reserved.
  *
- * $Id: OpenRTM.idl,v 1.1 2007/10/02 10:14:28 arafune Exp $
- *
- */
-
-/*
- * $Log: OpenRTM.idl,v $
- * Revision 1.1  2007/10/02 10:14:28  arafune
- * *** empty log message ***
- *
- * Revision 1.1  2007/04/13 18:17:59  n-ando
- * OpenRTM specific interface definition.
+ * $Id: OpenRTM.idl 1338 2009-05-18 05:58:25Z n-ando $
  *
  */
 
@@ -30,44 +20,45 @@
 
 #pragma prefix "openrtm.aist.go.jp"
 
-module RTC
+module OpenRTM
 {
 
   interface DataFlowComponent
-    : RTObject, DataFlowParticipant
+    : RTC::RTObject, RTC::DataFlowComponent
   {
   };
 
-  interface FiniteStateMachineComponent
-    : RTObject, FsmParticipant
-  {
-  };
-
-  interface DataFlowFiniteStateMachineComponent
-    : RTObject, DataFlowParticipant, FsmParticipant
-  {
-  };
-
-  interface DataFlowMultiModeComponent
-    : RTObject, DataFlowParticipant, MultiModeObject
-  {
-  };
-
-  interface FiniteStateMachineMultiModeComponent
-    : RTObject, FsmParticipant, MultiModeObject
-  {
-  };
-
-  interface DataFlowFiniteStateMachineMultiModeComponent
-    : RTObject, DataFlowParticipant, FsmParticipant, MultiModeObject
-  {
-  };
+//  interface FiniteStateMachineComponent
+//    : RTC::RTObject, RTC::FsmParticipant
+//  {
+//  };
+//
+//  interface DataFlowFiniteStateMachineComponent
+//    : RTC::RTObject, RTC::DataFlowComponent, RTC::FsmParticipant
+//  {
+//  };
+//
+//  interface DataFlowMultiModeComponent
+//    : RTC::RTObject, RTC::DataFlowComponent, RTC::MultiModeObject
+//  {
+//  };
+//
+//  interface FiniteStateMachineMultiModeComponent
+//    : RTC::RTObject, RTC::FsmParticipant, RTC::MultiModeObject
+//  {
+//  };
+//
+//  interface DataFlowFiniteStateMachineMultiModeComponent
+//    : RTC::RTObject, RTC::DataFlowComponent,
+//    RTC::FsmParticipant, RTC::MultiModeObject
+//  {
+//  };
 
 
   interface ExtTrigExecutionContextService
-    : ExecutionContextService
+    : RTC::ExecutionContextService
   {
-    oneway void tick();
+    void tick();
   };
 
 };

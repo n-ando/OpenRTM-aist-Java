@@ -4,15 +4,15 @@ import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.ObjectManager;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.PortListHolderFactory;
+import jp.go.aist.rtm.RTC.util.PortServiceListHolderFactory;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
 
 import org.omg.CORBA.ORB;
 import org.omg.PortableServer.POA;
 
-import RTC.Port;
-import RTC.PortListHolder;
-import RTC.PortOperations;
+import RTC.PortService;
+import RTC.PortServiceListHolder;
+import RTC.PortServiceOperations;
 import RTC.PortProfile;
 import RTC.PortProfileListHolder;
 
@@ -28,31 +28,61 @@ public class PortAdmin {
      * @param poa POAオブジェクト
      */
     public PortAdmin(ORB orb, POA poa) {
+	this.m_pORB = orb;
         this.m_pPOA = poa;
     }
     
     /**
      * <p>登録されているPortのリストを取得します。</p>
      * 
-     * @return Portオブジェクトリストを内包するPortListHolderオブジェクト
+     * @return Portオブジェクトリストを内包するPortServiceListHolderオブジェクト
      */
-    public PortListHolder getPortList() {
-        return PortListHolderFactory.clone(this.m_portRefs);
+    public PortServiceListHolder getPortList() {
+        return PortServiceListHolderFactory.clone(this.m_portRefs);
     }
-    
+    public PortServiceListHolder getPortServiceList() {
+        return PortServiceListHolderFactory.clone(this.m_portRefs);
+    }
+
+    /**
+     * <p>全ての Port のインターフェースを activates する。</p>
+     */
+    public void activatePorts() {
+	Vector<PortBase> ports;
+	ports = this.m_portServants.getObjects();
+	int len = ports.size();
+	for (int i = 0; i < len; ++i) {
+	    ports.get(i).activateInterfaces();
+	}
+    }
+
+    /**
+     * <p>全ての Port のインターフェースを deactivates する。</p>
+     */
+    public void deactivatePorts() {
+	Vector<PortBase> ports;
+	ports = this.m_portServants.getObjects();
+	int len = ports.size();
+	for (int i = 0; i < len; ++i) {
+	    ports.get(i).deactivateInterfaces();
+	}
+    }
+
     /**
      * <p>登録されているPortのリストを取得します。</p>
      * 
-     * @return Portオブジェクトリストを内包するPortListHolderオブジェクト
+     * @return Portオブジェクトリストを内包するPortServiceListHolderオブジェクト
      */
     public final PortProfileListHolder getPortProfileList() {
         PortProfileListHolder port_profs = new PortProfileListHolder();
         port_profs.value = new PortProfile[0]; 
         port_prof_collect p = new port_prof_collect(port_profs);
         //
-        for( PortBase port : m_portServants.getObjects()) {
+	//        for( PortBase port : m_portServants.getObjects()) {
+        for( PortService port : m_portRefs.value) {
             p.operator(port);
         }
+
         return port_profs;
     }
     
@@ -63,9 +93,9 @@ public class PortAdmin {
      * @return 指定されたポート名を持つPortのCORBAオブジェクト参照を返します。
      * 合致するポート名を持つものが見つからない場合はnullを返します。
      */
-    public Port getPortRef(final String portName) {
+    public PortService getPortRef(final String portName) {
         
-        Port port = null;
+        PortService port = null;
         
         int index = CORBA_SeqUtil.find(this.m_portRefs, new find_port_name(portName));
         if (index >= 0) {
@@ -100,6 +130,18 @@ public class PortAdmin {
     }
     
     /**
+     * <p> registerPort </p>
+     *
+     * @param port PortService
+     */
+    public void registerPort(PortService port) {
+	if (port == null) {
+	    System.out.println("registerPort() port is null.");
+	}
+        CORBA_SeqUtil.push_back(this.m_portRefs, port);
+    }
+    
+    /**
      * <p>指定されたPortサーバントの登録を解除します。</p>
      * 
      * @param port 登録解除するPortサーバントのオブジェクト
@@ -122,6 +164,29 @@ public class PortAdmin {
             ignored.printStackTrace();
         }
     }
+
+    /**
+     * <p> deletePort </p>
+     *
+     * @param port PortService
+     *
+     */
+    public void deletePort(PortService port) {
+        try {
+            // port.disconnect_all();
+            // port.shutdown();
+
+            final String tmp = port.get_port_profile().name;
+            CORBA_SeqUtil.erase_if(m_portRefs, new find_port_name(tmp));
+
+            // m_pPOA.deactivate_object(m_pPOA.servant_to_id(port));
+            // port.setPortRef(null);
+
+            // m_portServants.unregisterObject(new find_port_name(tmp));
+        } catch(Exception ignored) {
+            ignored.printStackTrace();
+        }
+  }
 
     /**
      * <p>指定されたポート名を持つPortサーバントの登録を解除します。</p>
@@ -150,8 +215,10 @@ public class PortAdmin {
     
     // POA へのポインタ
     private POA m_pPOA;
+    private ORB m_pORB;
+
     // PortのCORBAオブジェクト参照のリスト
-    private PortListHolder  m_portRefs = PortListHolderFactory.create();
+    private PortServiceListHolder  m_portRefs = PortServiceListHolderFactory.create();
     
     protected class find_port_name implements equalFunctor {
         
@@ -160,7 +227,7 @@ public class PortAdmin {
         }
 
         public boolean equalof(Object element) {
-            PortOperations port = (PortOperations) element;
+            PortServiceOperations port = (PortServiceOperations) element;
             return this.m_name.equals(port.get_port_profile().name);
         }
         
@@ -174,8 +241,13 @@ public class PortAdmin {
         public port_prof_collect(PortProfileListHolder p){
             m_p = p;
         }
+	/*
         public void operator(final PortBase port) {
             CORBA_SeqUtil.push_back(m_p, port.getPortProfile() );
+        }
+	*/
+        public void operator(final PortService port) {
+            CORBA_SeqUtil.push_back(m_p, port.get_port_profile() );
         }
         private PortProfileListHolder m_p;
     }

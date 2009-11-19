@@ -63,5 +63,15 @@ public class ShortHolder implements ValueHolder, Serializable {
     public String toString(){
         return String.valueOf(value);
     }
+    public void _read (org.omg.CORBA.portable.InputStream i)
+    {
+        short data = i.read_short();
+        value = new Short(data);
+    }
+
+    public void _write (org.omg.CORBA.portable.OutputStream o)
+    {
+        o.write_short(value.shortValue());
+    }
 
 }

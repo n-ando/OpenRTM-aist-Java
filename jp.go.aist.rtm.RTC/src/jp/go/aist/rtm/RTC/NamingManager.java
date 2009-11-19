@@ -1,9 +1,10 @@
 package jp.go.aist.rtm.RTC;
 
 import java.util.Vector;
-
-import jp.go.aist.rtm.RTC.log.LogStream;
-import jp.go.aist.rtm.RTC.log.MedLogbuf;
+import java.util.logging.FileHandler;
+import java.util.logging.ConsoleHandler;
+import java.io.IOException;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 
@@ -19,14 +20,9 @@ public class NamingManager implements NamingBase, CallbackFunction {
      */
     public NamingManager(Manager manager) {
         m_manager = manager;
-        m_MedLogbuf = new MedLogbuf(manager.getLogbuf());
-        rtcout = new LogStream(m_MedLogbuf);
-        
-        m_MedLogbuf.setSuffix("naming_svc");
-        m_MedLogbuf.setDateFmt(manager.getConfig().getProperty("logger.date_format"));
-        rtcout.setLogLevel(manager.getConfig().getProperty("logger.log_level"));
-        rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-                   "enable", "disable", false));
+
+        rtcout = new Logbuf("NamingManager");
+//        rtcout.setLevel("PARANOID");
     }
 
     /**
@@ -36,7 +32,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param name_server NameServer名称
      */
     public void registerNameServer(final String method, final String name_server) {
-        rtcout.println(rtcout.TRACE, "NamingManager::registerNameServer(" + method + ", " + name_server + ")");
+        rtcout.println(rtcout.TRACE, "NamingManager.registerNameServer(" + method + ", " + name_server + ")");
         NamingBase name = createNamingObj(method, name_server);
         m_names.add(new Names(method, name_server, name));
     }
@@ -48,9 +44,10 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param rtobj bind対象オブジェクト
      */
     public void bindObject(final String name, final RTObject_impl rtobj) {
-        rtcout.println(rtcout.TRACE, "NamingManager::bindObject(" + name + ")");
+        rtcout.println(rtcout.TRACE, "NamingManager.bindObject(" + name + ")");
         synchronized (m_names) {
-            for(int intIdx=0;intIdx<m_names.size();++intIdx ) {
+            int len = m_names.size();
+            for(int intIdx=0; intIdx < len; ++intIdx ) {
                 if( m_names.elementAt(intIdx).ns != null ) {
                     m_names.elementAt(intIdx).ns.bindObject(name, rtobj);
                 }
@@ -60,26 +57,51 @@ public class NamingManager implements NamingBase, CallbackFunction {
     }
 
     /**
+     * <p> bindObject </p> 
+     *
+     * @param name bind時の名称
+     * @param mgr bind対象マネージャサーバント
+     */
+    public void bindObject(final String name, final ManagerServant mgr) {
+        rtcout.println(rtcout.TRACE, "NamingManager.bindObject(" + name + ")");
+        synchronized (m_names) {
+            int len = m_names.size();
+            for(int intIdx=0; intIdx < len; ++intIdx ) {
+                if( m_names.elementAt(intIdx).ns != null ) {
+                    m_names.elementAt(intIdx).ns.bindObject(name, mgr);
+                }
+            }
+            this.registerMgrName(name, mgr);
+        }
+    }
+
+    /**
      * <p>NameServerの情報を更新します。</p>
      */
     public void update(){
-        rtcout.println(rtcout.TRACE, "NamingManager::update()");
+        rtcout.println(rtcout.TRACE, "NamingManager.update()");
         
+        boolean rebind = StringUtil.toBool(m_manager.getConfig().getProperty("naming.update.rebind"), 
+                            "YES", "NO", false);
         synchronized (m_names) {
-            for( int intIdx=0;intIdx<m_names.size(); ++intIdx ) {
-                if( m_names.elementAt(intIdx).ns == null ) { // if ns==NULL
+            int len = m_names.size();
+            for( int intIdx=0; intIdx < len; ++intIdx ) {
+                if( m_names.elementAt(intIdx).ns == null ) {
                     // recreate NamingObj
                     NamingBase nsobj = createNamingObj(m_names.elementAt(intIdx).method,
                                                         m_names.elementAt(intIdx).nsname);
-                    if( nsobj!=null ) { // if succeed
+                    if( nsobj != null ) { // if succeed
                         rtcout.println(rtcout.INFO, "New name server found: " + 
                                  m_names.elementAt(intIdx).method + "/" +
                                  m_names.elementAt(intIdx).nsname);
                         m_names.elementAt(intIdx).ns = nsobj;
+                        bindCompsTo(m_names.elementAt(intIdx).ns); // rebind all comps to new NS
                     }
                 }
-                if( m_names.elementAt(intIdx).ns != null ) {
-                    bindCompsTo(m_names.elementAt(intIdx).ns); // rebind all comps to new NS
+                else {
+                    if( rebind ) {
+                        bindCompsTo(m_names.elementAt(intIdx).ns);
+                    }
                 }
             }
         }
@@ -91,15 +113,17 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param name unbind対象オブジェクト名
      */
     public void unbindObject(final String name) {
-        rtcout.println(rtcout.TRACE, "NamingManager::unbindObject(" + name + ")");
+        rtcout.println(rtcout.TRACE, "NamingManager.unbindObject(" + name + ")");
         //
         synchronized (m_names) {
-            for( int intIdx=0;intIdx<m_names.size();++intIdx ) {
+            int len = m_names.size();
+            for( int intIdx=0; intIdx < len; ++intIdx ) {
                 if( m_names.elementAt(intIdx).ns != null ) {
                     m_names.elementAt(intIdx).ns.unbindObject(name);
                 }
             }
             unregisterCompName(name);
+            unregisterMgrName(name);
         }
     }
 
@@ -107,11 +131,17 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * <p>全てのオブジェクトをNameServerからunbindします。</p>
      */
     protected void unbindAll() {
-        rtcout.println(rtcout.TRACE, "NamingManager::unbindAll(): " + m_compNames.size() + " names.");
+        rtcout.println(rtcout.TRACE, "NamingManager.unbindAll(): m_compNames=" + Integer.toString(m_compNames.size()) + " m_mgrNames=" + Integer.toString(m_mgrNames.size()));
         synchronized (m_compNames) {
-            int compsnum = m_compNames.size();
-            for(int intIdx=0;intIdx<compsnum;intIdx++) {
-                unbindObject(m_compNames.elementAt(0).name);
+            int len = m_compNames.size();
+            for(int intIdx=len-1; intIdx >= 0; --intIdx) {
+                unbindObject(m_compNames.elementAt(intIdx).name);
+            }
+        }
+        synchronized (m_mgrNames) {
+            int len = m_mgrNames.size();
+            for(int intIdx=len-1; intIdx >= 0; --intIdx) {
+                unbindObject(m_mgrNames.elementAt(intIdx).name);
             }
         }
     }
@@ -123,7 +153,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
      */
     protected synchronized Vector<RTObject_impl> getObjects() {
         Vector<RTObject_impl> comps = new Vector<RTObject_impl>();
-        for(int intIdx=0;intIdx<m_compNames.size();++intIdx) {
+        int len = m_compNames.size();
+        for(int intIdx=0; intIdx < len; ++intIdx) {
             comps.add(m_compNames.elementAt(intIdx).rtobj);
         }
         return comps;
@@ -143,7 +174,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
             try {
                 NamingOnCorba nameb = new NamingOnCorba(m_manager.getORB(), name_server);
                 NamingBase name = nameb;
-                if( name==null ) return null;
+                if( name == null ) return null;
                 rtcout.println(rtcout.INFO, "NameServer connection succeeded: " + method + "/" + name_server);
                 return name;
             } catch (Exception ex) {
@@ -160,7 +191,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param ns bind対象オブジェクト
      */
     protected void bindCompsTo(NamingBase ns) {
-        for( int intIdx=0;intIdx<m_compNames.size(); ++intIdx) {
+        int len = m_compNames.size();
+        for( int intIdx=0; intIdx < len; ++intIdx) {
             ns.bindObject(m_compNames.elementAt(intIdx).name, m_compNames.elementAt(intIdx).rtobj);
         }
     }
@@ -173,7 +205,8 @@ public class NamingManager implements NamingBase, CallbackFunction {
      * @param rtobj bind対象オブジェクト
      */
     protected void registerCompName(final String name, final RTObject_impl rtobj) {
-        for(int intIdx=0;intIdx<m_compNames.size();++intIdx ) {
+        int len = m_compNames.size();
+        for(int intIdx=0; intIdx < len; ++intIdx ) {
             if( m_compNames.elementAt(intIdx).name.equals(name) ) {
                 m_compNames.elementAt(intIdx).rtobj = rtobj;
                 return;
@@ -184,14 +217,50 @@ public class NamingManager implements NamingBase, CallbackFunction {
     }
 
     /**
+     * <p>マネージャサーバントを登録します。
+     * 対象マネージャサーバントが既に登録済みの場合は何もしません。</p>
+     *
+     * @param name bind時の名称
+     * @param mgr bind対象マネージャサーバント
+     */
+    protected void registerMgrName(final String name, final ManagerServant mgr) {
+        int len = m_mgrNames.size();
+        for(int intIdx=0; intIdx < len; ++intIdx ) {
+            if( m_mgrNames.elementAt(intIdx).name.equals(name) ) {
+                m_mgrNames.elementAt(intIdx).mgr = mgr;
+                return;
+            }
+        }
+        m_mgrNames.add(new Mgr(name, mgr));
+        return;
+    }
+
+    /**
      * <p>登録済みコンポーネントの登録を解除します。</p>
      * 
      * @param name 解除対象コンポーネントの名称
      */
     protected void unregisterCompName(final String name) {
-        for( int intIdx=0;intIdx<m_compNames.size();++intIdx ) {
+        int len = m_compNames.size();
+        for( int intIdx=0; intIdx < len; ++intIdx ) {
             if( m_compNames.elementAt(intIdx).name.equals(name)) {
                 m_compNames.remove(m_compNames.elementAt(intIdx));
+                return;
+            }
+        }
+        return;
+    }
+
+    /**
+     * <p>登録済みマネージャサーバントの登録を解除します。</p>
+     * 
+     * @param name 解除対象マネージャサーバントの名称
+     */
+    protected void unregisterMgrName(final String name) {
+        int len = m_mgrNames.size();
+        for( int intIdx=0; intIdx < len; ++intIdx ) {
+            if( m_mgrNames.elementAt(intIdx).name.equals(name)) {
+                m_mgrNames.remove(m_mgrNames.elementAt(intIdx));
                 return;
             }
         }
@@ -255,10 +324,39 @@ public class NamingManager implements NamingBase, CallbackFunction {
          */
         public RTObject_impl rtobj;
     }
+    
+    /**
+     * <p>Naming Service登録用マネージャサーバントクラスです。</p>
+     */
+    protected class Mgr {
+        /**
+         * <p> constructor </p>
+         * 
+         * @param n
+         * @param obj
+         */
+        public Mgr(final String n, final ManagerServant obj) {
+            name = n;
+            mgr = obj;
+        }
+        /**
+         * <p>コンポーネント名称</p>
+         */
+        public String name;
+        /**
+         * <p>登録対象マネージャサーバント</p>
+         */
+        public ManagerServant mgr;
+    }
     /**
      * <p>登録されたコンポーネント</p>
      */
     protected Vector<Comps> m_compNames = new Vector<Comps>();
+
+    /**
+     * <p>登録されたマネージャサーバント</p>
+     */
+    protected Vector<Mgr> m_mgrNames = new Vector<Mgr>();
 
     /**
      * <p>タイマーに登録されたリスナーから呼び出されるメソッドです。</p>
@@ -272,11 +370,7 @@ public class NamingManager implements NamingBase, CallbackFunction {
      */
     protected Manager m_manager;
     /**
-     * <p>Logging用オブジェクト</p>
-     */
-    protected MedLogbuf m_MedLogbuf;
-    /**
      * <p>Logging用フォーマットオブジェクト</p>
      */
-    protected LogStream rtcout;
+    protected Logbuf rtcout;
 }

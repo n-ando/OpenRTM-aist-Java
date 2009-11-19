@@ -7,10 +7,10 @@ import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 import RTC.ComponentProfile;
-import RTC.Port;
+import RTC.PortService;
 import RTC.PortInterfacePolarity;
 import RTC.PortInterfaceProfileListHolder;
-import RTC.PortListHolder;
+import RTC.PortServiceListHolder;
 import _SDOPackage.NVListHolder;
 
 public class GUIInComp implements ModuleInitProc {
@@ -36,10 +36,10 @@ public class GUIInComp implements ModuleInitProc {
       NVUtil.dump(new NVListHolder(prof.properties));
       System.out.println( "=================================================" );
 
-      PortListHolder portlist = new PortListHolder(comp.get_ports());
+      PortServiceListHolder portlist = new PortServiceListHolder(comp.get_ports());
       
       for( int intIdx=0;intIdx<portlist.value.length;++intIdx ) {
-          Port port = portlist.value[intIdx];
+          PortService port = portlist.value[intIdx];
           System.out.println( "=================================================" );
           System.out.println( "Port" + intIdx + " (name): ");
           System.out.println( port.get_port_profile().name );

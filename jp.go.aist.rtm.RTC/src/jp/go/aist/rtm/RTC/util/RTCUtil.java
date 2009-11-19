@@ -3,8 +3,8 @@ package jp.go.aist.rtm.RTC.util;
 
 import org.omg.CORBA.Object;
 
-import RTC.DataFlowParticipant;
-import RTC.DataFlowParticipantHelper;
+import OpenRTM.DataFlowComponent;
+import OpenRTM.DataFlowComponentHelper;
 import RTC.FsmObject;
 import RTC.FsmObjectHelper;
 import RTC.FsmParticipant;
@@ -19,15 +19,15 @@ import RTC.MultiModeObjectHelper;
 public class RTCUtil {
     
     /**
-     * <p>RTコンポーネントのインスタンスがDataFlowParticipantであるかどうか判断します。</p>
+     * <p>RTコンポーネントのインスタンスがDataFlowComponentであるかどうか判断します。</p>
      * 
      * @param obj 判断対象のオブジェクト
-     * @return DataFlowParticipantのインスタンスであればtrueを、さもなくばfalseを返します。
+     * @return DataFlowComponentのインスタンスであればtrueを、さもなくばfalseを返します。
      */
-    public static boolean isDataFlowParticipant(Object obj) {
+    public static boolean isDataFlowComponent(Object obj) {
         
         try {
-            DataFlowParticipant dfp = DataFlowParticipantHelper.narrow(obj);
+            DataFlowComponent dfp = DataFlowComponentHelper.narrow(obj);
             if (dfp == null) return false;
         } catch (Exception ex) {
             return false;

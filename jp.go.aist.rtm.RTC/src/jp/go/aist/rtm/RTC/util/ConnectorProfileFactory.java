@@ -2,20 +2,34 @@ package jp.go.aist.rtm.RTC.util;
 
 import _SDOPackage.NameValue;
 import RTC.ConnectorProfile;
-import RTC.Port;
+import RTC.PortService;
 
+/**
+ * <p>Java用コネクタープロファイルファクトリの実装です。</p>
+ */
 public class ConnectorProfileFactory {
 
+    /**
+     * <p>コネクタープロファイルを生成します。</p>
+     * 
+     * @return 生成されたConnectorProfileオブジェクト
+     */
     public static ConnectorProfile create() {
 
         String name = new String();
         String connector_id = new String();
-        Port[] ports = new Port[0];
+        PortService[] ports = new PortService[0];
         NameValue[] properties = new NameValue[0];
         
         return new ConnectorProfile(name, connector_id, ports, properties);
     }
     
+    /**
+     * <p>コネクタープロファイルの複製を生成します。</p>
+     * 
+     * @param rhs ConnectorProfileオブジェクト
+     * @return コピーされたConnectorProfileオブジェクト
+     */
     public static ConnectorProfile clone(final ConnectorProfile rhs) {
         
         if (rhs == null) {
@@ -26,7 +40,7 @@ public class ConnectorProfileFactory {
         String connector_id = rhs.connector_id;
         
         // 配列の中身を丁寧にdeep-copyしてゆく
-        Port[] ports = new Port[rhs.ports.length];
+        PortService[] ports = new PortService[rhs.ports.length];
         for (int i = 0; i < ports.length; i++) {
             ports[i] = rhs.ports[i];
         }

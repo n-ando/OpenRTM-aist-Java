@@ -28,14 +28,14 @@ public class StringUtilTests extends TestCase {
      */
     public void test_isEscaped() throws Exception {
 
-        final String[] escapedStrs = {"\\t", "\\n", "\\f", "\\r", "\\\"", "\\'"};
+        final String[] escapedStrs = {"\\t", "\\n", "\\f", "\\r", "\\\"", "\\'", "\\|", "\\*", "\\^"};
 
         for( int i = 0; i < escapedStrs.length; i++ ) {
             String str = escapedStrs[i];
             assertTrue(StringUtil.isEscaped(str, str.length() - 1));
         }
         
-        final String[] noescapedStrs = {"\t", "\n", "\f", "\r"};
+        final String[] noescapedStrs = {"\t", "\n", "\f", "\r", "\"", "\'"};
 
         for( int i = 0; i < noescapedStrs.length; i++ ) {
             String str = noescapedStrs[i];
@@ -63,6 +63,9 @@ public class StringUtilTests extends TestCase {
                 {"\"", "\""}, // ダブルクォートはエスケープされない
                 {"'", "'"}, // シングルクォートはエスケープされない
                 {"\\", "\\\\"},
+                {"|", "\\|"},
+                {"*", "\\*"},
+                {"^", "\\^"},
                 {"\tHello!\t", "\\tHello!\\t"}
         };
 
@@ -282,6 +285,19 @@ public class StringUtilTests extends TestCase {
         String flattened = StringUtil.flatten(values);
         String expected = "value, \ttabbed\t, hello, world";
         assertEquals(expected, flattened);
+    }
+
+    /**
+     * <p>normalize()メソッドのテスト
+     * <ul>
+     * <li>与えられた文字列の先頭および末尾に存在する空白文字を削除し、英字をすべて小文字に変換する</li>
+     * </ul>
+     */
+    public void test_normalize() {
+        String values = new String(" NormalizeTestString.  ");
+        String normalized = StringUtil.normalize(values);
+        String expected = "normalizeteststring.";
+        assertEquals(expected, normalized);
     }
 
 }

@@ -4,6 +4,8 @@ import org.omg.CORBA.SystemException;
 
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.util.TimeValue;
+import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 
 /**
  * <p>１周期毎の実行が可能なPeriodic Sampled Data Processing(周期実行用)ExecutionContextクラスです。
@@ -17,12 +19,23 @@ public class ExtTrigExecutionContext
      */
     public ExtTrigExecutionContext() {
         super();
+
+        Manager manager = Manager.instance();
+        rtcout = new Logbuf("Manager.ExtTrigExecutionContext");
+        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
+        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
+        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
+        //            "enable", "disable", false));
+
     }
     
     /**
      * <p>ExecutionContextの処理を１周期分進めます。</p>
      */
     public void tick() throws SystemException {
+
+        rtcout.println(rtcout.TRACE, "ExtTrigExecutionContext.tick()");
+
         synchronized (m_worker) {
             m_worker._called = true;
             m_worker.notifyAll();
@@ -34,6 +47,9 @@ public class ExtTrigExecutionContext
      * 全Componentの処理を呼び出した後、次のイベントが発生するまで休止します。</p>
      */
     public int svc() {
+
+        rtcout.println(rtcout.TRACE, "ExtTrigExecutionContext.svc()");
+
         do {
             TimeValue tv = new TimeValue(0, m_usec); // (s, us)
 
@@ -47,7 +63,7 @@ public class ExtTrigExecutionContext
                 }
                 if (m_worker._called) {
                     m_worker._called = false;
-                    for (int intIdx = 0; intIdx < m_comps.size(); intIdx++) {
+                    for (int intIdx = 0; intIdx < m_comps.size(); ++intIdx) {
                         m_comps.elementAt(intIdx).invoke();
                     }
                     while (!m_running) {
@@ -115,4 +131,8 @@ public class ExtTrigExecutionContext
         return this;
     }
     
+    /**
+     * <p>Logging用フォーマットオブジェクト</p>
+     */
+    protected Logbuf rtcout;
 }

@@ -3,7 +3,10 @@ package jp.go.aist.rtm.RTC.executionContext;
 import org.omg.CORBA.SystemException;
 
 import RTC.ExecutionContextService;
-import RTC.ExtTrigExecutionContextServicePOA;
+import OpenRTM.ExtTrigExecutionContextServicePOA;
+
+import jp.go.aist.rtm.RTC.RTObject_impl;
+import RTC.ReturnCode_t;
 
 /**
  * <p>Periodic Sampled Data Processing(周期実行用)ExecutionContextのベースとなる
@@ -26,4 +29,20 @@ public abstract class ExecutionContextBase extends
     public void setObjRef(final ExecutionContextService ref) {
     }
     
+    /**
+     * <p> bindComponent </p>
+     *
+     * @param rtc RTObject
+     * @return ReturnCode_t
+     * 
+     */
+    public abstract ReturnCode_t bindComponent(RTObject_impl rtc);
+
+    /**
+     * <p> getObjRef </p>
+     *
+     * @return ExecutionContextService
+     * 
+     */
+    public abstract ExecutionContextService getObjRef();
 }

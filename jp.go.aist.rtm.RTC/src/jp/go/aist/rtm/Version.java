@@ -5,8 +5,8 @@ package jp.go.aist.rtm;
  */
 public interface Version {
 
-    public static final String openrtm_name = "OpenRTM-aist-0.4.2";
-    public static final String openrtm_version = "0.4.2";
+    public static final String openrtm_name = "OpenRTM-aist-1.0.0";
+    public static final String openrtm_version = "1.0.0";
     public static final String corba_name = "omniORB";
     
 }

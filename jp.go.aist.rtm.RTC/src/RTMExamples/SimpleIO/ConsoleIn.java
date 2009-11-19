@@ -5,8 +5,10 @@ import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.RtcDeleteFunc;
 import jp.go.aist.rtm.RTC.RtcNewFunc;
+import jp.go.aist.rtm.RTC.RegisterModuleFunc;
+import jp.go.aist.rtm.RTC.util.Properties;
 
-public class ConsoleIn implements RtcNewFunc, RtcDeleteFunc {
+public class ConsoleIn implements RtcNewFunc, RtcDeleteFunc, RegisterModuleFunc {
 
 //  Module specification
 //  <rtc-template block="module_spec">
@@ -31,5 +33,10 @@ public class ConsoleIn implements RtcNewFunc, RtcDeleteFunc {
 
     public void deleteRtc(RTObject_impl rtcBase) {
         rtcBase = null;
+    }
+    public void registerModule() {
+        Properties prop = new Properties(component_conf);
+        final Manager manager = Manager.instance();
+        manager.registerFactory(prop, new ConsoleIn(), new ConsoleIn());
     }
 }

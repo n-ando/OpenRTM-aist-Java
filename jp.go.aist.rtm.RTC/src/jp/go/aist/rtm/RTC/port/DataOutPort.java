@@ -38,6 +38,7 @@ public class DataOutPort<DataType> extends PortBase {
      */
     public DataOutPort(Class<DataType> DATA_TYPE_CLASS,
             final String name, OutPort<DataType> outPort, Properties prop) throws Exception {
+/*
         
         super(name);
         this.m_outPort = outPort;
@@ -58,6 +59,7 @@ public class DataOutPort<DataType> extends PortBase {
 
         this.m_consumers.add(new InPortCorbaConsumer<DataType>(DATA_TYPE_CLASS, outPort));
         this.m_consumers.add(new InPortTcpSockConsumer<DataType>(DATA_TYPE_CLASS, outPort, prop));
+*/
     }
     
     /**
@@ -110,6 +112,7 @@ public class DataOutPort<DataType> extends PortBase {
      * @return ReturnCode_t 戻り値
      */
     protected ReturnCode_t subscribeInterfaces(final ConnectorProfileHolder connector_profile) {
+/*
         
         subscribe s = new subscribe(connector_profile.value);
         for (Iterator<InPortConsumer> it = this.m_consumers.iterator(); it.hasNext(); ) {
@@ -126,6 +129,7 @@ public class DataOutPort<DataType> extends PortBase {
 
         // Publisher を OutPort にアタッチ
         this.m_outPort.attach(connector_profile.value.connector_id, publisher);
+*/
 
         return ReturnCode_t.RTC_OK;
     }
@@ -145,11 +149,13 @@ public class DataOutPort<DataType> extends PortBase {
      * @param connector_profile 接続プロファイル情報
      */
     protected void unsubscribeInterfaces(final ConnectorProfile connector_profile) {
+/*
         
         PublisherBase publisher = this.m_outPort.detach(connector_profile.connector_id);
         if( publisher != null ) {
             this.m_pf.destroy(publisher);
         }
+*/
     }
     
     private Vector<OutPortProvider> m_providers = new Vector<OutPortProvider>();
@@ -181,4 +187,15 @@ public class DataOutPort<DataType> extends PortBase {
         private final ConnectorProfile m_prof;
         private InPortConsumer _consumer;
     }
+  /**
+   * <p> Activate all Port interfaces </p>
+   */
+  public void activateInterfaces() {
+  }
+  
+  /**
+   * <p> Deactivate all Port interfaces </p>
+   */
+  public void deactivateInterfaces() {
+  }
 }

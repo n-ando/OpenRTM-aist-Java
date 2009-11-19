@@ -11,6 +11,8 @@ import java.util.Vector;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 
+
+
 /**
 * <p>モジュール管理クラスです。モジュールのロード・アンロードなどを管理します。</p>
 */
@@ -40,13 +42,13 @@ public class ModuleManager {
         
         m_configPath = new Vector<String>();
         String[] configPath = properties.getProperty(CONFIG_PATH).split(",");
-        for (int i = 0; i < configPath.length; i++) {
+        for (int i = 0; i < configPath.length; ++i) {
             m_configPath.add(configPath[i].trim());
         }
         
         m_loadPath = new Vector<String>();
         String[] loadPath = properties.getProperty(MOD_LOADPTH).split(",");
-        for (int i = 0; i < configPath.length; i++) {
+        for (int i = 0; i < loadPath.length; ++i) {
             m_loadPath.add(loadPath[i].trim());
         }
         
@@ -79,13 +81,16 @@ public class ModuleManager {
             super.finalize();
         }
     }
+
+    /**
+     * 
+     */
     public String load(final String moduleName) throws Exception {
         String module_path = null;
 
         if(moduleName==null || moduleName.length()==0) {
             throw new IllegalArgumentException("moduleName is empty.:load()");
         }
-
         try {
             new URL(moduleName);
             if (! m_downloadAllowed) {
@@ -98,17 +103,22 @@ public class ModuleManager {
 
         // Find local file from load path or absolute directory
         Class target = null;
-        if (m_absoluteAllowed) {
+        if (StringUtil.isAbsolutePath(moduleName)) {
             try {
-                target = Class.forName(moduleName);
-                module_path = moduleName;
-            } catch (ClassNotFoundException e) {
-//                e.printStackTrace();
+		if(!m_absoluteAllowed) {
+		    throw new IllegalArgumentException("Absolute path is not allowed");
+		}
+		else {
+		    target = Class.forName(moduleName);
+		    module_path = moduleName;
+		}
+	    } catch (ClassNotFoundException e) {
+		//                e.printStackTrace();
                 throw new ClassNotFoundException("Not implemented." + moduleName, e);
             }
         } else {
             if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
-            for (int i = 0; i < m_loadPath.size(); i++) {
+            for (int i = 0; i < m_loadPath.size(); ++i) {
                 String fullClassName = m_loadPath.elementAt(i) + "." + moduleName;
                 try {
                     target = Class.forName(fullClassName);
@@ -119,6 +129,10 @@ public class ModuleManager {
             }
             if( target==null ) throw new ClassNotFoundException("Not implemented." + moduleName);
         }
+        if(module_path==null || module_path.length()==0) {
+            throw new IllegalArgumentException("Invalid file name.");
+        }
+	
         m_modules.put(module_path, target);
         return module_path;
     }
@@ -150,53 +164,15 @@ public class ModuleManager {
             throw new IllegalArgumentException("methodName is empty.:load()");
         }
 
-        String module_path = null;
-        try {
-            new URL(moduleName);
-            if (! m_downloadAllowed) {
-                throw new IllegalArgumentException("Downloading module is not allowed.");
-                
-            } else {
-                throw new IllegalArgumentException("Not implemented.");
-            }
-        } catch (MalformedURLException moduleName_is_not_URL) {
-        }
+	String module_path = load(moduleName);
 
-        Class target = null;
-        if (m_absoluteAllowed) {
-            try {
-                target = Class.forName(moduleName);
-                module_path = moduleName;
-            } catch (ClassNotFoundException e) {
-//                e.printStackTrace();
-                throw new ClassNotFoundException("Not implemented.", e);
-            }
-        } else {
-            if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
-            for (int i = 0; i < m_loadPath.size(); i++) {
-                String fullClassName = m_loadPath.elementAt(i) + "." + moduleName;
-                try {
-                    target = Class.forName(fullClassName);
-                    module_path = fullClassName;
-                } catch (ClassNotFoundException e) {
-//                    e.printStackTrace();
-                    // throw new ClassNotFoundException("Not implemented.", ex);
-                }
-            }
-        }
-
-        Method initMethod;
-        try {
-            initMethod = target.getMethod(methodName);
-            
-        } catch (SecurityException e) {
-//            e.printStackTrace();
-            throw e;
-            
-        } catch (NoSuchMethodException e) {
-//            e.printStackTrace();
-            throw e;
-        }
+	Method initMethod = symbol(module_path,methodName);
+	Class target = null;
+	try {
+	    target = Class.forName(module_path);
+	} catch (ClassNotFoundException e) {
+	    throw new ClassNotFoundException("Not implemented." + moduleName, e);
+	}
 
         try {
             initMethod.invoke(target.newInstance());
@@ -213,7 +189,6 @@ public class ModuleManager {
 //            e.printStackTrace();
             throw e;
         }
-        m_modules.put(module_path, target);
         
         return module_path;
     }
@@ -308,8 +283,8 @@ public class ModuleManager {
      * 
      * @return ロード可能なモジュールリスト
      */
-    public Vector<String> getLoadableModules() {
-        return new Vector<String>();
+    public Vector<Properties> getLoadableModules() {
+        return new Vector<Properties>();
     }
     
     /**
