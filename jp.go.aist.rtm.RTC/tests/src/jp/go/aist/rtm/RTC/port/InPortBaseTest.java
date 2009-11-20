@@ -362,9 +362,11 @@ public class InPortBaseTest extends TestCase {
         if (m_mock_logger == null){
             m_mock_logger = new Logger();
         }
+/*
         if (RingBufferMock.m_mock_logger == null){
             RingBufferMock.m_mock_logger = new Logger();
         }
+*/
 
         java.util.Properties props = new java.util.Properties();
         this.m_orb = ORBUtil.getOrb();
@@ -406,7 +408,8 @@ public class InPortBaseTest extends TestCase {
         {
             BufferFactory.instance().removeFactory("ring_buffer");
         }
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
     }
     
     protected void tearDown() throws Exception {
@@ -476,7 +479,8 @@ public class InPortBaseTest extends TestCase {
         }
 
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
 
@@ -495,16 +499,19 @@ public class InPortBaseTest extends TestCase {
         assertEquals("4:",0, pstr.size());
         Vector<String> cstr = inport.get_m_consumerTypes();
         assertEquals("5:",0, cstr.size());
-        RingBufferMock.m_mock_logger.clearLog();
+//        RingBufferMock.m_mock_logger.clearLog();
+        m_mock_logger.clearLog();
         assertEquals("6:",0,
-             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+//             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+             m_mock_logger.countLog("RingBufferMock.Constructor"));
 
         inport.init();
 
         //
         assertTrue("7:",null!=inport.getThebuffer());
         assertEquals("8:",1,
-             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+//             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+             m_mock_logger.countLog("RingBufferMock.Constructor"));
 
         profile = inport.getPortProfile();
         holder = new _SDOPackage.NVListHolder(profile.properties);
@@ -561,7 +568,8 @@ public class InPortBaseTest extends TestCase {
             BufferFactory.instance().removeFactory("ring_buffer");
         }
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
  
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
 
@@ -580,16 +588,19 @@ public class InPortBaseTest extends TestCase {
         assertEquals(0, pstr.size());
         Vector<String> cstr = inport.get_m_consumerTypes();
         assertEquals(0, cstr.size());
-        RingBufferMock.m_mock_logger.clearLog();
+//        RingBufferMock.m_mock_logger.clearLog();
+        m_mock_logger.clearLog();
         assertEquals("6:",0,
-             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+//             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+             m_mock_logger.countLog("RingBufferMock.Constructor"));
 
         inport.setMultibuffer();
         inport.init();
 
         assertTrue(null==inport.getThebuffer());
         assertEquals("8:",0,
-             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+//             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+             m_mock_logger.countLog("RingBufferMock.Constructor"));
 
         profile = inport.getPortProfile();
         holder = new _SDOPackage.NVListHolder(profile.properties);
@@ -666,16 +677,19 @@ public class InPortBaseTest extends TestCase {
         assertEquals("4:",0, pstr.size());
         Vector<String> cstr = inport.get_m_consumerTypes();
         assertEquals("5:",0, cstr.size());
-        RingBufferMock.m_mock_logger.clearLog();
+//        RingBufferMock.m_mock_logger.clearLog();
+        m_mock_logger.clearLog();
         assertEquals("6:",0,
-             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+//             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+             m_mock_logger.countLog("RingBufferMock.Constructor"));
 
         inport.init();
 
         //
         assertTrue("7:",null==inport.getThebuffer());
         assertEquals("8:",0,
-             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+//             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
+             m_mock_logger.countLog("RingBufferMock.Constructor"));
 
         profile = inport.getPortProfile();
         holder = new _SDOPackage.NVListHolder(profile.properties);
@@ -729,7 +743,8 @@ public class InPortBaseTest extends TestCase {
                     new OutPortCorbaCdrConsumerMock());
 
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
@@ -794,7 +809,8 @@ public class InPortBaseTest extends TestCase {
             BufferFactory.instance().removeFactory("ring_buffer");
         }
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
 
         InPortBaseMock inport= new InPortBaseMock("InPortBaseTest", "TimedFloat");
@@ -861,7 +877,8 @@ public class InPortBaseTest extends TestCase {
             BufferFactory.instance().removeFactory("ring_buffer");
         }
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
 
@@ -925,7 +942,8 @@ public class InPortBaseTest extends TestCase {
             BufferFactory.instance().removeFactory("ring_buffer");
         }
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
 
@@ -994,7 +1012,8 @@ public class InPortBaseTest extends TestCase {
         }
 
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
         inport.init();
@@ -1067,7 +1086,8 @@ public class InPortBaseTest extends TestCase {
         }
 
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
         inport.init();
@@ -1147,7 +1167,8 @@ public class InPortBaseTest extends TestCase {
         }
 
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
         inport.init();
@@ -1224,7 +1245,8 @@ public class InPortBaseTest extends TestCase {
         }
 
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
         inport.init();
@@ -1296,7 +1318,8 @@ public class InPortBaseTest extends TestCase {
         }
 
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
         inport.init();
@@ -1429,7 +1452,8 @@ public class InPortBaseTest extends TestCase {
         }
 
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
         inport.init();
@@ -1505,7 +1529,8 @@ public class InPortBaseTest extends TestCase {
         }
 
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
         inport.init();
@@ -1575,7 +1600,8 @@ public class InPortBaseTest extends TestCase {
         }
 
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
         inport.init();
@@ -1641,7 +1667,8 @@ public class InPortBaseTest extends TestCase {
         }
 
         //
-        CdrRingBufferMock.CdrRingBufferMockInit();
+//        CdrRingBufferMock.CdrRingBufferMockInit();
+        CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
         inport.init();
@@ -1821,8 +1848,6 @@ public class InPortBaseTest extends TestCase {
         portAdmin.deletePort(inport);
     }
 
-    
-}
     /**
      * 
      * 
@@ -1849,11 +1874,13 @@ public class InPortBaseTest extends TestCase {
             obj = null;
         }
 
+    }
         /**
          * <p> CdrRingBufferInit </p>
          *
          */
-        public static void CdrRingBufferMockInit() {
+//        public static void CdrRingBufferMockInit() {
+        public void CdrRingBufferMockInit() {
             final BufferFactory<RingBufferMock<OutputStream>,String> factory 
                 = BufferFactory.instance();
 
@@ -1862,7 +1889,6 @@ public class InPortBaseTest extends TestCase {
                         new CdrRingBufferMock());
     
         }
-    }
     /**
      * 
      * 
@@ -2030,7 +2056,7 @@ public class InPortBaseTest extends TestCase {
         private Logger m_logger;
         private jp.go.aist.rtm.RTC.buffer.ReturnCode m_read_return_value;
         private jp.go.aist.rtm.RTC.buffer.ReturnCode m_write_return_value;
-        public static Logger m_mock_logger = null;
+//        public static Logger m_mock_logger = null;
   };
     /**
      * 
@@ -2058,3 +2084,5 @@ public class InPortBaseTest extends TestCase {
        private Vector<String> m_log = new Vector<String>();
     }
 
+    
+}
