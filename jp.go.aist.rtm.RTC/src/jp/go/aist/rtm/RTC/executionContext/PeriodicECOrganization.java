@@ -514,7 +514,7 @@ public class PeriodicECOrganization extends Organization_impl {
             m_rtobj.deletePort(
                             (PortService)plist[i].port_ref._duplicate());
 
-	    // portlist.remove(pos);
+            portlist.remove((String)port_name);
             rtcout.println(rtcout.DEBUG, "Port " + port_name + " was deleted.");
         }
      }

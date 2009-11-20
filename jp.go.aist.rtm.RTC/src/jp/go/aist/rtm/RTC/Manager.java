@@ -637,7 +637,7 @@ public class Manager {
      */
     public void cleanupComponent(RTObject_impl comp) {
         
-        rtcout.println(rtcout.TRACE, "Manager.shutdownComponents()");
+        rtcout.println(rtcout.TRACE, "Manager.cleanupComponent()");
         
         unregisterComponent(comp);
     }

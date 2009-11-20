@@ -264,11 +264,6 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
 
         if( m_running ) return ReturnCode_t.PRECONDITION_NOT_MET;
 
-//zxc        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-//zxc            if( m_comps.elementAt(intIdx)._ref.is_alive()==false) {
-//zxc                return ReturnCode_t.PRECONDITION_NOT_MET;
-//zxc            }
-//zxc        }
         // invoke ComponentAction::on_startup for each comps.
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             m_comps.elementAt(intIdx).invoke_on_startup();
@@ -358,9 +353,6 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
                 // the given component must be in Alive state.
-//zxc                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
-//zxc                    return ReturnCode_t.BAD_PARAMETER;
-//zxc                }
                 if(!(m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.INACTIVE_STATE))) {
                     return ReturnCode_t.PRECONDITION_NOT_MET;
                 }
@@ -386,9 +378,6 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
                 // the given component must be in Alive state.
-//zxc                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
-//zxc                    return ReturnCode_t.BAD_PARAMETER;
-//zxc                }
                 if(!(m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.ACTIVE_STATE))) {
                     return ReturnCode_t.PRECONDITION_NOT_MET;
                 }
@@ -414,9 +403,6 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
                 // the given component must be in Alive state.
-//zxc                if(m_comps.elementAt(intIdx)._ref.is_alive()==false) {
-//zxc                    return ReturnCode_t.PRECONDITION_NOT_MET;
-//zxc                }
                 if(!(m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.ERROR_STATE))) {
                     return ReturnCode_t.PRECONDITION_NOT_MET;
                 }
@@ -532,11 +518,8 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
-                // If the component is still Active, this operation shall fail.
-                if( m_comps.elementAt(intIdx)._sm.m_sm.isIn(LifeCycleState.ACTIVE_STATE) ) {
-                    return ReturnCode_t.PRECONDITION_NOT_MET;
-                }
                 m_comps.elementAt(intIdx)._ref.detach_context(m_comps.elementAt(intIdx)._sm.ec_id);
+                m_comps.elementAt(intIdx)._ref = null;
                 m_comps.remove(m_comps.elementAt(intIdx));
                 return ReturnCode_t.RTC_OK;
             }

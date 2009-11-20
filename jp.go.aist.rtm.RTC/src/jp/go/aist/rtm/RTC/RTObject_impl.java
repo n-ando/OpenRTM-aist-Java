@@ -416,6 +416,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
                     return ReturnCode_t.PRECONDITION_NOT_MET;
                 }
             }
+            m_ecOther.value = null;
         }
 
         ReturnCode_t ret = on_finalize();
@@ -654,13 +655,12 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         try {
             ComponentProfile profile = new ComponentProfile();
-            profile.instance_name = m_profile.instance_name;
-            profile.type_name = m_profile.type_name;
-            profile.description = m_profile.description;
-            profile.version = m_profile.version;
-            profile.vendor = m_profile.vendor;
-            profile.category = m_profile.category;
-            profile.port_profiles = m_profile.port_profiles;
+            profile.instance_name = m_properties.getProperty("instance_name");
+            profile.type_name = m_properties.getProperty("type_name");
+            profile.description = m_properties.getProperty("description");
+            profile.version = m_properties.getProperty("version");
+            profile.vendor = m_properties.getProperty("vendor");
+            profile.category = m_properties.getProperty("category");
             profile.parent = m_profile.parent;
             profile.properties = m_profile.properties;
             profile.port_profiles = m_portAdmin.getPortProfileList().value;
@@ -1840,7 +1840,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
          */
         public void operator(ExecutionContextService ecs)
         {
-            CORBA_SeqUtil.push_back(m_eclist, (ExecutionContext)ecs._duplicate());
+            if(ecs != null)  {
+                CORBA_SeqUtil.push_back(m_eclist, (ExecutionContext)ecs._duplicate());
+            }
         }
         private ExecutionContextListHolder m_eclist;
     };
@@ -1870,14 +1872,17 @@ public class RTObject_impl extends DataFlowComponentPOA {
         {
             try
             {
-                ExecutionContext ec;
-                ec = ExecutionContextHelper.narrow(ecs);
-                return m_ec._is_equivalent(ec);
+                if(ecs != null)  {
+                    ExecutionContext ec;
+                    ec = ExecutionContextHelper.narrow(ecs);
+                    return m_ec._is_equivalent(ec);
+                }
             }
             catch (Exception ex)
             {
                 return false;
             }
+            return false;
         }
         private ExecutionContext m_ec;
     };
@@ -1905,9 +1910,11 @@ public class RTObject_impl extends DataFlowComponentPOA {
          * <p> operator </p> 
          *
          */
-        void operator(ExecutionContextService ec)
+        void operator(ExecutionContextService ecs)
         {
-            ec.deactivate_component((LightweightRTObject)m_comp._duplicate());
+            if(ecs != null)  {
+                ecs.deactivate_component((LightweightRTObject)m_comp._duplicate());
+            }
         }
         LightweightRTObject m_comp;
     };
