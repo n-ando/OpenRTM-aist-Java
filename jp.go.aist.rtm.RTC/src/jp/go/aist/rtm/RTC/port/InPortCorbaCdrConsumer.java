@@ -41,7 +41,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
         super(OpenRTM.InPortCdr.class);
         m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
         rtcout = new Logbuf("InPortCorbaCdrConsumer");
-        rtcout.setLevel("PARANOID");
+//        rtcout.setLevel("PARANOID");
     }
     /**
      * <p> Initializing configuration </p>

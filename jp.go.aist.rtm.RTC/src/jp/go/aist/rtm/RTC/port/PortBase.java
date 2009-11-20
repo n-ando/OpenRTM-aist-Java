@@ -138,7 +138,7 @@ public abstract class PortBase extends PortServicePOA {
         this.m_objref = PortServiceHelper.narrow(this._this()._duplicate());
         this.m_profile.port_ref = this.m_objref;
         rtcout = new Logbuf(name);
-        rtcout.setLevel("PARANOID");
+//        rtcout.setLevel("PARANOID");
         m_onPublishInterfaces = null;
         m_onSubscribeInterfaces = null;
         m_onConnected = null;

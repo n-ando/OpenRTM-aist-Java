@@ -40,7 +40,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
     public OutPortCorbaCdrConsumer() {
         super(OpenRTM.OutPortCdr.class);
         rtcout = new Logbuf("OutPortCorbaCdrConsumer");
-        rtcout.setLevel("PARANOID");
+//        rtcout.setLevel("PARANOID");
     }
 
     /**

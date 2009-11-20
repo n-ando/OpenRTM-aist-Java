@@ -48,7 +48,7 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
     public OutPortCorbaCdrProvider() {
         m_buffer = null;
         rtcout = new Logbuf("OutPortCorbaCdrProvider");
-        rtcout.setLevel("PARANOID");
+//        rtcout.setLevel("PARANOID");
         // PortProfile setting
         setInterfaceType("corba_cdr");
     

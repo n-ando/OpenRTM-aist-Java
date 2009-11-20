@@ -30,7 +30,7 @@ public class InPortPullConnector extends InPortConnector {
         m_consumer = consumer;
 
         rtcout = new Logbuf("InPortPullConnector");
-        rtcout.setLevel("PARANOID");
+//        rtcout.setLevel("PARANOID");
 
         if (buffer == null) {
             m_buffer = createBuffer(m_profile);
