@@ -187,7 +187,7 @@ public class OutPortBase extends PortBase {
      *
      */
     public boolean getConnectorProfileById(final String id,
-                                 ConnectorBase.Profile prof) {
+                                 ConnectorBase.ProfileHolder profh) {
         rtcout.println(rtcout.TRACE, 
                        "getConnectorProfileById(id = "+id+")");
 
@@ -195,7 +195,7 @@ public class OutPortBase extends PortBase {
         synchronized (m_connectors){
             for (int i=0, len=m_connectors.size(); i < len; ++i) {
                 if (sid.equals(m_connectors.elementAt(i).id())) {
-                    prof = m_connectors.elementAt(i).profile();
+                    profh.value = m_connectors.elementAt(i).profile();
                     return true;
                 }
             }
@@ -213,7 +213,7 @@ public class OutPortBase extends PortBase {
      *
      */
     public boolean getConnectorProfileByName(final String name,
-                                   ConnectorBase.Profile prof) {
+                                   ConnectorBase.ProfileHolder profh) {
         rtcout.println(rtcout.TRACE, 
                        "getConnectorProfileByNmae(name = "+name+")");
 
@@ -221,7 +221,7 @@ public class OutPortBase extends PortBase {
         synchronized (m_connectors){
             for (int i=0, len=m_connectors.size(); i < len; ++i) {
                 if (sname.equals(m_connectors.elementAt(i).name())) {
-                    prof = m_connectors.elementAt(i).profile();
+                    profh.value = m_connectors.elementAt(i).profile();
                     return true;
                   }
             }
@@ -846,7 +846,7 @@ public class OutPortBase extends PortBase {
             }
             catch (Exception e) {
                 rtcout.println(rtcout.ERROR,
-                               "OutPortPullConnector creation failed");
+                               "OutPortPushConnector creation failed");
                 return null;
             }
         }
@@ -874,7 +874,7 @@ public class OutPortBase extends PortBase {
                                    "old compiler? new returned 0;");
                     return null;
                 }
-                rtcout.println(rtcout.TRACE, "OutPortPushConnector create");
+                rtcout.println(rtcout.TRACE, "OutPortPullConnector create");
     
                 m_connectors.add(connector);
                 rtcout.println(rtcout.PARANOID, 

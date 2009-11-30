@@ -18,6 +18,18 @@ import jp.go.aist.rtm.RTC.util.Properties;
 
 public abstract class ConnectorBase {
     /**
+     * <p> ProfileHoldedr </p>
+     *
+     */
+    public static class ProfileHolder {
+        public ConnectorBase.Profile value = null;
+        public ProfileHolder() {
+        }
+        public ProfileHolder(ConnectorBase.Profile initialValue) {
+            value = initialValue;
+        }
+    };
+    /**
      * <p> Profile </p>
      * <p> local representation of Connector profile </p>
      *
