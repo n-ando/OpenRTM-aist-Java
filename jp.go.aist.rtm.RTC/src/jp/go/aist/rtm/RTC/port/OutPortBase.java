@@ -182,7 +182,7 @@ public class OutPortBase extends PortBase {
      * <p> This operation returns ConnectorProfile specified by name </p>
      *
      * @param id Connector ID
-     * @param prof ConnectorProfile
+     * @param profh ConnectorProfileHolder
      * @return false specified ID does not exi
      *
      */
@@ -208,7 +208,7 @@ public class OutPortBase extends PortBase {
      * <p> This operation returns ConnectorProfile specified by name </p>
      *
      * @param name 
-     * @param prof ConnectorProfile
+     * @param profh ConnectorProfileHodler
      * @return false specified name does not exist
      *
      */
@@ -532,12 +532,27 @@ public class OutPortBase extends PortBase {
 
             rtcout.println(rtcout.DEBUG, 
                            "publishInterface() successfully finished.");
+            connector.setEndian(m_endian);
             return ReturnCode_t.RTC_OK;
         }
         else if (dflow_type.equals("pull")) {
             rtcout.println(rtcout.DEBUG, 
                            "dataflow_type = pull .... do nothing.");
-            return ReturnCode_t.RTC_OK;
+            //
+            String id = cprof.value.connector_id;
+            synchronized (m_connectors){
+                Iterator it = m_connectors.iterator();
+                while (it.hasNext()) {
+                    InPortConnector connector = (InPortConnector)it.next();
+                    if (id.equals(connector.id())) {
+                        connector.setEndian(m_endian);
+                        return ReturnCode_t.RTC_OK;
+                    }
+                }
+                rtcout.println(rtcout.ERROR, 
+                           "specified connector not found: " + id);
+                return ReturnCode_t.RTC_ERROR;
+            }
         }
 
         rtcout.println(rtcout.ERROR, "unsupported dataflow_type.");

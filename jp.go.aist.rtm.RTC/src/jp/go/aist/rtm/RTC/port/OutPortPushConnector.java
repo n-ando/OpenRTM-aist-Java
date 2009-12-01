@@ -91,17 +91,28 @@ public class OutPortPushConnector extends OutPortConnector {
      * <p> This operation writes data into publisher and then the data </p>
      * <p> will be transferred to correspondent InPort. </p>
      *
+     * @param data_little
+     * @param data_big
+     * @return ReturnCode
+     *
      */
-    public ReturnCode write(final OutputStream data) {
+//    public ReturnCode write(final OutputStream data) {
+    public ReturnCode write(final OutputStream data_little,final OutputStream data_big) {
         rtcout.println(rtcout.TRACE, "write()");
-        InputStream in = data.create_input_stream();
+        InputStream in = data_little.create_input_stream();
         try {
             rtcout.println(rtcout.PARANOID, "data size = "+ in.available() +"byte");
         }
         catch(IOException  e ){
             rtcout.println(rtcout.PARANOID, "an I/O error occurs.");
         }
-        return m_publisher.write(data, 0, 0);
+        if(m_endian.equals("little")){
+            return m_publisher.write(data_little,0,0);
+        }
+        else{
+            return m_publisher.write(data_big,0,0);
+        }
+//        return m_publisher.write(data, 0, 0);
     }
 
     /**

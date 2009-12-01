@@ -7,6 +7,7 @@ import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 /**
  * <p> InPortConnector </p>
@@ -23,6 +24,9 @@ public abstract class InPortConnector extends ConnectorBase {
         rtcout = new Logbuf("InPortConnector");
         m_profile = profile;
         m_buffer = buffer;
+        m_endian = "little";
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        m_orb = ORBUtil.getOrb();
     }
 
 
@@ -76,6 +80,16 @@ public abstract class InPortConnector extends ConnectorBase {
     public BufferBase<OutputStream> getBuffer() {
         return m_buffer;
     }
+    /**
+     *
+     * <p> Setting an endian type </p>
+     *
+     * <p> This operation set this connector's endian type </p>
+     *
+     */
+    public void setEndian(String endian_type){
+        m_endian = endian_type;
+    }
 
     /**
      *
@@ -84,12 +98,15 @@ public abstract class InPortConnector extends ConnectorBase {
      * <p> The read function to read data from buffer to InPort </p>
      *
      */
-    public abstract ReturnCode read(DataRef<OutputStream> data);
+//    public abstract ReturnCode read(DataRef<OutputStream> data);
+    public abstract ReturnCode read(DataRef<InputStream> data);
 
     protected Logbuf rtcout;
     protected Profile m_profile;
     protected BufferBase<OutputStream> m_buffer;
-
+    protected String m_endian;
+    protected com.sun.corba.se.spi.orb.ORB m_spi_orb;
+    protected org.omg.CORBA.ORB m_orb;
 }
 
 

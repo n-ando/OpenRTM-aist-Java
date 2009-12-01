@@ -1,5 +1,9 @@
 package jp.go.aist.rtm.RTC.port;
 
+import com.sun.corba.se.spi.ior.iiop.GIOPVersion;
+import com.sun.corba.se.impl.encoding.EncapsInputStream; 
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
+
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
@@ -62,7 +66,8 @@ public class InPortPushConnector extends InPortConnector {
      * @param data
      * @return ReturnCode
      */
-    public ReturnCode read(DataRef<OutputStream> data) {
+//    public ReturnCode read(DataRef<OutputStream> data) {
+    public ReturnCode read(DataRef<InputStream> data) {
         rtcout.println(rtcout.TRACE, "read()");
         /*
          * buffer returns
@@ -75,8 +80,19 @@ public class InPortPushConnector extends InPortConnector {
             return ReturnCode.PRECONDITION_NOT_MET;
         }
         
-        jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.read(data, 0, 0);
-
+        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+                                                    m_endian.equals("little"));
+        DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+        jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.read(dataref, 0, 0);
+        if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
+            cdr = (EncapsOutputStream)dataref.v;
+            byte[] ch = cdr.toByteArray();
+            data.v = new EncapsInputStream(m_orb, 
+                                       ch, 
+                                       ch.length,
+                                       m_endian.equals("little"),
+                                       GIOPVersion.V1_2);
+        }
         return convertReturn(ret);
     }
     /**

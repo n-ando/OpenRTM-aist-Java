@@ -2,6 +2,7 @@ package jp.go.aist.rtm.RTC.port;
 
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
@@ -46,11 +47,17 @@ public class InPortPullConnector extends InPortConnector {
      * <p> The read function to read data from buffer to InPort </p>
      *
      */
-    public ReturnCode read(DataRef<OutputStream> data){
+//    public ReturnCode read(DataRef<OutputStream> data){
+    public ReturnCode read(DataRef<InputStream> data){
         if (m_buffer == null) {
             return ReturnCode.PORT_ERROR;
         }
-        m_buffer.read(data);
+        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+                                                    m_endian.equals("little"));
+        DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+        m_buffer.read(dataref);
+        data.v = dataref.v.create_input_stream();
+
         return ReturnCode.PORT_OK;
     }
     /**

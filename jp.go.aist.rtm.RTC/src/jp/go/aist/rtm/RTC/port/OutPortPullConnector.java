@@ -37,12 +37,20 @@ public class OutPortPullConnector extends OutPortConnector {
      * <p> This operation writes data into publisher and then the data </p>
      * <p> will be transferred to correspondent InPort. </p>
      *
-     * @param data
+     * @param data_little
+     * @param data_big
      * @return ReturnCode
      *
      */
-    public ReturnCode write(final OutputStream data) {
-        m_buffer.write(data);
+//    public ReturnCode write(final OutputStream data) {
+    public ReturnCode write(final OutputStream data_little,final OutputStream data_big) {
+//        m_buffer.write(data);
+        if(m_endian.equals("little")){
+            m_buffer.write(data_little);
+        }
+        else{
+            m_buffer.write(data_big);
+        }
         return ReturnCode.PORT_OK;
     }
 

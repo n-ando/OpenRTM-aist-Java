@@ -23,6 +23,7 @@ public abstract class OutPortConnector extends ConnectorBase {
         rtcout = new Logbuf("OutPortConnector");
 //        rtcout.setLevel("PARANOID");
         m_profile = profile;
+        m_endian = "little";
     }
 
     /**
@@ -54,7 +55,16 @@ public abstract class OutPortConnector extends ConnectorBase {
         rtcout.println(rtcout.TRACE, "name() = " + profile().name);
         return profile().name;
     }
-
+    /**
+     *
+     * <p> Setting an endian type </p>
+     *
+     * <p> This operation set this connector's endian type </p>
+     *
+     */
+    public void setEndian(String endian_type){
+        m_endian = endian_type;
+    }
     /**
      * <p> Disconnect connection </p>
      * <p> This operation disconnect this connection </p>
@@ -74,9 +84,11 @@ public abstract class OutPortConnector extends ConnectorBase {
      * <p> The write function to write data from OutPort to Buffer </p>
      *
      */
-    public abstract ReturnCode write(final OutputStream data);
+//    public abstract ReturnCode write(final OutputStream data);
+    public abstract ReturnCode write(final OutputStream data_little,final OutputStream data_big);
 
     protected Logbuf rtcout;
     protected Profile m_profile;
+    protected String m_endian;
 }
 

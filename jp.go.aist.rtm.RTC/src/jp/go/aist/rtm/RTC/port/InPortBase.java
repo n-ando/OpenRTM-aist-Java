@@ -294,7 +294,21 @@ public class InPortBase extends PortBase {
         if (dflow_type.equals("push")) {
             rtcout.println(rtcout.DEBUG, 
                            "dataflow_type = push .... do nothing.");
-            return ReturnCode_t.RTC_OK;
+            //
+            String id = cprof.value.connector_id;
+            synchronized (m_connectors){
+                Iterator it = m_connectors.iterator();
+                while (it.hasNext()) {
+                    InPortConnector connector = (InPortConnector)it.next();
+                    if (id.equals(connector.id())) {
+                        connector.setEndian(m_endian);
+                        return ReturnCode_t.RTC_OK;
+                    }
+                }
+                rtcout.println(rtcout.ERROR, 
+                               "specified connector not found: " + id);
+                return ReturnCode_t.RTC_ERROR;
+            }
         }
         else if (dflow_type.equals("pull")) {
             rtcout.println(rtcout.DEBUG, 
@@ -312,6 +326,7 @@ public class InPortBase extends PortBase {
                 return ReturnCode_t.RTC_ERROR;
             }
 
+            connector.setEndian(m_endian);
             rtcout.println(rtcout.DEBUG, 
                            "publishInterface() successfully finished.");
             return ReturnCode_t.RTC_OK;
