@@ -919,7 +919,7 @@ public class Manager {
         comp_id.setProperty("implementation_id", comp.getProperties().getProperty("implementation_id"));
         comp_id.setProperty("version", comp.getProperties().getProperty("version"));
 
-        FactoryBase factory = (FactoryBase)m_factory.find(new FactoryPredicate(instanceName));
+	FactoryBase factory = (FactoryBase)m_factory.find(new FactoryPredicate(comp.getProperties().getProperty("implementation_id")));
 
         ReturnCode_t ret = comp.exit();
 
