@@ -1,6 +1,8 @@
 package jp.go.aist.rtm.RTC.port;
 
 import java.util.UUID;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.omg.CORBA.SystemException;
 
@@ -20,7 +22,6 @@ import RTC.PortServicePOA;
 import RTC.PortProfile;
 import RTC.RTObject;
 import RTC.ReturnCode_t;
-
 
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.ConnectorProfileFactory;
@@ -187,6 +188,9 @@ public abstract class PortBase extends PortServicePOA {
      * @return 本ポートに関するPortProfileオブジェクト
      */
     public PortProfile get_port_profile() {
+        rtcout.println(rtcout.TRACE, "get_port_profile()");
+
+        updateConnectors();
         synchronized (this.m_profile) {
             return PortProfileFactory.clone(this.m_profile);
         }
@@ -218,7 +222,9 @@ public abstract class PortBase extends PortServicePOA {
      * @return このポートに関連するConnectorProfileオブジェクトの配列
      */
     public RTC.ConnectorProfile[] get_connector_profiles() {
+        rtcout.println(rtcout.TRACE, "get_connector_profiles()");
 
+        updateConnectors();
         synchronized (this.m_profile) {
 
             int length = this.m_profile.connector_profiles.length;
@@ -241,6 +247,8 @@ public abstract class PortBase extends PortServicePOA {
     public ConnectorProfile get_connector_profile(final String connector_id) {
 
         rtcout.println(rtcout.TRACE, "get_connector_profile("+connector_id+")");
+
+        updateConnectors();
         synchronized (m_profile_mutex) {
 
             ConnectorProfileListHolder holder =
@@ -1380,6 +1388,49 @@ public abstract class PortBase extends PortServicePOA {
         NVUtil.appendStringValue(holder, key, value);
         this.m_profile.properties = holder.value;
     }
+    /**
+     *
+     */
+    protected void updateConnectors() {
+        Vector<String> connector_ids = new Vector<String>();
+        {
+            synchronized (this.m_profile) {
+                RTC.ConnectorProfile[] clist = m_profile.connector_profiles;
+  
+                for (int i=0; i < clist.length; ++i) {
+                    if (!checkPorts(clist[i].ports)) {
+                        String id = clist[i].connector_id;
+                        connector_ids.add(id);
+                        rtcout.println(rtcout.WARN,"Dead connection:"+id);
+                    }
+                }
+            }
+        }
+  
+
+        Iterator it = connector_ids.iterator();
+        while (it.hasNext()) {
+            this.disconnect((String)it.next());
+        }
+    }
+    /**
+     *
+     */
+    protected boolean checkPorts(RTC.PortService[] ports) {
+        for (int i=0, len=ports.length; i < len; ++i) {
+            try {
+                if (ports[i]._non_existent()) {
+                    rtcout.println(rtcout.WARN,"Dead Port reference detected.");
+                    return false;
+                }
+            }
+            catch (Exception ex) {
+                return false;
+            }
+        }
+        return true;
+    }
+  
     protected Logbuf rtcout;
     /**
      * <p>Callback functor objects</p>
