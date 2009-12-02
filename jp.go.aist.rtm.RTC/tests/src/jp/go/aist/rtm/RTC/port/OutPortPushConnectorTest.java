@@ -617,7 +617,7 @@ public class OutPortPushConnectorTest extends TestCase {
               int write_counter = m_mock_logger.countLog("PublisherNewMock.write");
               int num_counter =  m_mock_logger.countLog("12345");
               OutputStream cdr = toStream(12345,0,0);
-              connector.write(cdr);
+              connector.write(cdr,cdr);
               assertEquals("1:",write_counter+1, 
                      m_mock_logger.countLog("PublisherNewMock.write"));
               assertEquals("2:",num_counter+1, 

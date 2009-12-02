@@ -90,7 +90,7 @@ public class OutPortBaseTest extends TestCase {
     public void deactivate() {
         m_mock_logger.log("OutPortPushConnector.deactivate"); 
     }
-    public ReturnCode write(final OutputStream data) {
+    public ReturnCode write(final OutputStream data_little,final OutputStream data_big){
         return ReturnCode.PORT_OK;
     }
     protected PublisherBase createPublisher(Profile profile) {
@@ -118,7 +118,7 @@ public class OutPortBaseTest extends TestCase {
             throw new Exception("bad_alloc()");
         }
     }
-    public ReturnCode write(final OutputStream data) {
+    public ReturnCode write(final OutputStream data_little,final OutputStream data_big){
         return ReturnCode.PORT_OK;
     }
     public BufferBase<OutputStream> getBuffer() {
