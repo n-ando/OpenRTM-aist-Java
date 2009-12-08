@@ -916,11 +916,13 @@ public class OutPortBase extends PortBase {
     }
     protected List<Publisher> m_publishers = new ArrayList<Publisher>();
     protected Properties m_properties = new Properties();
-    protected Vector<OutPortConnector> m_connectors = new Vector<OutPortConnector>();
+    protected Vector<OutPortConnector> m_connectors 
+        = new Vector<OutPortConnector>();
     protected Vector<InPortConsumer> m_consumers = new Vector<InPortConsumer>();
     protected Vector<String> m_providerTypes = new Vector<String>();
     protected Vector<String> m_consumerTypes = new Vector<String>();
-    protected Vector<OutPortProvider> m_providers = new Vector<OutPortProvider>();
+    protected Vector<OutPortProvider> m_providers 
+        = new Vector<OutPortProvider>();
     
     private String m_endian = new String();
 }

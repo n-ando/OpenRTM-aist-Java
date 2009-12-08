@@ -21,7 +21,6 @@ public abstract class OutPortConnector extends ConnectorBase {
      */
     public OutPortConnector(ConnectorBase.Profile profile) {
         rtcout = new Logbuf("OutPortConnector");
-//        rtcout.setLevel("PARANOID");
         m_profile = profile;
         m_endian = "little";
     }
