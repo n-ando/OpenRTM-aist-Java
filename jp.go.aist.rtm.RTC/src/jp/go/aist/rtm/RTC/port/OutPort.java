@@ -207,27 +207,20 @@ public class OutPort<DataType> extends OutPortBase {
 //            set_timestamp(value);
 
             // data -> (conversion) -> CDR stream
-//            m_cdr = new EncapsOutputStream(m_spi_orb,isLittleEndian());
-            m_cdr_little = new EncapsOutputStream(m_spi_orb,true);
-            m_cdr_big  = new EncapsOutputStream(m_spi_orb,false);
+            m_cdr = new EncapsOutputStream(m_spi_orb,isLittleEndian());
 
             if (m_OnWriteConvert != null) {
                 DataType convervalue = m_OnWriteConvert.run(value);
-//                write_stream(convervalue,m_cdr); 
-                write_stream(convervalue,m_cdr_little); 
-                write_stream(convervalue,m_cdr_big); 
+                write_stream(convervalue,m_cdr); 
             }
             else {
-//                write_stream(value,m_cdr);
-                write_stream(value,m_cdr_little); 
-                write_stream(value,m_cdr_big); 
+                write_stream(value,m_cdr);
             }
 
             boolean result = true;
             for (int i=0, len=conn_size; i < len; ++i) {
                 ReturnCode ret;
-//                ret = m_connectors.elementAt(i).write(m_cdr);
-                ret = m_connectors.elementAt(i).write(m_cdr_little,m_cdr_big);
+                ret = m_connectors.elementAt(i).write(m_cdr);
                 if (ret != ReturnCode.PORT_OK) {
                     result = false;
                     if (ret.equals(ReturnCode.CONNECTION_LOST)) {
@@ -394,7 +387,7 @@ public class OutPort<DataType> extends OutPortBase {
 
     private OnConnect m_OnConnect;
     private OnDisconnect m_OnDisconnect;
-//    private OutputStream m_cdr;
+    private OutputStream m_cdr;
     private OutputStream m_cdr_little;
     private OutputStream m_cdr_big;
 

@@ -107,6 +107,8 @@ public class OutPortCorbaProvider<DataType>
     }
     public void init(Properties prop) {
     }
+    public void setConnector(OutPortConnector connector){
+    }
 
     private BufferBase<DataType> m_buffer;
     private OutPortAny m_objref;

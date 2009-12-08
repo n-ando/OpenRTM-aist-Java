@@ -94,6 +94,8 @@ public class InPortTcpSockProvider<DataType>
 
     public void put(Any data) {
     }
+    public void setConnector(InPortConnector connector) {
+    }
 
 //    private TcpServer<DataType> m_server;
     private BufferBase<DataType> m_buffer;

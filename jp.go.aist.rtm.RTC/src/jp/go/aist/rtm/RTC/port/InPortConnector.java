@@ -90,6 +90,16 @@ public abstract class InPortConnector extends ConnectorBase {
     public void setEndian(String endian_type){
         m_endian = endian_type;
     }
+    /**
+     * <p> This value is true if the architecture is little-endian; false if it is big-endian.  </p>
+     * 
+     */
+    public boolean isLittleEndian(){
+        if(m_endian.equals("little")){
+            return true;
+        }
+        return false;
+    }
 
     /**
      *

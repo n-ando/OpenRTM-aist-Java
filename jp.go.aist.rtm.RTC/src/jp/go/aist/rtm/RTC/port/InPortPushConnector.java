@@ -80,10 +80,14 @@ public class InPortPushConnector extends InPortConnector {
             return ReturnCode.PRECONDITION_NOT_MET;
         }
         
-        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
-                                                    m_endian.equals("little"));
+//        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+//                                                    m_endian.equals("little"));
+        org.omg.CORBA.Any any = m_orb.create_any(); 
+        OutputStream cdr = any.create_output_stream();
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.read(dataref, 0, 0);
+        data.v = dataref.v.create_input_stream();
+/*
         if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
             cdr = (EncapsOutputStream)dataref.v;
             byte[] ch = cdr.toByteArray();
@@ -93,6 +97,7 @@ public class InPortPushConnector extends InPortConnector {
                                        m_endian.equals("little"),
                                        GIOPVersion.V1_2);
         }
+*/
         return convertReturn(ret);
     }
     /**

@@ -112,6 +112,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      */
     public OpenRTM.PortStatus put(byte[] data)
       throws SystemException {
+System.out.println("InPortCorbaCdrProvider.put");
 
         rtcout.println(rtcout.PARANOID, "put()");
 
@@ -128,9 +129,8 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         rtcout.println(rtcout.PARANOID, "received data size: "+data.length);
 
 
-        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb,true);
-//zxc
-//      EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb,false);
+        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb,m_connector.isLittleEndian());
+//        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb,true);
         cdr.write_octet_array(data, 0, data.length);
 
         int len = cdr.toByteArray().length;
@@ -240,6 +240,13 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
     }
 
     /**
+     * <p> setConnecotor </p>
+     * @param connector
+     */
+    public void setConnector(InPortConnector connector) {
+        m_connector = connector;
+    }
+    /**
      * <p>データタイプを設定します。</p>
      * 
      * @param dataType データタイプ
@@ -294,5 +301,5 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
     private OpenRTM.InPortCdr m_objref;
 
     private com.sun.corba.se.spi.orb.ORB m_spi_orb;
-
+    private InPortConnector m_connector;
 }

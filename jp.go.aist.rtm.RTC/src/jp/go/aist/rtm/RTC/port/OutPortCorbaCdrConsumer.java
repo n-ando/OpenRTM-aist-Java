@@ -244,9 +244,17 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
                     new OutPortCorbaCdrConsumer());
     
     }
+    /**
+     * <p> setConnecotor </p>
+     * @param connector
+     */
+    public void setConnector(InPortConnector connector) {
+        m_connector = connector;
+    }
 
     //    RTC::OutPortCdr_var m_outport;
     private BufferBase<OutputStream> m_buffer;
 
     private Logbuf rtcout;
+    private InPortConnector m_connector;
 }

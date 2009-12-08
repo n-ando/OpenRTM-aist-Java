@@ -42,15 +42,8 @@ public class OutPortPullConnector extends OutPortConnector {
      * @return ReturnCode
      *
      */
-//    public ReturnCode write(final OutputStream data) {
-    public ReturnCode write(final OutputStream data_little,final OutputStream data_big) {
-//        m_buffer.write(data);
-        if(m_endian.equals("little")){
-            m_buffer.write(data_little);
-        }
-        else{
-            m_buffer.write(data_big);
-        }
+    public ReturnCode write(final OutputStream data) {
+        m_buffer.write(data);
         return ReturnCode.PORT_OK;
     }
 

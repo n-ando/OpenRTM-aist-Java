@@ -121,6 +121,8 @@ public class InPortCorbaProvider<DataType>
 
     public void setBuffer(BufferBase<OutputStream> buffer) {
     }
+    public void setConnector(InPortConnector connector) {
+    }
 
     
     private BufferBase<DataType> m_buffer;

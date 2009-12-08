@@ -212,6 +212,7 @@ public class InPortBase extends PortBase {
             if (connector == null) {
                 return ReturnCode_t.RTC_ERROR;
             }
+            provider.setConnector(connector);
 
             rtcout.println(rtcout.DEBUG, 
                            "publishInterface() successfully finished.");
@@ -325,6 +326,7 @@ public class InPortBase extends PortBase {
             if (connector == null) {
                 return ReturnCode_t.RTC_ERROR;
             }
+            consumer.setConnector(connector);
 
             connector.setEndian(m_endian);
             rtcout.println(rtcout.DEBUG, 

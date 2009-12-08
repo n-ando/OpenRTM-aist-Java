@@ -84,6 +84,7 @@ public class OutPortPushConnector extends OutPortConnector {
 
         m_publisher.setConsumer(m_consumer);
         m_publisher.setBuffer(m_buffer);
+
     }
     /**
      * <p> Writing data </p>
@@ -96,22 +97,28 @@ public class OutPortPushConnector extends OutPortConnector {
      * @return ReturnCode
      *
      */
-//    public ReturnCode write(final OutputStream data) {
-    public ReturnCode write(final OutputStream data_little,final OutputStream data_big) {
+    public ReturnCode write(final OutputStream data) {
         rtcout.println(rtcout.TRACE, "write()");
-        InputStream in = data_little.create_input_stream();
+
+
+        InputStream in = data.create_input_stream();
         try {
             rtcout.println(rtcout.PARANOID, "data size = "+ in.available() +"byte");
         }
         catch(IOException  e ){
             rtcout.println(rtcout.PARANOID, "an I/O error occurs.");
         }
+
+
+        return m_publisher.write(data,0,0);
+/*
         if(m_endian.equals("little")){
             return m_publisher.write(data_little,0,0);
         }
         else{
             return m_publisher.write(data_big,0,0);
         }
+*/
 //        return m_publisher.write(data, 0, 0);
     }
 

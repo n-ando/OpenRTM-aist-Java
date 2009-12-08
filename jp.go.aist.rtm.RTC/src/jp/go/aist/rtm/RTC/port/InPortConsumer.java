@@ -63,5 +63,12 @@ public interface InPortConsumer {
      */
     public void publishInterfaceProfile(NVListHolder properties);
     
+    /**
+     * <p> setting Connector </p>
+     * 
+     * @param connector
+     */
+    public void setConnector(OutPortConnector connector);
+
 
 }

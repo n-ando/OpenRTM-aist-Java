@@ -254,6 +254,13 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
         return true;
     }
     /**
+     * <p> setConnecotor </p>
+     * @param connector
+     */
+    public void setConnector(OutPortConnector connector) {
+        m_connector = connector;
+    }
+    /**
      * <p>インタフェースプロフィールのポートタイプを設定します。</p>
      * 
      * @param portType ポートタイプ
@@ -315,4 +322,5 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
     private Logbuf rtcout;
     private BufferBase<InputStream> m_buffer;
     private OpenRTM.OutPortCdr m_objref;
+    private OutPortConnector m_connector;
 }

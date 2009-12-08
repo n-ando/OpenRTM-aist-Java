@@ -108,6 +108,8 @@ public class OutPortCorbaConsumer<DataType>
     public ReturnCode get(OutputStream data) {
         return ReturnCode.PORT_OK;
     }
+    public void setConnector(InPortConnector connector){
+    }
     
     private BufferBase<DataType> m_buffer;
     private TypeCast<DataType> TYPE_CAST;

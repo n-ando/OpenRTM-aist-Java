@@ -54,6 +54,9 @@ public class OutPortTcpSockProvider<DataType>
     public boolean publishInterface(NVListHolder properties) {
         return true;
     }
+    public void setConnector(OutPortConnector connector){
+        ;
+    }
     private BufferBase<DataType> m_buffer;
     private Class<DataType> DATA_TYPE_CLASS;
     private TypeCast<DataType> TYPE_CAST;

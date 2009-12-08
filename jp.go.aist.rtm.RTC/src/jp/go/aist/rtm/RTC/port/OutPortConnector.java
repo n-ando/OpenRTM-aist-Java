@@ -66,6 +66,16 @@ public abstract class OutPortConnector extends ConnectorBase {
         m_endian = endian_type;
     }
     /**
+     * <p> This value is true if the architecture is little-endian; false if it is big-endian.  </p>
+     * 
+     */
+    public boolean isLittleEndian(){
+        if(m_endian.equals("little")){
+            return true;
+        }
+        return false;
+    }
+    /**
      * <p> Disconnect connection </p>
      * <p> This operation disconnect this connection </p>
      *
@@ -84,8 +94,7 @@ public abstract class OutPortConnector extends ConnectorBase {
      * <p> The write function to write data from OutPort to Buffer </p>
      *
      */
-//    public abstract ReturnCode write(final OutputStream data);
-    public abstract ReturnCode write(final OutputStream data_little,final OutputStream data_big);
+    public abstract ReturnCode write(final OutputStream data);
 
     protected Logbuf rtcout;
     protected Profile m_profile;

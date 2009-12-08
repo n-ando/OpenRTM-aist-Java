@@ -57,6 +57,8 @@ public class OutPortProviderImpl extends OutPortCdrPOA implements OutPortProvide
     public OpenRTM.PortStatus get(final OpenRTM.CdrDataHolder data) {
          return OpenRTM.PortStatus.PORT_OK;
     }
+    public void setConnector(OutPortConnector connector){
+    }
     /**
      * <p>インタフェースプロフィールのポートタイプを設定します。</p>
      * 

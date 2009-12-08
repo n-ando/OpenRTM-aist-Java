@@ -441,6 +441,7 @@ public class OutPortBase extends PortBase {
             if (connector == null) {
                 return ReturnCode_t.RTC_ERROR;
             }
+            provider.setConnector(connector);
 
             rtcout.println(rtcout.DEBUG, 
                            "publishInterface() successfully finished.");
@@ -529,6 +530,7 @@ public class OutPortBase extends PortBase {
             if (connector == null) {
                 return ReturnCode_t.RTC_ERROR;
             }
+            consumer.setConnector(connector);
 
             rtcout.println(rtcout.DEBUG, 
                            "publishInterface() successfully finished.");

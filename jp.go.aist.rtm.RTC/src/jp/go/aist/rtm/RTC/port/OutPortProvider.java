@@ -55,4 +55,10 @@ public interface OutPortProvider {
      * @param buffer A pointer to a data buffer to be used by OutPortProvider
      */
     public void setBuffer(BufferBase<InputStream> buffer);
+    /**
+     * <p> setting Connector </p>
+     * 
+     * @param connector
+     */
+    public void setConnector(OutPortConnector connector);
 }

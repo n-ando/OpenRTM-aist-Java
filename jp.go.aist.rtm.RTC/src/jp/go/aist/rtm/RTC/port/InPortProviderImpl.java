@@ -104,6 +104,8 @@ public class InPortProviderImpl extends InPortCdrPOA implements InPortProvider {
 
     public void setBuffer(BufferBase<OutputStream> buffer) {
     }
+    public void setConnector(InPortConnector connector) {
+    }
     /**
      * <p>インタフェース情報を保持するオブジェクトです。</p>
      */

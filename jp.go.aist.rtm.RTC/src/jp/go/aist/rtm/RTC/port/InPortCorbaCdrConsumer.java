@@ -42,6 +42,8 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
         m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
         rtcout = new Logbuf("InPortCorbaCdrConsumer");
 //        rtcout.setLevel("PARANOID");
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        m_orb = ORBUtil.getOrb();
     }
     /**
      * <p> Initializing configuration </p>
@@ -61,11 +63,16 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
     public ReturnCode put(final OutputStream data) {
         rtcout.println(rtcout.PARANOID, "put");
         
-        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, true);
+        EncapsOutputStream cdr;
         cdr = (EncapsOutputStream)data;
+        byte[] ch = cdr.toByteArray();
+        EncapsOutputStream output_stream 
+            = new EncapsOutputStream(m_spi_orb, m_connector.isLittleEndian());
+        output_stream.write_octet_array(ch,0,ch.length);
 
         try {
-            OpenRTM.PortStatus ret = _ptr().put(cdr.toByteArray());
+//            OpenRTM.PortStatus ret = _ptr().put(cdr.toByteArray());
+            OpenRTM.PortStatus ret = _ptr().put(output_stream.toByteArray());
             return convertReturn(ret);
         }
         catch (Exception e) {
@@ -345,10 +352,19 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
                     new InPortCorbaCdrConsumer());
     
     }
+    /**
+     * <p> setConnecotor </p>
+     * @param connector
+     */
+    public void setConnector(OutPortConnector connector) {
+        m_connector = connector;
+    }
 
     private Logbuf rtcout;
     private Properties m_properties;
     private com.sun.corba.se.spi.orb.ORB m_spi_orb;
+    private OutPortConnector m_connector;
+    private ORB m_orb;
 
 }
 
