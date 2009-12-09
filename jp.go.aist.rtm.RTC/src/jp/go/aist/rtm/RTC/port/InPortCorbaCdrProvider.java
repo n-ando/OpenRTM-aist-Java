@@ -112,7 +112,6 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      */
     public OpenRTM.PortStatus put(byte[] data)
       throws SystemException {
-System.out.println("InPortCorbaCdrProvider.put");
 
         rtcout.println(rtcout.PARANOID, "put()");
 
@@ -130,7 +129,6 @@ System.out.println("InPortCorbaCdrProvider.put");
 
 
         EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb,m_connector.isLittleEndian());
-//        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb,true);
         cdr.write_octet_array(data, 0, data.length);
 
         int len = cdr.toByteArray().length;

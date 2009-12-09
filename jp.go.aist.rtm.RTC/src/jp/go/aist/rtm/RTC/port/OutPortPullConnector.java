@@ -3,7 +3,10 @@ package jp.go.aist.rtm.RTC.port;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
+
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 public class OutPortPullConnector extends OutPortConnector {
     /**
@@ -24,6 +27,7 @@ public class OutPortPullConnector extends OutPortConnector {
         super(profile);
         m_provider = provider;
         m_buffer = buffer;
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
     }
     public OutPortPullConnector(Profile profile,
                          OutPortProvider provider ) {
@@ -31,19 +35,23 @@ public class OutPortPullConnector extends OutPortConnector {
         BufferBase<OutputStream> buffer = null;
         m_provider = provider;
         m_buffer = buffer;
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
     }
     /**
      * <p> Writing data </p>
      * <p> This operation writes data into publisher and then the data </p>
      * <p> will be transferred to correspondent InPort. </p>
      *
-     * @param data_little
-     * @param data_big
+     * @param data
      * @return ReturnCode
      *
      */
-    public ReturnCode write(final OutputStream data) {
-        m_buffer.write(data);
+    public <DataType> ReturnCode write(final DataType data) {
+        rtcout.println(rtcout.TRACE, "write()");
+        OutPort out = (OutPort)m_outport;
+        OutputStream cdr 
+            = new EncapsOutputStream(m_spi_orb,m_endian.equals("little"));
+        m_buffer.write(cdr);
         return ReturnCode.PORT_OK;
     }
 
@@ -84,6 +92,11 @@ public class OutPortPullConnector extends OutPortConnector {
     } // do nothing
 
     /**
+     */
+    public void setOutPortBase(OutPortBase outportbase) {
+        m_outport = outportbase;
+    }
+    /**
      * <p> the pointer to the OutPortProvider </p>
      */
     protected OutPortProvider m_provider;
@@ -92,4 +105,6 @@ public class OutPortPullConnector extends OutPortConnector {
      * <p> the pointer to the buffer </p>
      */
     protected BufferBase<OutputStream> m_buffer;
+    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
+    private OutPortBase m_outport;
 }

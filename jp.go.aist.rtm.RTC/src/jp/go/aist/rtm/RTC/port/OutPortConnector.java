@@ -93,7 +93,11 @@ public abstract class OutPortConnector extends ConnectorBase {
      * <p> The write function to write data from OutPort to Buffer </p>
      *
      */
-    public abstract ReturnCode write(final OutputStream data);
+    public abstract <DataType> ReturnCode write(final DataType data);
+
+    /**
+     */
+    public abstract void setOutPortBase(OutPortBase outportbase); 
 
     protected Logbuf rtcout;
     protected Profile m_profile;

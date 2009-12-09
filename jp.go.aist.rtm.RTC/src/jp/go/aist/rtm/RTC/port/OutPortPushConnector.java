@@ -1,9 +1,13 @@
 package jp.go.aist.rtm.RTC.port;
 
+import org.omg.CORBA.portable.Streamable;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.InPortConsumerFactory;
@@ -15,6 +19,7 @@ import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherFactory;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 public class OutPortPushConnector extends OutPortConnector {
     /**
@@ -85,41 +90,27 @@ public class OutPortPushConnector extends OutPortConnector {
         m_publisher.setConsumer(m_consumer);
         m_publisher.setBuffer(m_buffer);
 
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        
+
     }
     /**
      * <p> Writing data </p>
      *
-     * <p> This operation writes data into publisher and then the data </p>
-     * <p> will be transferred to correspondent InPort. </p>
+     * <p> This operation writes data into publisher and then the data 
+     * will be transferred to correspondent InPort. </p>
      *
-     * @param data_little
-     * @param data_big
+     * @param data
      * @return ReturnCode
      *
      */
-    public ReturnCode write(final OutputStream data) {
+    public <DataType> ReturnCode write(final DataType data) {
         rtcout.println(rtcout.TRACE, "write()");
-
-
-        InputStream in = data.create_input_stream();
-        try {
-            rtcout.println(rtcout.PARANOID, "data size = "+ in.available() +"byte");
-        }
-        catch(IOException  e ){
-            rtcout.println(rtcout.PARANOID, "an I/O error occurs.");
-        }
-
-
-        return m_publisher.write(data,0,0);
-/*
-        if(m_endian.equals("little")){
-            return m_publisher.write(data_little,0,0);
-        }
-        else{
-            return m_publisher.write(data_big,0,0);
-        }
-*/
-//        return m_publisher.write(data, 0, 0);
+        OutPort out = (OutPort)m_outport;
+        OutputStream cdr 
+            = new EncapsOutputStream(m_spi_orb,m_endian.equals("little"));
+        out.write_stream(data,cdr); 
+        return m_publisher.write(cdr,0,0);
     }
 
     /**
@@ -180,6 +171,11 @@ public class OutPortPushConnector extends OutPortConnector {
     public BufferBase<OutputStream> getBuffer() {
         return m_buffer;
     }
+    /**
+     */
+    public void setOutPortBase(OutPortBase outportbase) {
+        m_outport = outportbase;
+    }
 
     /**
      * <p> Connector deactivation </p>
@@ -230,6 +226,10 @@ public class OutPortPushConnector extends OutPortConnector {
      * <p> the buffer </p>
      */
     private BufferBase<OutputStream> m_buffer;
+    private Streamable m_streamable = null;
+    private Field m_field = null;
+    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
+    private OutPortBase m_outport;
 
 }
 
