@@ -226,6 +226,8 @@ public class InPortBaseTest extends TestCase {
       }
   
   
+      public void setConnector(InPortConnector connector){
+      }
       /*!
        *
        *

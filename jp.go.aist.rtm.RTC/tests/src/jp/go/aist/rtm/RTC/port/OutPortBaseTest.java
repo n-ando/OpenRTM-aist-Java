@@ -99,6 +99,11 @@ public class OutPortBaseTest extends TestCase {
     protected BufferBase<OutputStream> createBuffer(Profile profile) {
       return new RingBufferMock();
     }
+    public <DataType> ReturnCode write(final DataType data) {
+        return ReturnCode.PORT_OK;
+    }
+    public void setOutPortBase(OutPortBase outportbase){
+    } 
 
   }
   class OutPortPullConnector extends OutPortConnector {
@@ -130,6 +135,11 @@ public class OutPortBaseTest extends TestCase {
     public void deactivate() {
     }
     public void activate() {
+    }
+    public void setOutPortBase(OutPortBase outportbase){
+    } 
+    public <DataType> ReturnCode write(final DataType data) {
+        return ReturnCode.PORT_OK;
     }
   }
 
