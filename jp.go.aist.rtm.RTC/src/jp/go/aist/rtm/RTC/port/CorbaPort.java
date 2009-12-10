@@ -270,7 +270,7 @@ public class CorbaPort extends PortBase {
         rtcout.println(rtcout.TRACE, "subscribeInterfaces()");
         final NVListHolder nv = new NVListHolder(connector_profile.value.properties);
 
-        ORB orb = Manager.instance().getORB();
+        ORB orb = ORBUtil.getOrb();
 
         // CORBA_SeqUtil.for_each(nv, new subscribe(this.m_consumers));
 	int len = this.m_consumers.size();
