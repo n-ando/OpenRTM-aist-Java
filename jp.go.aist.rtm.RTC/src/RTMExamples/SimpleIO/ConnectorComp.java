@@ -124,8 +124,8 @@ public class ConnectorComp {
         NVListHolder nvholder = new NVListHolder();
         nvholder.value = prof.properties;
         if( nvholder.value==null ) nvholder.value = new NameValue[0];
-        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.interface_type","CORBA_Any"));
-        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.dataflow_type", "Push"));
+        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.interface_type","corba_cdr"));
+        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.dataflow_type", "push"));
         CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.subscription_type", subs_type));
         
         if( !period.equals("") )

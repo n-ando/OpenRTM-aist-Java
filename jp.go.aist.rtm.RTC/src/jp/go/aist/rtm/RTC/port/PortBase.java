@@ -316,9 +316,14 @@ public abstract class PortBase extends PortServicePOA {
         Properties prop = new Properties();
         NVUtil.copyToProperties(prop,nvholder);
         if(null != prop.findNode("dataport")){
-            CORBA_SeqUtil.push_back(nvholder, 
-                NVUtil.newNV("dataport.serializer.cdr.endian", "little,big"));
-            connector_profile.value.properties = nvholder.value;
+            int index = 
+                NVUtil.find_index(nvholder,"dataport.serializer.cdr.endian");
+            if(index<0){
+                CORBA_SeqUtil.push_back(nvholder, 
+                    NVUtil.newNV("dataport.serializer.cdr.endian", 
+                                    "little,big"));
+                connector_profile.value.properties = nvholder.value;
+            }
         }
         
         try {
