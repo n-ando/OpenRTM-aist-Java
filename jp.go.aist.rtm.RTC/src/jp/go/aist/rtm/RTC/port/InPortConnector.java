@@ -24,7 +24,7 @@ public abstract class InPortConnector extends ConnectorBase {
         rtcout = new Logbuf("InPortConnector");
         m_profile = profile;
         m_buffer = buffer;
-        m_endian = "little";
+        m_isLittleEndian = true;
         m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
         m_orb = ORBUtil.getOrb();
     }
@@ -87,18 +87,15 @@ public abstract class InPortConnector extends ConnectorBase {
      * <p> This operation set this connector's endian type </p>
      *
      */
-    public void setEndian(String endian_type){
-        m_endian = endian_type;
+    public void setEndian(boolean isLittleEndian){
+        m_isLittleEndian = isLittleEndian;
     }
     /**
      * <p> This value is true if the architecture is little-endian; false if it is big-endian.  </p>
      * 
      */
     public boolean isLittleEndian(){
-        if(m_endian.equals("little")){
-            return true;
-        }
-        return false;
+        return m_isLittleEndian;
     }
 
     /**
@@ -108,13 +105,12 @@ public abstract class InPortConnector extends ConnectorBase {
      * <p> The read function to read data from buffer to InPort </p>
      *
      */
-//    public abstract ReturnCode read(DataRef<OutputStream> data);
     public abstract ReturnCode read(DataRef<InputStream> data);
 
     protected Logbuf rtcout;
     protected Profile m_profile;
     protected BufferBase<OutputStream> m_buffer;
-    protected String m_endian;
+    protected boolean m_isLittleEndian;
     protected com.sun.corba.se.spi.orb.ORB m_spi_orb;
     protected org.omg.CORBA.ORB m_orb;
 }

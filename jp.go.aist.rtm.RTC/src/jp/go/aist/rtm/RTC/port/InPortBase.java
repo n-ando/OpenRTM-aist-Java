@@ -48,7 +48,7 @@ public class InPortBase extends PortBase {
 
         m_singlebuffer = true;
         m_thebuffer = null;
-        m_endian = "little";
+        m_isLittleEndian = true;
         // Set PortProfile::properties
         addProperty("port.port_type", "DataInPort",String.class);
         addProperty("dataport.data_type", data_type,String.class);
@@ -272,17 +272,20 @@ public class InPortBase extends PortBase {
             if(str.length()==0){
                 return ReturnCode_t.UNSUPPORTED;
             }
-            if(str.equals("little")||str.equals("big")){
-                m_endian = str;
+            if(str.equals("little")){
+                m_isLittleEndian = true;
+            }
+            else if(str.equals("big")){
+                m_isLittleEndian = false;
             }
             else {
-                m_endian = "little";
+                m_isLittleEndian = true;
             }
        }
        catch(Exception e){
-            m_endian = "little";
+            m_isLittleEndian = true;
        }
-        rtcout.println(rtcout.TRACE, "endian = "+m_endian);
+        rtcout.println(rtcout.TRACE, "Little Endian = "+m_isLittleEndian);
 
         /*
          * Because properties of ConnectorProfileHolder was merged, 
@@ -302,7 +305,7 @@ public class InPortBase extends PortBase {
                 while (it.hasNext()) {
                     InPortConnector connector = (InPortConnector)it.next();
                     if (id.equals(connector.id())) {
-                        connector.setEndian(m_endian);
+                        connector.setEndian(m_isLittleEndian);
                         return ReturnCode_t.RTC_OK;
                     }
                 }
@@ -328,7 +331,7 @@ public class InPortBase extends PortBase {
             }
             consumer.setConnector(connector);
 
-            connector.setEndian(m_endian);
+            connector.setEndian(m_isLittleEndian);
             rtcout.println(rtcout.DEBUG, 
                            "publishInterface() successfully finished.");
             return ReturnCode_t.RTC_OK;
@@ -671,10 +674,7 @@ public class InPortBase extends PortBase {
      * 
      */
     public boolean isLittleEndian(){
-        if(m_endian.equals("little")){
-            return true;
-        }
-        return false;
+        return m_isLittleEndian;
     }
     protected boolean m_singlebuffer;
     protected BufferBase<OutputStream> m_thebuffer;
@@ -682,7 +682,7 @@ public class InPortBase extends PortBase {
     protected Vector<String> m_providerTypes = new Vector<String>();
     protected Vector<String> m_consumerTypes = new Vector<String>();
     protected Vector<InPortConnector> m_connectors = new Vector<InPortConnector>();
-    private String m_endian = new String();
+    private boolean m_isLittleEndian;
 }
 
 

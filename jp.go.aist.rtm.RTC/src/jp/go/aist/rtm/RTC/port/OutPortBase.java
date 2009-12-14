@@ -43,7 +43,7 @@ public class OutPortBase extends PortBase {
     public OutPortBase(final String name,final String data_type) {
 	super(name);
         this.m_name = name;
-        m_endian = "litlle";
+        m_isLittleEndian = true;
 
         rtcout.println(rtcout.PARANOID, "Port name: "+name);
         rtcout.println(rtcout.PARANOID, "setting port.port_type: DataOutPort");
@@ -498,17 +498,20 @@ public class OutPortBase extends PortBase {
             if(str.length()==0){
                 return ReturnCode_t.UNSUPPORTED;
             }
-            if(str.equals("little")||str.equals("big")){
-                m_endian = str;
+            if(str.equals("little")){
+                m_isLittleEndian = true;
+            }
+            else if(str.equals("big")){
+                m_isLittleEndian = false;
             }
             else {
-                m_endian = "little";
+                m_isLittleEndian = true;
             }
        }
        catch(Exception e){
-            m_endian = "little";
+            m_isLittleEndian = true;
        }
-        rtcout.println(rtcout.TRACE, "endian = "+m_endian);
+        rtcout.println(rtcout.TRACE, "Little Endian = "+m_isLittleEndian);
         /*
          * Because properties of ConnectorProfileHolder was merged, 
          * the accesses such as prop["dataflow_type"] and 
@@ -536,7 +539,7 @@ public class OutPortBase extends PortBase {
 
             rtcout.println(rtcout.DEBUG, 
                            "publishInterface() successfully finished.");
-            connector.setEndian(m_endian);
+            connector.setEndian(m_isLittleEndian);
             return ReturnCode_t.RTC_OK;
         }
         else if (dflow_type.equals("pull")) {
@@ -549,7 +552,7 @@ public class OutPortBase extends PortBase {
                 while (it.hasNext()) {
                     InPortConnector connector = (InPortConnector)it.next();
                     if (id.equals(connector.id())) {
-                        connector.setEndian(m_endian);
+                        connector.setEndian(m_isLittleEndian);
                         return ReturnCode_t.RTC_OK;
                     }
                 }
@@ -911,10 +914,7 @@ public class OutPortBase extends PortBase {
      * 
      */
     public boolean isLittleEndian(){
-        if(m_endian.equals("little")){
-            return true;
-        }
-        return false;
+        return m_isLittleEndian;
     }
     protected List<Publisher> m_publishers = new ArrayList<Publisher>();
     protected Properties m_properties = new Properties();
@@ -926,5 +926,5 @@ public class OutPortBase extends PortBase {
     protected Vector<OutPortProvider> m_providers 
         = new Vector<OutPortProvider>();
     
-    private String m_endian = new String();
+    private boolean m_isLittleEndian;
 }

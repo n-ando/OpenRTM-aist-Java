@@ -50,7 +50,7 @@ public class OutPortPullConnector extends OutPortConnector {
         rtcout.println(rtcout.TRACE, "write()");
         OutPort out = (OutPort)m_outport;
         OutputStream cdr 
-            = new EncapsOutputStream(m_spi_orb,m_endian.equals("little"));
+            = new EncapsOutputStream(m_spi_orb,m_isLittleEndian);
         m_buffer.write(cdr);
         return ReturnCode.PORT_OK;
     }

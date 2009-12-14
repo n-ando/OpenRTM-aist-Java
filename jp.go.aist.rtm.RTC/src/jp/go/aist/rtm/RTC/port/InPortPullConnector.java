@@ -31,7 +31,6 @@ public class InPortPullConnector extends InPortConnector {
         m_consumer = consumer;
 
         rtcout = new Logbuf("InPortPullConnector");
-//        rtcout.setLevel("PARANOID");
 
         if (buffer == null) {
             m_buffer = createBuffer(m_profile);
@@ -47,13 +46,12 @@ public class InPortPullConnector extends InPortConnector {
      * <p> The read function to read data from buffer to InPort </p>
      *
      */
-//    public ReturnCode read(DataRef<OutputStream> data){
     public ReturnCode read(DataRef<InputStream> data){
         if (m_buffer == null) {
             return ReturnCode.PORT_ERROR;
         }
         EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
-                                                    m_endian.equals("little"));
+                                                    m_isLittleEndian);
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
         m_buffer.read(dataref);
         data.v = dataref.v.create_input_stream();

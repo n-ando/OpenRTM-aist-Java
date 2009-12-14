@@ -108,7 +108,7 @@ public class OutPortPushConnector extends OutPortConnector {
         rtcout.println(rtcout.TRACE, "write()");
         OutPort out = (OutPort)m_outport;
         OutputStream cdr 
-            = new EncapsOutputStream(m_spi_orb,m_endian.equals("little"));
+            = new EncapsOutputStream(m_spi_orb,m_isLittleEndian);
         out.write_stream(data,cdr); 
         return m_publisher.write(cdr,0,0);
     }

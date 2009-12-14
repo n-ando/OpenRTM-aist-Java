@@ -22,7 +22,7 @@ public abstract class OutPortConnector extends ConnectorBase {
     public OutPortConnector(ConnectorBase.Profile profile) {
         rtcout = new Logbuf("OutPortConnector");
         m_profile = profile;
-        m_endian = "little";
+        m_isLittleEndian = true;
     }
 
     /**
@@ -61,18 +61,15 @@ public abstract class OutPortConnector extends ConnectorBase {
      * <p> This operation set this connector's endian type </p>
      *
      */
-    public void setEndian(String endian_type){
-        m_endian = endian_type;
+    public void setEndian(boolean isLittleEndian){
+        m_isLittleEndian = isLittleEndian;
     }
     /**
      * <p> This value is true if the architecture is little-endian; false if it is big-endian.  </p>
      * 
      */
     public boolean isLittleEndian(){
-        if(m_endian.equals("little")){
-            return true;
-        }
-        return false;
+        return m_isLittleEndian;
     }
     /**
      * <p> Disconnect connection </p>
@@ -101,6 +98,6 @@ public abstract class OutPortConnector extends ConnectorBase {
 
     protected Logbuf rtcout;
     protected Profile m_profile;
-    protected String m_endian;
+    protected boolean m_isLittleEndian;
 }
 
