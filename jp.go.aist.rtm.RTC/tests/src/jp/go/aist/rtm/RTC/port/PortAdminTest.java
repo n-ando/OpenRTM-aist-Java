@@ -7,8 +7,8 @@ import org.omg.PortableServer.POAManagerPackage.State;
 
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
-//import RTC.Port;
-//import RTC.PortListHolder;
+import RTC.PortService;
+import RTC.PortServiceListHolder;
 import RTC.PortProfile;
 import RTC.ReturnCode_t;
 
@@ -17,11 +17,66 @@ import jp.go.aist.rtm.RTC.port.PortBase;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import junit.framework.TestCase;
 
+import java.util.Vector;
+
 /**
  * <p>PortAdminのためのテストケースです。</p>
  */
 public class PortAdminTest extends TestCase {
 
+    class Logger {
+        public void log(final String msg) {
+            m_log.add(msg);
+        }
+		
+        public int countLog(final String msg) {
+            int count = 0;
+            for (int i = 0; i < (int) m_log.size(); ++i) {
+                if (m_log.elementAt(i) == msg) {
+                    ++count;
+                 }
+            }
+            return count;
+        }
+
+        public void clearLog() {
+            m_log.clear();
+        }
+        private Vector<String> m_log = new Vector<String>();
+    };
+
+    class PortMock extends PortBase {
+        protected ReturnCode_t publishInterfaces(ConnectorProfileHolder cprof) {
+            return ReturnCode_t.RTC_OK;
+        }
+        protected ReturnCode_t subscribeInterfaces(
+                 final ConnectorProfileHolder cprof) {
+            return ReturnCode_t.RTC_OK;
+        }
+        protected void
+        unsubscribeInterfaces(final ConnectorProfile connector_profile) {
+        }
+        public void activateInterfaces() {
+            if (m_logger != null) {
+                m_logger.log("PortMock::activateInterfaces");
+            }
+        }
+        public void deactivateInterfaces() {
+            if (m_logger != null) {
+                m_logger.log("PortMock::deactivateInterfaces");
+            }
+        }
+        /**
+         *
+         *
+         */
+        public void setLogger(Logger logger) {
+            m_logger = logger;
+        }
+
+        private Logger m_logger;
+  
+    };
     private class OrbRunner implements Runnable {
 
         private final String[] ARGS = new String[] {
@@ -126,10 +181,38 @@ public class PortAdminTest extends TestCase {
      * </p>
      */
     public void test_getPortList() {
-/*
-        
+
+        {        
+        ORB _orb = m_orbRunner.getORB();
+        POA _poa = m_orbRunner.getPOA();
+        PortAdmin portAdmin = new PortAdmin(_orb, _poa);
+			
+        //
+        PortMock port0 = new PortMock();
+        port0.setName("port0");
+        portAdmin.registerPort(port0);
+
+        PortMock port1 = new PortMock();
+        port1.setName("port1");
+        portAdmin.registerPort(port1);
+			
+        //
+        RTC.PortServiceListHolder portList = portAdmin.getPortServiceList();
+			
+        //
+        RTC.PortProfile portProf0 = portList.value[0].get_port_profile();
+        assertTrue(portProf0 != null);
+        assertTrue(portProf0.name.equals("port0"));
+			
+        RTC.PortProfile portProf1 = portList.value[1].get_port_profile();
+        assertTrue(portProf1 != null);
+        assertTrue(portProf1.name.equals("port1"));
+        portAdmin.deletePort(port1);
+        portAdmin.deletePort(port0);
+        }
+
         // Portリストを取得する
-        PortListHolder getPList = this.m_ppadm.getPortList();
+        PortServiceListHolder getPList = this.m_ppadm.getPortList();
 
         // リスト内の1番目のPortに対して、プロファイルを正しく取得できることを確認する
         PortProfile getProf0 = getPList.value[0].get_port_profile();
@@ -138,7 +221,6 @@ public class PortAdminTest extends TestCase {
         // リスト内の2番目のPortに対して、プロファイルを正しく取得できることを確認する
         PortProfile getProf1 = getPList.value[1].get_port_profile();
         assertEquals("port1", getProf1.name);
-*/
     }
 
     /**
@@ -149,10 +231,37 @@ public class PortAdminTest extends TestCase {
      * </p>
      */
     public void test_getPortRef() {
-/*
         
+        {
+        ORB _orb = m_orbRunner.getORB();
+        POA _poa = m_orbRunner.getPOA();
+        PortAdmin portAdmin = new PortAdmin(_orb, _poa);
+			
+        //
+        PortMock port0 = new PortMock();
+        port0.setName("port0");
+        portAdmin.registerPort(port0);
+  
+        PortMock port1 = new PortMock();
+        port1.setName("port1");
+        portAdmin.registerPort(port1);
+			
+        //
+        RTC.PortService portRef0 = portAdmin.getPortRef("port0");
+        assertTrue(portRef0!=null);
+        RTC.PortProfile portProf0 = portRef0.get_port_profile();
+        assertTrue(portProf0.name.equals("port0"));
+
+        RTC.PortService portRef1 = portAdmin.getPortRef("port1");
+        assertTrue(portRef1 != null);
+        RTC.PortProfile portProf1 = portRef1.get_port_profile();
+        assertTrue(portProf1.name.equals("port1"));
+			
+        //
+        assertTrue(portAdmin.getPortRef("inexist")==null);
+        }
         // ポート名"port1"のPortを取得できるはず
-        Port port1 = this.m_ppadm.getPortRef("port1");
+        PortService port1 = this.m_ppadm.getPortRef("port1");
         assertNotNull(port1);
 
         // 取得されたPortに対して、プロファイルを正しく取得できることを確認する
@@ -160,13 +269,12 @@ public class PortAdminTest extends TestCase {
         assertEquals("port1", prof1.name);
 
         // ポート名"port0"のPortを取得できるはず
-        Port port0 = this.m_ppadm.getPortRef("port0");
+        PortService port0 = this.m_ppadm.getPortRef("port0");
         assertNotNull(port0);
 
         // 取得されたPortに対して、プロファイルを正しく取得できることを確認する
         PortProfile prof0 = port0.get_port_profile();
         assertEquals("port0", prof0.name);
-*/
     }
 
     /**
@@ -194,6 +302,29 @@ public class PortAdminTest extends TestCase {
      */
     public void test_getPort() {
         
+        {
+        ORB _orb = m_orbRunner.getORB();
+        POA _poa = m_orbRunner.getPOA();
+        PortAdmin portAdmin = new PortAdmin(_orb, _poa);
+			
+        //
+        PortMock port0 = new PortMock();
+        port0.setName("port0");
+        portAdmin.registerPort(port0);
+
+        PortMock port1 = new PortMock();
+        port1.setName("port1");
+        portAdmin.registerPort(port1);
+
+        //
+        PortBase portRet0 = portAdmin.getPort("port0");
+        RTC.PortProfile portProf0 = portRet0.get_port_profile();
+        assertTrue(portProf0.name.equals("port0"));
+
+        PortBase portRet1 = portAdmin.getPort("port1");
+        RTC.PortProfile portProf1 = portRet1.get_port_profile();
+        assertTrue(portProf1.name.equals("port1"));
+        }
         // ポート名"port1"で、Portサーバントを取得する
         PortBase portServant1 = this.m_ppadm.getPort("port1");
         
@@ -218,16 +349,44 @@ public class PortAdminTest extends TestCase {
      * </p>
      */
     public void test_deletePort() {
-/*
   
+        {
+        ORB _orb = m_orbRunner.getORB();
+        POA _poa = m_orbRunner.getPOA();
+        PortAdmin portAdmin = new PortAdmin(_orb, _poa);
+			
+        //
+        PortMock port0 = new PortMock();
+        port0.setName("port0");
+        portAdmin.registerPort(port0);
+
+        PortMock port1 = new PortMock();
+        port1.setName("port1");
+        portAdmin.registerPort(port1);
+
+        //
+        portAdmin.deletePort(port0);
+			
+        //
+        RTC.PortServiceListHolder portList = portAdmin.getPortServiceList();
+			
+        //
+        assertEquals(1, portList.value.length);
+        RTC.PortProfile portProf1 = portList.value[0].get_port_profile();
+        assertTrue(portProf1.name.equals("port1"));
+			
+        //
+        final RTC.PortProfile portProf0 = port0.getProfile();
+        assertTrue(portProf0.port_ref==null);
+        }
         // Portリストを取得して、現在のポート数を取得しておく
-        PortListHolder portListPre = this.m_ppadm.getPortList();
+        PortServiceListHolder portListPre = this.m_ppadm.getPortList();
 
         // 登録されているPort群のうち、１つを登録解除する
         this.m_ppadm.deletePort(this.m_ppb2);
 
         // Portリストを取得して、ポート数が意図どおりに１つ減っていることを確認する
-        PortListHolder portListPost = this.m_ppadm.getPortList();
+        PortServiceListHolder portListPost = this.m_ppadm.getPortList();
         assertEquals(portListPre.value.length - 1, portListPost.value.length);
 
         // 登録解除していないPortが、正しく残っていることを確認する
@@ -241,7 +400,6 @@ public class PortAdminTest extends TestCase {
             
         } catch (Exception expected) {
         }
-*/
     }
     
     /**
@@ -253,10 +411,38 @@ public class PortAdminTest extends TestCase {
      * </p>
      */
     public void test_deletePortByName() {
-/*
         
+        {
+        ORB _orb = m_orbRunner.getORB();
+        POA _poa = m_orbRunner.getPOA();
+        PortAdmin portAdmin = new PortAdmin(_orb, _poa);
+			
+        //
+        PortMock port0 = new PortMock();
+        port0.setName("port0");
+        portAdmin.registerPort(port0);
+
+        PortMock port1 = new PortMock();
+        port1.setName("port1");
+        portAdmin.registerPort(port1);
+
+        //
+        portAdmin.deletePortByName("port0");
+			
+        //
+        RTC.PortServiceListHolder portList = portAdmin.getPortServiceList();
+			
+        //
+        assertEquals(1, portList.value.length);
+        RTC.PortProfile portProf1 = portList.value[0].get_port_profile();
+        assertTrue(portProf1.name.equals("port1"));
+			
+        //
+        final RTC.PortProfile portProf0 = port0.getProfile();
+        assertTrue(portProf0.port_ref==null);
+        }
         // (1) getPortList()にてPortListを取得し登録されているPortの数を確認
-        PortListHolder getPList = this.m_ppadm.getPortList();
+        PortServiceListHolder getPList = this.m_ppadm.getPortList();
         assertEquals(2, getPList.value.length);
 
         this.m_ppadm.deletePortByName("port1");
@@ -264,7 +450,6 @@ public class PortAdminTest extends TestCase {
         // (2) getPortList()にてPortListを取得し登録されているPortの数を確認
         getPList = this.m_ppadm.getPortList();
         assertEquals(1, getPList.value.length);
-*/
     }
     
     /**
@@ -276,10 +461,38 @@ public class PortAdminTest extends TestCase {
      * </p>
      */
     public void test_finalizePorts() {
-/*
         
+        {
+        ORB _orb = m_orbRunner.getORB();
+        POA _poa = m_orbRunner.getPOA();
+        PortAdmin portAdmin = new PortAdmin(_orb, _poa);
+			
+        //
+        PortMock port0 = new PortMock();
+        port0.setName("port0");
+        portAdmin.registerPort(port0);
+
+        PortMock port1 = new PortMock();
+        port1.setName("port1");
+        portAdmin.registerPort(port1);
+
+        //
+        portAdmin.finalizePorts();
+			
+        //
+        RTC.PortServiceListHolder portList = portAdmin.getPortServiceList();
+			
+        //
+        assertEquals(0, portList.value.length);
+			
+        //
+        final RTC.PortProfile portProf0 = port0.getProfile();
+        assertTrue(portProf0.port_ref==null);
+        final RTC.PortProfile portProf1 = port1.getProfile();
+        assertTrue(portProf1.port_ref==null);
+        }
         // (1) getPortList()にてPortListを取得し登録されているPortの数を確認
-        PortListHolder getPList = this.m_ppadm.getPortList();
+        PortServiceListHolder getPList = this.m_ppadm.getPortList();
         assertEquals(2, getPList.value.length);
 
         // (2) finalizePorts()の呼び出し
@@ -288,6 +501,38 @@ public class PortAdminTest extends TestCase {
         // (3) getPortList()にてPortListを取得し登録されているPortの数を確認
         getPList = this.m_ppadm.getPortList();
         assertEquals(0, getPList.value.length);
-*/
+    }
+    public void test_activatePorts() {
+      ORB _orb = m_orbRunner.getORB();
+      POA _poa = m_orbRunner.getPOA();
+      
+      PortAdmin portAdmin = new PortAdmin(_orb, _poa);
+
+      Logger logger = new Logger();
+      //
+      PortMock port0 = new PortMock();
+      port0.setName("port0");
+      port0.setLogger(logger);
+      portAdmin.registerPort(port0);
+
+      PortMock port1 = new PortMock();
+      port1.setName("port1");
+      port1.setLogger(logger);
+      portAdmin.registerPort(port1);
+
+      assertEquals(0,logger.countLog("PortMock::activateInterfaces"));
+      portAdmin.activatePorts();
+      assertEquals(2,logger.countLog("PortMock::activateInterfaces"));
+
+      assertEquals(0,logger.countLog("PortMock::deactivateInterfaces"));
+      portAdmin.deactivatePorts();
+      assertEquals(2,logger.countLog("PortMock::deactivateInterfaces"));
+
+      try{
+          _poa.deactivate_object(_poa.servant_to_id(port0));
+          _poa.deactivate_object(_poa.servant_to_id(port1));
+      }
+      catch(Exception ex){
+      }
     }
 }
