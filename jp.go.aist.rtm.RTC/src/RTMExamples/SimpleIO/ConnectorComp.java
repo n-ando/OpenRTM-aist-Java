@@ -27,7 +27,7 @@ public class ConnectorComp {
 
     public static void main(String[] args) {
         
-        String subs_type = "";
+        String subs_type = "flush";
         String period = "";
         for( int intIdx=1;intIdx<args.length;++intIdx ) {
             String arg = new String(args[intIdx]);
@@ -119,17 +119,24 @@ public class ConnectorComp {
         prof.connector_id = "";
         prof.name = "connector0";
         prof.ports = new PortService[2];
+if(pin.value[0]==null){
+System.out.println("in is null");
+}
+if(pout.value[0]==null){
+System.out.println("in is null");
+}
         prof.ports[0] = pin.value[0];
         prof.ports[1] = pout.value[0];
         NVListHolder nvholder = new NVListHolder();
         nvholder.value = prof.properties;
         if( nvholder.value==null ) nvholder.value = new NameValue[0];
-        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.interface_type","corba_cdr"));
-        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.dataflow_type", "push"));
-        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.subscription_type", subs_type));
+        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNVString("dataport.interface_type","corba_cdr"));
+        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNVString("dataport.dataflow_type", "push"));
+        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNVString("dataport.subscription_type", subs_type));
+//        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNVString("dataport.serializer.cdr.endian", "big"));
         
         if( !period.equals("") )
-            CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.push_interval", period));
+            CORBA_SeqUtil.push_back(nvholder, NVUtil.newNVString("dataport.push_interval", period));
         prof.properties = nvholder.value;
         
         ConnectorProfileHolder proflist = new ConnectorProfileHolder();
@@ -141,6 +148,7 @@ public class ConnectorComp {
         System.out.println( "Connector ID: " + prof.connector_id );
         NVUtil.dump(new NVListHolder(proflist.value.properties));
 
+        System.out.println("..");
         orb.destroy();
     }
 
