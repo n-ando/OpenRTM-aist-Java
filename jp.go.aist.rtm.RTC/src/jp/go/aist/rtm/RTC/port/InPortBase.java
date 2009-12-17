@@ -179,11 +179,8 @@ public class InPortBase extends PortBase {
                     }
                 }
             }
-//            prop.setProperty("serializer.cdr.endian",endian_type);
             int index = NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
             holder.value[index].value.insert_string(endian_type);
-//            CORBA_SeqUtil.push_back(holder, 
-//                NVUtil.newNV("dataport.serializer.cdr.endian", endian_type));
             cprof.value.properties = holder.value;
        }
        catch(Exception e){

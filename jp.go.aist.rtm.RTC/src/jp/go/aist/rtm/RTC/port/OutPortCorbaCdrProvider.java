@@ -48,7 +48,6 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
     public OutPortCorbaCdrProvider() {
         m_buffer = null;
         rtcout = new Logbuf("OutPortCorbaCdrProvider");
-//        rtcout.setLevel("PARANOID");
         // PortProfile setting
         setInterfaceType("corba_cdr");
     
@@ -59,7 +58,7 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
         ORB orb = ORBUtil.getOrb();
         CORBA_SeqUtil.
         push_back(m_properties,
-                  NVUtil.newNV("dataport.corba_cdr.outport_ior",
+                  NVUtil.newNVString("dataport.corba_cdr.outport_ior",
                               orb.object_to_string(m_objref)));
         CORBA_SeqUtil.
         push_back(m_properties,

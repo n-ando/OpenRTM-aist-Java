@@ -320,7 +320,7 @@ public abstract class PortBase extends PortServicePOA {
                 NVUtil.find_index(nvholder,"dataport.serializer.cdr.endian");
             if(index<0){
                 CORBA_SeqUtil.push_back(nvholder, 
-                    NVUtil.newNV("dataport.serializer.cdr.endian", 
+                    NVUtil.newNVString("dataport.serializer.cdr.endian", 
                                     "little,big"));
                 connector_profile.value.properties = nvholder.value;
             }

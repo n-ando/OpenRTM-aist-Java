@@ -60,7 +60,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         // set InPort's reference
         ORB orb = ORBUtil.getOrb();
         CORBA_SeqUtil.push_back(m_properties,
-                NVUtil.newNV("dataport.corba_cdr.inport_ior",
+                NVUtil.newNVString("dataport.corba_cdr.inport_ior",
                               orb.object_to_string(m_objref)));
         CORBA_SeqUtil.push_back(m_properties,
                 NVUtil.newNV("dataport.corba_cdr.inport_ref",
