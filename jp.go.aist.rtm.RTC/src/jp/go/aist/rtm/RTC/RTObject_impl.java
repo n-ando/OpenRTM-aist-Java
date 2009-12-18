@@ -1520,8 +1520,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerPort(PortBase)");
 
-        m_portAdmin.registerPort(port);
         port.setOwner(this.getObjRef());
+        m_portAdmin.registerPort(port);
         return;
     }
 

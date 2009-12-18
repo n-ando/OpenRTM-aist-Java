@@ -176,8 +176,9 @@ public class PortAdmin {
             // port.disconnect_all();
             // port.shutdown();
 
-            final String tmp = port.get_port_profile().name;
-            CORBA_SeqUtil.erase_if(m_portRefs, new find_port_name(tmp));
+            // final String tmp = port.get_port_profile().name;
+            // CORBA_SeqUtil.erase_if(m_portRefs, new find_port_name(tmp));
+            CORBA_SeqUtil.erase_if(m_portRefs, new find_port(port));
 
             // m_pPOA.deactivate_object(m_pPOA.servant_to_id(port));
             // port.setPortRef(null);
@@ -186,7 +187,7 @@ public class PortAdmin {
         } catch(Exception ignored) {
             ignored.printStackTrace();
         }
-  }
+    }
 
     /**
      * <p>指定されたポート名を持つPortサーバントの登録を解除します。</p>
@@ -232,6 +233,19 @@ public class PortAdmin {
         }
         
         public String m_name;
+    }
+    
+    protected class find_port implements equalFunctor {
+        
+        public find_port(final PortService port ) {
+            this.m_port = port;
+        }
+
+        public boolean equalof(Object element) {
+            return m_port._is_equivalent((PortService)element);
+        }
+        
+        public PortService m_port;
     }
     
     // サーバントを直接格納するオブジェクトマネージャ
