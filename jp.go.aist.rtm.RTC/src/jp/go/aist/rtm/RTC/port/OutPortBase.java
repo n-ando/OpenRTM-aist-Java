@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Observer;
 
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
@@ -127,11 +128,11 @@ public class OutPortBase extends PortBase {
      *
      * @return connector list
      */
-    public Vector<ConnectorBase.Profile> getConnectorProfiles(){
+    public Vector<ConnectorBase.ConnectorInfo> getConnectorProfiles(){
         rtcout.println(rtcout.TRACE, 
                        "getConnectorProfiles(): size = "+m_connectors.size());
-        Vector<ConnectorBase.Profile> profs 
-            = new Vector<ConnectorBase.Profile>();
+        Vector<ConnectorBase.ConnectorInfo> profs 
+            = new Vector<ConnectorBase.ConnectorInfo>();
         synchronized (m_connectors){
             for (int i=0, len=m_connectors.size(); i < len; ++i) {
                 profs.add(m_connectors.elementAt(i).profile());
@@ -187,7 +188,7 @@ public class OutPortBase extends PortBase {
      *
      */
     public boolean getConnectorProfileById(final String id,
-                                 ConnectorBase.ProfileHolder profh) {
+                                 ConnectorBase.ConnectorInfoHolder profh) {
         rtcout.println(rtcout.TRACE, 
                        "getConnectorProfileById(id = "+id+")");
 
@@ -213,7 +214,7 @@ public class OutPortBase extends PortBase {
      *
      */
     public boolean getConnectorProfileByName(final String name,
-                                   ConnectorBase.ProfileHolder profh) {
+                                   ConnectorBase.ConnectorInfoHolder profh) {
         rtcout.println(rtcout.TRACE, 
                        "getConnectorProfileByNmae(name = "+name+")");
 
@@ -724,6 +725,64 @@ public class OutPortBase extends PortBase {
             }
         }
   }
+
+    /**
+     * <p> Adding BufferDataListener type listener </p>
+     */
+    public void addConnectorDataListener(int type,
+                             Observer listener,
+                             boolean autoclean) {
+        rtcout.println(rtcout.TRACE, "addConnectorDataListener()");
+  
+        if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
+            m_listeners.connectorData_[type].addObserver(listener);
+         }
+    }
+    public void addConnectorDataListener(int type,Observer listener) {
+        this.addConnectorDataListener(type,listener,true);
+    }
+
+    /**
+     * <p> Removing ConnectorDataListener type listener <p>
+     */
+    public void removeConnectorDataListener(int type,
+                                Observer listener) {
+        rtcout.println(rtcout.TRACE, "removeConnectorDataListener()");
+
+        if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
+            m_listeners.connectorData_[type].deleteObserver(listener);
+        }
+    }
+  
+    /**
+     * <p> Adding ConnectorListener type listener </p>
+     */
+    public void addConnectorListener(int type,
+                                           Observer listener,
+                                           boolean autoclean) {
+        rtcout.println(rtcout.TRACE,"addConnectorListener()");
+  
+        if (type < ConnectorListenerType.CONNECTOR_LISTENER_NUM) {
+            m_listeners.connector_[type].addObserver(listener);
+        }
+    }
+    
+    /**
+     * <p> Removing ConnectorListener type listener </p>
+     *
+     */
+    public void removeConnectorListener(int type,
+                                              Observer listener) {
+        rtcout.println(rtcout.TRACE,"removeConnectorListener()");
+  
+        if (type < ConnectorListenerType.CONNECTOR_LISTENER_NUM) {
+            m_listeners.connector_[type].deleteObserver(listener);
+        }
+    }
+  
+  
+  
+  
     /**
      * <p>データ更新通知先として登録されているPublisherオブジェクトのリストです。</p>
      */
@@ -939,8 +998,8 @@ public class OutPortBase extends PortBase {
     createConnector(final ConnectorProfileHolder cprof,
                                       Properties prop,
                                       InPortConsumer consumer) {
-        ConnectorBase.Profile profile 
-            = new ConnectorBase.Profile( cprof.value.name,
+        ConnectorBase.ConnectorInfo profile 
+            = new ConnectorBase.ConnectorInfo( cprof.value.name,
                                   cprof.value.connector_id,
                                   CORBA_SeqUtil.refToVstring(cprof.value.ports),
                                   prop); 
@@ -948,7 +1007,7 @@ public class OutPortBase extends PortBase {
         synchronized (m_connectors){
             try {
                 BufferBase<OutputStream> buffer = null;
-                connector = new OutPortPushConnector(profile, consumer, buffer);
+                connector = new OutPortPushConnector(profile, consumer, m_listeners, buffer);
 
                 if (connector == null) {
                     rtcout.println(rtcout.ERROR, 
@@ -976,8 +1035,8 @@ public class OutPortBase extends PortBase {
     createConnector(final ConnectorProfileHolder cprof,
                                       Properties prop,
                                       OutPortProvider provider) {
-        ConnectorBase.Profile profile 
-            = new ConnectorBase.Profile(cprof.value.name,
+        ConnectorBase.ConnectorInfo profile 
+            = new ConnectorBase.ConnectorInfo(cprof.value.name,
                                  cprof.value.connector_id,
                                  CORBA_SeqUtil.refToVstring(cprof.value.ports),
                                  prop); 
@@ -1023,4 +1082,5 @@ public class OutPortBase extends PortBase {
         = new Vector<OutPortProvider>();
     
     private boolean m_isLittleEndian;
+    protected ConnectorListeners m_listeners = new ConnectorListeners();
 }

@@ -82,4 +82,6 @@ public interface OutPortConsumer {
      * @param connector
      */
     public void setConnector(InPortConnector connector);
+    public void setListener(ConnectorBase.ConnectorInfo info, 
+                            ConnectorListeners listeners);
 }

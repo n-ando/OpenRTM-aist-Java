@@ -28,10 +28,12 @@ public class InPortPushConnector extends InPortConnector {
      * @param buffer
      *
      */
-    public InPortPushConnector(Profile profile, InPortProvider provider,
+    public InPortPushConnector(ConnectorInfo profile, InPortProvider provider,
+                        ConnectorListeners listeners,
                         BufferBase<OutputStream> buffer) throws Exception {
         super(profile, buffer);
         m_provider = provider;
+        m_listeners = listeners; 
         if (buffer == null ) {
             m_deleteBuffer = true;
         }
@@ -56,6 +58,11 @@ public class InPortPushConnector extends InPortConnector {
 
         m_provider.init(profile.properties);
         m_provider.setBuffer(m_buffer);
+        m_provider.setListener(profile, m_listeners);
+    }
+    public void setListener(ConnectorInfo profile, 
+                            ConnectorListeners listeners){
+        m_provider.setListener(profile, m_listeners);
     }
     /**
      *
@@ -66,7 +73,6 @@ public class InPortPushConnector extends InPortConnector {
      * @param data
      * @return ReturnCode
      */
-//    public ReturnCode read(DataRef<OutputStream> data) {
     public ReturnCode read(DataRef<InputStream> data) {
         rtcout.println(rtcout.TRACE, "read()");
         /*
@@ -80,24 +86,11 @@ public class InPortPushConnector extends InPortConnector {
             return ReturnCode.PRECONDITION_NOT_MET;
         }
         
-//        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
-//                                                    m_endian.equals("little"));
         org.omg.CORBA.Any any = m_orb.create_any(); 
         OutputStream cdr = any.create_output_stream();
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.read(dataref, 0, 0);
         data.v = dataref.v.create_input_stream();
-/*
-        if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
-            cdr = (EncapsOutputStream)dataref.v;
-            byte[] ch = cdr.toByteArray();
-            data.v = new EncapsInputStream(m_orb, 
-                                       ch, 
-                                       ch.length,
-                                       m_endian.equals("little"),
-                                       GIOPVersion.V1_2);
-        }
-*/
         return convertReturn(ret);
     }
     /**
@@ -133,7 +126,7 @@ public class InPortPushConnector extends InPortConnector {
     /*!
      * @brief create buffer
      */
-    protected BufferBase<OutputStream> createBuffer(Profile profile) {
+    protected BufferBase<OutputStream> createBuffer(ConnectorInfo profile) {
         String buf_type;
         buf_type = profile.properties.getProperty("buffer_type",
                                               "ring_buffer");
@@ -166,5 +159,9 @@ public class InPortPushConnector extends InPortConnector {
 
     private boolean m_deleteBuffer;
 
+    /**
+     * <p> A reference to a ConnectorListener </p>
+     */
+    private ConnectorListeners m_listeners;
 
 }

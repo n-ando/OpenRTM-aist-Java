@@ -128,14 +128,15 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         rtcout.println(rtcout.PARANOID, "received data size: "+data.length);
 
 
-        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb,m_connector.isLittleEndian());
+        EncapsOutputStream cdr 
+            = new EncapsOutputStream(m_spi_orb,m_connector.isLittleEndian());
         cdr.write_octet_array(data, 0, data.length);
 
         int len = cdr.toByteArray().length;
         rtcout.println(rtcout.PARANOID, "converted CDR data size: "+len);
 
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
-        return convertReturn(ret);
+        return convertReturn(ret,cdr);
     }
 
     public OpenRTM.PortStatus put(final OpenRTM.CdrDataHolder data)
@@ -147,15 +148,19 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      * <p> convertReturn </p>
      *
      */
-    protected OpenRTM.PortStatus convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status) {
+    protected OpenRTM.PortStatus 
+    convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status,
+                  final EncapsOutputStream data) {
         switch (status) {
             case BUFFER_OK:
+                onBufferWrite(data);
                 return OpenRTM.PortStatus.from_int(0);
             case BUFFER_EMPTY:
                 return OpenRTM.PortStatus.from_int(3);
             case TIMEOUT:
                 return OpenRTM.PortStatus.from_int(4);
             case PRECONDITION_NOT_MET:
+                onReceiverError(data);
                 return OpenRTM.PortStatus.from_int(1);
             default:
                 return OpenRTM.PortStatus.from_int(5);
@@ -181,7 +186,8 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      */
     public void destructor_(Object obj) {
         try{
-            byte[] oid = _default_POA().servant_to_id((InPortCorbaCdrProvider)obj);
+            byte[] oid 
+                = _default_POA().servant_to_id((InPortCorbaCdrProvider)obj);
             _default_POA().deactivate_object(oid);
         }
         catch(Exception e){
@@ -237,6 +243,11 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
 
     }
 
+    public void setListener(ConnectorBase.ConnectorInfo info, 
+                            ConnectorListeners listeners) {
+        m_profile = info;
+        m_listeners = listeners;
+    }
     /**
      * <p> setConnecotor </p>
      * @param connector
@@ -279,9 +290,76 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      * @param subscriptionType サブスクリプションタイプ
      */
     protected void setSubscriptionType(final String subscriptionType) {
-        rtcout.println(rtcout.TRACE, "setSubscriptionType("+subscriptionType+")");
+        rtcout.println(rtcout.TRACE,
+                       "setSubscriptionType("+subscriptionType+")");
         this.m_subscriptionType = subscriptionType;
     }
+
+    /**
+     * <p> Connector data listener functions </p>
+     */
+    private void onBufferWrite(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
+    }
+
+    private void onBufferFull(final OutputStream data) {
+      m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_FULL].notify(m_profile, data);
+    }
+
+    private void onBufferWriteTimeout(final OutputStream data) {
+      m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT].notify(m_profile, data);
+    }
+
+    private void onBufferWriteOverwrite(final OutputStream data) {
+      m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
+    }
+
+//    private void onBufferRead(final OutputStream data) {
+//      m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
+//    }
+
+//    private void onSend(final OutputStream data) {
+//      m_listeners.connectorData_[ConnectorDataListenerType.ON_SEND].notify(m_profile, data);
+//    }
+
+    private void onReceived(final OutputStream data) {
+      m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
+    }
+
+    private void onReceiverFull(final OutputStream data) {
+      m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
+    }
+
+    private void onReceiverTimeout(final OutputStream data) {
+      m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_TIMEOUT].notify(m_profile, data);
+    }
+
+    private void onReceiverError(final OutputStream data) {
+      m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_ERROR].notify(m_profile, data);
+    }
+
+    /**
+     * <p> Connector listener functions </p>
+     */
+//    private void onBufferEmpty() {
+//      m_listeners.connector_[ConnectorDataListenerType.ON_BUFFER_EMPTY].notify(m_profile);
+//    }
+
+//    privaet void onBufferReadTimeout(){
+//      m_listeners.connector_[ConnectorDataListenerType.ON_BUFFER_READ_TIMEOUT].notify(m_profile);
+//    }
+
+//    privaet void onSenderEmpty() {
+//      m_listeners.connector_[ConnectorDataListenerType.ON_SENDER_EMPTY].notify(m_profile);
+//    }
+
+//    privaet void onSenderTimeout() {
+//      m_listeners.connector_[ConnectorDataListenerType.ON_SENDER_TIMEOUT].notify(m_profile);
+//    }
+
+//    private void onSenderError(){
+//      m_listeners.connector_[ConnectorDataListenerType.ON_SENDER_ERROR].notify(m_profile);
+//    }
 
 
 
@@ -300,4 +378,6 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
 
     private com.sun.corba.se.spi.orb.ORB m_spi_orb;
     private InPortConnector m_connector;
+    private ConnectorListeners m_listeners;
+    private ConnectorBase.ConnectorInfo m_profile; 
 }

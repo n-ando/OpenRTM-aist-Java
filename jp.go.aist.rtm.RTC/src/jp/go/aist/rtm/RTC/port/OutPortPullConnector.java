@@ -21,7 +21,7 @@ public class OutPortPullConnector extends OutPortConnector {
      * @param buffer pointer to a buffer
      *
      */
-    public OutPortPullConnector(Profile profile,
+    public OutPortPullConnector(ConnectorInfo profile,
                          OutPortProvider provider,
                          BufferBase<OutputStream> buffer) {
         super(profile);
@@ -29,7 +29,7 @@ public class OutPortPullConnector extends OutPortConnector {
         m_buffer = buffer;
         m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
     }
-    public OutPortPullConnector(Profile profile,
+    public OutPortPullConnector(ConnectorInfo profile,
                          OutPortProvider provider ) {
         super(profile);
         BufferBase<OutputStream> buffer = null;

@@ -32,36 +32,40 @@ public class OutPortPushConnector extends OutPortConnector {
      * @param consumer InPortConsumer
      *
      */
-    public OutPortPushConnector(Profile profile,
+    public OutPortPushConnector(ConnectorInfo profile,
                          InPortConsumer consumer,
+                         ConnectorListeners listeners,
                          BufferBase<OutputStream> buffer) throws Exception {
         super(profile);
         try {
-            _Constructor(profile,consumer,buffer);
+            _Constructor(profile,consumer,listeners,buffer);
         }
         catch(Exception e) {
             throw new Exception("bad_alloc()");
         } 
     }
 
-    public OutPortPushConnector(Profile profile,
+    public OutPortPushConnector(ConnectorInfo profile,
+                         ConnectorListeners listeners,
                          InPortConsumer consumer )  throws Exception {
         super(profile);
         BufferBase<OutputStream> buffer = null;
         try {
-            _Constructor(profile,consumer,buffer);
+            _Constructor(profile,consumer,listeners,buffer);
         }
         catch(Exception e) {
             throw new Exception("bad_alloc()");
         } 
     }
 
-    private void _Constructor(Profile profile,
+    private void _Constructor(ConnectorInfo profile,
                          InPortConsumer consumer,
+                         ConnectorListeners listeners,
                          BufferBase<OutputStream> buffer) throws Exception {
         m_consumer = consumer;
         m_publisher = null;
         m_buffer = buffer;
+        m_listeners = listeners;
 
         // publisher/buffer creation. This may throw std::bad_alloc;
         m_publisher = createPublisher(profile);
@@ -89,6 +93,7 @@ public class OutPortPushConnector extends OutPortConnector {
 
         m_publisher.setConsumer(m_consumer);
         m_publisher.setBuffer(m_buffer);
+        m_publisher.setListener(m_profile, m_listeners);
 
         m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
         
@@ -190,7 +195,7 @@ public class OutPortPushConnector extends OutPortConnector {
     /**
      * <p> create publisher </p>
      */
-    protected PublisherBase createPublisher(Profile profile) {
+    protected PublisherBase createPublisher(ConnectorInfo profile) {
         String pub_type;
         pub_type = profile.properties.getProperty("subscription_type",
                                               "flush");
@@ -203,7 +208,7 @@ public class OutPortPushConnector extends OutPortConnector {
     /**
      * <p> create buffer </p>
      */
-    protected BufferBase<OutputStream> createBuffer(Profile profile) {
+    protected BufferBase<OutputStream> createBuffer(ConnectorInfo profile) {
         String buf_type;
         buf_type = profile.properties.getProperty("buffer_type",
                                               "ring_buffer");
@@ -230,6 +235,11 @@ public class OutPortPushConnector extends OutPortConnector {
     private Field m_field = null;
     private com.sun.corba.se.spi.orb.ORB m_spi_orb;
     private OutPortBase m_outport;
+    /**
+     * <p> A reference to a ConnectorListener </p>
+     */
+    ConnectorListeners m_listeners;
+
 
 }
 

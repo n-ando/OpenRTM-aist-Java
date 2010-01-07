@@ -19,7 +19,7 @@ public abstract class InPortConnector extends ConnectorBase {
     /**
      * <p> Constructor </p>
      */
-    public InPortConnector(ConnectorBase.Profile profile,
+    public InPortConnector(ConnectorBase.ConnectorInfo profile,
                     BufferBase<OutputStream> buffer) {
         rtcout = new Logbuf("InPortConnector");
         m_profile = profile;
@@ -36,7 +36,7 @@ public abstract class InPortConnector extends ConnectorBase {
      * <p> This operation returns Connector Profile </p>
      *
      */
-    public final Profile profile() {
+    public final ConnectorInfo profile() {
         rtcout.println(rtcout.TRACE, "profile()");
         return m_profile;
     }
@@ -97,6 +97,9 @@ public abstract class InPortConnector extends ConnectorBase {
     public boolean isLittleEndian(){
         return m_isLittleEndian;
     }
+    public abstract void setListener(ConnectorInfo profile, 
+                            ConnectorListeners listeners);
+    
 
     /**
      *
@@ -108,7 +111,7 @@ public abstract class InPortConnector extends ConnectorBase {
     public abstract ReturnCode read(DataRef<InputStream> data);
 
     protected Logbuf rtcout;
-    protected Profile m_profile;
+    protected ConnectorInfo m_profile;
     protected BufferBase<OutputStream> m_buffer;
     protected boolean m_isLittleEndian;
     protected com.sun.corba.se.spi.orb.ORB m_spi_orb;

@@ -4,6 +4,7 @@ import java.util.Vector;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Observer;
 
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
@@ -398,10 +399,16 @@ public class InPortBase extends PortBase {
             String id = cprof.value.connector_id;
             synchronized (m_connectors){
                 Iterator it = m_connectors.iterator();
+                ConnectorBase.ConnectorInfo profile 
+                    = new ConnectorBase.ConnectorInfo(cprof.value.name,
+                                 cprof.value.connector_id,
+                                 CORBA_SeqUtil.refToVstring(cprof.value.ports),
+                                 prop); 
                 while (it.hasNext()) {
                     InPortConnector connector = (InPortConnector)it.next();
                     if (id.equals(connector.id())) {
                         connector.setEndian(m_isLittleEndian);
+                        connector.setListener(profile,m_listeners);
                         return ReturnCode_t.RTC_OK;
                     }
                 }
@@ -473,6 +480,61 @@ public class InPortBase extends PortBase {
             return;
         }
     }
+
+    /**
+     * <p> Adding BufferDataListener type listener </p>
+     */
+    public void addConnectorDataListener(int type,
+                             Observer listener,
+                             boolean autoclean) {
+        rtcout.println(rtcout.TRACE, "addConnectorDataListener()");
+  
+        if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
+            m_listeners.connectorData_[type].addObserver(listener);
+         }
+    }
+    public void addConnectorDataListener(int type,Observer listener) {
+        this.addConnectorDataListener(type,listener,true);
+    }
+
+    /**
+     * <p> Removing ConnectorDataListener type listener <p>
+     */
+    public void removeConnectorDataListener(int type,
+                                Observer listener) {
+        rtcout.println(rtcout.TRACE, "removeConnectorDataListener()");
+
+        if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
+            m_listeners.connectorData_[type].deleteObserver(listener);
+        }
+    }
+  
+    /**
+     * <p> Adding ConnectorListener type listener </p>
+     */
+    public void addConnectorListener(int type,
+                                           Observer listener,
+                                           boolean autoclean) {
+        rtcout.println(rtcout.TRACE,"addConnectorListener()");
+  
+        if (type < ConnectorListenerType.CONNECTOR_LISTENER_NUM) {
+            m_listeners.connector_[type].addObserver(listener);
+        }
+    }
+    
+    /**
+     * <p> Removing ConnectorListener type listener </p>
+     *
+     */
+    public void removeConnectorListener(int type,
+                                              Observer listener) {
+        rtcout.println(rtcout.TRACE,"removeConnectorListener()");
+  
+        if (type < ConnectorListenerType.CONNECTOR_LISTENER_NUM) {
+            m_listeners.connector_[type].deleteObserver(listener);
+        }
+    }
+  
 
 
     /**
@@ -683,8 +745,8 @@ public class InPortBase extends PortBase {
     createConnector(ConnectorProfileHolder cprof, Properties prop,
                     InPortProvider provider) {
 
-        ConnectorBase.Profile profile 
-            = new ConnectorBase.Profile(cprof.value.name,
+        ConnectorBase.ConnectorInfo profile 
+            = new ConnectorBase.ConnectorInfo(cprof.value.name,
                                  cprof.value.connector_id,
                                  CORBA_SeqUtil.refToVstring(cprof.value.ports),
                                  prop); 
@@ -693,12 +755,12 @@ public class InPortBase extends PortBase {
             try {
                 if (m_singlebuffer) {
                     connector = new InPortPushConnector(profile, provider,
-                                                    m_thebuffer);
+                                                    m_listeners,m_thebuffer);
                 }
                 else {
                     BufferBase<OutputStream> buffer = null;
                     connector = new InPortPushConnector(profile, provider, 
-                                                        buffer);
+                                                        m_listeners,buffer);
                 }
     
                 if (connector == null) {
@@ -729,8 +791,8 @@ public class InPortBase extends PortBase {
     protected InPortConnector
     createConnector(final ConnectorProfileHolder cprof, Properties prop,
                     OutPortConsumer consumer) {
-        ConnectorBase.Profile profile 
-            = new ConnectorBase.Profile( cprof.value.name,
+        ConnectorBase.ConnectorInfo profile 
+            = new ConnectorBase.ConnectorInfo( cprof.value.name,
                                   cprof.value.connector_id,
                                   CORBA_SeqUtil.refToVstring(cprof.value.ports),
                                   prop); 
@@ -739,11 +801,13 @@ public class InPortBase extends PortBase {
             try {
                 if (m_singlebuffer) {
                     connector = new InPortPullConnector(profile, consumer,
+                                                        m_listeners,
                                                         m_thebuffer);
                 }
                 else {
                     BufferBase<OutputStream> buffer = null;
                     connector = new InPortPullConnector(profile, consumer, 
+                                                        m_listeners,
                                                         buffer);
                 }
 
@@ -779,6 +843,7 @@ public class InPortBase extends PortBase {
     protected Vector<String> m_consumerTypes = new Vector<String>();
     protected Vector<InPortConnector> m_connectors = new Vector<InPortConnector>();
     private boolean m_isLittleEndian;
+    protected ConnectorListeners m_listeners = new ConnectorListeners();
 }
 
 

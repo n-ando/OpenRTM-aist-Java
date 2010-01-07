@@ -6,10 +6,15 @@ import org.omg.CORBA.portable.OutputStream;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.port.InPortConsumer;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListeners;
+import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 
 /**
  * <p>データ送出を待つコンシューマを、送出する側と同じスレッドで動作させる場合に使用します。</p>
@@ -21,6 +26,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      * 
      */
     public PublisherFlush() {
+        rtcout = new Logbuf("PublisherFlush");
         m_consumer = null;
         m_active = false;
     }
@@ -31,6 +37,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      * @param property 当該Publisherの駆動を制御する情報を持つPropertyオブジェクト
      */
     public PublisherFlush(InPortConsumer consumer, final Properties property) {
+        rtcout = new Logbuf("PublisherFlush");
         m_consumer = consumer;
     }
     
@@ -97,6 +104,24 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
         return ReturnCode.PORT_ERROR;
     }
     /**
+     * <p> Setting buffer pointer </p>
+     */ 
+    public ReturnCode setListener(ConnectorBase.ConnectorInfo info,
+                              ConnectorListeners listeners) {
+        rtcout.println(rtcout.TRACE, "setListeners()" );
+
+        if (listeners == null) {
+            rtcout.println(rtcout.ERROR, 
+                "setListeners(listeners == 0): invalid argument" );
+            return ReturnCode.INVALID_ARGS;
+        }
+
+        m_profile = info;
+        m_listeners = listeners;
+
+        return ReturnCode.PORT_OK;
+    }
+    /**
      * <p> write </p>
      *
      * @param data
@@ -109,7 +134,29 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
             return ReturnCode.PRECONDITION_NOT_MET; 
         }
 
-        return m_consumer.put(data);
+        onSend(data);
+        //return m_consumer.put(data);
+        ReturnCode ret = m_consumer.put(data);
+        switch (ret) {
+            case PORT_OK:
+                onReceived(data);
+                return ret;
+            case PORT_ERROR:
+                onReceiverError(data);
+                return ret;
+            case SEND_FULL:
+                 onReceiverFull(data);
+                 return ret;
+            case SEND_TIMEOUT:
+                 onReceiverTimeout(data);
+                 return ret;
+            case UNKNOWN_ERROR:
+                 onReceiverError(data);
+                 return ret;
+            default:
+                 onReceiverError(data);
+                 return ret;
+        }
 
     }
     public ReturnCode write(final OutputStream data) {
@@ -181,6 +228,76 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
     }
     private static final String id_name = "flush";
 
+    protected Logbuf rtcout;
     private InPortConsumer m_consumer;
     private boolean m_active;
+
+    /**
+     * <p> Connector data listener functions </p>
+     */
+//    protected void onBufferWrite(final OutputStream data) {
+//        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
+//    }
+
+//    protected void onBufferFull(final OutputStream data) {
+//        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_FULL].notify(m_profile, data);
+//    }
+
+//    protected void onBufferWriteTimeout(final OutputStream data) {
+//        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT].notify(m_profile, data);
+//    }
+
+//    protected void onBufferWriteOverwrite(final OutputStream data) {
+//        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
+//    }
+
+//    protected void onBufferRead(final OutputStream data) {
+//        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
+//    }
+
+    protected void onSend(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_SEND].notify(m_profile, data);
+    }
+
+    protected void onReceived(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
+    }
+
+    protected void onReceiverFull(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
+    }
+
+    protected void onReceiverTimeout(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_TIMEOUT].notify(m_profile, data);
+    }
+
+    protected void onReceiverError(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_ERROR].notify(m_profile, data);
+    }
+
+    /**
+     * <p> Connector listener functions </p>
+     */
+//    protected void onBufferEmpty() {
+//        m_listeners.connector_[ConnectorDataListenerType.ON_BUFFER_EMPTY].notify(m_profile);
+//    }
+
+//    protected void onBufferReadTimeout() {
+//        m_listeners.connector_[ConnectorDataListenerType.ON_BUFFER_READ_TIMEOUT].notify(m_profile);
+//    }
+
+//    protected void onSenderEmpty() {
+//        m_listeners.connector_[ConnectorDataListenerType.ON_SENDER_EMPTY].notify(m_profile);
+//    }
+    
+//    protected void onSenderTimeout() {
+//        m_listeners.connector_[ConnectorDataListenerType.ON_SENDER_TIMEOUT].notify(m_profile);
+//    }
+
+//    protected void onSenderError() {
+//        m_listeners.connector_[ConnectorDataListenerType.ON_SENDER_ERROR].notify(m_profile);
+//    }
+    
+    private ConnectorListeners m_listeners = new  ConnectorListeners();
+    private ConnectorBase.ConnectorInfo m_profile;
 }

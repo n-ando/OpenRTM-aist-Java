@@ -1,12 +1,21 @@
 package RTMExamples.SimpleIO;
 
+import java.util.Observer;
+import java.util.Observable;
 
 import RTC.ReturnCode_t;
 import RTC.TimedLong;
 import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.port.InPort;
+import jp.go.aist.rtm.RTC.port.ConnectorBase;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListener;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerT;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
 import jp.go.aist.rtm.RTC.util.DataRef;
+
+import org.omg.CORBA.portable.OutputStream;
 
 public class ConsoleOutImpl  extends DataFlowComponentBase {
 
@@ -20,6 +29,7 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
 
         // Registration: InPort/OutPort/Service
         // <rtc-template block="registration">
+/*
         // Set InPort buffers
         try {
 //            registerInPort(TimedLong.class, "in", m_inIn);  //v042
@@ -27,6 +37,7 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+*/
         
         // Set OutPort buffer
         
@@ -42,9 +53,47 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
     // The initialize action (on CREATED->ALIVE transition)
     // formaer rtc_init_entry() 
 //    @Override
-//    protected ReturnCode_t onInitialize() {
+    protected ReturnCode_t onInitialize() {
+        try {
+            registerInPort("in", m_inIn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        m_inIn.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_WRITE,
+                            new DataListener("ON_BUFFER_WRITE"));
+        m_inIn.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_FULL, 
+                            new DataListener("ON_BUFFER_FULL"));
+        m_inIn.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT, 
+                            new DataListener("ON_BUFFER_WRITE_TIMEOUT"));
+        m_inIn.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_OVERWRITE, 
+                            new DataListener("ON_BUFFER_OVERWRITE"));
+        m_inIn.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_READ, 
+                            new DataListener("ON_BUFFER_READ"));
+        m_inIn.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_SEND, 
+                            new DataListener("ON_SEND"));
+        m_inIn.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVED,
+                            new DataListener("ON_RECEIVED"));
+        m_inIn.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVER_FULL, 
+                            new DataListener("ON_RECEIVER_FULL"));
+        m_inIn.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVER_TIMEOUT, 
+                            new DataListener("ON_RECEIVER_TIMEOUT"));
+        m_inIn.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVER_ERROR,
+                            new DataListener("ON_RECEIVER_ERROR"));
+
+        return ReturnCode_t.RTC_OK;
 //        return super.onInitialize();
-//    }
+    }
     // The finalize action (on ALIVE->END transition)
     // formaer rtc_exiting_entry()
 //    @Override
@@ -161,5 +210,27 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
     // <rtc-template block="consumer_declare">
     
     // </rtc-template>
+
+    class DataListener extends ConnectorDataListenerT<TimedLong>{
+        public DataListener(final String name){
+            super(TimedLong.class);
+            m_name = name;
+        }
+
+        public void operator(final ConnectorBase.ConnectorInfo arg,
+                               final TimedLong data) {
+            ConnectorBase.ConnectorInfo info =(ConnectorBase.ConnectorInfo)arg;
+            System.out.println("------------------------------");
+            System.out.println("Listener:       "+m_name);
+            System.out.println("Profile::name:  "+info.name);
+            System.out.println("Profile::id:    "+info.id);
+//            System.out.println("Profile::properties: ");
+//            System.out.println(info.properties);
+            System.out.println("Data:           "+data.data);
+            System.out.println("------------------------------");
+        }
+        public String m_name;
+    }
+
 
 }

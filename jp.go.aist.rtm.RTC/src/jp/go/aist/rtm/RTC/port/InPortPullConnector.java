@@ -24,12 +24,13 @@ public class InPortPullConnector extends InPortConnector {
     /**
      * <p> Constructor </p>
      */
-    public InPortPullConnector(Profile profile,
+    public InPortPullConnector(ConnectorInfo profile,
                         OutPortConsumer consumer,
+                        ConnectorListeners listeners,
                         BufferBase<OutputStream> buffer) throws Exception {
         super(profile, buffer);
         m_consumer = consumer;
-
+        m_listeners = listeners; 
         rtcout = new Logbuf("InPortPullConnector");
 
         if (buffer == null) {
@@ -39,6 +40,7 @@ public class InPortPullConnector extends InPortConnector {
             throw new Exception("bad_alloc()");
         }
         m_consumer.setBuffer(m_buffer);
+        m_consumer.setListener(profile, m_listeners);
     }
     /**
      * <p> Destructor </p>
@@ -71,7 +73,7 @@ public class InPortPullConnector extends InPortConnector {
     public void activate(){}; // do nothing
     public void deactivate(){}; // do nothing
 
-    protected BufferBase<OutputStream> createBuffer(Profile profile) {
+    protected BufferBase<OutputStream> createBuffer(ConnectorInfo profile) {
         String buf_type;
         buf_type = profile.properties.getProperty("buffer_type",
                                               "ring_buffer");
@@ -80,7 +82,14 @@ public class InPortPullConnector extends InPortConnector {
         return factory.createObject(buf_type);
     }
     
+    public void setListener(ConnectorInfo profile, 
+                            ConnectorListeners listeners){
+    }
     private OutPortConsumer m_consumer;
 
     private Logbuf rtcout;
+    /**
+     * A reference to a ConnectorListener
+     */
+    private ConnectorListeners m_listeners;
 }

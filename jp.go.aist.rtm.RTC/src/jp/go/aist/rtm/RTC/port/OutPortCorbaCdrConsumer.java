@@ -17,10 +17,11 @@ import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
-
 /**
  * <p> OutPortCorbaCdrConsumer </p>
  *
@@ -40,7 +41,6 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
     public OutPortCorbaCdrConsumer() {
         super(OpenRTM.OutPortCdr.class);
         rtcout = new Logbuf("OutPortCorbaCdrConsumer");
-//        rtcout.setLevel("PARANOID");
     }
 
     /**
@@ -76,6 +76,15 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
     public void setBuffer(BufferBase<OutputStream> buffer) {
         m_buffer = buffer;
     }
+    /**
+     * 
+     */
+    public void setListener(ConnectorBase.ConnectorInfo info, 
+                            ConnectorListeners listeners) {
+        m_listeners = listeners;
+        m_profile = info;
+    }
+
 
     /**
      *
@@ -252,9 +261,77 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
         m_connector = connector;
     }
 
+    /**
+     * <p> Connector data listener functions </p>
+     */
+    private void onBufferWrite(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
+    }
+
+    private void onBufferFull(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_FULL].notify(m_profile, data);
+    }
+
+//    private void onBufferWriteTimeout(final OutputStream data) {
+//        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT].notify(m_profile, data);
+//    }
+
+//    private void onBufferWriteOverwrite(final OutputStream data) {
+//        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
+//    }
+
+//    private void onBufferRead(final OutputStream data) {
+//      m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
+//    }
+
+//    private void onSend(final OutputStream data) {
+//        m_listeners.connectorData_[ConnectorDataListenerType.ON_SEND].notify(m_profile, data);
+//    }
+
+    private void onReceived(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
+    }
+
+    private void onReceiverFull(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
+    }
+
+//    private void onReceiverTimeout(final OutputStream data) {
+//        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_TIMEOUT].notify(m_profile, data);
+//    }
+
+//    private void onReceiverError(final OutputStream data) {
+//        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_ERROR].notify(m_profile, data);
+//    }
+
+    /**
+     * <p> Connector listener functions </p>
+     */
+//    private void onBufferEmpty() {
+//        m_listeners.connector_[ConnectorDataListenerType.ON_BUFFER_EMPTY].notify(m_profile);
+//    }
+
+//    private void onBufferReadTimeout() {
+//        m_listeners.connector_[ConnectorDataListenerType.ON_BUFFER_READ_TIMEOUT].notify(m_profile);
+//    }
+
+    private void onSenderEmpty() {
+        m_listeners.connector_[ConnectorListenerType.ON_SENDER_EMPTY].notify(m_profile);
+    }
+
+    private void onSenderTimeout() {
+        m_listeners.connector_[ConnectorListenerType.ON_SENDER_TIMEOUT].notify(m_profile);
+    }
+
+    private void onSenderError() {
+        m_listeners.connector_[ConnectorListenerType.ON_SENDER_ERROR].notify(m_profile);
+    }
+
     //    RTC::OutPortCdr_var m_outport;
     private BufferBase<OutputStream> m_buffer;
 
     private Logbuf rtcout;
     private InPortConnector m_connector;
+    private ConnectorListeners m_listeners;
+    private ConnectorBase.ConnectorInfo m_profile;
 }

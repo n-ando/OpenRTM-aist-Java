@@ -52,5 +52,7 @@ public interface InPortProvider {
      */
     public void setConnector(InPortConnector connector);
 
+    public void setListener(ConnectorBase.ConnectorInfo info, 
+                            ConnectorListeners listeners);
 
 }

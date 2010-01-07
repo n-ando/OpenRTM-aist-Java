@@ -4,6 +4,8 @@ import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
 import jp.go.aist.rtm.RTC.port.ReturnCode;
+import jp.go.aist.rtm.RTC.port.ConnectorBase;
+import jp.go.aist.rtm.RTC.port.ConnectorListeners;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.port.InPortConsumer;
@@ -74,6 +76,14 @@ public abstract class PublisherBase {
      * @return String 
      */
     public abstract String getName();
+    /**
+     * <p> Setting buffer pointer </p>
+     * @param info
+     * @param listeners
+     * @return ReturnCode 
+     */ 
+    public abstract ReturnCode setListener(ConnectorBase.ConnectorInfo info,
+                              ConnectorListeners listeners); 
 
 
 }

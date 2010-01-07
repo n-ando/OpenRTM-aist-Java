@@ -3,6 +3,7 @@ package jp.go.aist.rtm.RTC.port;
 public enum ReturnCode {
     PORT_OK,
     PORT_ERROR,
+    BUFFER_ERROR,
     BUFFER_FULL,
     BUFFER_EMPTY,
     BUFFER_TIMEOUT,
