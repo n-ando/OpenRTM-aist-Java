@@ -131,26 +131,26 @@ public class InPortBase extends PortBase {
     }
 
     /**
-     * Connect the Port
+     * <p> Connect the Port </p>
      *
-     * This operation establishes connection according to the given
+     * <p> This operation establishes connection according to the given
      * ConnectionProfile inforamtion. This function is premised on
-     * calling from mainly application program or tools.
+     * calling from mainly application program or tools.</p> 
      *
-     * @pre To establish the connection among Ports of RT-Components,
+     * <p> To establish the connection among Ports of RT-Components,
      * application programs must call this operation giving
-     * ConnectorProfile with valid values as an argument.
+     * ConnectorProfile with valid values as an argument.</p> 
      *
-     * @pre Out of ConnectorProfile member variables, "name", "ports"
+     * <p> Out of ConnectorProfile member variables, "name", "ports"
      * and "properties" members shall be set valid
      * data. "connector_id" shall be set as empty string value or
-     * valid string UUID value.
+     * valid string UUID value. </p> 
      *
-     * @pre ConnectorProfile::name that is connection identifier shall
-     * be any valid CORBA::string.
+     * <p> ConnectorProfile::name that is connection identifier shall
+     * be any valid CORBA::string. </p> 
      * 
      *
-     * @pre ConnectorProfile::connector_id shall be set unique
+     * <p> ConnectorProfile::connector_id shall be set unique
      * identifier (usually UUID is used) for all connections. Since
      * UUID string value is usually set in the connect() function,
      * caller should just set empty string. If the connect() is called
@@ -158,54 +158,56 @@ public class InPortBase extends PortBase {
      * returns PRECONDITION_NOT_MET error. However, in order to update
      * the existing connection profile, the "connect()" operation with
      * existing connector ID might be used as valid method by future
-     * extension
+     * extension </p> 
      *
-     * @pre ConnectorProfile::ports, which is sequence of
+     * <p> ConnectorProfile::ports, which is sequence of
      * RTC::PortService references, shall store usually two or more
      * ports' references. As exceptions, the "connect()" operation
      * might be called with only one reference in ConnectorProfile, in
      * case of just getting interfaces information from the port, or
      * connecting a special port (i.e. the peer port except
-     * RTC::PortService on CORBA).
+     * RTC::PortService on CORBA). </p> 
      *
-     * @pre ConnectorProfile::properties might be used to give certain
+     * <p> ConnectorProfile::properties might be used to give certain
      * properties to the service interfaces associated with the port.
      * The properties is a sequence variable with a pair of key string
      * and Any type value. Although the A variable can store any type
-     * of values, it is not recommended except string.
+     * of values, it is not recommended except string.</p> 
      *
-     * @pre The following is the summary of the ConnectorProfile
-     * member to be set when this operation is called.
+     * <p> The following is the summary of the ConnectorProfile
+     * member to be set when this operation is called.</p> 
      *
-     * - ConnectorProfile::name: The any name of connection
-     * - ConnectorProfile::connector_id: Empty string
-     * - ConnectorProfile::ports: One or more port references
-     * - ConnectorProfile::properties: Properties for the interfaces
+     * <ul>
+     * <li>- ConnectorProfile::name: The any name of connection</li>
+     * <li>- ConnectorProfile::connector_id: Empty string</li>
+     * <li>- ConnectorProfile::ports: One or more port references</li>
+     * <li>- ConnectorProfile::properties: Properties for the interfaces</li>
+     * </ul>
      *
-     * @post connect() operation will call the first port in the
-     * sequence of the ConnectorProfile.
+     * <p> connect() operation will call the first port in the
+     * sequence of the ConnectorProfile.</p>
      *
-     * @post "noify_connect()"s perform cascaded call to the ports
+     * <p> "noify_connect()"s perform cascaded call to the ports
      * stored in the ConnectorProfile::ports by order. Even if errors
      * are raised by intermediate notify_connect() operation, as long
      * as ports' object references are valid, it is guaranteed that
      * this cascaded call is completed in all the ports.  If invalid
      * or dead ports exist in the port's sequence, the ports are
-     * skipped and notify_connect() is called for the next valid port.
+     * skipped and notify_connect() is called for the next valid port.</p>
      *
-     * @post connect() function returns RTC_OK if all the
+     * <p> connect() function returns RTC_OK if all the
      * notify_connect() return RTC_OK. At this time the connection is
      * completed.  If notify_connect()s return except RTC_OK,
      * connect() calls disconnect() operation with the connector_id to
      * destruct the connection, and then it returns error code from
-     * notify_connect().
+     * notify_connect().</p>
      *
-     * @post The ConnectorProfile argument of the connect() operation
+     * <p> The ConnectorProfile argument of the connect() operation
      * returns ConnectorProfile::connector_id and various information
      * about service interfaces that is published by
      * publishInterfaces() in the halfway ports. The connect() and
      * halfway notify_connect() functions never change
-     * ConnectorProfile::{name, ports}.
+     * ConnectorProfile::{name, ports}.</p>
      *
      * @param connector_profile The ConnectorProfile.
      * @return ReturnCode_t The return code of ReturnCode_t type.

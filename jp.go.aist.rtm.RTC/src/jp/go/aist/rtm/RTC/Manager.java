@@ -262,11 +262,11 @@ public class Manager {
 
         preloadComponent();
 
-        precreateComponent();
-
         if (m_initProc != null) {
             m_initProc.myModuleInit(this);
         }
+
+        precreateComponent();
 
         return true;
     }
@@ -851,17 +851,14 @@ public class Manager {
             } catch (ServantAlreadyActive e) {
                 rtcout.println(rtcout.DEBUG, "Exception: Caught ServantAlreadyActive Exception in Manager.bindExecutionContext() DataFlowParticipant.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
-//                e.printStackTrace();
                 
             } catch (WrongPolicy e) {
                 rtcout.println(rtcout.DEBUG, "Exception: Caught WrongPolicy Exception in Manager.bindExecutionContext() DataFlowParticipant.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
-//                e.printStackTrace();
                 
             } catch (ObjectNotActive e) {
                 rtcout.println(rtcout.DEBUG, "Exception: Caught ObjectNotActive Exception in Manager.bindExecutionContext() DataFlowParticipant.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
-//                e.printStackTrace();
             }
             
             final String rate = m_config.getProperty("exec_cxt.periodic.rate");
@@ -877,17 +874,14 @@ public class Manager {
             } catch (ServantAlreadyActive e) {
                 rtcout.println(rtcout.DEBUG, "Exception: Caught ServantAlreadyActive Exception in Manager.bindExecutionContext() FsmParticipant.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
-//                e.printStackTrace();
                 
             } catch (WrongPolicy e) {
                 rtcout.println(rtcout.DEBUG, "Exception: Caught WrongPolicy Exception in Manager.bindExecutionContext() FsmParticipant.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
-//                e.printStackTrace();
                 
             } catch (ObjectNotActive e) {
                 rtcout.println(rtcout.DEBUG, "Exception: Caught ObjectNotActive Exception in Manager.bindExecutionContext() FsmParticipant.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
-//                e.printStackTrace();
             }
         }
 
@@ -1185,7 +1179,6 @@ public class Manager {
         } catch (Exception e) {
             rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.shutdownORB().");
             rtcout.println(rtcout.DEBUG, e.getMessage());
-//            e.getStackTrace();
         }
         
         rtcout.println(rtcout.DEBUG, "No pending works of ORB. Shutting down POA and ORB.");
@@ -1319,7 +1312,6 @@ public class Manager {
             } catch (Exception e) {
                 rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.shutdownComponents().");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
-//                e.printStackTrace();
             }
         }
     }
@@ -1353,12 +1345,10 @@ public class Manager {
             } catch (FileNotFoundException e) {
                 rtcout.println(rtcout.DEBUG, "Exception: Caught FileNotFoundException in Manager.configureComponent() name_conf.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
-//                e.printStackTrace();
                 
             } catch (Exception e) {
                 rtcout.println(rtcout.DEBUG, "Exception: Caught unknown in Manager.configureComponent() name_conf.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
-//                e.printStackTrace();
             }
         }
 

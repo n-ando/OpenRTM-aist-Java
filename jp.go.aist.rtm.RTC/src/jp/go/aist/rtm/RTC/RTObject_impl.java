@@ -763,18 +763,15 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
-            String active_config;
-            active_config = m_properties.getProperty("active_config");
-            if (active_config.length() == 0 || active_config.equals("")) {
-                m_configsets.update("default");
-            } else {
-                if (m_configsets.haveConfig(active_config)) {
-                    m_configsets.update(active_config);
-                } else {
-                    m_configsets.update("default");
-                }
-            }
             ret = onInitialize();
+            String active_set;
+            active_set = m_properties.getProperty("configuration.active_config","default");
+            if (m_configsets.haveConfig(active_set)) {
+                m_configsets.update(active_set);
+            }
+            else {
+                m_configsets.update("default");
+            }
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1574,12 +1571,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         if (m_properties.hasKey("port.inport") != null) {
 	    
-//          inport.properties() << m_properties.getNode("port.inport");
             inport.properties().merge(m_properties.getNode("port.inport"));
         }
         String propkey = "port.inport." + name;
         if (m_properties.hasKey(propkey) != null) {
-//          inport.properties() << m_properties.getNode(propkey);
             inport.properties().merge(m_properties.getNode(propkey));
         }
         inport.init();
@@ -1619,10 +1614,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerOutPort()");
 
         String propkey = "port.outport." + name;
-//      m_properties.getNode(propkey) << m_properties.getNode("port.outport.dataport");
         m_properties.getNode(propkey).merge(m_properties.getNode("port.outport.dataport"));
 
-//      outport.properties() << m_properties.getNode(propkey);
         outport.properties().merge(m_properties.getNode(propkey));
         this.registerPort(outport);
     }
