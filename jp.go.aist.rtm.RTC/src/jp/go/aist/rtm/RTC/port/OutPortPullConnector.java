@@ -36,14 +36,6 @@ public class OutPortPullConnector extends OutPortConnector {
         BufferBase<OutputStream> buffer = null;
         _constructor(profile, provider, listeners, buffer);
 
-/* zxc
-        super(profile);
-        BufferBase<OutputStream> buffer = null;
-        m_provider = provider;
-        m_buffer = buffer;
-        m_listeners = listeners;
-        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
-*/
     }
 
     /**

@@ -61,16 +61,6 @@ public class InPortPullConnector extends InPortConnector {
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
         data.v = dataref.v.create_input_stream();
         return ret;
-
-/* zxc
-        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
-                                                    m_isLittleEndian);
-        DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
-        m_buffer.read(dataref);
-        data.v = dataref.v.create_input_stream();
-
-        return ReturnCode.PORT_OK;
-*/
     }
     /**
      * <p> Disconnect connection </p>

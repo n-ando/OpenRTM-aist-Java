@@ -43,7 +43,6 @@ public class OutPortBase extends PortBase {
      */
     public OutPortBase(final String name,final String data_type) {
 	super(name);
-//zxc       this.m_name = name;
         m_isLittleEndian = true;
 
         rtcout.println(rtcout.DEBUG, "Port name: "+name);
@@ -65,10 +64,6 @@ public class OutPortBase extends PortBase {
         rtcout.println(rtcout.DEBUG,
                        "available subscription_type: "+pubs);
         addProperty("dataport.subscription_type", pubs, String.class);
-/* zxc
-        initConsumers();
-        initProviders();
-*/
     }
 
     /**
@@ -105,17 +100,6 @@ public class OutPortBase extends PortBase {
         return m_properties;
     }
 
-    /**
-     * <p>ポート名を取得します。</p>
-     * 
-     * @return ポート名
-     */
-/* zxc
-    public String name() {
-        rtcout.println(rtcout.TRACE, "name() = "+this.m_name);
-        return this.m_name;
-    }
-*/
     /**
      * <p> Connector list </p>
      *
@@ -254,18 +238,6 @@ public class OutPortBase extends PortBase {
         profh.value = conn.profile();
         return true;
 
-/* zxc
-        String sid = id;
-        synchronized (m_connectors){
-            for (int i=0, len=m_connectors.size(); i < len; ++i) {
-                if (sid.equals(m_connectors.elementAt(i).id())) {
-                    profh.value = m_connectors.elementAt(i).profile();
-                    return true;
-                }
-            }
-        }
-        return false;
-*/
     }
     /**
      * <p> Getting ConnectorProfile by name </p>
@@ -288,39 +260,7 @@ public class OutPortBase extends PortBase {
         }
         profh.value = conn.profile();
         return true;
-/* zxc
-        String sname = name;
-        synchronized (m_connectors){
-            for (int i=0, len=m_connectors.size(); i < len; ++i) {
-                if (sname.equals(m_connectors.elementAt(i).name())) {
-                    profh.value = m_connectors.elementAt(i).profile();
-                    return true;
-                  }
-            }
-        }
-        return false;
-*/
     }
-    /** 
-     * <p> Publish interface profile </p>
-     *
-     * <p> This operation publish interface profiles of this OutPort
-     * to DataOutPort. This operation should be called from DataOutPort. </p>
-     *
-     * @param properties itnerface profile
-     */
-/* zxc
-    public boolean publishInterfaceProfiles(NVListHolder properties) {
-        rtcout.println(rtcout.TRACE, "publishInterfaceProfiles()");
-
-        Iterator it = m_providers.iterator();
-        while(it.hasNext()){
-            OutPortProvider provider = (OutPortProvider)it.next();
-            provider.publishInterfaceProfile(properties);
-        }
-        return true;
-    }
-*/
     /**
      * <p> onConnect </p> 
      */
@@ -331,83 +271,10 @@ public class OutPortBase extends PortBase {
      */
     public void onDisconnect(final String id){
     };
-    /**
-     * <p>指定されたPublisherを、データ更新通知先として登録します。</p>
-     * 
-     * @param id 指定されたPublisherに割り当てるID
-     * @param publisher 登録するPublisherオブジェクト
-     */
-/*
-    public void attach(final String id, PublisherBase publisher) {
-        attach_back(id, publisher);
-    }
-*/
-    
-    /**
-     * <p>指定されたPublisherを、データ更新通知先リストの先頭に追加します。</p>
-     * 
-     * @param id 指定されたPublisherに割り当てるID
-     * @param publisher 登録するPublisherオブジェクト
-     */
-/*
-    public void attach_front(final String id, PublisherBase publisher) {
-        this.m_publishers.add(0, new Publisher(id, publisher));
-    }
-*/
-    
-    /**
-     * <p>指定されたPublisherを、データ更新通知先リストの最後尾に追加します。</p>
-     * 
-     * @param id 指定されたPublisherに割り当てるID
-     * @param publisher 登録するPublisherオブジェクト
-     */
-/*
-    public void attach_back(final String id, PublisherBase publisher) {
-        this.m_publishers.add(new Publisher(id, publisher));
-    }
-*/
-    
-    /**
-     * <p>指定されたPublisherを、データ更新先通知先から削除します。</p>
-     * 
-     * @param id 削除するPublisherに割り当てたID
-     * @return 正常にデータ更新先通知先から削除できた場合は、そのPublisherオブジェクトを返します。<br />
-     * 指定したIDに対応するPublisherオブジェクトが存在しない場合には、nullを返します。
-     */
-/*
-    public PublisherBase detach(final String id) {
-        
-        for (Iterator<Publisher> it = this.m_publishers.iterator(); it.hasNext(); ) {
-            Publisher publisher = it.next();
-            if (publisher.id.equals(id)) {
-                it.remove();
-                return publisher.publisher;
-            }
-        }
-        
-        return null;
-    }
-*/
-    
-    /**
-     * <p>登録されているすべてのPublisherオブジェクトに、データ更新を通知します。</p>
-     */
-/*
-    public void update() { // notifyメソッドはObjectクラスで使用されているので、メソッド名を変更した。
-        try {
-            for (Iterator<Publisher> it = this.m_publishers.iterator(); it.hasNext(); ) {
-                Publisher publisher = it.next();
-                publisher.publisher.update();
-            }
-        } catch(Exception ex) {
-        }
-    }
-*/
     
     /**
      * <p>ポート名です。</p>
      */
-//zxc    protected String m_name = new String();
 
     protected class Publisher {
         
@@ -1175,13 +1042,8 @@ public class OutPortBase extends PortBase {
     protected Properties m_properties = new Properties();
     protected Vector<OutPortConnector> m_connectors 
         = new Vector<OutPortConnector>();
-// zxc    protected Vector<InPortConsumer> m_consumers = new Vector<InPortConsumer>();
     protected Vector<String> m_providerTypes = new Vector<String>();
     protected Vector<String> m_consumerTypes = new Vector<String>();
-/* zxc
-    protected Vector<OutPortProvider> m_providers 
-        = new Vector<OutPortProvider>();
-*/
     
     private boolean m_isLittleEndian;
     protected ConnectorListeners m_listeners = new ConnectorListeners();
