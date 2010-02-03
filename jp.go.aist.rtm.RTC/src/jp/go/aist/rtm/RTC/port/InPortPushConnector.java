@@ -59,6 +59,8 @@ public class InPortPushConnector extends InPortConnector {
         m_provider.init(profile.properties);
         m_provider.setBuffer(m_buffer);
         m_provider.setListener(profile, m_listeners);
+
+        onConnect();
     }
     public void setListener(ConnectorInfo profile, 
                             ConnectorListeners listeners){
@@ -121,10 +123,20 @@ public class InPortPushConnector extends InPortConnector {
         return ReturnCode.PORT_OK;
     }
 
+    /**
+     * <p> Connector activation </p>
+     * <p> This operation activates this connector </p>
+     */
     public  void activate(){}; // do nothing
+
+    /**
+     * <p> Connector activation </p>
+     * <p> This operation activates this connector </p>
+     */
     public void deactivate(){}; // do nothing
-    /*!
-     * @brief create buffer
+
+    /**
+     * <p> create buffer </p>
      */
     protected BufferBase<OutputStream> createBuffer(ConnectorInfo profile) {
         String buf_type;
@@ -134,6 +146,21 @@ public class InPortPushConnector extends InPortConnector {
                 = BufferFactory.instance();
         return factory.createObject(buf_type);
     }
+
+    /**
+     * <p> Invoke callback when connection is established </p>
+     */
+    protected void onConnect() {
+        m_listeners.connector_[ConnectorListenerType.ON_CONNECT].notify(m_profile);
+    }
+
+    /**
+     * <p> Invoke callback when connection is destroied </p>
+     */
+    protected void onDisconnect() {
+        m_listeners.connector_[ConnectorListenerType.ON_DISCONNECT].notify(m_profile);
+    }
+
     /**
      * <p> convertReturn </p>
      *
@@ -152,8 +179,8 @@ public class InPortPushConnector extends InPortConnector {
                 return ReturnCode.PORT_ERROR;
         }
     }
-    /*!
-     * @brief the pointer to the InPortConsumer
+    /**
+     * <p> the pointer to the InPortConsumer </p>
      */
     private InPortProvider m_provider;
 

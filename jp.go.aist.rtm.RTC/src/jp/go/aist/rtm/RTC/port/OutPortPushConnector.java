@@ -97,6 +97,7 @@ public class OutPortPushConnector extends OutPortConnector {
 
         m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
         
+        onConnect();
 
     }
     /**
@@ -215,6 +216,19 @@ public class OutPortPushConnector extends OutPortConnector {
         BufferFactory<BufferBase<OutputStream>,String> factory 
                 = BufferFactory.instance();
         return factory.createObject(buf_type);
+    }
+    /**
+     * <p> Invoke callback when connection is established </p>
+     */
+    protected void onConnect() {
+        m_listeners.connector_[ConnectorListenerType.ON_CONNECT].notify(m_profile);
+    }
+
+    /**
+     * <p> Invoke callback when connection is destroied </p>
+     */
+    protected void onDisconnect() {
+        m_listeners.connector_[ConnectorListenerType.ON_DISCONNECT].notify(m_profile);
     }
 
     /**

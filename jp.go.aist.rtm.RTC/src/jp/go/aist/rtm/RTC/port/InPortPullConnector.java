@@ -36,11 +36,13 @@ public class InPortPullConnector extends InPortConnector {
         if (buffer == null) {
             m_buffer = createBuffer(m_profile);
         }
-        if (m_buffer == null || m_consumer==null) {
+        if (m_buffer == null || m_consumer == null) {
             throw new Exception("bad_alloc()");
         }
         m_consumer.setBuffer(m_buffer);
         m_consumer.setListener(profile, m_listeners);
+
+        onConnect();
     }
     /**
      * <p> Destructor </p>
@@ -49,9 +51,18 @@ public class InPortPullConnector extends InPortConnector {
      *
      */
     public ReturnCode read(DataRef<InputStream> data){
-        if (m_buffer == null) {
+        rtcout.println(rtcout.TRACE, "InPortPullConnector.read()");
+        if (m_consumer == null) {
             return ReturnCode.PORT_ERROR;
         }
+        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+                                                    m_isLittleEndian);
+        ReturnCode ret = m_consumer.get(cdr);
+        DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+        data.v = dataref.v.create_input_stream();
+        return ret;
+
+/* zxc
         EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
                                                     m_isLittleEndian);
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
@@ -59,6 +70,7 @@ public class InPortPullConnector extends InPortConnector {
         data.v = dataref.v.create_input_stream();
 
         return ReturnCode.PORT_OK;
+*/
     }
     /**
      * <p> Disconnect connection </p>
@@ -70,9 +82,23 @@ public class InPortPullConnector extends InPortConnector {
         return ReturnCode.PORT_OK;
     }
 
+    /**
+     *
+     * <p> Connector activation </p>
+     * <p> This operation activates this connector </p>
+     *
+     */
     public void activate(){}; // do nothing
+
+    /**
+     * <p> Connector deactivation </p>
+     * <p> This operation deactivates this connector </p>
+     */
     public void deactivate(){}; // do nothing
 
+    /**
+     * <p> create buffer </p>
+     */
     protected BufferBase<OutputStream> createBuffer(ConnectorInfo profile) {
         String buf_type;
         buf_type = profile.properties.getProperty("buffer_type",
@@ -82,6 +108,20 @@ public class InPortPullConnector extends InPortConnector {
         return factory.createObject(buf_type);
     }
     
+    /**
+     * <p> Invoke callback when connection is established </p>
+     */
+    protected void onConnect() {
+        m_listeners.connector_[ConnectorListenerType.ON_CONNECT].notify(m_profile);
+    }
+
+    /**
+     * <p> Invoke callback when connection is destroied </p>
+     */
+    protected void onDisconnect() {
+        m_listeners.connector_[ConnectorListenerType.ON_DISCONNECT].notify(m_profile);
+    }
+
     public void setListener(ConnectorInfo profile, 
                             ConnectorListeners listeners){
     }

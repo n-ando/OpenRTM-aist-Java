@@ -238,21 +238,21 @@ public class InPort<DataType> extends InPortBase {
 
             EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
                                                         isLittleEndian());
-//            DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+//zxc            DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
             DataRef<InputStream> dataref = new DataRef<InputStream>(cdr.create_input_stream());
             ReturnCode ret = m_connectors.elementAt(0).read(dataref);
 
-//            cdr = (EncapsOutputStream)dataref.v;
+//zxc            cdr = (EncapsOutputStream)dataref.v;
             if (ret.equals(ReturnCode.PORT_OK)) {
                 rtcout.println(rtcout.DEBUG, "data read succeeded");
-//                byte[] ch = cdr.toByteArray();
+//zxc                byte[] ch = cdr.toByteArray();
 //                InputStream input_stream = new EncapsInputStream(m_orb, 
 //                                                           ch, 
 //                                                           ch.length,
 //                                                           isLittleEndian(),
 //                                                           GIOPVersion.V1_2);
 
-//                m_value.v = read_stream(m_value,input_stream);
+//zxc                m_value.v = read_stream(m_value,input_stream);
                 m_value.v = read_stream(m_value,dataref.v);
                 if (m_OnReadConvert != null) {
                     m_value.v = m_OnReadConvert.run(m_value.v);

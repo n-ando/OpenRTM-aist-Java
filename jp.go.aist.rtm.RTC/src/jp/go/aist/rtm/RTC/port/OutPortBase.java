@@ -43,15 +43,15 @@ public class OutPortBase extends PortBase {
      */
     public OutPortBase(final String name,final String data_type) {
 	super(name);
-        this.m_name = name;
+//zxc       this.m_name = name;
         m_isLittleEndian = true;
 
-        rtcout.println(rtcout.PARANOID, "Port name: "+name);
-        rtcout.println(rtcout.PARANOID, "setting port.port_type: DataOutPort");
+        rtcout.println(rtcout.DEBUG, "Port name: "+name);
+        rtcout.println(rtcout.DEBUG, "setting port.port_type: DataOutPort");
 
         addProperty("port.port_type", "DataOutPort", String.class);
 
-        rtcout.println(rtcout.PARANOID,
+        rtcout.println(rtcout.DEBUG,
                        "setting dataport.data_type: "+data_type);
         addProperty("dataport.data_type", data_type, String.class);
 
@@ -62,34 +62,39 @@ public class OutPortBase extends PortBase {
 
         // blank characters are deleted for RTSE's bug
         pubs = pubs.trim();
-        rtcout.println(rtcout.PARANOID,
+        rtcout.println(rtcout.DEBUG,
                        "available subscription_type: "+pubs);
         addProperty("dataport.subscription_type", pubs, String.class);
-
+/* zxc
         initConsumers();
         initProviders();
+*/
     }
 
     /**
      * <p> Initializing properties </p>
-     *
      * <p> This operation initializes outport's properties </p>
+     * @param prop Property for setting ports
      *
      */
-    void init(Properties prop) {
+    public void init(Properties prop) {
         rtcout.println(rtcout.TRACE, "init()");
 
-        rtcout.println(rtcout.TRACE, "given properties:");
+        rtcout.println(rtcout.PARANOID, "given properties:");
         String str = new String();
         prop._dump(str,prop,0);
-        rtcout.println(rtcout.PARANOID, str);
+        rtcout.println(rtcout.DEBUG, str);
         m_properties.merge(prop);
 
         rtcout.println(rtcout.PARANOID, "updated properties:");
         str = "";
         m_properties._dump(str,m_properties,0);
+        rtcout.println(rtcout.DEBUG, str);
 
         configure();
+
+        initConsumers();
+        initProviders();
 
     }
     /**
@@ -105,10 +110,12 @@ public class OutPortBase extends PortBase {
      * 
      * @return ポート名
      */
+/* zxc
     public String name() {
         rtcout.println(rtcout.TRACE, "name() = "+this.m_name);
         return this.m_name;
     }
+*/
     /**
      * <p> Connector list </p>
      *
@@ -177,6 +184,54 @@ public class OutPortBase extends PortBase {
                        "getConnectorNames(): "+names.toString());
         return names;
     }
+
+    /**
+     * <p> Getting ConnectorProfile by ID </p>
+     * <p> This operation returns Connector specified by ID. </p>
+     * @param id Connector ID
+     * @return OutPortConnector connector
+     */
+    public OutPortConnector getConnectorById(final String id) {
+        rtcout.println(rtcout.TRACE, 
+                       "getConnectorById(id = "+id+")");
+
+        String sid = id;
+        synchronized (m_connectors){
+            for (int i=0, len=m_connectors.size(); i < len; ++i) {
+                if (sid.equals(m_connectors.elementAt(i).id())) {
+                    return m_connectors.elementAt(i);
+                }
+            }
+        }        
+        rtcout.println(rtcout.WARN, 
+                       "ConnectorProfile with the id("+id+") not found.");
+        return null;
+    }
+
+    /**
+     * <p> Getting Connector by name </p>
+     * <p> This operation returns Connector specified by name. </p>
+     * @param id Connector ID
+     * @return OutPortConnector connector
+     *
+     * @endif
+     */
+    OutPortConnector getConnectorByName(final String name) {
+        rtcout.println(rtcout.TRACE, 
+                       "getConnectorByName(name = "+name+")");
+
+        String sname = name;
+        synchronized (m_connectors){
+            for (int i=0, len=m_connectors.size(); i < len; ++i) {
+                if (sname.equals(m_connectors.elementAt(i).name())) {
+                    return m_connectors.elementAt(i);
+                }
+            }
+        }
+        rtcout.println(rtcout.WARN, 
+                       "ConnectorProfile with the name("+name+") not found.");
+        return null;
+    }
     /**
      * <p> Getting ConnectorProfile by name </p>
      *
@@ -184,7 +239,7 @@ public class OutPortBase extends PortBase {
      *
      * @param id Connector ID
      * @param profh ConnectorProfileHolder
-     * @return false specified ID does not exi
+     * @return false specified ID does not exit
      *
      */
     public boolean getConnectorProfileById(final String id,
@@ -192,6 +247,14 @@ public class OutPortBase extends PortBase {
         rtcout.println(rtcout.TRACE, 
                        "getConnectorProfileById(id = "+id+")");
 
+        OutPortConnector conn = getConnectorById(id);
+        if (conn == null) {
+            return false;
+          }
+        profh.value = conn.profile();
+        return true;
+
+/* zxc
         String sid = id;
         synchronized (m_connectors){
             for (int i=0, len=m_connectors.size(); i < len; ++i) {
@@ -202,6 +265,7 @@ public class OutPortBase extends PortBase {
             }
         }
         return false;
+*/
     }
     /**
      * <p> Getting ConnectorProfile by name </p>
@@ -218,6 +282,13 @@ public class OutPortBase extends PortBase {
         rtcout.println(rtcout.TRACE, 
                        "getConnectorProfileByNmae(name = "+name+")");
 
+        OutPortConnector conn = getConnectorByName(name);
+        if (conn == null) {
+            return false;
+        }
+        profh.value = conn.profile();
+        return true;
+/* zxc
         String sname = name;
         synchronized (m_connectors){
             for (int i=0, len=m_connectors.size(); i < len; ++i) {
@@ -228,6 +299,7 @@ public class OutPortBase extends PortBase {
             }
         }
         return false;
+*/
     }
     /** 
      * <p> Publish interface profile </p>
@@ -237,6 +309,7 @@ public class OutPortBase extends PortBase {
      *
      * @param properties itnerface profile
      */
+/* zxc
     public boolean publishInterfaceProfiles(NVListHolder properties) {
         rtcout.println(rtcout.TRACE, "publishInterfaceProfiles()");
 
@@ -247,6 +320,7 @@ public class OutPortBase extends PortBase {
         }
         return true;
     }
+*/
     /**
      * <p> onConnect </p> 
      */
@@ -333,7 +407,7 @@ public class OutPortBase extends PortBase {
     /**
      * <p>ポート名です。</p>
      */
-    protected String m_name = new String();
+//zxc    protected String m_name = new String();
 
     protected class Publisher {
         
@@ -478,6 +552,11 @@ public class OutPortBase extends PortBase {
             NVUtil.copyToProperties(conn_prop, nvlist);
             prop.merge(conn_prop.getNode("dataport")); //merge ConnectorProfile
         }
+        rtcout.println(rtcout.DEBUG, 
+                           "ConnectorProfile::properties are as follows.");
+        String dumpString = new String();
+        dumpString = prop._dump(dumpString, prop, 0);
+        rtcout.println(rtcout.DEBUG, dumpString);
         //
        NVListHolder holder = new NVListHolder(cprof.value.properties);
        try{ 
@@ -578,6 +657,11 @@ public class OutPortBase extends PortBase {
             prop.merge(conn_prop.getNode("dataport")); //merge ConnectorProfile
         }
 
+        rtcout.println(rtcout.DEBUG, 
+                           "ConnectorProfile::properties are as follows.");
+        String dumpString = new String();
+        dumpString = prop._dump(dumpString, prop, 0);
+        rtcout.println(rtcout.DEBUG, dumpString);
         //
        NVListHolder holder = new NVListHolder(cprof.value.properties);
        try{ 
@@ -593,6 +677,7 @@ public class OutPortBase extends PortBase {
             String[] endian = endian_type.split(",");
             String str = endian[0].trim();
             if(str.length()==0){
+                rtcout.println(rtcout.ERROR, "unsupported endian");
                 return ReturnCode_t.UNSUPPORTED;
             }
             if(str.equals("little")){
@@ -618,7 +703,7 @@ public class OutPortBase extends PortBase {
         dflow_type = StringUtil.normalize(dflow_type);
         if (dflow_type.equals("push")) {
             rtcout.println(rtcout.DEBUG, 
-                           "dataflow_type = push .... create PushConnector");
+                           "dataflow_type is push.");
 
             //interface 
             InPortConsumer consumer = createConsumer(cprof, prop);
@@ -641,7 +726,19 @@ public class OutPortBase extends PortBase {
         }
         else if (dflow_type.equals("pull")) {
             rtcout.println(rtcout.DEBUG, 
-                           "dataflow_type = pull .... do nothing.");
+                           "dataflow_type is pull.");
+            // set endian type
+            OutPortConnector conn = getConnectorById(cprof.value.connector_id);
+            if (conn == null) {
+                rtcout.println(rtcout.ERROR, 
+                   "specified connector not found: "+cprof.value.connector_id);
+                return ReturnCode_t.RTC_ERROR;
+            }
+            conn.setEndian(m_isLittleEndian);
+            rtcout.println(rtcout.DEBUG, 
+                           "subscribeInterfaces() successfully finished.");
+            return ReturnCode_t.RTC_OK;
+/* zxc
             //
             String id = cprof.value.connector_id;
             synchronized (m_connectors){
@@ -657,9 +754,10 @@ public class OutPortBase extends PortBase {
                            "specified connector not found: " + id);
                 return ReturnCode_t.RTC_ERROR;
             }
+*/
         }
 
-        rtcout.println(rtcout.ERROR, "unsupported dataflow_type.");
+        rtcout.println(rtcout.ERROR, "unsupported dataflow_type:"+dflow_type);
         return ReturnCode_t.BAD_PARAMETER;
 
     }
@@ -837,7 +935,7 @@ public class OutPortBase extends PortBase {
         if (provider_types.size() > 0) {
             rtcout.println(rtcout.DEBUG, 
                            "dataflow_type pull is supported");
-            appendProperty("dataport.dataflow_type", "push");
+            appendProperty("dataport.dataflow_type", "pull");
             appendProperty("dataport.interface_type",
                            StringUtil.flatten((Set)provider_types));
         }
@@ -1007,7 +1105,8 @@ public class OutPortBase extends PortBase {
         synchronized (m_connectors){
             try {
                 BufferBase<OutputStream> buffer = null;
-                connector = new OutPortPushConnector(profile, consumer, m_listeners, buffer);
+                connector = new OutPortPushConnector(profile, consumer, 
+                                                        m_listeners, buffer);
 
                 if (connector == null) {
                     rtcout.println(rtcout.ERROR, 
@@ -1044,7 +1143,8 @@ public class OutPortBase extends PortBase {
         synchronized (m_connectors){
             try {
                 BufferBase<OutputStream> buffer = null;
-                connector = new OutPortPullConnector(profile, provider, buffer);
+                connector = new OutPortPullConnector(profile, provider, 
+                                                        m_listeners, buffer);
 
                 if (connector == null) {
                     rtcout.println(rtcout.ERROR, 
@@ -1075,11 +1175,13 @@ public class OutPortBase extends PortBase {
     protected Properties m_properties = new Properties();
     protected Vector<OutPortConnector> m_connectors 
         = new Vector<OutPortConnector>();
-    protected Vector<InPortConsumer> m_consumers = new Vector<InPortConsumer>();
+// zxc    protected Vector<InPortConsumer> m_consumers = new Vector<InPortConsumer>();
     protected Vector<String> m_providerTypes = new Vector<String>();
     protected Vector<String> m_consumerTypes = new Vector<String>();
+/* zxc
     protected Vector<OutPortProvider> m_providers 
         = new Vector<OutPortProvider>();
+*/
     
     private boolean m_isLittleEndian;
     protected ConnectorListeners m_listeners = new ConnectorListeners();

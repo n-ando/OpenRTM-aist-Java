@@ -5,6 +5,7 @@ import org.omg.CORBA.portable.OutputStream;
 
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
+import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 
@@ -23,20 +24,57 @@ public class OutPortPullConnector extends OutPortConnector {
      */
     public OutPortPullConnector(ConnectorInfo profile,
                          OutPortProvider provider,
-                         BufferBase<OutputStream> buffer) {
+                         ConnectorListeners listeners,
+                         BufferBase<OutputStream> buffer)  throws Exception {
         super(profile);
-        m_provider = provider;
-        m_buffer = buffer;
-        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        _constructor(profile, provider, listeners, buffer);
     }
     public OutPortPullConnector(ConnectorInfo profile,
-                         OutPortProvider provider ) {
+                         OutPortProvider provider, 
+                         ConnectorListeners listeners)  throws Exception {
+        super(profile);
+        BufferBase<OutputStream> buffer = null;
+        _constructor(profile, provider, listeners, buffer);
+
+/* zxc
         super(profile);
         BufferBase<OutputStream> buffer = null;
         m_provider = provider;
         m_buffer = buffer;
+        m_listeners = listeners;
         m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+*/
     }
+
+    /**
+     *  
+     */
+    private void _constructor(ConnectorInfo profile,
+                         OutPortProvider provider,
+                         ConnectorListeners listeners,
+                         BufferBase<OutputStream> buffer)  throws Exception {
+        m_provider = provider;
+        m_buffer = buffer;
+        m_listeners = listeners;
+        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        // create buffer
+        if (m_buffer == null) {
+            m_buffer = createBuffer(profile);
+        }
+
+        if (m_provider == null || m_buffer == null) { 
+            throw new Exception("bad_alloc()");
+        }
+
+        m_buffer.init(profile.properties.getNode("buffer"));
+        m_provider.setBuffer(m_buffer);
+        m_provider.setConnector(this);
+        //    m_provider.init(m_profile /* , m_listeners */);
+        m_provider.setListener(profile, m_listeners);
+
+        onConnect();
+    }
+
     /**
      * <p> Writing data </p>
      * <p> This operation writes data into publisher and then the data </p>
@@ -51,6 +89,7 @@ public class OutPortPullConnector extends OutPortConnector {
         OutPort out = (OutPort)m_outport;
         OutputStream cdr 
             = new EncapsOutputStream(m_spi_orb,m_isLittleEndian);
+        out.write_stream(data,cdr); 
         m_buffer.write(cdr);
         return ReturnCode.PORT_OK;
     }
@@ -74,6 +113,32 @@ public class OutPortPullConnector extends OutPortConnector {
      */
     public BufferBase<OutputStream> getBuffer() {
         return m_buffer;
+    }
+
+    /**
+     * <p> create buffer </p>
+     */
+    protected BufferBase<OutputStream> createBuffer(ConnectorInfo profile) {
+        String buf_type;
+        buf_type = profile.properties.getProperty("buffer_type",
+                                              "ring_buffer");
+        BufferFactory<BufferBase<OutputStream>,String> factory 
+                = BufferFactory.instance();
+        return factory.createObject(buf_type);
+    }
+
+    /**
+     * <p> Invoke callback when connection is established </p>
+     */
+    protected void onConnect() {
+        m_listeners.connector_[ConnectorListenerType.ON_CONNECT].notify(m_profile);
+    }
+
+    /**
+     * <p> Invoke callback when connection is destroied </p>
+     */
+    protected void onDisconnect() {
+        m_listeners.connector_[ConnectorListenerType.ON_DISCONNECT].notify(m_profile);
     }
     /**
      * <p> Connector activation </p>
@@ -107,4 +172,8 @@ public class OutPortPullConnector extends OutPortConnector {
     protected BufferBase<OutputStream> m_buffer;
     private com.sun.corba.se.spi.orb.ORB m_spi_orb;
     private OutPortBase m_outport;
+    /**
+     * <p> A reference to a ConnectorListener </p>
+     */
+    private ConnectorListeners m_listeners;
 }

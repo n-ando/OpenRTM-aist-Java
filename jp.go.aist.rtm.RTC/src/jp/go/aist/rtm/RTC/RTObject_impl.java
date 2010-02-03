@@ -1565,19 +1565,15 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @param name DataInPortの名称
      * @param inport InPortへの参照
      */
-    public void registerInPort(final String name, InPortBase inport) throws Exception {
+    public void registerInPort(final String name, 
+                                    InPortBase inport) throws Exception {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerInPort()");
 
-        if (m_properties.hasKey("port.inport") != null) {
-	    
-            inport.properties().merge(m_properties.getNode("port.inport"));
-        }
-        String propkey = "port.inport." + name;
-        if (m_properties.hasKey(propkey) != null) {
-            inport.properties().merge(m_properties.getNode(propkey));
-        }
-        inport.init();
+        String propkey = "port.inport.";
+        propkey += name;
+        m_properties.getNode(propkey).merge(m_properties.getNode("port.inport.dataport"));
+        inport.init(m_properties.getNode(propkey));
         this.registerPort(inport);
     }
 
@@ -1609,14 +1605,15 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @param name DataOutPortの名称
      * @param outport OutPortへの参照
      */
-    public void registerOutPort(final String name, OutPortBase outport) throws Exception {
+    public void registerOutPort(final String name, 
+                                    OutPortBase outport) throws Exception {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerOutPort()");
 
         String propkey = "port.outport." + name;
         m_properties.getNode(propkey).merge(m_properties.getNode("port.outport.dataport"));
 
-        outport.properties().merge(m_properties.getNode(propkey));
+        outport.init(m_properties.getNode(propkey));
         this.registerPort(outport);
     }
 

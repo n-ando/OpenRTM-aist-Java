@@ -113,7 +113,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
     public OpenRTM.PortStatus put(byte[] data)
       throws SystemException {
 
-        rtcout.println(rtcout.PARANOID, "put()");
+        rtcout.println(rtcout.PARANOID, "InPortCorbaCdrProvider.put()");
 
         if (m_buffer == null) {
             rtcout.println(rtcout.PARANOID, "m_buffer is null.");

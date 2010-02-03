@@ -29,6 +29,8 @@ import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
+
 /**
  * <p> OutPortCorbaCdrProvider </p>
  * <p> OutPortCorbaCdrProvider class </p>
@@ -72,7 +74,8 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
         
         if (this.m_objref == null) {
             try {
-                this.m_objref = OpenRTM.OutPortCdrHelper.narrow(POAUtil.getRef(this));
+                this.m_objref 
+                    = OpenRTM.OutPortCdrHelper.narrow(POAUtil.getRef(this));
                 
             } catch (Exception e) {
                 throw new IllegalStateException(e);
@@ -111,7 +114,7 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
      * @param buffer A pointer to a data buffer to be used by OutPortProvider
      *
      */
-    public void setBuffer(BufferBase<InputStream> buffer){
+    public void setBuffer(BufferBase<OutputStream> buffer){
         m_buffer = buffer;
     }
     
@@ -125,36 +128,33 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
      *
      */
     public OpenRTM.PortStatus get(OpenRTM.CdrDataHolder data) {
-        rtcout.println(rtcout.PARANOID, "get()");
+        rtcout.println(rtcout.PARANOID, "OutPortCorbaCdrProvider.get()");
 
         if (m_buffer == null) {
+            onSenderError();
             rtcout.println(rtcout.PARANOID, "m_buffer is null.");
             return OpenRTM.PortStatus.UNKNOWN_ERROR;
         }
 
-        if (m_buffer.empty()) {
-            rtcout.println(rtcout.PARANOID, "m_buffer is empty.");
-            return OpenRTM.PortStatus.BUFFER_EMPTY;
-        }
-
-        InputStream cdr = null;
-
-        DataRef<InputStream> cdr_ref = new DataRef<InputStream>(cdr);
+        OutputStream cdr = null;
+        DataRef<OutputStream> cdr_ref = new DataRef<OutputStream>(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret 
-                          = m_buffer.read(cdr_ref);
+                          = m_buffer.read(cdr_ref,0,0);
+
         if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
-            byte[] bs = new byte[256];
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            try {
-                for(;;){
-                    cdr_ref.v.read_octet_array(bs,0,data.value.length);
-                    baos.write(bs, 0, 256);
-                }
-            }
-            catch(Exception e) {
-                    baos.write(bs, 0, 256);
-            }
-            data.value = baos.toByteArray();
+
+            EncapsOutputStream outcdr;
+            outcdr = (EncapsOutputStream)cdr_ref.v;
+/* zxc
+byte[] ch = outcdr.toByteArray();
+System.out.println("<+ch "+ch.length);
+for(int ic=0;ic<ch.length;++ic){
+System.out.print(ch[ic]+" ");
+}
+System.out.println("ch+>");
+*/
+            data.value =  outcdr.toByteArray();
+
         }
         return convertReturn(ret);
     }
@@ -162,7 +162,8 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
      * <p> convertReturn </p>
      *
      */
-    protected OpenRTM.PortStatus convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status) {
+    protected OpenRTM.PortStatus 
+    convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status) {
         switch (status) {
             case BUFFER_OK:
                 return OpenRTM.PortStatus.from_int(0);
@@ -309,17 +310,117 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
         this.m_subscriptionType = subscriptionType;
     }
     /**
+     * <p> Set the listener.  </p>
+     */
+    public void setListener(ConnectorBase.ConnectorInfo info,
+                             ConnectorListeners listeners) {
+        m_profile = info;
+        m_listeners = listeners;
+    }
+    /**
      * <p>接続プロフィールを保持するメンバ変数です。</p>
      */
     protected NVListHolder m_properties = NVListHolderFactory.create();
     
+    /**
+     * <p> Connector data listener functions </p>
+     */
+//    private void onBufferWrite(final OutputStream data)
+//    {
+//      m_listeners.
+//        connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
+//    }
+//
+//    private void onBufferFull(final OutputStream data)
+//    {
+//      m_listeners.
+//        connectorData_[ConnectorDataListenerType.ON_BUFFER_FULL].notify(m_profile, data);
+//    }
+//
+//    private void onBufferWriteTimeout(final OutputStream data)
+//    {
+//      m_listeners.
+//        connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT].notify(m_profile, data);
+//    }
+//
+//    private void onBufferWriteOverwrite(final OutputStream data)
+//    {
+//      m_listeners.
+//        connectorData_[ConnectorDataListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
+//    }
+
+    private void onBufferRead(final OutputStream data)
+    {
+      m_listeners.
+        connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
+    }
+
+    private void onSend(final OutputStream data)
+    {
+      m_listeners.
+        connectorData_[ConnectorDataListenerType.ON_SEND].notify(m_profile, data);
+    }
+
+//    private void onReceived(final OutputStream data)
+//    {
+//      m_listeners.
+//        connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
+//    }
+//
+//    private void onReceiverFull(final OutputStream data)
+//    {
+//      m_listeners.
+//        connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
+//    }
+//
+//    private void onReceiverTimeout(final OutputStream data)
+//    {
+//      m_listeners.
+//        connectorData_[ConnectorDataListenerType.ON_RECEIVER_TIMEOUT].notify(m_profile, data);
+//    }
+//
+//    private void onReceiverError(final OutputStream data)
+//    {
+//      m_listeners.
+//        connectorData_[ConnectorDataListenerType.ON_RECEIVER_ERROR].notify(m_profile, data);
+//    }
+
+    /**
+     * <p> Connector listener functions </p>
+     */
+    private void onBufferEmpty() {
+      m_listeners.
+        connector_[ConnectorListenerType.ON_BUFFER_EMPTY].notify(m_profile);
+    }
+
+    private void onBufferReadTimeout() {
+      m_listeners.
+        connector_[ConnectorListenerType.ON_BUFFER_READ_TIMEOUT].notify(m_profile);
+    }
+
+    private void onSenderEmpty() {
+      m_listeners.
+        connector_[ConnectorListenerType.ON_SENDER_EMPTY].notify(m_profile);
+    }
+
+    private void onSenderTimeout() {
+      m_listeners.
+        connector_[ConnectorListenerType.ON_SENDER_TIMEOUT].notify(m_profile);
+    }
+
+    private void onSenderError() {
+      m_listeners.
+        connector_[ConnectorListenerType.ON_SENDER_ERROR].notify(m_profile);
+    }
     private String m_portType = new String();
     private String m_dataType = new String();
     private String m_interfaceType = new String();
     private String m_dataflowType = new String();
     private String m_subscriptionType = new String();
     private Logbuf rtcout;
-    private BufferBase<InputStream> m_buffer;
+    private BufferBase<OutputStream> m_buffer;
     private OpenRTM.OutPortCdr m_objref;
     private OutPortConnector m_connector;
+    private ConnectorListeners m_listeners;
+    private ConnectorBase.ConnectorInfo m_profile;
 }

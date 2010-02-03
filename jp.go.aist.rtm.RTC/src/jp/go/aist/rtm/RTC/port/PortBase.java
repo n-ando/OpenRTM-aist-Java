@@ -571,6 +571,16 @@ public abstract class PortBase extends PortServicePOA {
     }
 
     /**
+     * <p> Get the name of this Port </p>
+     * <p> This operation returns the name of this Port. </p> 
+     * @return The name of this Port.
+     */
+    String getName() {
+        rtcout.println(rtcout.TRACE, "getName() = "+m_profile.name);
+        return m_profile.name;
+    }
+
+    /**
      * <p>当該ポートが保持しているPortProfileオブジェクトを取得します。</p>
      * 
      * @return 当該ポートが保持しているPortProfileオブジェクト
