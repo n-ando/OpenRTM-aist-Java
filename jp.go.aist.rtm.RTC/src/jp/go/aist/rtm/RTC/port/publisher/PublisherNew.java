@@ -289,34 +289,45 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         rtcout.println(rtcout.TRACE, "init()");
         String str = new String();
         prop._dump(str,prop,0);
-        rtcout.println(rtcout.PARANOID, str);
+        rtcout.println(rtcout.DEBUG, str);
     
+        setPushPolicy(prop);
+        if (!createTask(prop)) {
+            return ReturnCode.INVALID_ARGS;
+        }
+        return ReturnCode.PORT_OK;
+    }
+    /**
+     * <p> Setting PushPolicy </p>
+     * @param prop Properties
+     */
+    protected void setPushPolicy(final Properties prop) {
         // push_policy default: NEW
         String push_policy = prop.getProperty("publisher.push_policy", "new");
         rtcout.println(rtcout.DEBUG, "push_policy: " + push_policy );
     
-        // skip_count default: 0
-        String skip_count = prop.getProperty("publisher.skip_count", "0");
-        rtcout.println(rtcout.DEBUG, "skip_count: " + skip_count );
-    
         push_policy = StringUtil.normalize(push_policy);
         if (push_policy.equals("all")) {
             m_pushPolicy = Policy.ALL;
-          }
+        }
         else if (push_policy.equals("fifo")) {
             m_pushPolicy = Policy.FIFO;
-          }
+        }
         else if (push_policy.equals("skip")) {
             m_pushPolicy = Policy.SKIP;
-          }
+        }
         else if (push_policy.equals("new")) {
             m_pushPolicy = Policy.NEW;
-          }
+        }
         else {
             rtcout.println(rtcout.ERROR, 
                            "invalid push_policy value: " + push_policy );
             m_pushPolicy = Policy.NEW;     // default push policy
-          }
+        }
+
+        // skip_count default: 0
+        String skip_count = prop.getProperty("publisher.skip_count", "0");
+        rtcout.println(rtcout.DEBUG, "skip_count: " + skip_count );
     
         try {
             m_skipn = Integer.parseInt(skip_count);
@@ -331,6 +342,14 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                            "invalid skip_count value: " + m_skipn );
             m_skipn = 0;           // default skip count
         }
+    }
+
+    /**
+     * <p> Setting Task </p>
+     * @param prop Properties
+     * @return false:Task creation failed
+     */
+    protected boolean createTask(final Properties prop) {
     
         PeriodicTaskFactory<PeriodicTaskBase,String> factory 
             = PeriodicTaskFactory.instance();
@@ -345,7 +364,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             rtcout.println(rtcout.ERROR, 
                            "Task creation failed: " 
                            + prop.getProperty("thread_type", "default"));
-            return ReturnCode.INVALID_ARGS;
+            return false;
         }
         rtcout.println(rtcout.PARANOID, "Task creation succeeded." );
     
@@ -380,8 +399,10 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         m_task._suspend();
         m_task.activate();
         m_task._suspend();
-        return ReturnCode.PORT_OK;
+
+        return true;
     }
+
     /**
      * <p> setConsumer </p>
      * <p> Store InPort consumer </p>
