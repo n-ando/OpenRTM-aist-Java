@@ -60,6 +60,7 @@ class ManagerConfig {
      * ManagerConfigオブジェクトを生成するのみであり、何も処理は行われません。</p>
      */
     public ManagerConfig() {
+        m_isMaster = false;
     }
 
     /**
@@ -68,6 +69,7 @@ class ManagerConfig {
      * @param args コマンドライン引数
      */
     public ManagerConfig(String[] args) throws Exception {
+        m_isMaster = false;
         init(args);
     }
 
@@ -96,7 +98,8 @@ class ManagerConfig {
      * @throws FileNotFoundException コンフィグレーションファイルが見つからない場合にスローされます。
      * @throws IOException コンフィグレーションファイル読み取りエラーの場合にスローされます。
      */
-    public void configure(Properties properties) throws FileNotFoundException, IOException {
+    public void configure(Properties properties) 
+                                throws FileNotFoundException, IOException {
         
         properties.setDefaults(DefaultConfiguration.default_config);
         
@@ -114,6 +117,9 @@ class ManagerConfig {
         }
         
         setSystemInformation(properties);
+        if (m_isMaster) { 
+            properties.setProperty("manager.is_master","YES"); 
+        }
     }
     
     /**
@@ -149,7 +155,7 @@ class ManagerConfig {
             // do nothing
         }
         if (commandLine.hasOption("d")) {
-            // do nothing
+            m_isMaster = true;
         }
     }
     
@@ -263,4 +269,9 @@ class ManagerConfig {
      * <p>使用されるコンフィグレーションファイルのパス<p>
      */
     protected String m_configFile;
+    /**
+     * <p> Manager master flag </p>
+     * <p> true:master,false:slave </p>
+     */
+    protected boolean m_isMaster;
 }

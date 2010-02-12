@@ -1,5 +1,8 @@
 package jp.go.aist.rtm.RTC;
 
+import org.omg.CORBA.portable.Streamable;
+
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -7,10 +10,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import java.util.Set;
+import java.util.Iterator;
 
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 
+import jp.go.aist.rtm.RTC.log.Logbuf;
 
 
 /**
@@ -37,6 +43,7 @@ public class ModuleManager {
      * @param properties 初期化情報を持つPropertiesオブジェクト
      */
     public ModuleManager(Properties properties) {
+        rtcout = new Logbuf("ModuleManager");
         
         m_properties = properties;
         
@@ -48,8 +55,16 @@ public class ModuleManager {
         
         m_loadPath = new Vector<String>();
         String[] loadPath = properties.getProperty(MOD_LOADPTH).split(",");
+        String separator =  System.getProperty("file.separator");
         for (int i = 0; i < loadPath.length; ++i) {
-            m_loadPath.add(loadPath[i].trim());
+            loadPath[i] = loadPath[i].trim();
+            if(loadPath[i].substring(0,2).equals("."+separator)){
+                loadPath[i] = loadPath[i].substring(2);
+            }
+            loadPath[i] = loadPath[i].replace(separator,".");
+            loadPath[i] = loadPath[i].replace("..",".");
+System.out.println("-->:"+loadPath[i]);
+            m_loadPath.add(loadPath[i]);
         }
         
         m_absoluteAllowed = StringUtil.toBool(
@@ -83,9 +98,28 @@ public class ModuleManager {
     }
 
     /**
+     * <p> Load the module </p>
+     *
+     * <p>Load file_name as DLL or a shared liblary.
+     * The file_name is specified by the relative path to default load
+     * path (manager.modules.load_path). </p>
+     *
+     * <p>If Property manager.modules.abs_path_allowed is yes,
+     * the load module can be specified by the absolute path.<br>
+     * If Property manager.modules.download_allowed is yes,
+     * the load module can be specified with URL.</p>
+     *
+     * <p>The file_name can be specified by the absolute path.
+     * If manager.modules.allowAbsolutePath is no, module of file_name
+     * will be searched from the default module load path and loaded.</p>
+     * 
+     * @param moduleName The target module name for the loading
+     *
+     * @return Name of module for the specified load
      * 
      */
     public String load(final String moduleName) throws Exception {
+        rtcout.println(rtcout.TRACE, "load(fname = " + moduleName +")");
         String module_path = null;
 
         if(moduleName==null || moduleName.length()==0) {
@@ -94,9 +128,11 @@ public class ModuleManager {
         try {
             new URL(moduleName);
             if (! m_downloadAllowed) {
-                throw new IllegalArgumentException("Downloading module is not allowed.");
+                throw new IllegalArgumentException(
+                                    "Downloading module is not allowed.");
             } else {
-                throw new IllegalArgumentException("Not implemented." + moduleName);
+                throw new IllegalArgumentException(
+                                            "Not implemented." + moduleName);
             }
         } catch (MalformedURLException moduleName_is_not_URL) {
         }
@@ -106,34 +142,44 @@ public class ModuleManager {
         if (StringUtil.isAbsolutePath(moduleName)) {
             try {
 		if(!m_absoluteAllowed) {
-		    throw new IllegalArgumentException("Absolute path is not allowed");
+		    throw new IllegalArgumentException(
+                                            "Absolute path is not allowed");
 		}
 		else {
 		    target = Class.forName(moduleName);
 		    module_path = moduleName;
 		}
 	    } catch (ClassNotFoundException e) {
-		//                e.printStackTrace();
-                throw new ClassNotFoundException("Not implemented." + moduleName, e);
+                throw new ClassNotFoundException(
+                                    "Not implemented." + moduleName, e);
             }
         } else {
             if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
             for (int i = 0; i < m_loadPath.size(); ++i) {
-                String fullClassName = m_loadPath.elementAt(i) + "." + moduleName;
+                String fullClassName 
+                                = m_loadPath.elementAt(i) + "." + moduleName;
                 try {
                     target = Class.forName(fullClassName);
                     module_path = fullClassName;                    
                 } catch (ClassNotFoundException e) {
-//                    e.printStackTrace();
                 }
             }
-            if( target==null ) throw new ClassNotFoundException("Not implemented." + moduleName);
+            if( target==null ) {
+                throw new ClassNotFoundException(
+                                        "Not implemented." + moduleName);
+            }
         }
         if(module_path==null || module_path.length()==0) {
             throw new IllegalArgumentException("Invalid file name.");
         }
+        DLLEntity dll_entity = new DLLEntity();
+//        dll_entity.properties = new Properties("file_path",module_path);
+        dll_entity.properties = new Properties();
+        dll_entity.properties.setProperty("file_path",module_path);
+        dll_entity.dll = target;
 	
-        m_modules.put(module_path, target);
+        m_modules.put(module_path, dll_entity);
+//        m_modules.put(module_path, target);
         return module_path;
     }
 
@@ -208,14 +254,16 @@ public class ModuleManager {
      * <p>すべてのモジュールをアンロードします。</p>
      */
     public void unloadAll() {
-        m_modules = new HashMap<String, Class>();
+        m_modules = new HashMap<String, DLLEntity>();
+//        m_modules = new HashMap<String, Class>();
     }
     
     /**
      * <p>モジュールのメソッドの参照。</p>
      */
     public Method symbol(String class_name, String method_name) throws Exception {
-        Class target = m_modules.get(class_name);
+        Class target = m_modules.get(class_name).dll;
+//        Class target = m_modules.get(class_name);
         if( target==null ) 
             throw new IllegalArgumentException("Not Found(symbol):" + class_name);
         //
@@ -274,17 +322,59 @@ public class ModuleManager {
      *
      * @return ロード済みモジュールリスト
      */
-    public Map<String, Class> getLoadedModules() {
-        return m_modules;
+    public Vector<Properties> getLoadedModules() {
+        Vector<Properties> props = new Vector<Properties>();
+        Set<String> str_set = m_modules.keySet();
+        for(Iterator it=str_set.iterator();it.hasNext();){
+           props.add(m_modules.get(it.next()).properties); 
+        }
+        return props;
     }
         
     /**
      * <p>ロード可能なモジュールリストを取得します。</p>
      * 
      * @return ロード可能なモジュールリスト
+     * <p> Get the loadable module list </p>
+     * @return Loadable module list
      */
     public Vector<Properties> getLoadableModules() {
-        return new Vector<Properties>();
+        Vector<String> dlls = new Vector<String>();
+        String separator =  System.getProperty("file.separator");
+        for (int i=0; i < m_loadPath.size(); ++i) {
+            String loadpath = m_loadPath.elementAt(i);
+            if(loadpath==null|loadpath.equals("")){
+                continue;
+            }
+            loadpath = loadpath.replace(".",separator);
+            java.io.File dir = new java.io.File(loadpath);
+            String[] flist = dir.list(new FileFilter());
+            for (int ic=0; ic < flist.length; ++ic) {
+                dlls.add(loadpath+separator+flist[ic]);
+            }  
+        }
+
+        Vector<Properties> props = new Vector<Properties>();
+        for (int ic=0; ic < dlls.size(); ++ic) {
+            String str[] = dlls.elementAt(ic).split(".class");
+            str[0] = str[0].replace(separator,".");
+            str[0] = str[0].replace("..",".");
+System.out.println("-->:"+str[0]);
+            try {
+                Class holder = Class.forName(str[0],
+                                         true,
+                                         this.getClass().getClassLoader());
+                RegisterModuleFunc obj = (RegisterModuleFunc)holder.newInstance();
+                Field field = obj.getClass().getField("component_conf");
+                String[] data = (String[])field.get(obj);
+                props.add(new Properties(data));
+            }
+            catch(Exception e){
+                continue;
+            }
+        }  
+         
+        return props;
     }
     
     /**
@@ -321,8 +411,17 @@ public class ModuleManager {
     protected Properties m_properties;
     /**
      * <p>ロード済みモジュール</p>
+     * <p> Module list that has already loaded </p>
      */
-    protected Map<String, Class> m_modules = new HashMap<String, Class>();
+
+//    protected Map<Properties, Class> m_modules = new HashMap<Properties, Class>();
+    protected Map<String, DLLEntity> m_modules 
+                                        = new HashMap<String, DLLEntity>();
+    private class DLLEntity {
+        public Properties properties;
+        public Class dll;
+    }
+
     /**
      * <p>モジュールロードパス</p>
      */
@@ -347,4 +446,19 @@ public class ModuleManager {
      * <p>初期実行関数プリフィックス</p>
      */
     protected String m_initFuncPrefix = new String();
+
+    private class FileFilter implements java.io.FilenameFilter {
+        private final String FILTER_KEYWORD = ".class";
+
+        public boolean accept(java.io.File dir, String name) {
+            java.io.File file = new java.io.File(name);
+
+            if(file.isDirectory()){
+               return false;
+            }
+           
+            return (name.endsWith(FILTER_KEYWORD));
+        }
+    }
+    private Logbuf rtcout;
 }

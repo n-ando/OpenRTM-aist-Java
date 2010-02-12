@@ -276,7 +276,8 @@ public class Manager {
      *
      */
     private void preloadComponent() {
-        String[] mods = m_config.getProperty("manager.modules.preload").split(",");
+        String[] mods 
+                = m_config.getProperty("manager.modules.preload").split(",");
         for (int i=0; i < mods.length; ++i) {
             if ( mods[i].length() == 0) {
                 continue;
@@ -301,7 +302,8 @@ public class Manager {
      *
      */
     private void precreateComponent() {
-        String[] comp = m_config.getProperty("manager.components.precreate").split(",");
+        String[] comp 
+            = m_config.getProperty("manager.components.precreate").split(",");
         for (int i=0; i < comp.length; ++i) {
             if ( comp[i].length() == 0) {
                 continue;
@@ -354,13 +356,24 @@ public class Manager {
      */
     public String load(final String moduleFileName, final String initFunc) {
         
-        rtcout.println(rtcout.TRACE, "Manager.load("+moduleFileName+","+initFunc+")");
+        rtcout.println(rtcout.TRACE, 
+                        "Manager.load("+moduleFileName+","+initFunc+")");
         
+        String file_name = moduleFileName;
+        String init_func = initFunc;
         try {
-            return m_module.load(moduleFileName, initFunc);
+            if (init_func==null||init_func.equals("")) {
+                String[] mod = moduleFileName.split(".");
+                init_func = mod[0] + "Init";
+            }
+            String path = m_module.load(file_name, initFunc);
+            rtcout.println(rtcout.DEBUG, "module path: "+path);
+            return path;
+//            return m_module.load(moduleFileName, initFunc);
             
         } catch (Exception e) {
-            rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.load().");
+            rtcout.println(rtcout.DEBUG, 
+                "Exception: Caught unknown Exception in Manager.load().");
             rtcout.println(rtcout.DEBUG, e.getMessage());
             e.printStackTrace();
         }
@@ -398,14 +411,19 @@ public class Manager {
         
         rtcout.println(rtcout.TRACE, "Manager.getLoadedModules()");
 
+        return m_module.getLoadedModules();
+/*
         Set<String> key = m_module.getLoadedModules().keySet();
+
         Iterator it = key.iterator();
         Vector<Properties> props = new Vector<Properties>();
         while (it.hasNext()) {
-            Properties prop = new Properties((String)it.next());
+            String str  = (String)it.next();
+            Properties prop = new Properties(str);
             props.add(prop);
         } 
         return props;
+*/
     }
     
     /**
@@ -441,7 +459,8 @@ public class Manager {
             return true;
             
         } catch (Exception ex) {
-            rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.registerFactory().");
+            rtcout.println(rtcout.DEBUG, 
+           "Exception: Caught unknown Exception in Manager.registerFactory().");
             rtcout.println(rtcout.DEBUG, ex.getMessage());
             return false;
         }
@@ -530,7 +549,8 @@ public class Manager {
      */
     public RTObject_impl createComponent(final String comp_args) {
         
-        rtcout.println(rtcout.TRACE, "Manager.createComponent(" + comp_args + ")");
+        rtcout.println(rtcout.TRACE, 
+                            "Manager.createComponent(" + comp_args + ")");
         
         if( comp_args == null || comp_args.equals("") ) {
             return null;
@@ -546,7 +566,8 @@ public class Manager {
 
         if (!(comp_prop.getProperty("exported_ports") == null || 
               comp_prop.getProperty("exported_ports").equals(""))) {
-            comp_prop.setProperty("conf.default.exported_ports",comp_prop.getProperty("exported_ports"));
+            comp_prop.setProperty("conf.default.exported_ports"
+                                    ,comp_prop.getProperty("exported_ports"));
         }
 
         //------------------------------------------------------------
@@ -565,7 +586,8 @@ public class Manager {
 
                 Vector<String> keyval = comp_prop.propertyNames();
                 for (int ic=0, lenc=comp_prop.size(); ic < lenc; ++ic) {
-                    prop.setProperty(keyval.get(ic) , comp_prop.getProperty(keyval.get(ic)));
+                    prop.setProperty(keyval.get(ic) , 
+                                        comp_prop.getProperty(keyval.get(ic)));
                 }
 
                 final String[] inherit_prop = {
@@ -584,26 +606,30 @@ public class Manager {
                 for (int ic=0; inherit_prop[ic].length() != 0; ++ic) {
                     System.out.println( inherit_prop[ic] );
                     //        if (prop.hasKey() == NULL) continue;
-                    prop.setProperty(inherit_prop[ic], m_config.getProperty(inherit_prop[ic]));
+                    prop.setProperty(inherit_prop[ic], 
+                                        m_config.getProperty(inherit_prop[ic]));
                 }
 
                 comp = m_factory.m_objects.elementAt(i).create(this);
                 if (comp == null) {
-                    rtcout.println(rtcout.ERROR, "RTC creation failed: " + comp_id.getProperty("implementaion_id"));
+                    rtcout.println(rtcout.ERROR, 
+                        "RTC creation failed: " 
+                        + comp_id.getProperty("implementaion_id"));
                     return null;
                 }
-                rtcout.println(rtcout.TRACE, "RTC Created: " + comp_id.getProperty("implementaion_id"));
+                rtcout.println(rtcout.TRACE, 
+                    "RTC Created: " + comp_id.getProperty("implementaion_id"));
                 break;
             }
         }
         if(i == m_factory.m_objects.size()) {
-            rtcout.println(rtcout.ERROR, "Factory not found: " + comp_id.getProperty("implementaion_id"));
+            rtcout.println(rtcout.ERROR, 
+            "Factory not found: " + comp_id.getProperty("implementaion_id"));
             return null;
         } 
         if( comp == null ) {
             return null;
         }
-
         //------------------------------------------------------------
         // Load configuration file specified in "rtc.conf"
         //
@@ -826,6 +852,7 @@ public class Manager {
      * @param comp バインド対象のRTコンポーネントオブジェクト
      * @return 正常にバインドできた場合はtrueを、さもなくばfalseを返します。
      */
+/*
     public boolean bindExecutionContext(RTObject_impl comp) {
         
         rtcout.println(rtcout.TRACE, "Manager.bindExecutionContext()");
@@ -891,6 +918,7 @@ public class Manager {
         
         return true;
     }
+*/
     
     /**
      * <p>Managerに登録されているRTコンポーネントを削除します。</p>
@@ -1134,14 +1162,110 @@ public class Manager {
      * <p>ORBのコマンドラインオプションを生成します。</p>
      *
      * @return ORBコマンドラインオプション
+     *
+     * <p> Create ORB command options </p>
+     * <p> Create ORB launch options from configuration information
+     * that has been set. </p>
+     * @return ORB launch options
      */
     protected String createORBOptions() {
         
         String opt = m_config.getProperty("corba.args");
+        rtcout.println(rtcout.DEBUG, "corba.args: "+opt);
+        String dumpString = new String();
+        dumpString = m_config._dump(dumpString, m_config, 0);
+        rtcout.println(rtcout.DEBUG, dumpString);
+
+/*
+        Vector<String> endpoints = new Vector<String>();
+        createORBEndpoints(endpoints);
+        createORBEndpointOption(opt, endpoints);
+*/
+        rtcout.println(rtcout.PARANOID, "ORB options: "+opt);
         
         return opt;
     }
 
+    /**
+     * <p> Create Endpoints </p>
+     * <p> Create Endpoints from the configuration. </p>
+     * @param endpoints Endpoints list
+     */
+    protected void createORBEndpoints(Vector<String> endpoints) {
+        // corba.endpoint is obsolete
+        // corba.endpoints with comma separated values are acceptable
+        String[] endpoints_array = (String[])endpoints.toArray();
+        if (m_config.hasKey("corba.endpoints")!=null) {
+            endpoints_array 
+                = m_config.getProperty("corba.endpoints").split(",");
+            rtcout.println(rtcout.DEBUG, 
+                "corba.endpoints: "+m_config.getProperty("corba.endpoints"));
+        }
+        else if (m_config.hasKey("corba.endpoint")!=null) {
+            endpoints_array
+                = m_config.getProperty("corba.endpoint").split(",");
+            rtcout.println(rtcout.DEBUG, 
+                "corba.endpoint: "+m_config.getProperty("corba.endpoint"));
+        }
+        for(int ic=0;ic<endpoints_array.length;++ic){
+            endpoints.add(endpoints_array[ic]);
+        }
+        // If this process has master manager,
+        // master manager's endpoint inserted at the top of endpoints
+        rtcout.println(rtcout.DEBUG, 
+            "manager.is_master: "+m_config.getProperty("manager.is_master"));
+
+        if(StringUtil.toBool(m_config.getProperty("manager.is_master"), "YES", "NO", false)){
+            String  mm = m_config.getProperty("corba.master_manager", ":2810");
+            String[] mmm = mm.split(":");
+            if (mmm.length == 2) {
+                endpoints.add(0, ":" + mmm[1]);
+            }
+            else {
+                endpoints.add(0, ":2810");
+            }
+        }
+    }
+
+    /**
+     * <p> Create a command optional line of Endpoint of ORB. </p>
+     * @param opt ORB options
+     * @param endpoints Endpoints list
+     */
+    protected void createORBEndpointOption(String opt, 
+                                            Vector<String> endpoints) {
+        String corba = m_config.getProperty("corba.id");
+        rtcout.println(rtcout.DEBUG, "corba.id: "+corba);
+
+        for (int i=0; i < endpoints.size(); ++i) {
+            String endpoint = endpoints.elementAt(i);
+            rtcout.println(rtcout.DEBUG, "Endpoint is : "+endpoint);
+            if (endpoint.indexOf(":") == -1) {
+                endpoint += ":"; 
+            }
+
+            if (corba.equals("omniORB")) {
+                endpoint = StringUtil.normalize(endpoint);
+                if (StringUtil.normalize(endpoint).equals("all:")) {
+                    // omniORB 4.1 or later
+                    opt += " -ORBendPointPublish all(addr)";
+                }
+                else{
+                    opt += " -ORBendPoint giop:tcp:" + endpoint;
+                }
+            }
+            else if (corba == "TAO") {
+                opt += "-ORBEndPoint iiop://" + endpoint;
+            }
+            else if (corba == "MICO") {
+                opt += "-ORBIIOPAddr inet:" + endpoint;
+            }
+        }
+    }
+
+    /**
+     *
+     */
     protected java.util.Properties createORBProperties() {
         String endpoint = m_config.getProperty("corba.endpoint");
         if(endpoint == null || (endpoint.indexOf(":")<0))  {
@@ -1243,7 +1367,8 @@ public class Manager {
             String names[] = m_config.getProperty(meth[i] + ".nameservers").split(",");
 
             for (int j = 0; j < names.length; ++j) {
-                rtcout.println(rtcout.TRACE, "Register Naming Server: " + meth[i] + " " + names[j]);
+                rtcout.println(rtcout.TRACE, 
+                    "Register Naming Server: " + meth[i] + " " + names[j]);
                 
                 String[] nameServer = names[j].split(":");
                 if (nameServer.length == 1 && !nameServer[0].equals("")) {

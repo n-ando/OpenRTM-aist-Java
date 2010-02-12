@@ -1,6 +1,11 @@
 package jp.go.aist.rtm.RTC;
 
+import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
+
+import org.omg.PortableServer.POA;
+import org.omg.PortableServer.POAHelper;
+import org.omg.PortableServer.Servant;
 
 import java.util.Vector;
 
@@ -23,6 +28,10 @@ import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.util.equalFunctor;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 
 
 
@@ -35,8 +44,51 @@ public class ManagerServant extends ManagerPOA {
      * <p> Constructor </p>
      */
     public ManagerServant() {
+        rtcout = new Logbuf("ManagerServant");
         m_mgr = jp.go.aist.rtm.RTC.Manager.instance();
         this.m_objref = this._this();
+/*
+        Properties config = m_mgr.getConfig();    
+    
+        if (StringUtil.toBool(config.getProperty("manager.is_master"), "YES", "NO", true)) {
+            // this is master manager
+            rtcout.println(rtcout.TRACE, "This manager is master.");
+
+            if (!createINSManager()) {
+                rtcout.println(rtcout.WARN, 
+                    "Manager CORBA servant creation failed.");
+                return;
+            
+            }
+            m_isMaster = true;
+            rtcout.println(rtcout.WARN, 
+                    "Manager CORBA servant was successfully created.");
+            return;
+        }
+        else { // manager is slave
+            rtcout.println(rtcout.TRACE, "This manager is slave.");
+            try {
+                RTM.Manager owner;
+                owner = findManager(config.getProperty("corba.master_manager"));
+                if (owner == null) {
+                    rtcout.println(rtcout.INFO, "Master manager not found.");
+                    return;
+                }
+                if (!createINSManager()) {
+                    rtcout.println(rtcout.WARN, 
+                        "Manager CORBA servant creation failed.");
+                    return;
+                }
+                add_master_manager(owner);
+                owner.add_slave_manager(m_objref);
+                return;
+            }
+            catch (Exception ex) {
+                rtcout.println(rtcout.ERROR, 
+                        "Unknown exception caught.");
+            }
+        }
+*/
     }
 
     /**
@@ -57,13 +109,76 @@ public class ManagerServant extends ManagerPOA {
     }
 
     /**
+     * <p> Generate INSManager. </p>
+     * @return Successful:true, Failed:false
+     */
+    public boolean createINSManager() {
+
+        return true;
+/*
+        try {
+            //Ppreparing INS POA
+            org.omg.CORBA.Object obj;
+            obj = m_mgr.getORB().resolve_initial_references("omniINSPOA");
+            POA poa = org.omg.PortableServer.POAHelper.narrow(obj);
+            poa.the_POAManager().activate();
+
+            // Create readable object ID
+            Properties config = m_mgr.getConfig();
+	    byte[] id = null;
+            ORB orb = ORBUtil.getOrb();
+	    try {
+//                id = _default_POA().servant_to_id(orb.string_to_object(config.getProperty("manager.name")));
+                id = orb.string_to_object(config.getProperty("manager.name"))._id();
+	    }
+            catch (Exception e) {
+                rtcout.println(rtcout.WARN, 
+                    "Exception caught."+e.toString());
+            }
+
+            // Object activation
+            poa.activate_object_with_id(id, this);
+            org.omg.CORBA.Object mgrobj = poa.id_to_reference(id);
+
+            // Set m_objref 
+            m_objref = ManagerHelper.narrow(mgrobj);
+
+            String ior;
+            ior = ORBUtil.getOrb().object_to_string(m_objref);
+            String iorstr = ior;
+            rtcout.println(rtcout.DEBUG, 
+                        "Manager's IOR information:\n "+CORBA_IORUtil.formatIORinfo(iorstr));
+        }
+        catch (Exception ex) {
+            return false;
+        }
+        return true;
+*/
+    }
+
+    /**
+     * <p> Find the reference of Manager.  </p>
+     * @return Manager reference
+     */
+    public RTM.Manager findManager(final String host_port) {
+        return (RTM.Manager)null;
+    }
+
+    /**
      * <p> load_module </p>
      *
-     * @param pathname String
-     * @param initfunc String
-     * @return RTC.ReturnCode_t
+     * <p> Loading a module </p>
+     * <p> This operation loads a specified loadable module and perform
+     * initialization with the specified function. </p>
+     *
+     * @param pathname A path to a loading module.
+     * @param initfunc Module initialization function.
+     * @return The return code.
      */
-    public RTC.ReturnCode_t load_module(final String pathname, final String initfunc) {
+    public RTC.ReturnCode_t load_module(final String pathname, 
+                                            final String initfunc) {
+        rtcout.println(rtcout.TRACE, 
+                    "ManagerServant.load_module("+pathname+", "+initfunc+")");
         m_mgr.load(pathname, initfunc);
         return ReturnCode_t.RTC_OK;
     }
@@ -71,23 +186,84 @@ public class ManagerServant extends ManagerPOA {
     /**
      * <p> unload_module </p>
      *
-     * @param pathname String
-     * @return RTC.ReturnCode_t
+     * <p> Unloading a module </p >
+     * <p> This operation unloads a specified loadable module. </p >
+     * @param pathname A path to a loading module.
+     * @return The return code.
      */
     public RTC.ReturnCode_t unload_module(final String pathname) {
-      try {
-          m_mgr.unload(pathname);
-      } catch(Exception ex) {
-      }
-      return ReturnCode_t.RTC_OK;
+        rtcout.println(rtcout.TRACE, 
+                        "ManagerServant.unload_module("+pathname+")");
+        try {
+            m_mgr.unload(pathname);
+        } catch(Exception ex) {
+            rtcout.println(rtcout.WARN, 
+                    "Exception caught.Not Found:"+pathname+" "+ex.toString());
+        }
+        return ReturnCode_t.RTC_OK;
     }
 
     /**
      * <p> get_loadable_modules </p>
-     *
-     * @return RTM.ModuleProfile[]
+     * <p> Getting loadable module profiles </p>
+     * <p> This operation returns loadable module profiles. </p>
+     * @return A module profile list.
      */
     public RTM.ModuleProfile[] get_loadable_modules() {
+System.out.println("get_loadable_modules()");
+        rtcout.println(rtcout.TRACE, "get_loadable_modules()");
+        // copy local module profiles
+        Vector<Properties> prof = m_mgr.getLoadableModules();
+System.out.println("prof:"+prof.size());
+        RTM.ModuleProfile[] cprof = new RTM.ModuleProfile[prof.size()];
+        for (int i=0, len=prof.size(); i < len; ++i) {
+            String dumpString = new String();
+            dumpString = prof.elementAt(i)._dump(dumpString, 
+                                                    prof.elementAt(i), 0);
+            rtcout.println(rtcout.VERBOSE, dumpString);
+            _SDOPackage.NVListHolder nvlist = new _SDOPackage.NVListHolder();
+            NVUtil.copyFromProperties(nvlist, prof.elementAt(i));
+            cprof[i] = new RTM.ModuleProfile(nvlist.value);
+        }
+
+        if (false) {
+            // copy slaves' module profiles
+            synchronized(m_slaveMutex) {
+                rtcout.println(rtcout.DEBUG,
+                                    m_slaves.length+" slaves exists.");
+                for (int i=0, len=m_slaves.length; i < len; ++i) {
+                    try {
+                        if (m_slaves[i] != null) {
+                            RTM.ModuleProfile[] sprof;
+                            sprof = m_slaves[i].get_loadable_modules();
+                            
+                            RTM.ModuleProfileListHolder holder1 
+                                = new RTM.ModuleProfileListHolder(cprof);
+                            RTM.ModuleProfileListHolder holder2
+                                = new RTM.ModuleProfileListHolder(sprof);
+                            CORBA_SeqUtil.push_back_list(holder1, holder2);
+                            cprof = holder1.value;
+                            continue; 
+                        }
+                    }
+                    catch(Exception ex) {
+                        rtcout.println(rtcout.INFO,
+                                    "slave ("+i+") has disappeared.");
+                        m_slaves[i] = (RTM.Manager)null;
+                    }
+                    RTM.ManagerListHolder holder 
+                                    = new RTM.ManagerListHolder(m_slaves);
+                    CORBA_SeqUtil.erase(holder, i); 
+                    --i;
+                    m_slaves = holder.value;
+                }
+            }
+        }
+System.out.println("cprof:"+cprof.length);
+        return cprof;
+
+/*
+
         _SDOPackage.NVListHolder nvlist = new _SDOPackage.NVListHolder();
         Vector<Properties> prof = m_mgr.getLoadableModules();
         ModuleProfile[] cprof = new ModuleProfile[prof.size()];
@@ -99,21 +275,83 @@ public class ManagerServant extends ManagerPOA {
             Properties prop = new Properties(strs);
             NVUtil.copyFromProperties(nvlist, prop);
 
-            ModuleProfile cprof2 = new ModuleProfile();
+            ModuleProfile cprof3 = new ModuleProfile();
             cprof2.properties =  new _SDOPackage.NameValue [nvlist.value.length];
             cprof2.properties =  nvlist.value;
             cprof[i] = cprof2;
         }
 
         return cprof;
+*/
     }
 
     /**
      * <p> get_loaded_modules </p>
-     *
-     * @return RTM.ModuleProfile[]
+     * <p> Getting loaded module profiles </p>
+     * <p> This operation returns loaded module profiles. </p>
+     * @return A module profile list.
      */
     public RTM.ModuleProfile[] get_loaded_modules() {
+System.out.println("get_loaded_modules()");
+        rtcout.println(rtcout.TRACE, "get_loaded_modules()");
+
+        // copy local module profiles
+        RTM.ModuleProfileListHolder cprof = new RTM.ModuleProfileListHolder();
+        Vector<Properties> prof = m_mgr.getLoadedModules();
+        cprof.value = new RTM.ModuleProfile[prof.size()];
+
+        for (int i=0, len=prof.size(); i < len; ++i) {
+            String dumpString = new String();
+            dumpString = prof.elementAt(i)._dump(dumpString, 
+                                                    prof.elementAt(i), 1);
+            
+System.out.println("dumpString>:"+dumpString);
+            _SDOPackage.NVListHolder nvlist = new _SDOPackage.NVListHolder();
+            NVUtil.copyFromProperties(nvlist, prof.elementAt(i));
+//            cprof.value[i].properties = nvlist.value;
+System.out.println("nvlist.value.length>:"+nvlist.value.length);
+            cprof.value[i] = new RTM.ModuleProfile(nvlist.value);
+        }
+
+        if (false) {
+            // copy slaves' module profile
+            synchronized(m_slaveMutex) {
+
+                rtcout.println(rtcout.DEBUG,
+                                    m_slaves.length+" slave managers exists.");
+                for (int i=0, len= m_slaves.length; i < len; ++i) {
+                    try {
+                        if (m_slaves[i]!=null) {
+                            RTM.ModuleProfile[] sprof;
+                            sprof = m_slaves[i].get_loaded_modules();
+                            RTM.ModuleProfileListHolder holder
+                                = new RTM.ModuleProfileListHolder(sprof);
+                            CORBA_SeqUtil.push_back_list(cprof, holder);
+                            continue;
+                        }
+                    }
+                    catch(Exception ex) {
+                        rtcout.println(rtcout.INFO,
+                                    "slave ("+i+") has disappeared.");
+                        m_slaves[i] = (RTM.Manager)null;
+                    }
+                    RTM.ManagerListHolder holder 
+                                    = new RTM.ManagerListHolder(m_slaves);
+                    CORBA_SeqUtil.erase(holder, i); 
+                    --i;
+                    m_slaves = holder.value;
+                  }
+            }
+        }
+System.out.println("cprof:"+cprof.value.length);
+for (int i=0; i < cprof.value.length; ++i) {
+System.out.println("cprof:");
+System.out.println("cprof:"+cprof.value[i].properties[0].name);
+String value = cprof.value[i].properties[0].value.extract_wstring();
+System.out.println("cprof:"+value);
+}
+        return cprof.value;
+/*
         _SDOPackage.NVListHolder nvlist = new _SDOPackage.NVListHolder();
         Vector<Properties> prof = m_mgr.getLoadedModules();
         ModuleProfile[] cprof = new ModuleProfile[prof.size()];
@@ -132,39 +370,79 @@ public class ManagerServant extends ManagerPOA {
         }
 
         return cprof;
+*/
     }
 
     /**
      * <p> get_factory_profiles </p>
-     *
-     * @return RTM.ModuleProfile[]
+     * <p> Getting component factory profiles </p>
+     * <p> This operation returns component factory profiles from loaded
+     * RT-Component module factory profiles. </p>
+     * @return An RT-Component factory profile list.
      */
     public RTM.ModuleProfile[] get_factory_profiles() {
-        _SDOPackage.NVListHolder nvlist = new _SDOPackage.NVListHolder();
+        rtcout.println(rtcout.TRACE, "get_factory_profiles()");
+
         Vector<Properties> prof = m_mgr.getFactoryProfiles();
         ModuleProfile[] cprof = new ModuleProfile[prof.size()];
 
         for (int i=0, len=prof.size(); i < len; ++i) {
             Properties prop = prof.elementAt(i);
+            String dumpString = new String();
+            dumpString = prop._dump(dumpString, prop, 0);
+            _SDOPackage.NVListHolder nvlist = new _SDOPackage.NVListHolder();
             NVUtil.copyFromProperties(nvlist, prop);
-
-            ModuleProfile cprof2 = new ModuleProfile();
-            cprof2.properties =  new _SDOPackage.NameValue [nvlist.value.length];
-            cprof2.properties =  nvlist.value;
-            cprof[i] = cprof2;
+            cprof[i].properties =  nvlist.value;
         }
 
+        if (false) {
+            // copy slaves' factory profile
+            synchronized(m_slaveMutex) {
+                rtcout.println(rtcout.DEBUG,
+                                    m_slaves.length+" slaves exists.");
+                for (int i=0, len=m_slaves.length; i < len; ++i) {
+                    try {
+                        if (m_slaves[i]!=null) {
+                            RTM.ModuleProfile[] sprof;
+                            sprof = m_slaves[i].get_factory_profiles();
+                            RTM.ModuleProfileListHolder holder1 
+                                = new RTM.ModuleProfileListHolder(cprof);
+                            RTM.ModuleProfileListHolder holder2
+                                = new RTM.ModuleProfileListHolder(sprof);
+                            CORBA_SeqUtil.push_back_list(holder1, holder2);
+                            cprof = holder1.value;
+                            continue;
+                        }
+                    }
+                    catch(Exception ex) {
+                        rtcout.println(rtcout.INFO,
+                                    "slave ("+i+") has disappeared.");
+                        m_slaves[i] = (RTM.Manager)null;
+                    }
+                    RTM.ManagerListHolder holder 
+                                    = new RTM.ManagerListHolder(m_slaves);
+                    CORBA_SeqUtil.erase(holder, i); 
+                    --i;
+                    m_slaves = holder.value;
+                }
+            }
+        }   
         return cprof;
     }
 
     /**
      * <p> create_component </p>
+     * <p> Creating an RT-Component </p>
+     * <p> This operation creates RT-Component according to the string
+     * argument. </p>
      *
      * @param module_name
-     * @return RTC.RTObject
+     * @return A created RT-Component
      *
      */
     public RTC.RTObject create_component(final String module_name) {
+        rtcout.println(rtcout.TRACE, "create_component("+module_name+")");
+
         RTObject_impl rtc = m_mgr.createComponent(module_name);
         if (rtc == null) {
 //            System.err.println( "ManagerServant.create_component() RTC not found: "  + module_name );
@@ -175,22 +453,31 @@ public class ManagerServant extends ManagerPOA {
 
     /**
      * <p> delete_component </p>
+     * <p> Deleting an RT-Component </p>
+     * <p> This operation delete an RT-Component according to the string
+     * argument. </p>
      *
      * @param instance_name
-     * @return RTC.ReturnCode_t
+     * @return Return code
      *
      */
     public RTC.ReturnCode_t delete_component(final String instance_name) {
+        rtcout.println(rtcout.TRACE, "delete_component("+instance_name+")");
+
         m_mgr.deleteComponent(instance_name);
         return ReturnCode_t.RTC_OK;
     }
 
     /**
      * <p> get_components </p>
-     *
-     * @return RTC.RTObject[]
+     * <p> Getting RT-Component list running on this manager </p>
+     * <p> This operation returns RT-Component list running 
+     * on this manager. </p>
+     * @return A list of RT-Components
      */
     public RTC.RTObject[] get_components() {
+        rtcout.println(rtcout.TRACE, "get_component()");
+
         Vector<RTObject_impl> rtcs = m_mgr.getComponents();
         RTCListHolder crtcs = new RTCListHolder();
         crtcs.value = new RTObject[rtcs.size()];
@@ -198,15 +485,46 @@ public class ManagerServant extends ManagerPOA {
         for (int i=0, len=rtcs.size(); i < len; ++i) {
             crtcs.value[i] = rtcs.elementAt(i).getObjRef();
         }
+//        return crtcs.value;
+        // get slaves' component references
+        rtcout.println(rtcout.DEBUG,
+                                    m_slaves.length+" slaves exists.");
+        for (int i=0, len=m_slaves.length; i < len; ++i) {
+            try {
+                if (m_slaves[i]!=null) {
+                    RTC.RTObject[] srtcs;
+                    srtcs = m_slaves[i].get_components();
+                    RTC.RTCListHolder holder
+                            = new RTC.RTCListHolder(srtcs);
+                    CORBA_SeqUtil.push_back_list(holder, crtcs);
+                    srtcs = holder.value;
+                    continue;
+                  }
+            }
+            catch(Exception ex) {
+                rtcout.println(rtcout.INFO,
+                                    "slave ("+i+") has disappeared.");
+                m_slaves[i] = (RTM.Manager)null;
+            }
+            RTM.ManagerListHolder holder 
+                                = new RTM.ManagerListHolder(m_slaves);
+            CORBA_SeqUtil.erase(holder, i); 
+            --i;
+            m_slaves = holder.value;
+        }
         return crtcs.value;
     }
   
     /**
      * <p> get_component_profiles </p>
-     *
-     * @return RTC.ComponentProfile[]
+     * <p> Getting RT-Component's profile list running on this manager </p>
+     * <p> This operation returns RT-Component's profile list running on
+     * this manager. </p>
+     * @return A list of RT-Components' profiles
      */
     public RTC.ComponentProfile[] get_component_profiles() {
+        rtcout.println(rtcout.TRACE, "get_component_profiles()");
+
         ComponentProfileListHolder cprofs = new ComponentProfileListHolder();
         Vector<RTObject_impl> rtcs = m_mgr.getComponents();
         cprofs.value = new ComponentProfile[rtcs.size()];
@@ -214,15 +532,48 @@ public class ManagerServant extends ManagerPOA {
         for (int i=0, len=rtcs.size(); i < len; ++i) {
             cprofs.value[i] = rtcs.elementAt(i).get_component_profile();
         }
+//         return cprofs.value;
+        // copy slaves' component profiles
+        synchronized(m_slaveMutex) {
+            rtcout.println(rtcout.DEBUG,
+                                    m_slaves.length+" slaves exists.");
+            for (int i=0, len=m_slaves.length; i < len; ++i) {
+                try {
+                    if (m_slaves[i]!=null) {
+
+                        RTC.ComponentProfile[] sprof;
+                        sprof = m_slaves[i].get_component_profiles();
+                            
+                        ComponentProfileListHolder holder
+                                = new ComponentProfileListHolder(sprof);
+                        CORBA_SeqUtil.push_back_list(cprofs, holder);
+                        continue; 
+                      }
+                }
+                catch(Exception ex) {
+                    rtcout.println(rtcout.INFO,
+                                    "slave ("+i+") has disappeared.");
+                    m_slaves[i] = (RTM.Manager)null;
+                }
+                RTM.ManagerListHolder holder 
+                                = new RTM.ManagerListHolder(m_slaves);
+                CORBA_SeqUtil.erase(holder, i); 
+                --i;
+                m_slaves = holder.value;
+            }
+        }
         return cprofs.value;
     }
 
     /**
      * <p> get_profile </p>
-     *
-     * @return RTM.ManagerProfile
+     * <p> Getting this manager's profile. </p>
+     * <p> This operation returns this manager's profile. </p>
+     * @return Manager's profile
      */
     public RTM.ManagerProfile get_profile() {
+        rtcout.println(rtcout.TRACE, "get_profile()");
+
         NVListHolder nvlist = new NVListHolder();
         ManagerProfile prof = new ManagerProfile();
         NVUtil.copyFromProperties(nvlist,
@@ -233,10 +584,13 @@ public class ManagerServant extends ManagerPOA {
 
     /**
      * <p> get_configuration </p>
-     * 
-     * @return _SDOPackage.NameValue[]
+     * <p> Getting this manager's configuration. </p>
+     * <p> This operation returns this manager's configuration. </p>
+     * @return Manager's configuration
      */
     public _SDOPackage.NameValue[] get_configuration() {
+        rtcout.println(rtcout.TRACE, "get_configuration()");
+
         NVListHolder nvlist = new NVListHolder();
         NVUtil.copyFromProperties(nvlist, m_mgr.getConfig());
         return nvlist.value;
@@ -244,14 +598,176 @@ public class ManagerServant extends ManagerPOA {
 
     /**
      * <p> set_configuration </p>
-     *
-     * @param name
-     * @param value
-     * @return RTC.ReturnCode_t
+     * <p> Setting manager's configuration </p>
+     * <p> This operation sets managers configuration. </p>
+     * @param name A configuration key name to be set
+     * @param value A configuration value to be set
+     * @return Return code
      */
-    public RTC.ReturnCode_t set_configuration(final String name, final String value) {
+    public RTC.ReturnCode_t set_configuration(final String name, 
+                                                    final String value) {
+        rtcout.println(rtcout.TRACE, "set_configuration()");
+
         m_mgr.getConfig().setProperty(name, value);
         return ReturnCode_t.RTC_OK;
+    }
+
+    /**
+     * <p> Whether this manager is master or not </p>
+     * <p> It returns "True" if this manager is a master, and it returns
+     * "False" in other cases. </p>
+     * @return A boolean value that means it is master or not.
+     */
+    public boolean is_master() {
+        rtcout.println(rtcout.TRACE, "is_master(): "+m_isMaster);
+        return m_isMaster;
+
+    }
+
+    /**
+     * <p> Getting master managers </p>
+     * <p> This operation returns master manager list if this manager is
+     * slave. If this manager is master, an empty sequence would be
+     * returned. </p>
+     * @return Master manager list
+     */
+    public RTM.Manager[] get_master_managers() {
+        rtcout.println(rtcout.TRACE, "get_master_managers()");
+
+        synchronized(m_masterMutex) {
+            RTM.ManagerListHolder holder = new RTM.ManagerListHolder(m_masters);
+            return holder.value;
+        }
+    }
+
+    /**
+     * <p> Getting a master manager </p>
+     * <p> This operation returns a master manager with specified id. If
+     * the manager with the specified id does not exist, nil object
+     * reference would be returned. </p>
+     * @return ReturnCode_t
+     */
+    public ReturnCode_t add_master_manager(RTM.Manager mgr) {
+        synchronized(m_masterMutex) {
+            long index;
+            rtcout.println(rtcout.TRACE, 
+                    "add_master_manager(), "+m_masters.length+" masters");
+
+            RTM.ManagerListHolder holder = new RTM.ManagerListHolder(m_masters);
+            index = CORBA_SeqUtil.find(holder, new is_equiv(mgr));
+    
+            if (!(index < 0)) {// found in my list
+                rtcout.println(rtcout.ERROR, "Already exists.");
+                return ReturnCode_t.BAD_PARAMETER;
+            }
+    
+            CORBA_SeqUtil.push_back(holder, (RTM.Manager)mgr._duplicate());
+            m_masters = holder.value;
+            rtcout.println(rtcout.TRACE, 
+                "add_master_manager() done, "+m_masters.length+" masters");
+            return ReturnCode_t.RTC_OK;
+        }
+    }
+
+    /**
+     * <p> Removing a master manager </p>
+     * <p> This operation removes a master manager from this manager. </p>
+     * @param mgr A master manager
+     * @return ReturnCode_t 
+     */
+    public ReturnCode_t remove_master_manager(RTM.Manager mgr) {
+        synchronized(m_masterMutex) {
+            rtcout.println(rtcout.TRACE, 
+                    "remove_master_manager(), "+m_masters.length+" masters");
+
+            long index;
+            RTM.ManagerListHolder holder = new RTM.ManagerListHolder(m_masters);
+            index = CORBA_SeqUtil.find(holder, new is_equiv(mgr));
+    
+            if (index < 0) { // not found in my list
+                rtcout.println(rtcout.ERROR, "Not found.");
+                return ReturnCode_t.BAD_PARAMETER;
+            }
+    
+            CORBA_SeqUtil.erase(holder, (int)index);
+            m_masters = holder.value;
+            rtcout.println(rtcout.TRACE, 
+                "remove_master_manager() done, "+m_masters.length+" masters");
+            return ReturnCode_t.RTC_OK;
+        }
+    }    
+
+
+    /**
+     * <p> Getting slave managers </p>
+     * <p> This operation returns slave manager list if this manager is
+     * slave. If this manager is slave, an empty sequence would be
+     * returned. </p>
+     * @return Slave manager list
+     */
+    public RTM.Manager[] get_slave_managers() {
+        synchronized(m_masterMutex) {
+            rtcout.println(rtcout.TRACE, 
+                "get_slave_managers(), "+m_slaves.length+" slaves");
+    
+            RTM.ManagerListHolder holder = new RTM.ManagerListHolder(m_slaves);
+            return holder.value;
+        }
+    }
+
+    /**
+     * <p> Getting a slave manager </p>
+     * <p> This operation add a slave manager to this manager. </p>
+     * @param mgr A slave manager
+     * @return ReturnCode_t
+     */
+    public ReturnCode_t add_slave_manager(RTM.Manager mgr) {
+        synchronized(m_masterMutex) {
+            rtcout.println(rtcout.TRACE, 
+                "add_slave_manager(), "+m_slaves.length+" slaves");
+    
+            long index;
+            RTM.ManagerListHolder holder = new RTM.ManagerListHolder(m_slaves);
+            index = CORBA_SeqUtil.find(holder, new is_equiv(mgr));
+    
+            if (!(index < 0)) { // found in my list
+                rtcout.println(rtcout.ERROR, "Already exists.");
+                return ReturnCode_t.BAD_PARAMETER;
+            }
+    
+            CORBA_SeqUtil.push_back(holder, (RTM.Manager)mgr._duplicate());
+            m_slaves = holder.value;
+            rtcout.println(rtcout.TRACE, 
+                "add_slave_manager() done, "+m_slaves.length+" slaves");
+            return ReturnCode_t.RTC_OK;
+        }
+    }
+
+    /**
+     * <p> Removing a slave manager </p>
+     * <p> This operation removes a slave manager from this manager. </p>
+     * @param mgr A slave manager
+     * @return ReturnCode_t 
+     */
+    public ReturnCode_t remove_slave_manager(RTM.Manager mgr) {
+        synchronized(m_masterMutex) {
+            rtcout.println(rtcout.TRACE, 
+                "remove_slave_manager(), "+m_slaves.length+" slaves");
+            long index;
+            RTM.ManagerListHolder holder = new RTM.ManagerListHolder(m_slaves);
+            index = CORBA_SeqUtil.find(holder, new is_equiv(mgr));
+    
+            if (index < 0) {// not found in my list
+                rtcout.println(rtcout.ERROR, "Not found.");
+                return ReturnCode_t.BAD_PARAMETER;
+            }
+    
+            CORBA_SeqUtil.erase(holder, (int)index);
+            m_slaves = holder.value;
+            rtcout.println(rtcout.TRACE, 
+                "remove_slave_manager() done, "+m_slaves.length+" slaves");
+            return ReturnCode_t.RTC_OK;
+        }
     }
 
     /**
@@ -259,9 +775,11 @@ public class ManagerServant extends ManagerPOA {
      *
      * @return RTM.Manager
      */
+/* zxc
     public RTM.Manager get_owner() {
         return null;
     }
+*/
 
     /**
      * <p> set_owner </p>
@@ -270,25 +788,31 @@ public class ManagerServant extends ManagerPOA {
      * @return RTM.Manager
      *
      */
+/* zxc
     public RTM.Manager set_owner(RTM.Manager mgr) {
         return null;
     }
+*/
 
     /**
      * <p> get_child </p>
      *
      * @return RTM.Manager
      */
+/* zxc
     public RTM.Manager get_child() {
         return null;
     }
+*/
 
     /**
      * <p> set_child </p>
      */
+/* zxc
     public RTM.Manager set_child(RTM.Manager mgr) {
         return null;
     }
+*/
 
     /**
      * <p> fork </p>
@@ -345,4 +869,25 @@ public class ManagerServant extends ManagerPOA {
      */
     private RTM.Manager m_objref;
 
+    protected Logbuf rtcout;
+    private boolean m_isMaster;
+    private String m_masterMutex = new String();
+    private RTM.Manager m_masters[];
+    private String m_slaveMutex = new String();
+    private RTM.Manager m_slaves[];
+
+    private class is_equiv implements equalFunctor {
+        private RTM.Manager m_mgr;
+        public is_equiv(RTM.Manager mgr) {
+            m_mgr = (RTM.Manager)mgr._duplicate();
+        }
+/*
+        public boolean operator(RTM.Manager mgr) {
+            return m_mgr._is_equivalent(mgr);
+        }
+*/
+        public boolean equalof(final java.lang.Object object) {
+            return m_mgr._is_equivalent((RTM.Manager)object);
+        }
+    }
 }

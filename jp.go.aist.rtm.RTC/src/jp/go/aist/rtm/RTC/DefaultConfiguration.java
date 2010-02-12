@@ -42,13 +42,15 @@ interface DefaultConfiguration {
         "corba.args",             "",
         "corba.endpoint",         "",                   // hostname:port_number
         "corba.id",               Version.corba_name,
-        "corba.name_servers",     "",
+        "corba.nameservers",     "localhost",
+        "corba.master_manager",   "localhost:2810",
         "exec_cxt.periodic.type", "jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext",
         "exec_cxt.periodic.rate", "1000",
-    "exec_cxt.evdriven.type",     "jp.go.aist.rtm.RTC.executionContext.EventDrivenExecutionContext",
+        "exec_cxt.evdriven.type",     "jp.go.aist.rtm.RTC.executionContext.EventDrivenExecutionContext",
         "manager.modules.load_path",        "./",
         "manager.modules.abs_path_allowed", "YES",
-
+        "manager.is_master",                "NO",
+        "manager.name",                     "manager",
         ""
     };
 }
