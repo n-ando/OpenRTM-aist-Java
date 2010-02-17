@@ -146,6 +146,7 @@ public abstract class PortBase extends PortServicePOA {
         m_onUnsubscribeInterfaces = null;
         m_onDisconnected = null;
         m_onConnectionLost = null;
+        m_connectionLimit = 0;
     }
 
     /**
@@ -1430,6 +1431,38 @@ public abstract class PortBase extends PortServicePOA {
         return true;
     }
   
+    /**
+     * <p> Publish interface information </p>
+     *
+     * Publish interface information.
+     *
+     * @return The return code of ReturnCode_t type
+     */
+    protected ReturnCode_t _publishInterfaces() {
+        if(!(m_connectionLimit < 0)) {
+            if(m_connectionLimit<=m_profile.connector_profiles.length) {
+                rtcout.println(rtcout.PARANOID, 
+                    "Connected number has reached the limitation.");
+                rtcout.println(rtcout.PARANOID, 
+                    "Can connect the port up to "+m_connectionLimit+" ports.");
+                rtcout.println(rtcout.PARANOID, 
+                    m_profile.connector_profiles.length+" connectors are existing");
+                return ReturnCode_t.RTC_ERROR;
+             }
+        }
+        return ReturnCode_t.RTC_OK;
+    }
+
+    /**
+     * <p> Set the maximum number of connections </p>
+     *
+     * @param limit_value The maximum number of connections
+     *
+     */
+    protected void setConnectionLimit(int limit_value) {
+        m_connectionLimit = limit_value;
+    }
+
     protected Logbuf rtcout;
     /**
      * <p>Callback functor objects</p>
@@ -1440,4 +1473,8 @@ public abstract class PortBase extends PortServicePOA {
     protected ConnectionCallback m_onUnsubscribeInterfaces;
     protected ConnectionCallback m_onDisconnected;
     protected ConnectionCallback m_onConnectionLost;
+    /**
+     * <p> The maximum number of connections </p>
+     */
+    protected int m_connectionLimit;
 }

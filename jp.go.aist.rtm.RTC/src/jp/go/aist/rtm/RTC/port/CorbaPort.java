@@ -13,6 +13,7 @@ import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.operatorFunc;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
+import jp.go.aist.rtm.RTC.util.Properties;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.BAD_OPERATION;
@@ -50,6 +51,43 @@ public class CorbaPort extends PortBase {
         rtcout = new Logbuf("CorbaPort");
     }
     
+    /**
+     * <p> Initializing properties </p>
+     *
+     * This operation initializes outport's properties. If a property
+     * "connection_limit" is set and appropriate value is set to this
+     * property value, the number of maximum connection is set as this
+     * value. If the property does not exist or invalid value is set
+     * to this property, the maximum number of connection will be set
+     * unlimited.
+     *
+     * @param prop properties of the CorbaPort
+     */
+    public void init(Properties prop) {
+        rtcout.println(rtcout.TRACE, "init()");
+        rtcout.println(rtcout.PARANOID, "given properties:");
+        String dumpString = new String();
+        dumpString = prop._dump(dumpString, prop, 0);
+        rtcout.println(rtcout.DEBUG, dumpString);
+
+        m_properties.merge(prop);
+
+        rtcout.println(rtcout.PARANOID, "updated properties:");
+        dumpString = m_properties._dump(dumpString, m_properties, 0);
+        rtcout.println(rtcout.DEBUG, dumpString);
+
+        int num = -1;
+        String limit = m_properties.getProperty("connection_limit","-1");
+        try {
+            num = Integer.parseInt(limit);
+        }
+        catch(Exception ex){
+            rtcout.println(rtcout.ERROR, 
+                    "invalid connection_limit value: "+limit );
+        }
+        setConnectionLimit(num);
+    }
+
     /**
      * <p>このPortにおいて提供したいサーバントを登録します。<br />
      * 引数で与えられるインスタンス名とタイプ名が、
@@ -224,6 +262,12 @@ public class CorbaPort extends PortBase {
     protected ReturnCode_t publishInterfaces(ConnectorProfileHolder connector_profile) {
         
         rtcout.println(rtcout.TRACE, "publishInterfaces()");
+
+        ReturnCode_t returnvalue = _publishInterfaces();
+        if(returnvalue!=ReturnCode_t.RTC_OK) {
+            return returnvalue;
+        }
+
         NVListHolder holder = new NVListHolder(connector_profile.value.properties);
         CORBA_SeqUtil.push_back_list(holder, this.m_providers);
         connector_profile.value.properties = holder.value;
@@ -422,4 +466,8 @@ public class CorbaPort extends PortBase {
      * <p>Logging用フォーマットオブジェクト</p>
      */
     protected Logbuf rtcout;
+    /**
+     * <p> Properties </p>
+     */
+    protected Properties m_properties = new Properties();
 }

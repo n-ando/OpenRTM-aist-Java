@@ -128,10 +128,9 @@ public class InPortBase extends PortBase {
     /**
      * <p> Getting Connector by name </p>
      * <p> This operation returns Connector specified by name. </p>
-     * @param id Connector ID
+     * @param name Connector ID
      * @return InPortConnector connector
      *
-     * @endif
      */
     public InPortConnector getConnectorByName(final String name){
         rtcout.println(rtcout.TRACE, "getConnectorByName(name = "+name+")");
@@ -154,7 +153,6 @@ public class InPortBase extends PortBase {
      * @param prof ConnectorProfileHolder
      * @return boolean false specified ID does not exist
      *
-     * @endif
      */
     public boolean getConnectorProfileById(final String id, 
                                     ConnectorBase.ConnectorInfoHolder prof) {
@@ -173,11 +171,10 @@ public class InPortBase extends PortBase {
      * <p> Getting ConnectorProfile by name </p>
      * <p>This operation returns ConnectorProfile specified by name </p>
      *
-     * @param id Connector ID
+     * @param name Connector ID
      * @param prof ConnectorProfile
      * @return boolean false specified name does not exist
      *
-     * @endif
      */
     public boolean getConnectorProfileByName(final String name, 
                                       ConnectorBase.ConnectorInfoHolder prof) {
@@ -215,6 +212,17 @@ public class InPortBase extends PortBase {
         }
         initProviders();
         initConsumers();
+
+        int num = -1;
+        String limit = m_properties.getProperty("connection_limit","-1");
+        try {
+            num = Integer.parseInt(limit);
+        }
+        catch(Exception ex){
+            rtcout.println(rtcout.ERROR, 
+                    "invalid connection_limit value: "+limit );
+        }
+        setConnectionLimit(num);
       
     }
     /**
@@ -377,6 +385,11 @@ public class InPortBase extends PortBase {
      */
     protected ReturnCode_t publishInterfaces(ConnectorProfileHolder cprof) {
         rtcout.println(rtcout.TRACE, "publishInterfaces()");
+
+        ReturnCode_t returnvalue = _publishInterfaces();
+        if(returnvalue!=ReturnCode_t.RTC_OK) {
+            return returnvalue;
+        }
 
         // prop: [port.outport].
         Properties prop = m_properties;

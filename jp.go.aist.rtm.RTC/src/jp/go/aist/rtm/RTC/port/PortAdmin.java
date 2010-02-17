@@ -116,6 +116,59 @@ public class PortAdmin {
     }
 
     /**
+     * <p> Regsiter the Port </p>
+     *
+     * This operation registers the Port's servant given by argument.
+     * The given Port's servant will be activated on the POA that is given
+     * to the constructor, and the created object reference is set
+     * to the Port's profile.
+     *
+     * @param port The Port's servant.
+     * @return Register result (Successful:true, Failed:false)
+     *
+     */
+    public boolean addPort(PortBase port) {
+        // Check for duplicate
+        int index = 
+            CORBA_SeqUtil.find(m_portRefs, new find_port_name(port.getName()));
+        if(index != -1){
+            return false;
+        }
+
+        // Store Port's ref to PortServiceList
+        CORBA_SeqUtil.push_back(m_portRefs, port.getPortRef());
+    
+        // Store Port servant
+        return m_portServants.registerObject(port, 
+                            new find_port_name(port.get_port_profile().name));
+    }
+
+    /**
+     *
+     * <p> Regsiter the Port </p>
+     *
+     * This operation registers the Port's servant given by argument.
+     * The given Port's servant will be activated on the POA that is given
+     * to the constructor, and the created object reference is set
+     * to the Port's profile.
+     *
+     * @param port The Port's servant.
+     * @return Register result (Successful:true, Failed:false)
+     *
+     */
+    public boolean addPort(PortService port) {
+        // Check for duplicate
+        PortProfile prof = port.get_port_profile();
+        String name = prof.name;
+        if (CORBA_SeqUtil.find(m_portRefs, new find_port_name(name)) != -1) {
+            return false;
+        }
+
+        CORBA_SeqUtil.push_back(m_portRefs, port);
+        return true;
+    }
+
+    /**
      * <p>Portサーバントを登録します。</p>
      * 
      * @param port 登録するPortサーバント

@@ -3,6 +3,7 @@ package jp.go.aist.rtm.RTC;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.SDOPackage.Configuration_impl;
+import jp.go.aist.rtm.RTC.port.CorbaPort;
 import jp.go.aist.rtm.RTC.port.DataInPort;
 import jp.go.aist.rtm.RTC.port.DataOutPort;
 import jp.go.aist.rtm.RTC.port.InPort;
@@ -1516,27 +1517,117 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public void registerPort(PortBase port) {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerPort(PortBase)");
-
-        port.setOwner(this.getObjRef());
-        m_portAdmin.registerPort(port);
-        return;
+        if (!addPort(port)) {
+            rtcout.println(rtcout.ERROR, "addPort(PortBase&) failed.");
+        }
     }
 
+    /**
+     * <p> [local interface] Register Port </p>
+     *
+     * This operation registers a Port held by this RTC.
+     * In order to enable access to the Port from outside of RTC, the Port
+     * must be registered by this operation. The Port that is registered by
+     * this operation would be identified by PortProfile.name in the inside of
+     * RTC. Therefore, the Port should have unique PortProfile.name in the RTC.
+     * The registering Port would be activated properly, and the reference
+     * and the object reference would be stored in lists in RTC.
+     *
+     * @param port Port which is registered to the RTC
+     * @return Register result (Successful:true, Failed:false)
+     *
+     */
+    public boolean addPort(PortBase port) {
+        rtcout.println(rtcout.TRACE, "addPort(PortBase)");
+        port.setOwner(this.getObjRef());
+        return m_portAdmin.addPort(port);
+    }
 
     /**
-     * <p> registerPort </p>
+     * <p> [local interface] Register Port </p>
      *
-     * @param port PortService
+     * This operation registers a Port held by this RTC.
+     * In order to enable access to the Port from outside of RTC, the Port
+     * must be registered by this operation. The Port that is registered by
+     * this operation would be identified by PortProfile.name in the inside of
+     * RTC. Therefore, the Port should have unique PortProfile.name in the RTC.
+     * The registering Port would be activated properly, and the reference
+     * and the object reference would be stored in lists in RTC.
      *
+     * @param port Port which is registered to the RTC
      */
     public void registerPort(PortService port) {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerPort(PortService)");
 
-        m_portAdmin.registerPort(port);
-        return;
+        if (!addPort(port)){
+            rtcout.println(rtcout.ERROR, "addPort(PortBase&) failed.");
+        }
     }
 
+    /**
+     * <p> [local interface] Register Port </p>
+     *
+     * This operation registers a Port held by this RTC.
+     * In order to enable access to the Port from outside of RTC, the Port
+     * must be registered by this operation. The Port that is registered by
+     * this operation would be identified by PortProfile.name in the inside of
+     * RTC. Therefore, the Port should have unique PortProfile.name in the RTC.
+     * The registering Port would be activated properly, and the reference
+     * and the object reference would be stored in lists in RTC.
+     *
+     * @param port Port which is registered to the RTC
+     * @return Register result (Successful:true, Failed:false)
+     *
+     */
+    public boolean addPort(PortService port) {
+
+        rtcout.println(rtcout.TRACE, "addPort(PortService_ptr)");
+        return m_portAdmin.addPort(port);
+    }
+
+    /**
+     * <p> [local interface] Register Port </p>
+     *
+     * This operation registers a Port held by this RTC.
+     * In order to enable access to the Port from outside of RTC, the Port
+     * must be registered by this operation. The Port that is registered by
+     * this operation would be identified by PortProfile.name in the inside of
+     * RTC. Therefore, the Port should have unique PortProfile.name in the RTC.
+     * The registering Port would be activated properly, and the reference
+     * and the object reference would be stored in lists in RTC.
+     *
+     * @param port Port which is registered to the RTC
+     *
+     */
+    public void registerPort(CorbaPort port) {
+        rtcout.println(rtcout.TRACE, "registerPort(CorbaPort)");
+        if (!addPort(port)) {
+            rtcout.println(rtcout.ERROR, "addPort(CorbaPort&) failed.");
+        }
+    }
+    /**
+     * <p> [local interface] Register Port </p>
+     *
+     * This operation registers a Port held by this RTC.
+     * In order to enable access to the Port from outside of RTC, the Port
+     * must be registered by this operation. The Port that is registered by
+     * this operation would be identified by PortProfile.name in the inside of
+     * RTC. Therefore, the Port should have unique PortProfile.name in the RTC.
+     * The registering Port would be activated properly, and the reference
+     * and the object reference would be stored in lists in RTC.
+     *
+     * @param port Port which is registered to the RTC
+     * @return Register result (Successful:true, Failed:false)
+     */
+    public boolean addPort(CorbaPort port) {
+        rtcout.println(rtcout.TRACE, "addPort(CrobaPort)");
+        String propkey = "port.corbaport.";
+        m_properties.getNode(propkey).merge(m_properties.getNode("port.corba"));
+    
+        port.init(m_properties.getNode(propkey));
+        return addPort((PortBase)port);
+    }
     /**
      * <p>[local interface] DataInPort を登録します。<br />
      *

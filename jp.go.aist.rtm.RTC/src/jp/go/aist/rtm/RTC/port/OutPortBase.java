@@ -91,6 +91,17 @@ public class OutPortBase extends PortBase {
         initConsumers();
         initProviders();
 
+        int num = -1;
+        String limit = m_properties.getProperty("connection_limit","-1");
+        try {
+            num = Integer.parseInt(limit);
+        }
+        catch(Exception ex){
+            rtcout.println(rtcout.ERROR, 
+                    "invalid connection_limit value: "+limit );
+        }
+        setConnectionLimit(num);
+
     }
     /**
      * <p>プロパティを取得する</p>
@@ -195,10 +206,9 @@ public class OutPortBase extends PortBase {
     /**
      * <p> Getting Connector by name </p>
      * <p> This operation returns Connector specified by name. </p>
-     * @param id Connector ID
+     * @param name Connector ID
      * @return OutPortConnector connector
      *
-     * @endif
      */
     OutPortConnector getConnectorByName(final String name) {
         rtcout.println(rtcout.TRACE, 
@@ -410,6 +420,11 @@ public class OutPortBase extends PortBase {
     protected ReturnCode_t 
     publishInterfaces(ConnectorProfileHolder cprof) {
         rtcout.println(rtcout.TRACE, "publishInterfaces()");
+
+        ReturnCode_t returnvalue = _publishInterfaces();
+        if(returnvalue!=ReturnCode_t.RTC_OK) {
+            return returnvalue;
+        }
 
         // prop: [port.outport].
         Properties prop = m_properties;
