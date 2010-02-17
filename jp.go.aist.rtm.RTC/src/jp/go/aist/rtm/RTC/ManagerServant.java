@@ -34,7 +34,6 @@ import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
 
-
 /**
  * <p> ManagerServant </p>
  */
@@ -46,8 +45,7 @@ public class ManagerServant extends ManagerPOA {
     public ManagerServant() {
         rtcout = new Logbuf("ManagerServant");
         m_mgr = jp.go.aist.rtm.RTC.Manager.instance();
-        this.m_objref = this._this();
-/*
+
         Properties config = m_mgr.getConfig();    
     
         if (StringUtil.toBool(config.getProperty("manager.is_master"), "YES", "NO", true)) {
@@ -88,7 +86,7 @@ public class ManagerServant extends ManagerPOA {
                         "Unknown exception caught.");
             }
         }
-*/
+
     }
 
     /**
@@ -114,46 +112,60 @@ public class ManagerServant extends ManagerPOA {
      */
     public boolean createINSManager() {
 
-        return true;
-/*
-        try {
-            //Ppreparing INS POA
-            org.omg.CORBA.Object obj;
-            obj = m_mgr.getORB().resolve_initial_references("omniINSPOA");
-            POA poa = org.omg.PortableServer.POAHelper.narrow(obj);
-            poa.the_POAManager().activate();
-
-            // Create readable object ID
+        try{
             Properties config = m_mgr.getConfig();
-	    byte[] id = null;
-            ORB orb = ORBUtil.getOrb();
-	    try {
-//                id = _default_POA().servant_to_id(orb.string_to_object(config.getProperty("manager.name")));
-                id = orb.string_to_object(config.getProperty("manager.name"))._id();
-	    }
-            catch (Exception e) {
-                rtcout.println(rtcout.WARN, 
-                    "Exception caught."+e.toString());
-            }
+            String args[] = null;
+            java.util.Properties properties = System.getProperties( );
+            // STEP 1: Set ORBPeristentServerPort property
+            // Set the proprietary property to open up a port to listen to
+            // INS requests. 
+            // Note: This property is subject to change in future releases
+            String portNumber[] = config.getProperty("corba.master_manager").split(":");
+            properties.put( "com.sun.CORBA.POA.ORBPersistentServerPort",
+                            portNumber[1]);
 
-            // Object activation
-            poa.activate_object_with_id(id, this);
-            org.omg.CORBA.Object mgrobj = poa.id_to_reference(id);
+            // STEP 2: Instantiate the ORB, By passing in the 
+            // ORBPersistentServerPort property set in the previous step
+//<+zxc
+ORB orb;
+if (StringUtil.toBool(config.getProperty("manager.is_master"), "YES", "NO", true)) {
+             orb = ORB.init( (String[])null, properties );
+}
+else{
+             orb = ORBUtil.getOrb();
+}
+//zxc+>
 
-            // Set m_objref 
-            m_objref = ManagerHelper.narrow(mgrobj);
+            // STEP 3: Instantiate the Service Object that needs to be published
+            // and associate it with RootPOA.
+            Object obj = null;
+            String name = config.getProperty("manager.name");
+            POA rootPOA = 
+                POAHelper.narrow( orb.resolve_initial_references( "RootPOA" ));
+            rootPOA.the_POAManager().activate();
+            byte[] id  = rootPOA.activate_object( this );
+            org.omg.CORBA.Object ref = rootPOA.id_to_reference(id);
+            this.m_objref = ManagerHelper.narrow(ref);
+            // STEP 4: Publish the INS Service using 
+            // orb.register_initial_reference( <ObjectKey>, <ObjectReference> 
+            // NOTE: Sun private internal API, not part of CORBA 2.3.1.
+            // May move as our compliance with OMG standards evolves.
 
-            String ior;
-            ior = ORBUtil.getOrb().object_to_string(m_objref);
-            String iorstr = ior;
-            rtcout.println(rtcout.DEBUG, 
-                        "Manager's IOR information:\n "+CORBA_IORUtil.formatIORinfo(iorstr));
+
+            ((com.sun.corba.se.impl.orb.ORBImpl) orb).
+                register_initial_reference( 
+                name, rootPOA.servant_to_reference( this ));
+
+
+            System.out.println( "INS Server is Ready..." );
+             
+ 
         }
-        catch (Exception ex) {
-            return false;
+        catch(Exception ex){
+             System.err.println( "Error in setup : " + ex );
         }
+
         return true;
-*/
     }
 
     /**
@@ -161,7 +173,38 @@ public class ManagerServant extends ManagerPOA {
      * @return Manager reference
      */
     public RTM.Manager findManager(final String host_port) {
-        return (RTM.Manager)null;
+        rtcout.println(rtcout.TRACE, "findManager(host_port = "+host_port+")");
+
+        try{
+            Properties config = m_mgr.getConfig();
+            String name = config.getProperty("manager.name");
+            String mgrloc = "corbaloc:iiop:1.2@"+host_port+"/"+name;
+            rtcout.println(rtcout.DEBUG, "corbaloc: "+mgrloc);
+
+            ORB orb = ORBUtil.getOrb();
+            Object mobj;
+            mobj = orb.string_to_object(mgrloc);
+            RTM.Manager mgr 
+                = RTM.ManagerHelper.narrow(mobj);
+
+
+            String ior;
+            ior = orb.object_to_string(mobj);
+            rtcout.println(rtcout.DEBUG, 
+                    "Manager's IOR information: "+ior);
+     
+            return mgr;
+        }
+        catch(org.omg.CORBA.SystemException ex) {
+            rtcout.println(rtcout.DEBUG, 
+                "CORBA SystemException caught (CORBA."+ex+")");
+            return (RTM.Manager)null;
+        }
+        catch (Exception ex) {
+            rtcout.println(rtcout.DEBUG, "Unknown exception caught.");
+            return (RTM.Manager)null;
+        }
+
     }
 
     /**
@@ -210,11 +253,9 @@ public class ManagerServant extends ManagerPOA {
      * @return A module profile list.
      */
     public RTM.ModuleProfile[] get_loadable_modules() {
-System.out.println("get_loadable_modules()");
         rtcout.println(rtcout.TRACE, "get_loadable_modules()");
         // copy local module profiles
         Vector<Properties> prof = m_mgr.getLoadableModules();
-System.out.println("prof:"+prof.size());
         RTM.ModuleProfile[] cprof = new RTM.ModuleProfile[prof.size()];
         for (int i=0, len=prof.size(); i < len; ++i) {
             String dumpString = new String();
@@ -259,7 +300,6 @@ System.out.println("prof:"+prof.size());
                 }
             }
         }
-System.out.println("cprof:"+cprof.length);
         return cprof;
 
 /*
@@ -292,7 +332,6 @@ System.out.println("cprof:"+cprof.length);
      * @return A module profile list.
      */
     public RTM.ModuleProfile[] get_loaded_modules() {
-System.out.println("get_loaded_modules()");
         rtcout.println(rtcout.TRACE, "get_loaded_modules()");
 
         // copy local module profiles
@@ -305,11 +344,8 @@ System.out.println("get_loaded_modules()");
             dumpString = prof.elementAt(i)._dump(dumpString, 
                                                     prof.elementAt(i), 1);
             
-System.out.println("dumpString>:"+dumpString);
             _SDOPackage.NVListHolder nvlist = new _SDOPackage.NVListHolder();
             NVUtil.copyFromProperties(nvlist, prof.elementAt(i));
-//            cprof.value[i].properties = nvlist.value;
-System.out.println("nvlist.value.length>:"+nvlist.value.length);
             cprof.value[i] = new RTM.ModuleProfile(nvlist.value);
         }
 
@@ -343,13 +379,6 @@ System.out.println("nvlist.value.length>:"+nvlist.value.length);
                   }
             }
         }
-System.out.println("cprof:"+cprof.value.length);
-for (int i=0; i < cprof.value.length; ++i) {
-System.out.println("cprof:");
-System.out.println("cprof:"+cprof.value[i].properties[0].name);
-String value = cprof.value[i].properties[0].value.extract_wstring();
-System.out.println("cprof:"+value);
-}
         return cprof.value;
 /*
         _SDOPackage.NVListHolder nvlist = new _SDOPackage.NVListHolder();
@@ -392,7 +421,7 @@ System.out.println("cprof:"+value);
             dumpString = prop._dump(dumpString, prop, 0);
             _SDOPackage.NVListHolder nvlist = new _SDOPackage.NVListHolder();
             NVUtil.copyFromProperties(nvlist, prop);
-            cprof[i].properties =  nvlist.value;
+            cprof[i] =  new RTM.ModuleProfile(nvlist.value);
         }
 
         if (false) {
@@ -532,7 +561,6 @@ System.out.println("cprof:"+value);
         for (int i=0, len=rtcs.size(); i < len; ++i) {
             cprofs.value[i] = rtcs.elementAt(i).get_component_profile();
         }
-//         return cprofs.value;
         // copy slaves' component profiles
         synchronized(m_slaveMutex) {
             rtcout.println(rtcout.DEBUG,
@@ -872,9 +900,9 @@ System.out.println("cprof:"+value);
     protected Logbuf rtcout;
     private boolean m_isMaster;
     private String m_masterMutex = new String();
-    private RTM.Manager m_masters[];
+    private RTM.Manager m_masters[] = new RTM.Manager[1];
     private String m_slaveMutex = new String();
-    private RTM.Manager m_slaves[];
+    private RTM.Manager m_slaves[] = new RTM.Manager[1];
 
     private class is_equiv implements equalFunctor {
         private RTM.Manager m_mgr;

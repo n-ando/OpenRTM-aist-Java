@@ -364,9 +364,8 @@ System.out.println("-->:"+str[0]);
                 Class holder = Class.forName(str[0],
                                          true,
                                          this.getClass().getClassLoader());
-                RegisterModuleFunc obj = (RegisterModuleFunc)holder.newInstance();
-                Field field = obj.getClass().getField("component_conf");
-                String[] data = (String[])field.get(obj);
+                Field field = holder.getField("component_conf");
+                String[] data = (String[])field.get(null);
                 props.add(new Properties(data));
             }
             catch(Exception e){
