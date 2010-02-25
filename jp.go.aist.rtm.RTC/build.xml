@@ -22,6 +22,8 @@
 	<property name="build.dir" value="bin"/>
 	<property name="build.dir.test" value="tests/bin"/>
 	<property name="build.doc" value="installer/resources/Source/JavaDoc"/>
+	<property name="build.doc.us" value="installer/resources/Source/JavaDocEn"/>
+	<property name="build.doc.jp" value="installer/resources/Source/JavaDocJa"/>
 	<property name="build.dir.jar" value="installer/resources/Source/jar" />
 
 	<property name="installer.dir" value="installer/resources" />
@@ -100,12 +102,46 @@
 
 	<target name="javaDoc" description="JavaDocを作成します">
 		<delete dir="${build.doc}" />
+		<delete dir="${build.doc.jp}" />
+		<delete dir="${build.doc.us}" />
 
-		<javadoc sourcepath="${source}" destdir="${build.doc}"
+		<javadoc 
+                        sourcepath="${source}" destdir="${build.doc}"
 			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" encoding="UTF-8"
 			author="true" doctitle="OpenRTM-aist Java" 
 			nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" 
 			package="yes" source="1.5" splitindex="true" use="true" version="true"/>
+<!--
+		<javadoc 
+                        locale="ja_JP"
+                        sourcepath="${source}" destdir="${build.doc.jp}"
+			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
+                        encoding="UTF-8"
+			author="true" doctitle="OpenRTM-aist Java" 
+			nodeprecated="false" nodeprecatedlist="false" 
+                        noindex="false" nonavbar="false" notree="false" 
+			package="yes" source="1.5" splitindex="true" 
+                        use="true" version="true" 
+                        >
+                        <taglet name="JaOnTaglet" path="./util"/>
+                        <taglet name="EnOffTaglet"  path="./util"/>
+                </javadoc>
+
+		<javadoc 
+                        locale="en_US"
+                        sourcepath="${source}" destdir="${build.doc.us}"
+			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
+                        encoding="UTF-8"
+			author="true" doctitle="OpenRTM-aist Java" 
+			nodeprecated="false" nodeprecatedlist="false" 
+                        noindex="false" nonavbar="false" notree="false" 
+			package="yes" source="1.5" splitindex="true" 
+                        use="true" version="true"
+                        >
+                        <taglet name="EnOnTaglet"  path="./util"/>
+                        <taglet name="JaOffTaglet"  path="./util"/>
+                </javadoc>
+-->
 	</target>
 
 	<target name="javaInstaller"  description="インストーラを作成します">
