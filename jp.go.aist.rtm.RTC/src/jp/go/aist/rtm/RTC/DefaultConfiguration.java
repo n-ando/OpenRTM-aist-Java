@@ -27,7 +27,7 @@ interface DefaultConfiguration {
         "logger.enable",          "YES",
         "logger.file_name",       "./rtc%p.log",
         "logger.date_format",     "%b %d %H:%M:%S",
-        "logger.log_level",       "INFO",
+        "logger.log_level",       "PARANOID",
         "logger.stream_lock",     "NO",
         "logger.master_logger",   "",
         "module.conf_path",       "",
@@ -40,17 +40,22 @@ interface DefaultConfiguration {
         "timer.enable",           "YES",
         "timer.tick",             "0.1",
         "corba.args",             "",
-        "corba.endpoint",         "",                   // hostname:port_number
+        "corba.endpoint",         "192.168.100.220;,192.168.100.224", // hostname:port_number
         "corba.id",               Version.corba_name,
-        "corba.nameservers",     "localhost",
+        "corba.nameservers",      "localhost",
         "corba.master_manager",   "localhost:2810",
+        "corba.nameservice.replace_endpoint", "NO",
         "exec_cxt.periodic.type", "jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext",
         "exec_cxt.periodic.rate", "1000",
-        "exec_cxt.evdriven.type",     "jp.go.aist.rtm.RTC.executionContext.EventDrivenExecutionContext",
+        "exec_cxt.evdriven.type", "jp.go.aist.rtm.RTC.executionContext.EventDrivenExecutionContext",
         "manager.modules.load_path",        "./",
         "manager.modules.abs_path_allowed", "YES",
         "manager.is_master",                "NO",
+        "manager.corba_servant",            "YES",
+        "manager.shutdown_onrtcs",          "YES",
+        "manager.shutdown_auto",            "YES",
         "manager.name",                     "manager",
+        "manager.command",                  "rtcd",
         ""
     };
 }

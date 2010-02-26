@@ -23,6 +23,10 @@ public class InterceptorInitializer
       extends LocalObject
       implements ORBInitializer
 {
+    /**
+     * {@.ja コンストラクタ. }
+     * {@.en Constructor. }
+     */
    public InterceptorInitializer() {
 System.out.println("InterceptorInitializer");
 

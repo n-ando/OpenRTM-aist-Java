@@ -28,6 +28,7 @@ import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.Timer;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
+import jp.go.aist.rtm.RTC.util.IiopAddressComp;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
@@ -43,12 +44,18 @@ import RTC.RTObject;
 import RTC.ReturnCode_t;
 
 /**
-* <p>各コンポーネントの管理を行うクラスです。</p>
-*/
+ * {@.ja 各コンポーネントの管理を行うクラスです.}
+ * {@.en This is a manager class that manages various information 
+ * such as components.}
+ *
+ */
 public class Manager {
 
     /**
      * <p>コンストラクタです。</p>
+     *     
+     * Protected コンストラクタ
+     *
      */
     protected Manager() {
         
@@ -1176,10 +1183,12 @@ public class Manager {
         dumpString = m_config._dump(dumpString, m_config, 0);
         rtcout.println(rtcout.DEBUG, dumpString);
 
-/*
         Vector<String> endpoints = new Vector<String>();
+/*
         createORBEndpoints(endpoints);
+System.out.println("createORBOptions.endpoints>:"+endpoints);
         createORBEndpointOption(opt, endpoints);
+System.out.println("createORBOptions.endpoints>:"+endpoints);
 */
         rtcout.println(rtcout.PARANOID, "ORB options: "+opt);
         
@@ -1192,39 +1201,56 @@ public class Manager {
      * @param endpoints Endpoints list
      */
     protected void createORBEndpoints(Vector<String> endpoints) {
+System.out.println("IN  createORBEndpoints");
+System.out.println("endpoints>:"+endpoints);
         // corba.endpoint is obsolete
         // corba.endpoints with comma separated values are acceptable
-        String[] endpoints_array = (String[])endpoints.toArray();
+//        String[] endpoints_array = (String[])endpoints.toArray();
+        String[] endpoints_array = new String[0];
         if (m_config.hasKey("corba.endpoints")!=null) {
+System.out.println("---00100---");
             endpoints_array 
                 = m_config.getProperty("corba.endpoints").split(",");
             rtcout.println(rtcout.DEBUG, 
                 "corba.endpoints: "+m_config.getProperty("corba.endpoints"));
         }
         else if (m_config.hasKey("corba.endpoint")!=null) {
+System.out.println("---00200---");
             endpoints_array
                 = m_config.getProperty("corba.endpoint").split(",");
             rtcout.println(rtcout.DEBUG, 
                 "corba.endpoint: "+m_config.getProperty("corba.endpoint"));
         }
+System.out.println("endpoints_array.length>:"+endpoints_array.length);
         for(int ic=0;ic<endpoints_array.length;++ic){
+System.out.println("endpoints_array[ic]>:"+endpoints_array[ic]);
             endpoints.add(endpoints_array[ic]);
         }
+System.out.println("endpoints>:"+endpoints);
         // If this process has master manager,
         // master manager's endpoint inserted at the top of endpoints
         rtcout.println(rtcout.DEBUG, 
             "manager.is_master: "+m_config.getProperty("manager.is_master"));
 
         if(StringUtil.toBool(m_config.getProperty("manager.is_master"), "YES", "NO", false)){
+System.out.println("---00300---");
             String  mm = m_config.getProperty("corba.master_manager", ":2810");
+System.out.println("mm>:"+mm);
             String[] mmm = mm.split(":");
+System.out.println("mmm.length>:"+mmm.length);
+for(int ic=0;ic<mmm.length;++ic){
+System.out.println("mmm[ic]>:"+mmm[ic]);
+}
             if (mmm.length == 2) {
                 endpoints.add(0, ":" + mmm[1]);
             }
             else {
+System.out.println("---00400---");
                 endpoints.add(0, ":2810");
             }
         }
+System.out.println("endpoints>:"+endpoints);
+System.out.println("OUT createORBEndpoints");
     }
 
     /**
@@ -1234,7 +1260,9 @@ public class Manager {
      */
     protected void createORBEndpointOption(String opt, 
                                             Vector<String> endpoints) {
+System.out.println("IN  createORBEndpointOption>:"+opt+","+endpoints);
         String corba = m_config.getProperty("corba.id");
+System.out.println("    corba.id>:"+corba);
         rtcout.println(rtcout.DEBUG, "corba.id: "+corba);
 
         for (int i=0; i < endpoints.size(); ++i) {
@@ -1261,27 +1289,130 @@ public class Manager {
                 opt += "-ORBIIOPAddr inet:" + endpoint;
             }
         }
+System.out.println("OUT createORBEndpointOption");
     }
 
     /**
+     * {@.jp "corba.endpoints" を分析してエンドポイントを 
+     * IiopAddressComp の listへ出力する。}
+     * @param endpoint
+     *   {@.jp }
+     * @param result
+     *   {@.jp }
+     */
+     private void parsesCorbaEndpointOutputToList(String endpoint ,
+                                      java.util.ArrayList result){
+
+        if(endpoint != null && (endpoint.indexOf(":")>=0))  {
+            String[] endPointInfo = endpoint.split(":");
+            if( !endPointInfo[0].equals("") ) {
+            }
+            else{
+                rtcout.println(rtcout.WARN, 
+                    "Host of corba.endpoints is illegal." +endPointInfo[0]);
+                return;
+            }
+            short port = 0;
+            if( endPointInfo.length>1 ) {
+                try {
+                    port = (short)Integer.parseInt(endPointInfo[1]);
+                }
+                catch(Exception ex){
+                    rtcout.println(rtcout.WARN, 
+                        "Port of corba.endpoints is illegal." +endPointInfo[1]);
+System.out.println("Port of corba.endpoints is illegal." +endPointInfo[1]);
+                }
+            }
+            IiopAddressComp comp = new IiopAddressComp(endPointInfo[0],port);
+            result.add(comp);
+        }
+    }
+    /**
+     * {@.jp "corba.endpoint" を分析してエンドポイントを 
+     * Map へ出力する。}
+     *
+     */
+     private void parsesCorbaEndpoint(String endpoint ,
+                                      java.util.Map result){
+
+        if(endpoint != null && (endpoint.indexOf(":")>=0))  {
+            String[] endPointInfo = endpoint.split(":");
+            if( !endPointInfo[0].equals("") ) {
+//                result.put("org.omg.CORBA.ORBInitialHost", endPointInfo[0]);
+                result.put("com.sun.CORBA.ORBServerHost", endPointInfo[0]);
+            }
+            if( endPointInfo.length>1 ) {
+                try {
+                    short port = (short)Integer.parseInt(endPointInfo[1]);
+//                    result.put("org.omg.CORBA.ORBInitialPort", endPointInfo[1]);
+                    result.put("com.sun.CORBA.ORBServerPort", endPointInfo[1]);
+                }
+                catch(Exception ex){
+                    rtcout.println(rtcout.WARN, ""+endPointInfo[1]);
+                }
+            }
+        }
+    }
+    /**
+     * {@.ja プロパティの生成.}
+     * {@.en Creates ORB Properties.}
+     * @return java.util.Properties
+     *   {@.ja  ORB.init() のプロパティ}
+     *   {@.en  Property of ORB.init().}
      *
      */
     protected java.util.Properties createORBProperties() {
+        java.util.Properties result = new java.util.Properties();
+
+        //Registers Initializers.
+        result.put("org.omg.PortableInterceptor.ORBInitializerClass.jp.go.aist.rtm.RTC.InterceptorInitializer","");
+
+        //Parses "corba.endpoint".
         String endpoint = m_config.getProperty("corba.endpoint");
-        if(endpoint == null || (endpoint.indexOf(":")<0))  {
-            return null;
+        parsesCorbaEndpoint(endpoint, result);
+
+        //Parses "corba.endpoints".
+        // Multiple endpoint addresses and ports can be specified using 
+        // this option.
+        //  Example:
+        //   corba.endpoints: 192.168.1.10:1111, 192.168.10.11:2222
+        //   corba.endpoints: 192.168.1.10:, 192.168.10.11:
+        String endpoints = m_config.getProperty("corba.endpoints");
+System.out.println("    endpoints>:"+endpoints);
+        if(endpoints != null) {
+            java.util.ArrayList<IiopAddressComp> endpointsList = 
+                    new java.util.ArrayList<IiopAddressComp>();
+            if(endpoints.indexOf(",")!=-1){
+                String[] endPoints = endpoints.split(",");
+                int loopstart = 0;
+                if(result.getProperty("com.sun.CORBA.ORBServerHost")==null){
+                    parsesCorbaEndpoint(endPoints[0], result);
+                    loopstart = 1;
+                }
+                for(int ic=loopstart;ic<endPoints.length;++ic) {
+System.out.println("    endPoints[ic]>:"+endPoints[ic]);
+                    parsesCorbaEndpointOutputToList(endPoints[ic], 
+                                                    endpointsList);
+                }
+                IopIorInterceptor.SetEndpoints(endpointsList);
+            
+            }
+            else{
+                if(result.getProperty("com.sun.CORBA.ORBServerHost")==null){
+                    parsesCorbaEndpoint(endpoints, result);
+                }
+                else {
+                    parsesCorbaEndpointOutputToList(endpoints, endpointsList);
+                }
+            }
+            IopIorInterceptor.SetEndpoints(endpointsList);
         }
 
-        java.util.Properties result = new java.util.Properties();
-        String[] endPointInfo = endpoint.split(":");
-        if( !endPointInfo[0].equals("") ) {
-//            result.put("org.omg.CORBA.ORBInitialHost", endPointInfo[0]);
-            result.put("com.sun.CORBA.ORBServerHost", endPointInfo[0]);
-        }
-        if( endPointInfo.length>1 && !endPointInfo[1].equals("") ) {
-//            result.put("org.omg.CORBA.ORBInitialPort", endPointInfo[1]);
-            result.put("com.sun.CORBA.ORBServerPort", endPointInfo[1]);
-        }
+/*
+        result.put("com.sun.CORBA.ORBServerHost", "localhost");
+        result.put("com.sun.CORBA.ORBServerPort", "0");
+*/
+
         return result;
     }
 
