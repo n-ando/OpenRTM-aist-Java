@@ -107,10 +107,17 @@
 
 		<javadoc 
                         sourcepath="${source}" destdir="${build.doc}"
-			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" encoding="UTF-8"
+			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
+                        encoding="UTF-8"
 			author="true" doctitle="OpenRTM-aist Java" 
-			nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" 
-			package="yes" source="1.5" splitindex="true" use="true" version="true"/>
+			nodeprecated="false" nodeprecatedlist="false" 
+                        noindex="false" nonavbar="false" notree="false" 
+			package="yes" source="1.5" splitindex="true" 
+                        use="true" version="true"
+                        >
+                        <taglet name="JaOnTaglet" path="./util"/>
+                        <taglet name="EnOffTaglet"  path="./util"/>
+                </javadoc>
 <!--
 		<javadoc 
                         locale="ja_JP"
@@ -126,7 +133,7 @@
                         <taglet name="JaOnTaglet" path="./util"/>
                         <taglet name="EnOffTaglet"  path="./util"/>
                 </javadoc>
-
+-->
 		<javadoc 
                         locale="en_US"
                         sourcepath="${source}" destdir="${build.doc.us}"
@@ -141,7 +148,6 @@
                         <taglet name="EnOnTaglet"  path="./util"/>
                         <taglet name="JaOffTaglet"  path="./util"/>
                 </javadoc>
--->
 	</target>
 
 	<target name="javaInstaller"  description="インストーラを作成します">
