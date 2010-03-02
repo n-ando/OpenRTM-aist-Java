@@ -35,7 +35,7 @@ import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
  * <p> This is an implementation class for the data input port. <p>
  *
  */
-public class InPortBase extends PortBase {
+public abstract class InPortBase extends PortBase {
 
 
     /**
@@ -225,6 +225,21 @@ public class InPortBase extends PortBase {
         setConnectionLimit(num);
       
     }
+
+    /**
+     * {@.ja RTObject_impl::readAll()から呼ばれる仮想関数}
+     * {@.en It is a virtual method that is called from 
+     *       RTObject_impl::readAll().}
+     * <p>
+     * {@.ja DataPort からデータを読み出す}
+     * {@.en  This method reads out data from DataPort.}
+     * </p>
+     * @return 
+     *   {@.ja true:成功,false:失敗}
+     *   {@.en true:Success,false:Failure}
+     */
+    public abstract boolean read();
+
     /**
      * <p> Activate all Port interfaces </p>
      *

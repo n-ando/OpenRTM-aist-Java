@@ -33,7 +33,7 @@ import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
  * <p>出力ポートのベース実装クラスです。
  * Publisherの登録やPublisherへのデータ更新通知などの実装を提供します。</p>
  */
-public class OutPortBase extends PortBase {
+public abstract class OutPortBase extends PortBase {
 
     /**
      * <p>コンストラクタです。</p>
@@ -103,6 +103,22 @@ public class OutPortBase extends PortBase {
         setConnectionLimit(num);
 
     }
+
+    /**
+     * {@.ja データ書き込み}
+     * {@.en Write data}
+     * <p>
+     * {@.ja ポートへデータを書き込む。
+     *       バインドされた変数に設定された値をポートに書き込む。}
+     * {@.en Write data to the port.
+     *       Write the value, which was set to the bound variable, to the port.}
+     * </p>
+     * @return 
+     *   {@.ja 書き込み処理結果(書き込み成功:true、書き込み失敗:false)}
+     *   {@.en Writing result (Successful:true, Failed:false)
+     */
+    public abstract boolean write();
+
     /**
      * <p>プロパティを取得する</p>
      */

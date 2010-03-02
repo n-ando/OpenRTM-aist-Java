@@ -95,9 +95,11 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public static final int ECOTHER_OFFSET = 1000;
 
     /**
-     * <p>コンストラクタです。</p>
-     * 
-     * @param manager Managerオブジェクト
+     * {@.ja コンストラクタです。}
+     * {@.en Constructor}
+     * @param manager 
+     *   {@.ja Managerオブジェクト}
+     *   {@.en Manager object}
      */
     public RTObject_impl(Manager manager) {
         m_pManager =  manager;
@@ -107,6 +109,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_created = true;
         m_properties = new Properties(default_conf);
         m_configsets = new ConfigAdmin(m_properties.getNode("conf"));
+        m_readAll = false;
+        m_writeAll = false;
+        m_readAllCompletion = false;
+        m_writeAllCompletion = false;
         
         m_objref = this._this();
         m_pSdoConfigImpl = new Configuration_impl(m_configsets);
@@ -128,10 +134,14 @@ public class RTObject_impl extends DataFlowComponentPOA {
     }
 
     /**
-     * <p>コンストラクタです。</p>
-     * 
-     * @param orb ORB
-     * @param poa POA
+     * {@.ja コンストラクタです。}
+     * {@.en Constructor}
+     * @param orb 
+     *   {@.ja ORB}
+     *   {@.en ORB}
+     * @param poa 
+     *   {@.ja POA}
+     *   {@.en POA}
      */
     public RTObject_impl(ORB orb, POA poa) {
         m_pManager =  null;
@@ -141,6 +151,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_created = true;
         m_properties = new Properties(default_conf);
         m_configsets = new ConfigAdmin(m_properties.getNode("conf"));
+        m_readAll = false;
+        m_writeAll = false;
+        m_readAllCompletion = false;
+        m_writeAllCompletion = false;
         
         m_objref = this._this();
         m_pSdoConfigImpl = new Configuration_impl(m_configsets);
@@ -949,12 +963,19 @@ public class RTObject_impl extends DataFlowComponentPOA {
     }
 
     /**
-     * <p>[ComponentAction interface] 
-     * 当該コンポーネントがAvtive状態の間、呼び出されます。</p>
-     *
-     * @param ec_id 対象ExecutionContextのID
-     * 
-     * @return 実行結果
+     * {@.ja [DataFlowComponentAction CORBA interface] RTC の定常処理(第一周期)}
+     * {@.en [DataFlowComponentAction CORBA interface] Primary Periodic 
+     *        Operation of RTC}
+     * <p>
+     * {@.ja 当該コンポーネントがAvtive状態の間、呼び出されます。}
+     * {@.en The component is called during the state of Avtive. }
+     * </p>
+     * @param ec_id 
+     *   {@.ja 対象ExecutionContextのID}
+     *   {@.en ID of ExecutionContext}
+     * @return 
+     *   {@.ja 実行結果}
+     *   {@.en Execution result}
      */
     public ReturnCode_t on_execute(int ec_id) {
 
@@ -962,7 +983,13 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            if(m_readAll){
+                readAll();
+            }
             ret = onExecute(ec_id);
+            if(m_writeAll){
+                writeAll();
+            }
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1637,10 +1664,12 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @param name DataInPortの名称
      * @param inport InPortへの参照
      */
-    public <DataType, Buffer> void registerInPort(Class<DataType> DATA_TYPE_CLASS, 
-                            final String name, InPort<DataType> inport) throws Exception {
+    public 
+    <DataType, Buffer> void registerInPort(Class<DataType> DATA_TYPE_CLASS, 
+                                final String name, InPort<DataType> inport) 
+                                throws Exception {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl.registerInPort()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.registerInPort("+name+")");
 
         this.registerInPort(name, inport);
 //        String propkey = "port.dataport." + name + ".tcp_any";
@@ -1648,6 +1677,46 @@ public class RTObject_impl extends DataFlowComponentPOA {
 //        this.registerPort(port);
     }
 
+    /**
+     * {@.ja [local interface] DataInPort を登録する.}
+     * {@.en [local interface] Register DataInPort.}
+     * <p>
+     * {@.ja RTC が保持する DataInPort を登録する。
+     * Port のプロパティにデータポートであること("port.dataport")、
+     * TCPを使用すること("tcp_any")を設定するとともに、 DataInPort の
+     * インスタンスを生成し、登録する。} 
+     * {@.en This operation registers DataInPort held by this RTC.
+     * Set "port.dataport" and "tcp_any" to property of Port, and
+     * create instances of DataInPort and register it. }
+     * </p>
+     * @param name 
+     *   {@.ja port 名称}
+     *   {@.en Port name}
+     * @param inport 
+     *   {@.ja 登録対象 DataInPort}
+     *   {@.en DataInPort which is registered to the RTC}
+     * @return 
+     *   {@.ja 登録結果(登録成功:true，登録失敗:false)}
+     *   {@.en Register result (Successful:true, Failed:false)}
+     */
+    public boolean addInPort(final String name, InPortBase inport) {
+        rtcout.println(rtcout.TRACE, "addInPort("+name+")");
+
+        String propkey = "port.inport.";
+        propkey += name;
+        m_properties.getNode(propkey).merge(m_properties.getNode("port.inport.dataport"));
+
+        boolean ret = addPort(inport);
+    
+        if (!ret) {
+            rtcout.println(rtcout.ERROR, "addInPort() failed.");
+            return ret;
+        }
+
+        inport.init(m_properties.getNode(propkey));
+        m_inports.add(inport);
+        return ret;
+    }
     /**
      * <p>[local interface] DataInPort を登録します。<br />
      *
@@ -1659,15 +1728,59 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public void registerInPort(final String name, 
                                     InPortBase inport) throws Exception {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl.registerInPort()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.registerInPort("+name+")");
 
         String propkey = "port.inport.";
-        propkey += name;
-        m_properties.getNode(propkey).merge(m_properties.getNode("port.inport.dataport"));
         inport.init(m_properties.getNode(propkey));
         this.registerPort(inport);
+/*
+        if (!addInPort(name, inport)){
+            rtcout.println(rtcout.ERROR, "addInPort("+name+") failed.");
+        }
+*/
     }
 
+    /**
+     * {@.ja [local interface] DataOutPort を登録する.}
+     * {@.en [local interface] Register DataOutPort.}
+     * <p>
+     * {@.ja RTC が保持する DataOutPortを登録する。
+     * Port のプロパティにデータポートであること("port.dataport")、
+     * TCPを使用すること("tcp_any")を設定するとともに、 DataOutPort の
+     * インスタンスを生成し、登録する。}
+     * {@.en This operation registers DataOutPor held by this RTC.
+     * Set "port.dataport" and "tcp_any" to property of Port, and then
+     * create instances of DataOutPort and register it.}
+     * </p>
+     * @param name i
+     *   {@.ja port 名称}
+     *   {@.en Port name}
+     * @param outport 
+     *   {@.ja 登録対象 DataOutPort}
+     *   {@.en DataOutPort which is registered to the RTC}
+     * @return 
+     *   {@.ja 登録結果(登録成功:true，登録失敗:false)}
+     *   {@.en Register result (Successful:true, Failed:false)}
+     */
+    public boolean addOutPort(final String name, OutPortBase outport) {
+        rtcout.println(rtcout.TRACE, "addOutPort("+name+")");
+    
+        String propkey = "port.outport.";
+        propkey += name;
+        m_properties.getNode(propkey).merge(m_properties.getNode("port.inport.dataport"));
+    
+        boolean ret = addPort(outport);
+    
+        if (!ret) {
+            rtcout.println(rtcout.ERROR, "addOutPort() failed.");
+            return ret;
+        }
+
+        outport.init(m_properties.getNode(propkey));
+        m_outports.add(outport);
+        return ret;
+
+    }
     /**
      * <p>[local interface] DataOutPort を登録します。<br />
      *
@@ -1699,13 +1812,18 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public void registerOutPort(final String name, 
                                     OutPortBase outport) throws Exception {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl.registerOutPort()");
+        rtcout.println(rtcout.TRACE, "RTObject_impl.registerOutPort("+name+")");
 
-        String propkey = "port.outport." + name;
-        m_properties.getNode(propkey).merge(m_properties.getNode("port.outport.dataport"));
+       String propkey = "port.outport." + name;
+       m_properties.getNode(propkey).merge(m_properties.getNode("port.outport.dataport"));
 
-        outport.init(m_properties.getNode(propkey));
-        this.registerPort(outport);
+       outport.init(m_properties.getNode(propkey));
+       this.registerPort(outport);
+/*
+        if (!addOutPort(name, outport)){
+            rtcout.println(rtcout.ERROR, "addOutPort("+name+") failed.");
+        }
+*/
     }
 
     /**
@@ -1743,20 +1861,157 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void deletePortByName(final String port_name) {
 
-        rtcout.println(rtcout.TRACE, "RTObject_impl.deletePortByNamed(" + port_name + ")");
+        rtcout.println(rtcout.TRACE, 
+                    "RTObject_impl.deletePortByNamed(" + port_name + ")");
 
         m_portAdmin.deletePortByName(port_name);
         return;
     }
 
     /**
-     * <p>登録されているすべてのPortの登録を削除します。</p>
+     * {@.ja 全 InPort のデータを読み込む。}
+     * {@.en Readout the value from All InPorts.}
+     * <p>
+     * {@.ja RTC が保持する全ての InPort のデータを読み込む。}
+     * {@.en This operation read the value from all InPort 
+     * registered in the RTC.}
+     * </p>
+     * @return  
+     *   {@.ja 読み込み結果(全ポートの読み込み成功:true，失敗:false)}
+     *   {@.en result (Successful:true, Failed:false)}
+     *
+     */
+    public boolean readAll() {
+        rtcout.println(rtcout.TRACE, "readAll()");
+        java.util.Iterator it = m_inports.iterator(); 
+
+        boolean ret = true;
+        while( !it.hasNext() ) {
+            if (!((InPortBase)it.next()).read()) {
+                rtcout.println(rtcout.DEBUG, 
+                        "The error occurred in readAll().");
+                ret = false;
+                if (!m_readAllCompletion) {
+                    return false;
+                }
+            }
+        } 
+        return ret;
+    }
+
+    /**
+     * {@.ja  全 OutPort のwrite()メソッドをコールする。}
+     * {@.en  The write() method of all OutPort is called.}
+     * <p>
+     * {@.ja RTC が保持する全ての OutPort のwrite()メソッドをコールする。}
+     * {@.en This operation call the write() method of all OutPort
+     *  registered in the RTC.}
+     * </p>
+     * @return  
+     *   {@.ja 読み込み結果(全ポートへの書き込み成功:true，失敗:false)}
+     *   {@.en result (Successful:true, Failed:false)}
+     *
+     */
+    public boolean writeAll() {
+        rtcout.println(rtcout.TRACE, "writeAll()");
+        java.util.Iterator it     = m_outports.iterator(); 
+
+        boolean ret = true;
+        while( !it.hasNext() ){
+            if (!((OutPortBase)it.next()).write()) {
+                rtcout.println(rtcout.DEBUG, 
+                        "The error occurred in writeAll().");
+                ret = false;
+                if (!m_writeAllCompletion) {
+                    return false;
+                }
+            }
+        } 
+        return ret;
+    }
+
+    /**
+     * {@.ja onExecute()実行前でのreadAll()メソッドの呼出を有効または
+     *       無効にする。}
+     * {@.en Set whether to execute the readAll() method.}
+     * <p>
+     * {@.ja このメソッドをパラメータをtrueとして呼ぶ事により、
+     * onExecute()実行前に readAll()が呼出されるようになる。
+     * パラメータがfalseの場合は、readAll()呼出を無効にする。}
+     * {@.en  Set whether to execute the readAll() method.} 
+     * </p>
+     * @param read(default:true) 
+     *   {@.ja (readAll()メソッド呼出あり:true, 
+     *          readAll()メソッド呼出なし:false)}
+     *   {@.en (readAll() is called:true, readAll() isn't called:false)}
+     * @param completion(default:false) 
+     *   {@.ja readAll()にて、どれかの一つのInPortのread()が失敗しても
+     *         全てのInPortのread()を呼び出す:true,
+     *         readAll()にて、どれかの一つのInPortのread()が失敗した場合、
+     *         すぐにfalseで抜ける:false}
+     *   {@.en All InPort::read() calls are completed.:true,
+     *         If one InPort::read() is False, return false.:false}
+     */
+    public void setReadAll(boolean read, boolean completion){
+        m_readAll = read;
+        m_readAllCompletion = completion;
+    }
+    public void setReadAll(){
+        this.setReadAll(true, false);
+    }
+    public void setReadAll(boolean read){
+        this.setReadAll(read, false);
+    }
+
+    /**
+     * {@.ja onExecute()実行後にwriteAll()メソッドの呼出を有効または
+     *       無効にする。}
+     * {@.en  @brief Set whether to execute the writeAll() method.}
+     * <p>
+     * {@.ja このメソッドをパラメータをtrueとして呼ぶ事により、
+     *       onExecute()実行後にwriteAll()が呼出されるようになる。
+     *       パラメータがfalseの場合は、writeAll()呼出を無効にする。}
+     * {@.en Set whether to execute the writeAll() method.}
+     * </p>
+     * @param write(default:true) 
+     *   {@.ja (writeAll()メソッド呼出あり:true, 
+     *          writeAll()メソッド呼出なし:false)}
+     *   {@.en (writeAll() is called:true, writeAll() isn't called:false)}
+     * @param completion(default:false) 
+     *   {@.ja writeAll()にて、どれかの一つのOutPortのwrite()が失敗しても
+     *         全てのOutPortのwrite()を呼び出しを行う:true,
+     *         writeAll()にて、どれかの一つのOutPortのwrite()が失敗した場合、
+     *         すぐにfalseで抜ける:false}
+     *   {@.en All OutPort::write() calls are completed.:true,
+     *         If one OutPort::write() is False, return false.:false}
+     */
+    public void setWriteAll(boolean write, boolean completion){
+        m_writeAll = write;
+        m_writeAllCompletion = completion;
+    }
+    public void setWriteAll(){
+        this.setWriteAll(true, false);
+    }
+    public void setWriteAll(boolean write){
+        this.setWriteAll(write, false);
+    }
+
+
+    /**
+     * {@.ja 登録されているすべてのPortの登録を削除します。}
+     * {@.en Unregister All Ports}
+     * <p>
+     * {@.ja RTC が保持する全ての Port を削除する。}
+     * {@.en This operation deactivates the all Ports and deletes the all Port's
+     * registrations in the RTC}
      */
     public void finalizePorts() {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.finalizePorts()");
 
         m_portAdmin.finalizePorts();
+        m_inports.clear();
+        m_outports.clear();
     }
 
     /**
@@ -2004,4 +2259,53 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * <p>Logging用フォーマットオブジェクト</p>
      */
     protected Logbuf rtcout;
+
+    /**
+     * {@.ja InPortBase のリスト.}
+     * {@.en List of InPortBase.}
+     */
+    protected Vector<InPortBase> m_inports;
+
+    /**
+     * {@.ja OutPortBase のリスト.}
+     * {@.en List of OutPortBase.}
+     */
+    protected Vector<OutPortBase> m_outports;
+    
+    /**
+     * {@.ja readAll()呼出用のフラグ}
+     * {@.en flag for readAll()}
+     */
+    protected boolean m_readAll;
+
+    /**
+     * {@.ja writeAll()呼出用のフラグ}
+     * {@.en flag for writeAll()}
+     */
+    protected boolean m_writeAll;
+
+    /**
+     * {@.ja readAll()用のフラグ}
+     * {@.en flag for readAll()}
+     *  <p>
+     * {@.ja true:readAll()の途中ででエラーが発生しても最後まで実施する。}
+     * {@.ja false:readAll()の途中ででエラーが発生した場合終了。}
+     * {@.en true:Even if the error occurs during readAll(), 
+     * it executes it to the last minute.} 
+     * {@.en false:End when error occurs during readAll().}
+     * </p>
+     */
+    protected boolean m_readAllCompletion;
+
+    /**
+     * {@.ja writeAll()用のフラグ}
+     * {@.en flag for writeAll().}
+     * <p>
+     * {@.ja true:writeAll()の途中ででエラーが発生しても最後まで実施する。}
+     * {@.ja false:writeAll()の途中ででエラーが発生した場合終了。}
+     * {@.en true:Even if the error occurs during writeAll(), 
+     * it executes it to the last minute.}
+     * {@.en false:End when error occurs during writeAll().}
+     */
+    protected boolean m_writeAllCompletion;
 }

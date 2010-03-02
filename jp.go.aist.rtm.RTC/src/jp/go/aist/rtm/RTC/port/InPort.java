@@ -202,25 +202,74 @@ public class InPort<DataType> extends InPortBase {
     
     
     /**
-     * <p>ポートからデータを読み出します。</p>
+     * {@.ja DataPort から値を読み出す}
+     * {@.en Readout the value from DataPort}
+     * <p>
+     * {@.ja InPortに書き込まれたデータを読みだす。接続数が0、またはバッファに
+     * データが書き込まれていない状態で読みだした場合の戻り値は不定である。
+     * バッファが空の状態のとき、
+     * 事前に設定されたモード (readback, do_nothing, block) に応じて、
+     * 以下のような動作をする。
      *
-     * <ul>
-     * <li>コールバックインタフェースOnReadがセットされている場合は、
-     * ポートが保持するバッファからデータを読み出す前にOnReadが呼ばれます。</li>
-     * <li>ポートが保持するバッファがアンダーフローを検出できるバッファで、
-     * かつ、読み出す際にバッファがアンダーフローを検出した場合は、
-     * コールバックインタフェースOnUnderflowが呼び出されます。</li>
-     * <li>コールバックインタフェースOnReadConvertがセットされている場合は、
-     * バッファからのデータ読み取り時に、OnReadConvert#operator()が呼び出され、
-     * その戻り値がread()の戻り値となります。</li>
-     * <li>setReadTimeout()により読み出し時のタイムアウトが設定されている場合は、
-     * バッファアンダーフロー状態が解除されるまでタイムアウト時間だけ待ち、
-     * OnUnderflowがセットされていれば、これを呼び出して戻ります。</li>
-     * </ul>
+     * - readback: 最後の値を読みなおす。
+     *
+     * - do_nothing: 何もしない
+     *
+     * - block: ブロックする。タイムアウトが設定されている場合は、
+     *       タイムアウトするまで待つ。
+     *
+     * バッファが空の状態では、InPortにバインドされた変数の値が返される。
+     * したがって、初回読み出し時には不定値を返す可能性がある。
+     * この関数を利用する際には、
+     *
+     * - isNew(), isEmpty() と併用し、事前にバッファ状態をチェックする。
      * 
-     * @return 読み出したデータ
+     * - 初回読み出し時に不定値を返さないようにバインド変数を事前に初期化する
+     * 
+     * - ReturnCode read(DataType& data) 関数の利用を検討する。
+     *
+     * ことが望ましい。
+     *
+     * 各コールバック関数は以下のように呼び出される。
+     * - OnRead: read() 関数が呼ばれる際に必ず呼ばれる。
+     * 
+     * - OnReadConvert: データの読み出しが成功した場合、読みだしたデータを
+     *       引数としてOnReadConvertが呼び出され、戻り値をread()が戻り値
+     *       として返す。
+     *
+     * - OnEmpty: バッファが空のためデータの読み出しに失敗した場合呼び出される。
+     *        OnEmpty の戻り値を read() の戻り値として返す。
+     *
+     * - OnBufferTimeout: データフロー型がPush型の場合に、読み出し
+     *        タイムアウトのためにデータの読み出しに失敗した場合に呼ばれる。
+     *
+     * - OnRecvTimeout: データフロー型がPull型の場合に、読み出しタイムアウト
+     *        のためにデータ読み出しに失敗した場合に呼ばれる。
+     *
+     * - OnReadError: 上記以外の理由で読みだしに失敗した場合に呼ばれる。
+     *        理由としては、バッファ設定の不整合、例外の発生などが考えられる
+     *        が通常は起こりえないためバグの可能性がある。}
+     * {@en. Readout the value from DataPort
+     *
+     * - When Callback functor OnRead is already set, OnRead will be invoked
+     *   before reading from the buffer held by DataPort.
+     * - When the buffer held by DataPort can detect the underflow,
+     *   and when it detected the underflow at reading, callback functor
+     *   OnUnderflow will be invoked.
+     * - When callback functor OnReadConvert is already set, the return value of
+     *   operator() of OnReadConvert will be the return value of read().
+     * - When timeout of reading is already set by setReadTimeout(),
+     *   it waits for only timeout time until the state of the buffer underflow
+     *   is reset, and if OnUnderflow is already set, this will be invoked to 
+     *   return.}
+     * </p>
+     * @return 
+     *   {@.ja 読み出し結果(読み出し成功:true, 読み出し失敗:false)}
+     *   {@.en Readout result (Successful:true, Failed:false)}
+     *
      */
-    public DataType read() {
+    public boolean read() {
+//    public DataType read() {
         rtcout.println(rtcout.TRACE, "DataType read()");
 
 
@@ -233,7 +282,7 @@ public class InPort<DataType> extends InPortBase {
 
             if (m_connectors.size() == 0) {
                 rtcout.println(rtcout.DEBUG, "no connectors");
-                return m_value.v;
+                return false;
             }
 
             EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
@@ -257,21 +306,21 @@ public class InPort<DataType> extends InPortBase {
                 if (m_OnReadConvert != null) {
                     m_value.v = m_OnReadConvert.run(m_value.v);
                     rtcout.println(rtcout.DEBUG, "OnReadConvert called");
-                    return m_value.v;
+                    return true;
                 }
-                return m_value.v;
+                return true;
             }
             else if (ret.equals(ReturnCode.BUFFER_EMPTY)) {
                 rtcout.println(rtcout.WARN, "buffer empty");
-                return m_value.v;
+                return false;
             }
             else if (ret.equals(ReturnCode.BUFFER_TIMEOUT)) {
                 rtcout.println(rtcout.WARN, "buffer read timeout");
-                return m_value.v;
+                return false;
             }
             rtcout.println(rtcout.ERROR, 
                            "unknown retern value from buffer.read()");
-            return m_value.v;
+            return false;
 
         }
     }
@@ -282,6 +331,24 @@ public class InPort<DataType> extends InPortBase {
      */
     public void update() {
         this.read();
+    }
+
+    /**
+     * {@.ja T 型のデータへ InPort の最新値データを読み込む}
+     * {@.en Read the newly value data in InPort to type-T variable}
+     * <p>
+     * {@.ja InPort に設定されている最新データを読み込み、
+     *       指定されたデータ変数に設定する。}
+     * {@.en Read the newly data set in InPort and set to specified data 
+     *       variable.}
+     * </p>
+     * @return
+     *   {@.ja InPort バッファから値を読み込む T 型変数}
+     *   {@.en The type-T variable to read from InPort's buffer}
+     */
+    public DataType extract() {
+        this.read();
+        return m_value.v;
     }
     
     /**

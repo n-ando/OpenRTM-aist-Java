@@ -239,6 +239,26 @@ public class OutPort<DataType> extends OutPortBase {
     
     
     /**
+     * {@.ja データ書き込み}
+     * {@.en Write data}
+     * <p>
+     * {@.ja ポートへデータを書き込む。設定された値をポートに書き込む。}
+     * {@.en  Write data to the port. Write the set value to the port.}
+     * </p>
+     * @param value 
+     *   {@.ja 書き込み対象データ}
+     *   {@.en The target data for writing}
+     *
+     * @return  
+     *   {@.ja 書き込み処理結果(書き込み成功:true、書き込み失敗:false)}
+     *   {@.en Writing result (Successful:true, Failed:false)}
+     *
+     */
+    public boolean insert(DataType value) {
+        return write(value);
+    }
+
+    /**
      * <p>データ読み出し時における、ブロック/非ブロックモードを指定します。<br />
      * ブロックモードを指定した場合は、読み出せるデータを受信するかタイムアウトになるまで、
      * read()メソッドの呼び出しがブロックされます。</p>
