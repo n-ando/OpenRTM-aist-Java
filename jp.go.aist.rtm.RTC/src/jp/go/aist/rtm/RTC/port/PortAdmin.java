@@ -209,10 +209,10 @@ public class PortAdmin {
      * reference in the Port's profile is set to nil.}
      * </p>
      * @param port
-     *   {@.jaPort サーバント}
+     *   {@.ja Port サーバント}
      *   {@.en The Port's servant.}
      * @returni
-     *   {@.ja削除結果(削除成功:true，削除失敗:false)}
+     *   {@.ja 削除結果(削除成功:true，削除失敗:false)}
      *   {@.en Unregister result (Successful:true, Failed:false)}
      */
     public boolean removePort(PortBase port){
@@ -252,10 +252,10 @@ public class PortAdmin {
      * </p>
      * @param port
      *   {@.ja Port サーバント}
-     *   {@.enThe Port's servant.}
+     *   {@.en The Port's servant.}
      * @return
-     *   {@.ja削除結果(削除成功:true，削除失敗:false)}
-     *   {@.enUnregister result (Successful:true, Failed:false)}
+     *   {@.ja 削除結果(削除成功:true，削除失敗:false)}
+     *   {@.en Unregister result (Successful:true, Failed:false)}
      */
     public boolean removePort(PortService port) {
         try {
@@ -291,7 +291,7 @@ public class PortAdmin {
      * </p>
      * @param port 
      *   {@.ja Port サーバント}
-     *   {@.en he Port's servant.}
+     *   {@.en The Port's servant.}
      */
     public void deletePort(PortBase port) {
         
@@ -314,7 +314,7 @@ public class PortAdmin {
      * </p>
      * @param port 
      *   {@.ja Port サーバント}
-     *   {@.en he Port's servant.}
+     *   {@.en The Port's servant.}
      */
     public void deletePort(PortService port) {
 
