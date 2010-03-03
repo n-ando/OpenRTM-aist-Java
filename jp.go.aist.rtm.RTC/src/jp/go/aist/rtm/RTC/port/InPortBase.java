@@ -227,15 +227,15 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * {@.ja RTObject_impl::readAll()¤«¤é¸Æ¤Ğ¤ì¤ë²¾ÁÛ´Ø¿ô}
+     * {@.ja RTObject_impl::readAll()ã‹ã‚‰å‘¼ã°ã‚Œã‚‹ä»®æƒ³é–¢æ•°}
      * {@.en It is a virtual method that is called from 
      *       RTObject_impl::readAll().}
      * <p>
-     * {@.ja DataPort ¤«¤é¥Ç¡¼¥¿¤òÆÉ¤ß½Ğ¤¹}
+     * {@.ja DataPort ã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿å‡ºã™}
      * {@.en  This method reads out data from DataPort.}
      * </p>
      * @return 
-     *   {@.ja true:À®¸ù,false:¼ºÇÔ}
+     *   {@.ja true:æˆåŠŸ,false:å¤±æ•—}
      *   {@.en true:Success,false:Failure}
      */
     public abstract boolean read();

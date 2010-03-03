@@ -16,6 +16,7 @@ import RTC.PortServiceOperations;
 import RTC.PortProfile;
 import RTC.PortProfileListHolder;
 
+import jp.go.aist.rtm.RTC.log.Logbuf;
 /**
  * <p>Portの管理を行うクラスです。</p>
  */
@@ -30,6 +31,7 @@ public class PortAdmin {
     public PortAdmin(ORB orb, POA poa) {
 	this.m_pORB = orb;
         this.m_pPOA = poa;
+        rtcout = new Logbuf("PortAdmin");
     }
     
     /**
@@ -179,7 +181,8 @@ public class PortAdmin {
         CORBA_SeqUtil.push_back(this.m_portRefs, port.getPortRef());
 
         // Store Port servant
-        m_portServants.registerObject(port, new find_port_name(port.get_port_profile().name));
+        m_portServants.registerObject(port, 
+                            new find_port_name(port.get_port_profile().name));
     }
     
     /**
@@ -195,12 +198,24 @@ public class PortAdmin {
     }
     
     /**
-     * <p>指定されたPortサーバントの登録を解除します。</p>
-     * 
-     * @param port 登録解除するPortサーバントのオブジェクト
+     * {@.ja Port の登録を解除する}
+     * {@.en Unregister the Port registration}
+     * <p>
+     * {@.ja 引数 port で指定された Port の登録を解除する。
+     * 削除時に Port は deactivate され、PortのProfileのリファレンスには、
+     * nil値が代入される。}
+     * {@.en This operation unregisters the Port registration.
+     * When the Port is unregistered, Port is deactivated, and the object
+     * reference in the Port's profile is set to nil.}
+     * </p>
+     * @param port
+     *   {@.jaPort サーバント}
+     *   {@.en The Port's servant.}
+     * @returni
+     *   {@.ja削除結果(削除成功:true，削除失敗:false)}
+     *   {@.en Unregister result (Successful:true, Failed:false)}
      */
-    public void deletePort(PortBase port) {
-        
+    public boolean removePort(PortBase port){
         try {
             port.disconnect_all();
             // port.shutdown();
@@ -211,20 +226,38 @@ public class PortAdmin {
             m_pPOA.deactivate_object(m_pPOA.servant_to_id(port));
             port.setPortRef(null);
 
-            m_portServants.unregisterObject(new find_port_name(tmp));
+            if(m_portServants.unregisterObject(new find_port_name(tmp))==null){
+                return false;
+            }
+            else{
+                return true;
+            }
             
         } catch(Exception ignored) {
             ignored.printStackTrace();
+            return false;
         }
     }
 
     /**
-     * <p> deletePort </p>
-     *
-     * @param port PortService
-     *
+     * {@.ja Port の登録を解除する}
+     * {@.en Unregister the Port registration}
+     * <p>
+     * {@.ja 引数 port で指定された Port の登録を解除する。
+     * 削除時に Port は deactivate され、PortのProfileのリファレンスには、
+     * nil値が代入される。}
+     * {@.en This operation unregisters the Port registration.
+     * When the Port is unregistered, Port is deactivated, and the object
+     * reference in the Port's profile is set to nil.}
+     * </p>
+     * @param port
+     *   {@.ja Port サーバント}
+     *   {@.enThe Port's servant.}
+     * @return
+     *   {@.ja削除結果(削除成功:true，削除失敗:false)}
+     *   {@.enUnregister result (Successful:true, Failed:false)}
      */
-    public void deletePort(PortService port) {
+    public boolean removePort(PortService port) {
         try {
             // port.disconnect_all();
             // port.shutdown();
@@ -237,8 +270,56 @@ public class PortAdmin {
             // port.setPortRef(null);
 
             // m_portServants.unregisterObject(new find_port_name(tmp));
+            return true;
         } catch(Exception ignored) {
             ignored.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 
+     * {@.ja [local interface] Port の登録を削除する}
+     * {@.en [local interface] Unregister Port}
+     * <p>
+     * {@.ja 指定されたPortサーバントの登録を解除します。
+     *       削除時に Port は deactivate され、PortのProfileのリファレンスには、
+     *       nil値が代入される。}
+     * {@.en This operation unregisters a Port held by this RTC.
+     *       When the Port is unregistered, Port is deactivated, and the object
+     *       reference in the Port's profile is set to nil.}
+     * </p>
+     * @param port 
+     *   {@.ja Port サーバント}
+     *   {@.en he Port's servant.}
+     */
+    public void deletePort(PortBase port) {
+        
+        if (!removePort(port)) {
+            rtcout.println(rtcout.ERROR, "deletePort(PortBase&) failed.");
+        }
+    }
+
+    /**
+     * 
+     * {@.ja [local interface] Port の登録を削除する}
+     * {@.en [local interface] Unregister Port}
+     * <p>
+     * {@.ja 指定されたPortサーバントの登録を解除します。
+     *       削除時に Port は deactivate され、PortのProfileのリファレンスには、
+     *       nil値が代入される。}
+     * {@.en This operation unregisters a Port held by this RTC.
+     *       When the Port is unregistered, Port is deactivated, and the object
+     *       reference in the Port's profile is set to nil.}
+     * </p>
+     * @param port 
+     *   {@.ja Port サーバント}
+     *   {@.en he Port's servant.}
+     */
+    public void deletePort(PortService port) {
+
+        if (!removePort(port)) {
+            rtcout.println(rtcout.ERROR, "deletePort(PortService) failed.");
         }
     }
 
@@ -318,4 +399,11 @@ public class PortAdmin {
         }
         private PortProfileListHolder m_p;
     }
+
+    /**
+     * {@.ja Logging用フォーマットオブジェクト}
+     */
+    private Logbuf rtcout;
+
+
 }

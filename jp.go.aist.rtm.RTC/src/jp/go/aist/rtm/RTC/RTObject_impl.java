@@ -1827,31 +1827,187 @@ public class RTObject_impl extends DataFlowComponentPOA {
     }
 
     /**
-     * <p>[local interface] Port の登録を削除します。<br />
-     *
-     * RTC が保持するPortの登録を削除します。</p>
-     * 
-     * @param port RTC に登録する Port
+     * {@.ja [local interface] InPort の登録を削除する}
+     * {@.en @brief [local interface] Unregister InPort}
+     * <p>
+     * {@.ja RTC が保持するInPortの登録を削除する。}
+     * {@.en This operation unregisters a InPort held by this RTC.}
+     * </p>
+     * @param porti
+     *   {@.ja 削除対象 Port}
+     *   {@.en Port which is unregistered}
+     * @return
+     *   {@.ja 削除結果(削除成功:true，削除失敗:false)}
+     *   {@.enUnregister result (Successful:true, Failed:false)}
      */
-    public void deletePort(PortBase port) {
+    public boolean removeInPort(InPortBase port) {
+        rtcout.println(rtcout.TRACE, "removeInPort()");
+        boolean  ret = removePort(port);
 
-      rtcout.println(rtcout.TRACE, "RTObject_impl.deletePort(PortBase)");
+        java.util.Iterator it = m_inports.iterator(); 
 
-      m_portAdmin.deletePort(port);
-      return;
+        if(ret){
+            while( !it.hasNext() ){
+                if ( it.next() == port) {
+                    m_inports.remove(it);
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
-     * <p> deleteProt </p>
-     *
-     * @param port PortService
+     * {@.ja [local interface] OutPort の登録を削除する}
+     * {@.en [local interface] Unregister OutPort.}
+     * <p>
+     * {@.ja RTC が保持するOutPortの登録を削除する。}
+     * {@.en This operation unregisters a OutPort held by this RTC.}
+     * </p> 
+     * @param port
+     *   {@.ja 削除対象 Port}
+     *   {@.en Port which is unregistered}
+     * @return
+     *   {@.ja 削除結果(削除成功:true，削除失敗:false)}
+     *   {@.en Unregister result (Successful:true, Failed:false)}
+     */
+    public boolean removeOutPort(OutPortBase port){
+        rtcout.println(rtcout.TRACE, "removeOutPort()");
+        boolean  ret = removePort(port);
+
+        java.util.Iterator it = m_outports.iterator(); 
+
+        if(ret){
+            while( !it.hasNext() ){
+                if ( it.next() == port) {
+                    m_inports.remove(it);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * {@.ja [local interface] Port の登録を削除する}
+     * {@.en [local interface] Unregister Port}
+     * <p>
+     * {@.ja RTC が保持するPortの登録を削除する。}
+     * {@.en  This operation unregisters a Port held by this RTC.}
+     * </p>
+     * @param port
+     *   {@.ja 削除対象 Port}
+     *   {@.en Port which is unregistered}
+     * @return
+     *   {@.ja 削除結果(削除成功:true，削除失敗:false)}
+     *   {@.en Unregister result (Successful:true, Failed:false)}
+     */
+    public boolean removePort(PortBase port){
+        rtcout.println(rtcout.TRACE, "removePort(PortBase)");
+        return m_portAdmin.removePort(port);
+    }
+
+    /**
+     * {@.ja [local interface] Port の登録を削除する}
+     * {@.en [local interface] Unregister Port}
+     * <p>
+     * {@.ja RTC が保持するPortの登録を削除する。}
+     * {@.en This operation unregisters a Port held by this RTC.}
+     * </p> 
+     * @param port
+     *   {@.ja 削除対象 Port}
+     *   {@.en Port which is unregistered}
+     * @return
+     *   {@.ja 削除結果(削除成功:true，削除失敗:false)}
+     *   {@.en Unregister result (Successful:true, Failed:false)}
+     */
+    public boolean removePort(PortService port){
+        rtcout.println(rtcout.TRACE, "removePort(PortService)");
+        return m_portAdmin.removePort(port);
+    }
+
+    /**
+     * {@.ja [local interface] Port の登録を削除する}
+     * {@.en [local interface] Unregister Port}
+     * <p>
+     * {@.ja RTC が保持するPortの登録を削除する。}
+     * {@.en This operation unregisters a Port held by this RTC.}
+     * </p>
+     * @param port
+     *   {@.ja 削除対象 Port}
+     *   {@.en Port which is unregistered}
+     * @return
+     *   {@.ja 削除結果(削除成功:true，削除失敗:false)}
+     *   {@.en Unregister result (Successful:true, Failed:false)}
+     */
+    public boolean removePort(CorbaPort port) {
+        rtcout.println(rtcout.TRACE, "removePort(CorbaPortort)");
+        return m_portAdmin.removePort((PortBase)port);
+    }
+
+    /**
+     * {@.ja [local interface] Port の登録を削除します。}
+     * {@.en [local interface] Unregister Port}
+     * <p>
+     * {@.ja RTC が保持するPortの登録を削除します。}
+     * {@.en This operation unregisters a Port held by this RTC.}
+     * </p>
+     * @param port 
+     *   {@.ja 削除対象 Port}
+     *   {@.en Port which is unregistered}
+     */
+    public void deletePort(PortBase port) {
+
+        rtcout.println(rtcout.TRACE, "RTObject_impl.deletePort(PortBase)");
+
+        if (!removePort(port)){
+            rtcout.println(rtcout.ERROR, "removePort(PortBase&) failed.");
+        }
+        return;
+    }
+
+    /**
+     * {@.ja [local interface] Port の登録を削除します。}
+     * {@.en [local interface] Unregister Port}
+     * <p>
+     * {@.ja RTC が保持するPortの登録を削除します。}
+     * {@.en This operation unregisters a Port held by this RTC.}
+     * </p>
+     * @param port 
+     *   {@.ja 削除対象 Port}
+     *   {@.en Port which is unregistered}
      */
     public void deletePort(PortService port) {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.deletePort(PortService)");
 
-      m_portAdmin.deletePort(port);
-      return;
+        if (!removePort(port)){
+            rtcout.println(rtcout.ERROR, "removePort(PortService_pt) failed.");
+        }
+        return;
+    }
+
+    /**
+     * {@.ja [local interface] Port の登録を削除します。}
+     * {@.en [local interface] Unregister Port}
+     * <p>
+     * {@.ja RTC が保持するPortの登録を削除します。}
+     * {@.en This operation unregisters a Port held by this RTC.}
+     * </p>
+     * @param port 
+     *   {@.ja 削除対象 Port}
+     *   {@.en Port which is unregistered}
+     */
+    public void deletePort(CorbaPort port) {
+
+        rtcout.println(rtcout.TRACE, "RTObject_impl.deletePort(CorbaPort)");
+
+        if (!removePort(port)){
+            rtcout.println(rtcout.ERROR, "removePort(CorbaPort) failed.");
+        }
+        return;
     }
 
     /**

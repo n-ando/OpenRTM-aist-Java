@@ -249,7 +249,7 @@ public class InPort<DataType> extends InPortBase {
      * - OnReadError: 上記以外の理由で読みだしに失敗した場合に呼ばれる。
      *        理由としては、バッファ設定の不整合、例外の発生などが考えられる
      *        が通常は起こりえないためバグの可能性がある。}
-     * {@en. Readout the value from DataPort
+     * {@.en Readout the value from DataPort
      *
      * - When Callback functor OnRead is already set, OnRead will be invoked
      *   before reading from the buffer held by DataPort.
