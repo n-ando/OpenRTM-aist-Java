@@ -1828,17 +1828,17 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
     /**
      * {@.ja [local interface] InPort の登録を削除する}
-     * {@.en @brief [local interface] Unregister InPort}
+     * {@.en [local interface] Unregister InPort}
      * <p>
      * {@.ja RTC が保持するInPortの登録を削除する。}
      * {@.en This operation unregisters a InPort held by this RTC.}
      * </p>
-     * @param porti
+     * @param port
      *   {@.ja 削除対象 Port}
      *   {@.en Port which is unregistered}
      * @return
      *   {@.ja 削除結果(削除成功:true，削除失敗:false)}
-     *   {@.enUnregister result (Successful:true, Failed:false)}
+     *   {@.en Unregister result (Successful:true, Failed:false)}
      */
     public boolean removeInPort(InPortBase port) {
         rtcout.println(rtcout.TRACE, "removeInPort()");
@@ -1881,7 +1881,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         if(ret){
             while( !it.hasNext() ){
                 if ( it.next() == port) {
-                    m_inports.remove(it);
+                    m_outports.remove(it);
                     return true;
                 }
             }
@@ -2096,11 +2096,11 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * パラメータがfalseの場合は、readAll()呼出を無効にする。}
      * {@.en  Set whether to execute the readAll() method.} 
      * </p>
-     * @param read(default:true) 
+     * @param read (default:true) 
      *   {@.ja (readAll()メソッド呼出あり:true, 
      *          readAll()メソッド呼出なし:false)}
      *   {@.en (readAll() is called:true, readAll() isn't called:false)}
-     * @param completion(default:false) 
+     * @param completion (default:false) 
      *   {@.ja readAll()にて、どれかの一つのInPortのread()が失敗しても
      *         全てのInPortのread()を呼び出す:true,
      *         readAll()にて、どれかの一つのInPortのread()が失敗した場合、
@@ -2129,11 +2129,11 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *       パラメータがfalseの場合は、writeAll()呼出を無効にする。}
      * {@.en Set whether to execute the writeAll() method.}
      * </p>
-     * @param write(default:true) 
+     * @param write (default:true) 
      *   {@.ja (writeAll()メソッド呼出あり:true, 
      *          writeAll()メソッド呼出なし:false)}
      *   {@.en (writeAll() is called:true, writeAll() isn't called:false)}
-     * @param completion(default:false) 
+     * @param completion (default:false) 
      *   {@.ja writeAll()にて、どれかの一つのOutPortのwrite()が失敗しても
      *         全てのOutPortのwrite()を呼び出しを行う:true,
      *         writeAll()にて、どれかの一つのOutPortのwrite()が失敗した場合、
