@@ -549,10 +549,56 @@ public class Manager {
     }
     
     /**
-     * <p>RTコンポーネントを生成します。</p>
-     * 
-     * @param comp_args モジュール名
-     * @return 生成されたRTコンポーネントオブジェクト
+     * {@.ja RTコンポーネントを生成する}
+     * {@.en Create RT-Components}
+     * <p>
+     * {@.ja 指定したRTコンポーネントのインスタンスを登録されたFactory経由
+     * で生成する。
+     *
+     * 生成されるコンポーネントの各種プロファイルは以下の優先順位で
+     * 設定される。
+     *
+     * -# createComponent() の引数で与えられたプロファイル
+     * -# rtc.confで指定された外部ファイルで与えられたプロファイル
+     * --# category.instance_name.config_file
+     * --# category.component_type.config_file
+     * -# コードに埋め込まれたプロファイル 
+     *
+     * インスタンス生成が成功した場合、併せて以下の処理を実行する。
+     *  - 外部ファイルで設定したコンフィギュレーション情報の読み込み，設定
+     *  - ExecutionContextのバインド，動作開始
+     *  - ネーミングサービスへの登録}
+     * {@.en Create specified RT-Component's instances via registered Factory.
+     * When its instances have been created successfully, the following
+     * processings are also executed.
+     *  - Read and set configuration information that was set by external file.
+     *  - Bind ExecutionContext and start operation.
+     *  - Register to naming service.}
+     * </p>
+     * @param comp_args
+     *   {@.ja 生成対象RTコンポーネントIDおよびコンフィギュレー
+     *         ション引数。フォーマットは大きく分けて "id" と "configuration" 
+     *         部分が存在する。
+     *
+     * comp_args:     [id]?[configuration]
+     *                id は必須、configurationはオプション
+     * id:            RTC:[vendor]:[category]:[implementation_id]:[version]
+     *                RTC は固定かつ必須
+     *                vendor, category, version はオプション
+     *                implementation_id は必須
+     *                オプションを省略する場合でも ":" は省略不可
+     * configuration: [key0]=[value0]&[key1]=[value1]&[key2]=[value2].....
+     *                RTCが持つPropertiesの値をすべて上書きすることができる。
+     *                key=value の形式で記述し、"&" で区切る
+     *
+     * 例えば、
+     * RTC:jp.go.aist:example:ConfigSample:1.0?conf.default.str_param0=munya
+     * RTC::example:ConfigSample:?conf.default.int_param0=100}
+     *
+     *   {@.en Target RT-Component names for the creation}
+     * @return
+     *   {@.ja 生成したRTコンポーネントのインスタンス}
+     *   {@.en Created RT-Component's instances}
      */
     public RTObject_impl createComponent(final String comp_args) {
         
@@ -624,6 +670,34 @@ public class Manager {
                         + comp_id.getProperty("implementaion_id"));
                     return null;
                 }
+//<+zxc
+{
+    String ior = null;
+    try {
+        org.omg.CORBA.Object ref = m_pPOA.servant_to_reference(comp);
+        ior = m_pORB.object_to_string(ref);
+//        System.out.println(ior);
+    } catch (Exception e) {
+        System.out.println("create object:");
+        e.printStackTrace(System.err);
+    }
+    try {
+        // プロセスオブジェクトを生成
+        Process process = Runtime.getRuntime().exec("catior "+ior);
+        // 外部コマンドの標準出力を取得するための入力ストリームを取得
+        java.io.InputStream is = process.getInputStream();
+        BufferedReader br 
+                = new BufferedReader(new java.io.InputStreamReader(is));
+        // 標準出力を１行づつ取り出します
+        String line;
+        while ((line = br.readLine()) != null) {
+            System.out.println(line);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+//+>
                 rtcout.println(rtcout.TRACE, 
                     "RTC Created: " + comp_id.getProperty("implementaion_id"));
                 break;
@@ -1128,9 +1202,15 @@ public class Manager {
     }
     
     /**
-     * <p>CORBA ORBの初期化処理を行います。</p>
-     *
-     * @return 正常に初期化できた場合はtrueを、さもなくばfalseを返します。
+     * {@.ja CORBA ORB の初期化処理}
+     * {@.en CORBA ORB initialization}
+     * <p>
+     * {@.ja 引数により与えられた設定を元にORBを初期化する。}
+     * {@.en Initialize ORB based on the configuration given by arguments.}
+     * </p>
+     * @return  
+     *   {@.ja ORB 初期化処理結果(初期化成功:true、初期化失敗:false)}
+     *   {@.en ORB initialization result (Successful:true, Failed:false)}
      */
     protected boolean initORB() {
 
@@ -1143,6 +1223,24 @@ public class Manager {
 
             // ORB initialization
             m_pORB = ORBUtil.getOrb(args, prop);
+//<+zxc
+{
+                com.sun.corba.se.spi.orb.ORB sunorb 
+                            = (com.sun.corba.se.spi.orb.ORB)m_pORB;
+
+                int lport = sunorb.getORBData().getORBInitialPort();
+                System.out.println("main1.lport>:"+lport);
+                lport = sunorb.getORBData().getORBServerPort();
+                System.out.println("main1.lport>:"+lport);
+
+                com.sun.corba.se.spi.ior.IOR inior = sunorb.getFVDCodeBaseIOR();
+                org.omg.IOP.IOR iopior = inior.getIOPIOR();
+                int portint = (iopior.profiles[0].profile_data[25] & 255)
+                            |((iopior.profiles[0].profile_data[24]<<8)&65280);
+
+                IopIorInterceptor.replacePort0((short)portint);
+}
+//+>
 
             // Get the RootPOA
             Object obj = m_pORB.resolve_initial_references("RootPOA");
@@ -1157,7 +1255,8 @@ public class Manager {
             m_objManager = new CorbaObjectManager(m_pORB, m_pPOA);
             
         } catch (Exception ex) {
-            rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.initORB().");
+            rtcout.println(rtcout.DEBUG, 
+                "Exception: Caught unknown Exception in Manager.initORB().");
             rtcout.println(rtcout.DEBUG, ex.getMessage());
             return false;
         }
@@ -1166,14 +1265,17 @@ public class Manager {
     }
     
     /**
-     * <p>ORBのコマンドラインオプションを生成します。</p>
-     *
-     * @return ORBコマンドラインオプション
-     *
-     * <p> Create ORB command options </p>
-     * <p> Create ORB launch options from configuration information
-     * that has been set. </p>
-     * @return ORB launch options
+     * {@.ja ORBのコマンドラインオプションを生成します。}
+     * {@.en Create ORB command options}
+     * <p>
+     * {@.ja コンフィギュレーション情報に設定された内容から
+     *       ORB の起動時オプションを作成する。}
+     * {@.en Create ORB launch options from configuration information
+     *       that has been set.}
+     * </p>
+     * @return 
+     *   {@.ja ORB 起動時オプション}
+     *   {@.en ORB launch options}
      */
     protected String createORBOptions() {
         
@@ -1196,9 +1298,15 @@ System.out.println("createORBOptions.endpoints>:"+endpoints);
     }
 
     /**
-     * <p> Create Endpoints </p>
-     * <p> Create Endpoints from the configuration. </p>
-     * @param endpoints Endpoints list
+     * {@.ja エンドポイントの生成}
+     * {@.en Create Endpoints}
+     * <p>
+     * {@.ja コンフィグレーションからエンドポイントを生成する。}
+     * {@.en Create Endpoints from the configuration.}
+     * </p>
+     * @param endpoints 
+     *   {@.ja エンドポイントリスト}
+     *   {@.en endpoints Endpoints list}
      */
     protected void createORBEndpoints(Vector<String> endpoints) {
 System.out.println("IN  createORBEndpoints");
@@ -1208,14 +1316,12 @@ System.out.println("endpoints>:"+endpoints);
 //        String[] endpoints_array = (String[])endpoints.toArray();
         String[] endpoints_array = new String[0];
         if (m_config.hasKey("corba.endpoints")!=null) {
-System.out.println("---00100---");
             endpoints_array 
                 = m_config.getProperty("corba.endpoints").split(",");
             rtcout.println(rtcout.DEBUG, 
                 "corba.endpoints: "+m_config.getProperty("corba.endpoints"));
         }
         else if (m_config.hasKey("corba.endpoint")!=null) {
-System.out.println("---00200---");
             endpoints_array
                 = m_config.getProperty("corba.endpoint").split(",");
             rtcout.println(rtcout.DEBUG, 
@@ -1232,8 +1338,8 @@ System.out.println("endpoints>:"+endpoints);
         rtcout.println(rtcout.DEBUG, 
             "manager.is_master: "+m_config.getProperty("manager.is_master"));
 
-        if(StringUtil.toBool(m_config.getProperty("manager.is_master"), "YES", "NO", false)){
-System.out.println("---00300---");
+        if(StringUtil.toBool(m_config.getProperty("manager.is_master"), 
+                                                        "YES", "NO", false)){
             String  mm = m_config.getProperty("corba.master_manager", ":2810");
 System.out.println("mm>:"+mm);
             String[] mmm = mm.split(":");
@@ -1245,7 +1351,6 @@ System.out.println("mmm[ic]>:"+mmm[ic]);
                 endpoints.add(0, ":" + mmm[1]);
             }
             else {
-System.out.println("---00400---");
                 endpoints.add(0, ":2810");
             }
         }
@@ -1254,9 +1359,15 @@ System.out.println("OUT createORBEndpoints");
     }
 
     /**
-     * <p> Create a command optional line of Endpoint of ORB. </p>
-     * @param opt ORB options
-     * @param endpoints Endpoints list
+     * {@.ja ORB の Endpoint のコマンドラインオプション作成}
+     * {@.en Create a command optional line of Endpoint of ORB.}
+     * 
+     * @param opt 
+     *   {@.ja コマンドラインオプション}
+     *   {@.en ORB options}
+     * @param endpoint 
+     *   {@.ja エンドポイントリスト}
+     *   {@.en Endpoints list}
      */
     protected void createORBEndpointOption(String opt, 
                                             Vector<String> endpoints) {
@@ -1294,7 +1405,7 @@ System.out.println("OUT createORBEndpointOption");
 
     /**
      * {@.jp "corba.endpoints" を分析してエンドポイントを 
-     * IiopAddressComp の listへ出力する。}
+     *       IiopAddressComp の listへ出力する。}
      * @param endpoint
      *   {@.jp }
      * @param result
@@ -1329,7 +1440,8 @@ System.out.println("Port of corba.endpoints is illegal." +endPointInfo[1]);
     }
     /**
      * {@.jp "corba.endpoint" を分析してエンドポイントを 
-     * Map へ出力する。}
+     *        Map へ出力する。}
+     * {@.en Analyzes "corba.endpoint" and outputs the end point to Map.}
      *
      */
      private void parsesCorbaEndpoint(String endpoint ,
@@ -1346,6 +1458,7 @@ System.out.println("Port of corba.endpoints is illegal." +endPointInfo[1]);
                     short port = (short)Integer.parseInt(endPointInfo[1]);
 //                    result.put("org.omg.CORBA.ORBInitialPort", endPointInfo[1]);
                     result.put("com.sun.CORBA.ORBServerPort", endPointInfo[1]);
+System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
                 }
                 catch(Exception ex){
                     rtcout.println(rtcout.WARN, ""+endPointInfo[1]);
@@ -1394,7 +1507,7 @@ System.out.println("    endPoints[ic]>:"+endPoints[ic]);
                     parsesCorbaEndpointOutputToList(endPoints[ic], 
                                                     endpointsList);
                 }
-                IopIorInterceptor.SetEndpoints(endpointsList);
+                IopIorInterceptor.setEndpoints(endpointsList);
             
             }
             else{
@@ -1405,7 +1518,7 @@ System.out.println("    endPoints[ic]>:"+endPoints[ic]);
                     parsesCorbaEndpointOutputToList(endpoints, endpointsList);
                 }
             }
-            IopIorInterceptor.SetEndpoints(endpointsList);
+            IopIorInterceptor.setEndpoints(endpointsList);
         }
 
 /*

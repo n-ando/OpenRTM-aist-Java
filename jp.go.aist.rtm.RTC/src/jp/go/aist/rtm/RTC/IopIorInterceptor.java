@@ -26,19 +26,13 @@ public class IopIorInterceptor extends LocalObject
     implements org.omg.PortableInterceptor.IORInterceptor{
 
     /**
-     * {@.jp}
-     */
-    private TaggedComponent[] m_components;
-    /**
-     * {@.jp}
-     */
-    private String m_name;
-    /**
-     * {@.jp}
+     * {@.ja Codec}
+     * {@.en Codec}
      */
     static private Codec codec;
     /**
-     * {@.jp}
+     * {@.ja エンドポイント}
+     * {@.en endpoints}
      */
     static private ArrayList<IiopAddressComp> m_endpoints 
                                         =  new ArrayList<IiopAddressComp>();
@@ -47,11 +41,11 @@ public class IopIorInterceptor extends LocalObject
      * {@.ja エンドポイントを設定. }
      * {@.en Sets the end points. }
      * @param  endpoints 
-     *   {@.ja エンドポイント } 
+     *   {@.ja エンドポイント} 
      *   {@.en endpoints}
      *
      */
-    public static void SetEndpoints(ArrayList endpoints){
+    public static void setEndpoints(ArrayList endpoints){
 System.out.println("IN   SetEndpoints()");
         m_endpoints = endpoints;
 System.out.println("OUT   SetEndpoints()");
@@ -67,7 +61,7 @@ System.out.println("OUT   SetEndpoints()");
      *   {@.en port}
      *
      */
-    public static void SetEndpoints(String hostString, String portString){
+    public static void setEndpoints(String hostString, String portString){
         short port = 0;
         try {
             port = (short)Integer.parseInt(portString);
@@ -83,6 +77,29 @@ System.out.println("OUT   SetEndpoints()");
     }
 
     /**
+     * {@.ja エンドポイントを書き換える. }
+     * {@.en Replaces the end point the end point. }
+     * <p>
+     * {@.ja エンドポイントリスト内のポート番号が 0 のエンドポイントを
+     * 与えられたポート番号に置き換える。}
+     * {@.en Replaces the port number of the end point with the port number 
+     * of the argument.Only the end point of port number 0 is replaced.} 
+     * </p>
+     * @param  port 
+     *   {@.ja ポート番号} 
+     *   {@.en Port Number}
+     */
+    public static void replacePort0(short port) {
+        if(m_endpoints==null){
+            return;
+        }
+        for(int ic=0;ic<m_endpoints.size();ic++){
+            if(m_endpoints.get(ic).Port==0){
+                m_endpoints.get(ic).Port = port;
+            }
+        }
+    }
+    /**
      * {@.ja コンストラクタ.}
      * {@.en Constructor.}
      * @param  code 
@@ -91,10 +108,8 @@ System.out.println("OUT   SetEndpoints()");
      *
      */
     public IopIorInterceptor( Codec codec ){ 
-System.out.println("IN  CodebaseInterceptor");
         rtcout = new Logbuf("IopIorInterceptor");
         this.codec = codec;
-System.out.println("OUT CodebaseInterceptor");
     }
 
     public String name() {
@@ -121,9 +136,30 @@ System.out.println("IN  CodebaseInterceptor.establish_components");
 
         //Creates TaggedComponents
 System.out.println("    m_endpoints.size()>:"+ m_endpoints.size());
-        m_components = new TaggedComponent[m_endpoints.size()];
+        TaggedComponent[] components = new TaggedComponent[m_endpoints.size()];
         for(int ic=0;ic<m_endpoints.size();++ic){
             IiopAddressComp lp = m_endpoints.get(ic);
+            if(lp.Port==0){
+                com.sun.corba.se.spi.orb.ORB sunorb 
+                            = (com.sun.corba.se.spi.orb.ORB)orb;
+                com.sun.corba.se.impl.ior.IORImpl ior 
+                            = new com.sun.corba.se.impl.ior.IORImpl(sunorb);
+                System.out.println("ior>:"+ior.getTypeId());
+
+/* zxc
+                int lport = 
+                sunorb.getORBData().getORBInitialPort();
+                System.out.println("lport>:"+lport);
+                lport = 
+                sunorb.getORBData().getORBServerPort();
+                System.out.println("lport>:"+lport);
+                lport = 
+                sunorb).getORBData().getPersistentServerPort(); 
+                System.out.println("lport>:"+lport);
+*/
+System.out.println("port_size>:"+
+sunorb.getORBData().getUserSpecifiedListenPorts().length); 
+            }
             IiopAddressCompHelper.insert(any, lp);
             byte[] by = null;
             try {
@@ -134,14 +170,14 @@ System.out.println("    m_endpoints.size()>:"+ m_endpoints.size());
                     "Invalid Type For Encoding:" +lp.HostID+","+lp.Port);
                 continue;
             }
-            m_components[ic] = new TaggedComponent(
+            components[ic] = new TaggedComponent(
                 org.omg.IOP.TAG_ALTERNATE_IIOP_ADDRESS.value, by);
         }
 
        
-System.out.println("    m_components.length>:"+ m_components.length);
-       for ( int ic=0; ic<m_components.length; ++ic ) {
-           info.add_ior_component_to_profile( m_components[ic], 
+System.out.println("    components.length>:"+ components.length);
+       for ( int ic=0; ic<components.length; ++ic ) {
+           info.add_ior_component_to_profile( components[ic], 
                                                TAG_INTERNET_IOP.value );
        }
 
@@ -149,7 +185,7 @@ System.out.println("OUT CodebaseInterceptor.establish_components");
     }
  
     /**
-     * {@.jp ロガーストリーム}
+     * {@.ja ロガーストリーム}
      */
     private Logbuf rtcout;
 }
