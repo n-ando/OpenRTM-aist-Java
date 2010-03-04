@@ -211,7 +211,7 @@ public class PortAdmin {
      * @param port
      *   {@.ja Port サーバント}
      *   {@.en The Port's servant.}
-     * @returni
+     * @return
      *   {@.ja 削除結果(削除成功:true，削除失敗:false)}
      *   {@.en Unregister result (Successful:true, Failed:false)}
      */

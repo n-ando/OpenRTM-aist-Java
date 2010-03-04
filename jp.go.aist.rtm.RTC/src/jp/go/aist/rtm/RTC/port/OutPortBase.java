@@ -115,7 +115,7 @@ public abstract class OutPortBase extends PortBase {
      * </p>
      * @return 
      *   {@.ja 書き込み処理結果(書き込み成功:true、書き込み失敗:false)}
-     *   {@.en Writing result (Successful:true, Failed:false)
+     *   {@.en Writing result (Successful:true, Failed:false)}
      */
     public abstract boolean write();
 

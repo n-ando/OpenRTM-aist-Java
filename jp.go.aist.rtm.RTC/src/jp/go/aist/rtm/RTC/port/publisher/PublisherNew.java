@@ -647,7 +647,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * <p> Connector data listener functions </p>
      */
     private void onBufferWrite(final OutputStream data) {
-System.out.println("onBufferWrite");
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
     }
 
