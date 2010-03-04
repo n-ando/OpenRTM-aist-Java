@@ -1727,7 +1727,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *       Port のプロパティにデータポートであること("port.dataport")、
      *       TCPを使用すること("tcp_any")を設定するとともに、 DataInPort の
      *       インスタンスを生成し、登録する。}
-     * {@,en This operation registers DataInPort held by this RTC.
+     * {@.en This operation registers DataInPort held by this RTC.
      *       Set "port.dataport" and "tcp_any" to property of Port, and
      *       create instances of DataInPort and register it.}
      * </p>
@@ -1742,12 +1742,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
                                     InPortBase inport) throws Exception {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerInPort("+name+")");
-
-/*
-        String propkey = "port.inport.";
-        inport.init(m_properties.getNode(propkey));
-        this.registerPort(inport);
-*/
 
         if (!addInPort(name, inport)){
             rtcout.println(rtcout.ERROR, "addInPort("+name+") failed.");
@@ -1842,13 +1836,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerOutPort("+name+")");
 
-/*
-       String propkey = "port.outport." + name;
-       m_properties.getNode(propkey).merge(m_properties.getNode("port.outport.dataport"));
-
-       outport.init(m_properties.getNode(propkey));
-       this.registerPort(outport);
-*/
 
         if (!addOutPort(name, outport)){
             rtcout.println(rtcout.ERROR, "addOutPort("+name+") failed.");
