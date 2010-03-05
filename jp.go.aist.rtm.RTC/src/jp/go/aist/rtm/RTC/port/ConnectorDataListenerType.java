@@ -3,7 +3,7 @@ package jp.go.aist.rtm.RTC.port;
    * {@.ja ConnectorDataListener のタイプ}
    * {@.en The types of ConnectorDataListener}
    * <p>
-   * {@.ja
+   * {@.ja <ul>
    * <li> ON_BUFFER_WRITE:          バッファ書き込み時
    * <li> ON_BUFFER_FULL:           バッファフル時
    * <li> ON_BUFFER_WRITE_TIMEOUT:  バッファ書き込みタイムアウト時
