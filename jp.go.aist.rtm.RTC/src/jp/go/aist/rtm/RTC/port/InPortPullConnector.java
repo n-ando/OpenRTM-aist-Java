@@ -63,12 +63,16 @@ public class InPortPullConnector extends InPortConnector {
         return ret;
     }
     /**
-     * <p> Disconnect connection </p>
+     * {@.ja 接続解除関数}
+     * {@.en Disconnect connection}
      *
-     * <p> This operation disconnect this connection </p>
-     *
+     * <p>
+     * {@.ja Connector が保持している接続を解除する}
+     * {@.en This operation disconnect this connection}
+     * </p>
      */
     public ReturnCode disconnect() {
+        onDisconnect();
         return ReturnCode.PORT_OK;
     }
 
@@ -106,10 +110,12 @@ public class InPortPullConnector extends InPortConnector {
     }
 
     /**
-     * <p> Invoke callback when connection is destroied </p>
+     * {@.ja 接続切断時にコールバックを呼ぶ}
+     * {@.en Invoke callback when connection is destroied}
      */
     protected void onDisconnect() {
-        m_listeners.connector_[ConnectorListenerType.ON_DISCONNECT].notify(m_profile);
+        m_listeners.connector_[ConnectorListenerType.ON_DISCONNECT].notify(
+                                                                    m_profile);
     }
 
     public void setListener(ConnectorInfo profile, 

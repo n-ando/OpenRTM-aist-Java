@@ -9,11 +9,16 @@ import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.util.DataRef;
 
   /**
-   * <p> ConnectorDataListener class </p>
+   * {@.ja ConnectorDataListener ･ｯ･鬣ｹ}
+   * {@.en ConnectorDataListener class}
    *
-   * <p> This class is abstract base class for listener classes that
-   * provides callbacks for various events in the data port's
-   * connectors. </p>
+   * <p>
+   * {@.ja データポートの Connector において発生する各種イベントに対するコー
+   *       ルバックを実現するリスナクラスの基底クラス。}
+   * {@.en This class is abstract base class for listener classes that
+   *       provides callbacks for various events in the data port's
+   *       connectors.}
+   * </p>
    *
    */
 public abstract class ConnectorDataListener implements Observer{

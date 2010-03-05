@@ -87,14 +87,17 @@ public class OutPortPullConnector extends OutPortConnector {
     }
 
     /**
-     * <p> disconnect </p>
-     * <p> This operation destruct and delete the consumer, the publisher </p>
-     * <p> and the buffer. </p>
+     * {@.ja 接続解除}
+     * {@.en disconnect}
      *
-     * @return ReturnCode
-     *
+     * <p>
+     * {@.ja consumer, publisher, buffer が解体・削除される。}
+     * {@.en This operation destruct and delete the consumer, the publisher
+     * and the buffer.}
+     * </p>
      */
     public ReturnCode disconnect() {
+        onDisconnect();
         return ReturnCode.PORT_OK;
     }
 
@@ -127,10 +130,12 @@ public class OutPortPullConnector extends OutPortConnector {
     }
 
     /**
-     * <p> Invoke callback when connection is destroied </p>
+     * {@.ja 接続切断時にコールバックを呼ぶ}
+     * {@.en Invoke callback when connection is destroied}
      */
     protected void onDisconnect() {
-        m_listeners.connector_[ConnectorListenerType.ON_DISCONNECT].notify(m_profile);
+        m_listeners.connector_[ConnectorListenerType.ON_DISCONNECT].notify(
+                                                                    m_profile);
     }
     /**
      * <p> Connector activation </p>

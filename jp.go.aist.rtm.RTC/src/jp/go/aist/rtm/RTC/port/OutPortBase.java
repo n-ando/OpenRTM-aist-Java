@@ -723,57 +723,245 @@ public abstract class OutPortBase extends PortBase {
   }
 
     /**
-     * <p> Adding BufferDataListener type listener </p>
+     * {@.ja ConnectorDataListener リスナを追加する}
+     * {@.en Adds ConnectorDataListener type listener}
+     * <p>
+     *
+     * バッファ書き込みまたは読み出しイベントに関連する各種リスナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     *
+     * <ul>
+     * <li> ON_BUFFER_WRITE:          バッファ書き込み時
+     * <li> - ON_BUFFER_FULL:           バッファフル時
+     * <li> - ON_BUFFER_WRITE_TIMEOUT:  バッファ書き込みタイムアウト時
+     * <li> - ON_BUFFER_OVERWRITE:      バッファ上書き時
+     * <li> - ON_BUFFER_READ:           バッファ読み出し時
+     * <li> - ON_SEND:                  InProtへの送信時
+     * <li> - ON_RECEIVED:              InProtへの送信完了時
+     * <li> - ON_SEND_ERTIMEOUT:        OutPort側タイムアウト時
+     * <li> - ON_SEND_ERERROR:          OutPort側エラー時
+     * <li> - ON_RECEIVER_FULL:         InProt側バッファフル時
+     * <li> - ON_RECEIVER_TIMEOUT:      InProt側バッファタイムアウト時
+     * <li> - ON_RECEIVER_ERROR:        InProt側エラー時
+     * </ul>
+     *
+     * リスナは ConnectorDataListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * <pre><code>
+     * ConnectorDataListener::
+     *         operator()(const ConnectorProfile&, const cdrStream&)
+     * </code></pre>
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * OutPortに移り、OutPort解体時もしくは、
+     * removeConnectorDataListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to buffer writing and
+     * reading events.
+     * The following listener types are available.
+     *
+     * <ul>
+     * <li> ON_BUFFER_WRITE:          At the time of buffer write
+     * <li> ON_BUFFER_FULL:           At the time of buffer full
+     * <li> ON_BUFFER_WRITE_TIMEOUT:  At the time of buffer write timeout
+     * <li> ON_BUFFER_OVERWRITE:      At the time of buffer overwrite
+     * <li> ON_BUFFER_READ:           At the time of buffer read
+     * <li> ON_SEND:                  At the time of sending to InPort
+     * <li> ON_RECEIVED:              At the time of finishing sending to InPort
+     * <li> ON_SENDER_TIMEOUT:        At the time of timeout of OutPort
+     * <li> ON_SENDER_ERROR:          At the time of error of OutPort
+     * <li> ON_RECEIVER_FULL:         At the time of bufferfull of InPort
+     * <li> ON_RECEIVER_TIMEOUT:      At the time of timeout of InPort
+     * <li> ON_RECEIVER_ERROR:        At the time of error of InPort
+     * </ul>
+     *
+     * Listeners should have the following function operator().
+     *
+     * <pre><code>
+     * ConnectorDataListener::
+     *         operator()(const ConnectorProfile&, const cdrStream&)
+     * </code></pre>
+     *
+     * The ownership of the given listener object is transferred to
+     * this OutPort object in default.  The given listener object will
+     * be destroied automatically in the OutPort's dtor or if the
+     * listener is deleted by removeConnectorDataListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     * </p>
+     *
+     * @param type
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
+     *   {@.en A flag for automatic listener destruction}
      */
     public void addConnectorDataListener(int type,
                              Observer listener,
                              boolean autoclean) {
-        rtcout.println(rtcout.TRACE, "addConnectorDataListener()");
   
         if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
+            rtcout.println(rtcout.TRACE,
+                           "addConnectorDataListener("
+                           +ConnectorDataListenerType.toString(type)
+                           +")");
             m_listeners.connectorData_[type].addObserver(listener);
-         }
+            return;
+        }
+        rtcout.println(rtcout.ERROR,
+                        "addConnectorDataListener(): Invalid listener type.");
+        return; 
     }
     public void addConnectorDataListener(int type,Observer listener) {
         this.addConnectorDataListener(type,listener,true);
     }
 
     /**
-     * <p> Removing ConnectorDataListener type listener <p>
+     * {@.ja ConnectorDataListener リスナを削除する}
+     * {@.en Removes ConnectorDataListener type listener}
+     * <p>
+     * {@.ja 設定した各種リスナを削除する。}
+     * {@.en This operation removes a specified listener.}
+     * </p>
+     * 
+     * @param type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
      */
     public void removeConnectorDataListener(int type,
                                 Observer listener) {
-        rtcout.println(rtcout.TRACE, "removeConnectorDataListener()");
 
         if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
+            rtcout.println(rtcout.TRACE,
+                            "removeConnectorDataListener("
+                            +ConnectorDataListenerType.toString(type)
+                            +")");
             m_listeners.connectorData_[type].deleteObserver(listener);
+            return;
         }
+        rtcout.println(rtcout.ERROR,
+                    "removeConnectorDataListener(): Invalid listener type.");
+        return;
     }
   
     /**
-     * <p> Adding ConnectorListener type listener </p>
+     * {@.ja ConnectorListener リスナを追加する}
+     * {@.en Adds ConnectorListener type listener}
+     *
+     * <p>
+     *
+     * {@.ja バッファ書き込みまたは読み出しイベントに関連する各種リスナを
+     * 設定する。
+     *
+     * 設定できるリスナのタイプは
+     * 
+     * <ul>
+     * <li> ON_BUFFER_EMPTY:       バッファが空の場合
+     * <li> ON_BUFFER_READTIMEOUT: バッファが空でタイムアウトした場合
+     * </ul>
+     *
+     * リスナは以下のシグニチャを持つ operator() を実装している必要がある。
+     *
+     * <pre><code>
+     * ConnectorListener::operator()(const ConnectorProfile&)
+     * </code></pre>
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * OutPortに移り、OutPort解体時もしくは、
+     * removeConnectorListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     *
+     * {@.en This operation adds certain listeners related to buffer writing and
+     * reading events.
+     * The following listener types are available.
+     *
+     * <ul>
+     * <li> ON_BUFFER_EMPTY:       At the time of buffer empty
+     * <li> ON_BUFFER_READTIMEOUT: At the time of buffer read timeout
+     * </ul>
+     *
+     * Listeners should have the following function operator().
+     *
+     * ConnectorListener::operator()(const ConnectorProfile&)
+     *  
+     * The ownership of the given listener object is transferred to
+     * this OutPort object in default.  The given listener object will
+     * be destroied automatically in the OutPort's dtor or if the
+     * listener is deleted by removeConnectorListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     * </p>
+     * @param type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
+     *   {@.en A flag for automatic listener destruction}
      */
     public void addConnectorListener(int type,
                                            Observer listener,
                                            boolean autoclean) {
-        rtcout.println(rtcout.TRACE,"addConnectorListener()");
   
         if (type < ConnectorListenerType.CONNECTOR_LISTENER_NUM) {
+            rtcout.println(rtcout.TRACE,
+                            "addConnectorListener("
+                            +ConnectorListenerType.toString(type)
+                            +")");
             m_listeners.connector_[type].addObserver(listener);
+            return;
         }
+        rtcout.println(rtcout.ERROR,
+                    "addConnectorListener(): Invalid listener type.");
+        return;
+    }
+    public void addConnectorListener(int type,Observer listener) {
+        this.addConnectorListener(type,listener,true);
     }
     
     /**
-     * <p> Removing ConnectorListener type listener </p>
+     * {@.ja @brief ConnectorDataListener リスナを削除する}
+     * {@.en Removes BufferDataListener type listener}
      *
+     * <p>
+     * {@.ja 設定した各種リスナを削除する。}
+     * {@.en This operation removes a specified listener.}
+     * </p>
+     * 
+     * @param type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en listener A pointer to a listener object}
      */
     public void removeConnectorListener(int type,
                                               Observer listener) {
-        rtcout.println(rtcout.TRACE,"removeConnectorListener()");
   
         if (type < ConnectorListenerType.CONNECTOR_LISTENER_NUM) {
+            rtcout.println(rtcout.TRACE,
+                            "removeConnectorListener("
+                            +ConnectorListenerType.toString(type)
+                            +")");
             m_listeners.connector_[type].deleteObserver(listener);
+            return;
         }
+        rtcout.println(rtcout.ERROR,
+                    "removeConnectorListener(): Invalid listener type.");
+        return;
     }
   
   

@@ -120,11 +120,13 @@ public class OutPortPushConnector extends OutPortConnector {
     }
 
     /**
-     * <p> disconnect </p>
+     * {@.ja 接続解除}
+     * {@.en disconnect}
      *
-     * <p> This operation destruct and delete the consumer, the publisher </p>
-     * <p> and the buffer. </p>
-     *
+     * <p>
+     * {@.ja consumer, publisher, buffer が解体・削除される。}
+     * {@.en This operation destruct and delete the consumer, the publisher
+     * and the buffer.}
      */
     public ReturnCode disconnect() {
         rtcout.println(rtcout.TRACE, "disconnect()");
@@ -154,6 +156,7 @@ public class OutPortPushConnector extends OutPortConnector {
             bfactory.deleteObject(m_buffer);
         }
         m_buffer = null;
+        onDisconnect();
         rtcout.println(rtcout.TRACE, "disconnect() done");
         return ReturnCode.PORT_OK;
     
@@ -225,10 +228,12 @@ public class OutPortPushConnector extends OutPortConnector {
     }
 
     /**
-     * <p> Invoke callback when connection is destroied </p>
+     * {@.ja 接続切断時にコールバックを呼ぶ}
+     * {@.en Invoke callback when connection is destroied}
      */
     protected void onDisconnect() {
-        m_listeners.connector_[ConnectorListenerType.ON_DISCONNECT].notify(m_profile);
+        m_listeners.connector_[ConnectorListenerType.ON_DISCONNECT].notify(
+                                                                    m_profile);
     }
 
     /**
