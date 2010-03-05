@@ -120,11 +120,11 @@ public class OutPortPushConnector extends OutPortConnector {
     }
 
     /**
-     * {@.ja ÀÜÂ³²ò½ü}
+     * {@.ja æ¥ç¶šè§£é™¤}
      * {@.en disconnect}
      *
      * <p>
-     * {@.ja consumer, publisher, buffer ¤¬²òÂÎ¡¦ºï½ü¤µ¤ì¤ë¡£}
+     * {@.ja consumer, publisher, buffer ãŒè§£ä½“ãƒ»å‰Šé™¤ã•ã‚Œã‚‹ã€‚}
      * {@.en This operation destruct and delete the consumer, the publisher
      * and the buffer.}
      */
@@ -228,7 +228,7 @@ public class OutPortPushConnector extends OutPortConnector {
     }
 
     /**
-     * {@.ja ÀÜÂ³ÀÚÃÇ»ş¤Ë¥³¡¼¥ë¥Ğ¥Ã¥¯¤ò¸Æ¤Ö}
+     * {@.ja æ¥ç¶šåˆ‡æ–­æ™‚ã«ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’å‘¼ã¶}
      * {@.en Invoke callback when connection is destroied}
      */
     protected void onDisconnect() {

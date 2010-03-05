@@ -63,11 +63,11 @@ public class InPortPullConnector extends InPortConnector {
         return ret;
     }
     /**
-     * {@.ja ÀÜÂ³²ò½ü´Ø¿ô}
+     * {@.ja æ¥ç¶šè§£é™¤é–¢æ•°}
      * {@.en Disconnect connection}
      *
      * <p>
-     * {@.ja Connector ¤¬Êİ»ı¤·¤Æ¤¤¤ëÀÜÂ³¤ò²ò½ü¤¹¤ë}
+     * {@.ja Connector ãŒä¿æŒã—ã¦ã„ã‚‹æ¥ç¶šã‚’è§£é™¤ã™ã‚‹}
      * {@.en This operation disconnect this connection}
      * </p>
      */
@@ -110,7 +110,7 @@ public class InPortPullConnector extends InPortConnector {
     }
 
     /**
-     * {@.ja ÀÜÂ³ÀÚÃÇ»ş¤Ë¥³¡¼¥ë¥Ğ¥Ã¥¯¤ò¸Æ¤Ö}
+     * {@.ja æ¥ç¶šåˆ‡æ–­æ™‚ã«ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’å‘¼ã¶}
      * {@.en Invoke callback when connection is destroied}
      */
     protected void onDisconnect() {
