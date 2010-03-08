@@ -4,6 +4,7 @@ import org.omg.CORBA.ORB;
 import org.omg.CORBA.LocalObject;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.LocalObject;
+import org.omg.PortableServer.POA;
 import org.omg.PortableInterceptor.IORInterceptor;
 import org.omg.IOP.TAG_INTERNET_IOP;
 import org.omg.IOP.TAG_ALTERNATE_IIOP_ADDRESS;
@@ -17,6 +18,10 @@ import jp.go.aist.rtm.RTC.util.IiopAddressCompHelper;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
+import com.sun.corba.se.impl.ior.IORTemplateImpl;
+import com.sun.corba.se.impl.ior.iiop.IIOPProfileTemplateImpl;
+import com.sun.corba.se.impl.oa.poa.POAImpl;
+
 /**
  * {@.ja ポータブルインターセプタを利用してIORを書き換える.}
  * {@.en Rewrites IOR by using a portable interceptor.}
@@ -24,6 +29,7 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
  */
 public class IopIorInterceptor extends LocalObject 
     implements org.omg.PortableInterceptor.IORInterceptor{
+
 
     /**
      * {@.ja Codec}
@@ -46,17 +52,16 @@ public class IopIorInterceptor extends LocalObject
      *
      */
     public static void setEndpoints(ArrayList endpoints){
-System.out.println("IN   SetEndpoints()");
         m_endpoints = endpoints;
-System.out.println("OUT   SetEndpoints()");
     }
+
     /**
      * {@.ja エンドポイントを設定. }
      * {@.en Sets the end points. }
-     * @param  host 
+     * @param  hostString 
      *   {@.ja ホスト} 
      *   {@.en host}
-     * @param  port 
+     * @param  portString 
      *   {@.ja ポート} 
      *   {@.en port}
      *
@@ -72,9 +77,6 @@ System.out.println("OUT   SetEndpoints()");
         IiopAddressComp comp = new IiopAddressComp(hostString,port);
         m_endpoints.add(comp);
     }
-    public static Codec getCodec(){
-        return codec;
-    }
 
     /**
      * {@.ja エンドポイントを書き換える. }
@@ -85,14 +87,36 @@ System.out.println("OUT   SetEndpoints()");
      * {@.en Replaces the port number of the end point with the port number 
      * of the argument.Only the end point of port number 0 is replaced.} 
      * </p>
-     * @param  port 
-     *   {@.ja ポート番号} 
-     *   {@.en Port Number}
+     * @param orb 
+     *   {@.ja ORB}
+     *   {@.en ORB}
      */
-    public static void replacePort0(short port) {
+    public static void replacePort0(ORB orb) {
+        if(orb==null){
+            return;
+        }
         if(m_endpoints==null){
             return;
         }
+
+        com.sun.corba.se.spi.orb.ORB sunorb 
+                    = (com.sun.corba.se.spi.orb.ORB)orb;
+
+        com.sun.corba.se.spi.ior.IOR inior = sunorb.getFVDCodeBaseIOR();
+        com.sun.corba.se.spi.ior.iiop.IIOPProfile iop
+            = inior.getProfile();
+        com.sun.corba.se.spi.ior.iiop.IIOPProfileTemplate ptemp 
+            = (com.sun.corba.se.spi.ior.iiop.IIOPProfileTemplate)iop.getTaggedProfileTemplate();
+        String host = ptemp.getPrimaryAddress().getHost();
+        short port = (short)ptemp.getPrimaryAddress().getPort();
+//            IopIorInterceptor.setPOA(m_pPOA);
+//            IORTemplateImpl iorTmpl 
+//                = (IORTemplateImpl)((POAImpl)m_pPOA).getIORTemplate();
+//            IIOPProfileTemplateImpl profileTmpl 
+//            = ((IIOPProfileTemplateImpl)iorTmpl.get(TAG_INTERNET_IOP.value));
+//            int portint = profileTmpl.getPrimaryAddress().getPort();
+//            System.out.println("getPort()>:"+portint);
+
         for(int ic=0;ic<m_endpoints.size();ic++){
             if(m_endpoints.get(ic).Port==0){
                 m_endpoints.get(ic).Port = port;
@@ -102,7 +126,7 @@ System.out.println("OUT   SetEndpoints()");
     /**
      * {@.ja コンストラクタ.}
      * {@.en Constructor.}
-     * @param  code 
+     * @param  codec 
      *   {@.ja エンコード} 
      *   {@.en Encoding}
      *
@@ -128,38 +152,16 @@ System.out.println("OUT   SetEndpoints()");
      */
     public void establish_components(org.omg.PortableInterceptor.IORInfo info){
         rtcout.println(rtcout.TRACE, "establish_components()");
-System.out.println("IN  CodebaseInterceptor.establish_components");
 
         //Gets any type.
         ORB orb = ORB.init();
         Any any = orb.create_any();
 
         //Creates TaggedComponents
-System.out.println("    m_endpoints.size()>:"+ m_endpoints.size());
         TaggedComponent[] components = new TaggedComponent[m_endpoints.size()];
         for(int ic=0;ic<m_endpoints.size();++ic){
             IiopAddressComp lp = m_endpoints.get(ic);
-            if(lp.Port==0){
-                com.sun.corba.se.spi.orb.ORB sunorb 
-                            = (com.sun.corba.se.spi.orb.ORB)orb;
-                com.sun.corba.se.impl.ior.IORImpl ior 
-                            = new com.sun.corba.se.impl.ior.IORImpl(sunorb);
-                System.out.println("ior>:"+ior.getTypeId());
 
-/* zxc
-                int lport = 
-                sunorb.getORBData().getORBInitialPort();
-                System.out.println("lport>:"+lport);
-                lport = 
-                sunorb.getORBData().getORBServerPort();
-                System.out.println("lport>:"+lport);
-                lport = 
-                sunorb).getORBData().getPersistentServerPort(); 
-                System.out.println("lport>:"+lport);
-*/
-System.out.println("port_size>:"+
-sunorb.getORBData().getUserSpecifiedListenPorts().length); 
-            }
             IiopAddressCompHelper.insert(any, lp);
             byte[] by = null;
             try {
@@ -175,13 +177,11 @@ sunorb.getORBData().getUserSpecifiedListenPorts().length);
         }
 
        
-System.out.println("    components.length>:"+ components.length);
        for ( int ic=0; ic<components.length; ++ic ) {
            info.add_ior_component_to_profile( components[ic], 
                                                TAG_INTERNET_IOP.value );
        }
 
-System.out.println("OUT CodebaseInterceptor.establish_components");
     }
  
     /**

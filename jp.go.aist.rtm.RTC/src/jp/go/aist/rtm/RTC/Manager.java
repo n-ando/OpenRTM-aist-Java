@@ -39,6 +39,7 @@ import org.omg.PortableServer.POAManager;
 import org.omg.PortableServer.POAPackage.ObjectNotActive;
 import org.omg.PortableServer.POAPackage.ServantAlreadyActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
+import org.omg.IOP.TAG_INTERNET_IOP;
 
 import RTC.RTObject;
 import RTC.ReturnCode_t;
@@ -1223,24 +1224,9 @@ public class Manager {
 
             // ORB initialization
             m_pORB = ORBUtil.getOrb(args, prop);
-//<+zxc
-{
-                com.sun.corba.se.spi.orb.ORB sunorb 
-                            = (com.sun.corba.se.spi.orb.ORB)m_pORB;
 
-                int lport = sunorb.getORBData().getORBInitialPort();
-                System.out.println("main1.lport>:"+lport);
-                lport = sunorb.getORBData().getORBServerPort();
-                System.out.println("main1.lport>:"+lport);
-
-                com.sun.corba.se.spi.ior.IOR inior = sunorb.getFVDCodeBaseIOR();
-                org.omg.IOP.IOR iopior = inior.getIOPIOR();
-                int portint = (iopior.profiles[0].profile_data[25] & 255)
-                            |((iopior.profiles[0].profile_data[24]<<8)&65280);
-
-                IopIorInterceptor.replacePort0((short)portint);
-}
-//+>
+            // Sets ports of TAG_ALTERNATE_IIOP_ADDRESS(IOR).
+            IopIorInterceptor.replacePort0(m_pORB);
 
             // Get the RootPOA
             Object obj = m_pORB.resolve_initial_references("RootPOA");
@@ -1249,6 +1235,7 @@ public class Manager {
                 rtcout.println(rtcout.ERROR, "Could not resolve RootPOA.");
                 return false;
             }
+
             
             // Get the POAManager
             m_pPOAManager = m_pPOA.the_POAManager();
@@ -1365,7 +1352,7 @@ System.out.println("OUT createORBEndpoints");
      * @param opt 
      *   {@.ja コマンドラインオプション}
      *   {@.en ORB options}
-     * @param endpoint 
+     * @param endpoints
      *   {@.ja エンドポイントリスト}
      *   {@.en Endpoints list}
      */
@@ -1491,21 +1478,53 @@ System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
         //   corba.endpoints: 192.168.1.10:1111, 192.168.10.11:2222
         //   corba.endpoints: 192.168.1.10:, 192.168.10.11:
         String endpoints = m_config.getProperty("corba.endpoints");
-System.out.println("    endpoints>:"+endpoints);
         if(endpoints != null) {
+            endpoints = endpoints.trim();
+            endpoints = StringUtil.normalize(endpoints);
+            if(endpoints.equals("all")){
+                try{
+                    java.util.Enumeration<java.net.NetworkInterface> nic 
+                         = java.net.NetworkInterface.getNetworkInterfaces();
+                    endpoints = new String();
+                    while(nic.hasMoreElements()) {
+                        java.net.NetworkInterface netIf = nic.nextElement();
+                        java.util.Enumeration<java.net.InetAddress> enumAddress 
+                                = netIf.getInetAddresses();
+                        while(enumAddress.hasMoreElements()){
+                            java.net.InetAddress inetAdd 
+                                = enumAddress.nextElement();
+                            String hostString = inetAdd.getHostAddress();
+                            if(isIpAddressFormat(hostString)){
+                                if(endpoints.length()!=0){
+                                    endpoints 
+                                        = endpoints + "," + hostString + ":";
+                                }
+                                else{
+                                    endpoints = hostString + ":";
+                                }
+                            }
+                        }
+                    }
+                }
+                catch(Exception ex){
+                }
+                if(endpoints == null) {
+                    return result;
+                }
+            }
             java.util.ArrayList<IiopAddressComp> endpointsList = 
                     new java.util.ArrayList<IiopAddressComp>();
             if(endpoints.indexOf(",")!=-1){
                 String[] endPoints = endpoints.split(",");
                 int loopstart = 0;
-                if(result.getProperty("com.sun.CORBA.ORBServerHost")==null){
-                    parsesCorbaEndpoint(endPoints[0], result);
-                    loopstart = 1;
-                }
                 for(int ic=loopstart;ic<endPoints.length;++ic) {
-System.out.println("    endPoints[ic]>:"+endPoints[ic]);
-                    parsesCorbaEndpointOutputToList(endPoints[ic], 
+                    if(result.getProperty("com.sun.CORBA.ORBServerHost")==null){
+                        parsesCorbaEndpoint(endPoints[ic], result);
+                    }
+                    else{
+                        parsesCorbaEndpointOutputToList(endPoints[ic], 
                                                     endpointsList);
+                    }
                 }
                 IopIorInterceptor.setEndpoints(endpointsList);
             
@@ -1521,12 +1540,19 @@ System.out.println("    endPoints[ic]>:"+endPoints[ic]);
             IopIorInterceptor.setEndpoints(endpointsList);
         }
 
-/*
-        result.put("com.sun.CORBA.ORBServerHost", "localhost");
-        result.put("com.sun.CORBA.ORBServerPort", "0");
-*/
 
         return result;
+    }
+    
+    /**
+     * {@.en Checks that the string is IPaddress. }
+     */
+    private boolean isIpAddressFormat(String string){
+        java.util.regex.Pattern pattern 
+            = java.util.regex.Pattern.compile(
+               "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})");
+        java.util.regex.Matcher matcher = pattern.matcher(string);
+        return matcher.matches();
     }
 
     /**
