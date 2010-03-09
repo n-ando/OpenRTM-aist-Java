@@ -103,11 +103,17 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
     }
 
     /**
-     * <p> [CORBA interface] Write data into the buffer </p>
+     * {@.ja [CORBA interface] バッファにデータを書き込む}
+     * {@.en [CORBA interface] Write data into the buffer}
      *
-     * <p> Write data into the specified buffer. </p>
+     * <p>
+     * {@.ja 設定されたバッファにデータを書き込む。}
+     * {@.en Write data into the specified buffer.}
+     * </p>
      *
-     * @param data The target data for writing
+     * @param data 
+     *   {@.ja 書込対象データ}
+     *   {@.en The target data for writing}
      *
      */
     public OpenRTM.PortStatus put(byte[] data)
@@ -116,14 +122,13 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         rtcout.println(rtcout.PARANOID, "InPortCorbaCdrProvider.put()");
 
         if (m_buffer == null) {
-            rtcout.println(rtcout.PARANOID, "m_buffer is null.");
+            EncapsOutputStream cdr 
+            = new EncapsOutputStream(m_spi_orb,m_connector.isLittleEndian());
+            cdr.write_octet_array(data, 0, data.length);
+            onReceiverError(cdr);
             return OpenRTM.PortStatus.PORT_ERROR;
         }
 
-        if (m_buffer.full()) {
-            rtcout.println(rtcout.PARANOID, "buffer full");
-            return OpenRTM.PortStatus.BUFFER_FULL;
-        }
 
         rtcout.println(rtcout.PARANOID, "received data size: "+data.length);
 
@@ -134,7 +139,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
 
         int len = cdr.toByteArray().length;
         rtcout.println(rtcout.PARANOID, "converted CDR data size: "+len);
-
+        onReceived(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
         return convertReturn(ret,cdr);
     }
@@ -145,8 +150,8 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
 
     }
     /**
-     * <p> convertReturn </p>
-     *
+     * {@.ja リターンコード変換}
+     * {p.en Return codes conversion}
      */
     protected OpenRTM.PortStatus 
     convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status,
@@ -154,16 +159,35 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         switch (status) {
             case BUFFER_OK:
                 onBufferWrite(data);
-                return OpenRTM.PortStatus.from_int(0);
+                return OpenRTM.PortStatus.from_int(OpenRTM.PortStatus._PORT_OK);
+            case BUFFER_ERROR:
+                onReceiverError(data);
+                return OpenRTM.PortStatus.from_int(
+                                            OpenRTM.PortStatus._PORT_ERROR);
+
+            case BUFFER_FULL:
+                onBufferFull(data);
+                onReceiverFull(data);
+                return OpenRTM.PortStatus.from_int(
+                                            OpenRTM.PortStatus._BUFFER_FULL);
+
             case BUFFER_EMPTY:
-                return OpenRTM.PortStatus.from_int(3);
+                // never come here
+                return OpenRTM.PortStatus.from_int(
+                                            OpenRTM.PortStatus._BUFFER_EMPTY);
             case TIMEOUT:
-                return OpenRTM.PortStatus.from_int(4);
+                onBufferWriteTimeout(data);
+                onReceiverTimeout(data);
+                return OpenRTM.PortStatus.from_int(
+                                            OpenRTM.PortStatus._BUFFER_TIMEOUT);
             case PRECONDITION_NOT_MET:
                 onReceiverError(data);
-                return OpenRTM.PortStatus.from_int(1);
+                return OpenRTM.PortStatus.from_int(
+                                            OpenRTM.PortStatus._PORT_ERROR);
             default:
-                return OpenRTM.PortStatus.from_int(5);
+                onReceiverError(data);
+                return OpenRTM.PortStatus.from_int(
+                                            OpenRTM.PortStatus._UNKNOWN_ERROR);
         }
     }
 

@@ -247,21 +247,38 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
     }
     
     /**
-     * <p> convertReturn </p>
-     *
+     * {@.ja リターンコード変換 (DataPortStatus -> BufferStatus)}
+     * {@.en Return codes conversion}
      */
     protected ReturnCode convertReturn(OpenRTM.PortStatus status) {
         switch (status.value()) {
-            case 0:
+            case OpenRTM.PortStatus._PORT_OK:
+                // never comes here
                 return ReturnCode.PORT_OK;
-            case 1:
-                return ReturnCode.BUFFER_EMPTY;
-            case 3:
-                return ReturnCode.BUFFER_TIMEOUT;
-            case 4:
-                return ReturnCode.PRECONDITION_NOT_MET;
-            default:
+
+            case OpenRTM.PortStatus._PORT_ERROR:
+                onSenderError();
                 return ReturnCode.PORT_ERROR;
+
+            case OpenRTM.PortStatus._BUFFER_FULL:
+                // never comes here
+                return ReturnCode.BUFFER_FULL;
+
+            case OpenRTM.PortStatus._BUFFER_EMPTY:
+                onSenderEmpty();
+                return ReturnCode.BUFFER_EMPTY;
+
+            case OpenRTM.PortStatus._BUFFER_TIMEOUT:
+                onSenderTimeout();
+                return ReturnCode.BUFFER_TIMEOUT;
+ 
+            case OpenRTM.PortStatus._UNKNOWN_ERROR:
+                onSenderError();
+                return ReturnCode.UNKNOWN_ERROR;
+
+            default:
+                onSenderError();
+                return ReturnCode.UNKNOWN_ERROR;
         }
     }
     /**
