@@ -55,7 +55,7 @@ public class OutPortPushConnector extends OutPortConnector {
      *   {@.ja InPortConsumer}
      *   {@.en InPortConsumer}
      * @param listeners 
-     *   {@ja ConnectorListeners 型のリスナオブジェクトリスト}
+     *   {@.ja ConnectorListeners 型のリスナオブジェクトリスト}
      *   {@.en ConnectorListeners type lsitener object list}
      * @param buffer 
      *   {@.ja CdrBufferBase 型のバッファ}

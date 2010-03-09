@@ -446,7 +446,7 @@ public abstract class OutPortBase extends PortBase {
      * connection_id.}
      * </p>
      *
-     * @param connector_profile 
+     * @param cprof 
      *   {@.ja 接続に関するプロファイル情報}
      *   {@.en The connection profile information}
      *
@@ -582,7 +582,7 @@ public abstract class OutPortBase extends PortBase {
      * </ul>}
      * </p>
      *
-     * @param connector_profile 
+     * @param cporf 
      *   {@.ja 接続に関するプロファイル情報}
      *   {@.en The connection profile information}
      *

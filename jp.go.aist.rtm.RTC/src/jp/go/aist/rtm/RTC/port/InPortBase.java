@@ -404,7 +404,7 @@ public abstract class InPortBase extends PortBase {
      *  dataport.dataflow_type
      * </code></pre>
      *
-     * @param connector_profile
+     * @param cprof
      *   {@.ja コネクタプロファイル}
      *   {@.en The connector profile}
      *
@@ -534,7 +534,7 @@ public abstract class InPortBase extends PortBase {
      *       set the Consumer to the reference of the CORBA object.}
      * </p>
      *
-     * @param connector_profile
+     * @param cprof
      *   {@.ja コネクタ・プロファイル}
      *   {@.en The connector profile}
      *

@@ -34,7 +34,7 @@ public class InPortPullConnector extends InPortConnector {
      * ク機構を提供する ConnectorListeners を持ち、適切なタイミングでコー
      * ルバックを呼び出す。データバッファがもし InPortBase から提供さ
      * れる場合はそのポインタを取る。}
-     * {@en InPortPullConnector's constructor is given the following
+     * {@.en InPortPullConnector's constructor is given the following
      * arguments.  According to ConnectorInfo which includes
      * connection information, a buffer is created.  It is also given
      * a pointer to the consumer object for the OutPort interface.

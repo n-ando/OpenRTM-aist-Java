@@ -29,7 +29,7 @@ public class InPortPushConnector extends InPortConnector {
      * ク機構を提供する ConnectorListeners を持ち、適切なタイミングでコー
      * ルバックを呼び出す。データバッファがもし InPortBase から提供され
      * る場合はそのポインタを取る。}
-     * {@en InPortPushConnector's constructor is given the following
+     * {@.en InPortPushConnector's constructor is given the following
      * arguments.  According to ConnectorInfo which includes
      * connection information, a buffer is created.
      * It is also given a pointer to the provider object for the
