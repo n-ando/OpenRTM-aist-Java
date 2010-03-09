@@ -413,25 +413,46 @@ public abstract class OutPortBase extends PortBase {
         }
         return super.connect(connector_profile);
     }
+
     /**
-     * <p> Publish interface information </p>
+     * {@.ja Interface 情報を公開する}
+     * {@.en Publish interface information}
      *
-     * <p>This operation is pure virutal function that would be called at the
+     * <p>
+     * {@ja このオペレーションは、notify_connect() 処理シーケンスの始めにコール
+     * される純粋仮想関数である。
+     * notify_connect() では、
+     * <ul>
+     * <li> publishInterfaces()
+     * <li> connectNext()
+     * <li> subscribeInterfaces()
+     * <li> updateConnectorProfile()
+     * </ul>
+     * の順に protected 関数がコールされ接続処理が行われる。
+     * <br>
+     * このオペレーションは、新規の connector_id に対しては接続の生成、
+     * 既存の connector_id に対しては更新が適切に行われる必要がある。}
+     * {@.en This operation is pure virutal function that would be called at the
      * beginning of the notify_connect() process sequence.
-     * In the notify_connect(), the following methods would be called in order.</p>
-     * 
-     * <p> - publishInterfaces() </p>
-     * <p> - connectNext() </p>
-     * <p> - subscribeInterfaces() </p>
-     * <p> - updateConnectorProfile()  </p>
-     *
-     * <p> This operation should create the new connection for the new
+     * In the notify_connect(), the following methods would be called in order.
+     * <ul>
+     * <li> publishInterfaces()
+     * <li> connectNext()
+     * <li> subscribeInterfaces()
+     * <li> updateConnectorProfile()
+     * </ul>
+     * This operation should create the new connection for the new
      * connector_id, and should update the connection for the existing
-     * connection_id. </p>
+     * connection_id.}
+     * </p>
      *
-     * @param cprof The connection profile information
+     * @param connector_profile 
+     *   {@.ja 接続に関するプロファイル情報}
+     *   {@.en The connection profile information}
      *
-     * @return The return code of ReturnCode_t type.
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type.}
      */
     protected ReturnCode_t 
     publishInterfaces(ConnectorProfileHolder cprof) {
@@ -449,6 +470,13 @@ public abstract class OutPortBase extends PortBase {
             NVListHolder nvlist = new NVListHolder(cprof.value.properties);
             NVUtil.copyToProperties(conn_prop, nvlist);
             prop.merge(conn_prop.getNode("dataport")); //merge ConnectorProfile
+            /*
+             * marge ConnectorProfile for buffer property.
+             * e.g.
+             *  prof[buffer.write.full_policy]
+             *       << cprof[dataport.outport.buffer.write.full_policy]
+             */
+            prop.merge(conn_prop.getNode("dataport.outport"));
         }
         rtcout.println(rtcout.DEBUG, 
                            "ConnectorProfile::properties are as follows.");
@@ -527,21 +555,40 @@ public abstract class OutPortBase extends PortBase {
 
         return ReturnCode_t.BAD_PARAMETER;
     }
+
     /**
-     * <p> Subscribe to the interface </p>
+     * {@.ja Interface に接続する}
+     * {@.en Subscribe to the interface}
      *
-     * <p> This operation is pure virutal function that would be called at the
+     * <p>
+     * {@.ja このオペレーションは、notify_connect() 処理シーケンスの中間にコール
+     * される純粋仮想関数である。
+     * notify_connect() では、
+     * <ul>
+     * <li> publishInterfaces()
+     * <li> connectNext()
+     * <li> subscribeInterfaces()
+     * <li> updateConnectorProfile()
+     * </ul>
+     * の順に protected 関数がコールされ接続処理が行われる。}
+     * {@.en This operation is pure virutal function that would be called at the
      * middle of the notify_connect() process sequence.
-     * In the notify_connect(), the following methods would be called in order. </p>
+     * In the notify_connect(), the following methods would be called in order.
+     * <ul>
+     * <li> publishInterfaces()
+     * <li> connectNext()
+     * <li> subscribeInterfaces()
+     * <li> updateConnectorProfile()
+     * </ul>}
+     * </p>
      *
-     * <p> - publishInterfaces() </p>
-     * <p> - connectNext() </p>
-     * <p> - subscribeInterfaces() </p>
-     * <p> - updateConnectorProfile() </p>
+     * @param connector_profile 
+     *   {@.ja 接続に関するプロファイル情報}
+     *   {@.en The connection profile information}
      *
-     * @param cprof The connection profile information
-     *
-     * @return The return code of ReturnCode_t type.
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type.}
      */
     protected ReturnCode_t subscribeInterfaces(
             final ConnectorProfileHolder cprof) {
@@ -553,6 +600,13 @@ public abstract class OutPortBase extends PortBase {
             NVListHolder nvlist = new NVListHolder(cprof.value.properties);
             NVUtil.copyToProperties(conn_prop, nvlist);
             prop.merge(conn_prop.getNode("dataport")); //merge ConnectorProfile
+            /*
+             * marge ConnectorProfile for buffer property.
+             * e.g.
+             *  prof[buffer.write.full_policy]
+             *       << cprof[dataport.outport.buffer.write.full_policy]
+             */
+            prop.merge(conn_prop.getNode("dataport.outport"));
         }
 
         rtcout.println(rtcout.DEBUG, 

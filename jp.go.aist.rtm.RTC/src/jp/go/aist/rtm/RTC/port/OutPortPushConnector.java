@@ -23,14 +23,43 @@ import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 public class OutPortPushConnector extends OutPortConnector {
     /**
-     * <p> Constructor </p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      *
-     * <p> OutPortPushConnector assume ownership of InPortConsumer. 
-     * Therefore, InPortConsumer will be deleted when OutPortPushConnector
-     * is destructed. </p>
-     * @param profile ConnectorProfile
-     * @param consumer InPortConsumer
+     * <p>
+     * {@.ja OutPortPushConnector のコンストラクタはオブジェクト生成時に下記
+     * を引数にとる。ConnectorInfo は接続情報を含み、この情報に従いパブ
+     * リッシャやバッファ等を生成する。InPort インターフェースに対する
+     * コンシューマオブジェクトへのポインタを取り、所有権を持つので、
+     * OutPortPushConnector は InPortConsumer の解体責任を持つ。各種イ
+     * ベントに対するコールバック機構を提供する ConnectorListeners を持
+     * ち、適切なタイミングでコールバックを呼び出す。データバッファがも
+     * し OutPortBase から提供される場合はそのポインタを取る。}
+     * {@.en OutPortPushConnector's constructor is given the following
+     * arguments.  According to ConnectorInfo which includes
+     * connection information, a publisher and a buffer are created.
+     * It is also given a pointer to the consumer object for the
+     * InPort interface.  The owner-ship of the pointer is owned by
+     * this OutPortPushConnector, it has responsibility to destruct
+     * the InPortConsumer.  OutPortPushConnector also has
+     * ConnectorListeners to provide event callback mechanisms, and
+     * they would be called at the proper timing.  If data buffer is
+     * given by OutPortBase, the pointer to the buffer is also given
+     * as arguments.}
+     * </p>
      *
+     * @param profile 
+     *   {@.ja ConnectorInfo}
+     *   {@.en ConnectorInfo}
+     * @param consumer 
+     *   {@.ja InPortConsumer}
+     *   {@.en InPortConsumer}
+     * @param listeners 
+     *   {@ja ConnectorListeners 型のリスナオブジェクトリスト}
+     *   {@.en ConnectorListeners type lsitener object list}
+     * @param buffer 
+     *   {@.ja CdrBufferBase 型のバッファ}
+     *   {@.en CdrBufferBase type buffer}
      */
     public OutPortPushConnector(ConnectorInfo profile,
                          InPortConsumer consumer,
@@ -89,6 +118,7 @@ public class OutPortPushConnector extends OutPortConnector {
         if (!ret.equals(ReturnCode.PORT_OK)) {
             throw new Exception("bad_alloc()");
         }
+        m_buffer.init(profile.properties.getNode("buffer"));
         m_consumer.init(profile.properties);
 
         m_publisher.setConsumer(m_consumer);

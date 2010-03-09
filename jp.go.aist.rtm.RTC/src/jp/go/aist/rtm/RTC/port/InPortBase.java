@@ -386,16 +386,31 @@ public abstract class InPortBase extends PortBase {
         }
         return super.connect(connector_profile);
     }
+
     /**
-     * <p> Publish interface information </p>
+     * {@.ja Interface情報を公開する}
+     * [@.en Publish interface information}
      *
-     * <p> Publish interface information. </p>
-     * <p> Assign the Provider information that owned by this port </p>
-     * <p> to ConnectorProfile#properties </p>
+     * <p>
+     * {@.ja Interface情報を公開する。
+     *       引数の ConnectorProfile に格納されている dataflow_type が push 型
+     *       の場合は、指定された interface_type の InPortProvider に関する情報
+     *       を ConnectorProfile::properties に書込み呼び出し側に戻す。}
+     * [@.en Publish interface information.
+     *       Assign the Provider information that owned by this port
+     *       to ConnectorProfile#properties}
+     * </p>
+     * <pre><code>
+     *  dataport.dataflow_type
+     * </code></pre>
      *
-     * @param cprof The connector profile
+     * @param connector_profile
+     *   {@.ja コネクタプロファイル}
+     *   {@.en The connector profile}
      *
-     * @return The return code of ReturnCode_t type
+     * @return
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type}
      *
      */
     protected ReturnCode_t publishInterfaces(ConnectorProfileHolder cprof) {
@@ -413,6 +428,13 @@ public abstract class InPortBase extends PortBase {
             NVListHolder nvlist = new NVListHolder(cprof.value.properties);
             NVUtil.copyToProperties(conn_prop, nvlist);
             prop.merge(conn_prop.getNode("dataport")); //merge ConnectorProfile
+            /*
+             * marge ConnectorProfile for buffer property.
+             * e.g.
+             *  prof[buffer.write.full_policy]
+             *       << cprof[dataport.inport.buffer.write.full_policy]
+             */
+            prop.merge(conn_prop.getNode("dataport.inport"));
         }
         rtcout.println(rtcout.DEBUG, 
                            "ConnectorProfile::properties are as follows.");
@@ -498,17 +520,27 @@ public abstract class InPortBase extends PortBase {
     }
     
     /**
-     * <p> Subscribe to the interface </p>
+     * {@.ja Interfaceに接続する}
+     * {@.en Subscribe to the interface}
      *
-     * <p> Subscribe to interface. </p>
-     * <p> Derive Provider information that matches Consumer owned by the Port </p>
-     * <p> from ConnectorProfile#properties and  </p>
-     * <p> set the Consumer to the reference of the CORBA object. </p>
+     * <p>
+     * {@.ja Interfaceに接続する。
+     *       Portが所有するConsumerに適合するProviderに関する情報を 
+     *       ConnectorProfile#properties から抽出し、
+     *       ConsumerにCORBAオブジェクト参照を設定する。}
+     * {@.en Subscribe to interface.
+     *       Derive Provider information that matches Consumer owned by 
+     *       the Port from ConnectorProfile#properties and 
+     *       set the Consumer to the reference of the CORBA object.}
+     * </p>
      *
-     * @param cprof The connector profile
+     * @param connector_profile
+     *   {@.ja コネクタ・プロファイル}
+     *   {@.en The connector profile}
      *
-     * @return ReturnCode_t The return code of ReturnCode_t type
-     *
+     * @return
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en ReturnCode_t The return code of ReturnCode_t type}
      */
     protected ReturnCode_t subscribeInterfaces(
             final ConnectorProfileHolder cprof) {
@@ -521,6 +553,13 @@ public abstract class InPortBase extends PortBase {
             NVListHolder nvlist = new NVListHolder(cprof.value.properties);
             NVUtil.copyToProperties(conn_prop, nvlist);
             prop.merge(conn_prop.getNode("dataport")); //merge ConnectorProfile
+            /*
+             * marge ConnectorProfile for buffer property.
+             * e.g.
+             *  prof[buffer.write.full_policy]
+             *       << cprof[dataport.inport.buffer.write.full_policy]
+             */
+            prop.merge(conn_prop.getNode("dataport.inport"));
         }
 
         rtcout.println(rtcout.DEBUG, 
