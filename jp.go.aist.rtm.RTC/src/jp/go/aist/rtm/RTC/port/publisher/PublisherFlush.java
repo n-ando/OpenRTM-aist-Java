@@ -22,23 +22,15 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
 public class PublisherFlush extends PublisherBase implements ObjectCreator<PublisherBase>, ObjectDestructor{
 
     /**
-     * <p>コンストラクタです。</p>
-     * 
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      */
     public PublisherFlush() {
         rtcout = new Logbuf("PublisherFlush");
         m_consumer = null;
+        m_listeners = null;
+        m_retcode = ReturnCode.PORT_OK;
         m_active = false;
-    }
-    /**
-     * <p>コンストラクタです。</p>
-     * 
-     * @param consumer データ送出を待つコンシューマ
-     * @param property 当該Publisherの駆動を制御する情報を持つPropertyオブジェクト
-     */
-    public PublisherFlush(InPortConsumer consumer, final Properties property) {
-        rtcout = new Logbuf("PublisherFlush");
-        m_consumer = consumer;
     }
     
     /**
@@ -46,6 +38,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      */
     public void destruct() {
         m_consumer = null;
+        m_listeners = null;
     }
     
     /**
@@ -60,14 +53,6 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
         }
     }
 
-    /**
-     * <p>送出タイミング時に呼び出します。即座に同一スレッドにてコンシューマの送出処理が呼び出されます。</p>
-     */
-/*
-    public void update() {
-        m_consumer.push();
-    }
-*/
 
     /**
      * <p> init </p>
@@ -121,17 +106,77 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
 
         return ReturnCode.PORT_OK;
     }
+
     /**
-     * <p> write </p>
+     * {@.ja データを書き込む}
+     * {@.en Write data}
      *
-     * @param data
-     * @param sec
-     * @param usec
-     * @return ReturnCode
+     * <p>
+     * {@.ja Publisher が保持するコンシューマに対してデータを書き込む。コン
+     * シューマ、リスナ等が適切に設定されていない等、Publisher オブジェ
+     * クトが正しく初期化されていない場合、この関数を呼び出すとエラーコー
+     * ド PRECONDITION_NOT_MET が返され、コンシューマへの書き込み等の操
+     * 作は一切行われない。
+     *
+     * コンシューマへの書き込みに対して、コンシューマがフル状態、コン
+     * シューマのエラー、コンシューマへの書き込みがタイムアウトした場合
+     * にはそれぞれ、エラーコード SEND_FULL, SEND_ERROR, SEND_TIMEOUT
+     * が返される。
+     *
+     * これら以外のエラーの場合、PORT_ERROR が返される。}
+     * {@.en This function writes data into the consumer associated with
+     * this Publisher. If this function is called without initializing
+     * correctly such as a consumer, listeners, etc., error code
+     * PRECONDITION_NOT_MET will be returned and no operation of the
+     * writing to the consumer etc. will be performed.
+     *
+     * When publisher writes data to the buffer, if the consumer
+     * returns full-status, returns error, is returned with timeout,
+     * error codes BUFFER_FULL, BUFFER_ERROR and BUFFER_TIMEOUT will
+     * be returned respectively.
+     *
+     * In other cases, PROT_ERROR will be returned.}
+     * </p>
+     *
+     * 
+     *
+     * @param data 
+     *   {@.ja 書き込むデータ}
+     *   {@.en Data to be wrote to the buffer}
+     * @param sec 
+     *   {@.ja タイムアウト時間}
+     *   {@.en Timeout time in unit seconds}
+     * @param nsec 
+     *   {@.ja タイムアウト時間}
+     *   {@.en Timeout time in unit nano-seconds}
+     *
+     * @return 
+     *   {@.ja PORT_OK             正常終了
+     *         PRECONDITION_NO_MET consumer, buffer, listener等が適切に設定
+     *                             されていない等、このオブジェクトの事前条件
+     *                             を満たさない場合。
+     *         SEND_FULL           送信先がフル状態
+     *         SEND_TIMEOUT        送信先がタイムアウトした
+     *         CONNECTION_LOST     接続が切断されたことを検知した。}
+     *
+     *   {@.en PORT_OK             Normal return
+     *         PRECONDITION_NO_MET Precondition does not met. A consumer,
+     *                             a buffer, listenes are not set properly.
+     *         SEND_FULL           Data was sent but full-status returned
+     *         SEND_TIMEOUT        Data was sent but timeout occurred
+     *         CONNECTION_LOST     detected that the connection has been lost}
+     *
      */
     public ReturnCode write(final OutputStream data, int sec, int usec) {
         if (m_consumer == null ) { 
             return ReturnCode.PRECONDITION_NOT_MET; 
+        }
+        if (m_listeners == null ) { 
+            return ReturnCode.PRECONDITION_NOT_MET; 
+        }
+        if (m_retcode.equals(ReturnCode.CONNECTION_LOST)) {
+            rtcout.println(rtcout.DEBUG, "write(): connection lost." );
+            return m_retcode;
         }
 
         onSend(data);
@@ -298,6 +343,8 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
 //        m_listeners.connector_[ConnectorDataListenerType.ON_SENDER_ERROR].notify(m_profile);
 //    }
     
-    private ConnectorListeners m_listeners = new  ConnectorListeners();
+//zxc    private ConnectorListeners m_listeners = new  ConnectorListeners();
+    private ConnectorListeners m_listeners;
     private ConnectorBase.ConnectorInfo m_profile;
+    private ReturnCode m_retcode;
 }
