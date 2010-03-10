@@ -510,17 +510,95 @@ public class Configuration_impl extends ConfigurationPOA {
      * @exception NotAvailable SDOは存在するが応答がない。
      * @exception InternalError 内部的エラーが発生した。
      */
-    public boolean set_configuration_set_values(ConfigurationSet configuration_set) 
+    /**
+     * {@.ja [CORBA interface] ConfigurationSet をセットする}
+     * {@.en [CORBA interface] Set ConfigurationSet}
+     *
+     * <p>
+     * {@.ja このオペレーションは指定された id の ConfigurationSet を更新する。}
+     * {@.en This operation modifies the specified ConfigurationSet of an SDO.
+     * Note: The number of parameters differs between spec and IDL!!}
+     * </p>
+     * @param config_id 
+     *   {@.ja 変更する ConfigurationSet の ID。}
+     *   {@.en config_id The ID of ConfigurationSet to be modified.}
+     * @param configuration_set 
+     *   {@.ja 変更する ConfigurationSet そのもの。}
+     *   {@.en configuration_set ConfigurationSet to be replaced.}
+     *
+     * @return 
+     *   {@.ja ConfigurationSet が正常に更新できた場合は true。
+     *         そうでなければ false を返す。}
+     *   {@.en A flag indicating if the ConfigurationSet was modified 
+     *         successfully. "true" - The ConfigurationSet was modified
+     *         successfully. "false" - The ConfigurationSet could not be
+     *         modified successfully.}
+     *
+     * @exception InvalidParameter 
+     *   {@.ja config_id が null か、指定された id で格納された 
+     *         ConfigurationSetが存在しないか、指定された configuration_set内
+     *         の属性の１つが不正。}
+     *   {@.en The parameter 'configurationSetID' is null
+     *         or there is no ConfigurationSet stored with 
+     *         such id.
+     *         This exception is also raised if one of the 
+     *         attributes defining ConfigurationSet is not 
+     *         valid.}
+     * @exception SDONotExists 
+     *   {@.ja ターゲットのSDOが存在しない。
+     *         (本例外は、CORBA標準システム例外のOBJECT_NOT_EXISTに
+     *         マッピングされる)}
+     *   {@.en The target SDO does not exist.(This exception 
+     *         is mapped to CORBA standard system exception
+     *         OBJECT_NOT_EXIST.)}
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en The target SDO is reachable but cannot respond.}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en The target SDO cannot execute the operation
+     *         completely due to some internal error.}
+     */
+    public 
+    boolean set_configuration_set_values(ConfigurationSet configuration_set) 
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.set_configuration_set_values()");
+        rtcout.println(rtcout.TRACE, 
+                "Configuration_impl.set_configuration_set_values()");
 
         String config_id = configuration_set.id; 
-        if( config_id==null || config_id.equals("") ) throw new InvalidParameter("ID is empty.");
+        if( config_id==null || config_id.equals("") ) {
+            throw new InvalidParameter("ID is empty.");
+        }
         try {
             Properties conf = new Properties(config_id);
             toProperties(conf, configuration_set);
-	    return m_configsets.setConfigurationSetValues(config_id, conf);
+            //----------------------------------------------------------------
+            // Because the format of port-name had been changed 
+            // from <port_name> 
+            // to <instance_name>.<port_name>, 
+            // the following processing was added. 
+            String[] exported_ports 
+                    = conf.getProperty("exported_ports").split(",");
+            String exported_ports_str = "";
+            for (int i=0, len=exported_ports.length; i < len; ++i) {
+                String[]  keyval = exported_ports[i].split(".");
+                if (keyval.length > 2) {
+                    exported_ports_str 
+                            += (keyval[0] + "." + keyval[keyval.length]);
+                }
+                else{
+                    exported_ports_str += exported_ports[i];
+                }
+
+                if ( i != (exported_ports.length-1) ) {
+                   exported_ports_str += ",";
+                }
+            }
+	    conf.setProperty("exported_ports", exported_ports_str);
+            //----------------------------------------------------------------
+
+            return m_configsets.setConfigurationSetValues(config_id, conf);
             //if( m_configsets.setConfigurationSetValues(config_id, conf)) {
             //    String description = configuration_set.description;
             //    //

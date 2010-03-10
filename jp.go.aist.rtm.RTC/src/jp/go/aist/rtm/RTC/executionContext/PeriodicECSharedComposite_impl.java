@@ -109,11 +109,32 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
     }
 
     /**
-     * <p>初期化処理用コールバック関数</p>
+     * {@.ja 初期化}
+     * {@.en Initialization}
+     *
+     * <p>
+     * {@.ja データフロー型 RTComponent の初期化を実行する。
+     * 実際の初期化処理は、各具象クラス内に記述する。}
+     * {@.en Initialization the data flow type RT-Component.
+     * Write the actual initialization code in each concrete class.}
+     * </p>
+     *
      */
     public ReturnCode_t onInitialize() {
 
-        rtcout.println(rtcout.TRACE, "PeriodicECSharedComposite_impl.onInitialize()");
+        rtcout.println(rtcout.TRACE, 
+                    "PeriodicECSharedComposite_impl.onInitialize()");
+
+        String active_set;
+        active_set = m_properties.getProperty("configuration.active_config",
+                                              "default");
+        if (m_configsets.haveConfig(active_set)) {
+            m_configsets.update(active_set);
+        }
+        else {
+            m_configsets.update("default");
+        }
+
         Manager mgr = Manager.instance();
 
         Vector<RTObject_impl> comps = mgr.getComponents();

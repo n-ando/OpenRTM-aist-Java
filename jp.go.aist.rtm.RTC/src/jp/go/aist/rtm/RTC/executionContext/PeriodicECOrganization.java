@@ -15,6 +15,7 @@ import RTC.ExecutionContextService;
 
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
+import OpenRTM.DataFlowComponentHolder;
 
 import _SDOPackage.Configuration;
 import _SDOPackage.Organization;
@@ -297,15 +298,16 @@ public class PeriodicECOrganization extends Organization_impl {
     }
 
     /**
-     * <p>SDOからDFCへの変換</p>
+     * {@.ja SDOからDFCへの変換}j
+     * {@.en Conversion from SDO to DFC}
      */
-    public boolean sdoToDFC(final SDO sdo, DataFlowComponent dfc) {
+    public boolean sdoToDFC(final SDO sdo, DataFlowComponentHolder dfc) {
         if (sdo == null) {
             return false;
         }
         // narrowing: SDO . RTC (DataFlowComponent)
-        dfc = DataFlowComponentHelper.narrow(sdo);
-        if (dfc == null) {
+        dfc.value = DataFlowComponentHelper.narrow(sdo);
+        if (dfc.value == null) {
             return false;
         }
         return true;
@@ -394,7 +396,8 @@ public class PeriodicECOrganization extends Organization_impl {
     }
 
     /**
-     * <p>Composite の ExecutionContext を DFC にセットする。</p>
+     * {@.ja Composite の ExecutionContext を DFC にセットする}
+     * {@.en Set CompositeRTC's ExecutionContext to the given DFC}
      */
     public void addParticipantToEC(Member member) {
         rtcout.println(rtcout.DEBUG, "addParticipantToEC()");
@@ -409,10 +412,30 @@ public class PeriodicECOrganization extends Organization_impl {
         }
         // set ec to target RTC
         m_ec.add_component((RTObject)member.rtobj_._duplicate());
+
+        try {
+            Organization[] orglist = member.rtobj_.get_organizations();
+            for(int i=0; i < orglist.length; ++i) {
+                SDO[] sdos = orglist[i].get_members();
+                for (int j=0; j < sdos.length; ++j) {
+                    DataFlowComponentHolder dfc = null;
+                    if (!sdoToDFC(sdos[j], dfc)) { 
+                        continue; 
+                    }
+                    m_ec.add_component(dfc.value);
+                }
+            }
+        }
+        catch(Exception ex){
+            rtcout.println(rtcout.WARN, "no organization");
+        }
+
+
     }
 
     /**
-     * <p>Composite の ExecutionContext から DFC を削除する。</p>
+     * {@.ja Composite の ExecutionContext から DFC を削除する}
+     * {@.en Remove participant DFC from CompositeRTC's ExecutionContext}
      */
     public void removeParticipantFromEC(Member member) { 
         rtcout.println(rtcout.DEBUG, "removeParticipantFromEC()");
@@ -422,36 +445,54 @@ public class PeriodicECOrganization extends Organization_impl {
             if (ecs.length > 0) {
                 m_ec = (ExecutionContext)ecs[0]._duplicate();
             } else {
-                rtcout.println(rtcout.FATAL, "removeParticipantFromEC() no owned EC");
+                rtcout.println(rtcout.FATAL, 
+                    "removeParticipantFromEC() no owned EC");
                 return;
             }
         }
         m_ec.remove_component((RTObject)member.rtobj_._duplicate());
+
+        try {
+            Organization[] orglist = member.rtobj_.get_organizations();
+            for (int i=0; i < orglist.length; ++i) {
+                SDO[] sdos = orglist[i].get_members();
+                for (int j=0; j < sdos.length; ++j) {
+                    DataFlowComponentHolder dfc = null;
+                    if (!sdoToDFC(sdos[j], dfc)) { 
+                        continue;
+                    }
+                    m_ec.remove_component(dfc.value);
+                }
+            }
+        }
+        catch(Exception ex){
+            rtcout.println(rtcout.WARN, "no organization");
+        }
     }
 
     /**
-     * <p>ポートを委譲する。</p>
+     * {@.ja ポートを委譲する}
+     * {@.en Delegate given RTC's ports to the Composite}
      */
     public void addPort(Member member, Vector<String> portlist) {
-        rtcout.println(rtcout.TRACE, "addPort() portlist=" + StringUtil.flatten(portlist));
+        rtcout.println(rtcout.TRACE, 
+                    "addPort() portlist=" + StringUtil.flatten(portlist));
 
         if (portlist.size() == 0) {
             return;
         }
         String comp_name = new String();
         comp_name = member.profile_.instance_name;
-        PortProfile[] plist = new PortProfile[member.profile_.port_profiles.length];
+        PortProfile[] plist 
+                = new PortProfile[member.profile_.port_profiles.length];
         plist = member.profile_.port_profiles;
 
         // port delegation
         for (int i=0, len=plist.length; i < len; ++i) {
-            // port name . comp_name.port_name
-            String port_name = comp_name;
-            port_name = port_name.concat("."); 
-            port_name = port_name.concat(plist[i].name);
+            String port_name = plist[i].name;
 
             rtcout.println(rtcout.DEBUG, "port_name: " + port_name + 
-                                         " is in " + StringUtil.flatten(portlist));
+                                     " is in " + StringUtil.flatten(portlist));
             int pos = -1;
             for (Iterator it = portlist.iterator(); it.hasNext();) {
                 String str = (String)it.next();
@@ -462,29 +503,33 @@ public class PeriodicECOrganization extends Organization_impl {
             }
             if (pos == -1) {
                 rtcout.println(rtcout.DEBUG, "Not Found: " + port_name + 
-                                             " is in " + StringUtil.flatten(portlist));
+                                     " is in " + StringUtil.flatten(portlist));
                 continue;
             }
             rtcout.println(rtcout.DEBUG, "Found: " + port_name + 
-                                         " is in " + StringUtil.flatten(portlist));
-            m_rtobj.registerPort(
+                                     " is in " + StringUtil.flatten(portlist));
+            m_rtobj.addPort(
                         (PortService)plist[i].port_ref._duplicate());
-            rtcout.println(rtcout.DEBUG, "Port " + port_name + " was delegated.");
+            rtcout.println(rtcout.DEBUG, 
+                                    "Port " + port_name + " was delegated.");
         }
     }
 
     /**
-     * <p>委譲したポートを削除する。</p>
+     * {@.ja 委譲していたポートを削除する}
+     * {@.en Remove delegated participatns's ports from the composite}
      */
     public void removePort(Member member, Vector<String> portlist) {
-        rtcout.println(rtcout.TRACE, "removePort() portlist=" + StringUtil.flatten(portlist));
+        rtcout.println(rtcout.TRACE, 
+                "removePort() portlist=" + StringUtil.flatten(portlist));
 
         if (portlist.size() == 0) {
             return;
         }
         String comp_name = new String();
         comp_name = member.profile_.instance_name;
-        PortProfile[] plist = new PortProfile[member.profile_.port_profiles.length];
+        PortProfile[] plist 
+                = new PortProfile[member.profile_.port_profiles.length];
         plist = member.profile_.port_profiles;
 
         // port delegation
@@ -495,7 +540,7 @@ public class PeriodicECOrganization extends Organization_impl {
             port_name = port_name.concat(plist[i].name);
 
             rtcout.println(rtcout.DEBUG, "port_name: " + port_name + 
-                                         " is in " + StringUtil.flatten(portlist));
+                                     " is in " + StringUtil.flatten(portlist));
             int pos = -1;
             for (Iterator it = portlist.iterator(); it.hasNext();) {
                 String str = (String)it.next();
@@ -506,12 +551,12 @@ public class PeriodicECOrganization extends Organization_impl {
             }
             if (pos == -1) {
                 rtcout.println(rtcout.DEBUG, "Not Found: " + port_name + 
-                                             " is in " + StringUtil.flatten(portlist));
+                                     " is in " + StringUtil.flatten(portlist));
                 continue;
             }
             rtcout.println(rtcout.DEBUG, "Found: " + port_name + 
-                                         " is in " + StringUtil.flatten(portlist));
-            m_rtobj.deletePort(
+                                     " is in " + StringUtil.flatten(portlist));
+            m_rtobj.removePort(
                             (PortService)plist[i].port_ref._duplicate());
 
             portlist.remove((String)port_name);

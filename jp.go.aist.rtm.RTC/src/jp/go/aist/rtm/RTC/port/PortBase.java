@@ -124,14 +124,30 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
 public abstract class PortBase extends PortServicePOA {
     
     /**
-     * <p>本コンストラクタでは、オブジェクトの初期化処理を行うと同時に、
-     * 自身をCORBAオブジェクトとして活性化します。さらに、自分自身のPortProfileの
-     * port_refメンバに、自身のCORBAオブジェクト参照を格納します。</p>
-     * 
-     * @param name ポート名
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     * <p>
+     * {@.ja PortBase のコンストラクタは Port 名 name を引数に取り初期化を行う
+     * と同時に、自分自身を CORBA Object として活性化し、自身の PortProfile
+     * の port_ref に自身のオブジェクトリファレンスを格納する。}
+     * {@.en The constructor of the ProtBase class is given the name of 
+     * this Portand initialized. At the same time, 
+     * the PortBase activates itself as CORBA object 
+     * and stores its object reference to the PortProfile's * port_ref member.}
+     * </p>
+     *
+     * @param name 
+     *   {@.ja Port の名前(デフォルト値:"")}
+     *   {@.en The name of Port (The default value:"")}
+     *
      */
     public PortBase(final String name) {
-        this.m_profile.name = name;
+        m_ownerInstanceName = "unknown";
+        String portname = m_ownerInstanceName;
+        portname += ".";
+        portname += name;
+        this.m_profile.name = portname;
         this.m_profile.owner = null;
         this.m_profile.interfaces = new PortInterfaceProfile[0];
         this.m_profile.connector_profiles = new ConnectorProfile[0];
@@ -617,15 +633,32 @@ public abstract class PortBase extends PortServicePOA {
     }
 
     /**
-     * <p>当該ポートのオーナーRTObjectを設定します。
-     * 指定されたRTObjectオブジェクトが、PortProfileのownerメンバに設定されます。</p>
-     * 
-     * @param owner 当該ポートを所有するRTObjectのCORBAオブジェクト参照
+     * {@.ja Port の owner の RTObject を指定する}
+     * {@.en Set the owner RTObject of the Port}
+     *
+     * <p>
+     * {@.ja このオペレーションは Port の PortProfile.owner を設定する。}
+     * {@.en This operation sets the owner RTObject of this Port.}
+     * </p>
+     * @param owner 
+     *   {@.ja この Port を所有する RTObject の参照}
+     *   {@.en The owner RTObject's reference of this Port}
+     *
      */
     public void setOwner(RTObject owner) {
-        rtcout.println(rtcout.TRACE, "setOwner()");
+
+        RTC.ComponentProfile prof = m_profile.owner.get_component_profile();
+        m_ownerInstanceName = prof.instance_name;
+        rtcout.println(rtcout.TRACE, "setOwner("+m_ownerInstanceName+")");
+
         synchronized (this.m_profile) {
+            String portname = m_profile.name;
+            String[] port = portname.split(".");
+            // Now Port name is <instance_name>.<port_name>. 
+            portname = m_ownerInstanceName +"."+ port[port.length];
+
             this.m_profile.owner = (RTObject)owner._duplicate();
+            this.m_profile.name = portname;
         }
     }
     //============================================================
@@ -1477,4 +1510,12 @@ public abstract class PortBase extends PortServicePOA {
      * <p> The maximum number of connections </p>
      */
     protected int m_connectionLimit;
+    /*!
+     * @if jp
+     * @brief インスタンス名
+     * @else
+     * @brief Instance name
+     * @endif
+     */
+    protected String m_ownerInstanceName;
 }
