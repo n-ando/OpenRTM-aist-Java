@@ -784,9 +784,23 @@ public class RTObject_impl extends DataFlowComponentPOA {
     }
 
     /**
-     * <p>[ComponentAction interface] 当該コンポーネントの初期化時に呼び出されます。</p>
+     * {@.ja [ComponentAction CORBA interface] RTC の初期化}
+     * {@.en [ComponentAction CORBA interface] Initialize RTC}
      *
-     * @return 実行結果
+     * <p>
+     * {@.ja RTC が初期化され、Alive 状態に遷移する。
+     * RTC 固有の初期化処理はここで実行する。
+     * このオペレーション呼び出しの結果として onInitialize() コールバック関数が
+     * 呼び出される。}
+     * {@.en The RTC has been initialized and entered the Alive state.
+     * Any RTC-specific initialization logic should be performed here.
+     * As a result of this operation, onInitialize() callback function 
+     * is called.}
+     *
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type}
+     *
      */
     public ReturnCode_t on_initialize() {
 
@@ -796,7 +810,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
         try {
             ret = onInitialize();
             String active_set;
-            active_set = m_properties.getProperty("configuration.active_config","default");
+            active_set 
+                = m_properties.getProperty("configuration.active_config",
+                                            "default");
             if (m_configsets.haveConfig(active_set)) {
                 m_configsets.update(active_set);
             }
