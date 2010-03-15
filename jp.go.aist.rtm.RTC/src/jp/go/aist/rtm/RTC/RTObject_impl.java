@@ -129,6 +129,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             m_sdoOwnedOrganizations.value = new Organization[0];
         }
 
+        m_profile.properties    = new NameValue[0];
         rtcout = new Logbuf("RTObject_impl");
          
     }
@@ -170,6 +171,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
 
         Manager manager = Manager.instance();
+        m_profile.properties    = new NameValue[0];
         rtcout = new Logbuf("RTObject_impl");
     }
 
@@ -660,28 +662,74 @@ public class RTObject_impl extends DataFlowComponentPOA {
   //============================================================
   
     /**
-     * <p>[RTObject CORBA interface] 当該コンポーネントのプロファイル情報を取得します。</p>
+     * {@.ja [RTObject CORBA interface] コンポーネントプロファイルを取得する}
+     * {@.en [RTObject CORBA interface] Get RTC's profile}
      *
-     * @return コンポーネントのプロファイル情報
+     * <p>
+     * {@.ja 当該コンポーネントのプロファイル情報を返す。}
+     * {@.en This operation returns the ComponentProfile of the RTC.}
+     * </p>
+     *
+     * @return 
+     *   {@.ja コンポーネントプロファイル}
+     *   {@.en ComponentProfile}
+     *
      */
     public ComponentProfile get_component_profile() {
+        if(java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+            System.out.println("IN  get_component_profile()");
+        }
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.get_component_profile()");
 
         try {
             ComponentProfile profile = new ComponentProfile();
             profile.instance_name = m_properties.getProperty("instance_name");
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+               System.out.println("    ---030--- "+profile.instance_name);
+            }
             profile.type_name = m_properties.getProperty("type_name");
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ---040--- "+profile.type_name);
+            }
             profile.description = m_properties.getProperty("description");
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ---050--- "+profile.description);
+            }
             profile.version = m_properties.getProperty("version");
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ---060--- "+profile.version);
+            }
             profile.vendor = m_properties.getProperty("vendor");
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ---070--- "+profile.vendor);
+            }
             profile.category = m_properties.getProperty("category");
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ---080--- "+profile.category);
+            }
             profile.parent = m_profile.parent;
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ---090--- "+profile.parent);
+            }
             profile.properties = m_profile.properties;
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ---0a0--- "+profile.properties);
+            }
             profile.port_profiles = m_portAdmin.getPortProfileList().value;
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ---0b0--- "+profile.port_profiles);
+                System.out.println("OUT get_component_profile()");
+            }
             return profile;
         } catch (Exception ex) {
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    This operation throws no exception.");
+            }
             ; // This operation throws no exception.
+        }
+        if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            System.out.println("OUT get_component_profile() null");
         }
         return null;
     }
@@ -1435,9 +1483,15 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return rtobj CORBAオブジェクト参照
      */
     public final RTObject getObjRef() {
-
+System.out.println("IN  setObjRef");
         rtcout.println(rtcout.TRACE, "RTObject_impl.getObjRef()");
 
+if(m_objref==null){
+System.out.println("    m_objref is null.");
+}
+else{
+System.out.println("    m_objref is not null.");
+}
         return (RTObject)m_objref._duplicate();
     }
     /**
@@ -1451,14 +1505,22 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void setProperties(final Properties prop) {
 
+System.out.println("IN  setProperites");
         rtcout.println(rtcout.TRACE, "RTObject_impl.setProperties()");
 
         m_properties.merge(prop);
+{
+String str = new String(); 
+str = m_properties._dump(str,m_properties,0);
+System.out.println("--->:");
+System.out.println(str);
+}
         try {
             syncAttributesByProperties();
         } catch (Exception ex) {
             
         }
+System.out.println("OUT setProperites");
     }
 
     /**
@@ -1529,44 +1591,104 @@ public class RTObject_impl extends DataFlowComponentPOA {
     }
 
     /**
-     * <p>[local interface] Port を登録します。<br />
+     * {@.ja [local interface] Port を登録する}
+     * {@.en [local interface] Register Port}
      *
-     * RTC が保持するPortを登録します。
+     * <p>
+     * {@.ja RTC が保持するPortを登録する。
      * Port を外部からアクセス可能にするためには、このオペレーションにより
-     * 登録されていなければなりません。登録される Port はこの RTC 内部において
-     * PortProfile.name により区別されます。したがって、Port は RTC 内において、
-     * ユニークな PortProfile.name を持たなければなりません。
+     * 登録されていなければならない。登録される Port はこの RTC 内部において
+     * PortProfile.name により区別される。したがって、Port は RTC 内において、
+     * ユニークな PortProfile.name を持たなければならない。
      * 登録された Port は内部で適切にアクティブ化された後、その参照と
-     * オブジェクト参照がリスト内に保存されます。</p>
-     * 
-     * @param port RTC に登録する Port
-     */
-    public void registerPort(PortBase port) {
-
-        rtcout.println(rtcout.TRACE, "RTObject_impl.registerPort(PortBase)");
-        if (!addPort(port)) {
-            rtcout.println(rtcout.ERROR, "addPort(PortBase&) failed.");
-        }
-    }
-
-    /**
-     * <p> [local interface] Register Port </p>
-     *
-     * This operation registers a Port held by this RTC.
+     * オブジェクト参照がリスト内に保存される。}
+     * {@.en This operation registers a Port held by this RTC.
      * In order to enable access to the Port from outside of RTC, the Port
      * must be registered by this operation. The Port that is registered by
      * this operation would be identified by PortProfile.name in the inside of
      * RTC. Therefore, the Port should have unique PortProfile.name in the RTC.
      * The registering Port would be activated properly, and the reference
-     * and the object reference would be stored in lists in RTC.
+     * and the object reference would be stored in lists in RTC.}
+     * </p>
+     * 
+     * @param port 
+     *   {@.ja RTC に登録する Port}
+     *   {@.en Port which is registered to the RTC}
      *
-     * @param port Port which is registered to the RTC
-     * @return Register result (Successful:true, Failed:false)
+     */
+    public void registerPort(PortBase port) {
+
+        rtcout.println(rtcout.TRACE, "RTObject_impl.registerPort(PortBase)");
+
+try{
+        if (!addPort(port)) {
+            rtcout.println(rtcout.ERROR, "addPort(PortBase&) failed.");
+        }
+}
+catch(Exception ex){
+        if(java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+            System.out.println("caught -->:"+ex);
+        }
+}
+    }
+
+    /**
+     * {@.ja [local interface] Port を登録する}
+     * {@.en [local interface] Register Port}
+     * <p>
+     * {@.ja RTC が保持するPortを登録する。
+     * Port を外部からアクセス可能にするためには、このオペレーションにより
+     * 登録されていなければならない。登録される Port はこの RTC 内部において
+     * PortProfile.name により区別される。したがって、Port は RTC 内において、
+     * ユニークな PortProfile.name を持たなければならない。
+     * 登録された Port は内部で適切にアクティブ化された後、その参照と
+     * オブジェクト参照がリスト内に保存される。}
+     * {@.en This operation registers a Port held by this RTC.
+     * In order to enable access to the Port from outside of RTC, the Port
+     * must be registered by this operation. The Port that is registered by
+     * this operation would be identified by PortProfile.name in the inside of
+     * RTC. Therefore, the Port should have unique PortProfile.name in the RTC.
+     * The registering Port would be activated properly, and the reference
+     * and the object reference would be stored in lists in RTC.}
+     * </p>
+     * 
+     * @param port 
+     *   {@.ja RTC に登録する Port}
+     *   {@.en Port which is registered to the RTC}
+     * @return 
+     *   {@.ja 登録結果(登録成功:true，登録失敗:false)}
+     *   {@.en Register result (Successful:true, Failed:false)}
      *
      */
     public boolean addPort(PortBase port) {
+        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+            System.out.println("IN  addPort(PortBase)");
+        } 
+
         rtcout.println(rtcout.TRACE, "addPort(PortBase)");
+
+        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+            if(this.getObjRef()==null){
+                System.out.println("    this.getObjRef() is null");
+            }
+            else{
+                System.out.println("    this.getObjRef() is not null");
+            }
+            System.out.println("");
+            {
+                String str = new String(); 
+                str = m_properties._dump(str,m_properties,0);
+                System.out.println("--->:");
+                System.out.println(str);
+            }
+        }
+
         port.setOwner(this.getObjRef());
+
+        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+            System.out.println("OUT  addPorti(PortBase)");
+        }
+
         return m_portAdmin.addPort(port);
     }
 
