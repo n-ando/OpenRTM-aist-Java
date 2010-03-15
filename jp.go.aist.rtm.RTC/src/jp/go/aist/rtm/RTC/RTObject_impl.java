@@ -676,60 +676,28 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *
      */
     public ComponentProfile get_component_profile() {
-        if(java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
-            System.out.println("IN  get_component_profile()");
-        }
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.get_component_profile()");
 
         try {
             ComponentProfile profile = new ComponentProfile();
             profile.instance_name = m_properties.getProperty("instance_name");
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-               System.out.println("    ---030--- "+profile.instance_name);
-            }
             profile.type_name = m_properties.getProperty("type_name");
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-                System.out.println("    ---040--- "+profile.type_name);
-            }
             profile.description = m_properties.getProperty("description");
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-                System.out.println("    ---050--- "+profile.description);
-            }
             profile.version = m_properties.getProperty("version");
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-                System.out.println("    ---060--- "+profile.version);
-            }
             profile.vendor = m_properties.getProperty("vendor");
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-                System.out.println("    ---070--- "+profile.vendor);
-            }
             profile.category = m_properties.getProperty("category");
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-                System.out.println("    ---080--- "+profile.category);
-            }
             profile.parent = m_profile.parent;
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-                System.out.println("    ---090--- "+profile.parent);
-            }
             profile.properties = m_profile.properties;
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-                System.out.println("    ---0a0--- "+profile.properties);
-            }
             profile.port_profiles = m_portAdmin.getPortProfileList().value;
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-                System.out.println("    ---0b0--- "+profile.port_profiles);
-                System.out.println("OUT get_component_profile()");
-            }
             return profile;
         } catch (Exception ex) {
             if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-                System.out.println("    This operation throws no exception.");
+                System.out.println("    get_component_profile()"
+                                   +"This operation throws no exception."
+                                   +ex);
             }
             ; // This operation throws no exception.
-        }
-        if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-            System.out.println("OUT get_component_profile() null");
         }
         return null;
     }
@@ -1509,12 +1477,6 @@ System.out.println("IN  setProperites");
         rtcout.println(rtcout.TRACE, "RTObject_impl.setProperties()");
 
         m_properties.merge(prop);
-{
-String str = new String(); 
-str = m_properties._dump(str,m_properties,0);
-System.out.println("--->:");
-System.out.println(str);
-}
         try {
             syncAttributesByProperties();
         } catch (Exception ex) {

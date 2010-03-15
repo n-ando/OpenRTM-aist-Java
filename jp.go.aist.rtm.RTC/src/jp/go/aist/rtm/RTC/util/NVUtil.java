@@ -86,7 +86,8 @@ public class NVUtil {
      * @param nvlist 作成されたNameValueオブジェクトリストを受け取るためNVListHolder
      * @param prop 設定元となるPropertiesオブジェクト
      */
-    public static void copyFromProperties(NVListHolder nvlist, final Properties prop) {
+    public static void copyFromProperties(NVListHolder nvlist, 
+                                              final Properties prop) {
         
         Vector keys = prop.propertyNames();
         int len = keys.size();
@@ -445,6 +446,9 @@ public class NVUtil {
      */
     public static String toString(final NVListHolder nvlist) {
         String crlf = System.getProperty("line.separator");
+        if(nvlist.value==null){
+            return "NVListHolder is empty."+crlf;
+        }
         String str = new String();
         for (int intIdx = 0; intIdx < nvlist.value.length; ++intIdx) {
             final String name = nvlist.value[intIdx].name;

@@ -647,19 +647,58 @@ public abstract class PortBase extends PortServicePOA {
      */
     public void setOwner(RTObject owner) {
 
-        RTC.ComponentProfile prof = m_profile.owner.get_component_profile();
-        m_ownerInstanceName = prof.instance_name;
-        rtcout.println(rtcout.TRACE, "setOwner("+m_ownerInstanceName+")");
-
-        synchronized (this.m_profile) {
-            String portname = m_profile.name;
-            String[] port = portname.split(".");
-            // Now Port name is <instance_name>.<port_name>. 
-            portname = m_ownerInstanceName +"."+ port[port.length];
-
-            this.m_profile.owner = (RTObject)owner._duplicate();
-            this.m_profile.name = portname;
+try{
+        if(java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+            System.out.println("IN  setOwner");
         }
+        RTC.ComponentProfile prof = owner.get_component_profile();
+        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+            System.out.println("    ----010----");
+        }
+        m_ownerInstanceName = prof.instance_name;
+        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+            System.out.println("    ----020----");
+        }
+        rtcout.println(rtcout.TRACE, "setOwner("+m_ownerInstanceName+")");
+        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+            System.out.println("    ----030----");
+        }
+        synchronized (this.m_profile) {
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ----040----m_profile.name>:"
+                                    +m_profile.name);
+            }
+            String portname = m_profile.name;
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ----050----portname>:"+portname);
+            }
+            String[] port = portname.split("\\.");
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ----060---- port.length>:"+port.length);
+            }
+            // Now Port name is <instance_name>.<port_name>. 
+            portname = m_ownerInstanceName +"."+ port[port.length-1];
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ----070----");
+            }
+            this.m_profile.owner = (RTObject)owner._duplicate();
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ----080----");
+            }
+            this.m_profile.name = portname;
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ----090----");
+            }
+        }
+        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+            System.out.println("OUT setOwner");
+        }
+}
+catch(Exception ex){
+        if(java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+            System.out.println("caught -->:"+ex);
+        }
+}
     }
     //============================================================
     // callbacks
@@ -829,27 +868,58 @@ public abstract class PortBase extends PortServicePOA {
     protected abstract ReturnCode_t publishInterfaces(ConnectorProfileHolder connector_profile);
 
     /**
-     * <p>当該ポートの次のポートに対して接続通知を行います。</p>
-     * 
-     * <p>ConnectorProfile内に設定されているPortのシーケンスを調べて、
-     * 当該Portの次のPortを特定し、そのPortに対してnotify_connect()を呼び出します。</p>
-     * 
-     * @param connector_profile 接続プロファイル
+     * {@.ja 次の Port に対して notify_connect() をコールする}
+     * {@.en Call notify_connect() of the next Port}
+     *
+     * <p>
+     * {@.ja ConnectorProfile の port_ref 内に格納されている Port のオブジェクト
+     * リファレンスのシーケンスの中から、自身の Port の次の Port に対して
+     * notify_connect() をコールする。}
+     * {@.en This operation calls the notify_connect() of the next Port's 
+     * that stored in ConnectorProfile's port_ref sequence.}
+     * </p>
+     *
+     * @param connector_profile 
+     *   {@.ja 接続に関するプロファイル情報}
+     *   {@.en The connection profile information}
+     *
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type.}
+     *
      */
-    protected ReturnCode_t connectNext(ConnectorProfileHolder connector_profile) {
+    protected 
+    ReturnCode_t connectNext(ConnectorProfileHolder connector_profile) {
 
-        PortServiceListHolder portsHolder = new PortServiceListHolder(connector_profile.value.ports);
-        int index = CORBA_SeqUtil.find(portsHolder, new find_port_ref(this.m_profile.port_ref));
+        if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            System.out.println("IN  connectNext()");
+        }
+        PortServiceListHolder portsHolder 
+            = new PortServiceListHolder(connector_profile.value.ports);
+        int index 
+            = CORBA_SeqUtil.find(portsHolder, 
+                                    new find_port_ref(this.m_profile.port_ref));
         connector_profile.value.ports = portsHolder.value;
         
-        if (index < 0) return ReturnCode_t.BAD_PARAMETER;
+        if (index < 0) {
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    ReturnCode_t.BAD_PARAMETE");
+            }
+            return ReturnCode_t.BAD_PARAMETER;
+        }
         
         if (++index < connector_profile.value.ports.length) {
             PortService p = connector_profile.value.ports[index];
+            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                System.out.println("    p.notify_connect(connector_profile)");
+            }
             ReturnCode_t rc = p.notify_connect(connector_profile);
             return rc;
         }
         
+        if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            System.out.println("OUT connectNext()");
+        }
         return ReturnCode_t.RTC_OK;
     }
 

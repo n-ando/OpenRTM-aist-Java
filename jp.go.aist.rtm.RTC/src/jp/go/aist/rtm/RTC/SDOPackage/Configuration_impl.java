@@ -582,10 +582,10 @@ public class Configuration_impl extends ConfigurationPOA {
                     = conf.getProperty("exported_ports").split(",");
             String exported_ports_str = "";
             for (int i=0, len=exported_ports.length; i < len; ++i) {
-                String[]  keyval = exported_ports[i].split(".");
+                String[]  keyval = exported_ports[i].split("\\.");
                 if (keyval.length > 2) {
                     exported_ports_str 
-                            += (keyval[0] + "." + keyval[keyval.length]);
+                            += (keyval[0] + "." + keyval[keyval.length-1]);
                 }
                 else{
                     exported_ports_str += exported_ports[i];
@@ -597,7 +597,6 @@ public class Configuration_impl extends ConfigurationPOA {
             }
 	    conf.setProperty("exported_ports", exported_ports_str);
             //----------------------------------------------------------------
-
             return m_configsets.setConfigurationSetValues(config_id, conf);
             //if( m_configsets.setConfigurationSetValues(config_id, conf)) {
             //    String description = configuration_set.description;

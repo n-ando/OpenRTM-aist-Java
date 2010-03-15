@@ -371,7 +371,7 @@ public class Manager {
         String init_func = initFunc;
         try {
             if (init_func==null||init_func.equals("")) {
-                String[] mod = moduleFileName.split(".");
+                String[] mod = moduleFileName.split("\\.");
                 init_func = mod[0] + "Init";
             }
             String path = m_module.load(file_name, initFunc);
@@ -634,10 +634,10 @@ public class Manager {
 
             String exported_ports_str = "";
             for (int i=0, len=exported_ports.length; i < len; ++i) {
-               String[] keyval = exported_ports[i].split(".");
+               String[] keyval = exported_ports[i].split("\\.");
                if (keyval.length > 2) {
                    exported_ports_str 
-                           += (keyval[0] + "." + keyval[keyval.length]);
+                           += (keyval[0] + "." + keyval[keyval.length-1]);
                }
                else {
                    exported_ports_str += exported_ports[i];
@@ -692,8 +692,14 @@ public class Manager {
                                         m_config.getProperty(inherit_prop[ic]));
                 }
 
+                if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                    System.out.println("create");
+                }
                 comp = m_factory.m_objects.elementAt(i).create(this);
                 if (comp == null) {
+                    if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+                        System.out.println("RTC creation failed: "+ comp_id.getProperty("implementaion_id"));
+                    }
                     rtcout.println(rtcout.ERROR, 
                         "RTC creation failed: " 
                         + comp_id.getProperty("implementaion_id"));
