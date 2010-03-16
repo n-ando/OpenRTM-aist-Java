@@ -110,7 +110,7 @@ public class CorbaPort extends PortBase {
      * 関連付けられる。この関数により、サーバントは CorbaPort 内部に保
      * 持されるとともに、PortInterfaceProfile にRTC::PROVIDED インター
      * フェースとして登録される。}
-     * {@,.ja This operation registers a servant, which is provided in this
+     * {@.en This operation registers a servant, which is provided in this
      * Port, to the Port. The servant is associated with
      * "instance_name" and "type_name" as the instance name of the
      * servant and as the type name of the servant. A given servant
@@ -140,8 +140,15 @@ public class CorbaPort extends PortBase {
 
         rtcout.println(rtcout.TRACE, 
         "registerProvider(instance="+instance_name+",type_name="+type_name+")");
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("registerProvider(instance="
+                                +instance_name+",type_name="+type_name+")");
+        }
 
         try{ 
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    m_providers.add");
+            }   
             m_providers.add(new CorbaProviderHolder(type_name,
                                                   instance_name,
                                                   provider));
@@ -388,16 +395,26 @@ public class CorbaPort extends PortBase {
     protected 
     ReturnCode_t publishInterfaces(ConnectorProfileHolder connector_profile) {
         
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("IN  publishInterfaces()");
+        }
         rtcout.println(rtcout.TRACE, "publishInterfaces()");
 
         ReturnCode_t returnvalue = _publishInterfaces();
         if(returnvalue!=ReturnCode_t.RTC_OK) {
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    _publishInterfaces is not RTC_OK."
+                                    +returnvalue);
+            } 
             return returnvalue;
         }
 
 //        NVList properties = new NVList();
         NVListHolder holder = new NVListHolder();
 	Iterator it = m_providers.iterator();
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("   m_providers.size()>:"+m_providers.size());
+        } 
 	while(it.hasNext()) {
             CorbaProviderHolder provider = (CorbaProviderHolder)it.next();
           //------------------------------------------------------------
@@ -406,9 +423,21 @@ public class CorbaPort extends PortBase {
             String newdesc;
             newdesc = m_ownerInstanceName + ".port." + m_profile.name
                         + ".provider." + provider.descriptor();
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("   push_back"); 
+            } 
             CORBA_SeqUtil.push_back(holder, 
                                 NVUtil.newNVString(newdesc, provider.ior()));
 //            properties = holder.value;
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                if(holder.value==null){
+                    System.out.println("holder.value is null.");
+                }
+                else{
+                    System.out.println("holder.value is not null."
+                                        +holder.value.length);
+                }
+            } 
 
           //------------------------------------------------------------
           // old version descriptor
@@ -421,7 +450,6 @@ public class CorbaPort extends PortBase {
 //            properties = holder.value;
         }
 
-
         NVListHolder profholder 
             = new NVListHolder(connector_profile.value.properties);
 //        ORBA_SeqUtil.push_back_list(profholder, properties);
@@ -432,6 +460,9 @@ public class CorbaPort extends PortBase {
         dumpString = NVUtil.toString(holder);
         rtcout.println(rtcout.DEBUG, dumpString);
 
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("OUT publishInterfaces()");
+        }
         return ReturnCode_t.RTC_OK;
     }
     

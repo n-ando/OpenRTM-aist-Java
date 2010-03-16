@@ -63,7 +63,9 @@ public class ModuleManager {
             }
             loadPath[i] = loadPath[i].replace(separator,".");
             loadPath[i] = loadPath[i].replace("..",".");
-System.out.println("-->:"+loadPath[i]);
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("ModuleManager-->:"+loadPath[i]);
+            }
             m_loadPath.add(loadPath[i]);
         }
         
@@ -359,7 +361,9 @@ System.out.println("-->:"+loadPath[i]);
             String str[] = dlls.elementAt(ic).split(".class");
             str[0] = str[0].replace(separator,".");
             str[0] = str[0].replace("..",".");
-System.out.println("-->:"+str[0]);
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("getLoadableModules-->:"+str[0]);
+            }
             try {
                 Class holder = Class.forName(str[0],
                                          true,

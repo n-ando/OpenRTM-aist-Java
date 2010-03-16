@@ -648,54 +648,54 @@ public abstract class PortBase extends PortServicePOA {
     public void setOwner(RTObject owner) {
 
 try{
-        if(java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+        if(java.lang.System.getProperty("develop_prop.debug")!=null) { 
             System.out.println("IN  setOwner");
         }
         RTC.ComponentProfile prof = owner.get_component_profile();
-        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+        if (java.lang.System.getProperty("develop_prop.debug")!=null) { 
             System.out.println("    ----010----");
         }
         m_ownerInstanceName = prof.instance_name;
-        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+        if (java.lang.System.getProperty("develop_prop.debug")!=null) { 
             System.out.println("    ----020----");
         }
         rtcout.println(rtcout.TRACE, "setOwner("+m_ownerInstanceName+")");
-        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+        if (java.lang.System.getProperty("develop_prop.debug")!=null) { 
             System.out.println("    ----030----");
         }
         synchronized (this.m_profile) {
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    ----040----m_profile.name>:"
                                     +m_profile.name);
             }
             String portname = m_profile.name;
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    ----050----portname>:"+portname);
             }
             String[] port = portname.split("\\.");
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    ----060---- port.length>:"+port.length);
             }
             // Now Port name is <instance_name>.<port_name>. 
             portname = m_ownerInstanceName +"."+ port[port.length-1];
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    ----070----");
             }
             this.m_profile.owner = (RTObject)owner._duplicate();
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    ----080----");
             }
             this.m_profile.name = portname;
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    ----090----");
             }
         }
-        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+        if (java.lang.System.getProperty("develop_prop.debug")!=null) { 
             System.out.println("OUT setOwner");
         }
 }
 catch(Exception ex){
-        if(java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+        if(java.lang.System.getProperty("develop_prop.debug")!=null) { 
             System.out.println("caught -->:"+ex);
         }
 }
@@ -891,9 +891,6 @@ catch(Exception ex){
     protected 
     ReturnCode_t connectNext(ConnectorProfileHolder connector_profile) {
 
-        if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-            System.out.println("IN  connectNext()");
-        }
         PortServiceListHolder portsHolder 
             = new PortServiceListHolder(connector_profile.value.ports);
         int index 
@@ -902,7 +899,7 @@ catch(Exception ex){
         connector_profile.value.ports = portsHolder.value;
         
         if (index < 0) {
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            if(java.lang.System.getProperty("develop_prop.debug")!=null) { 
                 System.out.println("    ReturnCode_t.BAD_PARAMETE");
             }
             return ReturnCode_t.BAD_PARAMETER;
@@ -910,16 +907,13 @@ catch(Exception ex){
         
         if (++index < connector_profile.value.ports.length) {
             PortService p = connector_profile.value.ports[index];
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    p.notify_connect(connector_profile)");
             }
             ReturnCode_t rc = p.notify_connect(connector_profile);
             return rc;
         }
         
-        if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-            System.out.println("OUT connectNext()");
-        }
         return ReturnCode_t.RTC_OK;
     }
 

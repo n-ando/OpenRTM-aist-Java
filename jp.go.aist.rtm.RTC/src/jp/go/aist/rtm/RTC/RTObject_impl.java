@@ -692,7 +692,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             profile.port_profiles = m_portAdmin.getPortProfileList().value;
             return profile;
         } catch (Exception ex) {
-            if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    get_component_profile()"
                                    +"This operation throws no exception."
                                    +ex);
@@ -1467,15 +1467,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @return rtobj CORBAオブジェクト参照
      */
     public final RTObject getObjRef() {
-System.out.println("IN  setObjRef");
         rtcout.println(rtcout.TRACE, "RTObject_impl.getObjRef()");
 
-if(m_objref==null){
-System.out.println("    m_objref is null.");
-}
-else{
-System.out.println("    m_objref is not null.");
-}
         return (RTObject)m_objref._duplicate();
     }
     /**
@@ -1489,7 +1482,6 @@ System.out.println("    m_objref is not null.");
      */
     public void setProperties(final Properties prop) {
 
-System.out.println("IN  setProperites");
         rtcout.println(rtcout.TRACE, "RTObject_impl.setProperties()");
 
         m_properties.merge(prop);
@@ -1498,7 +1490,6 @@ System.out.println("IN  setProperites");
         } catch (Exception ex) {
             
         }
-System.out.println("OUT setProperites");
     }
 
     /**
@@ -1604,7 +1595,7 @@ try{
         }
 }
 catch(Exception ex){
-        if(java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
+        if(java.lang.System.getProperty("develop_prop.debug")!=null) { 
             System.out.println("caught -->:"+ex);
         }
 }
@@ -1639,33 +1630,10 @@ catch(Exception ex){
      *
      */
     public boolean addPort(PortBase port) {
-        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
-            System.out.println("IN  addPort(PortBase)");
-        } 
 
         rtcout.println(rtcout.TRACE, "addPort(PortBase)");
 
-        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
-            if(this.getObjRef()==null){
-                System.out.println("    this.getObjRef() is null");
-            }
-            else{
-                System.out.println("    this.getObjRef() is not null");
-            }
-            System.out.println("");
-            {
-                String str = new String(); 
-                str = m_properties._dump(str,m_properties,0);
-                System.out.println("--->:");
-                System.out.println(str);
-            }
-        }
-
         port.setOwner(this.getObjRef());
-
-        if (java.lang.System.getProperty("develop_prop.debug").equals("y")) { 
-            System.out.println("OUT  addPorti(PortBase)");
-        }
 
         return m_portAdmin.addPort(port);
     }
