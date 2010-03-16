@@ -128,8 +128,8 @@ public class ManagerServant extends ManagerPOA {
             com.sun.corba.se.impl.orb.ORBImpl orb 
                         = (com.sun.corba.se.impl.orb.ORBImpl)m_mgr.getORB();
             orb.register_initial_reference( 
-//                        "INSPOA", m_mgr.getPOA().servant_to_reference(this) );
-            "corbaloc:iiop:1.2@localhost:2810/manager", m_mgr.getPOA().servant_to_reference(this) );
+                        "INSPOA", m_mgr.getPOA().servant_to_reference(this) );
+//            "corbaloc:iiop:1.2@localhost:2810/manager", m_mgr.getPOA().servant_to_reference(this) );
             if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    register_initial_reference");
             } 
