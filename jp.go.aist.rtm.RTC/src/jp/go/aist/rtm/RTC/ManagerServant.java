@@ -48,7 +48,8 @@ public class ManagerServant extends ManagerPOA {
 
         Properties config = m_mgr.getConfig();    
     
-        if (StringUtil.toBool(config.getProperty("manager.is_master"), "YES", "NO", true)) {
+        if (StringUtil.toBool(config.getProperty("manager.is_master"), 
+                                                    "YES", "NO", true)) {
             // this is master manager
             rtcout.println(rtcout.TRACE, "This manager is master.");
 
@@ -107,64 +108,80 @@ public class ManagerServant extends ManagerPOA {
     }
 
     /**
-     * <p> Generate INSManager. </p>
-     * @return Successful:true, Failed:false
+     * {@.ja INSManagerの生成}
+     * {@.en Generate INSManager. }
+     * @return 
+     *   {@.ja 成功:true, 失敗:false}
+     *   {@.en Successful:true, Failed:false}
      */
     public boolean createINSManager() {
 
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("IN  createINSManager()");
+        }
         try{
-            Properties config = m_mgr.getConfig();
-            String args[] = null;
-            java.util.Properties properties = System.getProperties( );
-            // STEP 1: Set ORBPeristentServerPort property
-            // Set the proprietary property to open up a port to listen to
-            // INS requests. 
-            // Note: This property is subject to change in future releases
-            String portNumber[] = config.getProperty("corba.master_manager").split(":");
-            properties.put( "com.sun.CORBA.POA.ORBPersistentServerPort",
-                            portNumber[1]);
+            //Registers the reference
+            m_mgr.getPOA().activate_object( this );
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    activate_object");
+            } 
+            com.sun.corba.se.impl.orb.ORBImpl orb 
+                        = (com.sun.corba.se.impl.orb.ORBImpl)m_mgr.getORB();
+            orb.register_initial_reference( 
+                        "INSPOA", m_mgr.getPOA().servant_to_reference(this) );
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    register_initial_reference");
+            } 
 
-            // STEP 2: Instantiate the ORB, By passing in the 
-            // ORBPersistentServerPort property set in the previous step
-//<+zxc
-ORB orb;
-if (StringUtil.toBool(config.getProperty("manager.is_master"), "YES", "NO", true)) {
-             orb = ORB.init( (String[])null, properties );
-}
-else{
-             orb = ORBUtil.getOrb();
-}
-//zxc+>
+            //
+            org.omg.CORBA.Object obj 
+                    = m_mgr.getORB().resolve_initial_references("INSPOA");
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    resolve_initial_references");
+                if(obj==null){
+                    System.out.println("    obj is null.");
+                }
+                else{
+                    System.out.println("    obj is not null.>:"+obj);
+                }
+            }
+            this.m_objref = ManagerHelper.narrow(obj);
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    ManagerHelper.narrow");
+            } 
+/*
+            POA poa = POAHelper.narrow(obj);
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    POAHelper.narrow");
+            } 
+            poa.the_POAManager().activate();
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    the_POAManager().activate()");
+            } 
 
-            // STEP 3: Instantiate the Service Object that needs to be published
-            // and associate it with RootPOA.
-            Object obj = null;
-            String name = config.getProperty("manager.name");
-            POA rootPOA = 
-                POAHelper.narrow( orb.resolve_initial_references( "RootPOA" ));
-            rootPOA.the_POAManager().activate();
-            byte[] id  = rootPOA.activate_object( this );
-            org.omg.CORBA.Object ref = rootPOA.id_to_reference(id);
+            byte[] id  = poa.activate_object( this );
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("activate_object");
+            }
+            org.omg.CORBA.Object ref = poa.id_to_reference(id);
             this.m_objref = ManagerHelper.narrow(ref);
-            // STEP 4: Publish the INS Service using 
-            // orb.register_initial_reference( <ObjectKey>, <ObjectReference> 
-            // NOTE: Sun private internal API, not part of CORBA 2.3.1.
-            // May move as our compliance with OMG standards evolves.
-
-
-            ((com.sun.corba.se.impl.orb.ORBImpl) orb).
-                register_initial_reference( 
-                name, rootPOA.servant_to_reference( this ));
-
-
-            System.out.println( "INS Server is Ready..." );
-             
+        
+            String ior = m_mgr.getORB().object_to_string(m_objref);
+            rtcout.println(rtcout.DEBUG, 
+                        "Manager's IOR information:"+ior);
  
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("Manager's IOR information:"+ior);
+            }
+*/
         }
         catch(Exception ex){
              System.err.println( "Error in setup : " + ex );
         }
 
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("OUT createINSManager()");
+        }
         return true;
     }
 

@@ -235,18 +235,32 @@ public class Manager {
     }
     
     /**
-     * <p>Managerをアクティブ化します。
-     * 初期化後にrunManager()呼び出しに先立ってこのメソッドを呼び出す必要があります。</p>
-     * 
-     * <p>具体的には以下の処理が行われます。
-     * <ol>
-     * <li>CORBA POAManagerのアクティブ化</li>
-     * <li>Manager CORBAオブジェクトのアクティブ化</li>
-     * <li>ManagerへのCORBAオブジェクト参照の登録</li>
-     * </ol>
+     * {@.ja Managerのアクティブ化}
+     * {@.en Activate the Manager}
+     * <p>
+     * {@.ja 初期化後に runManager() 呼び出しに先立ってこのメソッドを
+     * 呼び出す必要があります。
+     * このオペレーションは以下の処理を行う
+     * - CORBA POAManager のアクティブ化
+     * - マネージャCORBAオブジェクトのアクティブ化
+     * - Manager のオブジェクト参照の登録
+     *
+     * このオペレーションは、マネージャの初期化後、runManager()
+     * の前に呼ぶ必要がある。}
+     * {@.en This operation do the following:
+     * - Activate CORBA POAManager
+     * - Activate Manager CORBA object
+     * - Bind object reference of the Manager to the nameserver
+     *
+     * This operation should be invoked after Manager:init(),
+     * and before runManager().}
      * </p>
-     * 
-     * @return 正常にアクティブ化できた場合はtrueを、さもなくばfalseを返します。
+     *
+     *
+     * @return 
+     *   {@.ja 処理結果(アクティブ化成功:true、失敗:false)}
+     *   {@.en Activation result (Successful:true, Failed:false)}
+     *
      */
     public boolean activateManager() {
         
@@ -260,7 +274,8 @@ public class Manager {
             this.getPOAManager().activate();
             rtcout.println(rtcout.TRACE, "POA Manager activated.");
         } catch (Exception e) {
-            rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.activateManager().");
+            rtcout.println(rtcout.DEBUG, 
+                "Exception: Caught unknown Exception in Manager.activateManager().");
             rtcout.println(rtcout.DEBUG, "POA Manager activation failed.");
             rtcout.println(rtcout.DEBUG, e.getMessage());
             return false;
@@ -692,13 +707,11 @@ public class Manager {
                                         m_config.getProperty(inherit_prop[ic]));
                 }
 
-                if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-                    System.out.println("create");
-                }
                 comp = m_factory.m_objects.elementAt(i).create(this);
                 if (comp == null) {
-                    if(java.lang.System.getProperty("develop_prop.debug").equals("y")){ 
-                        System.out.println("RTC creation failed: "+ comp_id.getProperty("implementaion_id"));
+                    if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                        System.out.println("RTC creation failed: "
+                                + comp_id.getProperty("implementaion_id"));
                     }
                     rtcout.println(rtcout.ERROR, 
                         "RTC creation failed: " 
@@ -1330,30 +1343,10 @@ System.out.println("createORBOptions.endpoints>:"+endpoints);
      *   {@.en endpoints Endpoints list}
      */
     protected void createORBEndpoints(Vector<String> endpoints) {
-System.out.println("IN  createORBEndpoints");
-System.out.println("endpoints>:"+endpoints);
-        // corba.endpoint is obsolete
-        // corba.endpoints with comma separated values are acceptable
-//        String[] endpoints_array = (String[])endpoints.toArray();
-        String[] endpoints_array = new String[0];
-        if (m_config.hasKey("corba.endpoints")!=null) {
-            endpoints_array 
-                = m_config.getProperty("corba.endpoints").split(",");
-            rtcout.println(rtcout.DEBUG, 
-                "corba.endpoints: "+m_config.getProperty("corba.endpoints"));
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("IN  createORBEndpoints");
+            System.out.println("endpoints>:"+endpoints);
         }
-        else if (m_config.hasKey("corba.endpoint")!=null) {
-            endpoints_array
-                = m_config.getProperty("corba.endpoint").split(",");
-            rtcout.println(rtcout.DEBUG, 
-                "corba.endpoint: "+m_config.getProperty("corba.endpoint"));
-        }
-System.out.println("endpoints_array.length>:"+endpoints_array.length);
-        for(int ic=0;ic<endpoints_array.length;++ic){
-System.out.println("endpoints_array[ic]>:"+endpoints_array[ic]);
-            endpoints.add(endpoints_array[ic]);
-        }
-System.out.println("endpoints>:"+endpoints);
         // If this process has master manager,
         // master manager's endpoint inserted at the top of endpoints
         rtcout.println(rtcout.DEBUG, 
@@ -1362,12 +1355,16 @@ System.out.println("endpoints>:"+endpoints);
         if(StringUtil.toBool(m_config.getProperty("manager.is_master"), 
                                                         "YES", "NO", false)){
             String  mm = m_config.getProperty("corba.master_manager", ":2810");
-System.out.println("mm>:"+mm);
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("mm>:"+mm);
+            }
             String[] mmm = mm.split(":");
-System.out.println("mmm.length>:"+mmm.length);
-for(int ic=0;ic<mmm.length;++ic){
-System.out.println("mmm[ic]>:"+mmm[ic]);
-}
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("mmm.length>:"+mmm.length);
+                for(int ic=0;ic<mmm.length;++ic){
+                    System.out.println("mmm[ic]>:"+mmm[ic]);
+                } 
+            }
             if (mmm.length == 2) {
                 endpoints.add(0, ":" + mmm[1]);
             }
@@ -1375,8 +1372,10 @@ System.out.println("mmm[ic]>:"+mmm[ic]);
                 endpoints.add(0, ":2810");
             }
         }
-System.out.println("endpoints>:"+endpoints);
-System.out.println("OUT createORBEndpoints");
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("endpoints>:"+endpoints);
+            System.out.println("OUT createORBEndpoints");
+        }
     }
 
     /**
@@ -1500,6 +1499,16 @@ System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
 
         //Registers Initializers.
         result.put("org.omg.PortableInterceptor.ORBInitializerClass.jp.go.aist.rtm.RTC.InterceptorInitializer","");
+
+        //This property is subject to change in future releases
+        if (StringUtil.toBool(m_config.getProperty("manager.is_master"), 
+                                                    "YES", "NO", true)) {
+            String mm = m_config.getProperty("corba.master_manager", 
+                                            "localhost:2810");
+            String portNumber[] = mm.split(":");
+            result.put("com.sun.CORBA.POA.ORBPersistentServerPort",
+                                                            portNumber[1]);
+        }
 
         //Parses "corba.endpoint".
         String endpoint = m_config.getProperty("corba.endpoint");
@@ -1868,9 +1877,13 @@ System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
     }
     
     /**
-     * <p> initManagerServant </p>
+     * {@.ja ManagerServant の初期化}
+     * {@.en ManagerServant initialization}
      *
-     * @return boolean
+     * <p>
+     * @return 
+     *     {@.ja 初期化処理実行結果(初期化成功:true、初期化失敗:false)}
+     *     {@.en Initialization result (Successful:true, Failed:false)}
      *
      */
     protected boolean initManagerServant() {
@@ -1891,15 +1904,30 @@ System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
             return false;
         }
 
+/*
+       try{
+            //
+            getPOA().activate_object(m_mgrservant);
+            com.sun.corba.se.impl.orb.ORBImpl orb 
+                            = (com.sun.corba.se.impl.orb.ORBImpl)getORB();
+            orb.register_initial_reference( 
+                        "INSPOA", getPOA().servant_to_reference(m_mgrservant) );
+        }
+        catch(Exception ex){
+            rtcout.println(rtcout.ERROR, "Error in INS Manager setup :"+ex);
+        }
+*/
+
         Properties prop = (m_config.getNode("manager"));
         String[] names=prop.getProperty("naming_formats").split(",");
 
         for (int i=0; i < names.length; ++i) {
             String mgr_name = formatString(names[i], prop);
             m_namingManager.bindObject(mgr_name, m_mgrservant);
-          }
+        }
 
-        File otherref = new File(m_config.getProperty("manager.refstring_path"));
+        File otherref 
+            = new File(m_config.getProperty("manager.refstring_path"));
         if (!otherref.exists()) {
             try {
                 FileWriter reffile = new FileWriter(otherref);
