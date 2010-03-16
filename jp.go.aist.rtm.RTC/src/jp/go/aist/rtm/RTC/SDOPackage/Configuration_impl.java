@@ -498,19 +498,6 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] ConfigurationSet を設定します。<br />
-     *
-     * このオペレーションは指定された id の ConfigurationSet を更新します。</p>
-     *
-     * @param configuration_set 変更する ConfigurationSet そのもの。
-     * @return boolean 
-     *         
-     *         
-     * @exception InvalidParameter config_id が null か ConfigurationSet
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
-     */
-    /**
      * {@.ja [CORBA interface] ConfigurationSet をセットする}
      * {@.en [CORBA interface] Set ConfigurationSet}
      *
@@ -519,9 +506,6 @@ public class Configuration_impl extends ConfigurationPOA {
      * {@.en This operation modifies the specified ConfigurationSet of an SDO.
      * Note: The number of parameters differs between spec and IDL!!}
      * </p>
-     * @param config_id 
-     *   {@.ja 変更する ConfigurationSet の ID。}
-     *   {@.en config_id The ID of ConfigurationSet to be modified.}
      * @param configuration_set 
      *   {@.ja 変更する ConfigurationSet そのもの。}
      *   {@.en configuration_set ConfigurationSet to be replaced.}

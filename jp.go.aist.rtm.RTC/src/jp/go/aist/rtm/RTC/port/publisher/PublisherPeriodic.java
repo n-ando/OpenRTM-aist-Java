@@ -534,9 +534,9 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * @param sec 
      *   {@.ja タイムアウト時間}
      *   {@.en Timeout time in unit seconds}
-     * @param nsec 
+     * @param usec 
      *   {@.ja タイムアウト時間}
-     *   {@.en Timeout time in unit nano-seconds}
+     *   {@.en Timeout time in unit micro-seconds}
      *
      * @return 
      *   {@.ja PORT_OK             正常終了

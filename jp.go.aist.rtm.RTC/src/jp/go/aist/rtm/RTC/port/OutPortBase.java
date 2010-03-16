@@ -582,7 +582,7 @@ public abstract class OutPortBase extends PortBase {
      * </ul>}
      * </p>
      *
-     * @param cporf 
+     * @param cprof 
      *   {@.ja 接続に関するプロファイル情報}
      *   {@.en The connection profile information}
      *

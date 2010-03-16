@@ -515,9 +515,9 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @param sec 
      *   {@.ja タイムアウト時間}
      *   {@.en Timeout time in unit seconds}
-     * @param nsec 
+     * @param usec 
      *   {@.ja タイムアウト時間}
-     *   {@.en Timeout time in unit nano-seconds}
+     *   {@.en Timeout time in unit micor-seconds}
      *
      * @return 
      *   {@.ja PORT_OK             正常終了
