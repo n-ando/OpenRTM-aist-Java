@@ -128,7 +128,8 @@ public class ManagerServant extends ManagerPOA {
             com.sun.corba.se.impl.orb.ORBImpl orb 
                         = (com.sun.corba.se.impl.orb.ORBImpl)m_mgr.getORB();
             orb.register_initial_reference( 
-                        "INSPOA", m_mgr.getPOA().servant_to_reference(this) );
+//                        "INSPOA", m_mgr.getPOA().servant_to_reference(this) );
+            "corbaloc:iiop:1.2@localhost:2810/manager", m_mgr.getPOA().servant_to_reference(this) );
             if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    register_initial_reference");
             } 
@@ -145,7 +146,7 @@ public class ManagerServant extends ManagerPOA {
                     System.out.println("    obj is not null.>:"+obj);
                 }
             }
-            this.m_objref = ManagerHelper.narrow(obj);
+            this.m_objref = RTM.ManagerHelper.narrow(obj);
             if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    ManagerHelper.narrow");
             } 
@@ -186,8 +187,11 @@ public class ManagerServant extends ManagerPOA {
     }
 
     /**
-     * <p> Find the reference of Manager.  </p>
-     * @return Manager reference
+     * {@.ja Managerのリファレンスを検索する。}
+     * {@.en Find the reference of Manager.}
+     * return 
+     *   {@.ja Managerのリファレンス}
+     *   {@.en Manager reference}
      */
     public RTM.Manager findManager(final String host_port) {
         rtcout.println(rtcout.TRACE, "findManager(host_port = "+host_port+")");
