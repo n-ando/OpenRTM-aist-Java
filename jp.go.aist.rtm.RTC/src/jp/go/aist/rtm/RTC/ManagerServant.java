@@ -53,6 +53,26 @@ public class ManagerServant extends ManagerPOA {
             // this is master manager
             rtcout.println(rtcout.TRACE, "This manager is master.");
 
+            try{
+                //Registers the reference
+                m_mgr.getPOA().activate_object( this );
+                if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                    System.out.println("    activate_object");
+                } 
+                com.sun.corba.se.impl.orb.ORBImpl orb 
+                        = (com.sun.corba.se.impl.orb.ORBImpl)m_mgr.getORB();
+                orb.register_initial_reference( 
+                        "manager", m_mgr.getPOA().servant_to_reference(this) );
+                if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                    System.out.println("    register_initial_reference");
+                } 
+            }
+            catch(Exception ex){
+                 rtcout.println(rtcout.WARN, 
+                           "Manager CORBA servant creation failed."+ex);
+                 return ;
+            }
+
             if (!createINSManager()) {
                 rtcout.println(rtcout.WARN, 
                     "Manager CORBA servant creation failed.");
@@ -65,6 +85,9 @@ public class ManagerServant extends ManagerPOA {
             return;
         }
         else { // manager is slave
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("ManagerServant() is_master is NO.");
+            }
             rtcout.println(rtcout.TRACE, "This manager is slave.");
             try {
                 RTM.Manager owner;
@@ -116,10 +139,12 @@ public class ManagerServant extends ManagerPOA {
      */
     public boolean createINSManager() {
 
+        rtcout.println(rtcout.DEBUG, "createINSManager()");
         if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
             System.out.println("IN  createINSManager()");
         }
         try{
+/*
             //Registers the reference
             m_mgr.getPOA().activate_object( this );
             if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
@@ -128,15 +153,17 @@ public class ManagerServant extends ManagerPOA {
             com.sun.corba.se.impl.orb.ORBImpl orb 
                         = (com.sun.corba.se.impl.orb.ORBImpl)m_mgr.getORB();
             orb.register_initial_reference( 
-                        "INSPOA", m_mgr.getPOA().servant_to_reference(this) );
-//            "corbaloc:iiop:1.2@localhost:2810/manager", m_mgr.getPOA().servant_to_reference(this) );
+                        "manager", m_mgr.getPOA().servant_to_reference(this) );
             if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    register_initial_reference");
             } 
+*/
 
             //
+            rtcout.println(rtcout.DEBUG, "gets object.");
             org.omg.CORBA.Object obj 
-                    = m_mgr.getORB().resolve_initial_references("INSPOA");
+                    = m_mgr.getORB().resolve_initial_references("manager");
+            rtcout.println(rtcout.DEBUG, "---010---");
             if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    resolve_initial_references");
                 if(obj==null){
@@ -146,7 +173,9 @@ public class ManagerServant extends ManagerPOA {
                     System.out.println("    obj is not null.>:"+obj);
                 }
             }
+            rtcout.println(rtcout.DEBUG, "---020---");
             this.m_objref = RTM.ManagerHelper.narrow(obj);
+            rtcout.println(rtcout.DEBUG, "---030---");
             if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 System.out.println("    ManagerHelper.narrow");
             } 
@@ -177,9 +206,12 @@ public class ManagerServant extends ManagerPOA {
 */
         }
         catch(Exception ex){
-             System.err.println( "Error in setup : " + ex );
+             rtcout.println(rtcout.WARN, 
+                       "Manager CORBA servant creation failed."+ex);
+             return false;
         }
 
+        rtcout.println(rtcout.DEBUG, "---040---");
         if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
             System.out.println("OUT createINSManager()");
         }
@@ -205,8 +237,21 @@ public class ManagerServant extends ManagerPOA {
             ORB orb = ORBUtil.getOrb();
             Object mobj;
             mobj = orb.string_to_object(mgrloc);
+//            mobj = orb.resolve_initial_references("INSPOA");
+//            mobj = m_mgr.getORB().resolve_initial_references("manager");
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                if(mobj==null){
+                    System.out.println("    mobj is null.");
+                }
+                else{
+                    System.out.println("    mobj is not null.>:"+mobj);
+                }
+            }
             RTM.Manager mgr 
                 = RTM.ManagerHelper.narrow(mobj);
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    ManagerHelper.narrow");
+            }
 
 
             String ior;
@@ -218,11 +263,17 @@ public class ManagerServant extends ManagerPOA {
         }
         catch(org.omg.CORBA.SystemException ex) {
             rtcout.println(rtcout.DEBUG, 
-                "CORBA SystemException caught (CORBA."+ex+")");
+                "CORBA SystemException caught (CORBA."+ex.toString()+")");
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    CORBA SystemException caught >:"+ex);
+            }
             return (RTM.Manager)null;
         }
         catch (Exception ex) {
             rtcout.println(rtcout.DEBUG, "Unknown exception caught.");
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    Unknown exception caught.");
+            }
             return (RTM.Manager)null;
         }
 

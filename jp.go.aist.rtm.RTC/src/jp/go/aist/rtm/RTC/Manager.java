@@ -1050,27 +1050,101 @@ public class Manager {
 */
     
     /**
-     * <p>Managerに登録されているRTコンポーネントを削除します。</p>
-     * <p>※未実装</p>
+     * {@.ja  Manager に登録されているRTコンポーネントを削除する}
+     * {@.en Unregister RT-Components that have been registered to Manager}
      *
-     * @param instanceName 削除対象のRTコンポーネント名 
+     * <p>
+     * {@.ja マネージャに登録されているRTコンポーネントを削除する。
+     * 指定されたRTコンポーネントをネーミングサービスから削除し、
+     * RTコンポーネント自体を終了させるとともに、インスタンスを解放する。}
+     * {@.en Unregister RT-Components that have been registered to manager
+     * Remove specified RT-Component from naming service, terminate itself
+     * and release its instances.}
+     * </p>
+     *
+     * @param comp 
+     *   {@.ja 削除対象RTコンポーネントのインスタンス}
+     *   {@.en Target RT-Component's instances for the unregistration}
+     *
+     */
+    public void deleteComponent(RTObject_impl comp) {
+        rtcout.println(rtcout.TRACE, 
+                "Manager.deleteComponent(RTObject)");
+        // cleanup from manager's table, and naming serivce
+        unregisterComponent(comp);
+
+        // find factory
+        Properties comp_id = comp.getProperties();
+	FactoryBase factory 
+            = (FactoryBase)m_factory.find(
+                  new FactoryPredicate(
+                      comp.getProperties().getProperty("implementation_id")));
+        if (factory == null) {
+            rtcout.println(rtcout.DEBUG, 
+                "Factory not found: "+comp_id.getProperty("implementation_id"));
+            return;
+        }
+        else {
+            rtcout.println(rtcout.DEBUG, 
+                "Factory not found: "+comp_id.getProperty("implementation_id"));
+            factory.destroy(comp);
+        } 
+        String shutdown_on_nortcs 
+            = m_config.getProperty("manager.shutdown_on_nortcs") ;
+        String is_master  = m_config.getProperty("manager.is_master");
+        if (StringUtil.toBool(shutdown_on_nortcs, "YES", "NO", true)
+            && !StringUtil.toBool(is_master, "YES", "NO", false)) {
+            Vector<RTObject_impl> comps = getComponents();
+            if (comps.size() == 0) {
+                shutdown();
+            }
+         }
+    } 
+
+    /**
+     * {@.ja Manager に登録されているRTコンポーネントを削除する}
+     * {@.en Unregister RT-Components that have been registered to Manager}
+     *
+     * <p>
+     * {@.ja マネージャに登録されているRTコンポーネントを削除する。
+     * 指定されたRTコンポーネントをネーミングサービスから削除し、
+     * RTコンポーネント自体を終了させるとともに、インスタンスを解放する。}
+     * {@.en Unregister RT-Components that have been registered to manager
+     * Remove specified RT-Component from naming service, terminate itself
+     * and release its instances.}
+     * </p>
+     *
+     * @param instanceName
+     *     {@.ja 削除対象RTコンポーネントのインスタンス名}
+     *     {@.en Target RT-Component's instances for the unregistration}
      */
     public void deleteComponent(final String instanceName) {
         
-        rtcout.println(rtcout.TRACE, "Manager.deleteComponent(" + instanceName + ")");
+        rtcout.println(rtcout.TRACE, 
+                "Manager.deleteComponent(" + instanceName + ")");
         RTObject_impl comp = null;
         comp = m_compManager.find(new InstanceName(instanceName));
         if (comp == null) {
+            rtcout.println(rtcout.TRACE, 
+                "RTC "+instanceName+" was not found in manager.");
             return;
         }
-
+        deleteComponent(comp);
+/* zxc
         Properties comp_id = new Properties();
-        comp_id.setProperty("vendor", comp.getProperties().getProperty("vendor"));
-        comp_id.setProperty("category", comp.getProperties().getProperty("category"));
-        comp_id.setProperty("implementation_id", comp.getProperties().getProperty("implementation_id"));
-        comp_id.setProperty("version", comp.getProperties().getProperty("version"));
+        comp_id.setProperty("vendor", 
+                        comp.getProperties().getProperty("vendor"));
+        comp_id.setProperty("category", 
+                        comp.getProperties().getProperty("category"));
+        comp_id.setProperty("implementation_id", 
+                        comp.getProperties().getProperty("implementation_id"));
+        comp_id.setProperty("version", 
+                        comp.getProperties().getProperty("version"));
 
-	FactoryBase factory = (FactoryBase)m_factory.find(new FactoryPredicate(comp.getProperties().getProperty("implementation_id")));
+	FactoryBase factory 
+            = (FactoryBase)m_factory.find(
+                  new FactoryPredicate(
+                      comp.getProperties().getProperty("implementation_id")));
 
         ReturnCode_t ret = comp.exit();
 
@@ -1080,6 +1154,7 @@ public class Manager {
         else {
             factory.destroy(comp);
         }
+*/
     }
     
     /**
@@ -1320,6 +1395,20 @@ public class Manager {
         rtcout.println(rtcout.DEBUG, dumpString);
 
         Vector<String> endpoints = new Vector<String>();
+        
+        //Sets ORBInitRef if manager is slave.
+        if (!StringUtil.toBool(m_config.getProperty("manager.is_master"), 
+                                                    "YES", "NO", false)) {
+            //This property is subject to change in future releases
+            String mm = m_config.getProperty("corba.master_manager", 
+                                            "localhost:2810");
+            Properties config = getConfig();
+            String name = config.getProperty("manager.name");
+            String mgrloc = "corbaloc:iiop:1.2@"+mm+"/"+name;
+            rtcout.println(rtcout.DEBUG, "corbaloc: "+mgrloc);
+            opt = opt + " -ORBInitRef manager="  + mgrloc +" ";
+     
+        }
 /*
         createORBEndpoints(endpoints);
 System.out.println("createORBOptions.endpoints>:"+endpoints);
@@ -1352,6 +1441,7 @@ System.out.println("createORBOptions.endpoints>:"+endpoints);
         rtcout.println(rtcout.DEBUG, 
             "manager.is_master: "+m_config.getProperty("manager.is_master"));
 
+/*
         if(StringUtil.toBool(m_config.getProperty("manager.is_master"), 
                                                         "YES", "NO", false)){
             String  mm = m_config.getProperty("corba.master_manager", ":2810");
@@ -1372,6 +1462,7 @@ System.out.println("createORBOptions.endpoints>:"+endpoints);
                 endpoints.add(0, ":2810");
             }
         }
+*/
         if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
             System.out.println("endpoints>:"+endpoints);
             System.out.println("OUT createORBEndpoints");
@@ -1500,11 +1591,12 @@ System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
         //Registers Initializers.
         result.put("org.omg.PortableInterceptor.ORBInitializerClass.jp.go.aist.rtm.RTC.InterceptorInitializer","");
 
-        //This property is subject to change in future releases
         if (StringUtil.toBool(m_config.getProperty("manager.is_master"), 
                                                     "YES", "NO", true)) {
+            //This property is subject to change in future releases
             String mm = m_config.getProperty("corba.master_manager", 
                                             "localhost:2810");
+
             String portNumber[] = mm.split(":");
             result.put("com.sun.CORBA.POA.ORBPersistentServerPort",
                                                             portNumber[1]);
@@ -1904,26 +1996,19 @@ System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
             return false;
         }
 
-/*
-       try{
-            //
-            getPOA().activate_object(m_mgrservant);
-            com.sun.corba.se.impl.orb.ORBImpl orb 
-                            = (com.sun.corba.se.impl.orb.ORBImpl)getORB();
-            orb.register_initial_reference( 
-                        "INSPOA", getPOA().servant_to_reference(m_mgrservant) );
-        }
-        catch(Exception ex){
-            rtcout.println(rtcout.ERROR, "Error in INS Manager setup :"+ex);
-        }
-*/
 
         Properties prop = (m_config.getNode("manager"));
         String[] names=prop.getProperty("naming_formats").split(",");
 
-        for (int i=0; i < names.length; ++i) {
-            String mgr_name = formatString(names[i], prop);
-            m_namingManager.bindObject(mgr_name, m_mgrservant);
+        if (StringUtil.toBool(prop.getProperty("is_master"), 
+                                                    "YES", "NO", true)) {
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("bindManagerServant() is_master is YES.");
+            }
+            for (int i=0; i < names.length; ++i) {
+                String mgr_name = formatString(names[i], prop);
+                m_namingManager.bindObject(mgr_name, m_mgrservant);
+            }
         }
 
         File otherref 
@@ -1931,7 +2016,8 @@ System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
         if (!otherref.exists()) {
             try {
                 FileWriter reffile = new FileWriter(otherref);
-                reffile.write(m_pORB.object_to_string(m_mgrservant.getObjRef()));
+                reffile.write(
+                        m_pORB.object_to_string(m_mgrservant.getObjRef()));
                 reffile.close();
             } catch (IOException e) {
             }
