@@ -146,7 +146,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      * @param sec 
      *   {@.ja タイムアウト時間}
      *   {@.en Timeout time in unit seconds}
-     * @param nsec 
+     * @param usec 
      *   {@.ja タイムアウト時間}
      *   {@.en Timeout time in unit micro-seconds}
      *

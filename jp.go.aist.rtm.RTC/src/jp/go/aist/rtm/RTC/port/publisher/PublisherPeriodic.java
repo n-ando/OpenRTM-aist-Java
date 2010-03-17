@@ -282,7 +282,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * </ul>}
      *
      * </p>
-     * @param property 
+     * @param prop 
      *   {@.ja 本Publisherの駆動制御情報を設定したPropertyオブジェクト}
      *   {@.en Property objects that includes the control information
      *                 of this Publisher}

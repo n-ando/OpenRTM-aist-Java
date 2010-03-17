@@ -419,7 +419,7 @@ public abstract class OutPortBase extends PortBase {
      * {@.en Publish interface information}
      *
      * <p>
-     * {@ja このオペレーションは、notify_connect() 処理シーケンスの始めにコール
+     * {@.ja このオペレーションは、notify_connect() 処理シーケンスの始めにコール
      * される純粋仮想関数である。
      * notify_connect() では、
      * <ul>
