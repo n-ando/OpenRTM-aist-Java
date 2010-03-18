@@ -4,6 +4,7 @@ import jp.go.aist.rtm.RTC.util.StringHolder;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
+import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.BindingIteratorHolder;
 import org.omg.CosNaming.BindingListHolder;
 import org.omg.CosNaming.BindingType;
@@ -43,9 +44,13 @@ import java.util.Properties;
 public class CorbaNaming {
 
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Consructor}
      *
-     * @param orb　ORB
+     * @param orb 
+     *   {@.ja ORB}
+     *   {@.en ORB}
+     *
      */
     public CorbaNaming(ORB orb){
         m_varORB = orb;
@@ -63,12 +68,17 @@ public class CorbaNaming {
     }
 
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Consructor}
      *
-     * @param orb　ORB
-     * @param name_server　ネーミングサービス名
-     * 
+     * @param orb 
+     *   {@.ja ORB}
+     *   {@.en ORB}
+     * @param name_server 
+     *   {@.ja ネームサーバの名称}
+     *   {@.en Name of the name server}
      * @exception Exception
+     *
      */
     public CorbaNaming(ORB orb, final String name_server) throws Exception {
         m_varORB = orb;
@@ -95,9 +105,17 @@ rtcout.println(rtcout.TRACE, "CorbaNaming.CorbaNaming(" +name_server +")");//zxc
     }
     
     /**
-     * <p>ネーミングサービスを初期化します。</p>
-     *
-     * @param name_server　ネーミングサービス名称
+     * {@.ja ネーミングサービスの初期化}
+     * {@.en Initialize the Naming Service}
+     * 
+     * <p>
+     * {@.ja 指定されたネームサーバ上のネーミングサービスを初期化します。}
+     * {@.en Initialize the Naming Service on the specified name server.}
+     * </p>
+     * 
+     * @param name_server 
+     *   {@.ja ネームサーバの名称}
+     *   {@.en Name of the name server}
      * 
      * @exception Exception
      */
@@ -109,6 +127,18 @@ rtcout.println(rtcout.TRACE, "in  CorbaNaming.init(" +name_server +")");//zxc
         m_rootContext = NamingContextExtHelper.narrow(obj);
         if (m_rootContext==null) throw new Exception("bad_alloc()");
 rtcout.println(rtcout.TRACE, "out CorbaNaming.init(" +name_server +")");//zxc
+    }
+
+    public boolean isAlive() {
+        try {
+            if (m_rootContext._non_existent()) { 
+                return false; 
+            }
+            return true;
+        }
+        catch (Exception ex) {
+            return false;
+        }
     }
 
     /**
@@ -126,52 +156,101 @@ rtcout.println(rtcout.TRACE, "out CorbaNaming.init(" +name_server +")");//zxc
      * @exception AlreadyBound name <c_n> の Object がすでにバインドされている。
      */
     public void bind(final NameComponent[] name, Object obj)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         this.bind(name, obj, true);
     }
+
     /**
-     * <p>Object を bind します。
+     * {@.ja Object を bind する}
+     * {@.en Bind object on specified name component position}
+     * <p>
+     * {@.ja CosNaming::bind() とほぼ同等の働きをするが、
+     * 常に与えられたネームサーバの
+     * ルートコンテキストに対してbind()が呼び出される点が異なる。
      *
-     * NamingContextOperations.bind() とほぼ同等の働きをするが、常に与えられたネームサーバの
-     * ルートコンテキストに対してbind()が呼び出される点が異なります。
-     *
-     * Name <name> と Object <obj> を当該 NamingContext 上にバインドします。
+     * Name <name> と Object <obj> を当該 NamingContext 上にバインドする。
      * c_n が n 番目の NameComponent をあらわすとすると、
-     * name が n 個の NameComponent から成るとき、以下のように扱われます。
+     * name が n 個の NameComponent から成るとき、以下のように扱われる。
      *
-     * cxt->bind(<c_1, c_2, ... c_n>, obj) は以下の操作と同等です。
+     * cxt->bind(<c_1, c_2, ... c_n>, obj) は以下の操作と同等である。
      * cxt->resolve(<c_1, ... c_(n-1)>)->bind(<c_n>, obj)
      *
      * すなわち、1番目からn-1番目のコンテキストを解決し、n-1番目のコンテキスト
-     * 上に name <n> として　obj を bind します。
+     * 上に name <n> として　obj を bind する。
      * 名前解決に参加する <c_1, ... c_(n-1)> の NemingContext は、
-     * bindContext() や rebindContext() で既にバインド済みでなければなりません。
+     * bindContext() や rebindContext() で既にバインド済みでなければならない。
      * もし <c_1, ... c_(n-1)> の NamingContext が存在しない場合には、
-     * NotFound 例外が発生します。
+     * NotFound 例外が発生する。
      *
      * ただし、強制バインドフラグ force が true の時は、<c_1, ... c_(n-1)>
      * が存在しない場合にも、再帰的にコンテキストをバインドしながら、
-     * 最終的に obj を名前 name <c_n> にバインドします。
+     * 最終的に obj を名前 name <c_n> にバインドする。
      *
      * いずれの場合でも、n-1番目のコンテキスト上に name<n> のオブジェクト
      * (Object あるいは コンテキスト) がバインドされていれば
-     * AlreadyBound 例外が発生します。
+     * AlreadyBound 例外が発生する。}
+     * {@.en Almost the same operation as CosNaming::bind(), 
+     * but there is a difference 
+     * that bind() is invoked for the root context of the given name server.
      *
-     * @param name オブジェクトに付ける名前の NameComponent
-     * @param obj 関連付けられる Object
-     * @param force trueの場合、途中のコンテキストを強制的にバインドする
+     * Bind between Name <name> and Object <obj> on this NamingContext.
+     * If c_n indicates the n-th of NameComponent,
+     * when name consists of n pieces of NameComponent, it is handled as 
+     * follows. 
      *
-     * @exception NotFound 途中の <c_1, c_2, ..., c_(n-1)> が存在しない。
-     * @exception CannotProceed 何らかの理由で処理を継続できない。
-     * @exception InvalidName 引数 name の名前が不正。
-     * @exception AlreadyBound name <c_n> の Object がすでにバインドされている。
+     * cxt->bind(<c_1, c_2, ... c_n>, obj) is the same as the following
+     * operation.
+     * cxt->resolve(<c_1, ... c_(n-1)>)->bind(<c_n>, obj)
+     *
+     * In other word, resolve from the first to the (n-1)th context and bind 
+     * obj as name<n> on the (n-1)th context.
+     * NemingContext of <c_1, ... c_(n-1)> for resolving name must be already 
+     * bound in bindContext() or rebindContext().
+     * If NamingContext of <c_1, ... c_(n-1)> does not exist, NotFound excption
+     * will occur.
+     *
+     * However, when flag of forced bind is true, 
+     * even if <c_1, ... c_(n-1)> does
+     * not exist, finally obj will be bound to name name <c_n> by binding to 
+     * the context recursively.
+     *
+     * Even in any case, if the object of name<n> (Object or context) is bound
+     * on the (n-1)th context, AlreadyBound exception will occur.}
+     * </p>
+     *
+     * @param name 
+     *   {@.ja オブジェクトに付ける名前の NameComponent}
+     * @param name NameComponent of name applied to object
+     * @param obj 
+     *   {@.ja 関連付けられる Object}
+     *   {@.en Object that is associated}
+     * @param force 
+     *   {@.ja trueの場合、途中のコンテキストを強制的にバインドする
+     *              (デフォルト値:true)}
+     *   {@.en force If true, the intermediate context is bound forcibly.
+     *              (The default value:true)}
+     *
+     * @exception NotFound 
+     *   {@.ja 途中の <c_1, c_2, ..., c_(n-1)> が存在しない。}
+     *   {@.en There is not <c_1, c_2, ..., c_(n-1)>.}
+     * @exception CannotProceed 
+     *   {@.ja 何らかの理由で処理を継続できない。}
+     *   {@.en Processing cannot be continued for some reasons.}
+     * @exception InvalidName 
+     *   {@.ja 引数 name の名前が不正。}
+     *   {@.en The argument 'name' is invalid.}
+     * @exception AlreadyBound 
+     *   {@.ja name <c_n> の Object がすでにバインドされている。}
+     *   {@.en The object of name<c_n> is already bound.}
      *
      */
-    public void bind(final NameComponent[] name, Object obj, final boolean force)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    public void bind(final NameComponent[] name, 
+                            Object obj, final boolean force)
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         try{
             if( isNamingContext(obj) ) {
-                m_rootContext.bind_context(name, NamingContextExtHelper.narrow(obj));
+                m_rootContext.bind_context(name, 
+                                        NamingContextExtHelper.narrow(obj));
             } else {
                 m_rootContext.bind(name, obj);
             }
@@ -206,27 +285,51 @@ rtcout.println(rtcout.TRACE, "out CorbaNaming.init(" +name_server +")");//zxc
      *
      */
     public void bindByString(final String string_name, Object obj)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         this.bindByString(string_name, obj, true);
     }
+
     /**
-    * <p>文字列表現の Object を bind します。
-    *
-    * Object を bind する際に与える名前が文字列表現であること以外は、bind()
-    * と同じです。bind(toName(string_name), obj) と等価。</p>
-    *
-    * @param string_name オブジェクトに付ける名前の文字列表現
-    * @param obj 関連付けられるオブジェクト
-    * @param force trueの場合、途中のコンテキストを強制的にバインドする
-    *
-    * @exception NotFound 途中の <c_1, c_2, ..., c_(n-1)> が存在しない。
-    * @exception CannotProceed 何らかの理由で処理を継続できない。
-    * @exception InvalidName 引数 string_name の名前が不正。
-    * @exception AlreadyBound string_name の Object がすでにバインドされている。
-    *
-    */
-    public void bindByString(final String string_name, Object obj, final boolean force)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+     * {@.ja Object を bind する}
+     * {@.en Bind object on specified string name position}
+     *
+     * <p>
+     * {@.ja Object を bind する際に与える名前が文字列表現であること以外は、
+     * bind() と同じである。bind(toName(string_name), obj) と等価。}
+     * {@.en This is the same as bind() except as the given name is string 
+     * representation when Object is bound. 
+     * bind(toName(string_name),obj) is the same.}
+     * </p>
+     *
+     * @param string_name 
+     *   {@.ja オブジェクトに付ける名前の文字列表現}
+     *   {@.en The string representation of name applied to object}
+     * @param obj 
+     *   {@.ja 関連付けられるオブジェクト}
+     *   {@.en Object that is associated}
+     * @param force 
+     *   {@.ja trueの場合、途中のコンテキストを強制的にバインドする
+     *              (デフォルト値:true)}
+     *   {@.enIf true, the intermediate context is bound forcibly.
+     *              (The default value:true)}
+     *
+     * @exception NotFound 
+     *   {@.ja 途中の <c_1, c_2, ..., c_(n-1)> が存在しない。}
+     *   {@.en There is not <c_1, c_2, ..., c_(n-1)>.}
+     * @exception CannotProceed 
+     *   {@.ja 何らかの理由で処理を継続できない。}
+     *   {@.en Processing cannot be continued for some reasons.}
+     * @exception InvalidName 
+     *   {@.ja 引数 name の名前が不正。}
+     *   {@.en The argument 'name' is invalid.}
+     * @exception AlreadyBound 
+     *   {@.ja name <n> の Object がすでにバインドされている。}
+     *   {@.en The object of name<c_n> is already bound.}
+     *
+     */
+    public void bindByString(final String string_name, 
+                                            Object obj, final boolean force)
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         this.bind(toName(string_name), obj, force);
     }
 
@@ -258,8 +361,72 @@ rtcout.println(rtcout.TRACE, "out CorbaNaming.init(" +name_server +")");//zxc
      * @exception AlreadyBound name <c_n> にすでに何らかの object がバインド
      *            されている。
      */
-    public void bindRecursive(NamingContext context,final NameComponent[] name, Object obj)
-        throws CannotProceed, InvalidName, AlreadyBound, NotFound {
+    /**
+     * {@.ja @brief 途中のコンテキストを再帰的に bind しながら Object を 
+     * bind する}
+     * {@.en Bind intermediate context recursively and bind object}
+     *
+     * <p>
+     * {@.ja context で与えられた NamingContext に対して、name で指定された
+     * ネームコンポーネント <c_1, ... c_(n-1)> を NamingContext として
+     * 解決しながら、名前 <c_n> に対して obj を bind する。
+     * もし、<c_1, ... c_(n-1)> に対応する NamingContext がない場合には
+     * 新たな NamingContext をバインドする。
+     *
+     * 最終的に <c_1, c_2, ..., c_(n-1)> に対応する NamingContext が生成
+     * または解決された上で、CosNaming::bind(<c_n>, object) が呼び出される。
+     * このとき、すでにバインディングが存在すれば AlreadyBound例外が発生する。
+     *
+     * 途中のコンテキストを解決する過程で、解決しようとするコンテキストと
+     * 同じ名前の NamingContext ではない Binding が存在する場合、
+     * CannotProceed 例外が発生し処理を中止する。}
+     * {@.en For NamingContext given in context, 
+     * bind obj to name <c_n> with solving
+     * name component <c_1, ... c_(n-1)> specified by name as NamingContext.
+     * Bind new NamingContext when there is no NamingContext corresponding to
+     * c_(n-1) >.
+     *
+     * Finally, NamingContext corresponding to <c_1, c_2, ..., c_(n-1)> 
+     * will be generated, or CosNaming::bind(<c_n>, object) will be invoked
+     * after solving. At this time, if the binding already exists, 
+     * the AlreadyBound exception will occur.
+     *
+     * During process, when Binding that is not NamingContext of the same name
+     * as the context for solving exists, CannotProceed exception will occur
+     * and stop processing.}
+     * </p>
+     *
+     * @param context 
+     *   {@.ja bind を開始する　NamingContext}
+     *   {@.en NamingContext that starts the bind}
+     * @param name 
+     *   {@.ja オブジェクトに付ける名前のネームコンポーネント}
+     *   {@.en NameComponent of name applied to object}
+     * @param obj 
+     *   {@.ja 関連付けられるオブジェクト}
+     *   {@.en Object that is associated}
+     *
+     * @exception CannotProceed 
+     *   {@.ja <c_1, ..., c_(n-1)> に対応する NamingContext 
+     *            のうちひとつが、すでに NamingContext 以外の object にバインド
+     *            されており、処理を継続できない。}
+     *   {@.en Since one of NamingContext corresponding to
+     *                          <c_1, ..., c_(n-1)> is already bound to object
+     *                          other than NamingContext and processing cannot 
+     *                          be continued}
+     * @exception InvalidName 
+     *   {@.ja 名前 name が不正}
+     *   {@.en name 'name' is invalid.}
+     * @exception AlreadyBound 
+     *   {@.ja name <c_n> にすでに何らかの object がバインド
+     *            されている。}
+     *   {@.en The object of name<c_n> is already bound.}
+     *
+     *
+     */
+    public void bindRecursive(NamingContext context,
+                                        final NameComponent[] name, Object obj)
+    throws SystemException, CannotProceed, InvalidName, AlreadyBound, NotFound {
         int len = name.length;
         NamingContext cxt = (NamingContext)context._duplicate();
     
@@ -267,7 +434,8 @@ rtcout.println(rtcout.TRACE, "out CorbaNaming.init(" +name_server +")");//zxc
             if( intIdx==(len-1)) {
                 // this operation may throw AlreadyBound, 
                 if(isNamingContext(obj)) {
-                    cxt.bind_context(subName(name, intIdx, intIdx), NamingContextExtHelper.narrow(obj));
+                    cxt.bind_context(subName(name, intIdx, intIdx), 
+                                        NamingContextExtHelper.narrow(obj));
                 } else {
                     cxt.rebind(subName(name, intIdx, intIdx), obj);
                 }
@@ -290,22 +458,50 @@ rtcout.println(rtcout.TRACE, "out CorbaNaming.init(" +name_server +")");//zxc
      * @param obj 関連付けられるオブジェクト
      */
     public void rebind(final NameComponent[] name, Object obj) 
-        throws NotFound, CannotProceed, InvalidName {
+        throws SystemException, NotFound, CannotProceed, InvalidName {
         rebind(name, obj, true);
     }
+
     /**
-     * <p>Object を rebind します。
+     * {@.ja Object を rebind する}
+     * {@.en Rebind object}
      *
-     * name で指定された Binding がすでに存在する場合を除いて bind() と同じ
-     * です。バインディングがすでに存在する場合には、新しいバインディングに
-     * 置き換えられます。</p>
+     * <p>
+     * {@.ja name で指定された Binding がすでに存在する場合を除いて 
+     * bind() と同じである。
+     * バインディングがすでに存在する場合には、新しいバインディングに
+     * 置き換えられる。}
+     * {@.en This is the same as bind() except as Binding specified by name 
+     * already exists. If the binding already exists, new binding will be 
+     * replaced.}
+     * </p>
      *
-     * @param name オブジェクトに付ける名前の NameComponent
-     * @param obj 関連付けられるオブジェクト
-     * @param force trueの場合、途中のコンテキストを強制的にバインドする
+     * @param name 
+     *   {@.ja オブジェクトに付ける名前の NameComponent}
+     *   {@.en NameComponent of name applied to object}
+     * @param obj 
+     *   {@.ja 関連付けられるオブジェクト}
+     *   {@.en Object that is associated}
+     * @param force 
+     *   {@.ja trueの場合、途中のコンテキストを強制的にバインドする
+     *              (デフォルト値:true)}
+     *   {@.em If true, the intermediate context is bound forcibly.
+     *              (The default value:true)}
+     *
+     * @exception NotFound 
+     *   {@.ja 途中の <c_1, c_2, ..., c_(n-1)> が存在しない。}
+     *   {@.en There is not <c_1, c_2, ..., c_(n-1)>.}
+     * @exception CannotProceed 
+     *   {@.ja 何らかの理由で処理を継続できない。}
+     *   {@.en Processing cannot be continued for some reasons.}
+     * @exception InvalidName 
+     *   {@.ja 名前 name が不正}
+     *   {@.en Name 'name' is invalid.}
+     *
      */
-    public void rebind(final NameComponent[] name, Object obj, final boolean force)
-        throws NotFound, CannotProceed, InvalidName {
+    public void rebind(final NameComponent[] name, 
+                        Object obj, final boolean force)
+        throws SystemException, NotFound, CannotProceed, InvalidName {
 rtcout.println(rtcout.TRACE, "in  CorbaNaming.rebind(" +name +"," +java.lang.Boolean.toString(force) +")");//zxc
 
 
@@ -346,49 +542,89 @@ rtcout.println(rtcout.TRACE, "out  CorbaNaming.rebind()");//zxc
      * @exception InvalidName 引数 string_name の名前が不正。
      */
     public void rebindByString(final String string_name, Object obj)
-        throws NotFound, CannotProceed, InvalidName {
+        throws SystemException, NotFound, CannotProceed, InvalidName {
             rebindByString(string_name, obj, true);
     }
     /**
-     * <p>文字列表現の Object を rebind します。
+     * {@.ja Object を rebind する}
+     * {@.en @brief Rebind Object}
      *
-     * Object を rebind する際に与える名前が文字列表現であること以外は rebind()
-     * と同じです。rebind(toName(string_name), obj) と等価。</p>
+     * <p>
+     * {@.ja Object を rebind する際に与える名前が文字列表現であること以外は 
+     * {@.en rebind()と同じである。rebind(toName(string_name), obj) と等価。}
+     * This is the same as rebind() except as the given name is string
+     * representation when object is rebound. rebind(toName(string_name), obj) 
+     * is the same.}
+     * </p>
      *
-     * @param string_name オブジェクトに付ける名前の文字列表現
-     * @param obj 関連付けられるオブジェクト
-     * @param force trueの場合、途中のコンテキストを強制的にバインドする
+     * @param string_name 
+     *   {@.ja オブジェクトに付ける名前の文字列表現}
+     * @param string_name NameComponent of name applied to object
+     * @param obj 
+     *   {@.ja 関連付けられるオブジェクト}
+     * @param obj Object that is associated
+     * @param force 
+     *   {@.ja trueの場合、途中のコンテキストを強制的にバインドする
+     *              (デフォルト値:true)}
+     *   {@.en If true, the intermediate context is bound forcibly.
+     *              (The default value:true)}
      *
-     * @exception NotFound 途中の <c_1, c_2, ..., c_(n-1)> が存在しない。
-     * @exception CannotProceed 何らかの理由で処理を継続できない。
-     * @exception InvalidName 引数 string_name の名前が不正。
+     * @exception NotFound 
+     *   {@.ja 途中の <c_1, c_2, ..., c_(n-1)> が存在しない。}
+     *   {@.en There is not <c_1, c_2, ..., c_(n-1)>.}
+     * @exception CannotProceed 
+     *   {@.ja 何らかの理由で処理を継続できない。}
+     *   {@.en Processing cannot be continued for some reasons.}
+     * @exception InvalidName 
+     *   {@.ja 引数 name の名前が不正。}
+     *   {@.en Name The argument 'name' is invalid.}
+     *
      */
-    public void rebindByString(final String string_name, Object obj, final boolean force)
-        throws NotFound, CannotProceed, InvalidName {
+    public void rebindByString(final String string_name, 
+                            Object obj, final boolean force)
+        throws SystemException, NotFound, CannotProceed, InvalidName {
 rtcout.println(rtcout.TRACE, "in  CorbaNaming.rebindByString(" + string_name + ")");//zxc
             rebind(toName(string_name), obj, force);
 rtcout.println(rtcout.TRACE, "out CorbaNaming.rebindByString(" + string_name + ")");//zxc
     }
 
     /**
-     * <p>途中のコンテキストを bind しながら Object を rebind します。
+     * {@.ja 途中のコンテキストを bind しながら Object を rebind する}
+     * {@.en Bind intermediate context recursively and rebind object}
      *
-     * name <c_n> で指定された NamingContext もしくは Object がすでに存在する
-     * 場合を除いて bindRecursive() と同じです。
+     * <p>
+     * {@.ja name <c_n> で指定された NamingContext もしくは Object が
+     * すでに存在する場合を除いて bindRecursive() と同じである。
      *
      * name <c_n> で指定されたバインディングがすでに存在する場合には、
-     * 新しいバインディングに置き換えられます。</p>
+     * 新しいバインディングに置き換えられる。}
+     * {@.en This is the same as bindRecursive() except as NamingContext 
+     * or Object specified by name <c_n> already exists.
      *
-     * @param context bind を開始する　NamingContext
-     * @param name オブジェクトに付ける名前の文字列表現
-     * @param obj 関連付けられるオブジェクト
+     * If the binding specified by name <c_n> already exists, 
+     * new binding will be replaced.}
      *
-     * @exception CannotProceed 途中のコンテキストが解決できない。
-     * @exception InvalidName 与えられた name が不正。
-     * @exception NotFound 途中の <c_1, c_2, ..., c_(n-1)> が存在しない。
+     * @param context 
+     *   {@.ja bind を開始する　NamingContext}
+     *   {@.en NamingContext that starts the bind}
+     * @param name 
+     *   {@.ja オブジェクトに付ける名前の NameComponent}
+     *   {@.en NameComponent of name applied to object}
+     * @param obj 
+     *   {@.ja 関連付けられるオブジェクト}
+     *   {@.en Object that is associated}
+     *
+     * @exception CannotProceed 
+     *   {@.ja 途中のコンテキストが解決できない。}
+     *   {@.en The intermediate context cannot resolved.}
+     * @exception InvalidName 
+     *   {@.ja 与えられた name が不正。}
+     *   {@.en The given name is invalid.}
+     *
      */
-    public void rebindRecursive(NamingContext context, final NameComponent[] name, Object obj)
-        throws CannotProceed, InvalidName, NotFound {
+    public void rebindRecursive(NamingContext context, 
+                                final NameComponent[] name, Object obj)
+        throws SystemException, CannotProceed, InvalidName, NotFound {
 rtcout.println(rtcout.TRACE, "in  CorbaNamaing.rebindRecursive");//zxc
         int len = name.length;
         NamingContext cxt = (NamingContext)context._duplicate();
@@ -437,7 +673,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception AlreadyBound name <n> の Object がすでにバインドされている。
      */
     public void bindContext(final NameComponent[] name, NamingContext name_cxt)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         this.bindContext(name, name_cxt, true);
     }    
     /**
@@ -456,7 +692,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception AlreadyBound name <n> の Object がすでにバインドされている。
      */
     public void bindContext(final NameComponent[] name, NamingContext name_cxt, final boolean force)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         this.bind(name, name_cxt, force);
     }
     
@@ -472,7 +708,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception AlreadyBound string_name の Object がすでにバインドされている。
      */
     public void bindContext(final String string_name, NamingContext name_cxt)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         this.bindContext(string_name, name_cxt, true);
     }
     /**
@@ -491,7 +727,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception AlreadyBound string_name の Object がすでにバインドされている。
      */
     public void bindContext(final String string_name, NamingContext name_cxt, final boolean force)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         this.bindContext(toName(string_name), name_cxt, force);        
     }
 
@@ -527,8 +763,9 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception CannotProceed 何らかの理由で処理を継続できない。
      * @exception InvalidName 引数 name の名前が不正。
      */
-    public void rebindContext(final NameComponent[] name, NamingContext name_cxt)
-        throws NotFound, CannotProceed, InvalidName {
+    public void rebindContext(final NameComponent[] name, 
+                                                    NamingContext name_cxt)
+        throws SystemException, NotFound, CannotProceed, InvalidName {
         this.rebindContext(name, name_cxt, true);
     }
     /**
@@ -547,8 +784,9 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception CannotProceed 何らかの理由で処理を継続できない。
      * @exception InvalidName 引数 name の名前が不正。
      */
-    public void rebindContext(final NameComponent[] name, NamingContext name_cxt, final boolean force)
-        throws NotFound, CannotProceed, InvalidName {
+    public void rebindContext(final NameComponent[] name, 
+                                NamingContext name_cxt, final boolean force)
+        throws SystemException, NotFound, CannotProceed, InvalidName {
         this.rebind(name, name_cxt, force);
         return;
         
@@ -565,7 +803,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception InvalidName 引数 string_name の名前が不正。
      */
     public void rebindContext(final String string_name, NamingContext name_cxt)
-        throws NotFound, CannotProceed, InvalidName {
+        throws SystemException, NotFound, CannotProceed, InvalidName {
         this.rebindContext(string_name, name_cxt, true);
     }
     /**
@@ -584,8 +822,9 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception CannotProceed 何らかの理由で処理を継続できない。
      * @exception InvalidName 引数 string_name の名前が不正。
      */
-    public void rebindContext(final String string_name, NamingContext name_cxt, final boolean force)
-        throws NotFound, CannotProceed, InvalidName {
+    public void rebindContext(final String string_name, 
+                                NamingContext name_cxt, final boolean force)
+        throws SystemException, NotFound, CannotProceed, InvalidName {
         this.rebindContext(toName(string_name), name_cxt, force);
     }
 
@@ -625,7 +864,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      *
      */
     public Object resolve(final NameComponent[] name)
-        throws NotFound, CannotProceed, InvalidName {
+        throws SystemException, NotFound, CannotProceed, InvalidName {
         return m_rootContext.resolve(name);
     }
 
@@ -647,7 +886,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception InvalidName 引数 string_name の名前が不正。
      */
     public Object resolve(final String string_name)
-        throws NotFound, CannotProceed, InvalidName {
+        throws SystemException, NotFound, CannotProceed, InvalidName {
         return resolve(toName(string_name));
     }
 
@@ -667,7 +906,8 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception CannotProceed 何らかの理由で処理を継続できない。
      * @exception InvalidName 引数 name の名前が不正。
      */
-    public void unbind(final NameComponent[] name) throws NotFound, CannotProceed, InvalidName {
+    public void unbind(final NameComponent[] name) 
+    throws SystemException, NotFound, CannotProceed, InvalidName {
         m_rootContext.unbind(name);
     }
 
@@ -687,7 +927,8 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception CannotProceed 何らかの理由で処理を継続できない。
      * @exception InvalidName 引数 name の名前が不正。
      */
-    public void unbind(final String string_name) throws NotFound, CannotProceed, InvalidName {
+    public void unbind(final String string_name) 
+    throws SystemException, NotFound, CannotProceed, InvalidName {
         this.unbind(this.toName(string_name));
     }
 
@@ -715,7 +956,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception AlreadyBound name <n> の Object がすでにバインドされている。
      */
     public NamingContext bindNewContext(final NameComponent[] name)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         return this.bindNewContext(name, true);
     }
     /**
@@ -733,8 +974,9 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception InvalidName 引数 name の名前が不正。
      * @exception AlreadyBound name <n> の Object がすでにバインドされている。
      */
-    public NamingContext bindNewContext(final NameComponent[] name, boolean force)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    public NamingContext bindNewContext(final NameComponent[] name, 
+                                                boolean force)
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         try {
             return m_rootContext.bind_new_context(name);
         } catch(NotFound ex ) {
@@ -768,7 +1010,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception AlreadyBound string_name の Object がすでにバインドされている。
      */
     public NamingContext bindNewContext(final String string_name)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         return this.bindNewContext(string_name, true);
     }
     /**
@@ -787,7 +1029,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception AlreadyBound string_name の Object がすでにバインドされている。
      */
     public NamingContext bindNewContext(final String string_name, boolean force)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
         return this.bindNewContext(toName(string_name));
     }
 
@@ -801,7 +1043,8 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      *
      * @exception NotEmpty 対象コンテキストに他のコンテキストがバインドされている
      */
-    public void destroy(NamingContext context) throws NotEmpty {
+    public void destroy(NamingContext context) 
+        throws SystemException, NotEmpty {
       context.destroy();
     }
 
@@ -816,7 +1059,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception InvalidName 引数 context の名前が不正。
      */
     public void destroyRecursive(NamingContext context)
-        throws NotEmpty, NotFound, CannotProceed, InvalidName {
+    throws SystemException, NotEmpty, NotFound, CannotProceed, InvalidName {
         BindingListHolder bl = new BindingListHolder();
         BindingIteratorHolder bi = new BindingIteratorHolder();
         boolean cont = true;
@@ -829,13 +1072,16 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
             for(int intIdx=0;intIdx<len;++intIdx) {
                 if( bl.value[intIdx].binding_type == BindingType.ncontext ) {
                     // If Object is context, destroy recursive.
-                    NamingContext next_context = NamingContextExtHelper.narrow(context.resolve(bl.value[intIdx].binding_name));
+                    NamingContext next_context 
+                        = NamingContextExtHelper.narrow(
+                              context.resolve(bl.value[intIdx].binding_name));
         
                     // Recursive function call
                     destroyRecursive(next_context); // +++ Recursive call +++
                     context.unbind(bl.value[intIdx].binding_name);
                     next_context.destroy();
-                } else if( bl.value[intIdx].binding_type == BindingType.nobject) {
+                } 
+                else if( bl.value[intIdx].binding_type == BindingType.nobject) {
                     // If Object is object, unbind it.
                     context.unbind(bl.value[intIdx].binding_name);
                 }
@@ -890,7 +1136,8 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @param name 取得対象の NameComponent
      * @exception InvalidName 引数 name の名前が不正。
      */
-    public String toString(final NameComponent[] name) throws InvalidName {
+    public String toString(final NameComponent[] name) 
+    throws SystemException, InvalidName {
         if( name==null || name.equals("")) throw new InvalidName();
     
         int slen = 0;
@@ -911,7 +1158,8 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      *
      * @exception InvalidName 引数 sname が不正。
      */
-    public NameComponent[] toName(final String sname) throws InvalidName {
+    public NameComponent[] toName(final String sname) 
+    throws SystemException, InvalidName {
         if( sname==null || sname.equals("") ) throw new InvalidName();
         
         String string_name = sname;
@@ -951,7 +1199,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception InvalidName 引数 string_name が不正。
      */
     public String toUrl(String addr, String string_name)
-        throws InvalidAddress, InvalidName {
+        throws SystemException, InvalidAddress, InvalidName {
       return m_rootContext.to_url(addr, string_name);
     }
 
@@ -966,7 +1214,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
      * @exception AlreadyBound string_name の Object がすでにバインドされている。
      */
     public Object resolveStr(final String string_name)
-        throws NotFound, CannotProceed, InvalidName, AlreadyBound {
+    throws SystemException, NotFound, CannotProceed, InvalidName, AlreadyBound {
       return resolve(string_name);
     }
 
