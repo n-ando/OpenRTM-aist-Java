@@ -220,7 +220,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNaming.init(" +name_server +")");//zxc
      *
      * @param name 
      *   {@.ja オブジェクトに付ける名前の NameComponent}
-     * @param name NameComponent of name applied to object
+     *   {@.en NameComponent of name applied to object}
      * @param obj 
      *   {@.ja 関連付けられる Object}
      *   {@.en Object that is associated}
@@ -310,7 +310,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNaming.init(" +name_server +")");//zxc
      * @param force 
      *   {@.ja trueの場合、途中のコンテキストを強制的にバインドする
      *              (デフォルト値:true)}
-     *   {@.enIf true, the intermediate context is bound forcibly.
+     *   {@.en If true, the intermediate context is bound forcibly.
      *              (The default value:true)}
      *
      * @exception NotFound 
@@ -485,7 +485,7 @@ rtcout.println(rtcout.TRACE, "out CorbaNaming.init(" +name_server +")");//zxc
      * @param force 
      *   {@.ja trueの場合、途中のコンテキストを強制的にバインドする
      *              (デフォルト値:true)}
-     *   {@.em If true, the intermediate context is bound forcibly.
+     *   {@.en If true, the intermediate context is bound forcibly.
      *              (The default value:true)}
      *
      * @exception NotFound 
@@ -559,10 +559,10 @@ rtcout.println(rtcout.TRACE, "out  CorbaNaming.rebind()");//zxc
      *
      * @param string_name 
      *   {@.ja オブジェクトに付ける名前の文字列表現}
-     * @param string_name NameComponent of name applied to object
+     *   {@.en NameComponent of name applied to object}
      * @param obj 
      *   {@.ja 関連付けられるオブジェクト}
-     * @param obj Object that is associated
+     *   {@.en Object that is associated}
      * @param force 
      *   {@.ja trueの場合、途中のコンテキストを強制的にバインドする
      *              (デフォルト値:true)}
