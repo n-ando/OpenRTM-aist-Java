@@ -2478,7 +2478,8 @@ catch(Exception ex){
     };
 
     /**
-     * RTC 非活性化用ファンクタ
+     * {@.je RTC 非活性化用ファンクタ}
+     * {@.en Functor to deactivate RTC}
      */
     class deactivate_comps implements operatorFunc
     {
@@ -2502,8 +2503,9 @@ catch(Exception ex){
          */
         void operator(ExecutionContextService ecs)
         {
-            if(ecs != null)  {
-                ecs.deactivate_component((LightweightRTObject)m_comp._duplicate());
+            if(ecs != null && !ecs._non_existent())  {
+                ecs.deactivate_component(
+                                (LightweightRTObject)m_comp._duplicate());
             }
         }
         LightweightRTObject m_comp;
