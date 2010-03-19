@@ -22,7 +22,8 @@ public class RingBuffer<DataType> implements BufferBase<DataType> {
 
 private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      * 
      */
     public RingBuffer() {
@@ -30,9 +31,20 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
 
     }
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      * 
-     * @param length バッファ長
+     * <p>
+     * {@.ja 指定されたバッファ長でバッファを初期化する。}
+     * {@.en Initialize the buffer by specified buffer length.
+     * However, if the specified length is less than two, the buffer should
+     * be initialized by two in length.}
+     * </p>
+     *
+     * @param length 
+     *   {@.ja バッファ長}
+     *   {@.en Buffer length}
+     * 
      */
     public RingBuffer(int length) {
         this.m_length = (length < 2) ? 2 : length;
@@ -51,6 +63,7 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
         this.m_rpos = 0;
         this.m_fillcount = 0;
         this.reset();
+        this.m_wcount = 0;
     }
 
     /**
@@ -103,7 +116,7 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                 if (overwrite && !timedwrite) {      // "overwrite" mode
                     advanceRptr();
                 }
-                else if (!overwrite && !timedwrite) { // "do_notiong" mode
+                else if (!overwrite && !timedwrite) { // "do_nothing" mode
                     return ReturnCode.BUFFER_FULL;
                 }
                 else if (!overwrite && timedwrite) { // "block" mode
@@ -161,6 +174,49 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
     public ReturnCode read(DataRef<DataType> valueRef, int sec) {
         return read(valueRef, sec, 0);
     }
+    /**
+     * {@.ja バッファから読み出す}
+     * {@.en Readout data from the buffer}
+     * 
+     * <p>
+     * {@.ja バッファに格納されたデータを読み出す。
+     *
+     * 第2引数(sec)、第3引数(nsec)が指定されていない場合、バッファ空状
+     * 態での読み出しモード (readback, do_nothing, block) は init() で設
+     * 定されたモードに従う。
+     *
+     * 第2引数(sec) に引数が指定された場合は、init() で設定されたモード
+     * に関わらず、block モードとなり、バッファが空状態であれば指定時間
+     * 待ち、タイムアウトする。第3引数(nsec)は指定されない場合0として扱
+     * われる。タイムアウト待ち中に、書込みスレッド側でバッファへ書込み
+     * があれば、ブロッキングは解除されデータが読みだされる。
+     *
+     * 読み出し時にバッファが空(empty)状態で、別のスレッドがblockモード
+     * で書込み待ちをしている場合、signalを発行して書込み側のブロッキン
+     * グが解除される。}
+     * {@.en Readout data stored into the buffer.}
+     * </p>
+     * 
+     * @param valueRef
+     *   {@.ja 読み出し対象データ}
+     *   {@.en Readout data}
+     * @param sec   
+     *   {@.ja タイムアウト時間 sec  (default -1: 無効)}
+     *   {@.en TimeOut sec order}
+     * @param nsec  
+     *   {@.ja タイムアウト時間 nsec (default 0)}
+     *   {@.en TimeOut nsec order}
+     * @return 
+     *   {@.ja BUFFER_OK            正常終了
+     *         BUFFER_EMPTY         バッファが空状態
+     *         TIMEOUT              書込みがタイムアウトした
+     *         PRECONDITION_NOT_MET 設定異常}
+     *   {@.en BUFFER_OK
+     *         BUFFER_EMPTY
+     *         TIMEOUT
+     *         PRECONDITION_NOT_MET}
+     * 
+     */
     public ReturnCode read(DataRef<DataType> valueRef, int sec, int nsec) {
         long local_msec = 0;
         int local_nsec = 0;
@@ -175,9 +231,12 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                     local_nsec = (int)(m_rtimeout.usec() % 1000)*1000;
                 }
                 if (readback && !timedread) {      // "readback" mode
+                    if (!(m_wcount > 0)) {
+                        return ReturnCode.BUFFER_EMPTY;
+                    }
                     advanceRptr(-1);
                 }
-                else if (!readback && !timedread) { // "do_notiong" mode
+                else if (!readback && !timedread) { // "do_nothing" mode
                     return ReturnCode.BUFFER_EMPTY;
                 }
                 else if (!readback && timedread) { // "block" mode
@@ -277,17 +336,32 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
         initWritePolicy(prop);
         initReadPolicy(prop);
     }
+
     /**
-     * <p> reset </p>
-     * <p> This function resets the state of the buffer. </p>
-     *
-     * @return ReturnCode
-     */
+     * {@.ja バッファの状態をリセットする}
+     * {@.en Get the buffer length}
+     * 
+     * <p>
+     * {@.ja バッファの読み出しポインタと書き込みポインタの位置をリセットする。
+     * この実装では BUFFER_OK しか返さない。}
+     * {@.en Pure virtual function to get the buffer length.}
+     * </p>
+     * 
+     * @return 
+     *   {@.ja BUFFER_OK: 正常終了
+     *         NOT_SUPPORTED: リセット不可能
+     *         BUFFER_ERROR: 異常終了}
+     *   {@.en BUFFER_OK: Normal termination
+     *         NOT_SUPPORTED:Reset failure
+     *         BUFFER_ERROR:Abnormal termination}
+     * 
+     */ 
     public ReturnCode reset() {
         synchronized (m_posmutex) {
             m_fillcount = 0;
             m_wpos = 0;
             m_rpos = 0;
+            m_wcount = 0;
             return ReturnCode.BUFFER_OK;
         }
     }
@@ -313,13 +387,28 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
             return m_buffer.get((m_wpos + n + m_length) % m_length);
         }
     }
+
     /**
-     * <p> advanceWptr </p>
-     * <p> This function advances the writing pointer. </p>
-     *
-     * @param  n
-     * @return ReturnCode
-     */
+     * {@.ja 書込みポインタを進める}
+     * {@.en Get the buffer length}
+     * 
+     * <p>
+     * {@.ja 現在の書き込み位置のポインタを n 個進める。
+     * 書き込み可能な要素数以上の数値を指定した場合、PRECONDITION_NOT_MET
+     * を返す。}
+     * {@.en This function advances the writing pointer.}
+     * </p>
+     * 
+     * @param  n 
+     *   {@.ja 書込みポインタ + n の位置のポインタ}
+     *   {@.en write pinter + n pointer}
+     * @return 
+     *   {@.ja BUFFER_OK:            正常終了
+     *         PRECONDITION_NOT_MET: n > writable()}
+     *   {@.en BUFFER_OK:Normal termination
+     *         PRECONDITION_NOT_MET: n > writable()}
+     * 
+     */ 
     public ReturnCode advanceWptr(int n) {
       // n > 0 :
       //     n satisfies n <= writable elements
@@ -336,6 +425,7 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
         synchronized (m_posmutex) {
             m_wpos = (m_wpos + n + m_length) % m_length;
             m_fillcount += n;
+            m_wcount += n;
             return ReturnCode.BUFFER_OK;
         }
     }
@@ -346,24 +436,7 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
      * @return ReturnCode
      */
     public ReturnCode advanceWptr() {
-      // n > 0 :
-      //     n satisfies n <= writable elements
-      //                 n <= m_length - m_fillcout
-      // n < 0 : -n = n'
-      //     n satisfies n'<= readable elements
-      //                 n'<= m_fillcount
-      //                 n >= - m_fillcount
-        int n = 1;
-        if (n > 0 && n > (m_length - m_fillcount) ||
-          n < 0 && n < (-m_fillcount)) {
-            return ReturnCode.PRECONDITION_NOT_MET;
-        }
-
-        synchronized (m_posmutex) {
-            m_wpos = (m_wpos + n + m_length) % m_length;
-            m_fillcount += n;
-            return ReturnCode.BUFFER_OK;
-        }
+        return this.advanceWptr(1);
     }
     /**
      * <p> writable </p>
@@ -568,4 +641,9 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
     };
     private condition m_empty = new condition();
     private condition m_full = new condition();
+    /**
+     * {@.ja 書き込みカウント}
+     * {@.en Counter for writing}
+     */
+    int m_wcount;
 }
