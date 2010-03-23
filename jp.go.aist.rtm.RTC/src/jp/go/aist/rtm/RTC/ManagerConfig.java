@@ -92,11 +92,21 @@ class ManagerConfig {
     }
     
     /**
-     * <p>コンフィグレーション情報をPropertiesオブジェクトの形式で取得します。</p>
+     * {@.ja Configuration 情報を Property に設定する}
+     * {@.en Specify the configuration information to the Property}
      * 
-     * @param properties コンフィグレーション情報を受け取って格納するPropertiesオブジェクト
-     * @throws FileNotFoundException コンフィグレーションファイルが見つからない場合にスローされます。
-     * @throws IOException コンフィグレーションファイル読み取りエラーの場合にスローされます。
+     * <p>
+     * {@.ja Manager のConfiguration 情報を指定された Property に設定する。}
+     * {@.en Configure to the properties specified by Manager's configuration}
+     * </p>
+     *
+     * @param properties 
+     *   {@.ja コンフィグレーション情報を受け取って格納する
+     *          Propertiesオブジェクト}
+     *   {@.en The target properties to configure}
+     * 
+     * @throws IOException 
+     *   {@.ja コンフィグレーションファイル読み取りエラーの場合にスローされる}
      */
     public void configure(Properties properties) 
                                 throws FileNotFoundException, IOException {
@@ -120,23 +130,53 @@ class ManagerConfig {
         if (m_isMaster) { 
             properties.setProperty("manager.is_master","YES"); 
         }
+
+        // Properties from arguments are marged finally
+        properties.merge(m_argprop);
     }
     
     /**
-     * <p>コマンドライン引数を解析します。</p>
-     * 
-     * @param args コマンドライン引数
-     * @throws IllegalArgumentException コマンドライン引数を解析できなかった場合にスローされます。
+     * {@.ja コマンド引数をパースする}
+     * {@.en Parse the command arguments}
+     *
+     * <p>
+     * {@.ja <ul>
+     * <li> -a         : Create manager's corba service or not.
+     * <li> -f file    : コンフィギュレーションファイルを指定する。
+     * <li> -l module  : ロードするモジュールを指定する。(未実装)
+     * <li> -o options : その他オプションを指定する。(未実装)
+     * <li> -p endpoint: Multiple endpoint option.
+     * <li> -d         : デフォルトのコンフィギュレーションを使う。(未実装)
+     * </ul>}
+     * {@.en <ul> 
+     * <li> -a         : Create manager's corba service or not.
+     * <li> -f file    : Specify the configuration file.
+     * <li> -l module  : Specify modules to be loaded. (Not implemented)
+     * <li> -o options : Other options. (Not implemented)
+     * <li> -p endpoint: Multiple endpoint option.
+     * <li> -d         : Use default static configuration. (Not implemented)
+     * </ul>}
+     * </p>
+     *
+     * @param args 
+     *   {@.ja コマンドライン引数}
+     *   {@.en The command line arguments}
+     *
+     * @throws IllegalArgumentException 
+     *   {@.ja コマンドライン引数を解析できなかった場合にスローされる。}
+     *
      */
     protected void parseArgs(String[] args) throws IllegalArgumentException {
         
         Options options = new Options();
+        options.addOption("a", false, "create manager's corba service or not");
         options.addOption("f", true, "configuration file");
         options.addOption("l", true, "load module");
         options.addOption("o", true, "other options");
+        options.addOption("p", true, "multiple endpoint options");
         options.addOption("d", false, "use default configuration");
 
-        CommandLine commandLine;
+	CommandLine commandLine = null;
         try {
             CommandLineParser parser = new BasicParser();
             commandLine = parser.parse(options, args);
@@ -145,6 +185,9 @@ class ManagerConfig {
             throw new IllegalArgumentException("Could not parse arguments.");
         }
 
+        if (commandLine.hasOption("a")) {
+            m_argprop.setProperty("manager.corba_servant","NO");;
+        }
         if (commandLine.hasOption("f")) {
             this.m_configFile = commandLine.getOptionValue("f").trim();
         }
@@ -152,7 +195,26 @@ class ManagerConfig {
             // do nothing
         }
         if (commandLine.hasOption("o")) {
-            // do nothing
+            String optarg = commandLine.getOptionValue("o").trim();
+            int pos = optarg.indexOf(":");
+            if (pos >= 0) {
+                m_argprop.setProperty(optarg.substring(0, pos), 
+                                                    optarg.substring(pos + 1));
+            }
+        }
+        if (commandLine.hasOption("p")) {
+        // ORB's port number
+            String str = commandLine.getOptionValue("p").trim();
+            int portnum;
+            try {
+                portnum = Integer.parseInt(str);
+                String arg = ":"; 
+                arg += str;
+                m_argprop.setProperty("corba.endpoints", arg);
+            }
+            catch(Exception ex){
+                //do nothing
+            }
         }
         if (commandLine.hasOption("d")) {
             m_isMaster = true;
@@ -253,6 +315,7 @@ class ManagerConfig {
         properties.setProperty("manager.os.arch", osArch);
         properties.setProperty("manager.os.hostname", hostName);
         properties.setProperty("manager.pid", pid);
+
     }
 
     /**
@@ -274,4 +337,9 @@ class ManagerConfig {
      * <p> true:master,false:slave </p>
      */
     protected boolean m_isMaster;
+    /**
+     * {@.ja 引数から渡されるプロパティ}
+     * {@.en configuration properties from arguments}
+     */
+    protected Properties m_argprop = new Properties();
 }
