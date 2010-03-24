@@ -8,6 +8,8 @@ import org.omg.PortableServer.POAHelper;
 import org.omg.PortableServer.Servant;
 
 import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 import RTM.ManagerPOA;
 import RTM.ManagerHelper;
@@ -265,7 +267,7 @@ public class ManagerServant extends ManagerPOA {
             rtcout.println(rtcout.DEBUG, 
                 "CORBA SystemException caught (CORBA."+ex.toString()+")");
             if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("    CORBA SystemException caught >:"+ex);
+//                System.out.println("    CORBA SystemException caught >:"+ex);
             }
             return (RTM.Manager)null;
         }
@@ -532,24 +534,160 @@ public class ManagerServant extends ManagerPOA {
     }
 
     /**
-     * <p> create_component </p>
-     * <p> Creating an RT-Component </p>
-     * <p> This operation creates RT-Component according to the string
-     * argument. </p>
+     * {@.ja コンポーネントを生成する}
+     * {@.en Creating an RT-Component}
      *
-     * @param module_name
-     * @return A created RT-Component
+     * <p>
+     * {@.ja 引数に指定されたコンポーネントを生成する。}
+     * {@.en This operation creates RT-Component according to the string
+     * argument.}
+     *
+     * @return 
+     *   {@.ja 生成されたRTコンポーネント}
+     *   {@.en A created RT-Component}
      *
      */
     public RTC.RTObject create_component(final String module_name) {
         rtcout.println(rtcout.TRACE, "create_component("+module_name+")");
 
-        RTObject_impl rtc = m_mgr.createComponent(module_name);
-        if (rtc == null) {
-//            System.err.println( "ManagerServant.create_component() RTC not found: "  + module_name );
+        String arg = module_name;
+        int pos0 = arg.indexOf("&manager=");
+        int pos1 = arg.indexOf("?manager=");
+
+        if (pos0 < 0 && pos1 < 0){
+            if (false) { //is_master()
+                rtcout.println(rtcout.TRACE, 
+                    "Master manager cannot create component: "+module_name);
+                return null;
+            }
+        // create on this manager
+            RTObject_impl rtc = m_mgr.createComponent(module_name);
+            if (rtc == null) {
+                if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                    System.err.println( 
+                        "ManagerServant.create_component() RTC not found: "  
+                        + module_name );
+                }
+                return null;
+            }
+            return rtc.getObjRef();
+        }
+
+
+        // create other manager
+        // extract manager's location
+        int pos;
+        if(! (pos0 < 0) ){
+            pos = pos0;
+        }
+        else{
+            pos = pos1;
+        }
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("    pos >:"+pos);
+        }
+    
+        int endpos;
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("    arg >:"+arg);
+        }
+        endpos = arg.indexOf('&', pos + 1);
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("    endpos >:"+endpos);
+        }
+        if(endpos<0){
+            endpos = arg.length();
+        }
+        String mgrstr = arg.substring(pos + 1, endpos - 1);
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("    Manager arg:  >:"+mgrstr);
+        }
+        rtcout.println(rtcout.VERBOSE, "Manager arg: "+mgrstr);
+        String[] mgrvstr = mgrstr.split(":");
+        if (mgrvstr.length != 2) {
+            rtcout.println(rtcout.WARN, "Invalid manager name: "+mgrstr);
             return null;
         }
-        return rtc.getObjRef();
+        int  eqpos = mgrstr.indexOf("=");
+        if (eqpos < 0) {
+            rtcout.println(rtcout.WARN, "Invalid argument: "+module_name);
+            return null;
+        }
+        mgrstr =  mgrstr.substring(eqpos + 1);
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("    Manager is:  >:"+mgrstr);
+        }
+        rtcout.println(rtcout.DEBUG, "Manager is : "+mgrstr);
+
+        // find manager
+        RTM.Manager mgrobj = findManager(mgrstr);
+        if (mgrobj==null) {
+            List<String> cmd = new ArrayList();
+            cmd.add("java");
+            cmd.add("-jar");
+            cmd.add("rtcd.jar");
+            cmd.add("-p");
+            cmd.add(mgrvstr[1]); // port number
+
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    Invoking command: >:"+cmd);
+            }
+            rtcout.println(rtcout.DEBUG, "Invoking command: "+cmd);
+            try{
+                ProcessBuilder pb = new ProcessBuilder(cmd);
+                Process p = pb.start();
+            }
+            catch(Exception ex){
+                if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                    System.out.println(cmd + ": failed");
+                }
+                rtcout.println(rtcout.DEBUG, cmd + ": failed");
+                return null;
+            }
+
+            // find manager
+            try{
+                Thread.sleep(10);   //10ms
+            }
+            catch(InterruptedException ex){
+                 //do nothing
+            }
+            int count = 0;
+            while (mgrobj == null) {
+                mgrobj = findManager(mgrstr);
+                ++count;
+                if (count > 1000) { 
+                    break; 
+                }
+                try{
+                    Thread.sleep(10);   //10ms
+                }
+                catch(InterruptedException ex){
+                    //do nothing
+                }
+            }
+        }
+
+        if (mgrobj == null) {
+            rtcout.println(rtcout.WARN, "Manager cannot be found.");
+            return null;
+        }
+    
+        // create component on the manager    
+        arg = arg.substring(pos + 1, endpos);
+        rtcout.println(rtcout.DEBUG, "Creating component on "+mgrstr);
+        rtcout.println(rtcout.DEBUG, "arg: "+arg);
+        try {
+            RTObject rtobj;
+            rtobj = mgrobj.create_component(arg);
+            rtcout.println(rtcout.DEBUG, "Component created "+arg);
+            return rtobj;
+        }
+        catch (org.omg.CORBA.SystemException e) {
+            rtcout.println(rtcout.DEBUG, 
+                        "Exception was caught while creating component.");
+            return null;
+        }
     }
 
     /**
