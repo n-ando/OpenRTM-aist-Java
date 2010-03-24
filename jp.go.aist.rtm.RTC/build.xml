@@ -15,6 +15,7 @@
 	<property name="source.samples.java.AutoTest" value="${source.samples.java}/AutoTest"/>
 	<property name="source.test" value="tests/src"/>
 	<property name="source.tests.bind" value="${source.test}/jp/go/aist/rtm/bind"/>
+	<property name="source.rtcd" value="src/rtcd"/>
 
 	<property name="dist.dir" value="jar" />
 	<property name="dist.samples" value="installer/resources/Source/examples/RTMExamples"/>
@@ -25,6 +26,7 @@
 	<property name="build.doc.us" value="installer/resources/Source/JavaDocEn"/>
 	<property name="build.doc.jp" value="installer/resources/Source/JavaDocJa"/>
 	<property name="build.dir.jar" value="installer/resources/Source/jar" />
+	<property name="build.dir.rtcd" value="bin/rtcd" />
 
 	<property name="installer.dir" value="installer/resources" />
 	<property name="installer.script" value="installer/commands/genwxs.vbs" />
@@ -85,10 +87,16 @@
 
 		<jar destfile="${dist.dir}/${target.name}.jar"
 			 basedir="${build.dir}"
-			 excludes="RTMExamples/**" />
+			 excludes="RTMExamples/**, rtcd/**" />
 
 		<delete file="${build.dir.jar}/${target.name}.jar" />
 		<copy file="${dist.dir}/${target.name}.jar" todir="${build.dir.jar}" />
+		<jar destfile="${dist.dir}/rtcd.jar"
+			 basedir="${build.dir}"
+                         manifest="${source.rtcd}/META-INF/MANIFEST.MF"
+			 includes="rtcd/**" />
+		<delete file="${build.dir.jar}/rtcd.jar" />
+		<copy file="${dist.dir}/rtcd.jar" todir="${build.dir.jar}" />
 	</target>
 
 	<target name="javaExamples"  description="Sampleをコピーします">
@@ -212,7 +220,7 @@
 
 	<target name="compile" description="ソースをコンパイルします">
 		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="Shift-JIS" />
-		<javac srcdir="${source.main}:${source.examples}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
+		<javac srcdir="${source.main}:${source.examples}:${source.rtcd}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
 	</target>
 
 	<target name="compile_tests" description="ソースをコンパイルします">
