@@ -648,50 +648,16 @@ public abstract class PortBase extends PortServicePOA {
     public void setOwner(RTObject owner) {
 
 try{
-        if(java.lang.System.getProperty("develop_prop.debug")!=null) { 
-            System.out.println("IN  setOwner");
-        }
         RTC.ComponentProfile prof = owner.get_component_profile();
-        if (java.lang.System.getProperty("develop_prop.debug")!=null) { 
-            System.out.println("    ----010----");
-        }
         m_ownerInstanceName = prof.instance_name;
-        if (java.lang.System.getProperty("develop_prop.debug")!=null) { 
-            System.out.println("    ----020----");
-        }
         rtcout.println(rtcout.TRACE, "setOwner("+m_ownerInstanceName+")");
-        if (java.lang.System.getProperty("develop_prop.debug")!=null) { 
-            System.out.println("    ----030----");
-        }
         synchronized (this.m_profile) {
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("    ----040----m_profile.name>:"
-                                    +m_profile.name);
-            }
             String portname = m_profile.name;
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("    ----050----portname>:"+portname);
-            }
             String[] port = portname.split("\\.");
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("    ----060---- port.length>:"+port.length);
-            }
             // Now Port name is <instance_name>.<port_name>. 
             portname = m_ownerInstanceName +"."+ port[port.length-1];
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("    ----070----");
-            }
             this.m_profile.owner = (RTObject)owner._duplicate();
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("    ----080----");
-            }
             this.m_profile.name = portname;
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("    ----090----");
-            }
-        }
-        if (java.lang.System.getProperty("develop_prop.debug")!=null) { 
-            System.out.println("OUT setOwner");
         }
 }
 catch(Exception ex){
