@@ -241,6 +241,7 @@ public class ManagerServant extends ManagerPOA {
             mobj = orb.string_to_object(mgrloc);
 //            mobj = orb.resolve_initial_references("INSPOA");
 //            mobj = m_mgr.getORB().resolve_initial_references("manager");
+/*
             if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
                 if(mobj==null){
                     System.out.println("    mobj is null.");
@@ -249,6 +250,7 @@ public class ManagerServant extends ManagerPOA {
                     System.out.println("    mobj is not null.>:"+mobj);
                 }
             }
+*/
             RTM.Manager mgr 
                 = RTM.ManagerHelper.narrow(mobj);
             if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
@@ -583,9 +585,6 @@ public class ManagerServant extends ManagerPOA {
         else{
             pos = pos1;
         }
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("    pos >:"+pos);
-        }
     
         int endpos;
         if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
@@ -598,7 +597,7 @@ public class ManagerServant extends ManagerPOA {
         if(endpos<0){
             endpos = arg.length();
         }
-        String mgrstr = arg.substring(pos + 1, endpos - 1);
+        String mgrstr = arg.substring(pos + 1, endpos);
         if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
             System.out.println("    Manager arg:  >:"+mgrstr);
         }
@@ -625,7 +624,12 @@ public class ManagerServant extends ManagerPOA {
             List<String> cmd = new ArrayList();
             cmd.add("java");
             cmd.add("-jar");
-            cmd.add("rtcd.jar");
+            String rtm_java_root = System.getenv("RTM_JAVA_ROOT");
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("    rtm_java_root>:"+rtm_java_root);
+            }
+            String rtcd = rtm_java_root+"/jar/rtcd.jar";
+            cmd.add(rtcd);
             cmd.add("-p");
             cmd.add(mgrvstr[1]); // port number
 
@@ -646,6 +650,9 @@ public class ManagerServant extends ManagerPOA {
             }
 
             // find manager
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("find manager");
+            }
             try{
                 Thread.sleep(10);   //10ms
             }
@@ -670,6 +677,9 @@ public class ManagerServant extends ManagerPOA {
 
         if (mgrobj == null) {
             rtcout.println(rtcout.WARN, "Manager cannot be found.");
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                    System.out.println("Manager cannot be found.");
+            }
             return null;
         }
     
@@ -681,11 +691,18 @@ public class ManagerServant extends ManagerPOA {
             RTObject rtobj;
             rtobj = mgrobj.create_component(arg);
             rtcout.println(rtcout.DEBUG, "Component created "+arg);
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                    System.out.println("Component created "+arg);
+            }
             return rtobj;
         }
         catch (org.omg.CORBA.SystemException e) {
             rtcout.println(rtcout.DEBUG, 
                         "Exception was caught while creating component.");
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println(
+                    "Exception was caught while creating component.");
+            }
             return null;
         }
     }
