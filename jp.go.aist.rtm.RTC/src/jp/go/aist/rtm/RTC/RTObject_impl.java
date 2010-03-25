@@ -2478,7 +2478,7 @@ catch(Exception ex){
     };
 
     /**
-     * {@.je RTC 非活性化用ファンクタ}
+     * {@.ja RTC 非活性化用ファンクタ}
      * {@.en Functor to deactivate RTC}
      */
     class deactivate_comps implements operatorFunc
