@@ -26,4 +26,15 @@ public interface NamingBase {
      * @param name unbind対象オブジェクト名
      */
     public void unbindObject(final String name);
+
+    /**
+     * {@.ja ネームサーバの生存を確認する。}
+     * {@.en Check if the name service is alive}
+     * 
+     * @return 
+     *   {@.ja true:生存している, false:生存していない}
+     *   {@.en true: alive, false:non not alive}
+     *
+     */
+    public boolean isAlive();
 }
