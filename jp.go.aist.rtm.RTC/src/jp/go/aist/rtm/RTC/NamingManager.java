@@ -14,15 +14,17 @@ import jp.go.aist.rtm.RTC.util.StringUtil;
 public class NamingManager implements NamingBase, CallbackFunction {
 
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタです。}
+     * {@.en Constructor}
      * 
-     * @param manager Managerオブジェクト
+     * @param manager 
+     *   {@.ja Managerオブジェクト}
+     *   {@.en Manager object}
      */
     public NamingManager(Manager manager) {
         m_manager = manager;
 
         rtcout = new Logbuf("NamingManager");
-//        rtcout.setLevel("PARANOID");
     }
 
     /**
@@ -128,20 +130,37 @@ public class NamingManager implements NamingBase, CallbackFunction {
     }
 
     /**
-     * <p>全てのオブジェクトをNameServerからunbindします。</p>
+     * {@.ja 全てのオブジェクトをNamingServiceからアンバインド}
+     * {@.en Unbind all objects from NamingService}
+     *  
+     * <p>
+     * {@.ja 全てのオブジェクトを CORBA NamingService からアンバインドする。}
+     * {@.en Unbind all objects from CORBA NamingService.}
+     * 
      */
     protected void unbindAll() {
-        rtcout.println(rtcout.TRACE, "NamingManager.unbindAll(): m_compNames=" + Integer.toString(m_compNames.size()) + " m_mgrNames=" + Integer.toString(m_mgrNames.size()));
+        rtcout.println(rtcout.TRACE, 
+            "NamingManager.unbindAll(): m_compNames=" 
+            + Integer.toString(m_compNames.size()) 
+            + " m_mgrNames=" + Integer.toString(m_mgrNames.size()));
+
         synchronized (m_compNames) {
-            int len = m_compNames.size();
-            for(int intIdx=len-1; intIdx >= 0; --intIdx) {
-                unbindObject(m_compNames.elementAt(intIdx).name);
+            Vector<String> names = new Vector<String>();
+            for (int i=0, len=m_compNames.size(); i < len; ++i) {
+                names.add(m_compNames.elementAt(i).name);
+            }
+            for (int i=0; i < names.size(); ++i) {
+                unbindObject(names.elementAt(i));
             }
         }
         synchronized (m_mgrNames) {
-            int len = m_mgrNames.size();
-            for(int intIdx=len-1; intIdx >= 0; --intIdx) {
-                unbindObject(m_mgrNames.elementAt(intIdx).name);
+            Vector<String> names = new Vector<String>();
+            // unbindObject modifiy m_mgrNames
+            for (int i=0, len=m_mgrNames.size(); i < len; ++i) {
+                names.add(m_mgrNames.elementAt(i).name);
+            }
+            for (int i=0; i < names.size(); ++i) {
+                unbindObject(names.elementAt(i));
             }
         }
     }
