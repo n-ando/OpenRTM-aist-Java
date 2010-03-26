@@ -32,7 +32,7 @@ public class NamingManager implements CallbackFunction {
      * {@.en Regster the NameServer}
      *
      * <p>
-     * {@ja 指定した形式の NameServer を登録する。
+     * {@.ja 指定した形式の NameServer を登録する。
      * 現在指定可能な形式は CORBA のみ。}
      * {@.en Register NameServer by specified format.
      * Currently. only CORBA can be specified.}
@@ -58,12 +58,6 @@ public class NamingManager implements CallbackFunction {
         }
     }
 
-    /**
-     * <p>オブジェクトをNameServerにbindします。</p>
-     * 
-     * @param name bind時の名称
-     * @param rtobj bind対象オブジェクト
-     */
     /**
      * {@.ja 指定したオブジェクトのNamingServiceへバインド}
      * {@.en Bind the specified objects to NamingService}

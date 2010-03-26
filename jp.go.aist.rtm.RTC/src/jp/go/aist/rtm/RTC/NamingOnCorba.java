@@ -33,111 +33,14 @@ class NamingOnCorba implements NamingBase {
      *
      */
     public NamingOnCorba(ORB orb, final String names) {
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("IN  NamingOnCorba");
-        }
         try {
             m_cosnaming = new CorbaNaming(orb, names);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        m_endpoint = "";
-        m_replaceEndpoint = false;
 
         rtcout = new Logbuf("NamingOnCorba");
 
-        Properties prop = Manager.instance().getConfig();
-        String replace_endpoint 
-            = prop.getProperty("corba.nameservice.replace_endpoint");
-        m_replaceEndpoint = 
-            StringUtil.toBool(replace_endpoint, "YES", "NO", true);
-
-        String[] host_port = names.split(":");
-        try{
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("getByName("+host_port[0]+")");
-            }
-//            java.net.NetworkInterface ni 
-//                    = java.net.NetworkInterface.getByName(host_port[0]);
-            java.net.InetAddress ni 
-                    = java.net.InetAddress.getByName(host_port[0]);
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                if(ni==null){
-                    System.out.println("ni is null.");
-                }
-                else{
-                    System.out.println("ni is not null.>:"+ni);
-                    System.out.println("ni is not null.>:"+ni.getHostName());
-                }
-            }
-//            m_endpoint = ni.getHostAddress();
-            java.net.NetworkInterface nic 
-                    = java.net.NetworkInterface.getByInetAddress(ni); 
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                if(nic==null){
-                    System.out.println("nic is null.");
-                }
-                else{
-                    System.out.println("nic is not null.>:"+nic);
-                    System.out.println("nic is not null.>:"+nic.getName());
-                    System.out.println("nic is not null.>:"+nic.getDisplayName());
-                }
-            }
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("m_endpoint>: "+m_endpoint);
-            }
-        }
-        catch(Exception ex){
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("Caught exceptionet.>: "+ex);
-            }
-        }
-
-/*
-        try{
-            java.util.Enumeration<java.net.NetworkInterface> nic 
-                 = java.net.NetworkInterface.getNetworkInterfaces();
-            while(nic.hasMoreElements()) {
-                java.net.NetworkInterface netIf = nic.nextElement();
-                java.util.Enumeration<java.net.InetAddress> enumAddress 
-                        = netIf.getInetAddresses();
-                while(enumAddress.hasMoreElements()){
-                    java.net.InetAddress inetAdd 
-                        = enumAddress.nextElement();
-                    String hostString = inetAdd.getHostAddress();
-                    if(isIpAddressFormat(hostString)){
-                        if(m_endpoint.length()!=0){
-                            m_endpoint 
-                                = m_endpoint + "," + hostString + ":";
-                        }
-                        else{
-                            m_endpoint = hostString + ":";
-                        }
-                    }
-                }
-            }
-        }
-        catch(Exception ex){
-        }
-*/
-
-
-
-
-//        if (coil::dest_to_endpoint(host_port[0], m_endpoint)) {
-        if (m_endpoint != null) {
-            rtcout.println(rtcout.INFO, 
-                "Endpoint for the CORBA naming service ("
-                 +host_port[0]+") is "+m_endpoint);
-        }
-        else {
-            rtcout.println(rtcout.WARN, 
-                "No endpoint for the CORBA naming service ("
-                 +host_port[0]+") was found.");
-        }
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("OUT NamingOnCorba");
-        }
     }
     
     /**
@@ -234,6 +137,4 @@ class NamingOnCorba implements NamingBase {
      * {@.ja Logging用フォーマットオブジェクト}
      */
     protected Logbuf rtcout;
-    private boolean m_replaceEndpoint;
-    private String m_endpoint;
 }

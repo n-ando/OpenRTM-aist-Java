@@ -944,9 +944,9 @@ public class Manager {
      * {@.en This method deletes RT-Components.}
      *
      * <p>
-     * {@ja 削除するRTコンポーネントを登録する。
+     * {@.ja 削除するRTコンポーネントを登録する。
      * 登録されたRTコンポーネントは cleanupComponents() で削除される。}
-     * {@.en The deleted RT-Component is registered. i
+     * {@.en The deleted RT-Component is registered. 
      * The registered RT-Components 
      * are deleted by cleanupComponents().}
      *
@@ -1842,15 +1842,12 @@ System.out.println("Port of corba.endpoints is illegal." +endPointInfo[1]);
         if(endpoint != null && (endpoint.indexOf(":")>=0))  {
             String[] endPointInfo = endpoint.split(":");
             if( !endPointInfo[0].equals("") ) {
-//                result.put("org.omg.CORBA.ORBInitialHost", endPointInfo[0]);
                 result.put("com.sun.CORBA.ORBServerHost", endPointInfo[0]);
             }
             if( endPointInfo.length>1 ) {
                 try {
                     short port = (short)Integer.parseInt(endPointInfo[1]);
-//                    result.put("org.omg.CORBA.ORBInitialPort", endPointInfo[1]);
                     result.put("com.sun.CORBA.ORBServerPort", endPointInfo[1]);
-System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
                 }
                 catch(Exception ex){
                     rtcout.println(rtcout.WARN, ""+endPointInfo[1]);
