@@ -29,6 +29,7 @@ import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.Timer;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.util.IiopAddressComp;
+import jp.go.aist.rtm.RTC.util.CallbackFunction;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
@@ -633,13 +634,6 @@ public class Manager {
             return null;
         }
 
-//<+zxc
-        if (!(comp_prop.getProperty("exported_ports") == null || 
-              comp_prop.getProperty("exported_ports").equals(""))) {
-            comp_prop.setProperty("conf.default.exported_ports"
-                                    ,comp_prop.getProperty("exported_ports"));
-        }
-//zxc+>
         //------------------------------------------------------------
         // Because the format of port-name had been changed from <port_name> 
         // to <instance_name>.<port_name>, the following processing was added. 
@@ -672,6 +666,124 @@ public class Manager {
         RTObject_impl comp = null;
         Properties prop = new Properties();
         int i,len;
+        FactoryBase factory = findPropertyFormFactory(comp_id);
+        if (factory == null) {
+            rtcout.println(rtcout.ERROR, 
+                "Factory not found: " 
+                + comp_id.getProperty("implementaion_id"));
+
+            // automatic module loading
+            Vector<Properties> mp = m_module.getLoadableModules();
+            rtcout.println(rtcout.INFO, 
+                + mp.size() + " loadable modules found");
+
+            boolean find = false;
+            Properties mprop = new Properties();
+            java.util.Iterator it = mp.iterator();
+            while (it.hasNext()) {
+                mprop = (Properties)it.next();
+                if( new find_conf(comp_id).equalof(mprop) ) {
+                    find = true;
+                }
+            }
+            if(find==false){
+                rtcout.println(rtcout.ERROR, 
+                "No module for " 
+                + comp_id.getProperty("implementation_id")
+                +" in loadable modules list");
+                return null;
+            }
+            if(mprop.findNode("module_file_name")==null){
+                rtcout.println(rtcout.ERROR, 
+                "Hmm...module_file_name key not found. "); 
+                return null;
+            }
+            // module loading
+            rtcout.println(rtcout.INFO, 
+                "Loading module: "+ mprop.getProperty("module_file_name"));
+            load(mprop.getProperty("module_file_name"), "");
+            factory = findPropertyFormFactory(comp_id);
+            if (factory == null){
+                rtcout.println(rtcout.ERROR, 
+                    "Factory not found for loaded module: "
+                    + comp_id.getProperty("implementation_id"));
+                return null;
+            }
+
+        }
+        prop = factory.profile();
+
+/*
+        Vector<String> keyval = comp_prop.propertyNames();
+        for (int ic=0, lenc=comp_prop.size(); ic < lenc; ++ic) {
+            prop.setProperty(keyval.get(ic) , 
+                                comp_prop.getProperty(keyval.get(ic)));
+        }
+*/
+
+        final String[] inherit_prop = {
+            "exec_cxt.periodic.type",
+            "exec_cxt.periodic.rate",
+            "exec_cxt.evdriven.type",
+            "naming.formats",
+            "logger.enable",
+            "logger.log_level",
+            "naming.enable",
+            "naming.type",
+            "naming.formats",
+            ""
+        };
+
+        for (int ic=0; inherit_prop[ic].length() != 0; ++ic) {
+            //        if (prop.hasKey() == NULL) continue;
+            prop.setProperty(inherit_prop[ic], 
+                                m_config.getProperty(inherit_prop[ic]));
+        }
+
+        comp = factory.create(this);
+        if (comp == null) {
+            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+                System.out.println("RTC creation failed: "
+                        + comp_id.getProperty("implementaion_id"));
+            }
+            rtcout.println(rtcout.ERROR, 
+                "RTC creation failed: " 
+                + comp_id.getProperty("implementaion_id"));
+            return null;
+        }
+
+        if(java.lang.System.getProperty("develop_prop.debug")!=null) { 
+            String ior = null;
+            try {
+                org.omg.CORBA.Object ref = m_pPOA.servant_to_reference(comp);
+                ior = m_pORB.object_to_string(ref);
+                  System.out.println(ior);
+            } catch (Exception e) {
+                System.out.println("create object:");
+                e.printStackTrace(System.err);
+            }
+            try {
+                // プロセスオブジェクトを生成
+                Process process = Runtime.getRuntime().exec("catior "+ior);
+                // 外部コマンドの標準出力を取得するための入力ストリームを取得
+                java.io.InputStream is = process.getInputStream();
+                BufferedReader br 
+                        = new BufferedReader(new java.io.InputStreamReader(is));
+                // 標準出力を１行づつ取り出します
+                String line;
+                while ((line = br.readLine()) != null) {
+                    System.out.println(line);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        rtcout.println(rtcout.TRACE, 
+            "RTC Created: " + comp_id.getProperty("implementaion_id"));
+        prop.merge(comp_prop);
+    
+/*
         for (i=0, len=m_factory.m_objects.size(); i < len; ++i) {
             FactoryBase factory = m_factory.m_objects.elementAt(i);
             if (factory == null) {
@@ -701,7 +813,6 @@ public class Manager {
                 };
 
                 for (int ic=0; inherit_prop[ic].length() != 0; ++ic) {
-                    System.out.println( inherit_prop[ic] );
                     //        if (prop.hasKey() == NULL) continue;
                     prop.setProperty(inherit_prop[ic], 
                                         m_config.getProperty(inherit_prop[ic]));
@@ -718,34 +829,6 @@ public class Manager {
                         + comp_id.getProperty("implementaion_id"));
                     return null;
                 }
-//<+zxc
-{
-    String ior = null;
-    try {
-        org.omg.CORBA.Object ref = m_pPOA.servant_to_reference(comp);
-        ior = m_pORB.object_to_string(ref);
-//        System.out.println(ior);
-    } catch (Exception e) {
-        System.out.println("create object:");
-        e.printStackTrace(System.err);
-    }
-    try {
-        // プロセスオブジェクトを生成
-        Process process = Runtime.getRuntime().exec("catior "+ior);
-        // 外部コマンドの標準出力を取得するための入力ストリームを取得
-        java.io.InputStream is = process.getInputStream();
-        BufferedReader br 
-                = new BufferedReader(new java.io.InputStreamReader(is));
-        // 標準出力を１行づつ取り出します
-        String line;
-        while ((line = br.readLine()) != null) {
-            System.out.println(line);
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
-//+>
                 rtcout.println(rtcout.TRACE, 
                     "RTC Created: " + comp_id.getProperty("implementaion_id"));
                 break;
@@ -759,6 +842,7 @@ public class Manager {
         if( comp == null ) {
             return null;
         }
+*/
         //------------------------------------------------------------
         // Load configuration file specified in "rtc.conf"
         //
@@ -772,11 +856,15 @@ public class Manager {
         //------------------------------------------------------------
         // Component initialization
         if( comp.initialize() != ReturnCode_t.RTC_OK ) {
-            rtcout.println(rtcout.TRACE, "RTC initialization failed: " + comp_id.getProperty("implementaion_id"));
+            rtcout.println(rtcout.TRACE, 
+                "RTC initialization failed: " 
+                + comp_id.getProperty("implementaion_id"));
             comp.exit();
             return null;
         }
-        rtcout.println(rtcout.TRACE, "RTC initialization succeeded: " + comp_id.getProperty("implementaion_id"));
+        rtcout.println(rtcout.TRACE, 
+            "RTC initialization succeeded: " 
+            + comp_id.getProperty("implementaion_id"));
 
         //------------------------------------------------------------
         // Bind component to naming service
@@ -785,6 +873,25 @@ public class Manager {
         return comp;
     }
     
+    /**
+     * {@.ja m_factoryから指定のプロパティと同じimplementation_idをもつ
+     * FactoryBaseを探す。}
+     *
+     */
+    private FactoryBase findPropertyFormFactory(Properties comp_id) {
+        FactoryBase factory = null;
+        for (int i=0, len=m_factory.m_objects.size(); i < len; ++i) {
+            factory = m_factory.m_objects.elementAt(i);
+            if(factory == null){
+                continue;
+            }
+            String str = factory.m_Profile.getProperty("implementation_id");
+            if (str.equals(comp_id.getProperty("implementation_id"))) {
+                return factory;
+            }
+        }
+        return null;
+    }
     /**
      * <p>指定したRTコンポーネントを登録解除します。</p>
      * 
@@ -797,6 +904,64 @@ public class Manager {
         unregisterComponent(comp);
     }
     
+    class cleanupComponentsClass implements CallbackFunction {
+
+    private Manager m_mgr;
+    public cleanupComponentsClass() {
+//        m_mgr = Manager.instance(); 
+    }
+    public void doOperate() {
+        cleanupComponents();
+    }
+    /**
+     * {@.ja RTコンポーネントの削除する}
+     * {@.en This method deletes RT-Components.}
+     *
+     * <p>
+     * {@.ja notifyFinalized()によって登録されたRTコンポーネントを削除する。}
+     * {@.en This method deletes RT-Components registered by 
+     * notifyFinalized().} 
+     *
+     */
+    public void cleanupComponents() {
+        rtcout.println(rtcout.VERBOSE, "Manager.cleanupComponents()");
+        synchronized (m_finalized.mutex){
+            rtcout.println(rtcout.VERBOSE,  
+                m_finalized.comps.size()
+                +" components are marked as finalized.");
+            for (int i=0; i < m_finalized.comps.size(); ++i) {
+                deleteComponent(m_finalized.comps.elementAt(i));
+            }
+            m_finalized.comps.clear();
+        }
+    }
+
+    }
+    cleanupComponentsClass m_cleanupComponents = new cleanupComponentsClass();
+
+    /**
+     * {@.ja RTコンポーネントの削除する}
+     * {@.en This method deletes RT-Components.}
+     *
+     * <p>
+     * {@ja 削除するRTコンポーネントを登録する。
+     * 登録されたRTコンポーネントは cleanupComponents() で削除される。}
+     * {@.en The deleted RT-Component is registered. i
+     * The registered RT-Components 
+     * are deleted by cleanupComponents().}
+     *
+     * @param comp
+     *   {@.ja 削除するRTコンポーネント}
+     *   {@.en Deleted RT component}
+     *
+     *
+     */
+    public void notifyFinalized(RTObject_impl comp) {
+        rtcout.println(rtcout.TRACE, "Manager.notifyFinalized()");
+        synchronized (m_finalized.mutex){
+            m_finalized.comps.add(comp);
+        }
+    }
     /**
      * <p> procComponentArgs </p>
      *
@@ -808,15 +973,17 @@ public class Manager {
      */
     public boolean procComponentArgs(final String comp_arg,
                                      Properties comp_id,
-                                     Properties comp_conf)
-    {
+                                     Properties comp_conf) {
         rtcout.println(rtcout.TRACE, "Manager.procComponentArgs("+comp_arg+")");
 
         String[] id_and_conf = comp_arg.split("\\?");
-        // arg should be "id?[conf]". id is mandatory, conf is optional
+        // arg should be "id?key0=value0&key1=value1...".
+        // id is mandatory, conf is optional
         if (id_and_conf.length != 1 && id_and_conf.length != 2) {
-            rtcout.println(rtcout.ERROR, "args devided into " + id_and_conf.length);
-            rtcout.println(rtcout.ERROR, "Invalid arguments. Two or more '?' in arg : " + comp_arg);
+            rtcout.println(rtcout.ERROR, 
+                "args devided into " + id_and_conf.length);
+            rtcout.println(rtcout.ERROR, 
+                "Invalid arguments. Two or more '?' in arg : " + comp_arg);
             return false;
         }
         if (id_and_conf[0].indexOf(":") == -1) {
@@ -830,7 +997,8 @@ public class Manager {
         // id should be devided into 1 or 5 elements
         // RTC:[vendor]:[category]:impl_id:[version] => 5
         if (id.length != 5) {
-            rtcout.println(rtcout.ERROR, "Invalid RTC id format.: " + id_and_conf[0]);
+            rtcout.println(rtcout.ERROR, 
+                    "Invalid RTC id format.: " + id_and_conf[0]);
             return false;
         }
 
@@ -848,15 +1016,23 @@ public class Manager {
         }
         for (int i = 1; i < 5; ++i) {
             comp_id.setProperty(prof[i], id[i].trim());
-            rtcout.println(rtcout.TRACE, "RTC basic propfile " + prof[i] + ":" + id[i].trim());
+            rtcout.println(rtcout.TRACE, 
+                "RTC basic propfile " + prof[i] + ":" + id[i].trim());
         }
 
         if (id_and_conf.length == 2) {
             String[] conf = id_and_conf[1].split("&");
             for (int i = 0, len = conf.length; i < len; ++i) {
+                if (conf[i]==null) { 
+                    continue; 
+                }
                 String[] keyval = conf[i].split("=", -1);
+                if (keyval.length != 2) { 
+                    continue; 
+                }
                 comp_conf.setProperty(keyval[0].trim(), keyval[1].trim());
-                rtcout.println(rtcout.TRACE, "RTC property " + keyval[0] + ":" + keyval[1]);
+                rtcout.println(rtcout.TRACE, 
+                    "RTC property " + keyval[0] + ":" + keyval[1]);
             }
         }
         return true;
@@ -1219,20 +1395,62 @@ public class Manager {
     }
     
     /**
-     * <p>Managerの内部初期化処理を行います。</p>
+     * {@.ja Manager の内部初期化処理}
+     * {@.en Manager internal initialization}
      *
-     * @param argv コマンドライン引数
+     * <p> 
+     * {@.ja Manager の内部初期化処理を実行する。
+     * <ul>
+     * <li> Manager コンフィギュレーションの設定
+     * <li> ログ出力ファイルの設定
+     * <li> 終了処理用スレッドの生成
+     * <li> タイマ用スレッドの生成(タイマ使用時)
+     * </ul>}
+     * {@.en Execute Manager's internal initialization processing.
+     * <ul>
+     * <li> Set Manager configuration
+     * <li> Set log output file
+     * <li> Create termination processing thread
+     * <li> Create timer thread (when using timer)
+     * </ul>}
+     *
+     * @param argv 
+     *   {@.ja コマンドライン引数}
+     *   {@.en Commandline arguments}
      */
     protected void initManager(String[] argv) throws Exception {
         
-        ManagerConfig config = new ManagerConfig(argv);
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("IN  initManager");
+        }
+        ManagerConfig config = null;
+        try{
+            config = new ManagerConfig(argv);
+        }
+        catch(IllegalArgumentException e){
+            rtcout.println(rtcout.WARN, "Could not parse arguments.");
+        }
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            if (m_config == null) {
+                System.out.println("m_confg is null.");
+            }
+            else{
+                System.out.println("m_confg is not null.");
+            }
+            if (config == null) {
+                System.out.println("confg is null.");
+            }
+            else{
+                System.out.println("confg is not null.");
+            }
+        }
         if (m_config == null) {
             m_config = new Properties();
         }
         
         config.configure(m_config);
         m_config.setProperty("logger.file_name",
-                formatString(m_config.getProperty("logger.file_name"), m_config));
+              formatString(m_config.getProperty("logger.file_name"), m_config));
 
         m_module = new ModuleManager(m_config);
         m_terminator = new Terminator(this);
@@ -1241,7 +1459,8 @@ public class Manager {
             m_terminate_waiting = 0;
         }
 
-        if (StringUtil.toBool(m_config.getProperty("timer.enable"), "YES", "NO", true)) {
+        if (StringUtil.toBool(m_config.getProperty("timer.enable"), 
+                              "YES", "NO", true)) {
             TimeValue tm = new TimeValue(0, 100);
             String tick = m_config.getProperty("timer.tick");
             if (! (tick == null || tick.equals(""))) {
@@ -1249,6 +1468,26 @@ public class Manager {
                 m_timer = new Timer(tm);
                 m_timer.start();
             }
+        }
+        if (StringUtil.toBool(m_config.getProperty("manager.shutdown_auto"), 
+                              "YES", "NO", true)  &&
+            !StringUtil.toBool(m_config.getProperty("manager.is_master"), 
+                              "YES", "NO", false) ) {
+            TimeValue tm = new TimeValue(10, 0);
+            if (m_timer != null) {
+                m_timer.registerListenerObj(m_shutdownOnNoRtcs, tm);
+            }
+        }
+    
+        {
+            TimeValue tm = new TimeValue(1, 0);
+            if (m_timer != null) {
+                m_timer.registerListenerObj(m_cleanupComponents, tm);
+            }
+        }
+
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("OUT initManager");
         }
     }
     
@@ -1260,6 +1499,44 @@ public class Manager {
         rtcout.println(rtcout.TRACE, "Manager.shutdownManager()");
     }
     
+    class shutdownOnNoRtcsClass implements CallbackFunction {
+    private Manager m_mgr;
+    public shutdownOnNoRtcsClass() {
+//        m_mgr = Manager.instance(); 
+    }
+    public void doOperate() {
+        shutdownOnNoRtcs();
+    }
+    /**
+     * {@.ja Manager の終了処理}
+     * {@.en Shutdown Manager}
+     *
+     * <p>
+     * {@.ja configuration の "manager.shutdown_on_nortcs" YES で、
+     * コンポーネントが登録されていない場合 Manager を終了する。}
+     * {@.en This method shutdowns Manager as follows.
+     * <ul>
+     * <li> "Manager.shutdown_on_nortcs" of configuration is YES. 
+     * <li> The component is not registered.
+     * </ul>}
+     *
+     */
+    protected void shutdownOnNoRtcs(){
+        rtcout.println(rtcout.TRACE, "Manager.shutdownOnNoRtcs()");
+        if (StringUtil.toBool(
+            m_config.getProperty("manager.shutdown_on_nortcs"), 
+            "YES", "NO", true)) {
+
+            Vector<RTObject_impl> comps = getComponents();
+            if (comps.size() == 0) {
+                shutdown();
+            }
+        }
+    }
+
+    }
+    shutdownOnNoRtcsClass m_shutdownOnNoRtcs = new shutdownOnNoRtcsClass();
+  
     /**
      * <p>System loggerを初期化します。</p>
      *
@@ -1411,9 +1688,7 @@ public class Manager {
         }
 /*
         createORBEndpoints(endpoints);
-System.out.println("createORBOptions.endpoints>:"+endpoints);
         createORBEndpointOption(opt, endpoints);
-System.out.println("createORBOptions.endpoints>:"+endpoints);
 */
         rtcout.println(rtcout.PARANOID, "ORB options: "+opt);
         
@@ -1482,9 +1757,13 @@ System.out.println("createORBOptions.endpoints>:"+endpoints);
      */
     protected void createORBEndpointOption(String opt, 
                                             Vector<String> endpoints) {
-System.out.println("IN  createORBEndpointOption>:"+opt+","+endpoints);
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("IN  createORBEndpointOption>:"+opt+","+endpoints);
+        }
         String corba = m_config.getProperty("corba.id");
-System.out.println("    corba.id>:"+corba);
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("    corba.id>:"+corba);
+        }
         rtcout.println(rtcout.DEBUG, "corba.id: "+corba);
 
         for (int i=0; i < endpoints.size(); ++i) {
@@ -1511,7 +1790,9 @@ System.out.println("    corba.id>:"+corba);
                 opt += "-ORBIIOPAddr inet:" + endpoint;
             }
         }
-System.out.println("OUT createORBEndpointOption");
+        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
+            System.out.println("OUT createORBEndpointOption");
+        }
     }
 
     /**
@@ -1979,6 +2260,10 @@ System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
      *
      */
     protected boolean initManagerServant() {
+        if (!StringUtil.toBool(m_config.getProperty("manager.corba_servant"), 
+                                                    "YES", "NO", true)) {
+            return true;
+        }
         m_mgrservant = new ManagerServant();
         return true;
     }
@@ -1991,6 +2276,10 @@ System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
      */
     protected boolean bindManagerServant() {
 
+        if (!StringUtil.toBool(m_config.getProperty("manager.corba_servant"), 
+                                                    "YES", "NO", true)) {
+            return true;
+        }
         if( m_mgrservant == null) {
             rtcout.println(rtcout.ERROR, "ManagerServant is not created.");
             return false;
@@ -2374,4 +2663,42 @@ System.out.println("com.sun.CORBA.ORBServerPort"+", "+endPointInfo[1]);
      * <p>Terminator用カウンタ</p>
      */
     protected int m_terminate_waiting;
+    /**
+     *
+     * {@.ja コンフィギュレーションセット検索用ヘルパークラス}
+     *
+     */
+    private class find_conf {
+        private Properties m_prop;
+        public find_conf(final Properties prop) {
+            m_prop = prop;
+        }
+        public boolean equalof(Properties prop) {
+            String str = m_prop.getProperty("implementation_id");
+            if (!str.equals(prop.getProperty("implementation_id"))) {
+                return false;
+            }
+            str = m_prop.getProperty("vendor");
+            if (str != null &&
+                !str.equals(prop.getProperty("vendor"))){ 
+                return false; 
+            }
+            str = m_prop.getProperty("category");
+            if (str != null &&
+                !str.equals(prop.getProperty("category"))) { 
+                return false; 
+            }
+            str = m_prop.getProperty("version");
+            if (str!=null && 
+                !str.equals(prop.getProperty("version"))) {
+                return false; 
+            }
+            return true;
+        }
+    }
+    protected class Finalized {
+        String  mutex = new String();
+        Vector<RTObject_impl> comps = new Vector<RTObject_impl>();
+    };
+    Finalized m_finalized = new Finalized();
 }
