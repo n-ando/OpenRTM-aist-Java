@@ -535,11 +535,6 @@ public class PeriodicECOrganization extends Organization_impl {
         // port delegation
         for (int i=0, len=plist.length; i < len; ++i) {
             // port name . comp_name.port_name
-/*
-            String port_name = comp_name;
-            port_name = port_name.concat("."); 
-            port_name = port_name.concat(plist[i].name);
-*/
             String port_name =  plist[i].name;
 
             rtcout.println(rtcout.DEBUG, "port_name: " + port_name + 
