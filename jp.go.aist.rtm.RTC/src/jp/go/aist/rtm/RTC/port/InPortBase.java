@@ -74,6 +74,51 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
+     * {@.ja Connector を取得}
+     * {@.en Connector list}
+     *
+     * <p>
+     * {@.ja 現在所有しているコネクタを取得する。}
+     * {@.en This operation returns connector list}
+     *
+     * @return 
+     *   {@.ja connector のリスト}
+     *   {@.en connector list}
+     *
+     *
+     */
+    public final Vector<InPortConnector> connectors() {
+        rtcout.println(rtcout.TRACE, 
+                            "connectors(): size = "+m_connectors.size());
+        return m_connectors;
+    }
+
+    /**
+     * {@.ja ConnectorProfile を取得}
+     * {@.en ConnectorProfile list}
+     *
+     * <p>
+     * {@.ja 現在所有しているコネクタのProfileを取得する。}
+     * {@.en This operation returns ConnectorProfile list}
+     *
+     * @return 
+     *   {@.ja ConnectorProfile のリスト}
+     *   {@.en connector list}
+     *
+     *
+     */
+    public Vector<ConnectorBase.ConnectorInfo> getConnectorProfiles(){
+        rtcout.println(rtcout.TRACE, 
+                        "getConnectorProfiles(): size = "+m_connectors.size());
+        Vector<ConnectorBase.ConnectorInfo> profs 
+                = new Vector<ConnectorBase.ConnectorInfo>();
+        for (int i=0, len=m_connectors.size(); i < len; ++i) {
+            profs.add(m_connectors.elementAt(i).profile());
+        }
+        return profs;
+    }
+
+    /**
      *
      * <p> ConnectorId list </p>
      * <p> This operation returns ConnectorId list </p>
