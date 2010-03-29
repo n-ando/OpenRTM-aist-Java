@@ -40,7 +40,7 @@ interface DefaultConfiguration {
         "timer.enable",           "YES",
         "timer.tick",             "0.1",
         "corba.args",             "",
-        "corba.endpoint",         "192.168.100.220;,192.168.100.224", // hostname:port_number
+        "corba.endpoint",         "", // hostname:port_number
         "corba.id",               Version.corba_name,
         "corba.nameservers",      "localhost",
         "corba.master_manager",   "localhost:2810",
@@ -52,7 +52,7 @@ interface DefaultConfiguration {
         "manager.modules.abs_path_allowed", "YES",
         "manager.is_master",                "NO",
         "manager.corba_servant",            "YES",
-        "manager.shutdown_onrtcs",          "YES",
+        "manager.shutdown_on_nortcs",          "YES",
         "manager.shutdown_auto",            "YES",
         "manager.name",                     "manager",
         "manager.command",                  "rtcd",
