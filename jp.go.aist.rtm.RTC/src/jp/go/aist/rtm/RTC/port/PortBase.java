@@ -341,84 +341,190 @@ public abstract class PortBase extends PortServicePOA {
     }
 
     /**
-     * <p>ポートの接続通知を行います。本メソッドは、ポート間で接続が行われる際に、
-     * ポート間で内部的に呼び出されます。</p>
-     * 
-     * @param connector_profile 接続プロファイル
-     * @return ReturnCode_t型の戻り値
+     * {@.ja [CORBA interface] Port の接続通知を行う}
+     * {@.en [CORBA interface] Notify the Ports connection}
+     *
+     * <p>
+     * {@.ja このオペレーションは、Port間の接続が行われる際に、Port間で内部的
+     * に呼ばれるオペレーションであって、通常アプリケーションプログラム
+     * や、Port以外のRTC関連オブジェクト等から呼び出されることは想定さ
+     * れていない。
+     *
+     * notify_connect() 自体はテンプレートメソッドパターンとして、サブ
+     * クラスで実装されることが前提の publishInterfaces(),
+     * subscribeInterfaces() の2つの関数を内部で呼び出す。処理の手順は
+     * 以下の通りである。
+     *
+     * - publishInterfaces(): インターフェース情報の公開
+     * - connectNext(): 次の Port の notify_connect() の呼び出し
+     * - subscribeInterfaces(): インターフェース情報の取得
+     * - 接続情報の保存
+     *
+     * notify_connect() は ConnectorProfile::ports に格納されている
+     * Port の順序に従って、カスケード状に呼び出しを行うことにより、イ
+     * ンターフェース情報の公開と取得を関連すすべてのポートに対して行う。
+     * このカスケード呼び出しは途中で中断されることはなく、必ず
+     * ConnectorProfile::ports に格納されている全ポートに対して行われる。
+     *
+     * @pre notify_connect() は ConnectorProfile::ports 内に格納されて
+     * いる Port 参照リストのうち、当該 Port 自身の参照の次に格納されて
+     * いる Port に対して notify_connect() を呼び出す。したがって
+     * ConnectorProfile::ports には当該 Port の参照が格納されている必要
+     * がある。もし、自身の参照が格納されていない場合、その他の処理によ
+     * りエラーが上書きされなければ、BAD_PARAMETER エラーが返される。
+     *
+     * @pre 呼び出し時に ConnectorProfile::connector_id には一意なIDと
+     * して UUID が保持されている必要がある。通常 connector_id は
+     * connect() 関数により与えられ、空文字の場合は動作は未定義である。
+     *
+     * @post ConnectorProfile::name, ConnectorProfile::connector_id,
+     * ConnectorProfile::ports は notify_connect() の呼び出しにより
+     * 書き換えられることはなく不変である。
+     *
+     * @post ConnectorProfile::properties は notify_connect() の内部で、
+     * 当該 Port が持つサービスインターフェースに関する情報を他の Port
+     * に伝えるために、プロパティ情報が書き込まれる。
+     *
+     * @post なお、ConnectorProfile::ports のリストの最初 Port の
+     * notify_connet() が終了した時点では、すべての関連する Port の
+     * notify_connect() の呼び出しが完了する。publishInterfaces(),
+     * connectNext(), subscribeInterfaces() および接続情報の保存のいず
+     * れかの段階でエラーが発生した場合でも、エラーコードは内部的に保持
+     * されており、最初に生じたエラーのエラーコードが返される。}
+     * {@.en This operation is usually called from other ports' connect() or
+     * notify_connect() operations when connection between ports is
+     * established.  This function is not premised on calling from
+     * other functions or application programs.
+     *
+     * According to the template method pattern, the notify_connect()
+     * calls "publishInterfaces()" and "subsctiveInterfaces()"
+     * functions, which are premised on implementing in the
+     * subclasses. The processing sequence is as follows.
+     *
+     * - publishInterfaces(): Publishing interface information
+     * - connectNext(): Calling notify_connect() of the next port
+     * - subscribeInterfaces(): Subscribing interface information
+     * - Storing connection profile
+     *
+     * According to the order of port's references stored in the
+     * ConnectorProfile::ports, publishing interface information to
+     * all the ports and subscription interface information from all
+     * the ports is performed by "notify_connect()"s.  This cascaded
+     * call never aborts in the halfway operations, and calling
+     * sequence shall be completed for all the ports.
+     *
+     * @pre notify_connect() calls notify_connect() for the port's
+     * reference that is stored in next of this port's reference in
+     * the sequence of the ConnectorProfile::ports. Therefore the
+     * reference of this port shall be stored in the
+     * ConnectorProfile::ports. If this port's reference is not stored
+     * in the sequence, BAD_PARAMETER error will be returned, except
+     * the return code is overwritten by other operations.
+     *
+     * @pre UUID shall be set to ConnectorProfile::connector_id as a
+     * unique identifier when this operation is called.  Usually,
+     * connector_id is given by a connect() function and, the behavior
+     * is undefined in the case of a null character.
+     *
+     * @post ConnectorProfile::name, ConnectorProfile::connector_id,
+     * ConnectorProfile::ports are invariant, and they are never
+     * rewritten by notify_connect() operations.
+     *
+     * @post In order to transfer interface information to other
+     * ports, interface property information is stored into the
+     * ConnectorProfile::properties.
+     *
+     * @post At the end of notify_connect() operation for the first
+     * port stored in the ConnectorProfile::ports sequence, the
+     * related ports' notify_connect() invocations complete. Even if
+     * errors are raised at the halfway of publishInterfaces(),
+     * connectNext(), subscribeInterfaces() and storing process of
+     * ConnectorProfile, error codes are saved and the first error is
+     * returned.}
+     *
+     * @param connector_profile 
+     *   {@.ja ConnectorProfileHolder}
+     *   {@.en ConnectorProfileHolder}
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en ReturnCode_t The return code of ReturnCode_t type.}
+     *
      */
     public ReturnCode_t 
     notify_connect(ConnectorProfileHolder connector_profile) {
 
         rtcout.println(rtcout.TRACE, "notify_connect()");
 
-        ReturnCode_t[] retval = {ReturnCode_t.RTC_OK, ReturnCode_t.RTC_OK, 
+        synchronized (m_connectorsMutex){
+            ReturnCode_t[] retval = {ReturnCode_t.RTC_OK, ReturnCode_t.RTC_OK, 
                                  ReturnCode_t.RTC_OK}; 
-        //
-        // publish owned interface information to the ConnectorProfile
-        retval[0] = publishInterfaces(connector_profile);
-        if (! ReturnCode_t.RTC_OK.equals(retval[0])) {
-            rtcout.println(rtcout.ERROR, 
+            //
+            // publish owned interface information to the ConnectorProfile
+            retval[0] = publishInterfaces(connector_profile);
+            if (! ReturnCode_t.RTC_OK.equals(retval[0])) {
+                rtcout.println(rtcout.ERROR, 
                            "publishInterfaces() in notify_connect() failed.");
-        }
-        if (m_onPublishInterfaces != null) {
-            m_onPublishInterfaces.run(connector_profile);
-        }
+            }
+            if (m_onPublishInterfaces != null) {
+                m_onPublishInterfaces.run(connector_profile);
+            }
     
 
-        // call notify_connect() of the next Port
-        retval[1] = connectNext(connector_profile);
-        if (! ReturnCode_t.RTC_OK.equals(retval[1])) {
-            rtcout.println(rtcout.ERROR, 
-                           "connectNext() in notify_connect() failed.");
-        }
+            // call notify_connect() of the next Port
+            retval[1] = connectNext(connector_profile);
+            if (! ReturnCode_t.RTC_OK.equals(retval[1])) {
+                rtcout.println(rtcout.ERROR, 
+                               "connectNext() in notify_connect() failed.");
+            }
 
-        // subscribe interface from the ConnectorProfile's information
-        if (m_onSubscribeInterfaces != null) {
-            m_onSubscribeInterfaces.run(connector_profile);
-        }
-        retval[2] = subscribeInterfaces(connector_profile);
-        if (! ReturnCode_t.RTC_OK.equals(retval[2])) {
-            // cleanup this connection for downstream ports
-            rtcout.println(rtcout.ERROR, 
+            // subscribe interface from the ConnectorProfile's information
+            if (m_onSubscribeInterfaces != null) {
+                m_onSubscribeInterfaces.run(connector_profile);
+            }
+            retval[2] = subscribeInterfaces(connector_profile);
+            if (! ReturnCode_t.RTC_OK.equals(retval[2])) {
+                // cleanup this connection for downstream ports
+                rtcout.println(rtcout.ERROR, 
                            "subscribeInterfaces() in notify_connect() failed.");
-        }
+            }
 
-        rtcout.println(rtcout.PARANOID, 
-            m_profile.connector_profiles.length+" connectors are existing.");
+            rtcout.println(rtcout.PARANOID, 
+                m_profile.connector_profiles.length
+                +" connectors are existing.");
 
-        synchronized (m_profile_mutex) {
-            // update ConnectorProfile
-            int index = 
+            synchronized (m_profile_mutex) {
+                // update ConnectorProfile
+                int index = 
                      findConnProfileIndex(connector_profile.value.connector_id);
-            if (index < 0) {
-                ConnectorProfileListHolder holder =
-                  new ConnectorProfileListHolder(
+                if (index < 0) {
+                    ConnectorProfileListHolder holder =
+                      new ConnectorProfileListHolder(
                                              this.m_profile.connector_profiles);
-                CORBA_SeqUtil.push_back(holder, connector_profile.value);
-                this.m_profile.connector_profiles = holder.value;
-                rtcout.println(rtcout.PARANOID,
+                    CORBA_SeqUtil.push_back(holder, connector_profile.value);
+                    this.m_profile.connector_profiles = holder.value;
+                    rtcout.println(rtcout.PARANOID,
                                "New connector_id. Push backed.");
 
-            } else {
-                this.m_profile.connector_profiles[index] = 
+                } else {
+                    this.m_profile.connector_profiles[index] = 
                                                        connector_profile.value;
-                rtcout.println(rtcout.PARANOID,
-                               "Existing connector_id. Updated.");
-            } 
-        }
-
-        for (int i=0, len=retval.length; i < len; ++i) {
-            if (! ReturnCode_t.RTC_OK.equals(retval[i])) {
-                return retval[i];
+                    rtcout.println(rtcout.PARANOID,
+                                   "Existing connector_id. Updated.");
+                } 
             }
-        }
 
-        // connection established without errors
-        if (m_onConnected != null) {
-            m_onConnected.run(connector_profile);
+            for (int i=0, len=retval.length; i < len; ++i) {
+                if (! ReturnCode_t.RTC_OK.equals(retval[i])) {
+                    return retval[i];
+                }
+            }
+
+            // connection established without errors
+            if (m_onConnected != null) {
+                m_onConnected.run(connector_profile);
+            }
+            return ReturnCode_t.RTC_OK;
         }
-        return ReturnCode_t.RTC_OK;
     }
 
     /**
@@ -468,11 +574,88 @@ public abstract class PortBase extends PortServicePOA {
     }
 
     /**
-     * <p>ポートの接続解除通知を行います。本メソッドは、ポート間の接続解除が行われる際に、
-     * ポート間で内部的に呼び出されます。</p>
+     * {@.ja [CORBA interface] Port の接続解除通知を行う}
+     * {@.en [CORBA interface] Notify the Ports disconnection}
+     *
+     * <p>
+     * {@.ja このオペレーションは、Port間の接続解除が行われる際に、Port間で内
+     * 部的に呼ばれるオペレーションであり、通常アプリケーションプログラ
+     * ムや、 Port 以外の RTC 関連オブジェクト等から呼び出されることは
+     * 想定されていない。
+     *
+     * notify_disconnect() 自体はテンプレートメソッドパターンとして、サ
+     * ブクラスで実装されることが前提の unsubscribeInterfaces() 関数を
+     * 内部で呼び出す。処理の手順は以下の通りである。
+     *
+     * - ConnectorProfile の検索
+     * - 次の Port の notify_disconnect() 呼び出し
+     * - unsubscribeInterfaces()
+     * - ConnectorProfile の削除
+     *
+     * notify_disconnect() は ConnectorProfile::ports に格納されている
+     * Port の順序に従って、カスケード状に呼び出しを行うことにより、接
+     * 続の解除をすべての Port に通知する。
+     *
+     * @pre Port は与えられた connector_id に対応する ConnectorProfile
+     * を保持していなければならない。
+     *
+     * @post connector_id に対応する ConnectorProfile が見つからない場
+     * 合はBAD_PARAMETER エラーを返す。
+     *
+     * @post カスケード呼び出しを行う際には ConnectorProfile::ports に
+     * 保持されている Port の参照リストのうち、自身の参照の次の参照に対
+     * して notify_disconnect() を呼び出すが、その呼び出しで例外が発生
+     * した場合には、呼び出しをスキップしリストの次の参照に対して
+     * notify_disconnect() を呼び出す。一つも呼び出しに成功しない場合、
+     * RTC_ERROR エラーコードを返す。
+     *
+     * @post なお、ConnectorProfile::ports のリストの最初 Port の
+     * notify_disconnet() が終了した時点では、すべての関連する Port の
+     * notify_disconnect() の呼び出しが完了する。}
+     * {@.en This operation is invoked between Ports internally when the
+     * connection is destroied. Generally it is not premised on
+     * calling from application programs or RTC objects except Port
+     * object.
+     *
+     * According to the template method pattern, the
+     * notify_disconnect() calls unsubsctiveInterfaces() function,
+     * which are premised on implementing in the subclasses. The
+     * processing sequence is as follows.
+     *
+     * - Searching ConnectorProfile
+     * - Calling notify_disconnect() for the next port
+     * - Unsubscribing interfaces
+     * - Deleting ConnectorProfile
+     *
+     * notify_disconnect() notifies disconnection to all the ports by
+     * cascaded call to the stored ports in the
+     * ConnectorProfile::ports in order.
+     *
+     * @pre The port shall store the ConnectorProfile having same id
+     * with connector_id.
+     *
+     * @post If ConnectorProfile of same ID with connector_id does not
+     * exist, it returns BAD_PARAMETER error.
+     *
+     * @post For the cascaded call, this operation calls
+     * noify_disconnect() for the port that is stored in the next of
+     * this port in the ConnectorProfile::ports.  If the operation
+     * call raises exception for some failure, it tries to call
+     * notify_disconnect() and skips until the operation succeeded.
+     * If none of operation call succeeded, it returns RTC_ERROR.
+     *
+     * @post At the end of notify_disconnect() operation for the first
+     * port stored in the ConnectorProfile::ports sequence, the
+     * related ports' notify_disconnect() invocations complete.}
      * 
-     * @param connector_id コネクタID
-     * @return ReturnCode_t型の戻り値
+     * @param connector_id
+     *   {@.ja ConnectorProfile の ID}
+     *   {@.en The ID of the ConnectorProfile.}
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type.}
+     *
+     *
      */
     public ReturnCode_t notify_disconnect(final String connector_id) {
 
@@ -484,52 +667,44 @@ public abstract class PortBase extends PortServicePOA {
         // The slave Ports have only responsibility of deleting its own
         // ConnectorProfile.
 
-        synchronized (m_profile_mutex) {
-            // find connector_profile
-            int index = findConnProfileIndex(connector_id);
-            if (index < 0) {
-                rtcout.println(rtcout.ERROR, 
+        synchronized (m_connectorsMutex){
+            synchronized (m_profile_mutex) {
+                // find connector_profile
+                int index = findConnProfileIndex(connector_id);
+                if (index < 0) {
+                    rtcout.println(rtcout.ERROR, 
                                "Invalid connector id: "+connector_id);
-	         return ReturnCode_t.BAD_PARAMETER;
-             }
-/* zxc
- Please delete this processing 
- if the unit test of this function is executed, 
- and the problem doesn't occur.
+	             return ReturnCode_t.BAD_PARAMETER;
+                 }
 
-            ConnectorProfile org_conn_prof 
-                               = this.m_profile.connector_profiles[index];
-            ConnectorProfile prof = new ConnectorProfile(
-                    org_conn_prof.name,
-                    org_conn_prof.connector_id,
-                    org_conn_prof.ports,
-                    org_conn_prof.properties);
-*/
+                ConnectorProfile prof 
+                    = this.m_profile.connector_profiles[index];
+                ReturnCode_t retval = disconnectNext(prof);
+                if (m_onUnsubscribeInterfaces != null) {
+                    ConnectorProfileHolder holder 
+                        = new ConnectorProfileHolder(prof);
+                    m_onUnsubscribeInterfaces.run(holder);
+                    prof = holder.value;
+                }
+                unsubscribeInterfaces(prof);
 
-            ConnectorProfile prof = this.m_profile.connector_profiles[index];
-            ReturnCode_t retval = disconnectNext(prof);
-            if (m_onUnsubscribeInterfaces != null) {
-                ConnectorProfileHolder holder 
-                    = new ConnectorProfileHolder(prof);
-                m_onUnsubscribeInterfaces.run(holder);
-                prof = holder.value;
-            }
-            unsubscribeInterfaces(prof);
+                if (m_onDisconnected != null) {
+                    ConnectorProfileHolder holder 
+                        = new ConnectorProfileHolder(prof);
+                    m_onDisconnected.run(holder);
+                    prof = holder.value;
+                }
 
-            if (m_onDisconnected != null) {
-                ConnectorProfileHolder holder 
-                    = new ConnectorProfileHolder(prof);
-                m_onDisconnected.run(holder);
-                prof = holder.value;
-            }
+                ConnectorProfileListHolder holder 
+                    = new ConnectorProfileListHolder(
+                        this.m_profile.connector_profiles);
 
-            ConnectorProfileListHolder holder =
-              new ConnectorProfileListHolder(this.m_profile.connector_profiles);
-            CORBA_SeqUtil.erase(holder, index);
-            this.m_profile.connector_profiles = holder.value;
+                CORBA_SeqUtil.erase(holder, index);
+                this.m_profile.connector_profiles = holder.value;
         
-            return retval;
-       }
+                return retval;
+           }
+        }
     }
 
     /**
@@ -1190,6 +1365,7 @@ catch(Exception ex){
      */
     protected PortProfile m_profile = new PortProfile();
     protected static String m_profile_mutex = new String();
+    protected static String m_connectorsMutex = new String();
 
     /**
      * <p>当該ポートのCORBAオブジェクト参照です。</p>

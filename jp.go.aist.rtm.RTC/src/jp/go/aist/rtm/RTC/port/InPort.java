@@ -179,25 +179,47 @@ public class InPort<DataType> extends InPortBase {
      *          false:Past data Data has already been readout.)
      * 
      */
+    /**
+     * {@.ja 最新データが存在するか確認する}
+     * {@.en Check whether the data is newest}
+     * 
+     * <p>
+     * {@.ja InPortに未読の最新データが到着しているかをbool値で返す。
+     * InPortが未接続の場合、および接続コネクタのバッファがEmpty
+     * の場合にはfalseを返す。}
+     * {@.en Check whether the data stored at a current buffer position is i
+     * newest.}
+     *
+     * @return 
+     *   {@.ja true 未読の最新データが存在する
+     *         false 未接続またはバッファにデータが存在しない。}
+     *   {@.en Newest data check result
+     *         ( true:Newest data. Data has not been readout yet.
+     *          false:Past data．Data has already been readout.)}
+     * 
+     */
     public boolean isNew() {
 
         rtcout.println(rtcout.TRACE, "isNew()");
+        int r = 0;
 
-        synchronized (m_connectors){
-            if (m_connectors.size() == 0) {
-                rtcout.println(rtcout.DEBUG, "no connectors");
-                return false;
+        synchronized (m_connectorsMutex){
+            synchronized (m_connectors){
+                if (m_connectors.size() == 0) {
+                    rtcout.println(rtcout.DEBUG, "no connectors");
+                    return false;
+                }
+                r = m_connectors.elementAt(0).getBuffer().readable();
             }
-            int r = m_connectors.elementAt(0).getBuffer().readable();
-            if (r > 0) {
-                rtcout.println(rtcout.DEBUG, 
-                               "isNew() = true, readable data: " + r);
-                return true;
-            }
-      
-            rtcout.println(rtcout.DEBUG, "isNew() = false, no readable data");
-            return false;
         }
+        if (r > 0) {
+            rtcout.println(rtcout.DEBUG, 
+                              "isNew() = true, readable data: " + r);
+            return true;
+        }
+  
+        rtcout.println(rtcout.DEBUG, "isNew() = false, no readable data");
+        return false;
     }
     
     
@@ -269,27 +291,30 @@ public class InPort<DataType> extends InPortBase {
      *
      */
     public boolean read() {
-//    public DataType read() {
         rtcout.println(rtcout.TRACE, "DataType read()");
 
 
-        synchronized (m_connectors){
+        synchronized (m_connectorsMutex){
 
             if (m_OnRead != null) {
                 m_OnRead.run();
                 rtcout.println(rtcout.TRACE, "OnRead called");
             }
 
-            if (m_connectors.size() == 0) {
-                rtcout.println(rtcout.DEBUG, "no connectors");
-                return false;
-            }
-
+            ReturnCode ret;
             EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
                                                         isLittleEndian());
-//zxc            DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
-            DataRef<InputStream> dataref = new DataRef<InputStream>(cdr.create_input_stream());
-            ReturnCode ret = m_connectors.elementAt(0).read(dataref);
+            DataRef<InputStream> dataref 
+                    = new DataRef<InputStream>(cdr.create_input_stream());
+            synchronized (m_connectors){
+
+                if (m_connectors.size() == 0) {
+                    rtcout.println(rtcout.DEBUG, "no connectors");
+                    return false;
+                }
+
+                ret = m_connectors.elementAt(0).read(dataref);
+            }
 
 //zxc            cdr = (EncapsOutputStream)dataref.v;
             if (ret.equals(ReturnCode.PORT_OK)) {
@@ -415,29 +440,46 @@ public class InPort<DataType> extends InPortBase {
     
 
     /**
-     * <p>バッファが空である、つまり読み取れるデータがないかどうかを取得します。</p>
+     * {@.ja バッファが空かどうか確認する}
+     * {@.en Check whether the data is newest}
+     *
+     * <p> 
+     * {@.ja InPortのバッファが空かどうかを bool 値で返す。
+     * 空の場合は true, 未読データがある場合は false を返す。}
+     * {@.en Check whether the data stored at a current buffer position is 
+     * newest.}
+     *
+     * @return 
+     *   {@.ja true  バッファは空
+     *         false バッファに未読データがある}
+     *   {@.en Newest data check result
+     *         ( true:Newest data. Data has not been readout yet.
+     *          false:Past data．Data has already been readout.)}
      * 
-     * @return バッファが空の場合はtrueを、さもなくばfalseを返します。
+     *
      */
     public boolean isEmpty() {
         rtcout.println(rtcout.TRACE, "isEmpty()");
 
-        synchronized (m_connectors){
-            if (m_connectors.size() == 0) {
-                rtcout.println(rtcout.DEBUG, "no connectors");
-                return true;
+        int r = 0;
+        synchronized (m_connectorsMutex){
+            synchronized (m_connectors){
+                if (m_connectors.size() == 0) {
+                    rtcout.println(rtcout.DEBUG, "no connectors");
+                    return true;
+                }
+                r = m_connectors.elementAt(0).getBuffer().readable();
             }
-            int r = m_connectors.elementAt(0).getBuffer().readable();
-            if (r == 0) {
-                rtcout.println(rtcout.DEBUG, 
-                               "isEmpty() = true, buffer is empty");
-                return true;
-            }
-      
-            rtcout.println(rtcout.DEBUG, 
-                           "isEmpty() = false, data exists in the buffer");
-            return false;
         }
+        if (r == 0) {
+            rtcout.println(rtcout.DEBUG, 
+                           "isEmpty() = true, buffer is empty");
+            return true;
+        }
+          
+        rtcout.println(rtcout.DEBUG, 
+                   "isEmpty() = false, data exists in the buffer");
+        return false;
     }
     
     private BufferBase<DataType> m_superClass;

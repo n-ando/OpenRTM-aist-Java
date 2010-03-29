@@ -224,10 +224,14 @@ public class OutPort<DataType> extends OutPortBase {
      */
     public boolean write(final DataType value) {
         rtcout.println(rtcout.TRACE, "DataType write()");
-        synchronized (m_connectors){
-            if (m_OnWrite != null) {
-                m_OnWrite.run(value);
-            }
+
+        if (m_OnWrite != null) {
+            m_OnWrite.run(value);
+        }
+
+        boolean result = true;
+        Vector<String> disconnect_ids = new Vector<String>();
+        synchronized (m_connectorsMutex){
 
             // check number of connectors
             int conn_size = m_connectors.size();
@@ -238,19 +242,23 @@ public class OutPort<DataType> extends OutPortBase {
             // set timestamp
 //            set_timestamp(value);
 
-            // data -> (conversion) -> CDR stream
-
-
-            DataType convervalue = value;
-            if (m_OnWriteConvert != null) {
-                convervalue = m_OnWriteConvert.run(value);
-            }
-
-
-            boolean result = true;
             m_status.setSize(conn_size);
+
             for (int i=0, len=conn_size; i < len; ++i) {
-                ReturnCode ret = m_connectors.elementAt(i).write(convervalue);
+                ReturnCode ret;
+                // data -> (conversion) -> CDR stream
+                if (m_OnWriteConvert != null) {
+                    rtcout.println(rtcout.DEBUG, 
+                                "m_connectors.OnWriteConvert called");
+                    ret = m_connectors.elementAt(i).write(
+                                                m_OnWriteConvert.run(value));
+                }
+                else{
+                    rtcout.println(rtcout.DEBUG, 
+                                "m_connectors.write called");
+                    ret = m_connectors.elementAt(i).write(value);
+                }
+
                 m_status.add(i, ret);
                 if (ret.equals(ReturnCode.PORT_OK)) {
                     continue;
@@ -267,11 +275,16 @@ public class OutPort<DataType> extends OutPortBase {
                             = new RTC.ConnectorProfileHolder(prof);
                         m_onConnectionLost.run(holder);
                     }
-                    disconnect(m_connectors.elementAt(i).id());
+                    disconnect_ids.add(id);
                 }
             }
-            return result;
         }
+        
+        java.util.Iterator it = disconnect_ids.iterator();
+        while (it.hasNext()) {
+            disconnect((String)it.next());
+        }
+        return result;
     }
     
     /**
