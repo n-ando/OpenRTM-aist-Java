@@ -8,6 +8,7 @@ import com.sun.corba.se.impl.encoding.EncapsOutputStream;
 import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 
 public class OutPortPullConnector extends OutPortConnector {
     /**
@@ -98,6 +99,21 @@ public class OutPortPullConnector extends OutPortConnector {
      */
     public ReturnCode disconnect() {
         onDisconnect();
+        // delete provider 
+        if (m_provider != null) {
+            OutPortProviderFactory<OutPortProvider,String> cfactory 
+                = OutPortProviderFactory.instance();
+            cfactory.deleteObject(m_provider);
+        }
+        m_provider = null;
+
+        // delete buffer
+        if (m_buffer != null) {
+            BufferFactory<BufferBase<OutputStream>,String> bfactory 
+                = BufferFactory.instance();
+            bfactory.deleteObject(m_buffer);
+        }
+        m_buffer = null;
         return ReturnCode.PORT_OK;
     }
 

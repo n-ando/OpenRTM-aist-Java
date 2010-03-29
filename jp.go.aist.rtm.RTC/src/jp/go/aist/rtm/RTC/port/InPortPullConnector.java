@@ -10,6 +10,7 @@ import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
 
 /**
  * <p> InPortPullConnector </p>
@@ -109,7 +110,16 @@ public class InPortPullConnector extends InPortConnector {
      * </p>
      */
     public ReturnCode disconnect() {
+        rtcout.println(rtcout.TRACE, "disconnect()");
         onDisconnect();
+        // delete consumer
+        if (m_consumer != null) {
+            rtcout.println(rtcout.DEBUG, "delete consumer");
+            OutPortConsumerFactory<OutPortConsumer,String> cfactory 
+                = OutPortConsumerFactory.instance();
+            cfactory.deleteObject(m_consumer);
+        }
+
         return ReturnCode.PORT_OK;
     }
 

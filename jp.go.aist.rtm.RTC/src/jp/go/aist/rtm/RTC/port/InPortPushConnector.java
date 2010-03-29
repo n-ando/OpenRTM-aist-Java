@@ -156,7 +156,9 @@ public class InPortPushConnector extends InPortConnector {
      * and the buffer.}
      */
     public ReturnCode disconnect() {
-        // delete consumer
+        rtcout.println(rtcout.TRACE, "disconnect()");
+        onDisconnect();
+        // delete provider 
         if (m_provider != null) {
             InPortProviderFactory<InPortProvider,String> cfactory 
                 = InPortProviderFactory.instance();
@@ -171,7 +173,6 @@ public class InPortPushConnector extends InPortConnector {
             bfactory.deleteObject(m_buffer);
         }
         m_buffer = null;
-        onDisconnect();
         return ReturnCode.PORT_OK;
     }
 

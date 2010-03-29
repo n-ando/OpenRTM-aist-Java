@@ -160,6 +160,7 @@ public class OutPortPushConnector extends OutPortConnector {
      */
     public ReturnCode disconnect() {
         rtcout.println(rtcout.TRACE, "disconnect()");
+        onDisconnect();
         // delete publisher
         if (m_publisher != null) {
             rtcout.println(rtcout.DEBUG, "delete publisher");
@@ -186,7 +187,6 @@ public class OutPortPushConnector extends OutPortConnector {
             bfactory.deleteObject(m_buffer);
         }
         m_buffer = null;
-        onDisconnect();
         rtcout.println(rtcout.TRACE, "disconnect() done");
         return ReturnCode.PORT_OK;
     
