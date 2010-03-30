@@ -16,6 +16,7 @@
 	<property name="source.test" value="tests/src"/>
 	<property name="source.tests.bind" value="${source.test}/jp/go/aist/rtm/bind"/>
 	<property name="source.rtcd" value="src/rtcd"/>
+	<property name="source.rtcprof" value="src/rtcprof"/>
 
 	<property name="dist.dir" value="jar" />
 	<property name="dist.samples" value="installer/resources/Source/examples/RTMExamples"/>
@@ -27,6 +28,7 @@
 	<property name="build.doc.jp" value="installer/resources/Source/JavaDocJa"/>
 	<property name="build.dir.jar" value="installer/resources/Source/jar" />
 	<property name="build.dir.rtcd" value="bin/rtcd" />
+	<property name="build.dir.prof" value="bin/rtcprof" />
 
 	<property name="installer.dir" value="installer/resources" />
 	<property name="installer.script" value="installer/commands/genwxs.vbs" />
@@ -87,7 +89,7 @@
 
 		<jar destfile="${dist.dir}/${target.name}.jar"
 			 basedir="${build.dir}"
-			 excludes="RTMExamples/**, rtcd/**" />
+			 excludes="RTMExamples/**, rtcd/**, rtcprof/**" />
 
 		<delete file="${build.dir.jar}/${target.name}.jar" />
 		<copy file="${dist.dir}/${target.name}.jar" todir="${build.dir.jar}" />
@@ -97,6 +99,13 @@
 			 includes="rtcd/**" />
 		<delete file="${build.dir.jar}/rtcd.jar" />
 		<copy file="${dist.dir}/rtcd.jar" todir="${build.dir.jar}" />
+
+		<jar destfile="${dist.dir}/rtcprof.jar"
+			 basedir="${build.dir}"
+                         manifest="${source.rtcprof}/META-INF/MANIFEST.MF"
+			 includes="rtcprof/**" />
+		<delete file="${build.dir.jar}/rtcprof.jar" />
+		<copy file="${dist.dir}/rtcprof.jar" todir="${build.dir.jar}" />
 	</target>
 
 	<target name="javaExamples"  description="Sampleをコピーします">
@@ -220,7 +229,7 @@
 
 	<target name="compile" description="ソースをコンパイルします">
 		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="Shift-JIS" />
-		<javac srcdir="${source.main}:${source.examples}:${source.rtcd}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
+		<javac srcdir="${source.main}:${source.examples}:${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
 	</target>
 
 	<target name="compile_tests" description="ソースをコンパイルします">
