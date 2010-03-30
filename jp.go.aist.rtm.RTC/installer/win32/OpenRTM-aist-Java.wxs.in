@@ -93,15 +93,20 @@
               <Component Id="RtmSourceExamplesBin" Guid="{% RtmSourceExamplesBin.GUID %}">
                 <RemoveFolder Id='RtmSourceExamplesBin_f' On='uninstall' />
                 {% for file in RtmSourceExamplesBin.Files %}
-                  {% if file.Name is start-orbd.vbs %}
                   <File Id="{% file.Id %}"
                        Name="{% file.Name %}" DiskId="1"
                        Source="{% file.Source %}">
-                    <Shortcut Id="{% file.Id %}" Directory="ExpMenuFolder"
-                              Name="Start orbd"
+                    {% if file.Name is start-orbd.vbs %}
+                    <Shortcut Id="{% file.Id %}" Directory="ToolsMenuFolder"
+                              Name="Start Naming Service"
                               Show="normal" WorkingDirectory="bin"/>
+                    {% endif %}
+                    {% if file.Name is rtcd.bat %}
+                    <Shortcut Id="{% file.Id %}" Directory="ToolsMenuFolder"
+                              Name="Start RTC daemon" Arguments=" -d -f rtcd_java.conf"
+                              Show="normal" WorkingDirectory="bin"/>
+                    {% endif %}
                   </File>
-                  {% endif %}
                 {% endfor %}
               </Component>
             </Directory>
@@ -1794,7 +1799,11 @@
       <Directory Id="ProgramMenuFolder">
         <Directory Id="AppMenuFolder" Name="OpenRTM-aist">
           <Directory Id="JavaMenuFolder" Name="Java">
-            <Directory Id="ExpMenuFolder" Name="examples">
+            <Directory Id="ToolsMenuFolder" Name="tools">
+            </Directory>
+            <Directory Id="Components" Name="components">
+              <Directory Id="ExpMenuFolder" Name="examples">
+              </Directory>
             </Directory>
             <Directory Id="DocMenuFolder" Name="documents">
             </Directory>

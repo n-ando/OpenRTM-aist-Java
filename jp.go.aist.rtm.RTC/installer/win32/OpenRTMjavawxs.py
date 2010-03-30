@@ -22,7 +22,7 @@ import makewxs
 data = [
     ("Source/jar",                                                      "*.jar"),
     ("Source/examples/bat",                                             "*.bat"),
-    ("Source/examples/bin",                                             "*.vbs"),
+    ("Source/examples/bin",                                             "*.vbs *.bat *.conf"),
     ("Source/examples/RTMExamples/Composite",                           "*.class *.java *.conf"),
     ("Source/examples/RTMExamples/ConfigSample",                        "*.class *.java *.conf"),
     ("Source/examples/RTMExamples/GUIIn",                               "*.class *.java *.conf"),
@@ -159,7 +159,18 @@ os.mkdir(temp_dir)
 for i in range(bin_cnt):
     shutil.copy2(bin_list[i], temp_dir)
 
-## Shortcut *.bat choice
+## tools *.bat choice
+temp_dir = base_dir + "Source\\examples\\bin"
+bat_dir = base_dir + "Source\\examples\\"
+bat_list = ["rtcd.bat", "rtcprof.bat", "rtcd_java.conf"]
+bin_cnt = len(bat_list)
+bin_list = []
+for i in range(bin_cnt):
+    bin_list.append(bat_dir + bat_list[i])
+for i in range(bin_cnt):
+    shutil.copy2(bin_list[i], temp_dir)
+
+## Shortcut examples *.bat choice
 temp_dir = base_dir + "Source\\examples\\bat"
 bat_dir = base_dir + "Source\\examples\\"
 bat_list = ["Composite.bat", "ConfigSample.bat", "ConsoleIn.bat", "ConsoleOut.bat", 
