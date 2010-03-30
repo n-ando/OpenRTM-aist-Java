@@ -713,19 +713,11 @@ public class Manager {
         }
         prop = factory.profile();
 
-/*
-        Vector<String> keyval = comp_prop.propertyNames();
-        for (int ic=0, lenc=comp_prop.size(); ic < lenc; ++ic) {
-            prop.setProperty(keyval.get(ic) , 
-                                comp_prop.getProperty(keyval.get(ic)));
-        }
-*/
 
         final String[] inherit_prop = {
             "exec_cxt.periodic.type",
             "exec_cxt.periodic.rate",
             "exec_cxt.evdriven.type",
-            "naming.formats",
             "logger.enable",
             "logger.log_level",
             "naming.enable",
@@ -735,7 +727,6 @@ public class Manager {
         };
 
         for (int ic=0; inherit_prop[ic].length() != 0; ++ic) {
-            //        if (prop.hasKey() == NULL) continue;
             prop.setProperty(inherit_prop[ic], 
                                 m_config.getProperty(inherit_prop[ic]));
         }
@@ -781,9 +772,10 @@ public class Manager {
 
         rtcout.println(rtcout.TRACE, 
             "RTC Created: " + comp_id.getProperty("implementaion_id"));
+
         prop.merge(comp_prop);
     
-/*
+/* zxc
         for (i=0, len=m_factory.m_objects.size(); i < len; ++i) {
             FactoryBase factory = m_factory.m_objects.elementAt(i);
             if (factory == null) {
@@ -1306,31 +1298,6 @@ public class Manager {
             return;
         }
         deleteComponent(comp);
-/* zxc
-        Properties comp_id = new Properties();
-        comp_id.setProperty("vendor", 
-                        comp.getProperties().getProperty("vendor"));
-        comp_id.setProperty("category", 
-                        comp.getProperties().getProperty("category"));
-        comp_id.setProperty("implementation_id", 
-                        comp.getProperties().getProperty("implementation_id"));
-        comp_id.setProperty("version", 
-                        comp.getProperties().getProperty("version"));
-
-	FactoryBase factory 
-            = (FactoryBase)m_factory.find(
-                  new FactoryPredicate(
-                      comp.getProperties().getProperty("implementation_id")));
-
-        ReturnCode_t ret = comp.exit();
-
-        if (factory == null) {
-            return;
-        }
-        else {
-            factory.destroy(comp);
-        }
-*/
     }
     
     /**
@@ -1492,11 +1459,19 @@ public class Manager {
     }
     
     /**
-     * <p>Managerの終了処理を実行します。</p>
+     * {@.ja Manager の終了処理}
+     * {@.en @brief Shutdown Manager}
+     *
+     * <p>
+     * {@.ja Manager を終了する}
+     * {@.en Shutdown Manager}
+     * </p>
+     *
      */
     protected void shutdownManager() {
         
         rtcout.println(rtcout.TRACE, "Manager.shutdownManager()");
+        m_timer.stop();
     }
     
     class shutdownOnNoRtcsClass implements CallbackFunction {
@@ -1716,7 +1691,7 @@ public class Manager {
         rtcout.println(rtcout.DEBUG, 
             "manager.is_master: "+m_config.getProperty("manager.is_master"));
 
-/*
+/* zxc
         if(StringUtil.toBool(m_config.getProperty("manager.is_master"), 
                                                         "YES", "NO", false)){
             String  mm = m_config.getProperty("corba.master_manager", ":2810");
@@ -2125,11 +2100,27 @@ System.out.println("Port of corba.endpoints is illegal." +endPointInfo[1]);
     }
     
     /**
-     * <p>RTコンポーネントのコフィグレーション設定を行います。</p>
-     * 
-     * @param comp コンフィグレーション設定対象のRTコンポーネント
+     * {@.ja RTコンポーネントのコンフィギュレーション処理}
+     * {@.en Configure RT-Component}
+     *
+     * <p>
+     * {@.ja RTコンポーネントの型およびインスタンス毎に
+     * 記載されたプロパティファイルの
+     * 情報を読み込み、コンポーネントに設定する。
+     * また、各コンポーネントの NamingService 登録時の名称を取得し、設定する。}
+     * {@.en Read property files described each RT-Component's type and 
+     * instance, * and configure it to the component.
+     * Also, get each component's registered name when registering to
+     * NamingService and configure it.}
+     *
+     * @param comp 
+     *   {@.ja コンフィギュレーション対象RTコンポーネント}
+     *   {@.en Target RT-Component for the configuration}
+     *
+     *
      */
-    protected void configureComponent(RTObject_impl comp, final Properties prop ) {
+    protected void configureComponent(RTObject_impl comp, 
+                                                final Properties prop ) {
         
         String category = comp.getCategory();
         String type_name = comp.getTypeName();
@@ -2151,11 +2142,15 @@ System.out.println("Port of corba.endpoints is illegal." +endPointInfo[1]);
                 name_prop.load(conff);
                 
             } catch (FileNotFoundException e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught FileNotFoundException in Manager.configureComponent() name_conf.");
+                rtcout.println(rtcout.DEBUG, 
+                    "Exception: Caught FileNotFoundException"
+                    +" in Manager.configureComponent() name_conf.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
                 
             } catch (Exception e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught unknown in Manager.configureComponent() name_conf.");
+                rtcout.println(rtcout.DEBUG, 
+                    "Exception: Caught unknown"
+                    +" in Manager.configureComponent() name_conf.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
             }
         }
@@ -2169,21 +2164,25 @@ System.out.println("Port of corba.endpoints is illegal." +endPointInfo[1]);
                 type_prop.load(conff);
                 
             } catch (FileNotFoundException e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught FileNotFoundException in Manager.configureComponent() type_conf.");
+                rtcout.println(rtcout.DEBUG, 
+                    "Exception: Caught FileNotFoundException"
+                    +" in Manager.configureComponent() type_conf.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
                 e.printStackTrace();
                 
             } catch (Exception e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.configureComponent() type_conf.");
+                rtcout.println(rtcout.DEBUG, 
+                    "Exception: Caught unknown Exception"
+                    +" in Manager.configureComponent() type_conf.");
                 rtcout.println(rtcout.DEBUG, e.getMessage());
                 e.printStackTrace();
             }
         }
 
         // Merge Properties. type_prop is merged properties
-        comp.getProperties().merge(prop);
+        comp.setProperties(prop);
         type_prop.merge(name_prop);
-        comp.getProperties().merge(type_prop);
+        comp.setProperties(type_prop);
 
         // ------------------------------------------------------------
         // Format component's name for NameService
@@ -2195,8 +2194,10 @@ System.out.println("Port of corba.endpoints is illegal." +endPointInfo[1]);
         String naming_formats_result = StringUtil.flatten(
                 StringUtil.unique_sv(naming_formats.toString().split(",")));
 
-        comp.getProperties().setProperty("naming.formats", naming_formats.toString());
-        String naming_names = this.formatString(naming_formats_result, comp.getProperties());
+        comp.getProperties().setProperty("naming.formats", 
+                                            naming_formats.toString());
+        String naming_names = this.formatString(naming_formats_result, 
+                                                    comp.getProperties());
         comp.getProperties().setProperty("naming.names", naming_names);
     }
     
