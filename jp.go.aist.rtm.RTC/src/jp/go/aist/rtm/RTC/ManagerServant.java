@@ -731,6 +731,20 @@ public class ManagerServant extends ManagerPOA {
      * on this manager. </p>
      * @return A list of RT-Components
      */
+    /**
+     * {@.ja 起動中のコンポーネントのリストを取得する}
+     * {@.en Getting RT-Component list running on this manager}
+     *
+     * <p>
+     * {@.ja 現在当該マネージャ上で起動中のコンポーネントのリストを返す。}
+     * {@.en This operation returns RT-Component list running on this manager.}
+     *
+     * @return 
+     *   {@.ja RTコンポーネントのリスト}
+     *   {@.en A list of RT-Components}
+     *
+     *
+     */
     public RTC.RTObject[] get_components() {
         rtcout.println(rtcout.TRACE, "get_component()");
 
@@ -741,7 +755,6 @@ public class ManagerServant extends ManagerPOA {
         for (int i=0, len=rtcs.size(); i < len; ++i) {
             crtcs.value[i] = rtcs.elementAt(i).getObjRef();
         }
-//        return crtcs.value;
         // get slaves' component references
         rtcout.println(rtcout.DEBUG,
                                     m_slaves.length+" slaves exists.");
@@ -752,8 +765,7 @@ public class ManagerServant extends ManagerPOA {
                     srtcs = m_slaves[i].get_components();
                     RTC.RTCListHolder holder
                             = new RTC.RTCListHolder(srtcs);
-                    CORBA_SeqUtil.push_back_list(holder, crtcs);
-                    srtcs = holder.value;
+                    CORBA_SeqUtil.push_back_list(crtcs, holder);
                     continue;
                   }
             }
