@@ -174,13 +174,13 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      */
     @Override
     protected ReturnCode_t onDeactivated(int ec_id) {
-	try {
-	    m_br.close();
-	}
-	catch (Exception e) {
-	    e.printStackTrace();
-	}
-
+		try {
+			m_br.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		m_myservice0.reset_message();
         return super.onDeactivated(ec_id);
     }
 
