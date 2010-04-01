@@ -58,6 +58,12 @@ public class MyServiceSVC_impl extends MyServicePOA{
 	}
 	return "";
     }
+
+    public void reset_message() {
+	    m_isNew = false;
+	    m_msg = "";
+	}
+
     private String m_msg = new String();
     private Boolean m_isNew = false;
 //  End of example implementational code
