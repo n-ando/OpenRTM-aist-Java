@@ -30,11 +30,19 @@ public class rtcprof {
         return target;
     }
 
+    /**
+     * フルパスで指定されたコンポーネント（jarファイルとclassファイル）の
+     * スペックを読み込み表示する。
+     *
+     *   jarファイルが指定された場合、
+     *   jarファイルと同じ名前のクラスファイル(コンポーネント)を探す。
+     *
+     */
     public static void main(String[] args) {
         if (args.length != 1) {
             System.err.println("usage: ");
             if (args.length != 0) {
-                System.err.println(args[0]+" .class ");
+                System.err.println(args[0]+" .class or .jar");
             }
             System.err.println("");
             System.exit(-1);
