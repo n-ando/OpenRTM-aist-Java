@@ -7,6 +7,7 @@ if test "x$RTM_JAVA_ROOT" = "x" ; then
     exit 1
 fi
 
-export CLASSPATH=.:$RTM_JAVA_ROOT/jar/OpenRTM-aist-1.0.0.jar:$RTM_JAVA_ROOT/jar/commons-cli-1.1.jar
-java -jar $RTM_JAVA_ROOT/jar/rtcprof.jar ${1+"$@"}
+export CLASSPATH=.:$RTM_JAVA_ROOT/jar/OpenRTM-aist-1.0.0.jar:$RTM_JAVA_ROOT/jar/commons-cli-1.1.jar:$(dirname $1)
+#java -cp $CLASSPATH -jar $RTM_JAVA_ROOT/jar/rtcprof.jar ${1+"$@"}
+java -cp $CLASSPATH:$RTM_JAVA_ROOT/jar/rtcprof.jar rtcprof.rtcprof ${1+"$@"}
 

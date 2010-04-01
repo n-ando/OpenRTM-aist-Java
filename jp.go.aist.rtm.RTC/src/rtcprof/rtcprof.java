@@ -1,37 +1,84 @@
 package rtcprof;
 
-import jp.go.aist.rtm.RTC.Manager;
+import java.util.Vector;
+import java.lang.reflect.Field;
+import java.io.File;
+
+import jp.go.aist.rtm.RTC.util.Properties;
+
 public class rtcprof {
 
-    public static void main(String[] args) {
-        System.out.println("rtcprof");
-        if (args.length != 2) {
-            System.err.println("usage: ");
-/*
-            std::cerr << "usage: " << std::endl;
-            std::cerr << argv[0] << " .so or .DLL" << std::endl;
-            std::cerr << std::endl;
-            return -1;
-*/
+    private static Class getClassFromName(String name){
+        String separator =  "/";
+        Class target = null;
+        try {
+            target = Class.forName(name);
+        } catch (java.lang.NoClassDefFoundError e) {
+            String messagetString = e.getMessage();
+            System.err.println("    getMessage:"+messagetString);
+            String key = "wrong name: ";
+            int index = messagetString.indexOf(key);
+            String packageName 
+                = messagetString.substring(index+key.length(),
+                                               messagetString.length()-1);
+            packageName = packageName.replace(separator,".");
+            packageName = packageName.trim();
+            System.err.println("    packageName:"+packageName);
+            target = rtcprof.getClassFromName(packageName);
+        } catch (Exception e) {
+            System.err.println("    Caught.Exception:"+e);
         }
-
-        // Initialize manager
-        System.out.println("    Initialize manager");
-        final Manager manager = Manager.init(args);
-
-        // Activate manager and register to naming service
-        System.out.println("    Activate manager ");
-        manager.activateManager();
-
-        // run the manager in blocking mode
-        // runManager(false) is the default.
-        System.out.println("    run the manager in blocking mode");
-        manager.runManager();
-        // If you want to run the manager in non-blocking mode, do like this
-        // manager.runManager(true);
-        //
+        return target;
     }
 
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.err.println("usage: ");
+            if (args.length != 0) {
+                System.err.println(args[0]+" .class ");
+            }
+            System.err.println("");
+            System.exit(-1);
+        }
+        Vector<Properties> props = new Vector<Properties>();
+        String separator =  System.getProperty("file.separator");
+        Class target = null;
+        File file = new File(args[0]);
+        if(file.isAbsolute()) {
+            args[0] = file.getName();
+            String extensions[] = {".class", ".jar"};
+            for(int ic=0;ic<extensions.length;++ic){
+                if(args[0].endsWith(extensions[ic])){
+                    int point = args[0].lastIndexOf(extensions[ic]);
+                    args[0] =  args[0].substring(0, point);
+                    break;
+                }
+            }
+        }
+        else{
+            args[0] = args[0].replace(separator,".");
+            args[0] = args[0].replace("..",".");
+        }
+
+        target = rtcprof.getClassFromName(args[0]);
+
+        if(target != null){
+            try {
+                Field field = target.getField("component_conf");
+                String[] data = (String[])field.get(null);
+                for(int ic=0;ic<data.length/2;++ic){
+                    System.out.println(data[ic*2] +": "+data[ic*2+1]);
+                }
+                props.add(new Properties(data));
+            }
+            catch(Exception e){
+                System.err.println("    Caught.Exception. getFiled:"+e);
+                System.exit(1);
+            }
+            System.exit(0);
+       }
+       System.exit(1);
+    }
 }
 
 
