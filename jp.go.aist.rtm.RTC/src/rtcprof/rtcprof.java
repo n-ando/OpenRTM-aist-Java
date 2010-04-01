@@ -49,6 +49,9 @@ public class rtcprof {
                 if(args[0].endsWith(extensions[ic])){
                     int point = args[0].lastIndexOf(extensions[ic]);
                     args[0] =  args[0].substring(0, point);
+                    if(extensions[ic].equals(".jar")){
+                        args[0] =  args[0]+"."+args[0];
+                    }
                     break;
                 }
             }
