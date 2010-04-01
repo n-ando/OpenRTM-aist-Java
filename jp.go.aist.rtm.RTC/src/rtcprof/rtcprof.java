@@ -4,7 +4,6 @@ import java.util.Vector;
 import java.lang.reflect.Field;
 import java.io.File;
 
-import jp.go.aist.rtm.RTC.util.Properties;
 
 public class rtcprof {
 
@@ -40,7 +39,6 @@ public class rtcprof {
             System.err.println("");
             System.exit(-1);
         }
-        Vector<Properties> props = new Vector<Properties>();
         String separator =  System.getProperty("file.separator");
         Class target = null;
         File file = new File(args[0]);
@@ -69,7 +67,6 @@ public class rtcprof {
                 for(int ic=0;ic<data.length/2;++ic){
                     System.out.println(data[ic*2] +": "+data[ic*2+1]);
                 }
-                props.add(new Properties(data));
             }
             catch(Exception e){
                 System.err.println("    Caught.Exception. getFiled:"+e);
