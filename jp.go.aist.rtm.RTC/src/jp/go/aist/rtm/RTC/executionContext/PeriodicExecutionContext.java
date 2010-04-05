@@ -12,6 +12,7 @@ import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
@@ -33,7 +34,18 @@ import _SDOPackage.NVListHolder;
 public class PeriodicExecutionContext extends ExecutionContextBase implements Runnable {
 
     /**
-     * <p>デフォルト・コンストラクタです。</p>
+     * {@.ja デフォルトコンストラクタ}
+     * {@.en Default Constructor}
+     *
+     * <p>
+     * {@.ja デフォルトコンストラクタ
+     * プロファイルに以下の項目を設定する。
+     *  - kind : PERIODIC
+     *  - rate : 0.0}
+     * {@.en Default Constructor
+     * Set the following items to profile.
+     *  - kind : PERIODIC
+     *  - rate : 0.0}
      */
     public PeriodicExecutionContext() {
         super();
@@ -48,7 +60,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_usec = 0;
         m_ref = (ExecutionContextService)this.__this();
 
-        rtcout = new Logbuf("Manager.PeriodicExecutionContext");
+        rtcout = new Logbuf("PeriodicExecutionContext");
 
         NVListHolder holder  = new NVListHolder(m_profile.properties);
         CORBA_SeqUtil.push_back(holder,
@@ -64,17 +76,28 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     public PeriodicExecutionContext(DataFlowComponent owner) {
         this(owner, 1000);
     }
+
     /**
-     * <p>コンストラクタです。</p>
-     * 
-     * @param owner ExecutionContextのowner
-     * @param rate 動作周期
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     * <p>
+     * {@.ja 設定された値をプロファイルに設定する。}
+     * {@.en Set the configuration value to profile.}
+     *
+     * @param owner 
+     *   {@.ja 当該 Executioncontext の owner}
+     *   {@.en The owner of this Executioncontext}
+     * @param rate 
+     *   {@.ja 動作周期(Hz)(デフォルト値:1000)}
+     *   {@.en Execution cycle(Hz)(The default value:1000)}
+     *
      */
     public PeriodicExecutionContext(DataFlowComponent owner, double rate) {
         super();
         m_running = false;
         m_svc = true;
-        m_nowait = false;
+        m_nowait = true;
         m_profile.kind = ExecutionKind.PERIODIC;
         m_profile.rate = rate;
         m_profile.owner = owner;
@@ -83,7 +106,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         if( m_usec==0 ) m_nowait = true;
         m_ref = (ExecutionContextService)this.__this();
 
-        rtcout = new Logbuf("Manager.PeriodicExecutionContext");
+        rtcout = new Logbuf("PeriodicExecutionContext");
 
         m_profile.participants = new RTC.RTObject[0];
         NVListHolder holder  = new NVListHolder(m_profile.properties);
@@ -446,15 +469,36 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     }
 
     /**
-     * <p>コンポーネントを追加します。</p>
-     * 
-     * @param comp 追加対象コンポーネント
-     * 
-     * @return 実行結果
+     * {@.ja RTコンポーネントを追加する}
+     * {@.en Add an RT-component}
+     *
+     * <p>
+     * {@.ja 指定したRTコンポーネントを参加者リストに追加する。追加されたRTコ
+     * ンポーネントは attach_context が呼ばれ、Inactive 状態に遷移する。
+     * 指定されたRTコンポーネントがnullの場合は、BAD_PARAMETER が返され
+     * る。指定されたRTコンポーネントが DataFlowComponent 以外の場合は、
+     * BAD_PARAMETER が返される。}
+     * {@.en The operation causes the given RTC to begin participating in
+     * the execution context.  The newly added RTC will receive a call
+     * to LightweightRTComponent::attach_context and then enter the
+     * Inactive state.  BAD_PARAMETER will be invoked, if the given
+     * RT-Component is null or if the given RT-Component is other than
+     * DataFlowComponent.}
+     *
+     * @param comp 
+     *   {@.ja 追加対象RTコンポーネント}
+     *   {@.en The target RT-Component for add}
+     *
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type}
+     *
+     *
      */
     public ReturnCode_t add_component(LightweightRTObject comp) {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.add_component()");
+        rtcout.println(rtcout.TRACE, 
+                            "PeriodicExecutionContext.add_component()");
 
         if( comp==null ) return ReturnCode_t.BAD_PARAMETER;
         //
@@ -468,7 +512,13 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             //
             int id = dfp.attach_context(m_ref);
             //
-            m_comps.add(new Comp((LightweightRTObject)comp._duplicate(), (DataFlowComponent)dfp._duplicate(), id));
+            m_comps.add(new Comp((LightweightRTObject)comp._duplicate(), 
+                                (DataFlowComponent)dfp._duplicate(), id));
+            RTC.RTCListHolder holder
+                        = new RTC.RTCListHolder(m_profile.participants);
+            CORBA_SeqUtil.push_back(holder, 
+                        RTC.RTObjectHelper.narrow(comp));
+            m_profile.participants = holder.value;
             return ReturnCode_t.RTC_OK;
         } catch(Exception ex) {
             return ReturnCode_t.BAD_PARAMETER;
@@ -476,15 +526,25 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     }
 
     /**
-     * <p> bindComponent </p>
+     * {@.ja コンポーネントをバインドする。}
+     * {@.en Bind the component.}
      *
-     * @param rtc RTObject_impl
+     * <p>
+     * {@.ja コンポーネントをバインドする。}
+     * {@.en Bind the component.}
      *
-     * @return the result of execution. 
+     * @param rtc 
+     *  {@.ja RTコンポーネント}
+     *  {@.en RT-Component's instances}
+     * @return 
+     *  {@.ja ReturnCode_t 型のリターンコード}
+     *  {@.en The return code of ReturnCode_t type}
+     *
      */
     public ReturnCode_t bindComponent(RTObject_impl rtc) {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.bindComponent()");
+        rtcout.println(rtcout.TRACE, 
+                    "PeriodicExecutionContext.bindComponent()");
 
         if (rtc == null) return ReturnCode_t.BAD_PARAMETER;
 
@@ -501,26 +561,68 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_comps.add(new Comp((LightweightRTObject)comp._duplicate(),
                              (DataFlowComponent)dfp._duplicate(),
                              id));
+        m_profile.owner = (DataFlowComponent)dfp._duplicate();
+
+
         return ReturnCode_t.RTC_OK;
     }
 
     /**
-     * <p>コンポーネントをコンポーネントリストから削除します。</p>
-     * 
-     * @param comp 削除対象コンポーネント
-     * 
-     * @return 実行結果
+     * {@.ja RTコンポーネントを参加者リストから削除する}
+     * {@.en Remove the RT-Component from participant list}
+     *
+     * <p>
+     * {@.ja 指定したRTコンポーネントを参加者リストから削除する。削除された
+     * RTコンポーネントは detach_context が呼ばれる。指定されたRTコンポー
+     * ネントが参加者リストに登録されていない場合は、BAD_PARAMETER が返
+     * される。}
+     * {@.en This operation causes a participant RTC to stop participating in 
+     * the execution context.
+     * The removed RTC will receive a call to
+     * LightweightRTComponent::detach_context.
+     * BAD_PARAMETER will be returned, if the given RT-Component is not 
+     * participating in the participant list.}
+     *
+     * @param comp 
+     *   {@.ja 削除対象RTコンポーネント}
+     *   {@.en The target RT-Component for delete}
+     *
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type}
+     *
      */
     public ReturnCode_t remove_component(LightweightRTObject comp) {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.remove_component()");
+        rtcout.println(rtcout.TRACE, 
+                        "PeriodicExecutionContext.remove_component()");
 
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-            find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
+            find_comp find 
+                = new find_comp((LightweightRTObject)comp._duplicate());
             if (find.eqaulof(m_comps.elementAt(intIdx)) ) {
-                m_comps.elementAt(intIdx)._ref.detach_context(m_comps.elementAt(intIdx)._sm.ec_id);
+                m_comps.elementAt(intIdx)._ref.detach_context(
+                                        m_comps.elementAt(intIdx)._sm.ec_id);
                 m_comps.elementAt(intIdx)._ref = null;
                 m_comps.remove(m_comps.elementAt(intIdx));
+                RTC.RTObject rtcomp = RTC.RTObjectHelper.narrow(comp);
+                if(rtcomp == null){
+                    rtcout.println(rtcout.ERROR,"Invalid object reference."); 
+                    return ReturnCode_t.RTC_ERROR;
+                }
+                long index;
+                RTC.RTCListHolder holder
+                        = new RTC.RTCListHolder(m_profile.participants);
+                index = CORBA_SeqUtil.find(holder, new is_equiv(rtcomp));
+    
+                if (index < 0) { // not found in my list
+                    rtcout.println(rtcout.ERROR, "Not found.");
+                    return ReturnCode_t.BAD_PARAMETER;
+                }
+    
+                CORBA_SeqUtil.erase(holder, (int)index);
+                m_profile.participants = holder.value;
+
                 return ReturnCode_t.RTC_OK;
             }
         }
@@ -949,4 +1051,13 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     protected Logbuf rtcout;
 
+    private class is_equiv implements equalFunctor {
+        private RTC.RTObject m_obj;
+        public is_equiv(RTC.RTObject obj) {
+            m_obj = (RTC.RTObject)obj._duplicate();
+        }
+        public boolean equalof(final java.lang.Object object) {
+            return m_obj._is_equivalent((RTC.RTObject)object);
+        }
+    }
 }

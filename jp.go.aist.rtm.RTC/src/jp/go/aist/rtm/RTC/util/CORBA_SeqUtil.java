@@ -213,6 +213,19 @@ public class CORBA_SeqUtil {
     }
 
     /**
+     * 
+     */
+    public static int find(final RTC.RTCListHolder seq, equalFunctor f) {
+        if( seq.value == null ) return -1;
+        for (int i = 0; i < seq.value.length; ++i) {
+            if (f.equalof(seq.value[i])) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+    /**
      * <p>シーケンスの末尾にNameValueオブジェクトを追加します。</p>
      * 
      * @param seq 追加先NameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
@@ -855,6 +868,23 @@ public class CORBA_SeqUtil {
         seq.value = newlist;
     }
 
+    /**
+     *
+     *
+     */
+    public static void erase(RTC.RTCListHolder seq, int index) {
+        if ( seq.value == null ) return;
+        int len = seq.value.length;
+        if (index > len)  return;
+        RTC.RTObject[] newlist = new RTC.RTObject[len - 1];
+        for (int intIdx = 0; intIdx < index; ++intIdx) {
+            newlist[intIdx] = seq.value[intIdx];
+        }
+        for (int intIdx = index; intIdx < len - 1; ++intIdx) {
+            newlist[intIdx] = seq.value[intIdx + 1];
+        }
+        seq.value = newlist;
+    }
     /**
      * <p>シーケンス内の条件に合致する要素を削除します。</p>
      * 
