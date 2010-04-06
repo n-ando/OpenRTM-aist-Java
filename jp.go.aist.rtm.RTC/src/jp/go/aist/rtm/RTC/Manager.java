@@ -733,42 +733,12 @@ public class Manager {
 
         comp = factory.create(this);
         if (comp == null) {
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("RTC creation failed: "
-                        + comp_id.getProperty("implementaion_id"));
-            }
             rtcout.println(rtcout.ERROR, 
                 "RTC creation failed: " 
                 + comp_id.getProperty("implementaion_id"));
             return null;
         }
 
-        if(java.lang.System.getProperty("develop_prop.debug")!=null) { 
-            String ior = null;
-            try {
-                org.omg.CORBA.Object ref = m_pPOA.servant_to_reference(comp);
-                ior = m_pORB.object_to_string(ref);
-                  System.out.println(ior);
-            } catch (Exception e) {
-                System.out.println("create object:");
-                e.printStackTrace(System.err);
-            }
-            try {
-                // プロセスオブジェクトを生成
-                Process process = Runtime.getRuntime().exec("catior "+ior);
-                // 外部コマンドの標準出力を取得するための入力ストリームを取得
-                java.io.InputStream is = process.getInputStream();
-                BufferedReader br 
-                        = new BufferedReader(new java.io.InputStreamReader(is));
-                // 標準出力を１行づつ取り出します
-                String line;
-                while ((line = br.readLine()) != null) {
-                    System.out.println(line);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
 
         rtcout.println(rtcout.TRACE, 
             "RTC Created: " + comp_id.getProperty("implementaion_id"));
@@ -812,10 +782,6 @@ public class Manager {
 
                 comp = m_factory.m_objects.elementAt(i).create(this);
                 if (comp == null) {
-                    if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                        System.out.println("RTC creation failed: "
-                                + comp_id.getProperty("implementaion_id"));
-                    }
                     rtcout.println(rtcout.ERROR, 
                         "RTC creation failed: " 
                         + comp_id.getProperty("implementaion_id"));
@@ -982,9 +948,7 @@ public class Manager {
             id_and_conf[0] = "RTC:::".concat(id_and_conf[0]);
             id_and_conf[0] = id_and_conf[0].concat(":");
         }
-        System.out.println( "ID: " + id_and_conf[0] );
         String[] id = id_and_conf[0].split(":",-1);
-        System.out.println( "id.size(): " + id.length );
 
         // id should be devided into 1 or 5 elements
         // RTC:[vendor]:[category]:impl_id:[version] => 5
@@ -1387,29 +1351,12 @@ public class Manager {
      */
     protected void initManager(String[] argv) throws Exception {
         
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("IN  initManager");
-        }
         ManagerConfig config = null;
         try{
             config = new ManagerConfig(argv);
         }
         catch(IllegalArgumentException e){
             rtcout.println(rtcout.WARN, "Could not parse arguments.");
-        }
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            if (m_config == null) {
-                System.out.println("m_confg is null.");
-            }
-            else{
-                System.out.println("m_confg is not null.");
-            }
-            if (config == null) {
-                System.out.println("confg is null.");
-            }
-            else{
-                System.out.println("confg is not null.");
-            }
         }
         if (m_config == null) {
             m_config = new Properties();
@@ -1453,9 +1400,6 @@ public class Manager {
             }
         }
 
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("OUT initManager");
-        }
     }
     
     /**
@@ -1682,10 +1626,6 @@ public class Manager {
      *   {@.en endpoints Endpoints list}
      */
     protected void createORBEndpoints(Vector<String> endpoints) {
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("IN  createORBEndpoints");
-            System.out.println("endpoints>:"+endpoints);
-        }
         // If this process has master manager,
         // master manager's endpoint inserted at the top of endpoints
         rtcout.println(rtcout.DEBUG, 
@@ -1695,16 +1635,7 @@ public class Manager {
         if(StringUtil.toBool(m_config.getProperty("manager.is_master"), 
                                                         "YES", "NO", false)){
             String  mm = m_config.getProperty("corba.master_manager", ":2810");
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("mm>:"+mm);
-            }
             String[] mmm = mm.split(":");
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("mmm.length>:"+mmm.length);
-                for(int ic=0;ic<mmm.length;++ic){
-                    System.out.println("mmm[ic]>:"+mmm[ic]);
-                } 
-            }
             if (mmm.length == 2) {
                 endpoints.add(0, ":" + mmm[1]);
             }
@@ -1713,10 +1644,6 @@ public class Manager {
             }
         }
 */
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("endpoints>:"+endpoints);
-            System.out.println("OUT createORBEndpoints");
-        }
     }
 
     /**
@@ -1732,13 +1659,7 @@ public class Manager {
      */
     protected void createORBEndpointOption(String opt, 
                                             Vector<String> endpoints) {
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("IN  createORBEndpointOption>:"+opt+","+endpoints);
-        }
         String corba = m_config.getProperty("corba.id");
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("    corba.id>:"+corba);
-        }
         rtcout.println(rtcout.DEBUG, "corba.id: "+corba);
 
         for (int i=0; i < endpoints.size(); ++i) {
@@ -1764,9 +1685,6 @@ public class Manager {
             else if (corba == "MICO") {
                 opt += "-ORBIIOPAddr inet:" + endpoint;
             }
-        }
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("OUT createORBEndpointOption");
         }
     }
 
@@ -1798,7 +1716,6 @@ public class Manager {
                 catch(Exception ex){
                     rtcout.println(rtcout.WARN, 
                         "Port of corba.endpoints is illegal." +endPointInfo[1]);
-System.out.println("Port of corba.endpoints is illegal." +endPointInfo[1]);
                 }
             }
             IiopAddressComp comp = new IiopAddressComp(endPointInfo[0],port);
@@ -2289,9 +2206,6 @@ System.out.println("Port of corba.endpoints is illegal." +endPointInfo[1]);
 
         if (StringUtil.toBool(prop.getProperty("is_master"), 
                                                     "YES", "NO", true)) {
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("bindManagerServant() is_master is YES.");
-            }
             for (int i=0; i < names.length; ++i) {
                 String mgr_name = formatString(names[i], prop);
                 m_namingManager.bindObject(mgr_name, m_mgrservant);
@@ -2321,7 +2235,6 @@ System.out.println("Port of corba.endpoints is illegal." +endPointInfo[1]);
                 br.close();
                 reffile.close();
 
-                System.out.println( refstring );
 
                 //Object obj = m_pORB.string_to_object(refstring);
                 //Manager mgr = ManagerHelper.narrow(obj);
