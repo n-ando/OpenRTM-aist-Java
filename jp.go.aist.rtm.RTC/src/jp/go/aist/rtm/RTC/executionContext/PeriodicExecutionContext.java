@@ -49,19 +49,22 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public PeriodicExecutionContext() {
         super();
+        rtcout = new Logbuf("PeriodicExecutionContext");
         m_running = false;
 	m_svc = true;
         m_nowait = false;
-        if( m_profile==null ) m_profile = new ExecutionContextProfile();
+
+        double rate = (1.0/0.000001);//1000000Hz
+
+        m_usec = (long)(1000000/rate);
+
+        m_ref = (ExecutionContextService)this.__this();
+
+
         m_profile.kind = ExecutionKind.PERIODIC;
         m_profile.rate = 0.0;
         m_profile.owner = (RTC.RTObject)null;
         m_profile.participants = new RTC.RTObject[0];
-        m_usec = 0;
-        m_ref = (ExecutionContextService)this.__this();
-
-        rtcout = new Logbuf("PeriodicExecutionContext");
-
         NVListHolder holder  = new NVListHolder(m_profile.properties);
         CORBA_SeqUtil.push_back(holder,
                                 NVUtil.newNV("", "", String.class));
@@ -69,9 +72,17 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     }
 
     /**
-     * <p>コンストラクタです。</p>
-     * 
-     * @param owner ExecutionContextのowner
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     * <p>
+     * {@.ja 設定された値をプロファイルに設定する。}
+     * {@.en Set the configuration value to profile.}
+     *
+     * @param owner 
+     *   {@.ja 当該 Executioncontext の owner}
+     *   {@.en The owner of this Executioncontext}
+     *
      */
     public PeriodicExecutionContext(DataFlowComponent owner) {
         this(owner, 1000);
@@ -89,25 +100,30 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      *   {@.ja 当該 Executioncontext の owner}
      *   {@.en The owner of this Executioncontext}
      * @param rate 
-     *   {@.ja 動作周期(Hz)(デフォルト値:1000)}
-     *   {@.en Execution cycle(Hz)(The default value:1000)}
+     *   {@.ja 動作周期(Hz)}
+     *   {@.en Execution cycle(Hz)}
      *
      */
     public PeriodicExecutionContext(DataFlowComponent owner, double rate) {
         super();
+        rtcout = new Logbuf("PeriodicExecutionContext");
+        rtcout.println(rtcout.TRACE, 
+                    "PeriodicExecutionContext(owner,rate="+rate+")");
         m_running = false;
         m_svc = true;
         m_nowait = true;
+
+        if( rate==0 ) rate = (1.0/0.000001);//1000000Hz
+
+        m_usec = (long)(1000000/rate);
+        if( m_usec==0 ) m_nowait = true;
+
+        m_ref = (ExecutionContextService)this.__this();
+
+
         m_profile.kind = ExecutionKind.PERIODIC;
         m_profile.rate = rate;
         m_profile.owner = owner;
-        if( rate==0 ) rate = 0.0000001;
-        m_usec = (long)(1000000/rate);
-        if( m_usec==0 ) m_nowait = true;
-        m_ref = (ExecutionContextService)this.__this();
-
-        rtcout = new Logbuf("PeriodicExecutionContext");
-
         m_profile.participants = new RTC.RTObject[0];
         NVListHolder holder  = new NVListHolder(m_profile.properties);
         CORBA_SeqUtil.push_back(holder,
