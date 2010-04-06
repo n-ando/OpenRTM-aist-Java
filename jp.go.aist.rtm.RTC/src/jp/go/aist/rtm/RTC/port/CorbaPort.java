@@ -14,6 +14,7 @@ import jp.go.aist.rtm.RTC.util.operatorFunc;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.util.StringHolder;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.BAD_OPERATION;
@@ -140,15 +141,8 @@ public class CorbaPort extends PortBase {
 
         rtcout.println(rtcout.TRACE, 
         "registerProvider(instance="+instance_name+",type_name="+type_name+")");
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("registerProvider(instance="
-                                +instance_name+",type_name="+type_name+")");
-        }
 
         try{ 
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("    m_providers.add");
-            }   
             m_providers.add(new CorbaProviderHolder(type_name,
                                                   instance_name,
                                                   provider));
@@ -162,57 +156,9 @@ public class CorbaPort extends PortBase {
 				   PortInterfacePolarity.PROVIDED)) {
             return false;
         }
-/* zxc
-        // byte[] oid = _default_POA().activate_object(provider);
-	byte[] oid = null;
-	try {
-	    oid = _default_POA().servant_to_id(provider);
-	}
-	catch (Exception e) {
-            rtcout.println(rtcout.WARN, 
-                "Exception caught."+e.toString());
-	}
-
-	try {
-            _default_POA().activate_object_with_id(oid,provider);
-	}
-	catch (org.omg.PortableServer.POAPackage.ServantAlreadyActive e) {
-            rtcout.println(rtcout.WARN, 
-                "Exception caught."+e.toString());
-	}
-	catch (org.omg.PortableServer.POAPackage.ObjectAlreadyActive e) {
-            rtcout.println(rtcout.WARN, 
-                "Exception caught."+e.toString());
-        }
-	
-        org.omg.CORBA.Object obj = _default_POA().id_to_reference(oid);
-
-        StringBuffer key = new StringBuffer("port");
-        key.append(".").append(type_name).append(".").append(instance_name);
-
-        ORB orb = ORBUtil.getOrb();
-	String ior = orb.object_to_string(obj);
-
-	CORBA_SeqUtil.push_back(this.m_providers, NVUtil.newNVString(key.toString(), ior));
-	m_servants.put(instance_name, new ProviderInfo(provider, oid));
-*/
         return true;
     }
     
-    /**
-     * <p>このPortが要求するサービスのプレースホルダとしてのコンシューマ(Consumer)を登録します。<br />
-     * 引数で指定されたインスタンス名とタイプ名が、指定されたコンシューマと関連付けられます。</p>
-     * 
-     * <p>Port間の接続時には、同一のインスタンス名とタイプ名を持つサービスが、
-     * 他のPortから提供(Provide)されている場合、そのサービスのCORBAオブジェクト参照が
-     * コンシューマ(Consumer)に設定されます。</p>
-     * 
-     * @param instance_name インスタンス名
-     * @param type_name タイプ名
-     * @param consumer Consumerオブジェクト
-     * 
-     * @return 既に同名の instance_name が登録されていれば false を返します。
-     */
     /*
      * {@.ja Consumer を登録する}
      * {@.en Register the consumer}
@@ -395,64 +341,38 @@ public class CorbaPort extends PortBase {
     protected 
     ReturnCode_t publishInterfaces(ConnectorProfileHolder connector_profile) {
         
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("IN  publishInterfaces()");
-        }
         rtcout.println(rtcout.TRACE, "publishInterfaces()");
 
         ReturnCode_t returnvalue = _publishInterfaces();
         if(returnvalue!=ReturnCode_t.RTC_OK) {
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("    _publishInterfaces is not RTC_OK."
-                                    +returnvalue);
-            } 
             return returnvalue;
         }
 
-//        NVList properties = new NVList();
         NVListHolder holder = new NVListHolder();
 	Iterator it = m_providers.iterator();
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("   m_providers.size()>:"+m_providers.size());
-        } 
 	while(it.hasNext()) {
             CorbaProviderHolder provider = (CorbaProviderHolder)it.next();
           //------------------------------------------------------------
           // new version descriptor
-          // <comp_iname>.port.<port_name>.provider.<type_name>.<instance_name>
-            String newdesc;
-            newdesc = m_ownerInstanceName + ".port." + m_profile.name
-                        + ".provider." + provider.descriptor();
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("   push_back"); 
-            } 
+          // <comp_iname>.port.<port_name>.provided.<type_name>.<instance_name>
+            StringBuffer strbuff = new StringBuffer(m_profile.name);
+            strbuff.insert(m_ownerInstanceName.length(), ".port");
+            strbuff.append(".provided." + provider.descriptor());
+            String newdesc = strbuff.substring(0);
             CORBA_SeqUtil.push_back(holder, 
                                 NVUtil.newNVString(newdesc, provider.ior()));
-//            properties = holder.value;
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                if(holder.value==null){
-                    System.out.println("holder.value is null.");
-                }
-                else{
-                    System.out.println("holder.value is not null."
-                                        +holder.value.length);
-                }
-            } 
 
           //------------------------------------------------------------
           // old version descriptor
           // port.<type_name>.<instance_name>
             String olddesc = new String();
             olddesc += "port." + provider.descriptor();
-//            holder = new NVListHolder(properties);
             CORBA_SeqUtil.push_back(holder, 
                                 NVUtil.newNVString(olddesc, provider.ior()));
-//            properties = holder.value;
         }
 
         NVListHolder profholder 
             = new NVListHolder(connector_profile.value.properties);
-//        ORBA_SeqUtil.push_back_list(profholder, properties);
         CORBA_SeqUtil.push_back_list(profholder, holder);
         connector_profile.value.properties = profholder.value;
         
@@ -460,46 +380,9 @@ public class CorbaPort extends PortBase {
         dumpString = NVUtil.toString(holder);
         rtcout.println(rtcout.DEBUG, dumpString);
 
-        if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-            System.out.println("OUT publishInterfaces()");
-        }
         return ReturnCode_t.RTC_OK;
     }
     
-    /**
-     * <p>Interfaceに接続します。Portが所有するConsumerに適合するProviderに関する情報を
-     * ConnectorProfile#propertiesから抽出し、ConsumerにCORBAオブジェクト参照を設定します。</p>
-     * 
-     * <p>たとえば、Consumerが
-     * <pre>
-     *  PortInterfaceProfile
-     *  {
-     *      instance_name = "PA10_0";
-     *      type_name = "Manipulator";
-     *      polarity = REQUIRED;
-     *  }
-     * </pre>
-     * として登録されていれば、他のPortの
-     * <pre>
-     *  PortInterfaceProfile
-     *  {
-     *      instance_name = "PA10_0";
-     *      type_name = "Manipulator";
-     *      polarity = PROVIDED;
-     *  }
-     * </pre> 
-     * として登録されているSerivce ProviderのCORBAオブジェクト参照を探して、Consumerに設定します。</p>
-     * 
-     * <p>実際には、ConnectorProfile#propertiesに
-     * <pre>
-     * NameValue = { "port.Manipulator.PA10_0": &lt;Object reference&gt; }
-     * </pre>
-     * として登録されているNameValueを探し、そのCORBAオブジェクト参照をConsumerに設定します。</p>
-     * 
-     * @param connector_profile 接続プロファイルオブジェクト
-     * 
-     * @return ReturnCode_t.RTC_OK
-     */
     /**
      * {@.ja Provider Interface 情報を取得する} 
      * {@.en Subscribe to interface}
@@ -660,17 +543,17 @@ public class CorbaPort extends PortBase {
                 "Connetion strictness is: "+ strictness);
         }
 
-        // CORBA_SeqUtil.for_each(nv, new subscribe(this.m_consumers));
 	Iterator it = m_consumers.iterator();
 	while(it.hasNext()) {
+            StringHolder ior = new StringHolder();
             CorbaConsumerHolder cons = (CorbaConsumerHolder)it.next();
-            boolean res0 = findProvider(nv, cons);
-            if (res0) { 
+            if (findProvider(nv, cons, ior)) { 
+                setObject(ior.value, cons);
                 continue; 
             }
 
-            boolean res1 = findProviderOld(nv, cons);
-            if (res1) { 
+            if (findProviderOld(nv, cons, ior)) { 
+                setObject(ior.value, cons);
                 continue; 
             }
 
@@ -684,51 +567,53 @@ public class CorbaPort extends PortBase {
         }
         rtcout.println(rtcout.TRACE, 
             "subscribeInterfaces() successfully finished.");
-/*
-	int len = this.m_consumers.size();
-	for (int i = 0; i < len; ++i) {
-	    int index;
-	    index = NVUtil.find_index(nv, this.m_consumers.get(i).name);
-	    if (index < 0)
-		continue;
 
-	    Any anyVal = nv.value[index].value;
-	    String ior = null;
-	    if (anyVal.type().kind() == TCKind.tk_wstring) {
-		ior = anyVal.extract_wstring();
-	    }
-	    else if (anyVal.type().kind() == TCKind.tk_string) {
-		ior = anyVal.extract_string();
-	    }
-	    else {
-		ior = anyVal.extract_Value().toString();
-	    }
-
-	    org.omg.CORBA.Object obj = orb.string_to_object(ior);
-	    if (obj == null) {
-		rtcout.println(rtcout.ERROR, "Extracted object is nul reference");
-		continue;
-	    }
-	    
-	    boolean result = this.m_consumers.get(i).consumer.setObject(obj);
-	    if (!result) {
-		rtcout.println(rtcout.ERROR, "Cannot narrow reference");
-		continue;
-	    }
-	}
-*/
         return ReturnCode_t.RTC_OK;
     }
     
     /**
-     * <p>Interfaceへの接続を解除します。
-     * 与えられたConnectorProfileに関連するConsumerに設定された全てのObjectを解放し接続を解除します。</p>
-     * 
-     * @param connector_profile 接続プロファイルオブジェクト
+     * {@.ja Interface への接続を解除する}
+     * {@.en Unsubscribe interfaces}
+     *
+     * <p>
+     * {@.ja 与えられた ConnectorProfile に関連する Consumer にセットされた
+     * すべての Object を解放し接続を解除する。}
+     * {@.en Release all Objects that was set in Consumer associated with the 
+     * given ConnectorProfile.}
+     *
+     * @param connector_profile 
+     *   {@.ja コネクタプロファイルオブジェクト}
+     *   {@.en Connector profile}
+     *
+     *
      */
-    protected void unsubscribeInterfaces(final ConnectorProfile connector_profile) {
+    protected void 
+    unsubscribeInterfaces(final ConnectorProfile connector_profile) {
         
+        rtcout.println(rtcout.TRACE, "unsubscribeInterfaces()");
+
         final NVListHolder nv = new NVListHolder(connector_profile.properties);
+        rtcout.println(rtcout.DEBUG, NVUtil.toString(nv));
+
+	Iterator it = m_consumers.iterator();
+	while(it.hasNext()) {
+            StringHolder ior = new StringHolder();
+            CorbaConsumerHolder cons = (CorbaConsumerHolder)it.next();
+            if (findProvider(nv, cons, ior)) { 
+                rtcout.println(rtcout.DEBUG, "Correspoinding consumer found.");
+                releaseObject(ior.value, cons);
+                continue; 
+            }
+
+            if (findProviderOld(nv, cons, ior)) { 
+                rtcout.println(rtcout.DEBUG, "Correspoinding consumer found.");
+                releaseObject(ior.value, cons);
+                continue; 
+            }
+
+            
+        }
+
         CORBA_SeqUtil.for_each(nv, new unsubscribe(this.m_consumers));
         connector_profile.properties = nv.value;
     }
@@ -841,7 +726,6 @@ public class CorbaPort extends PortBase {
      * {@.en vector to stored Providers' information}
      */
     Vector<CorbaProviderHolder> m_providers = new Vector<CorbaProviderHolder>();
-//zxc    private NVListHolder m_providers = NVListHolderFactory.create();
 
     /**
      * {@.ja Consumer の情報を格納する構造体}
@@ -854,6 +738,7 @@ public class CorbaPort extends PortBase {
             m_typeName = type_name;
             m_instanceName = instance_name;
             m_consumer = consumer;
+            m_ior = new String();
         }
         public String instanceName() { 
             return m_instanceName; 
@@ -866,6 +751,7 @@ public class CorbaPort extends PortBase {
         }
 
         public boolean setObject(final String ior) {
+            m_ior = ior;
             ORB orb = ORBUtil.getOrb();
 	    org.omg.CORBA.Object obj = orb.string_to_object(ior);
 	    if (obj == null) {
@@ -879,10 +765,14 @@ public class CorbaPort extends PortBase {
         public void releaseObject() {
             m_consumer.releaseObject();
         }
+        public final String getIor() {
+            return m_ior;
+        }
 
         private String m_typeName;
         private String m_instanceName;
         private CorbaConsumerBase m_consumer;
+        private String m_ior;
     };
     Vector<CorbaConsumerHolder> m_consumers = new Vector<CorbaConsumerHolder>();
 
@@ -948,13 +838,6 @@ public class CorbaPort extends PortBase {
         public unsubscribe(Vector<CorbaConsumerHolder> consumers) {
             m_consumers = consumers;
         }
-/* zxc
-        public unsubscribe(final Vector<Consumer> cons) {
-            
-            this.m_cons = new Vector<Consumer>(cons);
-            this.m_len = cons.size();
-        }
-*/
         
         public void operator(java.lang.Object elem) {
 
@@ -971,13 +854,6 @@ public class CorbaPort extends PortBase {
                     consumer.releaseObject();
                 }
             }
-/* zxc
-            for (int i = 0; i < this.m_len; i++) {
-                if (this.m_cons.get(i).name.equals(nv.name)) {
-                    this.m_cons.get(i).consumer.releaseObject();
-                }
-            }
-*/
         }
 /*
         private Vector<Consumer> m_cons; // コンストラクタで必ず初期化されるので、ここではインスタンス生成しない。
@@ -986,22 +862,6 @@ public class CorbaPort extends PortBase {
         public Vector<CorbaConsumerHolder> m_consumers;
     }
 
-    /**
-     * <p> Providerの情報を格納するクラス </p>
-     */
-/* zxc
-    private class ProviderInfo {
-	public ProviderInfo() {
-	}
-	public ProviderInfo(Servant svt, byte[] objectid) {
-	    servant = svt;
-	    oid = objectid;
-	}
-	public Servant servant = null;
-	public byte[] oid = null;
-    }
-    protected HashMap<String, ProviderInfo> m_servants = new HashMap<String, ProviderInfo>();
-*/
 
 
     /**
@@ -1036,6 +896,9 @@ public class CorbaPort extends PortBase {
      * @param cons 
      *   {@.ja Provider と対応する Consumer のホルダ}
      *   {@.en a Consumer holder to be matched with a Provider}
+     * @param iorstr 
+     *   {@.ja 見つかったIOR文字列を格納する変数}
+     *   {@.en variable which is set IOR string}
      * 
      * @retrun 
      *   {@.ja Consumer に対応する Provider が見つからない場合 false}
@@ -1043,11 +906,13 @@ public class CorbaPort extends PortBase {
      *
      */
     private 
-    boolean findProvider(final NVListHolder nv, CorbaConsumerHolder cons) {
+    boolean findProvider(final NVListHolder nv, CorbaConsumerHolder cons,
+                        StringHolder iorstr) {
         // new consumer interface descriptor
-        String newdesc;
-        newdesc = m_ownerInstanceName + ".port." + m_profile.name
-          + ".consumer." + cons.descriptor();
+        StringBuffer strbuff = new StringBuffer(m_profile.name);
+        strbuff.insert(m_ownerInstanceName.length(), ".port");
+        strbuff.append(".required." + cons.descriptor());
+        String newdesc = strbuff.substring(0);
   
         // find a NameValue of the consumer
         int  cons_index = NVUtil.find_index(nv, newdesc);
@@ -1083,22 +948,7 @@ public class CorbaPort extends PortBase {
             ior = nv.value[prov_index].value.extract_Value().toString();
         }
  
-        // if ior string is "null" or "nil", ignore it.
-        if (ior.equals("null")) { 
-            return true; 
-        }
-        if (ior.equals("nil")) { 
-            return true; 
-        }
-        // IOR should be started by "IOR:"
-        if (ior.indexOf("IOR:") != 0) { 
-            return false; 
-        }
-        // set IOR to the consumer
-        if (!cons.setObject(ior)) {
-            rtcout.println(rtcout.ERROR, "Cannot narrow reference");
-            return false;
-        }
+        iorstr.value = ior;
         rtcout.println(rtcout.TRACE, 
                     "interface matched with new descriptor:"+newdesc);
   
@@ -1138,7 +988,8 @@ public class CorbaPort extends PortBase {
      *
      */
     private 
-    boolean findProviderOld(final NVListHolder nv, CorbaConsumerHolder cons) {
+    boolean findProviderOld(final NVListHolder nv, CorbaConsumerHolder cons,
+                        StringHolder iorstr) {
         // old consumer interface descriptor
         String olddesc = "port."; 
         olddesc += cons.descriptor();
@@ -1160,19 +1011,96 @@ public class CorbaPort extends PortBase {
             ior = nv.value[cons_index].value.extract_Value().toString();
         }
  
-        // set IOR to the consumer
-        if (!cons.setObject(ior)) {
-            rtcout.println(rtcout.WARN, 
-                    "Cannot narrow reference");
-            return false;
-        }
-
-        rtcout.println(rtcout.TRACE, 
+        iorstr.value = ior;
+        rtcout.println(rtcout.INFO, 
                     "interface matched with old descriptor:"+olddesc);
 
         return true;
     }
 
-  
+    /**
+     * {@.ja Consumer に IOR をセットする}
+     * {@.en Setting IOR to Consumer}
+     *
+     * <p>
+     * {@.ja IOR をナローイングしてConsumer にセットする。ナローイングに失敗
+     * した場合、false を返す。ただし、IOR文字列が、nullまたはnilの場合、
+     * オブジェクトに何もセットせずに true を返す。}
+     * {@.en This function performs narrowing into the Consumer and set it to 
+     * the Consumer. False is returned when the narrowing failed. But, if IOR
+     * string is "null" or "nil", this function returns true.}
+     *
+     * @param ior 
+     *   {@.ja セットする IOR 文字列}
+     *   {@.en ior IOR string}
+     * @param cons 
+     *   {@.ja Consumer のホルダ}
+     *   {@.en Consumer holder}
+     * 
+     * @retrun boolean 
+     *   {@.ja Consumer へのナローイングに失敗した場合 false}
+     *   {@.en false if narrowing failed.}
+     *
+     *
+     */
+    private boolean setObject(final String ior, CorbaConsumerHolder cons){
 
+        // if ior string is "null" or "nil", ignore it.
+        if (ior.equals("null")) { 
+            return true; 
+        }
+        if (ior.equals("nil")) { 
+            return true; 
+        }
+        // IOR should be started by "IOR:"
+        if (ior.indexOf("IOR:") != 0) { 
+            return false; 
+        }
+        // set IOR to the consumer
+        if (!cons.setObject(ior)) {
+            rtcout.println(rtcout.ERROR, "Cannot narrow reference");
+            return false;
+        }
+        if(!cons.setObject(ior)){
+            rtcout.println(rtcout.ERROR, "Cannot narrow reference");
+            return false;
+        }
+        rtcout.println(rtcout.TRACE, "setObject() done");
+        return true;
+    }
+    /**
+     * {@.ja Consumer のオブジェクトをリリースする}
+     * {@.en Releasing Consumer Object}
+     *
+     * <p>
+     * {@.ja Consumer にセットされた参照をリリースする。ConsumerのIORが与えら
+     * れたIOR文字列と異なる場合、falseを返す。}
+     * {@.en This function releases object reference of Consumer. If the
+     * given IOR string is different from Consumer's IOR string, it
+     * returns false.}
+     *
+     * @param ior 
+     *   {@.ja セットする IOR 文字列}
+     *   {@.en IOR string}
+     * @param cons 
+     *   {@.ja Consumer のホルダ}
+     *   {@.en Consumer holder}
+     * 
+     * @retrun 
+     *   {@.ja ConsumerのIORが与えられたIOR文字列と異なる場合、falseを返す。}
+     *   {@.en False if IOR and Consumer's IOR are different}
+     * 
+     *
+     */
+    private boolean releaseObject(final String ior, CorbaConsumerHolder cons){
+        if (ior == cons.getIor()) {
+            cons.releaseObject();
+            rtcout.println(rtcout.DEBUG, 
+                                "Consumer "+cons.descriptor()+" released.");
+            return true;
+        }
+        rtcout.println(rtcout.WARN, 
+                        "IORs between Consumer and Connector are different.");
+        return false;
+    }
 }
