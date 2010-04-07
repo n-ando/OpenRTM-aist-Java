@@ -33,19 +33,6 @@ public class SensorImpl extends DataFlowComponentBase {
 
         // Registration: InPort/OutPort/Service
         // <rtc-template block="registration">
-        // Set InPort buffers
-        try {
-	    registerInPort("in", m_inIn);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-        
-        // Set OutPort buffer
-        try {
-	    registerOutPort("out", m_outOut);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
         
         // Set service provider to Ports
         
@@ -67,6 +54,9 @@ public class SensorImpl extends DataFlowComponentBase {
      */
     @Override
     protected ReturnCode_t onInitialize() {
+
+        addInPort("in", m_inIn);
+        addOutPort("out", m_outOut);
         return ReturnCode_t.RTC_OK;
     }
 

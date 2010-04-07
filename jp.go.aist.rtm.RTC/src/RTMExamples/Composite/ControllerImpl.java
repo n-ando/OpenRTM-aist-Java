@@ -29,24 +29,6 @@ public class ControllerImpl extends DataFlowComponentBase {
         m_out = new DataRef<TimedFloat>(m_out_val);
         m_outOut = new OutPort<TimedFloat>("out", m_out);
         // </rtc-template>
-
-        // Registration: InPort/OutPort/Service
-        // <rtc-template block="registration">
-        // Set InPort buffers
-        try {
-	    // registerInPort(TimedFloat.class, "in", m_inIn);
-	    registerInPort("in", m_inIn);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-        
-        // Set OutPort buffer
-        try {
-	    //	    registerOutPort(TimedFloat.class, "out", m_outOut);
-	    registerOutPort("out", m_outOut);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
         
         // Set service provider to Ports
         
@@ -68,6 +50,8 @@ public class ControllerImpl extends DataFlowComponentBase {
      */
     @Override
     protected ReturnCode_t onInitialize() {
+        addInPort("in", m_inIn);
+        addOutPort("out", m_outOut);
         return ReturnCode_t.RTC_OK;
     }
 
