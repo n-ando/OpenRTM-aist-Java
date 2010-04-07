@@ -151,7 +151,22 @@ public class PeriodicECOrganization extends Organization_impl {
     }
 
     /**
-     * <p>Organizationメンバーを追加する。</p>
+     * {@.ja [CORBA interface] Organizationメンバーを追加する}
+     * {@.en [CORBA interface] Add Organization member}
+     *
+     * <p>
+     * {@.ja Organization が保持するメンバーリストに与えられたSDOListを
+     * 追加する。}
+     * {@.en This operation adds the given SDOList to the existing 
+     * organization's member list}
+     * 
+     * @param sdo_list 
+     *   {@.ja 追加される SDO メンバーのリスト}
+     *   {@.en SDO member list to be added}
+     * @return 
+     *   {@.ja 追加が成功したかどうかがboolで返される}
+     *   {@.en boolean will returned if the operation succeed}
+     *
      */
      public boolean add_members(final SDO[] sdo_list) 
 	 throws SystemException, InvalidParameter, NotAvailable, InternalError {
@@ -192,7 +207,24 @@ public class PeriodicECOrganization extends Organization_impl {
     }
 
     /**
-     * <p>Organizationメンバーをセットする。</p>
+     * {@.ja [CORBA interface] Organizationメンバーをセットする}
+     * {@.en [CORBA interface] Set Organization member}
+     *
+     * <p>
+     * {@.ja Organization が保持するメンバーリストを削除し、与えられた
+     * SDOListを新規にセットする。}
+     * {@.en This operation removes existing member list and sets the given
+     * SDOList to the existing organization's member list}
+     * 
+     * @param sdo_list
+     *   {@.ja 新規にセットされる SDO メンバーのリスト}
+     *   {@.en SDO member list to be set}
+     * @return 
+     *   {@.ja 追加が成功したかどうかがboolで返される}
+     *   {@.en boolean will returned if the operation succeed}
+     *
+     * 
+     *
      */
     public boolean set_members(final SDO[] sdo_list)
         throws SystemException, InvalidParameter, NotAvailable, InternalError {
@@ -481,8 +513,7 @@ public class PeriodicECOrganization extends Organization_impl {
         if (portlist.size() == 0) {
             return;
         }
-        String comp_name = new String();
-        comp_name = member.profile_.instance_name;
+        String comp_name = member.profile_.instance_name;
         PortProfile[] plist 
                 = new PortProfile[member.profile_.port_profiles.length];
         plist = member.profile_.port_profiles;
@@ -563,13 +594,14 @@ public class PeriodicECOrganization extends Organization_impl {
      }
 
     /**
-     * <p>ポートリストを更新する。</p>
+     * {@.ja PortsListを更新する}
+     * {@.en PortsList is updated.}
      */
     private void updateExportedPortsList() {
         rtcout.println(rtcout.DEBUG, "updateExportedPortsList()");
 
-        String plist = new String();
-        plist = m_rtobj.getProperties().getProperty("conf.default.exported_ports");
+        String plist 
+          = m_rtobj.getProperties().getProperty("conf.default.exported_ports");
         m_expPorts = StringUtil.split(plist, ",");
 	for (int i=0; i<m_expPorts.size(); ++i) {
 	    m_expPorts.set(i,m_expPorts.get(i).trim());
