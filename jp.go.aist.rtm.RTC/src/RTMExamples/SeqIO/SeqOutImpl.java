@@ -62,14 +62,6 @@ public class SeqOutImpl  extends DataFlowComponentBase {
             registerOutPort(TimedDoubleSeq.class, "DoubleSeq", m_DoubleSeqOut);
 */  //v042
 
-            registerOutPort("Short", m_ShortOut);
-            registerOutPort("Long", m_LongOut);
-            registerOutPort("Float", m_FloatOut);
-            registerOutPort("Double", m_DoubleOut);
-            registerOutPort("ShortSeq", m_ShortSeqOut);
-            registerOutPort("LongSeq", m_LongSeqOut);
-            registerOutPort("FloatSeq", m_FloatSeqOut);
-            registerOutPort("DoubleSeq", m_DoubleSeqOut);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,6 +96,14 @@ public class SeqOutImpl  extends DataFlowComponentBase {
     // formaer rtc_init_entry() 
     @Override
     protected ReturnCode_t onInitialize() {
+        addOutPort("Short", m_ShortOut);
+        addOutPort("Long", m_LongOut);
+        addOutPort("Float", m_FloatOut);
+        addOutPort("Double", m_DoubleOut);
+        addOutPort("ShortSeq", m_ShortSeqOut);
+        addOutPort("LongSeq", m_LongSeqOut);
+        addOutPort("FloatSeq", m_FloatSeqOut);
+        addOutPort("DoubleSeq", m_DoubleSeqOut);
         seqOutView.init("SeqOut");
         return super.onInitialize();
     }

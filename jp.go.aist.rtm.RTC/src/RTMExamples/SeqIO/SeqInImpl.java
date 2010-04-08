@@ -62,14 +62,6 @@ public class SeqInImpl  extends DataFlowComponentBase {
             registerInPort(TimedDoubleSeq.class, "DoubleSeq", m_DoubleSeqIn);
 */  //v042
 
-            registerInPort("Short", m_ShortIn);
-            registerInPort("Long", m_LongIn);
-            registerInPort("Float", m_FloatIn);
-            registerInPort("Double", m_DoubleIn);
-            registerInPort("ShortSeq", m_ShortSeqIn);
-            registerInPort("LongSeq", m_LongSeqIn);
-            registerInPort("FloatSeq", m_FloatSeqIn);
-            registerInPort("DoubleSeq", m_DoubleSeqIn);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,6 +82,14 @@ public class SeqInImpl  extends DataFlowComponentBase {
     // formaer rtc_init_entry() 
     @Override
     protected ReturnCode_t onInitialize() {
+        addInPort("Short", m_ShortIn);
+        addInPort("Long", m_LongIn);
+        addInPort("Float", m_FloatIn);
+        addInPort("Double", m_DoubleIn);
+        addInPort("ShortSeq", m_ShortSeqIn);
+        addInPort("LongSeq", m_LongSeqIn);
+        addInPort("FloatSeq", m_FloatSeqIn);
+        addInPort("DoubleSeq", m_DoubleSeqIn);
         seqInView.init("SeqIn");
         return super.onInitialize();
     }

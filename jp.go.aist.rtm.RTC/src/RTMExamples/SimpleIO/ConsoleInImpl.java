@@ -59,7 +59,7 @@ public class ConsoleInImpl extends DataFlowComponentBase {
     protected ReturnCode_t onInitialize() {
 
         try {
-            registerOutPort("out", m_outOut);
+            addOutPort("out", m_outOut);
         } catch (Exception e) {
             e.printStackTrace();
         }

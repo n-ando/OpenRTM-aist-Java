@@ -1,7 +1,7 @@
 // -*- Java -*-
-/*!
- * @file AutoTestOut.java
- * @date $Date$
+/**
+ * AutoTestOut.java
+ * $Date$
  *
  * $Id$
  */
@@ -15,27 +15,26 @@ import jp.go.aist.rtm.RTC.RtcNewFunc;
 import jp.go.aist.rtm.RTC.RegisterModuleFunc;
 import jp.go.aist.rtm.RTC.util.Properties;
 
-/*!
- * @class AutoTestOut
- * @brief Sample component for auto test.
+/**
+ * Sample component for auto test.
  */
 public class AutoTestOut implements RtcNewFunc, RtcDeleteFunc, RegisterModuleFunc {
 
 //  Module specification
 //  <rtc-template block="module_spec">
     public static String component_conf[] = {
-    	    "implementation_id", "AutoTestOut",
-    	    "type_name",         "AutoTestOut",
-    	    "description",       "Sample component for auto test.",
-    	    "version",           "1.0.0",
-    	    "vendor",            "AIST",
-    	    "category",          "example",
-    	    "activity_type",     "STATIC",
-    	    "max_instance",      "1",
-    	    "language",          "Java",
-    	    "lang_type",         "compile",
-    	    "exec_cxt.periodic.rate", "1.0",
-    	    ""
+            "implementation_id", "AutoTestOut",
+            "type_name",         "AutoTestOut",
+            "description",       "Sample component for auto test.",
+            "version",           "1.0.0",
+            "vendor",            "AIST",
+            "category",          "example",
+            "activity_type",     "STATIC",
+            "max_instance",      "1",
+            "language",          "Java",
+            "lang_type",         "compile",
+            "exec_cxt.periodic.rate", "1.0",
+            ""
             };
 //  </rtc-template>
 

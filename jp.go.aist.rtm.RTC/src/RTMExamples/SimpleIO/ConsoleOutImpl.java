@@ -55,7 +55,7 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
 //    @Override
     protected ReturnCode_t onInitialize() {
         try {
-            registerInPort("in", m_inIn);
+            addInPort("in", m_inIn);
         } catch (Exception e) {
             e.printStackTrace();
         }
