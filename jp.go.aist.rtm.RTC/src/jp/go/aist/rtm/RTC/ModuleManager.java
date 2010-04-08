@@ -5,6 +5,7 @@ import org.omg.CORBA.portable.Streamable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.Iterator;
 
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.util.StringHolder;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
@@ -63,9 +65,6 @@ public class ModuleManager {
             }
             loadPath[i] = loadPath[i].replace(separator,".");
             loadPath[i] = loadPath[i].replace("..",".");
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("ModuleManager-->:"+loadPath[i]);
-            }
             m_loadPath.add(loadPath[i]);
         }
         
@@ -100,27 +99,47 @@ public class ModuleManager {
     }
 
     /**
-     * <p> Load the module </p>
+     * {@.ja モジュールのロード}
+     * {@.en Load the module}
      *
-     * <p>Load file_name as DLL or a shared liblary.
+     * <p>
+     * {@.ja file_name をDLL もしくは共有ライブラリとしてロードする。
+     * file_name は既定のロードパス (manager.modules.load_path) に対する
+     * 相対パスで指定する。
+     *
+     * Property manager.modules.abs_path_allowed が yes の場合、
+     * ロードするモジュールを絶対パスで指定することができる。<br>
+     * Property manager.modules.download_allowed が yes の場合、
+     * ロードするモジュールをURLで指定することができる。
+     *
+     * file_name は絶対パスで指定することができる。
+     * manager.modules.allowAbsolutePath が no の場合、
+     * 既定のモジュールロードパスから、file_name のモジュールを探しロードする。}
+     * {@.en Load file_name as DLL or a shared liblary.
      * The file_name is specified by the relative path to default load
-     * path (manager.modules.load_path). </p>
+     * path (manager.modules.load_path).
      *
-     * <p>If Property manager.modules.abs_path_allowed is yes,
+     * If Property manager.modules.abs_path_allowed is yes,
      * the load module can be specified by the absolute path.<br>
      * If Property manager.modules.download_allowed is yes,
-     * the load module can be specified with URL.</p>
+     * the load module can be specified with URL.
      *
-     * <p>The file_name can be specified by the absolute path.
+     * The file_name can be specified by the absolute path.
      * If manager.modules.allowAbsolutePath is no, module of file_name
-     * will be searched from the default module load path and loaded.</p>
+     * will be searched from the default module load path and loaded.}
      * 
-     * @param moduleName The target module name for the loading
+     * @param file_name 
+     *   {@.ja ロード対象モジュール名}
+     *   {@.en The target module name for the loading}
      *
-     * @return Name of module for the specified load
-     * 
+     * @return 
+     *   {@.ja 指定したロード対象モジュール名}
+     *   {@.en Name of module for the specified load}
+     *
+     *
      */
     public String load(final String moduleName) throws Exception {
+System.out.println("load(fname = " + moduleName +")");
         rtcout.println(rtcout.TRACE, "load(fname = " + moduleName +")");
         String module_path = null;
 
@@ -140,26 +159,50 @@ public class ModuleManager {
         }
 
         // Find local file from load path or absolute directory
+        String separator =  System.getProperty("file.separator");
         Class target = null;
         if (StringUtil.isAbsolutePath(moduleName)) {
-            try {
+//            try {
 		if(!m_absoluteAllowed) {
 		    throw new IllegalArgumentException(
                                             "Absolute path is not allowed");
 		}
 		else {
-		    target = Class.forName(moduleName);
-		    module_path = moduleName;
-		}
-	    } catch (ClassNotFoundException e) {
-                throw new ClassNotFoundException(
-                                    "Not implemented." + moduleName, e);
-            }
+                    File file = new File(moduleName);
+                    String path = file.getParent();
+//                    String name = moduleName;
+                    String name = file.getName();
+                    name = getModuleName(name);
+
+                    StringHolder packageModuleName = new StringHolder();
+                    target = getClassFromName(name,packageModuleName);
+System.out.println("--010--");
+System.out.println("    name>:"+name);
+                    target = getClassFromName(name,packageModuleName);
+System.out.println("    packageModuleName.value>"+packageModuleName.value);
+                    module_path = packageModuleName.value;
+//                    target = Class.forName(moduleName);
+//                    module_path = moduleName;
+                }
+//            } catch (ClassNotFoundException e) {
+//                throw new ClassNotFoundException(
+//                                    "Not implemented." + moduleName, e);
+//            }
         } else {
             if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
+                String name = getModuleName(moduleName);
+                name = name.replace(separator,".");
+                name = name.replace("..",".");
             for (int i = 0; i < m_loadPath.size(); ++i) {
-                String fullClassName 
-                                = m_loadPath.elementAt(i) + "." + moduleName;
+                String fullClassName ;
+                if(m_loadPath.elementAt(i).equals("")
+                            ||m_loadPath.elementAt(i).length()==0){
+                    fullClassName = name;
+                }
+                else {
+                    fullClassName 
+                                = m_loadPath.elementAt(i) + "." + name;
+                }
                 try {
                     target = Class.forName(fullClassName);
                     module_path = fullClassName;                    
@@ -175,35 +218,103 @@ public class ModuleManager {
             throw new IllegalArgumentException("Invalid file name.");
         }
         DLLEntity dll_entity = new DLLEntity();
-//        dll_entity.properties = new Properties("file_path",module_path);
         dll_entity.properties = new Properties();
         dll_entity.properties.setProperty("file_path",module_path);
         dll_entity.dll = target;
 	
         m_modules.put(module_path, dll_entity);
-//        m_modules.put(module_path, target);
         return module_path;
     }
 
     /**
-     * <p>指定されたモジュールをロードします。初期化メソッドを指定した場合には、
-     * ロード時にそのメソッドが呼び出されます。これにより、モジュール初期化を行えます。</p>
+     *
+     */
+    private Class getClassFromName(String name, StringHolder holder){
+System.out.println("IN  getClassFromName");
+        String separator =  System.getProperty("file.separator");
+        Class target = null;
+
+        try {
+System.out.println("    name>:"+name);
+            target = Class.forName(name);
+            holder.value = name;
+        } catch (java.lang.NoClassDefFoundError e) {
+            String messagetString = e.getMessage();
+System.out.println("    getMessage:"+messagetString);
+            String key = "wrong name: ";
+            int index = messagetString.indexOf(key);
+            String packageName 
+                = messagetString.substring(index+key.length(),
+                                               messagetString.length()-1);
+            packageName = packageName.replace(separator,".");
+            packageName = packageName.trim();
+            target = getClassFromName(packageName,holder);
+        } catch (Exception e) {
+            //
+System.out.println("    cought exception."+e);
+        }
+System.out.println("OUT getClassFromName");
+        return target;
+    }
+
+    /**
+     *
+     */
+    private String getModuleName(String name){
+        String extensions[] = {".class", ".jar"};
+        for(int ic=0;ic<extensions.length;++ic){
+            if(name.endsWith(extensions[ic])){
+                int point = name.lastIndexOf(extensions[ic]);
+                name =  name.substring(0, point);
+                if(extensions[ic].equals(".jar")){
+                    name =  name+"."+name;
+                }
+                break;
+            }
+        }
+        return name;
+    }
+
+    /**
+     * {@.ja モジュールのアンロード}
+     * {@.en Load and intialize the module}
+     *
+     * <p>
+     * {@.ja 指定されたモジュールをロードします。初期化メソッドを指定した場合
+     * には、 * ロード時にそのメソッドが呼び出されます。
+     * これにより、モジュール初期化を行えます。>
      * 
-     * <p>コンストラクタで指定した初期化情報の 'manager.modules.abs_path_allowed' が 'yes' の場合は、
-     * className引数は、ロードモジュールのフルクラス名として解釈されます。<br />
-     * 'no' が指定されている場合は、className引数はロードモジュールのシンプルクラス名として解釈され、
-     * 規定のモジュールロードパス以下からモジュールが検索されます。</p>
+     * コンストラクタで指定した初期化情報の 'manager.modules.abs_path_allowed'
+     * が 'yes' の場合は、className引数は、ロードモジュールのフルクラス名
+     * として解釈されます。<br />
+     * 'no' が指定されている場合は、className引数はロードモジュールの
+     * シンプルクラス名として解釈され、
+     * 規定のモジュールロードパス以下からモジュールが検索されます。
      * 
-     * <p>コンストラクタで指定した初期化情報の 'manager.modules.download_allowed' が 'yes' の場合は、
-     * className引数は、ロードモジュールのURLとして解釈されます。（未実装）</p>
+     * コンストラクタで指定した初期化情報の 'manager.modules.download_allowed'
+     * が 'yes' の場合は、
+     * className引数は、ロードモジュールのURLとして解釈されます。（未実装）}
+     * {@.en Load the specified file as DLL or a shared library, and execute 
+     * operation for specified initialization.}
      * 
-     * @param moduleName モジュール名
-     * @param methodName 初期実行メソッド名
-     * @return moduleName引数で指定したモジュール名がそのまま返されます。
-     * @throws IllegalArgumentException 引数が正しく指定されていない場合にスローされます。
+     * @param moduleName 
+     *   {@.ja モジュール名}
+     *   {@.en A module name}
+     * @param methodName 
+     *   {@.ja 初期実行メソッド名}
+     *   {@.en a initial method name }
+     * @return 
+     *   {@.ja moduleName引数で指定したモジュール名がそのまま返されます。}
+     *   {@.en The module name specified by the argument is returned. }
+     * @throws IllegalArgumentException 
+     *   {@.ja 引数が正しく指定されていない場合にスローされます。}
+     *   {@.en When the argument is not correctly specified, it is thrown out. }
      */
     public String load(final String moduleName, final String methodName)
             throws Exception {
+System.out.println("load(fname = "+moduleName+"   init_func = "+methodName+")" );
+        rtcout.println(rtcout.TRACE, 
+                "load(fname = "+moduleName+"   init_func = "+methodName+")");
         
         if (moduleName == null || moduleName.length() == 0) {
             throw new IllegalArgumentException("moduleName is empty.:load()");
@@ -218,8 +329,9 @@ public class ModuleManager {
 	Class target = null;
 	try {
 	    target = Class.forName(module_path);
-	} catch (ClassNotFoundException e) {
-	    throw new ClassNotFoundException("Not implemented." + moduleName, e);
+	} catch (ClassNotFoundException ex) {
+	    throw new ClassNotFoundException("Not implemented." + moduleName, 
+                                             ex);
 	}
 
         try {
@@ -361,9 +473,6 @@ public class ModuleManager {
             String str[] = dlls.elementAt(ic).split(".class");
             str[0] = str[0].replace(separator,".");
             str[0] = str[0].replace("..",".");
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("getLoadableModules-->:"+str[0]);
-            }
             try {
                 Class holder = Class.forName(str[0],
                                          true,
