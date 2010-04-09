@@ -3,13 +3,11 @@ package jp.go.aist.rtm.RTC.port;
 import java.lang.ClassCastException;
 import org.omg.CORBA.TypeCodePackage.BadKind;
 import java.io.IOException;
-import com.sun.corba.se.spi.ior.iiop.GIOPVersion;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.portable.Streamable;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
-import com.sun.corba.se.impl.encoding.EncapsInputStream; 
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 import java.lang.reflect.Method;

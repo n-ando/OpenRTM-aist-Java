@@ -1,9 +1,5 @@
 package jp.go.aist.rtm.RTC.port;
 
-import com.sun.corba.se.spi.ior.iiop.GIOPVersion;
-import com.sun.corba.se.impl.encoding.EncapsInputStream; 
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
-
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 

@@ -18,9 +18,6 @@ import jp.go.aist.rtm.RTC.util.IiopAddressCompHelper;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
-import com.sun.corba.se.impl.ior.IORTemplateImpl;
-import com.sun.corba.se.impl.ior.iiop.IIOPProfileTemplateImpl;
-import com.sun.corba.se.impl.oa.poa.POAImpl;
 
 /**
  * {@.ja ポータブルインターセプタを利用してIORを書き換える.}
@@ -109,13 +106,6 @@ public class IopIorInterceptor extends LocalObject
             = (com.sun.corba.se.spi.ior.iiop.IIOPProfileTemplate)iop.getTaggedProfileTemplate();
         String host = ptemp.getPrimaryAddress().getHost();
         short port = (short)ptemp.getPrimaryAddress().getPort();
-//            IopIorInterceptor.setPOA(m_pPOA);
-//            IORTemplateImpl iorTmpl 
-//                = (IORTemplateImpl)((POAImpl)m_pPOA).getIORTemplate();
-//            IIOPProfileTemplateImpl profileTmpl 
-//            = ((IIOPProfileTemplateImpl)iorTmpl.get(TAG_INTERNET_IOP.value));
-//            int portint = profileTmpl.getPrimaryAddress().getPort();
-//            System.out.println("getPort()>:"+portint);
 
         for(int ic=0;ic<m_endpoints.size();ic++){
             if(m_endpoints.get(ic).Port==0){

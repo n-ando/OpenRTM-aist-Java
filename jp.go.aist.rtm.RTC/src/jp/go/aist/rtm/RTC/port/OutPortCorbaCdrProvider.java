@@ -145,14 +145,6 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
 
             EncapsOutputStream outcdr;
             outcdr = (EncapsOutputStream)cdr_ref.v;
-/* zxc
-byte[] ch = outcdr.toByteArray();
-System.out.println("<+ch "+ch.length);
-for(int ic=0;ic<ch.length;++ic){
-System.out.print(ch[ic]+" ");
-}
-System.out.println("ch+>");
-*/
             data.value =  outcdr.toByteArray();
 
         }
