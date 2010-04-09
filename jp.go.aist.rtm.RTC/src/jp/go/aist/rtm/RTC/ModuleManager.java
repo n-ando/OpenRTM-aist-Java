@@ -6,6 +6,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.io.File;
+import java.net.URI;
+import java.net.URLClassLoader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -162,37 +164,33 @@ System.out.println("load(fname = " + moduleName +")");
         String separator =  System.getProperty("file.separator");
         Class target = null;
         if (StringUtil.isAbsolutePath(moduleName)) {
-//            try {
-		if(!m_absoluteAllowed) {
-		    throw new IllegalArgumentException(
+            if(!m_absoluteAllowed) {
+                throw new IllegalArgumentException(
                                             "Absolute path is not allowed");
-		}
-		else {
-                    File file = new File(moduleName);
-                    String path = file.getParent();
-//                    String name = moduleName;
-                    String name = file.getName();
-                    name = getModuleName(name);
+            }
+            else {
+                File file = new File(moduleName);
+                URLClassLoader url = createURLClassLoader(file.getParent());
+                if(url==null){
+                    System.out.println("    url==null");
+                }
 
-                    StringHolder packageModuleName = new StringHolder();
-                    target = getClassFromName(name,packageModuleName);
+                String name = file.getName();
+                name = getModuleName(name);
+
+                StringHolder packageModuleName = new StringHolder();
 System.out.println("--010--");
 System.out.println("    name>:"+name);
-                    target = getClassFromName(name,packageModuleName);
+                target = getClassFromName(url,name,packageModuleName);
+System.out.println("    target>"+target);
 System.out.println("    packageModuleName.value>"+packageModuleName.value);
-                    module_path = packageModuleName.value;
-//                    target = Class.forName(moduleName);
-//                    module_path = moduleName;
-                }
-//            } catch (ClassNotFoundException e) {
-//                throw new ClassNotFoundException(
-//                                    "Not implemented." + moduleName, e);
-//            }
+                module_path = packageModuleName.value;
+            }
         } else {
             if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
-                String name = getModuleName(moduleName);
-                name = name.replace(separator,".");
-                name = name.replace("..",".");
+            String name = getModuleName(moduleName);
+            name = name.replace(separator,".");
+            name = name.replace("..",".");
             for (int i = 0; i < m_loadPath.size(); ++i) {
                 String fullClassName ;
                 if(m_loadPath.elementAt(i).equals("")
@@ -209,10 +207,11 @@ System.out.println("    packageModuleName.value>"+packageModuleName.value);
                 } catch (ClassNotFoundException e) {
                 }
             }
-            if( target==null ) {
-                throw new ClassNotFoundException(
-                                        "Not implemented." + moduleName);
-            }
+        }
+        if( target==null ) {
+System.out.println("target==null");
+            throw new ClassNotFoundException(
+                                    "Not implemented." + moduleName);
         }
         if(module_path==null || module_path.length()==0) {
             throw new IllegalArgumentException("Invalid file name.");
@@ -229,14 +228,21 @@ System.out.println("    packageModuleName.value>"+packageModuleName.value);
     /**
      *
      */
-    private Class getClassFromName(String name, StringHolder holder){
+    private Class getClassFromName(URLClassLoader url, 
+                                    String name, 
+                                    StringHolder holder){
 System.out.println("IN  getClassFromName");
         String separator =  System.getProperty("file.separator");
         Class target = null;
 
         try {
 System.out.println("    name>:"+name);
-            target = Class.forName(name);
+URL[] urls = url.getURLs();
+for(int ic=0;ic<urls.length;++ic){
+System.out.println("    url>:"+urls[ic]);
+}
+            target = url.loadClass(name);
+//            target = Class.forName(name);
             holder.value = name;
         } catch (java.lang.NoClassDefFoundError e) {
             String messagetString = e.getMessage();
@@ -248,9 +254,10 @@ System.out.println("    getMessage:"+messagetString);
                                                messagetString.length()-1);
             packageName = packageName.replace(separator,".");
             packageName = packageName.trim();
-            target = getClassFromName(packageName,holder);
+            target = getClassFromName(url,packageName,holder);
         } catch (Exception e) {
             //
+System.out.println("    cought exception."+e.getMessage());
 System.out.println("    cought exception."+e);
         }
 System.out.println("OUT getClassFromName");
@@ -273,6 +280,26 @@ System.out.println("OUT getClassFromName");
             }
         }
         return name;
+    }
+
+    /**
+     *
+     */
+    private URLClassLoader createURLClassLoader(String parent){
+        File path = new File(parent);
+        URL[] urls = new URL[1];
+        try{
+            URI uri = path.toURI();
+            urls[0] = uri.toURL();
+
+        }
+        catch(java.net.MalformedURLException ex){
+            System.out.println("    toURL() threw Exception."+ex);
+            return null;
+        }
+        System.out.println("    urls[0]>:"+urls[0]);
+        URLClassLoader url = new URLClassLoader(urls);
+        return url;
     }
 
     /**
@@ -325,31 +352,44 @@ System.out.println("load(fname = "+moduleName+"   init_func = "+methodName+")" )
 
 	String module_path = load(moduleName);
 
+System.out.println("    module_path>:"+module_path);
 	Method initMethod = symbol(module_path,methodName);
-	Class target = null;
-	try {
-	    target = Class.forName(module_path);
-	} catch (ClassNotFoundException ex) {
-	    throw new ClassNotFoundException("Not implemented." + moduleName, 
-                                             ex);
-	}
+
+
+        DLLEntity dll_entity = m_modules.get(module_path);
+        Class target = dll_entity.dll;
+        if(target == null){
+System.out.println("    target == null");
+//             throw new ClassNotFoundException("Not implemented." + moduleName, 
+//                                             ex);
+        }
+        else{
+System.out.println("    target is not null.");
+        }
+
+System.out.println("    initMethod>:"+initMethod);
 
         try {
             initMethod.invoke(target.newInstance());
         } catch (IllegalArgumentException e) {
 //            e.printStackTrace();
+System.out.println("    e1");
             throw e;
         } catch (IllegalAccessException e) {
 //            e.printStackTrace();
+System.out.println("    e2");
             throw e;
         } catch (InvocationTargetException e) {
 //            e.printStackTrace();
+System.out.println("    e3");
             throw e;
         } catch (InstantiationException e) {
 //            e.printStackTrace();
+System.out.println("    e4");
             throw e;
         }
         
+System.out.println("    module_path>:"+module_path);
         return module_path;
     }
     
