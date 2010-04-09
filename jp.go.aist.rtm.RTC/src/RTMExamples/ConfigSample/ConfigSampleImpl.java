@@ -50,7 +50,7 @@ public class ConfigSampleImpl  extends DataFlowComponentBase {
         System.out.println("Please change configuration values from RtcLink"); 
         System.out.println("");
 
-        return ReturnCode_t.RTC_OK;
+        return super.onInitialize();
     }
     // The finalize action (on ALIVE->END transition)
     // formaer rtc_exiting_entry()
@@ -136,7 +136,7 @@ public class ConfigSampleImpl  extends DataFlowComponentBase {
                 e.printStackTrace();
             }
         }
-        return ReturnCode_t.RTC_OK;
+        return super.onExecute(ec_id);
     }
     //
     // The aborting action when main logic error occurred.

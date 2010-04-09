@@ -151,7 +151,7 @@ public class SeqInImpl  extends DataFlowComponentBase {
         if( m_LongSeq.v!=null ) seqInView.setLongSeqVal(m_LongSeq.v.data);
         if( m_ShortSeq.v!=null ) seqInView.setShortSeqVal(m_ShortSeq.v.data);
         //
-        return ReturnCode_t.RTC_OK;
+        return super.onExecute(ec_id);
     }
     //
     // The aborting action when main logic error occurred.

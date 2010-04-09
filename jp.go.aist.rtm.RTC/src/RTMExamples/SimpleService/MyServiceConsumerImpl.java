@@ -16,31 +16,19 @@ public class MyServiceConsumerImpl  extends DataFlowComponentBase {
         super(manager);
         // <rtc-template block="initializer">
         m_MyServicePort = new CorbaPort("MyService");
-        // </rtc-template>
-
-        // Registration: InPort/OutPort/Service
-        // <rtc-template block="registration">
-        // Set InPort buffers
-        
-        // Set OutPort buffer
-        
-        // Set service provider to Ports
-        
-        // Set service consumers to Ports
-        m_MyServicePort.registerConsumer("myservice0", "MyService", m_myservice0Base);
-        
-        // Set CORBA Service Ports
-        registerPort(m_MyServicePort);
-        
-        // </rtc-template>
     }
 
     // The initialize action (on CREATED->ALIVE transition)
     // formaer rtc_init_entry() 
-//    @Override
-//    protected ReturnCode_t onInitialize() {
-//        return super.onInitialize();
-//    }
+    @Override
+    protected RTC.ReturnCode_t onInitialize() {
+        m_MyServicePort.registerConsumer("myservice0", 
+                                            "MyService", 
+                                            m_myservice0Base);
+        // Set CORBA Service Ports
+        addPort(m_MyServicePort);
+        return super.onInitialize();
+    }
     // The finalize action (on ALIVE->END transition)
     // formaer rtc_exiting_entry()
 //    @Override
@@ -118,25 +106,25 @@ public class MyServiceConsumerImpl  extends DataFlowComponentBase {
              std::cout << "command: " << argv[0] << std::endl;
              if (argv.size() > 1)
              std::cout << "arg    : " << argv[1] << std::endl;
-          */
+            */
           
           m_myservice0 = m_myservice0Base._ptr();
           if( argv[0].equals("echo") && argv.length>1 ) {
               String retmsg = m_myservice0.echo(argv[1]);
               System.out.println( "echo return: " + retmsg );
-              return ReturnCode_t.RTC_OK;
+              return super.onExecute(ec_id);
           }
           
           if( argv[0].equals("set_value") && argv.length>1 ) {
               Float val = Float.valueOf(argv[1]);
               m_myservice0.set_value(val.floatValue());
               System.out.println( "Set remote value: " + val );
-              return ReturnCode_t.RTC_OK;
+              return super.onExecute(ec_id);
           }
           
           if( argv[0].equals("get_value") ) {
               System.out.println( "Current remote value: " + m_myservice0.get_value() );
-              return ReturnCode_t.RTC_OK;
+              return super.onExecute(ec_id);
           }
           
           if( argv[0].equals("get_echo_history") ) {
@@ -144,7 +132,7 @@ public class MyServiceConsumerImpl  extends DataFlowComponentBase {
               for( int intIdx=0;intIdx<echo_history.length;intIdx++ ) {
                   System.out.println( intIdx+": "+echo_history[intIdx]);
               }
-              return ReturnCode_t.RTC_OK;
+              return super.onExecute(ec_id);
           }
           
           if( argv[0].equals("get_value_history") ) {
@@ -152,13 +140,13 @@ public class MyServiceConsumerImpl  extends DataFlowComponentBase {
               for( int intIdx=0;intIdx<value_history.length;intIdx++ ) {
                   System.out.println( intIdx+": "+value_history[intIdx]);
               }
-              return ReturnCode_t.RTC_OK;
+              return super.onExecute(ec_id);
           }
           System.out.println( "Invalid command or argument(s)." );
         } catch (Exception ex) {
             System.out.println( "No service connected." );
         }
-        return ReturnCode_t.RTC_OK;
+        return super.onExecute(ec_id);
     }
     //
     // The aborting action when main logic error occurred.

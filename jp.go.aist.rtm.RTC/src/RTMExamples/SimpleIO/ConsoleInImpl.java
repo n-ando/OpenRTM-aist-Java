@@ -95,8 +95,7 @@ public class ConsoleInImpl extends DataFlowComponentBase {
                             ConnectorDataListenerType.ON_RECEIVER_ERROR,
                             new DataListener("ON_RECEIVER_ERROR"));
 
-        return ReturnCode_t.RTC_OK;
-//        return super.onInitialize();
+        return super.onInitialize();
     }
     // The finalize action (on ALIVE->END transition)
     // formaer rtc_exiting_entry()
@@ -151,7 +150,7 @@ public class ConsoleInImpl extends DataFlowComponentBase {
         System.out.println("Sending to subscriber: "  + m_out_val.data);
         m_outOut.write();
 
-        return ReturnCode_t.RTC_OK;
+        return super.onExecute(ec_id);
     }
     //
     // The aborting action when main logic error occurred.

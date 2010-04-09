@@ -56,7 +56,7 @@ public class MotorImpl extends DataFlowComponentBase {
     protected ReturnCode_t onInitialize() {
         addInPort("in", m_inIn);
         addOutPort("out", m_outOut);
-        return ReturnCode_t.RTC_OK;
+        return super.onInitialize();
     }
 
     /***

@@ -117,7 +117,7 @@ public class GUIInImpl  extends DataFlowComponentBase {
         
 //        System.out.println("slider:" + m_out1_val.data + " text:" + m_out2_val.data + " spinner:" + m_out3_val.data );
 
-        return ReturnCode_t.RTC_OK;
+        return super.onExecute(ec_id);
     }
     //
     // The aborting action when main logic error occurred.

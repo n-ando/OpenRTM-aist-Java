@@ -104,7 +104,7 @@ public class SinCosOutImpl  extends DataFlowComponentBase {
         } catch(Exception ex) {
         }
 
-        return ReturnCode_t.RTC_OK;
+        return super.onExecute(ec_id);
     }
     //
     // The aborting action when main logic error occurred.

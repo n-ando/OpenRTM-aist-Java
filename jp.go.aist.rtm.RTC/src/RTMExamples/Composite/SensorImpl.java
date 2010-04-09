@@ -57,7 +57,7 @@ public class SensorImpl extends DataFlowComponentBase {
 
         addInPort("in", m_inIn);
         addOutPort("out", m_outOut);
-        return ReturnCode_t.RTC_OK;
+        return super.onInitialize();
     }
 
 

@@ -85,7 +85,7 @@ public class AutoTestInImpl extends DataFlowComponentBase {
         addInPort("seqin", m_seqinIn);
         // Set CORBA Service Ports
         addPort(m_MyServicePort);
-        return ReturnCode_t.RTC_OK;
+        return super.onInitialize();
     }
 
     /***
