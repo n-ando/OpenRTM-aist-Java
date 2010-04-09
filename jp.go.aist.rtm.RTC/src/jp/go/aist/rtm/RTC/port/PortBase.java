@@ -34,92 +34,87 @@ import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
 
-/*!
- * @if jp
- * @class PortBase
- * @brief Port の基底クラス
+/**
+ * {@.ja Port の基底クラス}
+ * {@.en Port base class}
  *
- * RTC::Port の基底となるクラス。
+ *<p>
+ *{@.ja RTC::Port の基底となるクラス。
  * RTC::Port はほぼ UML Port の概念を継承しており、ほぼ同等のものとみなす
  * ことができる。RT コンポーネントのコンセプトにおいては、
  * Port はコンポーネントに付属し、コンポーネントが他のコンポーネントと相互作用
  * を行う接点であり、通常幾つかのインターフェースと関連付けられる。
  * コンポーネントは Port を通して外部に対しインターフェースを提供または要求
  * することができ、Portはその接続を管理する役割を担う。
- * <p>
  * Port の具象クラスは、通常 RT コンポーネントインスタンス生成時に同時に
  * 生成され、提供・要求インターフェースを登録した後、RT コンポーネントに
  * 登録され、外部からアクセス可能な Port として機能することを想定している。
- * <p>
  * RTC::Port は CORBA インターフェースとして以下のオペレーションを提供する。
  *
- * - get_port_profile()
- * - get_connector_profiles()
- * - get_connector_profile()
- * - connect()
- * - notify_connect()
- * - disconnect()
- * - notify_disconnect()
- * - disconnect_all()
+ * <ul>
+ * <li> get_port_profile()
+ * <li> get_connector_profiles()
+ * <li> get_connector_profile()
+ * <li> connect()
+ * <li> notify_connect()
+ * <li> disconnect()
+ * <li> notify_disconnect()
+ * <li> disconnect_all()
+ * </ul>
  *
  * このクラスでは、これらのオペレーションの実装を提供する。
- * <p>
+ *
  * これらのオペレーションのうち、get_port_profile(), get_connector_profiles(),
  * get_connector_profile(), connect(), disconnect(), disconnect_all() は、
  * サブクラスにおいて特に振る舞いを変更する必要がないため、オーバーライド
  * することは推奨されない。
- * <p>
+ *
  * notify_connect(), notify_disconnect() については、サブクラスが提供・要求
  * するインターフェースの種類に応じて、振る舞いを変更する必要が生ずる
  * かもしれないが、これらを直接オーバーライドすることは推奨されず、
  * 後述の notify_connect(), notify_disconnect() の項においても述べられる通り
  * これらの関数に関連した protected 関数をオーバーライドすることにより
- * 振る舞いを変更することが推奨される。
+ * 振る舞いを変更することが推奨される。}
+ * {@.en This class is a base class of RTC::Port.
+ * RTC::Port inherits a concept of RT-Component, and can be regarded as almost
+ * the same as it. In the concept of RT-Component, Port is attached to the
+ * component, can mediate interaction between other components and usually is
+ * associated with some interfaces.
+ * Component can provide or require interface for outside via Port, and the
+ * Port plays a role to manage the connection.
  *
- * @else
+ * Concrete class of Port assumes to be usually created at the same time that
+ * RT-Component's instance is created, be registerd to RT-Component after
+ * provided and required interfaces are registerd, and function as accessible
+ * Port from outside.
  *
+ * RTC::Port provides the following operations as CORBA interface:
  *
- * @endif
- */
-/**
- * <p>Portサーバントのベース実装となるクラスです。</p>
- * 
- * <p>Portは、UMLにおけるポートの概念をほぼ継承しており、ほぼ同等のものとみなすことができます。
- * RTコンポーネントのコンセプトにおいては、Portはコンポーネントに付属するものであり、
- * コンポーネントが他のコンポーネントと相互作用を行う接点であり、
- * 通常は幾つかのインターフェースと関連付けられます。</p>
- * 
- * <p>コンポーネントはPortを通して外部に対してインターフェースを提供または要求
- * することができ、Portはその接続を管理する役割を担っています。</p>
- * 
- * <p>Portの具象クラスは、通常はRTコンポーネントインスタンス生成時に同時に生成され、
- * 提供・要求インターフェースを登録した後、RTコンポーネントに登録され、
- * 外部からアクセス可能なPortとして機能することを想定しています。</p>
- *
- * <p>Portは、CORBAインターフェースとして以下のオペレーションを提供します。
- * 
  * <ul>
- * <li>get_port_profile()</li>
- * <li>get_connector_profiles()</li>
- * <li>get_connector_profile()</li>
- * <li>connect()</li>
- * <li>notify_connect()</li>
- * <li>disconnect()</li>
- * <li>notify_disconnect()</li>
- * <li>disconnect_all()</li>
+ * <li> get_port_profile()
+ * <li> get_connector_profiles()
+ * <li> get_connector_profile()
+ * <li> connect()
+ * <li> notify_connect()
+ * <li> disconnect()
+ * <li> notify_disconnect()
+ * <li> disconnect_all()
  * </ul>
- * 
- * このクラスでは、これらのオペレーションの実装を提供しています。</p>
- * 
- * <p>上記のオペレーションのうち、get_port_profile(), get_connector_profiles(),
- * get_connector_profile(), connect(), disconnect(), disconnect_all()は、
- * サブクラスにおいて特に振る舞いを変更する必要がないため、オーバーライドすることは推奨されません。</p>
- * 
- * <p>notify_connect(), notify_disconnect()については、サブクラスが提供・要求するインターフェースの
- * 種類に応じて、振る舞いを変更する必要が生ずるかもしれませんが、これらを直接オーバーライドすることは
- * 推奨されず、後述のnotify_connect(), notify_disconnect()の項にも記述されている通りに、
- * これらのメソッドに関連したprotectedメソッドをオーバーライドすることにより振る舞いを変更することが
- * 推奨されます。</p>
+ *
+ * This class provides implementations of these operations.
+ *
+ * In these operations, as for get_port_profile(), get_connector_profiles(),
+ * get_connector_profile(), connect(), disconnect() and disconnect_all(),
+ * since their behaviors especially need not to be change in subclass, 
+ * overriding is not recommended.
+ *
+ * As for notify_connect() and notify_disconnect(), you may have to modify
+ * behavior according to the kind of interfaces that subclass provides and
+ * requires, however it is not recommended these are overriden directly.
+ * In the section of notify_connect() and notify_disconnect() as described
+ * below, it is recommended that you modify behavior by overriding the
+ * protected function related to these functions.}
+ *
  */
 public abstract class PortBase extends PortServicePOA {
     
@@ -155,7 +150,6 @@ public abstract class PortBase extends PortServicePOA {
         this.m_objref = PortServiceHelper.narrow(this._this()._duplicate());
         this.m_profile.port_ref = this.m_objref;
         rtcout = new Logbuf(name);
-//        rtcout.setLevel("PARANOID");
         m_onPublishInterfaces = null;
         m_onSubscribeInterfaces = null;
         m_onConnected = null;
@@ -365,27 +359,31 @@ public abstract class PortBase extends PortServicePOA {
      * ンターフェース情報の公開と取得を関連すすべてのポートに対して行う。
      * このカスケード呼び出しは途中で中断されることはなく、必ず
      * ConnectorProfile::ports に格納されている全ポートに対して行われる。
-     *
-     * @pre notify_connect() は ConnectorProfile::ports 内に格納されて
+     * </p>
+     * <p>
+     * 事前条件:<br>
+     * notify_connect() は ConnectorProfile::ports 内に格納されて
      * いる Port 参照リストのうち、当該 Port 自身の参照の次に格納されて
      * いる Port に対して notify_connect() を呼び出す。したがって
      * ConnectorProfile::ports には当該 Port の参照が格納されている必要
      * がある。もし、自身の参照が格納されていない場合、その他の処理によ
      * りエラーが上書きされなければ、BAD_PARAMETER エラーが返される。
      *
-     * @pre 呼び出し時に ConnectorProfile::connector_id には一意なIDと
+     * 呼び出し時に ConnectorProfile::connector_id には一意なIDと
      * して UUID が保持されている必要がある。通常 connector_id は
      * connect() 関数により与えられ、空文字の場合は動作は未定義である。
-     *
-     * @post ConnectorProfile::name, ConnectorProfile::connector_id,
+     * </p>
+     * <p>
+     * 事後条件:<br>
+     * ConnectorProfile::name, ConnectorProfile::connector_id,
      * ConnectorProfile::ports は notify_connect() の呼び出しにより
      * 書き換えられることはなく不変である。
      *
-     * @post ConnectorProfile::properties は notify_connect() の内部で、
+     * ConnectorProfile::properties は notify_connect() の内部で、
      * 当該 Port が持つサービスインターフェースに関する情報を他の Port
      * に伝えるために、プロパティ情報が書き込まれる。
      *
-     * @post なお、ConnectorProfile::ports のリストの最初 Port の
+     * なお、ConnectorProfile::ports のリストの最初 Port の
      * notify_connet() が終了した時点では、すべての関連する Port の
      * notify_connect() の呼び出しが完了する。publishInterfaces(),
      * connectNext(), subscribeInterfaces() および接続情報の保存のいず
@@ -412,8 +410,10 @@ public abstract class PortBase extends PortServicePOA {
      * the ports is performed by "notify_connect()"s.  This cascaded
      * call never aborts in the halfway operations, and calling
      * sequence shall be completed for all the ports.
-     *
-     * @pre notify_connect() calls notify_connect() for the port's
+     * </p>
+     * <p>
+     * Precondition:<br>
+     * notify_connect() calls notify_connect() for the port's
      * reference that is stored in next of this port's reference in
      * the sequence of the ConnectorProfile::ports. Therefore the
      * reference of this port shall be stored in the
@@ -421,20 +421,22 @@ public abstract class PortBase extends PortServicePOA {
      * in the sequence, BAD_PARAMETER error will be returned, except
      * the return code is overwritten by other operations.
      *
-     * @pre UUID shall be set to ConnectorProfile::connector_id as a
+     * UUID shall be set to ConnectorProfile::connector_id as a
      * unique identifier when this operation is called.  Usually,
      * connector_id is given by a connect() function and, the behavior
      * is undefined in the case of a null character.
-     *
-     * @post ConnectorProfile::name, ConnectorProfile::connector_id,
+     * </p>
+     * <p>
+     * Postcondition:<br>
+     * ConnectorProfile::name, ConnectorProfile::connector_id,
      * ConnectorProfile::ports are invariant, and they are never
      * rewritten by notify_connect() operations.
      *
-     * @post In order to transfer interface information to other
+     * In order to transfer interface information to other
      * ports, interface property information is stored into the
      * ConnectorProfile::properties.
      *
-     * @post At the end of notify_connect() operation for the first
+     * At the end of notify_connect() operation for the first
      * port stored in the ConnectorProfile::ports sequence, the
      * related ports' notify_connect() invocations complete. Even if
      * errors are raised at the halfway of publishInterfaces(),
@@ -595,21 +597,25 @@ public abstract class PortBase extends PortServicePOA {
      * notify_disconnect() は ConnectorProfile::ports に格納されている
      * Port の順序に従って、カスケード状に呼び出しを行うことにより、接
      * 続の解除をすべての Port に通知する。
-     *
-     * @pre Port は与えられた connector_id に対応する ConnectorProfile
+     * </p>
+     * <p>
+     * 事前条件:<br>
+     * Port は与えられた connector_id に対応する ConnectorProfile
      * を保持していなければならない。
-     *
-     * @post connector_id に対応する ConnectorProfile が見つからない場
+     * </p>
+     * <p>
+     * 事後条件:<br>
+     * connector_id に対応する ConnectorProfile が見つからない場
      * 合はBAD_PARAMETER エラーを返す。
      *
-     * @post カスケード呼び出しを行う際には ConnectorProfile::ports に
+     * カスケード呼び出しを行う際には ConnectorProfile::ports に
      * 保持されている Port の参照リストのうち、自身の参照の次の参照に対
      * して notify_disconnect() を呼び出すが、その呼び出しで例外が発生
      * した場合には、呼び出しをスキップしリストの次の参照に対して
      * notify_disconnect() を呼び出す。一つも呼び出しに成功しない場合、
      * RTC_ERROR エラーコードを返す。
      *
-     * @post なお、ConnectorProfile::ports のリストの最初 Port の
+     * なお、ConnectorProfile::ports のリストの最初 Port の
      * notify_disconnet() が終了した時点では、すべての関連する Port の
      * notify_disconnect() の呼び出しが完了する。}
      * {@.en This operation is invoked between Ports internally when the
@@ -631,20 +637,24 @@ public abstract class PortBase extends PortServicePOA {
      * cascaded call to the stored ports in the
      * ConnectorProfile::ports in order.
      *
-     * @pre The port shall store the ConnectorProfile having same id
+     * </p>
+     * <p>
+     * Precondition:<br>
+     * The port shall store the ConnectorProfile having same id
      * with connector_id.
-     *
-     * @post If ConnectorProfile of same ID with connector_id does not
+     * </p>
+     * <p>
+     * Postcondition:<br>
+     * If ConnectorProfile of same ID with connector_id does not
      * exist, it returns BAD_PARAMETER error.
-     *
-     * @post For the cascaded call, this operation calls
+     * For the cascaded call, this operation calls
      * noify_disconnect() for the port that is stored in the next of
      * this port in the ConnectorProfile::ports.  If the operation
      * call raises exception for some failure, it tries to call
      * notify_disconnect() and skips until the operation succeeded.
      * If none of operation call succeeded, it returns RTC_ERROR.
      *
-     * @post At the end of notify_disconnect() operation for the first
+     * At the end of notify_disconnect() operation for the first
      * port stored in the ConnectorProfile::ports sequence, the
      * related ports' notify_disconnect() invocations complete.}
      * 
@@ -822,7 +832,7 @@ public abstract class PortBase extends PortServicePOA {
      */
     public void setOwner(RTObject owner) {
 
-try{
+
         RTC.ComponentProfile prof = owner.get_component_profile();
         m_ownerInstanceName = prof.instance_name;
         rtcout.println(rtcout.TRACE, "setOwner("+m_ownerInstanceName+")");
@@ -834,12 +844,6 @@ try{
             this.m_profile.owner = (RTObject)owner._duplicate();
             this.m_profile.name = portname;
         }
-}
-catch(Exception ex){
-        if(java.lang.System.getProperty("develop_prop.debug")!=null) { 
-            System.out.println("caught -->:"+ex);
-        }
-}
     }
     //============================================================
     // callbacks
