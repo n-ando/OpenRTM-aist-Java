@@ -692,11 +692,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
             profile.port_profiles = m_portAdmin.getPortProfileList().value;
             return profile;
         } catch (Exception ex) {
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("    get_component_profile()"
-                                   +"This operation throws no exception."
-                                   +ex);
-            }
             ; // This operation throws no exception.
         }
         return null;
@@ -1589,16 +1584,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.registerPort(PortBase)");
 
-try{
         if (!addPort(port)) {
             rtcout.println(rtcout.ERROR, "addPort(PortBase&) failed.");
         }
-}
-catch(Exception ex){
-        if(java.lang.System.getProperty("develop_prop.debug")!=null) { 
-            System.out.println("caught -->:"+ex);
-        }
-}
     }
 
     /**

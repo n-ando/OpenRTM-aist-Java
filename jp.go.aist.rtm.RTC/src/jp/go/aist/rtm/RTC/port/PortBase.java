@@ -1044,17 +1044,11 @@ public abstract class PortBase extends PortServicePOA {
         connector_profile.value.ports = portsHolder.value;
         
         if (index < 0) {
-            if(java.lang.System.getProperty("develop_prop.debug")!=null) { 
-                System.out.println("    ReturnCode_t.BAD_PARAMETE");
-            }
             return ReturnCode_t.BAD_PARAMETER;
         }
         
         if (++index < connector_profile.value.ports.length) {
             PortService p = connector_profile.value.ports[index];
-            if(java.lang.System.getProperty("develop_prop.debug")!=null){ 
-                System.out.println("    p.notify_connect(connector_profile)");
-            }
             ReturnCode_t rc = p.notify_connect(connector_profile);
             return rc;
         }
