@@ -373,10 +373,22 @@ public class Manager {
     }
     
     /**
-     * <p>コンポーネントのモジュールをロードして、初期化メソッドを実行します。</p>
+     * {@.ja [CORBA interface] モジュールのロード}
+     * {@.en [CORBA interface] Load module}
      *
-     * @param moduleFileName モジュールファイル名
-     * @param initFunc 初期化メソッド名
+     * <p>
+     * {@.ja コンポーネントのモジュールをロードして、
+     * 初期化メソッドを実行します。}
+     * {@.en Load specified module (shared library, DLL etc..),
+     * and invoke initialize function.}
+     *
+     * @param moduleFileName 
+     *   {@.ja モジュールファイル名}
+     *   {@.en The module file name}
+     * @param initFunc 
+     *   {@.ja 初期化メソッド名}
+     *   {@.en The initialize function name}
+     * 
      */
     public String load(final String moduleFileName, final String initFunc) {
         
@@ -393,13 +405,11 @@ public class Manager {
             String path = m_module.load(file_name, initFunc);
             rtcout.println(rtcout.DEBUG, "module path: "+path);
             return path;
-//            return m_module.load(moduleFileName, initFunc);
             
         } catch (Exception e) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(rtcout.WARN, 
                 "Exception: Caught unknown Exception in Manager.load().");
-            rtcout.println(rtcout.DEBUG, e.getMessage());
-            e.printStackTrace();
+            rtcout.println(rtcout.WARN, e.getMessage());
         }
         return null;
     }
@@ -640,7 +650,6 @@ public class Manager {
         if (comp_prop.findNode("exported_ports") != null) {
             String[] exported_ports;
             exported_ports = comp_prop.getProperty("exported_ports").split(",");
-
             String exported_ports_str = "";
             for (int i=0, len=exported_ports.length; i < len; ++i) {
                String[] keyval = exported_ports[i].split("\\.");

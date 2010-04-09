@@ -130,7 +130,7 @@ public class ModuleManager {
      * If manager.modules.allowAbsolutePath is no, module of file_name
      * will be searched from the default module load path and loaded.}
      * 
-     * @param file_name 
+     * @param moduleName 
      *   {@.ja ロード対象モジュール名}
      *   {@.en The target module name for the loading}
      *
@@ -141,7 +141,6 @@ public class ModuleManager {
      *
      */
     public String load(final String moduleName) throws Exception {
-System.out.println("load(fname = " + moduleName +")");
         rtcout.println(rtcout.TRACE, "load(fname = " + moduleName +")");
         String module_path = null;
 
@@ -171,20 +170,14 @@ System.out.println("load(fname = " + moduleName +")");
             else {
                 File file = new File(moduleName);
                 URLClassLoader url = createURLClassLoader(file.getParent());
-                if(url==null){
-                    System.out.println("    url==null");
+                if(url!=null){
+                    String name = file.getName();
+                    name = getModuleName(name);
+
+                    StringHolder packageModuleName = new StringHolder();
+                    target = getClassFromName(url,name,packageModuleName);
+                    module_path = packageModuleName.value;
                 }
-
-                String name = file.getName();
-                name = getModuleName(name);
-
-                StringHolder packageModuleName = new StringHolder();
-System.out.println("--010--");
-System.out.println("    name>:"+name);
-                target = getClassFromName(url,name,packageModuleName);
-System.out.println("    target>"+target);
-System.out.println("    packageModuleName.value>"+packageModuleName.value);
-                module_path = packageModuleName.value;
             }
         } else {
             if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
@@ -209,7 +202,6 @@ System.out.println("    packageModuleName.value>"+packageModuleName.value);
             }
         }
         if( target==null ) {
-System.out.println("target==null");
             throw new ClassNotFoundException(
                                     "Not implemented." + moduleName);
         }
@@ -231,22 +223,14 @@ System.out.println("target==null");
     private Class getClassFromName(URLClassLoader url, 
                                     String name, 
                                     StringHolder holder){
-System.out.println("IN  getClassFromName");
         String separator =  System.getProperty("file.separator");
         Class target = null;
 
         try {
-System.out.println("    name>:"+name);
-URL[] urls = url.getURLs();
-for(int ic=0;ic<urls.length;++ic){
-System.out.println("    url>:"+urls[ic]);
-}
             target = url.loadClass(name);
-//            target = Class.forName(name);
             holder.value = name;
         } catch (java.lang.NoClassDefFoundError e) {
             String messagetString = e.getMessage();
-System.out.println("    getMessage:"+messagetString);
             String key = "wrong name: ";
             int index = messagetString.indexOf(key);
             String packageName 
@@ -257,10 +241,7 @@ System.out.println("    getMessage:"+messagetString);
             target = getClassFromName(url,packageName,holder);
         } catch (Exception e) {
             //
-System.out.println("    cought exception."+e.getMessage());
-System.out.println("    cought exception."+e);
         }
-System.out.println("OUT getClassFromName");
         return target;
     }
 
@@ -291,13 +272,12 @@ System.out.println("OUT getClassFromName");
         try{
             URI uri = path.toURI();
             urls[0] = uri.toURL();
-
         }
         catch(java.net.MalformedURLException ex){
-            System.out.println("    toURL() threw Exception."+ex);
+            rtcout.println(rtcout.WARN, 
+                "java.net.MalformedURLException: toURL() threw Exception."+ex);
             return null;
         }
-        System.out.println("    urls[0]>:"+urls[0]);
         URLClassLoader url = new URLClassLoader(urls);
         return url;
     }
@@ -339,7 +319,6 @@ System.out.println("OUT getClassFromName");
      */
     public String load(final String moduleName, final String methodName)
             throws Exception {
-System.out.println("load(fname = "+moduleName+"   init_func = "+methodName+")" );
         rtcout.println(rtcout.TRACE, 
                 "load(fname = "+moduleName+"   init_func = "+methodName+")");
         
@@ -352,44 +331,28 @@ System.out.println("load(fname = "+moduleName+"   init_func = "+methodName+")" )
 
 	String module_path = load(moduleName);
 
-System.out.println("    module_path>:"+module_path);
 	Method initMethod = symbol(module_path,methodName);
 
 
         DLLEntity dll_entity = m_modules.get(module_path);
         Class target = dll_entity.dll;
         if(target == null){
-System.out.println("    target == null");
-//             throw new ClassNotFoundException("Not implemented." + moduleName, 
-//                                             ex);
-        }
-        else{
-System.out.println("    target is not null.");
+            throw new ClassNotFoundException("Not implemented." + moduleName); 
         }
 
-System.out.println("    initMethod>:"+initMethod);
 
         try {
             initMethod.invoke(target.newInstance());
         } catch (IllegalArgumentException e) {
-//            e.printStackTrace();
-System.out.println("    e1");
             throw e;
         } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-System.out.println("    e2");
             throw e;
         } catch (InvocationTargetException e) {
-//            e.printStackTrace();
-System.out.println("    e3");
             throw e;
         } catch (InstantiationException e) {
-//            e.printStackTrace();
-System.out.println("    e4");
             throw e;
         }
         
-System.out.println("    module_path>:"+module_path);
         return module_path;
     }
     
@@ -413,22 +376,34 @@ System.out.println("    module_path>:"+module_path);
     }
     
     /**
-     * <p>モジュールのメソッドの参照。</p>
+     * {@.ja モジュールのメソッドの参照。}
+     * {@.en Refer to the symbol of the method}
+     *
+     * @param class_name 
+     *   {@.ja クラスの名前}
+     *   {@.en Name of class}
+     * @param method_name
+     *   {@.ja メソッドの名前}
+     *   {@.en Name of method}
+     *
+     * @return
+     *   {@.ja メソッド}
+     *   {@.en method}
      */
-    public Method symbol(String class_name, String method_name) throws Exception {
+    public Method symbol(String class_name, String method_name) 
+        throws Exception {
         Class target = m_modules.get(class_name).dll;
-//        Class target = m_modules.get(class_name);
-        if( target==null ) 
-            throw new IllegalArgumentException("Not Found(symbol):" + class_name);
+        if( target==null ) {
+            throw new IllegalArgumentException(
+                                    "Not Found(symbol):" + class_name);
+        }
         //
         Method initMethod;
         try {
             initMethod = target.getMethod(method_name);
         } catch (SecurityException e) {
-//            e.printStackTrace();
             throw e;
         } catch (NoSuchMethodException e) {
-//            e.printStackTrace();
             throw e;
         }
         
