@@ -21,6 +21,7 @@
 	<property name="dist.dir" value="jar" />
 	<property name="dist.samples" value="installer/resources/Source/examples/RTMExamples"/>
 	
+	<property name="distribution.dir" value="C:/distribution/" />
 	<property name="build.dir" value="bin"/>
 	<property name="build.dir.test" value="tests/bin"/>
 	<property name="build.doc" value="installer/resources/Source/JavaDoc"/>
@@ -61,7 +62,9 @@
 		<antcall target="javaExamples" />
 		<antcall target="javaDoc" />
 		<antcall target="javaInstaller" />
+<!--
 		<antcall target="dist" />
+-->
 	</target>
 	
         <target name="buildAllLinux">
@@ -170,12 +173,28 @@
 	</target>
 
 	<target name="javaInstaller"  description="インストーラを作成します">
+		<!-- フォルダ削除 -->
+		<delete dir="${distribution.dir}/OpenRTM-aist-Java-${version}" />
+		<!-- フォルダ生成 -->		
+		<mkdir dir="${distribution.dir}/OpenRTM-aist-Java-${version}" />
+		<mkdir dir="${distribution.dir}/OpenRTM-aist-Java-${version}/Source" />
+		<!-- 情報コピー -->
+		<copy todir="${distribution.dir}/OpenRTM-aist-Java-${version}/Source">
+			<fileset dir="installer/resources/Source" />
+		</copy>
+
+		<!-- コマンド実行 -->		
+		<exec dir="installer/win32" executable="cmd">
+			<arg value="/c build.cmd"/>
+		</exec>
+<!--
 		<exec dir="${installer.dir}" executable="${wix.dir}\candle.exe">
 			<arg line="OpenRTM-aist-Java-1.0.0.wxs"/>
 		</exec>
 		<exec dir="${installer.dir}" executable="${wix.dir}\light.exe">
 			<arg line="OpenRTM-aist-Java-1.0.0.wixobj -out OpenRTM-aist-Java-1.0.0.msi ${wix.dir}\wixui.wixlib -loc wixui_ja-jp.wxl"/>
 		</exec>
+-->
 	</target>
 
 	<target name="idlCompile" description="IDLファイルをコンパイルします">
