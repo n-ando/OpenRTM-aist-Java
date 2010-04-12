@@ -162,7 +162,7 @@ for i in range(bin_cnt):
 ## tools *.bat choice
 temp_dir = base_dir + "Source\\examples\\bin"
 bat_dir = base_dir + "Source\\examples\\"
-bat_list = ["rtcd.bat", "rtcprof.bat", "rtcd_java.conf"]
+bat_list = ["rtcd_java.bat", "rtcprof_java.bat", "rtcd_java.conf"]
 bin_cnt = len(bat_list)
 bin_list = []
 for i in range(bin_cnt):
