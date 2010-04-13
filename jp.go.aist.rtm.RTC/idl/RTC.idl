@@ -34,17 +34,17 @@ module RTC
    * @if jp
    * @brief ReturnCode_t
    *
-   * OMG RTC 1.0 仕様中の多くのオペレーションは、クラインとに対して考え
-   * られるエラー状態を報告する必要がある。これは、ReturnCode_t型の所謂
-   * リターンコードにより行われる。
+   * OMG RTC 1.0 \u4ed5\u69d8\u4e2d\u306e\u591a\u304f\u306e\u30aa\u30da\u30ec\u30fc\u30b7\u30e7\u30f3\u306f\u3001\u30af\u30e9\u30a4\u30f3\u3068\u306b\u5bfe\u3057\u3066\u8003\u3048
+   * \u3089\u308c\u308b\u30a8\u30e9\u30fc\u72b6\u614b\u3092\u5831\u544a\u3059\u308b\u5fc5\u8981\u304c\u3042\u308b\u3002\u3053\u308c\u306f\u3001ReturnCode_t\u578b\u306e\u6240\u8b02
+   * \u30ea\u30bf\u30fc\u30f3\u30b3\u30fc\u30c9\u306b\u3088\u308a\u884c\u308f\u308c\u308b\u3002
    *
-   * OMG RTC 1.0 の PIM 内において、ReturnCode_t型の値を返さないオペレーションは
-   * それらの戻り値の型に依存して、次の方法によりエラーを報告するものとする。
-   * -オペレーションが正数値を返す場合 (OMG RTC 1.0 Section 5.2.2.6.4 の
-   *  get_rateのように)、負数値を返すことによりエラーを示すものとする。
-   * - オペレーションがオブジェクトリファレンス(RTObject::get_component_profile
-   *   OMG RTC 1.0 5.4.2.2.1を参照) を通常返す場合、nil参照を返すことにより
-   *   エラーを示すものとする。
+   * OMG RTC 1.0 \u306e PIM \u5185\u306b\u304a\u3044\u3066\u3001ReturnCode_t\u578b\u306e\u5024\u3092\u8fd4\u3055\u306a\u3044\u30aa\u30da\u30ec\u30fc\u30b7\u30e7\u30f3\u306f
+   * \u305d\u308c\u3089\u306e\u623b\u308a\u5024\u306e\u578b\u306b\u4f9d\u5b58\u3057\u3066\u3001\u6b21\u306e\u65b9\u6cd5\u306b\u3088\u308a\u30a8\u30e9\u30fc\u3092\u5831\u544a\u3059\u308b\u3082\u306e\u3068\u3059\u308b\u3002
+   * -\u30aa\u30da\u30ec\u30fc\u30b7\u30e7\u30f3\u304c\u6b63\u6570\u5024\u3092\u8fd4\u3059\u5834\u5408 (OMG RTC 1.0 Section 5.2.2.6.4 \u306e
+   *  get_rate\u306e\u3088\u3046\u306b)\u3001\u8ca0\u6570\u5024\u3092\u8fd4\u3059\u3053\u3068\u306b\u3088\u308a\u30a8\u30e9\u30fc\u3092\u793a\u3059\u3082\u306e\u3068\u3059\u308b\u3002
+   * - \u30aa\u30da\u30ec\u30fc\u30b7\u30e7\u30f3\u304c\u30aa\u30d6\u30b8\u30a7\u30af\u30c8\u30ea\u30d5\u30a1\u30ec\u30f3\u30b9(RTObject::get_component_profile
+   *   OMG RTC 1.0 5.4.2.2.1\u3092\u53c2\u7167) \u3092\u901a\u5e38\u8fd4\u3059\u5834\u5408\u3001nil\u53c2\u7167\u3092\u8fd4\u3059\u3053\u3068\u306b\u3088\u308a
+   *   \u30a8\u30e9\u30fc\u3092\u793a\u3059\u3082\u306e\u3068\u3059\u308b\u3002
    *
    * @else
    * @brief ReturnCode_t
@@ -329,7 +329,7 @@ module RTC
      *
      * If the RTC is in the Error state relative to some execution
      * context when it would otherwise be invoked from that context
-     * (according to the context’s ExecutionKind), this callback
+     * (according to the context\u2019s ExecutionKind), this callback
      * shall be invoked instead. For example,
      *
      * - If the ExecutionKind is PERIODIC, this operation shall be
@@ -408,7 +408,7 @@ module RTC
    * Relative to a given execution context, an RTC may either be
    * Active, Inactive, or in Error. When the RTC is Active in a
    * Running execution context, the ComponentAction callbacks (see
-   * Section 5.2.2.4) shall be invoked as appropriate for the context’
+   * Section 5.2.2.4) shall be invoked as appropriate for the context\u2019
    * s ExecutionKind. The callbacks shall not be invoked relative to
    * that context when either the RTC is Inactive in that context or
    * the context is Stopped. (Note that starting and stopping an
@@ -428,7 +428,7 @@ module RTC
    * corresponding to that context. While the RTC is in Error, the
    * ComponentAction::on_error callback will be invoked in place of
    * those callbacks that would otherwise have been invoked according
-   * to the context’s ExecutionKind. For example, if the kind is
+   * to the context\u2019s ExecutionKind. For example, if the kind is
    * PERIODIC, on_error shall be invoked instead of the pair of
    * on_execute, and on_state_update.  When an RTC is in Error, it may
    * be reset. If resetting is successful, the RTC shall return to the
@@ -531,7 +531,7 @@ module RTC
      *
      * @section Description
      *
-     * Stop the RTC’s execution context(s) and finalize it along with
+     * Stop the RTC\u2019s execution context(s) and finalize it along with
      * its contents.
      *
      * @section Semantics
@@ -634,7 +634,7 @@ module RTC
      *
      * @section Description 
      *
-     * この RTC が所有する ExecutionContext のリストを取得する。
+     * \u3053\u306e RTC \u304c\u6240\u6709\u3059\u308b ExecutionContext \u306e\u30ea\u30b9\u30c8\u3092\u53d6\u5f97\u3059\u308b\u3002
      * 
      * @else
      * @brief get_owned_contexts
@@ -654,13 +654,13 @@ module RTC
      *  
      * @section Description
      *
-     * この RTC が参加しているすべての ExecutionContext のリストを取得する。
+     * \u3053\u306e RTC \u304c\u53c2\u52a0\u3057\u3066\u3044\u308b\u3059\u3079\u3066\u306e ExecutionContext \u306e\u30ea\u30b9\u30c8\u3092\u53d6\u5f97\u3059\u308b\u3002
      *
      * @section Semantics
      *
-     * このリストに含まれる実行コンテキストは、attach_context が呼び出
-     * されるごとに、リストに追加され、detach_context が呼び出されるご
-     * とに、リストから削除される。
+     * \u3053\u306e\u30ea\u30b9\u30c8\u306b\u542b\u307e\u308c\u308b\u5b9f\u884c\u30b3\u30f3\u30c6\u30ad\u30b9\u30c8\u306f\u3001attach_context \u304c\u547c\u3073\u51fa
+     * \u3055\u308c\u308b\u3054\u3068\u306b\u3001\u30ea\u30b9\u30c8\u306b\u8ffd\u52a0\u3055\u308c\u3001detach_context \u304c\u547c\u3073\u51fa\u3055\u308c\u308b\u3054
+     * \u3068\u306b\u3001\u30ea\u30b9\u30c8\u304b\u3089\u524a\u9664\u3055\u308c\u308b\u3002
      *
      * @else
      * @brief* get_participating_contexts
@@ -682,8 +682,8 @@ module RTC
     
     /*!
      * @if jp
-     * ### [誤植] RTC.idl には含まれていないがPIMには含まれている。
-     * ### PIMが正しい。
+     * ### [\u8aa4\u690d] RTC.idl \u306b\u306f\u542b\u307e\u308c\u3066\u3044\u306a\u3044\u304cPIM\u306b\u306f\u542b\u307e\u308c\u3066\u3044\u308b\u3002
+     * ### PIM\u304c\u6b63\u3057\u3044\u3002
      *
      * @brief 
      * @else
@@ -803,8 +803,8 @@ module RTC
    * indirectly. An RTC that owns one or more execution contexts is
    * known as an autonomous RTC.  An autonomous RTC and some subset of
    * the RTCs within it (to be defined by the application developer)
-   * shall be executed by the infrastructure according to the context’
-   * s execution kind, which defines when each RTC’s operations will
+   * shall be executed by the infrastructure according to the context\u2019
+   * s execution kind, which defines when each RTC\u2019s operations will
    * be invoked when and in which order. These RTCs are said to
    * participate in the context. The available execution kinds are
    * described in Section 5.2.2.7.  The relationship between RTCs and
@@ -819,7 +819,7 @@ module RTC
    *
    * Although an execution context represents a logical thread of
    * control, the choice of how it maps to a physical thread shall be
-   * left to the application’s deployment
+   * left to the application\u2019s deployment
    * environment. Implementations may elect to associate contexts with
    * threads with a one-to-one mapping, to serve multiple contexts
    * from a single thread, or by any other means. In the case where a
@@ -844,7 +844,7 @@ module RTC
      * @section Semantics
      *
      * While the context is Running, all Active RTCs participating in
-     * the context shall be executed according to the context’s
+     * the context shall be executed according to the context\u2019s
      * execution kind.  
      *
      * @endif
@@ -952,7 +952,7 @@ module RTC
      * @section Description
      *
      * This operation shall set the rate (in hertz) at which this
-     * context’s Active participating RTCs are being called.
+     * context\u2019s Active participating RTCs are being called.
      *
      * @section Semantics
      *
@@ -1051,7 +1051,7 @@ module RTC
      * @section Description
      *
      * The given participant RTC is Inactive and is therefore not
-     * being invoked according to the execution context’s execution
+     * being invoked according to the execution context\u2019s execution
      * kind. This operation shall cause the RTC to transition to the
      * Active state such that it may subsequently be invoked in this
      * execution context.
@@ -1418,7 +1418,7 @@ module RTC
    *
    * @section Description
    *
-   * The ModeCapable interface provides access to an object’s modes
+   * The ModeCapable interface provides access to an object\u2019s modes
    * and a means to set the current mode.
    *
    * @section Semantics
@@ -1442,13 +1442,13 @@ module RTC
    * Figure 5.26 depicts a state machine that describes mode
    * changes. Each parallel region in the composite state Mode Pending
    * represents an execution context. The trigger "sample" within
-   * that state is considered to have occurred: - …just before the
+   * that state is considered to have occurred: - \u2026just before the
    * next call to on_execute (see Section 5.3.1.2.1) in the case where
-   * immediate is false and the execution kind is PERIODIC, …
+   * immediate is false and the execution kind is PERIODIC, \u2026
    *
-   * - …just before the processing of the next stimulus in the case
+   * - \u2026just before the processing of the next stimulus in the case
    *   where immediate is false and the execution kind is
-   *   EVENT_DRIVEN, or …- …immediately in all other cases.
+   *   EVENT_DRIVEN, or \u2026- \u2026immediately in all other cases.
    *
    * @endif
    */
@@ -1518,7 +1518,7 @@ module RTC
      * @section Description
      *
      * This operation shall return the last mode to have been passed
-     * to set_mode that has not yet stabilized. Once the RTC’s mode
+     * to set_mode that has not yet stabilized. Once the RTC\u2019s mode
      * has stabilized, this operation shall return nil.
      *
      * @endif
@@ -1825,7 +1825,7 @@ module RTC
    *
    * A PortProfile describes a port of an RTC (referred to as the
    * "target" RTC). This port is referred to as the "target" port.
-   * From this profile, other components and tools can obtain Port’s
+   * From this profile, other components and tools can obtain Port\u2019s
    * name, type, object reference, and so on.
    *
    * @endif
@@ -1945,7 +1945,7 @@ module RTC
      *
      * @section Description
      *
-     * This attribute stores the context’s ExecutionKind.
+     * This attribute stores the context\u2019s ExecutionKind.
      *
      * @endif
      */
@@ -1991,7 +1991,7 @@ module RTC
      *
      * @section Description
      *
-     * This attribute stores references to the context’s participant RTCs.
+     * This attribute stores references to the context\u2019s participant RTCs.
      *
      * @endif
      */

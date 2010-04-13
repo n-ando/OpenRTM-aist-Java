@@ -47,22 +47,20 @@ module RTM
 
   interface Manager
   {
-    // module 関連
+    // module \ufffd\ufffd
     /*!
      * @if jp
-     * @brief モジュールをロードする
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * 当該マネージャに指定されたモジュールをロードし、指定された初期化
-     * 関数で初期化を行う。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffds\ufffd\ufffd
      *
-     * @param pathname モジュールへのパス
-     * @param initfunc モジュールの初期化関数
-     * @return リターンコード
+     * @param pathname \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
+     * @param initfunc \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Loading a module
      *
-     * This operation loads a specified loadable module、and perform
+     * This operation loads a specified loadable module\ufffdand perform
      * initialization with the specified function.
      *
      * @param pathname A path to a loading module.
@@ -75,12 +73,12 @@ module RTM
 
     /*!
      * @if jp
-     * @brief モジュールをアンロードする
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * 当該マネージャに指定されたモジュールをアンロードする。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @param pathname モジュールへのパス
-     * @return リターンコード
+     * @param pathname \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Unloading a module
@@ -96,11 +94,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief ロード可能なモジュールのプロファイルを取得する
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * ロード可能なモジュールのプロファイルを取得する。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @return モジュールプロファイル
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Getting loadable module profiles
@@ -115,11 +113,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief ロード済みのモジュールのプロファイルを取得する
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * ロード済みのモジュールのプロファイルを取得する。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @return モジュールプロファイル
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Getting loaded module profiles
@@ -132,15 +130,15 @@ module RTM
      */
     ModuleProfileList get_loaded_modules();
     
-    // component 関連
+    // component \ufffd\ufffd
     /*!
      * @if jp
-     * @brief コンポーネントファクトリのプロファイルを取得する
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * ロード済みのモジュールのうち、RTコンポーネントのモジュールが持つ
-     * ファクトリのプロファイルのリストを取得する。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdRT\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @return コンポーネントファクトリのプロファイルリスト
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Getting component factory profiles
@@ -156,11 +154,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief コンポーネントを生成する
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * 引数に指定されたコンポーネントを生成する。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @return 生成されたRTコンポーネント
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffdRT\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Creating an RT-Component
@@ -176,11 +174,10 @@ module RTM
 
     /*!
      * @if jp
-     * @brief コンポーネントを削除する
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd     *
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdB
      *
-     * 引数に指定されたコンポーネントを削除する。
-     *
-     * @return リターンコード
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Deleting an RT-Component
@@ -196,11 +193,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 起動中のコンポーネントのリストを取得する
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * 現在当該マネージャ上で起動中のコンポーネントのリストを返す。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdN\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @return RTコンポーネントのリスト
+     * @return RT\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Getting RT-Component list running on this manager
@@ -215,12 +212,12 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 起動中のコンポーネントプロファイルのリストを取得する
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * 現在当該マネージャ上で起動中のコンポーネントのプロファイルのリス
-     * トを返す。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdN\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
+     * \ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @return RTコンポーネントプロファイルのリスト
+     * @return RT\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Getting RT-Component's profile list running on this manager
@@ -234,14 +231,14 @@ module RTM
      */
     RTC::ComponentProfileList get_component_profiles();
 
-    // manager 基本
+    // manager \ufffd\ufffd
     /*!
      * @if jp
-     * @brief マネージャのプロファイルを取得する
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * 現在当該マネージャのプロファイルを取得する。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @return マネージャプロファイル
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Getting this manager's profile.
@@ -256,11 +253,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief マネージャのコンフィギュレーションを取得する
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * 現在当該マネージャのコンフィギュレーションを取得する。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @return マネージャコンフィギュレーション
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Getting this manager's configuration.
@@ -275,13 +272,13 @@ module RTM
 
     /*!
      * @if jp
-     * @brief マネージャのコンフィギュレーションを設定する
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * 現在当該マネージャのコンフィギュレーションを設定する。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @param name セットするコンフィギュレーションのキー名
-     * @param value セットするコンフィギュレーションの値
-     * @return リターンコード
+     * @param name \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
+     * @param value \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Setting manager's configuration
@@ -298,12 +295,12 @@ module RTM
 
     /*!
      * @if jp
-     * @brief マネージャがマスターかどうか
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * この関数はマネージャがマスターかどうかを返す。Trueならば、当該マ
-     * ネージャはマスターであり、それ以外は False を返す。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdTrue\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd False \ufffd\ufffd\ufffd\ufffd
      *
-     * @return マスターマネージャかどうかのbool値
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdbool\ufffd
      *
      * @else
      * @brief Whether this manager is master or not
@@ -319,13 +316,13 @@ module RTM
 
     /*!
      * @if jp
-     * @brief マスターマネージャの取得
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * このマネージャがスレーブマネージャの場合、マスターとなっているマ
-     * ネージャのリストを返す。このマネージャがマスターの場合、空のリス
-     * トが返る。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdA\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdA\ufffd\ufffd\ufffd\ufffd
+     * \ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @return マスターマネージャのリスト
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Getting master managers
@@ -342,11 +339,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief マスターマネージャの追加
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * このマネージャのマスタとしてマネージャを一つ追加する。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @param mgr マスターマネージャ
+     * @param mgr \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      * @return ReturnCode_t
      *
      * @else
@@ -363,11 +360,10 @@ module RTM
 
     /*!
      * @if jp
-     * @brief マスターマネージャの削除
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd     *
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdB
      *
-     * このマネージャが保持するマスタのうち、指定されたものを削除する。
-     *
-     * @param mgr マスターマネージャ
+     * @param mgr \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      * @return ReturnCode_t
      *
      * @else
@@ -384,13 +380,13 @@ module RTM
 
     /*!
      * @if jp
-     * @brief スレーブマネージャの取得
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * このマネージャがスレーブマネージャの場合、スレーブとなっているマ
-     * ネージャのリストを返す。このマネージャがスレーブの場合、空のリス
-     * トが返る。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdA\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdA\ufffd\ufffd\ufffd\ufffd
+     * \ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @return スレーブマネージャのリスト
+     * @return \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
      * @else
      * @brief Getting slave managers
@@ -406,11 +402,11 @@ module RTM
     ManagerList get_slave_managers();
     /*!
      * @if jp
-     * @brief スレーブマネージャの追加
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * このマネージャのマスタとしてマネージャを一つ追加する。
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      *
-     * @param mgr スレーブマネージャ
+     * @param mgr \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      * @return ReturnCode_t
      *
      * @else
@@ -427,11 +423,10 @@ module RTM
 
     /*!
      * @if jp
-     * @brief スレーブマネージャの削除
+     * @brief \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd     *
+     * \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffdB
      *
-     * このマネージャが保持するマスタのうち、指定されたものを削除する。
-     *
-     * @param mgr スレーブマネージャ
+     * @param mgr \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd
      * @return ReturnCode_t
      *
      * @else
