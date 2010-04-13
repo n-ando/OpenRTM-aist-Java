@@ -41,6 +41,36 @@ if "x%WIX%" == "x" (
 )
 
 @rem ------------------------------------------------------------
+@rem Generate RTSystemEditor wxs file
+@rem
+@rem RTSystemEditorRCP.exe should be under %RTSE_ROOT%
+@rem
+@rem ------------------------------------------------------------
+if "x%RTSE_ROOT%" == "x" (
+   echo Envrionment variable "RTSE_ROOT" is not set. Abort.
+   goto END
+)
+if not exist "%RTSE_ROOT%\RTSystemEditorRCP.exe" (
+   echo RTSystemEditorRCP.exe does not found. Abort
+   goto END
+)
+set INCLUDE_RTSE=YES
+set INCLUDE_OPENRTP=YES
+
+if not exist OpenRTP_inc.wxs (
+   cd OpenRTP
+rem set TMP_PYTHONPATH=%PYTHONPATH%
+rem set PYTHONPATH=../../bin;%PYTHONPATH%
+rem echo Generating OpenRTP_inc.wxs......
+rem openrtpwxs.py
+rem set PYTHONPATH=%TMP_PYTHONPATH%
+   copy OpenRTP_inc.wxs ..
+   cd ..
+)
+
+
+
+@rem ------------------------------------------------------------
 @rem Import Language-Country, Language codes, Codepages
 @rem from langs.txt
 @rem http://www.tramontana.co.hu/wix/lesson2.php#2.4
