@@ -399,10 +399,9 @@ public class Manager {
         String init_func = initFunc;
         try {
             if (init_func==null||init_func.equals("")) {
-                String[] mod = moduleFileName.split("\\.");
-                init_func = mod[0] + "Init";
+                init_func = "registerModule";
             }
-            String path = m_module.load(file_name, initFunc);
+            String path = m_module.load(file_name, init_func);
             rtcout.println(rtcout.DEBUG, "module path: "+path);
             return path;
             
@@ -693,6 +692,7 @@ public class Manager {
                 mprop = (Properties)it.next();
                 if( new find_conf(comp_id).equalof(mprop) ) {
                     find = true;
+                    break;
                 }
             }
             if(find==false){
@@ -2599,17 +2599,17 @@ public class Manager {
                 return false;
             }
             str = m_prop.getProperty("vendor");
-            if (str != null &&
+            if (str != null && !str.equals("") &&
                 !str.equals(prop.getProperty("vendor"))){ 
                 return false; 
             }
             str = m_prop.getProperty("category");
-            if (str != null &&
+            if (str != null && !str.equals("") &&
                 !str.equals(prop.getProperty("category"))) { 
                 return false; 
             }
             str = m_prop.getProperty("version");
-            if (str!=null && 
+            if (str!=null &&  !str.equals("") &&
                 !str.equals(prop.getProperty("version"))) {
                 return false; 
             }
