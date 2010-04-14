@@ -41,10 +41,16 @@ public class ModuleManager {
     private final String MOD_PRELOAD = "manager.modules.preload";
 
     /**
-     * <p>コンストラクタです。
-     * 指定されたPropertiesオブジェクト内の情報に基づいて初期化を行います。</p>
-     * 
-     * @param properties 初期化情報を持つPropertiesオブジェクト
+     * {@.ja コンストラクタです。}
+     * {@.en Constructor}
+     * <p>
+     * {@.ja 指定されたPropertiesオブジェクト内の情報に基づいてi
+     * 初期化を行います。}
+     * {@.en Initialize based on information in the set Property object.}
+     *
+     * @param properties
+     *   {@.ja 初期化情報を持つPropertiesオブジェクト}
+     *   {@.en Properties for initialization}
      */
     public ModuleManager(Properties properties) {
         rtcout = new Logbuf("ModuleManager");
@@ -461,13 +467,20 @@ public class ModuleManager {
     }
         
     /**
-     * <p>ロード可能なモジュールリストを取得します。</p>
-     * 
-     * @return ロード可能なモジュールリスト
-     * <p> Get the loadable module list </p>
-     * @return Loadable module list
+     * {@.ja ロード可能モジュールリストを取得する}
+     * {@.en Get the loadable module list}
+     *
+     * <p>
+     * {@.ja ロード可能なモジュールのリストを取得する。}
+     * {@.en Get the loadable module list (not implemented).}
+     *
+     * @return
+     *   {@.ja ロード可能モジュールリスト}
+     *   {@.en Loadable module list}
+     *
      */
     public Vector<Properties> getLoadableModules() {
+        rtcout.println(rtcout.TRACE, "getLoadableModules()");
         Vector<String> dlls = new Vector<String>();
         String separator =  System.getProperty("file.separator");
         for (int i=0; i < m_loadPath.size(); ++i) {
@@ -485,6 +498,7 @@ public class ModuleManager {
 
         Vector<Properties> props = new Vector<Properties>();
         for (int ic=0; ic < dlls.size(); ++ic) {
+            File file = new File(dlls.elementAt(ic));
             String str[] = dlls.elementAt(ic).split(".class");
             str[0] = str[0].replace(separator,".");
             str[0] = str[0].replace("..",".");
@@ -494,7 +508,14 @@ public class ModuleManager {
                                          this.getClass().getClassLoader());
                 Field field = holder.getField("component_conf");
                 String[] data = (String[])field.get(null);
-                props.add(new Properties(data));
+                java.util.ArrayList al 
+                    = new java.util.ArrayList(java.util.Arrays.asList(data));
+                
+                al.add(0,"module_file_name");
+                al.add(1,file.getName());
+                al.add(2,"module_file_path");
+                al.add(3,dlls.elementAt(ic));
+                props.add(new Properties((String[])al.toArray(new String[]{})));
             }
             catch(Exception e){
                 continue;

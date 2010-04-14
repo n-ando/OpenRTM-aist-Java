@@ -255,10 +255,17 @@ public class ManagerServant extends ManagerPOA {
     }
 
     /**
-     * <p> get_loadable_modules </p>
-     * <p> Getting loadable module profiles </p>
-     * <p> This operation returns loadable module profiles. </p>
-     * @return A module profile list.
+     * {@.ja ロード可能なモジュールのプロファイルを取得する}
+     * {@.en Getting loadable module profiles}
+     *
+     * <p>
+     * {@.ja ロード可能なモジュールのプロファイルを取得する。}
+     * {@.en This operation returns loadable module profiles.}
+     *
+     * @return
+     *   {@.ja モジュールプロファイル}
+     *   {@.en A module profile list.}
+     *
      */
     public RTM.ModuleProfile[] get_loadable_modules() {
         rtcout.println(rtcout.TRACE, "get_loadable_modules()");
