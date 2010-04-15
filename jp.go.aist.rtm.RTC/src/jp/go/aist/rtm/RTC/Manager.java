@@ -1795,7 +1795,7 @@ public class Manager {
         if(endpoints != null) {
             endpoints = endpoints.trim();
             endpoints = StringUtil.normalize(endpoints);
-            if(endpoints.equals("all")){
+            if(endpoints.equals("all")||endpoints.equals("all:")){
                 try{
                     java.util.Enumeration<java.net.NetworkInterface> nic 
                          = java.net.NetworkInterface.getNetworkInterfaces();
