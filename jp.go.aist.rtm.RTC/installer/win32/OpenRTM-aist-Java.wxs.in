@@ -7,7 +7,7 @@
            Codepage='$(var.codepage)'
            Version="1.0.0" 
            Manufacturer="AIST"
-           UpgradeCode="572C59A1-4637-4624-AD55-FC4533CE4C8B">
+           UpgradeCode="A8C8006F-E9D8-4528-AF4F-B8AE2D25AB47">
     <Package Id="*" 
              Keywords="Installer"
              Description="OpenRTM-aist-Java Installer"
