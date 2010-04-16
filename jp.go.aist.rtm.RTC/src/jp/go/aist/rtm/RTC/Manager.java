@@ -710,7 +710,8 @@ public class Manager {
             // module loading
             rtcout.println(rtcout.INFO, 
                 "Loading module: "+ mprop.getProperty("module_file_name"));
-            load(mprop.getProperty("module_file_name"), "");
+//            load(mprop.getProperty("module_file_name"), "");
+            load(mprop.getProperty("module_file_path"), "");
             factory = findPropertyFormFactory(comp_id);
             if (factory == null){
                 rtcout.println(rtcout.ERROR, 

@@ -78,6 +78,15 @@ public class ManagerServant extends ManagerPOA {
             m_isMaster = true;
             rtcout.println(rtcout.WARN, 
                     "Manager CORBA servant was successfully created.");
+/*
+{
+String ior;
+ior = m_mgr.getORB().object_to_string(m_objref);
+rtcout.println(rtcout.DEBUG, 
+        "Manager's IOR information: "+ior);
+System.err.println("Manager's IOR information: "+ior);
+}
+*/
             return;
         }
         else { // manager is slave
@@ -89,6 +98,25 @@ public class ManagerServant extends ManagerPOA {
                     rtcout.println(rtcout.INFO, "Master manager not found.");
                     return;
                 }
+
+
+
+                try{
+                    //Registers the reference
+                    m_mgr.getPOA().activate_object( this );
+                    com.sun.corba.se.impl.orb.ORBImpl orb 
+                        = (com.sun.corba.se.impl.orb.ORBImpl)m_mgr.getORB();
+                    orb.register_initial_reference( 
+                        "manager", m_mgr.getPOA().servant_to_reference(this) );
+                }
+                catch(Exception ex){
+                     rtcout.println(rtcout.WARN, 
+                           "Manager CORBA servant creation failed."+ex);
+                     return ;
+                }
+
+
+
                 if (!createINSManager()) {
                     rtcout.println(rtcout.WARN, 
                         "Manager CORBA servant creation failed.");
@@ -96,6 +124,15 @@ public class ManagerServant extends ManagerPOA {
                 }
                 add_master_manager(owner);
                 owner.add_slave_manager(m_objref);
+/*
+{
+String ior;
+ior = m_mgr.getORB().object_to_string(m_objref);
+rtcout.println(rtcout.DEBUG, 
+        "Manager's IOR information: "+ior);
+System.err.println("Manager's IOR information: "+ior);
+}
+*/
                 return;
             }
             catch (Exception ex) {

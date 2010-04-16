@@ -71,8 +71,8 @@ public class ModuleManager {
             if(loadPath[i].substring(0,2).equals("."+separator)){
                 loadPath[i] = loadPath[i].substring(2);
             }
-            loadPath[i] = loadPath[i].replace(separator,".");
-            loadPath[i] = loadPath[i].replace("..",".");
+//            loadPath[i] = loadPath[i].replace(separator,".");
+//            loadPath[i] = loadPath[i].replace("..",".");
             m_loadPath.add(loadPath[i]);
         }
         
@@ -197,8 +197,11 @@ public class ModuleManager {
                     fullClassName = name;
                 }
                 else {
+                    String packageName = m_loadPath.elementAt(i);
+                    packageName = packageName.replace(separator,".");
+                    packageName = packageName.replace("..",".");
                     fullClassName 
-                                = m_loadPath.elementAt(i) + "." + name;
+                                = packageName + "." + name;
                 }
                 try {
                     target = Class.forName(fullClassName);
@@ -242,8 +245,34 @@ public class ModuleManager {
             String packageName 
                 = messagetString.substring(index+key.length(),
                                                messagetString.length()-1);
+            URL[] urls = url.getURLs();
+            java.util.ArrayList al 
+                    = new java.util.ArrayList(java.util.Arrays.asList(urls));
+            for(int ic=0;ic<urls.length;++ic){
+                String stringPath = new String();
+                String stringUrl = urls[ic].getPath();
+                int pointer = packageName.lastIndexOf(name);
+                String stringPackageName = packageName.substring(0, pointer);
+                if(stringUrl.endsWith(stringPackageName)){
+                    int point = stringUrl.lastIndexOf(stringPackageName);
+                    stringPath = stringUrl.substring(0, point);
+                    File path = new File(stringPath);
+                    try{
+                        URI uri = path.toURI();
+                        al.add(uri.toURL());
+                    }
+                    catch(java.net.MalformedURLException ex){
+                        System.err.println(
+                       "java.net.MalformedURLException: toURL() threw Exception."+ex);
+                    }
+                }
+            }
+            URL[] addUrls = (URL[])al.toArray(new URL[]{});
+            url = url.newInstance(addUrls, url);
+
             packageName = packageName.replace(separator,".");
             packageName = packageName.trim();
+
             target = getClassFromName(url,packageName,holder);
         } catch (Exception e) {
             //
@@ -252,7 +281,9 @@ public class ModuleManager {
     }
 
     /**
-     *
+     * {@.ja モジュール名作成する。}
+     * <p>
+     * {@.ja 拡張子を削除する。拡張子jarの場合はモジュール名を付加する}
      */
     private String getModuleName(String name){
         String extensions[] = {".class", ".jar"};
@@ -488,7 +519,6 @@ public class ModuleManager {
             if(loadpath==null|loadpath.equals("")){
                 continue;
             }
-            loadpath = loadpath.replace(".",separator);
             java.io.File dir = new java.io.File(loadpath);
             String[] flist = dir.list(new FileFilter());
             for (int ic=0; ic < flist.length; ++ic) {
@@ -498,25 +528,42 @@ public class ModuleManager {
 
         Vector<Properties> props = new Vector<Properties>();
         for (int ic=0; ic < dlls.size(); ++ic) {
+            Class target = null;
             File file = new File(dlls.elementAt(ic));
-            String str[] = dlls.elementAt(ic).split(".class");
-            str[0] = str[0].replace(separator,".");
-            str[0] = str[0].replace("..",".");
-            try {
-                Class holder = Class.forName(str[0],
+            if(file.isAbsolute()) {
+                URLClassLoader url = createURLClassLoader(file.getParent());
+                if(url!=null){
+                    String name = file.getName();
+                    name = getModuleName(name);
+                    StringHolder packageModuleName = new StringHolder();
+                    target = getClassFromName(url,name,packageModuleName);
+                }
+            }
+            else{
+                String str[] = dlls.elementAt(ic).split(".class");
+                str[0] = str[0].replace(separator,".");
+                str[0] = str[0].replace("..",".");
+                try {
+                    target = Class.forName(str[0],
                                          true,
                                          this.getClass().getClassLoader());
-                Field field = holder.getField("component_conf");
+                }
+                catch(Exception e){
+                    continue;
+                }
+            }
+            try {
+                Field field = target.getField("component_conf");
                 String[] data = (String[])field.get(null);
                 java.util.ArrayList al 
                     = new java.util.ArrayList(java.util.Arrays.asList(data));
-                
+            
                 al.add(0,"module_file_name");
                 al.add(1,file.getName());
                 al.add(2,"module_file_path");
                 al.add(3,dlls.elementAt(ic));
                 props.add(new Properties((String[])al.toArray(new String[]{})));
-            }
+            } 
             catch(Exception e){
                 continue;
             }
@@ -596,7 +643,7 @@ public class ModuleManager {
     protected String m_initFuncPrefix = new String();
 
     private class FileFilter implements java.io.FilenameFilter {
-        private final String FILTER_KEYWORD = ".class";
+        private final String FILTER_KEYWORD = ".class,.jar";
 
         public boolean accept(java.io.File dir, String name) {
             java.io.File file = new java.io.File(name);
@@ -604,8 +651,13 @@ public class ModuleManager {
             if(file.isDirectory()){
                return false;
             }
-           
-            return (name.endsWith(FILTER_KEYWORD));
+            String[] filter = FILTER_KEYWORD.split(",");
+            for(int ic=0;ic<filter.length;++ic){ 
+                if(name.endsWith(filter[ic])){
+                    return true;
+                }
+            }
+            return false;
         }
     }
     private Logbuf rtcout;
