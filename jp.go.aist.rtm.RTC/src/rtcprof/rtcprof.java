@@ -27,7 +27,7 @@ public class rtcprof {
             String packageName 
                 = messagetString.substring(index+key.length(),
                                                messagetString.length()-1);
-            packageName = packageName.replace(separator,".");
+            packageName = packageName.replace("/",".");
             packageName = packageName.trim();
             target = rtcprof.getClassFromName(packageName);
         } catch (Exception e) {
@@ -78,7 +78,7 @@ public class rtcprof {
             URL[] addUrls = (URL[])al.toArray(new URL[]{});
             url = url.newInstance(addUrls, url);
 
-            packageName = packageName.replace(separator,".");
+            packageName = packageName.replace("/",".");
             packageName = packageName.trim();
 
 
