@@ -168,14 +168,13 @@ public class ModuleManager {
         String separator =  System.getProperty("file.separator");
         Class target = null;
 
-        if (StringUtil.isAbsolutePath(moduleName)) { 
-                                            //When moduleName is AbsolutePath.
+        File file = new File(moduleName);
+        if(file.exists()){ // When moduleName is AbsolutePath.
             if(!m_absoluteAllowed) {
                 throw new IllegalArgumentException(
                                             "Absolute path is not allowed");
             }
             else {
-                File file = new File(moduleName);
                 URLClassLoader url = createURLClassLoader(file.getParent());
                 if(url!=null){
                     String name = file.getName();
@@ -187,58 +186,42 @@ public class ModuleManager {
                 }
             }
         } else {
-            File filename = new File(moduleName);
-            if(filename.exists()){
-                URLClassLoader url = createURLClassLoader(filename.getParent());
-                if(url!=null){
-                    String name = filename.getName();
-                    name = getModuleName(name);
-
-                    StringHolder packageModuleName = new StringHolder();
-                    target = getClassFromName(url,name,packageModuleName);
-                    module_path = packageModuleName.value;
-                }
+            if( m_loadPath.size()==0 ) {
+                throw new ClassNotFoundException();
             }
-            else{
-                if( m_loadPath.size()==0 ) {
-                    throw new ClassNotFoundException();
+            for (int i = 0; i < m_loadPath.size(); ++i) {
+                String fullClassName ;
+                if(m_loadPath.elementAt(i).equals("")
+                        ||m_loadPath.elementAt(i).length()==0){
+                    fullClassName = moduleName;
                 }
-                for (int i = 0; i < m_loadPath.size(); ++i) {
-                    String fullClassName ;
-                    if(m_loadPath.elementAt(i).equals("")
-                            ||m_loadPath.elementAt(i).length()==0){
-                        fullClassName = moduleName;
-                    }
-                    else {
-                        String packageName = m_loadPath.elementAt(i);
-                        fullClassName 
-                                = packageName + "/" + moduleName;
-                    }
-                    File file = new File(fullClassName);
-                    if(file.isAbsolute()){
-                        URLClassLoader url 
-                                = createURLClassLoader(file.getParent());
-                        if(url!=null){
-                            String name = file.getName();
-                            name = getModuleName(name);
+                else {
+                    String packageName = m_loadPath.elementAt(i);
+                    fullClassName = packageName + "/" + moduleName;
+                }
+                file = new File(fullClassName);
+                if(file.isAbsolute()){
+                    URLClassLoader url 
+                            = createURLClassLoader(file.getParent());
+                    if(url!=null){
+                        String name = file.getName();
+                        name = getModuleName(name);
 
-                            StringHolder packageModuleName = new StringHolder();
-                            target 
-                                = getClassFromName(url,name,packageModuleName);
-                            module_path = packageModuleName.value;
-                        }
+                        StringHolder packageModuleName = new StringHolder();
+                        target = getClassFromName(url,name,packageModuleName);
+                        module_path = packageModuleName.value;
                     }
-                    else{
-                        try {
-                            fullClassName = getModuleName(fullClassName);
-                            fullClassName 
-                                    = fullClassName.replace(separator,".");
-                            fullClassName = fullClassName.replace("..",".");
-                            target = Class.forName(fullClassName);
-                            module_path = fullClassName;                    
-                        } catch (ClassNotFoundException e) {
-                            // do nothing
-                        }
+                }
+                else{
+                    try {
+                        fullClassName = getModuleName(fullClassName);
+                        fullClassName 
+                                = fullClassName.replace(separator,".");
+                        fullClassName = fullClassName.replace("..",".");
+                        target = Class.forName(fullClassName);
+                        module_path = fullClassName;                    
+                    } catch (ClassNotFoundException e) {
+                        // do nothing
                     }
                 }
             }
