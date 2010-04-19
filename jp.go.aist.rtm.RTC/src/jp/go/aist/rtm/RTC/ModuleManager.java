@@ -197,7 +197,7 @@ public class ModuleManager {
                 }
                 else {
                     String packageName = m_loadPath.elementAt(i);
-                    fullClassName = packageName + "/" + moduleName;
+                    fullClassName = packageName + separator + moduleName;
                 }
                 file = new File(fullClassName);
                 if(file.isAbsolute()){
@@ -286,7 +286,7 @@ public class ModuleManager {
             URL[] addUrls = (URL[])al.toArray(new URL[]{});
             url = url.newInstance(addUrls, url);
 
-            packageName = packageName.replace(separator,".");
+            packageName = packageName.replace("/",".");
             packageName = packageName.trim();
 
             target = getClassFromName(url,packageName,holder);
