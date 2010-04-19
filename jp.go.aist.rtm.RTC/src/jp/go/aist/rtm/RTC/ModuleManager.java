@@ -71,8 +71,6 @@ public class ModuleManager {
             if(loadPath[i].substring(0,2).equals("."+separator)){
                 loadPath[i] = loadPath[i].substring(2);
             }
-//            loadPath[i] = loadPath[i].replace(separator,".");
-//            loadPath[i] = loadPath[i].replace("..",".");
             m_loadPath.add(loadPath[i]);
         }
         
@@ -168,7 +166,8 @@ public class ModuleManager {
         // Find local file from load path or absolute directory
         String separator =  System.getProperty("file.separator");
         Class target = null;
-        if (StringUtil.isAbsolutePath(moduleName)) {
+        if (StringUtil.isAbsolutePath(moduleName)) { 
+                                            //When moduleName is AbsolutePath.
             if(!m_absoluteAllowed) {
                 throw new IllegalArgumentException(
                                             "Absolute path is not allowed");
@@ -187,26 +186,39 @@ public class ModuleManager {
             }
         } else {
             if( m_loadPath.size()==0 ) throw new ClassNotFoundException();
-            String name = getModuleName(moduleName);
-            name = name.replace(separator,".");
-            name = name.replace("..",".");
             for (int i = 0; i < m_loadPath.size(); ++i) {
                 String fullClassName ;
                 if(m_loadPath.elementAt(i).equals("")
                             ||m_loadPath.elementAt(i).length()==0){
-                    fullClassName = name;
+                    fullClassName = moduleName;
                 }
                 else {
                     String packageName = m_loadPath.elementAt(i);
-                    packageName = packageName.replace(separator,".");
-                    packageName = packageName.replace("..",".");
                     fullClassName 
-                                = packageName + "." + name;
+                                = packageName + "/" + moduleName;
                 }
-                try {
-                    target = Class.forName(fullClassName);
-                    module_path = fullClassName;                    
-                } catch (ClassNotFoundException e) {
+                File file = new File(fullClassName);
+                if(file.isAbsolute()){
+                    URLClassLoader url = createURLClassLoader(file.getParent());
+                    if(url!=null){
+                        String name = file.getName();
+                        name = getModuleName(name);
+
+                        StringHolder packageModuleName = new StringHolder();
+                        target = getClassFromName(url,name,packageModuleName);
+                        module_path = packageModuleName.value;
+                    }
+                }
+                else{
+                    try {
+                        fullClassName = getModuleName(fullClassName);
+                        fullClassName = fullClassName.replace(separator,".");
+                        fullClassName = fullClassName.replace("..",".");
+                        target = Class.forName(fullClassName);
+                        module_path = fullClassName;                    
+                    } catch (ClassNotFoundException e) {
+                        // do nothing
+                    }
                 }
             }
         }
@@ -263,7 +275,7 @@ public class ModuleManager {
                     }
                     catch(java.net.MalformedURLException ex){
                         System.err.println(
-                       "java.net.MalformedURLException: toURL() threw Exception."+ex);
+                 "java.net.MalformedURLException: toURL() threw Exception."+ex);
                     }
                 }
             }
@@ -409,7 +421,6 @@ public class ModuleManager {
      */
     public void unloadAll() {
         m_modules = new HashMap<String, DLLEntity>();
-//        m_modules = new HashMap<String, Class>();
     }
     
     /**
@@ -609,7 +620,6 @@ public class ModuleManager {
      * <p> Module list that has already loaded </p>
      */
 
-//    protected Map<Properties, Class> m_modules = new HashMap<Properties, Class>();
     protected Map<String, DLLEntity> m_modules 
                                         = new HashMap<String, DLLEntity>();
     private class DLLEntity {
