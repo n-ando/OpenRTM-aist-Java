@@ -15,7 +15,6 @@ public class rtcprof {
      * 
      */
     private static Class getClassFromName(String name){
-System.err.println("getClassFromName");
         String separator =  System.getProperty("file.separator");
         Class target = null;
 
@@ -23,7 +22,6 @@ System.err.println("getClassFromName");
             target = Class.forName(name);
         } catch (java.lang.NoClassDefFoundError e) {
             String messagetString = e.getMessage();
-            System.err.println("    getMessage:"+messagetString);
             String key = "wrong name: ";
             int index = messagetString.indexOf(key);
             String packageName 
@@ -31,10 +29,9 @@ System.err.println("getClassFromName");
                                                messagetString.length()-1);
             packageName = packageName.replace(separator,".");
             packageName = packageName.trim();
-            System.err.println("    packageName:"+packageName);
             target = rtcprof.getClassFromName(packageName);
         } catch (Exception e) {
-            System.err.println("    Caught.Exception:"+e);
+            // do nothing
         }
         return target;
     }
@@ -74,8 +71,7 @@ System.err.println("getClassFromName");
                         al.add(uri.toURL());
                     }
                     catch(java.net.MalformedURLException ex){
-                        System.err.println(
-                       "java.net.MalformedURLException: toURL() threw Exception."+ex);
+                       // do nothing
                     }
                 }
             }
@@ -88,7 +84,7 @@ System.err.println("getClassFromName");
 
             target = rtcprof.getClassFromName(url,packageName);
         } catch (Exception e) {
-            System.err.println("    Caught.Exception:"+e);
+            // do nothing
         }
         return target;
     }
@@ -104,8 +100,6 @@ System.err.println("getClassFromName");
             urls[0] = uri.toURL();
         }
         catch(java.net.MalformedURLException ex){
-            System.err.println(
-                "java.net.MalformedURLException: toURL() threw Exception."+ex);
             return null;
         }
         URLClassLoader url = new URLClassLoader(urls);
@@ -161,12 +155,10 @@ System.err.println("getClassFromName");
                 Field field = target.getField("component_conf");
                 String[] data = (String[])field.get(null);
                 for(int ic=0;ic<data.length/2;++ic){
-                    System.err.println(data[ic*2] +": "+data[ic*2+1]);
                     System.out.println(data[ic*2] +": "+data[ic*2+1]);
                 }
             }
             catch(Exception e){
-                System.err.println("    Caught.Exception. getFiled:"+e);
                 System.exit(1);
             }
             System.exit(0);
