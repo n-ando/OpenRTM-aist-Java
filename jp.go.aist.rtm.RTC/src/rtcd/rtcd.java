@@ -4,7 +4,6 @@ import jp.go.aist.rtm.RTC.Manager;
 public class rtcd {
 
     public static void main(String[] args) {
-        System.err.println("IN  main");
         // Initialize manager
         final Manager manager = Manager.init(args);
 
