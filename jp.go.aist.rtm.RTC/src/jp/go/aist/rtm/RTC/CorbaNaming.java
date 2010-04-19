@@ -92,7 +92,9 @@ public class CorbaNaming {
 
         obj = m_varORB.string_to_object(m_nameServer);
         m_rootContext =  NamingContextExtHelper.narrow(obj);
-        if (m_rootContext==null) throw new Exception("bad_alloc()");
+        if (m_rootContext==null) {
+            throw new Exception("bad_alloc()");
+        }
 //<+zxc
         Manager manager = Manager.instance();
         rtcout = new Logbuf("Manager.CorbaNaming");
@@ -625,31 +627,22 @@ rtcout.println(rtcout.TRACE, "out CorbaNaming.rebindByString(" + string_name + "
     public void rebindRecursive(NamingContext context, 
                                 final NameComponent[] name, Object obj)
         throws SystemException, CannotProceed, InvalidName, NotFound {
-rtcout.println(rtcout.TRACE, "in  CorbaNamaing.rebindRecursive");//zxc
         int len = name.length;
         NamingContext cxt = (NamingContext)context._duplicate();
         
-rtcout.println(rtcout.TRACE, "    name.length:" + len);//zxc
         for( int intIdx=0;intIdx<len;intIdx++ ) {
-rtcout.println(rtcout.TRACE, "    name[" +intIdx +"].id:" +name[intIdx].id);//zxc
             if( intIdx==(len-1) ) {
                 if( isNamingContext(obj) ) {
-rtcout.println(rtcout.TRACE, "    isNamingContext returned true.");//zxc
                     cxt.rebind_context(subName(name, intIdx, intIdx), NamingContextExtHelper.narrow(obj));
                 } else {
-rtcout.println(rtcout.TRACE, "    isNamingContext returned false.");//zxc
                     cxt.rebind(subName(name, intIdx, intIdx), obj);
-rtcout.println(rtcout.TRACE, "    rebind OK");//zxc
                 }
-rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
                 return;
             }
             // If the context is not a NamingContext, CannotProceed is thrown
             if( isNamingContext(cxt)) {
                 try {
-rtcout.println(rtcout.TRACE, "    call bind_new_context");//zxc
                     cxt = cxt.bind_new_context(subName(name, intIdx, intIdx));
-rtcout.println(rtcout.TRACE, "    bind_new_context OK");//zxc
                 } catch (AlreadyBound ex) {
                     cxt = NamingContextExtHelper.narrow(cxt.resolve(subName(name, intIdx, intIdx)));
                 }
@@ -657,7 +650,6 @@ rtcout.println(rtcout.TRACE, "    bind_new_context OK");//zxc
                 throw new CannotProceed(cxt, subName(name, intIdx));
             }
         }
-rtcout.println(rtcout.TRACE, "out CorbaNamaing.rebindRecursive");//zxc
         return;
     }
 
