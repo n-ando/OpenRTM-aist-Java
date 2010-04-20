@@ -33,7 +33,7 @@
                       Type="raw" />
     </Property>
 
-    <!-- アップグレード -->
+    <!-- アチE�E�EグレーチE-->
     <Upgrade Id="A8C8006F-E9D8-4528-AF4F-B8AE2D25AB47">
       <UpgradeVersion OnlyDetect="yes"
                       Minimum="1.0.0"
@@ -54,13 +54,13 @@
       <RemoveExistingProducts Before="InstallInitialize"/>
     </InstallExecuteSequence>
 
-    <!-- メディア -->
+    <!-- メチE�E��E�ア -->
     <Media Id="1" Cabinet="OpenRTMjava.cab" EmbedCab="yes"/>
 
-    <!-- 常にAll Users へ登録する場合は下記を有効にする -->
+    <!-- 常にAll Users へ登録する場吁E�E�下記を有効にする -->
     <!-- <Property Id="ALLUSERS" Value="1" /> -->
 
-    <!-- インストール条件判定 -->
+    <!-- インスチE�E�ル条件判宁E-->
     <Condition Message="[ProductName] requires JDK 1.5 or 1.6">
       <![CDATA[Installed OR (JDK15 <> "" OR JDK16 <> "")]]>
     </Condition>
@@ -91,7 +91,7 @@
             <!-- bin -->
             <Directory Id="bin" Name="bin">
               <Component Id="RtmSourceExamplesBin" Guid="{% RtmSourceExamplesBin.GUID %}">
-                <RemoveFolder Id='RtmSourceExamplesBin_f' On='uninstall' />
+                <RemoveFolder Id='RtmSourceExamplesBin_f' On='uninstall'/>
                 {% for file in RtmSourceExamplesBin.Files %}
                   <File Id="{% file.Id %}"
                        Name="{% file.Name %}" DiskId="1"
@@ -108,9 +108,10 @@
                     {% endif %}
                     {% if file.Name is rtcd_java.conf %}
                     <Shortcut Id="{% file.Id %}" Directory="ToolsMenuFolder"
-			      Name="rtc_java.conf for RTC deamon"
+			                        Name="rtc_java.conf for RTC deamon"
                               Show="normal" WorkingDirectory="bin"/>
                     {% endif %}
+
                   </File>
                 {% endfor %}
               </Component>
@@ -1795,14 +1796,16 @@
             </Directory>
 
           </Directory>
-	  <!-- rtmtools components -->
-	  <?if $(env.INCLUDE_OPENRTP) = YES ?>
-	  <?include OpenRTP_inc.wxs ?>
-	  <?endif ?>
-          <!-- end of rtmtools -->
+	        
       </Directory>
-
+        
+        <!-- rtmtools components -->
+        <?if $(env.INCLUDE_OPENRTP) = YES ?>
+        <?include OpenRTP_inc.wxs ?>
+        <?endif ?>
+        <!-- end of rtmtools -->
       <!-- end of Program Files フォルダ -->
+        
       </Directory>
 
       <!-- プログラムフォルダ -->
@@ -1824,7 +1827,7 @@
     <!-- end of SourceDir -->
     </Directory>
 
-    <!-- 機能定義 OpenRTM-aist -->
+    <!-- 機E�E�定義 OpenRTM-aist -->
     <Feature Id="ProductFeature" Level="1" Title="OpenRTM-aist (Java)"
              ConfigurableDirectory="INSTALLLOCATION">
 
@@ -1978,14 +1981,14 @@
 	    </Feature>
     </Feature>
     <?endif ?>
-
+    
     <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="Bitmaps/bannrbmp.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="Bitmaps/dlgbmp.bmp" />
 
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
 
-    <!-- WixUI_Mondo にインストールの種類を選択するダイアログを追加したもの -->
+    <!-- WixUI_Mondo にインスチE�E�ルの種類を選択するダイアログを追加しためE -->
     <UIRef Id="WixUI_Mondo_RTM" />
 
   </Product>
