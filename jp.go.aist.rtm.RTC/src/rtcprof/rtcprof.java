@@ -59,7 +59,13 @@ public class rtcprof {
                     = new java.util.ArrayList(java.util.Arrays.asList(urls));
             for(int ic=0;ic<urls.length;++ic){
                 String stringPath = new String();
-                String stringUrl = urls[ic].getPath();
+                String stringUrl = new String();
+                try{
+                    stringUrl = urls[ic].toURI().getPath();
+                }
+                catch(Exception ex){
+                    continue;
+                } 
                 int pointer = packageName.lastIndexOf(name);
                 String stringPackageName = packageName.substring(0, pointer);
                 if(stringUrl.endsWith(stringPackageName)){
