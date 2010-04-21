@@ -237,7 +237,7 @@ public class ModuleManager {
         dll_entity.properties = new Properties();
         dll_entity.properties.setProperty("file_path",module_path);
         dll_entity.dll = target;
-	
+
         m_modules.put(module_path, dll_entity);
         return module_path;
     }
@@ -266,7 +266,13 @@ public class ModuleManager {
                     = new java.util.ArrayList(java.util.Arrays.asList(urls));
             for(int ic=0;ic<urls.length;++ic){
                 String stringPath = new String();
-                String stringUrl = urls[ic].getPath();
+                String stringUrl = new String();
+                try{
+                    stringUrl = urls[ic].toURI().getPath();
+                }
+                catch(Exception ex){
+                    continue;
+                } 
                 int pointer = packageName.lastIndexOf(name);
                 String stringPackageName = packageName.substring(0, pointer);
                 if(stringUrl.endsWith(stringPackageName)){
@@ -382,9 +388,9 @@ public class ModuleManager {
             throw new IllegalArgumentException("methodName is empty.:load()");
         }
 
-	String module_path = load(moduleName);
+        String module_path = load(moduleName);
 
-	Method initMethod = symbol(module_path,methodName);
+        Method initMethod = symbol(module_path,methodName);
 
 
         DLLEntity dll_entity = m_modules.get(module_path);
@@ -578,6 +584,8 @@ public class ModuleManager {
                 al.add(2,"module_file_path");
                 al.add(3,dlls.elementAt(ic));
                 props.add(new Properties((String[])al.toArray(new String[]{})));
+                rtcout.println(rtcout.TRACE, 
+                                    "loadabe module:"+dlls.elementAt(ic));
             } 
             catch(Exception e){
                 continue;
