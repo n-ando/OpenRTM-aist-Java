@@ -1,2 +1,0 @@
-Main-Class: rtcd.rtcd
-Class-Path: OpenRTM-aist-1.0.0.jar commons-cli-1.1.jar
