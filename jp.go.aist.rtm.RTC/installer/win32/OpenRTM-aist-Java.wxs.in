@@ -115,14 +115,14 @@
                               Name="Start Naming Service"
                               Show="normal" WorkingDirectory="bin"/>
                     {% endif %}
-                    {% if file.Name is rtcd_java.bat %}
+                    {% if file.Name is rtcd_java.exe %}
                     <Shortcut Id="{% file.Id %}" Directory="ToolsMenuFolder"
-                              Name="Start RTC daemon" Arguments=" -d -f rtcd_java.conf"
+                              Name="Start RTC daemon" Arguments=" -d"
                               Show="normal" WorkingDirectory="bin"/>
                     {% endif %}
                     {% if file.Name is rtcd_java.conf %}
                     <Shortcut Id="{% file.Id %}" Directory="ToolsMenuFolder"
-			                        Name="rtc_java.conf for RTC deamon"
+			                        Name="rtc.conf for RTC deamon"
                               Show="normal" WorkingDirectory="bin"/>
                     {% endif %}
 
