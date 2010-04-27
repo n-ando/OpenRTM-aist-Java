@@ -55,9 +55,6 @@
 	<property name="idl.autotest" value="${source.samples.java}/AutoTestService.idl" />
 	
 	<property name="dir.jsmooth" value="${env.JSMOOTH_HOME}"/>
-	<taskdef name="jsmoothgen"
-	classname="net.charabia.jsmoothgen.ant.JSmoothGen"
-	classpath="${dir.jsmooth}/lib/jsmoothgen-ant.jar"/>
 
 
 	<target name="buildAll">
@@ -130,6 +127,9 @@
 	</target>
 
 	<target name="createExe" description="exeファイルを作成します">
+		<taskdef name="jsmoothgen"
+		classname="net.charabia.jsmoothgen.ant.JSmoothGen"
+		classpath="${dir.jsmooth}/lib/jsmoothgen-ant.jar"/>
 		<jsmoothgen project="rtcd.jsmooth"
 			skeletonroot="${dir.jsmooth}/skeletons"/>
 		<copy file="rtcd_java.exe" todir="${dist.bat}" />
