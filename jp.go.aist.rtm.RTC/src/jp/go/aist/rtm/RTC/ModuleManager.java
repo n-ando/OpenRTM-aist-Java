@@ -537,7 +537,7 @@ public class ModuleManager {
         String separator =  System.getProperty("file.separator");
         for (int i=0; i < m_loadPath.size(); ++i) {
             String loadpath = m_loadPath.elementAt(i);
-            if(loadpath==null|loadpath.equals("")){
+            if(loadpath==null || loadpath.equals("")){
                 continue;
             }
             java.io.File dir = new java.io.File(loadpath);
