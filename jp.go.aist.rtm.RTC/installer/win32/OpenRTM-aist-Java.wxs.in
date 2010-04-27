@@ -16,7 +16,7 @@
              Compressed="yes"
              SummaryCodepage='$(var.codepage)' />
 
-    <!-- プロパティ -->
+    <!-- Property -->
     <Property Id='USERPROFILEDIR' Value='%USERPROFILE%' />
     <Property Id="JDK15">
       <RegistrySearch Id="JDK15"
@@ -32,8 +32,22 @@
                       Name="JavaHome"
                       Type="raw" />
     </Property>
+    
+    <!-- RTSE Property-->
+    <Property Id="FILEEXISTS">
+      <DirectorySearch Id="CheckFileDir" Path="C:\Program Files">
+        <DirectorySearch Id="CheckFileDir2" Path ="OpenRTP">
+          <DirectorySearch Id="CheckFileDir3" Path ="RTSystemEditor">
+            <FileSearch Id="CheckFile" Name="RTSystemEditorRCP.exe" />
+          </DirectorySearch>
+        </DirectorySearch>
+      </DirectorySearch>
+    </Property>
 
-    <!-- アチE�E�EグレーチE-->
+<!--     <SetProperty Id="FILEEXISTSDIR" After="AppSearch" Value="[FILEEXISTS]">
+    </SetProperty>-->
+
+    <!-- Upgrade -->
     <Upgrade Id="A8C8006F-E9D8-4528-AF4F-B8AE2D25AB47">
       <UpgradeVersion OnlyDetect="yes"
                       Minimum="1.0.0"
@@ -54,20 +68,20 @@
       <RemoveExistingProducts Before="InstallInitialize"/>
     </InstallExecuteSequence>
 
-    <!-- メチE�E��E�ア -->
+    <!-- Media -->
     <Media Id="1" Cabinet="OpenRTMjava.cab" EmbedCab="yes"/>
-
-    <!-- 常にAll Users へ登録する場吁E�E�下記を有効にする -->
+    
+    <!-- Install for All -->
     <!-- <Property Id="ALLUSERS" Value="1" /> -->
-
-    <!-- インスチE�E�ル条件判宁E-->
+    
+    <!-- Check Conditions -->
     <Condition Message="[ProductName] requires JDK 1.5 or 1.6">
       <![CDATA[Installed OR (JDK15 <> "" OR JDK16 <> "")]]>
     </Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
 
-      <!-- Program Files フォルダ -->
+      <!-- Program Files Folder -->
       <Directory Id="ProgramFilesFolder" SourceName="PFILE">
         <Directory Id="INSTALLLOCATION" Name="OpenRTM-aist">
           <Directory Id="Version" Name="1.0">
@@ -1804,11 +1818,11 @@
         <?include OpenRTP_inc.wxs ?>
         <?endif ?>
         <!-- end of rtmtools -->
-      <!-- end of Program Files フォルダ -->
+      <!-- end of Program Files Folder -->
         
       </Directory>
 
-      <!-- プログラムフォルダ -->
+      <!-- Program Folder -->
       <Directory Id="ProgramMenuFolder">
         <Directory Id="AppMenuFolder" Name="OpenRTM-aist">
           <Directory Id="JavaMenuFolder" Name="Java">
@@ -1827,7 +1841,7 @@
     <!-- end of SourceDir -->
     </Directory>
 
-    <!-- 機E�E�定義 OpenRTM-aist -->
+    <!-- Difinition of OpenRTM-aist -->
     <Feature Id="ProductFeature" Level="1" Title="OpenRTM-aist (Java)"
              ConfigurableDirectory="INSTALLLOCATION">
 
@@ -1960,25 +1974,29 @@
         <ComponentRef Id="RtmSourceExamplesRtmexamplesSimpleservice"/>
         <ComponentRef Id="RtmSourceExamplesRtmexamplesSincosout"/>
       </Feature>
-
+    
     </Feature>
+
     <!-- OpenRTP tools -->
     <?if $(env.INCLUDE_OPENRTP) = YES ?>
     <Feature Id="OpenRTP" Level="1" Title="OpenRT Platform Tool Chain">
-	    <!-- rtse rcp -->
-	    <Feature Id="RTSystemEditor" Level="1" Title="RTSystemEditor">
-		    <ComponentRef Id="RTSystemEditor" />
-		    <ComponentRef Id="configuration" />
-		    <ComponentRef Id="plugins" />
-		    <ComponentRef Id="org.eclipse.core.runtime.compatibility.registry_3.2.1.R32x_v20060907" />
-		    <ComponentRef Id="META_INF" />
-		    <ComponentRef Id="org.eclipse.jdt.junit.runtime.nl1_3.2.1.v200609270227" />
-		    <ComponentRef Id="META_INF_1" />
-		    <ComponentRef Id="org.eclipse.jdt.junit.runtime_3.2.1.r321_v20060721" />
-		    <ComponentRef Id="META_INF_2" />
-		    <ComponentRef Id="org.junit_3.8.1" />
-		    <ComponentRef Id="META_INF_3" />
-	    </Feature>
+      <Condition Level ="1"><![CDATA[ (FILEEXISTS =  "") ]]></Condition>
+      <Condition Level ="0"><![CDATA[ (FILEEXISTS <> "") ]]></Condition>
+
+      <!-- rtse rcp -->
+      <Feature Id="RTSystemEditor" Level="1" Title="RTSystemEditor">
+        <ComponentRef Id="RTSystemEditor" />   
+        <ComponentRef Id="configuration" />
+        <ComponentRef Id="plugins" />
+        <ComponentRef Id="org.eclipse.core.runtime.compatibility.registry_3.2.1.R32x_v20060907" />
+        <ComponentRef Id="META_INF" />
+        <ComponentRef Id="org.eclipse.jdt.junit.runtime.nl1_3.2.1.v200609270227" />
+        <ComponentRef Id="META_INF_1" />
+        <ComponentRef Id="org.eclipse.jdt.junit.runtime_3.2.1.r321_v20060721" />
+        <ComponentRef Id="META_INF_2" />
+        <ComponentRef Id="org.junit_3.8.1" />
+        <ComponentRef Id="META_INF_3" />
+      </Feature>
     </Feature>
     <?endif ?>
     
@@ -1988,7 +2006,7 @@
 
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
 
-    <!-- WixUI_Mondo にインスチE�E�ルの種類を選択するダイアログを追加しためE -->
+    <!-- WixUI_Mondo -->
     <UIRef Id="WixUI_Mondo_RTM" />
 
   </Product>
