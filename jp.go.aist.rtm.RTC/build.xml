@@ -20,6 +20,7 @@
 
 	<property name="dist.dir" value="jar" />
 	<property name="dist.samples" value="installer/resources/Source/examples/RTMExamples"/>
+	<property name="dist.bat" value="installer/resources/Source/examples/"/>
 	
 	<property name="distribution.dir" value="C:/distribution/" />
 	<property name="build.dir" value="bin"/>
@@ -52,7 +53,13 @@
 	<property name="idl.test.TypeCast" value="${idl.path.tests}/TypeCast/Mock.idl" />
 	<property name="idl.sample" value="${source.samples.java}/MyService.idl" />
 	<property name="idl.autotest" value="${source.samples.java}/AutoTestService.idl" />
-
+	
+	<property name="dir.jsmooth" value="${env.JSMOOTH_HOME}"/>
+	<taskdef name="jsmoothgen"
+	classname="net.charabia.jsmoothgen.ant.JSmoothGen"
+	classpath="${dir.jsmooth}/lib/jsmoothgen-ant.jar"/>
+
+
 	<target name="buildAll">
 		<antcall target="idlCompile" />
 		<antcall target="idlCompileEtc" />
@@ -60,6 +67,7 @@
 		<antcall target="compile" />
 		<antcall target="jar" />
 		<antcall target="javaExamples" />
+		<antcall target="createExe" />
 		<antcall target="javaDoc" />
 		<antcall target="javaInstaller" />
 <!--
@@ -100,7 +108,6 @@
 		<copy file="${dist.dir}/${target.name}.jar" todir="${build.dir.jar}" />
 		<jar destfile="${dist.dir}/rtcd.jar"
 			 basedir="${build.dir}"
-                         manifest="${source.rtcd}/META-INF/MANIFEST.MF"
 			 includes="rtcd/**" />
 		<delete file="${build.dir.jar}/rtcd.jar" />
 		<copy file="${dist.dir}/rtcd.jar" todir="${build.dir.jar}" />
@@ -122,6 +129,12 @@
 		</copy>
 	</target>
 
+	<target name="createExe" description="exeファイルを作成します">
+		<jsmoothgen project="rtcd.jsmooth"
+			skeletonroot="${dir.jsmooth}/skeletons"/>
+		<copy file="rtcd_java.exe" todir="${dist.bat}" />
+		<delete file="rtcd_java.exe" />
+	</target>
 	<target name="javaDoc" description="JavaDocを作成します">
 		<delete dir="${build.doc}" />
 		<delete dir="${build.doc.jp}" />
@@ -140,22 +153,6 @@
                         <taglet name="JaOnTaglet" path="./util"/>
                         <taglet name="EnOffTaglet"  path="./util"/>
                 </javadoc>
-<!--
-		<javadoc 
-                        locale="ja_JP"
-                        sourcepath="${source}" destdir="${build.doc.jp}"
-			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
-                        encoding="UTF-8"
-			author="true" doctitle="OpenRTM-aist Java" 
-			nodeprecated="false" nodeprecatedlist="false" 
-                        noindex="false" nonavbar="false" notree="false" 
-			package="yes" source="1.5" splitindex="true" 
-                        use="true" version="true" 
-                        >
-                        <taglet name="JaOnTaglet" path="./util"/>
-                        <taglet name="EnOffTaglet"  path="./util"/>
-                </javadoc>
--->
 		<javadoc 
                         locale="en_US"
                         sourcepath="${source}" destdir="${build.doc.us}"
@@ -173,6 +170,10 @@
 	</target>
 
 	<target name="javaInstaller"  description="インストーラを作成します">
+		<!-- コマンド実行 -->		
+		<exec dir="installer/win32" executable="cmd">
+			<arg value="/c cleanup.cmd"/>
+		</exec>
 		<!-- フォルダ削除 -->
 		<delete dir="${distribution.dir}/OpenRTM-aist-Java-${version}" />
 		<!-- フォルダ生成 -->		
@@ -187,14 +188,6 @@
 		<exec dir="installer/win32" executable="cmd">
 			<arg value="/c build.cmd"/>
 		</exec>
-<!--
-		<exec dir="${installer.dir}" executable="${wix.dir}\candle.exe">
-			<arg line="OpenRTM-aist-Java-1.0.0.wxs"/>
-		</exec>
-		<exec dir="${installer.dir}" executable="${wix.dir}\light.exe">
-			<arg line="OpenRTM-aist-Java-1.0.0.wixobj -out OpenRTM-aist-Java-1.0.0.msi ${wix.dir}\wixui.wixlib -loc wixui_ja-jp.wxl"/>
-		</exec>
--->
 	</target>
 
 	<target name="idlCompile" description="IDLファイルをコンパイルします">
