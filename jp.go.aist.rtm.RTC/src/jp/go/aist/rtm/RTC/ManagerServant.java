@@ -581,11 +581,14 @@ System.err.println("Manager's IOR information: "+ior);
         RTM.Manager mgrobj = findManager(mgrstr);
         if (mgrobj==null) {
             List<String> cmd = new ArrayList();
+/*
             cmd.add("java");
             cmd.add("-jar");
             String rtm_java_root = System.getenv("RTM_JAVA_ROOT");
             String rtcd = rtm_java_root+"/jar/rtcd.jar";
             cmd.add(rtcd);
+*/
+            cmd.add("rtcd_java");
             cmd.add("-p");
             cmd.add(mgrvstr[1]); // port number
 
@@ -628,7 +631,7 @@ System.err.println("Manager's IOR information: "+ior);
         }
     
         // create component on the manager    
-        arg = arg.substring(pos + 1, endpos);
+        arg = arg.substring(0, pos);
         rtcout.println(rtcout.DEBUG, "Creating component on "+mgrstr);
         rtcout.println(rtcout.DEBUG, "arg: "+arg);
         try {
