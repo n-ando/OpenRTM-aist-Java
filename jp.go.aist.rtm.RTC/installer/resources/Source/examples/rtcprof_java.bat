@@ -1,3 +1,5 @@
+@echo off
+
 set _ext_=%~x1
 
 if "%_ext_%"==".jar" goto jar
