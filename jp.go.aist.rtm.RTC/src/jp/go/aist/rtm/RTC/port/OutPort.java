@@ -503,6 +503,40 @@ public class OutPort<DataType> extends OutPortBase {
         rtcout.println(rtcout.TRACE, "onDisconnect(id = "+id+")");
     }
 
+    /**
+     * {@.ja CDR化で使用するStreamableを設定する}
+     * {@.en Sets Streamable. }
+     *
+     * <p> 
+     * {@.ja 与えられたStreamableをCDR化で使用するStreamableへ設定する。
+     * また、与えられたStreamableからvalueフィールドを取得し保持する。}
+     * {@.en This method sets Streamable used when making it to CDR. 
+     * Moreover, this method acquires the value field from Streamable. }
+     *
+     * @param holderStreamable
+     *   {@.ja  HolderクラスのStreamable}
+     *   {@.en  Streamable of Holder class}
+     * @return 
+     *   {@.ja false 失敗}
+     *   {@.en false Failure}
+     * 
+     *
+     */
+    public boolean setStreamable(Streamable holderStreamable) {
+        try {
+            m_streamable = holderStreamable;
+            m_field = m_streamable.getClass().getField("value");
+            return true;
+        }
+        catch(NoSuchFieldException e){
+            //getField throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        return false;
+    }
+
+
     private BufferBase<DataType> m_buffer;
     private DataRef<DataType> m_value;
     private long m_timeoutTick;
