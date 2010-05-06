@@ -11,6 +11,7 @@ import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.port.OutPort;
 import jp.go.aist.rtm.RTC.port.ConnectorBase;
+import jp.go.aist.rtm.RTC.port.ConnectorListener;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListener;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListenerT;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
@@ -95,6 +96,9 @@ public class ConsoleInImpl extends DataFlowComponentBase {
                             ConnectorDataListenerType.ON_RECEIVER_ERROR,
                             new DataListener("ON_RECEIVER_ERROR"));
 
+        m_outOut.addConnectorListener(
+                            ConnectorListenerType.ON_CONNECT,
+                            new Listener("ON_CONNECT"));
         return super.onInitialize();
     }
     // The finalize action (on ALIVE->END transition)
@@ -232,6 +236,22 @@ public class ConsoleInImpl extends DataFlowComponentBase {
 //            System.out.println("Profile::properties: ");
 //            System.out.println(info.properties);
             System.out.println("Data:           "+data.data);
+            System.out.println("------------------------------");
+        }
+        public String m_name;
+    }
+    class Listener extends ConnectorListener{
+        public Listener(final String name){
+            m_name = name;
+        }
+
+        public void operator(final ConnectorBase.ConnectorInfo arg){
+            System.out.println("------------------------------");
+            System.out.println("Listener:          "+m_name);
+            System.out.println("Profile::name:     "+arg.name);
+            System.out.println("Profile::id:       "+arg.id);
+            String str = new String();
+            System.out.println("Profile::data_type:"+arg.properties.getProperty("data_type"));
             System.out.println("------------------------------");
         }
         public String m_name;

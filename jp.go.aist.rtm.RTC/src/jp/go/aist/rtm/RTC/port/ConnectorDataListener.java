@@ -9,7 +9,7 @@ import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.util.DataRef;
 
   /**
-   * {@.ja ConnectorDataListener ･ｯ･鬣ｹ}
+   * {@.ja ConnectorDataListener クラス}
    * {@.en ConnectorDataListener class}
    *
    * <p>

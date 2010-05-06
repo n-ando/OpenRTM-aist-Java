@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Observer;
 
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
@@ -858,7 +857,7 @@ public abstract class OutPortBase extends PortBase {
      *   {@.en A flag for automatic listener destruction}
      */
     public void addConnectorDataListener(int type,
-                             Observer listener,
+                             ConnectorDataListenerT listener,
                              boolean autoclean) {
   
         if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
@@ -873,7 +872,8 @@ public abstract class OutPortBase extends PortBase {
                         "addConnectorDataListener(): Invalid listener type.");
         return; 
     }
-    public void addConnectorDataListener(int type,Observer listener) {
+    public void addConnectorDataListener(int type,
+                                        ConnectorDataListenerT listener) {
         this.addConnectorDataListener(type,listener,true);
     }
 
@@ -893,7 +893,7 @@ public abstract class OutPortBase extends PortBase {
      *   {@.en A pointer to a listener object}
      */
     public void removeConnectorDataListener(int type,
-                                Observer listener) {
+                                ConnectorDataListenerT listener) {
 
         if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
             rtcout.println(rtcout.TRACE,
@@ -967,7 +967,7 @@ public abstract class OutPortBase extends PortBase {
      *   {@.en A flag for automatic listener destruction}
      */
     public void addConnectorListener(int type,
-                                           Observer listener,
+                                           ConnectorListener listener,
                                            boolean autoclean) {
   
         if (type < ConnectorListenerType.CONNECTOR_LISTENER_NUM) {
@@ -982,7 +982,7 @@ public abstract class OutPortBase extends PortBase {
                     "addConnectorListener(): Invalid listener type.");
         return;
     }
-    public void addConnectorListener(int type,Observer listener) {
+    public void addConnectorListener(int type,ConnectorListener listener) {
         this.addConnectorListener(type,listener,true);
     }
     
@@ -1003,7 +1003,7 @@ public abstract class OutPortBase extends PortBase {
      *   {@.en listener A pointer to a listener object}
      */
     public void removeConnectorListener(int type,
-                                              Observer listener) {
+                                              ConnectorListener listener) {
   
         if (type < ConnectorListenerType.CONNECTOR_LISTENER_NUM) {
             rtcout.println(rtcout.TRACE,
