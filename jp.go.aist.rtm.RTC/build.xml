@@ -55,9 +55,13 @@
 	<property name="idl.autotest" value="${source.samples.java}/AutoTestService.idl" />
 	
 	<property name="dir.jsmooth" value="${env.JSMOOTH_HOME}"/>
+	<property name="util.source" value="util"/>
 
 
 	<target name="buildAll">
+	<taskdef name="jsmoothgen"
+	classname="net.charabia.jsmoothgen.ant.JSmoothGen"
+	classpath="${dir.jsmooth}/lib/jsmoothgen-ant.jar"/>
 		<antcall target="idlCompile" />
 		<antcall target="idlCompileEtc" />
 		<antcall target="clean" />
@@ -139,7 +143,11 @@
 		<delete dir="${build.doc}" />
 		<delete dir="${build.doc.jp}" />
 		<delete dir="${build.doc.us}" />
-
+		<delete>
+			<fileset dir="${util.source}" includes="*.class" />
+		</delete>
+		<javac srcdir="${util.source}" destdir="${util.source}" 
+			encoding="Shift-JIS" />
 		<javadoc 
                         sourcepath="${source}" destdir="${build.doc}"
 			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
