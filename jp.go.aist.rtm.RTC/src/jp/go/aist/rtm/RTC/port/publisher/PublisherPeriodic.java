@@ -179,6 +179,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             return ReturnCode.BUFFER_EMPTY;
         }
     
+        m_readback = true;
         m_buffer.advanceRptr(m_buffer.readable() - 1);
     
         final OutputStream cdr = m_buffer.get();
