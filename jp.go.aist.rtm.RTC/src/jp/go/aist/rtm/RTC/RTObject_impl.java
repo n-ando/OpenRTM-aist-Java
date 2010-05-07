@@ -605,16 +605,16 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         rtcout.println(rtcout.TRACE, "RTObject_impl.get_context_handle()");
 
-        int ech;
-        ech = 0;
-        // ec_id 0 : owned context
-        // ec_id 1-: participating context
-        if (cxt._is_equivalent(m_ecMine.value[0])) {
-            return ech;
-        }
         int num;
+        num = CORBA_SeqUtil.find(m_ecMine, new ec_find(cxt));
+        if(num != -1){
+            return num;
+        }
         num = CORBA_SeqUtil.find(m_ecOther, new ec_find(cxt));
-        return (num +1);
+        if(num != -1){
+            return (ECOTHER_OFFSET+num);
+        }
+        return -1;
     }
 
     /**
