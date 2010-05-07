@@ -23,6 +23,7 @@
 @rem ------------------------------------------------------------
 @set DISTRIBUTION=C:\distribution
 @set OPENRTM_JAVA=%DISTRIBUTION%\OpenRTM-aist-Java-1.0.0
+@set RTSE_ROOT=%DISTRIBUTION%\OpenRTP\RTSystemEditor
 
 @rem ------------------------------------------------------------
 @rem Supported languages
