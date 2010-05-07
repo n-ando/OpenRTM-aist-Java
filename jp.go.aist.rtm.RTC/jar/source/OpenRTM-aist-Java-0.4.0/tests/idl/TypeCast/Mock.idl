@@ -1,9 +1,0 @@
-module TypeCast {
-
-interface Mock
-{
-    void operation();
-    boolean isCalled();
-};
-
-};
