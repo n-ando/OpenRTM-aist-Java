@@ -426,7 +426,15 @@ public class PortAdmin {
     }
 
     /**
-     * <p>登録されているすべてのPortサーバントについて、deactivateしたうえで登録を解除します。</p>
+     * {@.ja 全ての Port をdeactivateし登録を削除する}
+     * {@.en Deactivate all Ports and unregister them}
+     *
+     * <p>
+     * {@.ja 登録されている全てのPortに対して、サーバントのdeactivateを行い、
+     * 登録リストから削除する。}
+     * {@.en This operation deactivates the all Port and deletes the all Port's
+     * registrations from the list.}
+     *
      */
     public void finalizePorts() {
         
