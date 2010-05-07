@@ -71,9 +71,7 @@
 		<antcall target="createExe" />
 		<antcall target="javaDoc" />
 		<antcall target="javaInstaller" />
-<!--
 		<antcall target="dist" />
--->
 	</target>
 	
         <target name="buildAllLinux">
