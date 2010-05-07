@@ -290,14 +290,17 @@
 		<echo>All Test complete!</echo>
 	</target>
 	<target name="dist" description="ソースをエクスポートします">
+		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}.zip" />
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}/src" >
 			<fileset dir="src" />
 		</copy>
+<!--
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}/tests" >
 			<fileset dir="tests" />
 		</copy>
+-->
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}/idl" >
 			<fileset dir="idl" />
 		</copy>
@@ -305,21 +308,26 @@
 		<copy file=".classpath" todir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 
+
+
 		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4" />
 		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0" />
 		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0" />
 		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar.zip" />
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/jar" >
 			<fileset dir="installer/resources/Source/jar">
+				<include name="rtcd.jar" />
+				<include name="rtcprof.jar" />
 				<include name="*${version}.jar" />
 				<include name="commons-cli-1.1.jar" />
 			</fileset>
-			<fileset dir="installer/resources/EULA">
+			<fileset dir="installer/win32">
 				<include name="License.txt" />
 			</fileset>
 		</copy>
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/examples" >
 			<fileset dir="installer/resources/Source/examples">
+				<include name="*.exe" />
 				<include name="*.bat" />
 				<include name="*.sh" />
 				<include name="*.vbs" />
@@ -331,10 +339,21 @@
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/JavaDoc" >
 			<fileset dir="installer/resources/Source/JavaDoc" />
 		</copy>
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0/JavaDocEn" >
+			<fileset dir="installer/resources/Source/JavaDocEn" />
+		</copy>
 		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar" />
 		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.tar.gz" />
-		<tar destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.tar.gz" basedir="../" compression="gzip" excludes="jp.go.aist.rtm.RTC/installer/**, jp.go.aist.rtm.RTC/jar/source/**, jp.go.aist.rtm.RTC/Source/**, jp.go.aist.rtm.RTC/build_org.xml, jp.go.aist.rtm.RTC/jcoverage.ser, buildRTC.bat, buildRTC.sh, clean.bat, clean.sh, cmd.bat, **/*.swp" />
-
+		<tar destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.tar.gz" 
+			basedir="../" 
+			compression="gzip" 
+			excludes="jp.go.aist.rtm.RTC/installer/**, 
+				jp.go.aist.rtm.RTC/jar/source/**, 
+				jp.go.aist.rtm.RTC/Source/**, 
+				jp.go.aist.rtm.RTC/build_org.xml, 
+				jp.go.aist.rtm.RTC/jcoverage.ser, 
+				buildRTC.bat, buildRTC.sh, clean.bat, 
+				clean.sh, cmd.bat, **/*.swp" />
 
 	</target>
 </project>
