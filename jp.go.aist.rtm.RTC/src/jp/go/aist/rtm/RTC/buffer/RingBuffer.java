@@ -148,6 +148,7 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
           
             put(value);
           
+            advanceWptr(1);
             if (empty_) {
                 synchronized (m_empty.mutex) {
                     try {
@@ -157,7 +158,6 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                     }
                 }
             }
-            advanceWptr(1);
             return ReturnCode.BUFFER_OK;
         }
     }
