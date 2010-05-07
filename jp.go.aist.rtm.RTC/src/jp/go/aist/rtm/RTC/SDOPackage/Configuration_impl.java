@@ -562,24 +562,26 @@ public class Configuration_impl extends ConfigurationPOA {
             // from <port_name> 
             // to <instance_name>.<port_name>, 
             // the following processing was added. 
-            String[] exported_ports 
+            if (conf.findNode("exported_ports") != null) {
+                String[] exported_ports 
                     = conf.getProperty("exported_ports").split(",");
-            String exported_ports_str = "";
-            for (int i=0, len=exported_ports.length; i < len; ++i) {
-                String[]  keyval = exported_ports[i].split("\\.");
-                if (keyval.length > 2) {
-                    exported_ports_str 
-                            += (keyval[0] + "." + keyval[keyval.length-1]);
-                }
-                else{
-                    exported_ports_str += exported_ports[i];
-                }
+                String exported_ports_str = "";
+                for (int i=0, len=exported_ports.length; i < len; ++i) {
+                    String[]  keyval = exported_ports[i].split("\\.");
+                    if (keyval.length > 2) {
+                        exported_ports_str 
+                                += (keyval[0] + "." + keyval[keyval.length-1]);
+                    }
+                    else{
+                        exported_ports_str += exported_ports[i];
+                    }
 
-                if ( i != (exported_ports.length-1) ) {
-                   exported_ports_str += ",";
+                    if ( i != (exported_ports.length-1) ) {
+                        exported_ports_str += ",";
+                    }
                 }
+	        conf.setProperty("exported_ports", exported_ports_str);
             }
-	    conf.setProperty("exported_ports", exported_ports_str);
             //----------------------------------------------------------------
             return m_configsets.setConfigurationSetValues(config_id, conf);
             //if( m_configsets.setConfigurationSetValues(config_id, conf)) {
