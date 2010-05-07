@@ -156,21 +156,21 @@
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 
 			package="yes" source="1.5" splitindex="true" 
-                        use="true" version="true"
+                        use="true" version="true" charset="UTF-8"
                         >
                         <taglet name="JaOnTaglet" path="./util"/>
                         <taglet name="EnOffTaglet"  path="./util"/>
                 </javadoc>
 		<javadoc 
-                        locale="en_US"
-                        sourcepath="${source}" destdir="${build.doc.us}"
+                        Locale="en_US"
 			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
+                        sourcepath="${source}" destdir="${build.doc.us}"
                         encoding="UTF-8"
 			author="true" doctitle="OpenRTM-aist Java" 
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 
 			package="yes" source="1.5" splitindex="true" 
-                        use="true" version="true"
+                        use="true" version="true" charset="UTF-8"
                         >
                         <taglet name="EnOnTaglet"  path="./util"/>
                         <taglet name="JaOffTaglet"  path="./util"/>
