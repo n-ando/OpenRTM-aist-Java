@@ -32,8 +32,6 @@ public class SinCosOutImpl  extends DataFlowComponentBase {
         try {
 //            registerOutPort(TimedDouble.class, "out_sin", m_out1Out);  //v042
 //            registerOutPort(TimedDouble.class, "out_cos", m_out2Out);  //v042
-            registerOutPort("out_sin", m_out1Out);
-            registerOutPort("out_cos", m_out2Out);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,10 +47,12 @@ public class SinCosOutImpl  extends DataFlowComponentBase {
 
     // The initialize action (on CREATED->ALIVE transition)
     // formaer rtc_init_entry() 
-//    @Override
-//    protected ReturnCode_t onInitialize() {
-//        return super.onInitialize();
-//    }
+    @Override
+    protected ReturnCode_t onInitialize() {
+        addOutPort("out_sin", m_out1Out);
+        addOutPort("out_cos", m_out2Out);
+        return super.onInitialize();
+    }
     // The finalize action (on ALIVE->END transition)
     // formaer rtc_exiting_entry()
 //    @Override
@@ -104,7 +104,7 @@ public class SinCosOutImpl  extends DataFlowComponentBase {
         } catch(Exception ex) {
         }
 
-        return ReturnCode_t.RTC_OK;
+        return super.onExecute(ec_id);
     }
     //
     // The aborting action when main logic error occurred.

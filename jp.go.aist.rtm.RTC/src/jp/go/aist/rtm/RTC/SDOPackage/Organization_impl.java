@@ -549,12 +549,13 @@ public class Organization_impl extends OrganizationPOA{
     protected DependencyType m_dependency;
 
     /**
-     * <p>Organization プロパティ<br />
-     *
+     * Organization プロパティ
+     * <p>
      * OrganizationProperty は Organization のプロパティ情報を保持します。
-     * 一つの Organization は0個もしくは1個の OrganizationProperty をもちます。</p>
+     * 一つの Organization は0個もしくは1個の OrganizationProperty 
+     * をもちます。</p>
      *
-     * @member property NVList
+     * member:property NVList
      */
     OrganizationProperty m_orgProperty = new OrganizationProperty();
     /**

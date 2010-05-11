@@ -38,6 +38,8 @@ public class PublisherFactoryTests extends TestCase {
         }
         public void publishInterfaceProfile(NVListHolder properties) {
         }
+        public void setConnector(OutPortConnector connector) {
+        }
     };
 
     protected void setUp() throws Exception {

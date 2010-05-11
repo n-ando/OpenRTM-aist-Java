@@ -1,9 +1,10 @@
 package jp.go.aist.rtm.RTC.port;
 
+import java.util.Vector;
+
 import org.omg.CORBA.portable.Streamable;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +18,6 @@ import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.TypeCast;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
-import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
 
@@ -50,9 +50,8 @@ public class OutPort<DataType> extends OutPortBase {
      * @param data  data   
      * @param cdr   OutputStream
      */
-    private void write_stream(DataType data,OutputStream cdr) {
+    public void write_stream(DataType data,OutputStream cdr) {
         try {
-
             m_field.set(m_streamable,data);
             m_streamable._write(cdr);
 
@@ -185,51 +184,105 @@ public class OutPort<DataType> extends OutPortBase {
     }
     
     /**
-     * <p>データを書き込みます。<p>
-     * 
-     * @param value 書き込むデータ
-     * @return データを書き込めた場合はtrueを、さもなくばfalseを返します。
+     * {@.ja データ書き込み}
+     * {@.en Write data}
+     *
+     * <p>
+     * {@.ja ポートへデータを書き込む。
+     * <ul>
+     * <li> コールバックファンクタ OnWrite がセットされている場合、
+     *      OutPort が保持するバッファに書き込む前に OnWrite が呼ばれる。</li>
+     * <li> OutPort が保持するバッファがオーバーフローを検出できるバッファであ
+     *      り、かつ、書き込む際にバッファがオーバーフローを検出した場合、
+     *      コールバックファンクタ OnOverflow が呼ばれる。</li>
+     * <li> コールバックファンクタ OnWriteConvert がセットされている場合、
+     *      バッファ書き込み時に、 OnWriteConvert の operator() の戻り値が
+     *      バッファに書き込まれる。</li>
+     * </ul>}
+     * {@.en Write data in the port.
+     * <ul>
+     * <li> When callback functor OnWrite is already set, OnWrite will be
+     *      invoked before writing into the buffer held by OutPort.
+     * <li> When the buffer held by OutPort can detect the overflow,
+     *      and when it detected the overflow at writing, callback functor
+     *      OnOverflow will be invoked.
+     * <li> When callback functor OnWriteConvert is already set, 
+     *      the return value of operator() of OnWriteConvert will be written
+     *      into the buffer at the writing.
+     * </ul>}
+     * </p>
+     * @param value 
+     *   {@.ja 書き込み対象データ}
+     *   {@.en The target data for writing}
+     *
+     * @return 
+     *   {@.ja 書き込み処理結果(書き込み成功:true、書き込み失敗:false)}
+     *   {@.en Writing result (Successful:true, Failed:false)}
+     *
      */
     public boolean write(final DataType value) {
         rtcout.println(rtcout.TRACE, "DataType write()");
-        synchronized (m_connectors){
-            if (m_OnWrite != null) {
-                m_OnWrite.run(value);
-            }
+
+        if (m_OnWrite != null) {
+            m_OnWrite.run(value);
+        }
+
+        boolean result = true;
+        Vector<String> disconnect_ids = new Vector<String>();
+        synchronized (m_connectorsMutex){
 
             // check number of connectors
             int conn_size = m_connectors.size();
             if (!(conn_size > 0)) { 
-                return true; 
+                return false; 
             }
         
             // set timestamp
 //            set_timestamp(value);
 
-            // data -> (conversion) -> CDR stream
-            m_cdr = new EncapsOutputStream(m_spi_orb,isLittleEndian());
+            m_status.setSize(conn_size);
 
-            if (m_OnWriteConvert != null) {
-                DataType convervalue = m_OnWriteConvert.run(value);
-                write_stream(convervalue,m_cdr); 
-            }
-            else {
-                write_stream(value,m_cdr);
-            }
-
-            boolean result = true;
             for (int i=0, len=conn_size; i < len; ++i) {
                 ReturnCode ret;
-                ret = m_connectors.elementAt(i).write(m_cdr);
-                if (ret != ReturnCode.PORT_OK) {
-                    result = false;
-                    if (ret.equals(ReturnCode.CONNECTION_LOST)) {
-                        disconnect(m_connectors.elementAt(i).id());
+                // data -> (conversion) -> CDR stream
+                if (m_OnWriteConvert != null) {
+                    rtcout.println(rtcout.DEBUG, 
+                                "m_connectors.OnWriteConvert called");
+                    ret = m_connectors.elementAt(i).write(
+                                                m_OnWriteConvert.run(value));
+                }
+                else{
+                    rtcout.println(rtcout.DEBUG, 
+                                "m_connectors.write called");
+                    ret = m_connectors.elementAt(i).write(value);
+                }
+
+                m_status.add(i, ret);
+                if (ret.equals(ReturnCode.PORT_OK)) {
+                    continue;
+                }
+
+                result = false;
+                String id = m_connectors.elementAt(i).id();
+                RTC.ConnectorProfile prof = findConnProfile(id);
+
+                if (ret.equals(ReturnCode.CONNECTION_LOST)) {
+                    rtcout.println(rtcout.TRACE, "connection_lost id: "+id);
+                    if(m_onConnectionLost != null) {
+                        RTC.ConnectorProfileHolder holder 
+                            = new RTC.ConnectorProfileHolder(prof);
+                        m_onConnectionLost.run(holder);
                     }
+                    disconnect_ids.add(id);
                 }
             }
-            return result;
         }
+        
+        java.util.Iterator it = disconnect_ids.iterator();
+        while (it.hasNext()) {
+            disconnect((String)it.next());
+        }
+        return result;
     }
     
     /**
@@ -242,6 +295,26 @@ public class OutPort<DataType> extends OutPortBase {
     }
     
     
+    /**
+     * {@.ja データ書き込み}
+     * {@.en Write data}
+     * <p>
+     * {@.ja ポートへデータを書き込む。設定された値をポートに書き込む。}
+     * {@.en  Write data to the port. Write the set value to the port.}
+     * </p>
+     * @param value 
+     *   {@.ja 書き込み対象データ}
+     *   {@.en The target data for writing}
+     *
+     * @return  
+     *   {@.ja 書き込み処理結果(書き込み成功:true、書き込み失敗:false)}
+     *   {@.en Writing result (Successful:true, Failed:false)}
+     *
+     */
+    public boolean insert(DataType value) {
+        return write(value);
+    }
+
     /**
      * <p>データ読み出し時における、ブロック/非ブロックモードを指定します。<br />
      * ブロックモードを指定した場合は、読み出せるデータを受信するかタイムアウトになるまで、
@@ -282,6 +355,66 @@ public class OutPort<DataType> extends OutPortBase {
         this.m_writeTimeout = timeout;
     }
     
+    /**
+     * {@.ja 特定のコネクタへの書き込みステータスを得る}
+     * {@.en brief Getting specified connector's writing status}
+     *
+     * <p>
+     * {@.ja OutPort は接続ごとに Connector と呼ばれる仮想データチャネルを持
+     * つ。write() 関数はこれら Connector に対してデータを書き込むが、
+     * 各 Connector は書き込みごとにステータスを返す。write() 関数では、
+     * すべての Connector が正常終了したときのみ true を返し、それ以外
+     * では false を返却する。この関数は write() が false の場合ステー
+     * タスを調べるのに使用することができる。}
+     * {@.en An OutPort has Connectors that are virtual data stream channel
+     * for each connection.  "write()" function write into these
+     * Connectors, and each Connector returns writing-status.  write()
+     * function will return a true value if all Connectors return
+     * normal status, and a false value will be returned if at least
+     * one Connector failed.  This function can be used to inspect
+     * each return status}
+     * </p>
+     * 
+     * @param index 
+     *   {@.ja Connector の index}
+     *   {@.en Connector index}
+     * @return 
+     *   {@.ja ステータス}
+     *   {@.en Writing status}
+     *
+     */
+    ReturnCode getStatus(int index) {
+        return m_status.elementAt(index);
+    }
+
+    /**
+     * {@.ja 特定のコネクタへの書き込みステータスリストを得る}
+     * {@.en Getting specified connector's writing status list}
+     *
+     * <p>
+     * {@.ja OutPort は接続ごとに Connector と呼ばれる仮想データチャネルを持
+     * つ。write() 関数はこれら Connector に対してデータを書き込むが、
+     * 各 Connector は書き込みごとにステータスを返す。write() 関数では、
+     * すべての Connector が正常終了したときのみ true を返し、それ以外
+     * では false を返却する。この関数は write() が false の場合ステー
+     * タスを調べるのに使用することができる。}
+     * {@.en An OutPort has Connectors that are virtual data stream channel
+     * for each connection.  "write()" function write into these
+     * Connectors, and each Connector returns writing-status.  write()
+     * function will return a true value if all Connectors return
+     * normal status, and a false value will be returned if at least
+     * one Connector failed.  This function can be used to inspect
+     * each return status}
+     * </p>
+     * 
+     * @return 
+     *   {@.ja ステータスリスト}
+     *   {@.en Writing status list}
+     */
+    Vector<ReturnCode> getStatusList() {
+        return m_status;
+    }
+
     /**
      * <p>データ書き込み直前に呼び出されるコールバックインタフェースを設定します。</p>
      * 
@@ -370,6 +503,40 @@ public class OutPort<DataType> extends OutPortBase {
         rtcout.println(rtcout.TRACE, "onDisconnect(id = "+id+")");
     }
 
+    /**
+     * {@.ja CDR化で使用するStreamableを設定する}
+     * {@.en Sets Streamable. }
+     *
+     * <p> 
+     * {@.ja 与えられたStreamableをCDR化で使用するStreamableへ設定する。
+     * また、与えられたStreamableからvalueフィールドを取得し保持する。}
+     * {@.en This method sets Streamable used when making it to CDR. 
+     * Moreover, this method acquires the value field from Streamable. }
+     *
+     * @param holderStreamable
+     *   {@.ja  HolderクラスのStreamable}
+     *   {@.en  Streamable of Holder class}
+     * @return 
+     *   {@.ja false 失敗}
+     *   {@.en false Failure}
+     * 
+     *
+     */
+    public boolean setStreamable(Streamable holderStreamable) {
+        try {
+            m_streamable = holderStreamable;
+            m_field = m_streamable.getClass().getField("value");
+            return true;
+        }
+        catch(NoSuchFieldException e){
+            //getField throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        return false;
+    }
+
+
     private BufferBase<DataType> m_buffer;
     private DataRef<DataType> m_value;
     private long m_timeoutTick;
@@ -387,9 +554,9 @@ public class OutPort<DataType> extends OutPortBase {
 
     private OnConnect m_OnConnect;
     private OnDisconnect m_OnDisconnect;
-    private OutputStream m_cdr;
 
     private Streamable m_streamable = null;
     private Field m_field = null;
     private com.sun.corba.se.spi.orb.ORB m_spi_orb;
+    private Vector<ReturnCode> m_status = new Vector<ReturnCode>();
 }

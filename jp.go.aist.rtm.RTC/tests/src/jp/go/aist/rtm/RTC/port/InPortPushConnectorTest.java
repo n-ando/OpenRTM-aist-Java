@@ -339,8 +339,8 @@ public class InPortPushConnectorTest extends TestCase {
         InPortConnector connector= null;
         connector = new InPortPushConnector(profile_new, provider, pbuffer);
 
-        OutputStream cdr = null;
-        DataRef<OutputStream> cdrref = new DataRef<OutputStream>(cdr);
+        InputStream cdr = null;
+        DataRef<InputStream> cdrref = new DataRef<InputStream>(cdr);
         int read_counter =  RingBufferMock.m_mock_logger.countLog("RingBufferMock.read");
         ReturnCode read_ret = connector.read(cdrref);
         assertEquals("1:",read_counter+1, 
@@ -401,8 +401,8 @@ public class InPortPushConnectorTest extends TestCase {
         connector = new InPortPushConnector(profile_new, provider,buffer);
 
         connector.disconnect();
-        OutputStream cdr = null;
-        DataRef<OutputStream> cdrref = new DataRef<OutputStream>(cdr);
+        InputStream cdr = null;
+        DataRef<InputStream> cdrref = new DataRef<InputStream>(cdr);
         ReturnCode ret = connector.read(cdrref);
         assertTrue("1:"+"PRECONDITION_NOT_MET"+"read="+ret,ret.equals(ReturnCode.PRECONDITION_NOT_MET)); 
 

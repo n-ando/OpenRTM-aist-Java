@@ -197,7 +197,34 @@ public class CORBA_SeqUtil {
         
         return -1;
     }
+    
+    /**
+     * 
+     */
+    public static int find(final RTM.ManagerListHolder seq, equalFunctor f) {
+        if( seq.value == null ) return -1;
+        for (int i = 0; i < seq.value.length; ++i) {
+            if (f.equalof(seq.value[i])) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
 
+    /**
+     * 
+     */
+    public static int find(final RTC.RTCListHolder seq, equalFunctor f) {
+        if( seq.value == null ) return -1;
+        for (int i = 0; i < seq.value.length; ++i) {
+            if (f.equalof(seq.value[i])) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
     /**
      * <p>シーケンスの末尾にNameValueオブジェクトを追加します。</p>
      * 
@@ -453,6 +480,25 @@ public class CORBA_SeqUtil {
         newlist[len] = elem;
         seq.value = newlist;
     }
+
+    /**
+     *
+     */
+    public static void push_back(RTM.ManagerListHolder seq, RTM.Manager elem) {
+        int len;
+        if( seq.value == null ) {
+            len = 0;
+        } else {
+            len = seq.value.length;
+        }
+        RTM.Manager[] newlist = new RTM.Manager[len + 1];
+        for (int intIdx = 0; intIdx < len; ++intIdx) {
+            newlist[intIdx] = seq.value[intIdx];
+        }
+        newlist[len] = elem;
+        seq.value = newlist;
+    }
+
     /**
      * <p>シーケンスの末尾に、別のNameValueオブジェクトシーケンスを追加します。</p>
      * 
@@ -510,7 +556,92 @@ public class CORBA_SeqUtil {
         }
         seq1.value = newlist;
     }
+
+    /**
+     * 
+     *
+     */
+    public static void push_back_list(RTM.ModuleProfileListHolder seq1, 
+                                       RTM.ModuleProfileListHolder seq2) {
+        int len1, len2;
+        if( seq1.value==null ) {
+            len1 = 0;
+        } else {
+            len1 = seq1.value.length;
+        }
+        if( seq2.value==null ) {
+            len2 = 0;
+        } else {
+            len2 = seq2.value.length;
+        }
+        int len = len1 + len2;
+        RTM.ModuleProfile[] newlist = new RTM.ModuleProfile[len];
+        for (int intIdx = 0; intIdx < len1; ++intIdx) {
+            newlist[intIdx] = seq1.value[intIdx];
+        }
+        for (int intIdx = 0; intIdx < len2; ++intIdx) {
+            newlist[len1 + intIdx] = seq2.value[intIdx];
+        }
+        seq1.value = newlist;
+    }
     
+
+    /**
+     * 
+     *
+     */
+    public static void push_back_list(RTC.RTCListHolder seq1, 
+                                       RTC.RTCListHolder seq2) {
+        int len1, len2;
+        if( seq1.value==null ) {
+            len1 = 0;
+        } else {
+            len1 = seq1.value.length;
+        }
+        if( seq2.value==null ) {
+            len2 = 0;
+        } else {
+            len2 = seq2.value.length;
+        }
+        int len = len1 + len2;
+        RTC.RTObject[] newlist = new RTC.RTObject[len];
+        for (int intIdx = 0; intIdx < len1; ++intIdx) {
+            newlist[intIdx] = seq1.value[intIdx];
+        }
+        for (int intIdx = 0; intIdx < len2; ++intIdx) {
+            newlist[len1 + intIdx] = seq2.value[intIdx];
+        }
+        seq1.value = newlist;
+    }
+
+    /**
+     * 
+     *
+     */
+    public static void push_back_list(RTC.ComponentProfileListHolder seq1, 
+                                       RTC.ComponentProfileListHolder seq2) {
+        int len1, len2;
+        if( seq1.value==null ) {
+            len1 = 0;
+        } else {
+            len1 = seq1.value.length;
+        }
+        if( seq2.value==null ) {
+            len2 = 0;
+        } else {
+            len2 = seq2.value.length;
+        }
+        int len = len1 + len2;
+        RTC.ComponentProfile[] newlist = new RTC.ComponentProfile[len];
+        for (int intIdx = 0; intIdx < len1; ++intIdx) {
+            newlist[intIdx] = seq1.value[intIdx];
+        }
+        for (int intIdx = 0; intIdx < len2; ++intIdx) {
+            newlist[len1 + intIdx] = seq2.value[intIdx];
+        }
+        seq1.value = newlist;
+    }
+
     /**
      * <p>シーケンス内の指定された位置にNameValueオブジェクトを挿入します。</p>
      * 
@@ -719,6 +850,41 @@ public class CORBA_SeqUtil {
         seq.value = newlist;
     }
 
+    /**
+     *
+     *
+     */
+    public static void erase(RTM.ManagerListHolder seq, int index) {
+        if ( seq.value == null ) return;
+        int len = seq.value.length;
+        if (index > len)  return;
+        RTM.Manager[] newlist = new RTM.Manager[len - 1];
+        for (int intIdx = 0; intIdx < index; ++intIdx) {
+            newlist[intIdx] = seq.value[intIdx];
+        }
+        for (int intIdx = index; intIdx < len - 1; ++intIdx) {
+            newlist[intIdx] = seq.value[intIdx + 1];
+        }
+        seq.value = newlist;
+    }
+
+    /**
+     *
+     *
+     */
+    public static void erase(RTC.RTCListHolder seq, int index) {
+        if ( seq.value == null ) return;
+        int len = seq.value.length;
+        if (index > len)  return;
+        RTC.RTObject[] newlist = new RTC.RTObject[len - 1];
+        for (int intIdx = 0; intIdx < index; ++intIdx) {
+            newlist[intIdx] = seq.value[intIdx];
+        }
+        for (int intIdx = index; intIdx < len - 1; ++intIdx) {
+            newlist[intIdx] = seq.value[intIdx + 1];
+        }
+        seq.value = newlist;
+    }
     /**
      * <p>シーケンス内の条件に合致する要素を削除します。</p>
      * 

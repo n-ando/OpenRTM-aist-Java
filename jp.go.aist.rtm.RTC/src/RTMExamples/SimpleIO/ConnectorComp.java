@@ -5,6 +5,7 @@ import jp.go.aist.rtm.RTC.port.CorbaConsumer;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.StringUtil;
 
 import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
@@ -27,9 +28,10 @@ public class ConnectorComp {
 
     public static void main(String[] args) {
         
-        String subs_type = "";
+        String subs_type = "flush";
         String period = "";
-        for( int intIdx=1;intIdx<args.length;++intIdx ) {
+        String endian = "little,big";
+        for( int intIdx=0;intIdx<args.length;++intIdx ) {
             String arg = new String(args[intIdx]);
             if( arg.equals("--flush") ) {
                 subs_type = "Flush";
@@ -42,6 +44,11 @@ public class ConnectorComp {
                 } else {
                     period = "1.0";
                 }
+            } else if( arg.equals("--endian") ) {
+                if( ++intIdx<args.length) {
+                    endian = args[intIdx];
+                } 
+                endian = StringUtil.normalize(endian);
             } else if( arg.equals("--help") ) {
                 usage();
             } else {
@@ -54,6 +61,8 @@ public class ConnectorComp {
             System.out.println( "Period: "  + period + " [Hz]" );
         }
         
+        System.out.println( "Endian: "+endian);
+
         ORB orb = ORBUtil.getOrb(args);
         CorbaNaming naming = null;
         try {
@@ -124,12 +133,18 @@ public class ConnectorComp {
         NVListHolder nvholder = new NVListHolder();
         nvholder.value = prof.properties;
         if( nvholder.value==null ) nvholder.value = new NameValue[0];
-        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.interface_type","CORBA_Any"));
-        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.dataflow_type", "Push"));
-        CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.subscription_type", subs_type));
+        CORBA_SeqUtil.push_back(nvholder, 
+                NVUtil.newNVString("dataport.interface_type","corba_cdr"));
+        CORBA_SeqUtil.push_back(nvholder, 
+                NVUtil.newNVString("dataport.dataflow_type", "push"));
+        CORBA_SeqUtil.push_back(nvholder, 
+                NVUtil.newNVString("dataport.subscription_type", subs_type));
+        CORBA_SeqUtil.push_back(nvholder, 
+                NVUtil.newNVString("dataport.serializer.cdr.endian", endian));
         
         if( !period.equals("") )
-            CORBA_SeqUtil.push_back(nvholder, NVUtil.newNV("dataport.push_interval", period));
+            CORBA_SeqUtil.push_back(nvholder, 
+                NVUtil.newNVString("dataport.push_interval", period));
         prof.properties = nvholder.value;
         
         ConnectorProfileHolder proflist = new ConnectorProfileHolder();
@@ -141,6 +156,7 @@ public class ConnectorComp {
         System.out.println( "Connector ID: " + prof.connector_id );
         NVUtil.dump(new NVListHolder(proflist.value.properties));
 
+        System.out.println("..");
         orb.destroy();
     }
 

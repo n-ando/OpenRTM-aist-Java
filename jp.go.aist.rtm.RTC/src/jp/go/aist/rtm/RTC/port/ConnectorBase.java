@@ -18,13 +18,25 @@ import jp.go.aist.rtm.RTC.util.Properties;
 
 public abstract class ConnectorBase {
     /**
-     * <p> Profile </p>
+     * <p> ConnectorInfoHoldedr </p>
+     *
+     */
+    public static class ConnectorInfoHolder {
+        public ConnectorBase.ConnectorInfo value = null;
+        public ConnectorInfoHolder() {
+        }
+        public ConnectorInfoHolder(ConnectorBase.ConnectorInfo initialValue) {
+            value = initialValue;
+        }
+    };
+    /**
+     * <p> ConnectorInfo </p>
      * <p> local representation of Connector profile </p>
      *
      * <p> ConnectorProfile struct for ConnectorBase and its subclasses. </p>
      */
-    public static class Profile {
-        public Profile(final String name_, final String id_,
+    public static class ConnectorInfo {
+        public ConnectorInfo(final String name_, final String id_,
               Vector<String> ports_, Properties properties_) {
             name = name_;
             id = id_;
@@ -44,7 +56,7 @@ public abstract class ConnectorBase {
      * <p> Getting Profile </p>
      * <p> This operation returns Connector Profile </p>
      */
-    public abstract Profile profile();
+    public abstract ConnectorInfo profile();
 
     /**
      * <p> Getting Connector ID </p>

@@ -1,8 +1,7 @@
 // -*- Java -*-
-/*!
- * @file AutoTestOutComp.java
- * @brief Standalone component
- * @date $Date$
+/**
+ * Standalone component
+ * $Date$
  *
  * $Id$
  */
@@ -14,9 +13,8 @@ import jp.go.aist.rtm.RTC.ModuleInitProc;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.util.Properties;
 
-/*!
- * @class AutoTestOutComp
- * @brief Standalone component Class
+/**
+ * Standalone component Class
  *
  */
 public class AutoTestOutComp implements ModuleInitProc {
@@ -28,8 +26,8 @@ public class AutoTestOutComp implements ModuleInitProc {
       // Create a component
       RTObject_impl comp = mgr.createComponent("AutoTestOut");
       if( comp==null ) {
-    	  System.err.println("Component create failed.");
-    	  System.exit(0);
+          System.err.println("Component create failed.");
+          System.exit(0);
       }
       
       // Example

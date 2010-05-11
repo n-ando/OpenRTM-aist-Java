@@ -1,8 +1,8 @@
 // -*- Java -*-
-/*!
- * @file  AutoTestInImpl.java
- * @brief Sample component for auto test.
- * @date  $Date$
+/**
+ * AutoTestInImpl.java
+ * Sample component for auto test.
+ * $Date$
  *
  * $Id$
  */
@@ -22,18 +22,17 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
 import RTC.ReturnCode_t;
 import java.io.*;
 
-/*!
- * @class AutoTestInImpl
- * @brief Sample component for auto test.
+/**
+ * Sample component for auto test.
  *
  */
 public class AutoTestInImpl extends DataFlowComponentBase {
 
-  /*!
-   * @brief constructor
+  /**
+   * constructor
    * @param manager Maneger Object
    */
-	public AutoTestInImpl(Manager manager) {  
+  public AutoTestInImpl(Manager manager) {  
         super(manager);
         // <rtc-template block="initializer">
         m_in_val = new TimedFloat();
@@ -47,19 +46,14 @@ public class AutoTestInImpl extends DataFlowComponentBase {
 
         // Registration: InPort/OutPort/Service
         // <rtc-template block="registration">
-        // Set InPort buffers
-        try {
-	    registerInPort(TimedFloat.class, "in", m_inIn);
-	    registerInPort(TimedFloatSeq.class, "seqin", m_seqinIn);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
         
         // Set OutPort buffer
         
         // Set service provider to Ports
         try {
-	    m_MyServicePort.registerProvider("myservice0", "MyService", m_myservice0);
+            m_MyServicePort.registerProvider("myservice0", 
+                                                "MyService", 
+                                                m_myservice0);
         } catch (ServantAlreadyActive e) {
             e.printStackTrace();
         } catch (WrongPolicy e) {
@@ -70,8 +64,6 @@ public class AutoTestInImpl extends DataFlowComponentBase {
         
         // Set service consumers to Ports
         
-        // Set CORBA Service Ports
-        registerPort(m_MyServicePort);
         
         // </rtc-template>
     }
@@ -85,18 +77,22 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      * 
      * 
      */
-//    @Override
-//    protected ReturnCode_t onInitialize() {
-//	
-//        return super.onInitialize();
-//    }
+    @Override
+    protected ReturnCode_t onInitialize() {
+
+        // Set InPort buffers
+        addInPort("in", m_inIn);
+        addInPort("seqin", m_seqinIn);
+        // Set CORBA Service Ports
+        addPort(m_MyServicePort);
+        return super.onInitialize();
+    }
 
     /***
      *
      * The finalize action (on ALIVE->END transition)
      * formaer rtc_exiting_entry()
      *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -110,9 +106,6 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      * The startup action when ExecutionContext startup
      * former rtc_starting_entry()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -126,9 +119,6 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      * The shutdown action when ExecutionContext stop
      * former rtc_stopping_entry()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -142,21 +132,18 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      * The activated action (Active state entry action)
      * former rtc_active_entry()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
     @Override
     protected ReturnCode_t onActivated(int ec_id) {
-	try {
-	    m_br  = new BufferedWriter( new FileWriter("received-data") );
-	}
-	catch (Exception e) {
-	    e.printStackTrace();
-	}
-	m_msg = "";
+        try {
+            m_br  = new BufferedWriter( new FileWriter("received-data") );
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        m_msg = "";
 
         return super.onActivated(ec_id);
     }
@@ -166,21 +153,18 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      * The deactivated action (Active state exit action)
      * former rtc_active_exit()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
     @Override
     protected ReturnCode_t onDeactivated(int ec_id) {
-	try {
-	    m_br.close();
-	}
-	catch (Exception e) {
-	    e.printStackTrace();
-	}
-
+        try {
+            m_br.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        m_myservice0.reset_message();
         return super.onDeactivated(ec_id);
     }
 
@@ -189,50 +173,49 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      * The execution action that is invoked periodically
      * former rtc_active_do()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
     @Override
     protected ReturnCode_t onExecute(int ec_id) {
-	try {
-	    if (m_msg.equals("")) 
-		m_msg = m_myservice0.get_echo_message();
+        try {
+            if (m_msg.equals("")) 
+                m_msg = m_myservice0.get_echo_message();
 
-	    if (m_inIn.isNew() && m_seqinIn.isNew() && !m_msg.equals("")) {
-		// read TimedFloat data.
-		m_inIn.read();
-		// read TimedFloatSeq data.
-		m_seqinIn.read();
-		
-		Float f = new Float(m_in.v.data);
-		// write data.
-		m_br.write(f.toString());
-		m_br.newLine();
-		int len = m_seqin.v.data.length;
+            if (m_inIn.isNew() && m_seqinIn.isNew() && !m_msg.equals("")) {
+                // read TimedFloat data.
+                m_inIn.read();
+                // read TimedFloatSeq data.
+                m_seqinIn.read();
 
-		Float fs = new Float(m_seqin.v.data[0]);
-		String str = new String(fs.toString());
-		for (int i=1; i<len; ++i) {
-		    str = str + " " + m_seqin.v.data[i];
-		}
-		m_br.write(str);
-		m_br.newLine();
+                Float f = new Float(m_in.v.data);
+                // write data.
+                java.text.DecimalFormat exf 
+                    = new java.text.DecimalFormat("###.0");
+                m_br.write(exf.format(f));
+                m_br.newLine();
+                int len = m_seqin.v.data.length;
 
-		m_br.write(m_msg);
-		m_br.newLine();
-		m_msg = "";
-	    }
-	}
-	catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	}
-	catch (Exception e) {
-	    e.printStackTrace();
-	}
-	
+                Float fs = new Float(m_seqin.v.data[0]);
+                String str = new String(fs.toString());
+                for (int i=1; i<len; ++i) {
+                    str = str + " " + m_seqin.v.data[i];
+                }
+                m_br.write(str);
+                m_br.newLine();
+
+                m_br.write(m_msg);
+                m_br.newLine();
+                m_msg = "";
+           }
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return super.onExecute(ec_id);
     }
 
@@ -241,9 +224,6 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      * The aborting action when main logic error occurred.
      * former rtc_aborting_entry()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -257,9 +237,6 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      * The error action in ERROR state
      * former rtc_error_do()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -273,9 +250,6 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      * The reset action that is invoked resetting
      * This is same but different the former rtc_init_entry()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -289,9 +263,6 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      * The state update action that is invoked after onExecute() action
      * no corresponding operation exists in OpenRTm-aist-0.2.0
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -305,9 +276,6 @@ public class AutoTestInImpl extends DataFlowComponentBase {
      * The action that is invoked when execution context's rate is changed
      * no corresponding operation exists in OpenRTm-aist-0.2.0
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -320,13 +288,13 @@ public class AutoTestInImpl extends DataFlowComponentBase {
     // <rtc-template block="inport_declare">
     protected TimedFloat m_in_val;
     protected DataRef<TimedFloat> m_in;
-    /*!
+    /**
      */
     protected InPort<TimedFloat> m_inIn;
 
     protected TimedFloatSeq m_seqin_val;
     protected DataRef<TimedFloatSeq> m_seqin;
-    /*!
+    /**
      */
     protected InPort<TimedFloatSeq> m_seqinIn;
 
@@ -340,7 +308,7 @@ public class AutoTestInImpl extends DataFlowComponentBase {
 
     // CORBA Port declaration
     // <rtc-template block="corbaport_declare">
-    /*!
+    /**
      */
     protected CorbaPort m_MyServicePort;
     
@@ -348,7 +316,7 @@ public class AutoTestInImpl extends DataFlowComponentBase {
 
     // Service declaration
     // <rtc-template block="service_declare">
-    /*!
+    /**
      */
     protected MyServiceSVC_impl m_myservice0 = new MyServiceSVC_impl();
     

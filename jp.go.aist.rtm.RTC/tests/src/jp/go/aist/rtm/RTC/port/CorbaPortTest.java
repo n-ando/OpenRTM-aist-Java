@@ -10,7 +10,7 @@ import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
-//import RTC.Port;
+import RTC.PortService;
 import RTC.PortInterfacePolarity;
 import RTC.PortInterfaceProfile;
 import RTC.PortInterfaceProfileListHolder;
@@ -31,6 +31,26 @@ import junit.framework.TestCase;
  */
 public class CorbaPortTest extends TestCase {
 
+    class CorbaPortMock extends CorbaPort {
+        /**
+         *
+         */
+        public CorbaPortMock(final String name){
+            super(name);
+        }
+        /**
+         *
+         */
+        public void deactivateInterfaces_public() {
+            deactivateInterfaces();
+        }
+        /**
+         *
+         */
+        public void activateInterfaces_public() {
+            activateInterfaces();
+        }
+    };
     private class OrbRunner implements Runnable {
 
         private final String[] ARGS = new String[] {
@@ -67,6 +87,9 @@ public class CorbaPortTest extends TestCase {
     
     private class MyService_impl extends MyServicePOA {
         
+        public MyService_impl(){
+            m_hello_world_called = false;
+        }
         public void setName(final String name) {
             this.m_name = name;
         }
@@ -88,15 +111,15 @@ public class CorbaPortTest extends TestCase {
         private boolean m_hello_world_called;
     }
 
-    private CorbaPort m_port0;
+//    private CorbaPort m_port0;
 //    private Port m_port0ref;
-    private MyService_impl m_mysvc0 = new MyService_impl();
-    private CorbaConsumer<MyService> m_cons0 = new CorbaConsumer<MyService>(MyService.class);
+//    private MyService_impl m_mysvc0 = new MyService_impl();
+//    private CorbaConsumer<MyService> m_cons0 = new CorbaConsumer<MyService>(MyService.class);
     
-    private CorbaPort m_port1;
+//    private CorbaPort m_port1;
 //    private Port m_port1ref;
-    private MyService_impl m_mysvc1 = new MyService_impl();
-    private CorbaConsumer<MyService> m_cons1 = new CorbaConsumer<MyService>(MyService.class);
+//    private MyService_impl m_mysvc1 = new MyService_impl();
+//    private CorbaConsumer<MyService> m_cons1 = new CorbaConsumer<MyService>(MyService.class);
     
     private OrbRunner m_orbRunner;
 
@@ -106,7 +129,7 @@ public class CorbaPortTest extends TestCase {
 
         this.m_orbRunner = new OrbRunner();
         this.m_orbRunner.start();
-
+/*
         this.m_port0 = new CorbaPort("port0");
         this.m_port1 = new CorbaPort("port1");
         
@@ -120,6 +143,7 @@ public class CorbaPortTest extends TestCase {
         this.m_mysvc1.setName("MyService1 in Port1");
         this.m_port1.registerProvider("MyService1", "Generic", this.m_mysvc1);
         this.m_port1.registerConsumer("MyService0", "Generic", this.m_cons1);
+*/
     }
     protected void tearDown() throws Exception {
         super.tearDown();
@@ -215,12 +239,18 @@ public class CorbaPortTest extends TestCase {
      * </p>
      */
     public void test_connect() {
-/*
-        MyService_impl pMyServiceImplA = new MyService_impl(); // will be deleted automatically
-        CorbaConsumer<MyService> pMyServiceConsumerB = new CorbaConsumer<MyService>(MyService.class); // will be deleted automatically
-        
-        MyService_impl pMyServiceImplB = new MyService_impl(); // will be deleted automatically
-        CorbaConsumer<MyService> pMyServiceConsumerA = new CorbaConsumer<MyService>(MyService.class); // will be deleted automatically
+
+System.out.println("test_connect()");
+        MyService_impl pMyServiceImplA 
+            = new MyService_impl();          // will be deleted automatically
+        CorbaConsumer<MyService> pMyServiceConsumerB 
+            = new CorbaConsumer<MyService>(MyService.class);
+                                             // will be deleted automatically
+        MyService_impl pMyServiceImplB 
+            = new MyService_impl();          // will be deleted automatically
+        CorbaConsumer<MyService> pMyServiceConsumerA 
+            = new CorbaConsumer<MyService>(MyService.class);
+                                             // will be deleted automatically 
 
         CorbaPort port0 = new CorbaPort("name of port0");
         CorbaPort port1 = new CorbaPort("name of port1");
@@ -247,60 +277,293 @@ public class CorbaPortTest extends TestCase {
                 ConnectorProfileFactory.create());
         prof.value.connector_id = "";
         prof.value.name = "connector0";
-        prof.value.ports = new Port[2];
-        prof.value.ports[0] = this.m_port0ref;
-        prof.value.ports[1] = this.m_port1ref;
+        prof.value.ports = new PortService[2];
+        prof.value.ports[0] = port0.getPortRef();
+        prof.value.ports[1] = port1.getPortRef();
 
         // 接続する
-        port0.connect(prof);
+        ReturnCode_t ret = port0.connect(prof);
         
         // 接続IDが割り当てられたことを確認する
-        assertFalse(prof.value.connector_id.equals(""));
+        assertFalse("1:",prof.value.connector_id.equals(""));
 
-        assertEquals("MyService", pMyServiceImplA.name());
-        assertEquals("MyService", pMyServiceImplB.name());
+        assertEquals("2:","MyService", pMyServiceImplA.name());
+        assertEquals("3:","MyService", pMyServiceImplB.name());
 
         // ポート1のコンシューマ側からメソッドを呼び出すと、ポート0のプロバイダ側が意図どおり呼び出されるか？
-        assertFalse(pMyServiceImplA.is_hello_world_called());
-        pMyServiceImplA.hello_world();
-        assertTrue(pMyServiceImplA.is_hello_world_called());
+        assertFalse("4:",pMyServiceImplA.is_hello_world_called());
+        pMyServiceConsumerA._ptr().hello_world();
+        assertTrue("5:",pMyServiceImplA.is_hello_world_called());
         
         // ポート0のコンシューマ側からメソッドを呼び出すと、ポート1のプロバイダ側が意図どおり呼び出されるか？
-        assertFalse(pMyServiceImplB.is_hello_world_called());
-        pMyServiceImplB.hello_world();
-        assertTrue(pMyServiceImplB.is_hello_world_called());
-*/
+        assertFalse("6:",pMyServiceImplB.is_hello_world_called());
+        pMyServiceConsumerB._ptr().hello_world();
+        assertTrue("7:",pMyServiceImplB.is_hello_world_called());
     }
 
     /**
      * <p>ポート間接続の切断をテストします。</p>
      */
     public void test_disconnect() {
-/*        
+        
+        MyService_impl pMyServiceImplA 
+            = new MyService_impl();          // will be deleted automatically
+        CorbaConsumer<MyService> pMyServiceConsumerB 
+            = new CorbaConsumer<MyService>(MyService.class);
+                                             // will be deleted automatically
+        MyService_impl pMyServiceImplB 
+            = new MyService_impl();          // will be deleted automatically
+        CorbaConsumer<MyService> pMyServiceConsumerA 
+            = new CorbaConsumer<MyService>(MyService.class);
+                                             // will be deleted automatically 
+
+        CorbaPort port0 = new CorbaPort("name of port0");
+        CorbaPort port1 = new CorbaPort("name of port1");
+
+        try {
+            port0.registerProvider("MyServiceA", "Generic", pMyServiceImplA);
+            port0.registerConsumer("MyServiceB", "Generic", pMyServiceConsumerB);
+            
+            port1.registerProvider("MyServiceB", "Generic", pMyServiceImplB);
+            port1.registerConsumer("MyServiceA", "Generic", pMyServiceConsumerA);
+        } catch (ServantAlreadyActive e) {
+            e.printStackTrace();
+            fail();
+        } catch (WrongPolicy e) {
+            e.printStackTrace();
+            fail();
+        } catch (ObjectNotActive e) {
+            e.printStackTrace();
+            fail();
+        }
+
         ConnectorProfileHolder prof = new ConnectorProfileHolder(
                 ConnectorProfileFactory.create());
         prof.value.connector_id = "";
         prof.value.name = "connector0";
-        prof.value.ports = new Port[2];
-        prof.value.ports[0] = this.m_port0ref;
-        prof.value.ports[1] = this.m_port1ref;
+        prof.value.ports = new PortService[2];
+        prof.value.ports[0] = port0.getPortRef();
+        prof.value.ports[1] = port1.getPortRef();
         
         // ポート間を接続して、接続できていることを確認する
-        ReturnCode_t retval = m_port0ref.connect(prof);
-        assertEquals(ReturnCode_t.RTC_OK, retval);
-        assertFalse(prof.value.connector_id.equals(""));
+        ReturnCode_t retval = port0.connect(prof);
 
-        ConnectorProfile[] proflist = this.m_port0ref.get_connector_profiles();
-        assertEquals(1, proflist.length);
-
-        assertEquals("MyService", this.m_cons0._ptr().name());
-        this.m_cons0._ptr().hello_world();
-        this.m_cons0._ptr().print_msg("hogehoge");
+        assertFalse("1:",pMyServiceImplA.is_hello_world_called());
+        pMyServiceConsumerA._ptr().hello_world();
+        assertTrue("2:",pMyServiceImplA.is_hello_world_called());
 
         // 接続を解除し、正しく切断できていることを確認する
-        this.m_port0ref.disconnect(prof.value.connector_id);
+        port0.disconnect(prof.value.connector_id);
 
-        assertNull(this.m_cons0._ptr());
-*/
+      try
+	{
+	  assertTrue("3:",! pMyServiceImplB.is_hello_world_called());
+	  pMyServiceConsumerB._ptr().hello_world();
+							
+	  fail("Couldn't catch no exceptions. Disconnection failed.");
+	}
+      catch(Exception ex)
+	{
+	  // Properly disconnected.
+	}
+
+
     }
+    /**
+     */ 
+    public void test_get_port_profile() {
+        //
+        MyService_impl pMyServiceImpl
+            = new MyService_impl(); // will be deleted automatically
+        CorbaConsumer<MyService> pMyServiceConsumer
+            = new CorbaConsumer<MyService>(MyService.class); 
+                                    // will be deleted automatically
+			
+        CorbaPort port = new CorbaPort("name of port");
+        try {
+            port.registerProvider("MyService (provided)", "Generic (provided)", pMyServiceImpl);
+            port.registerConsumer("MyService (required)", "Generic (required)", pMyServiceConsumer);
+        } catch (ServantAlreadyActive e) {
+            e.printStackTrace();
+            fail();
+        } catch (WrongPolicy e) {
+            e.printStackTrace();
+            fail();
+        } catch (ObjectNotActive e) {
+            e.printStackTrace();
+            fail();
+        }
+			
+        RTC.PortService portRef = port.getPortRef();
+        RTC.PortProfile profile = portRef.get_port_profile();
+
+        //
+        assertTrue(profile.name.equals("name of port"));
+			
+        //
+        RTC.PortInterfaceProfile[] profiles = profile.interfaces;
+        for (int i = 0; i < profile.interfaces.length; ++i) {
+            if (profiles[i].instance_name.equals("MyService (provided)")) {
+	        //
+	        assertTrue(profiles[i].type_name.equals("Generic (provided)"));
+					
+	        //
+  	        assertEquals(RTC.PortInterfacePolarity.PROVIDED, profiles[i].polarity);
+            }
+            else if (profiles[i].instance_name.equals("MyService (required)")) {
+	        //
+	        assertTrue(profiles[i].type_name.equals("Generic (required)"));
+
+                assertEquals(RTC.PortInterfacePolarity.REQUIRED, profiles[i].polarity);
+	    }
+	    else {
+	        //
+	        String msg = "Unexpected instance_name:";
+	        msg += profiles[i].instance_name;
+	        fail(msg);
+	    }
+	}
+    }
+    /**
+     */
+    public void test_registerProvider() {
+        MyService_impl pImpl0
+	    = new MyService_impl();
+
+        MyService_impl pImpl1
+            = new MyService_impl();
+			
+			
+        CorbaPortMock port0 = new CorbaPortMock("name of port");
+        boolean ret;
+        try {
+            ret = port0.registerProvider("registerProvider0", "Generic", pImpl0);
+            assertEquals(true,ret);
+
+            //
+            ret = port0.registerProvider("registerProvider0", "Generic", pImpl0);
+            assertEquals(false,ret);
+
+            //
+            ret = port0.registerProvider("registerProvider0", "Generic", pImpl1);
+            assertEquals(false,ret);
+     
+            //
+            //
+            ret = port0.registerProvider("registerProvider1", "Generic", pImpl0);
+            assertEquals(true,ret);
+
+            //
+            ret = port0.registerProvider("registerProvider2", "Generic", pImpl1);
+            assertEquals(true,ret);
+        } catch (ServantAlreadyActive e) {
+              e.printStackTrace();
+              fail();
+        } catch (WrongPolicy e) {
+              e.printStackTrace();
+              fail();
+        } catch (ObjectNotActive e) {
+              e.printStackTrace();
+              fail();
+        }
+
+        port0.deactivateInterfaces_public();
+
+    }
+    public void test_activateInterfaces_deactivateInterfaces() {
+System.out.println("test_activateInterfaces_deactivateInterfaces()");
+        // Create port0.
+        MyService_impl pMyServiceImplA
+            = new MyService_impl(); // will be deleted automatically
+        CorbaConsumer<MyService> pMyServiceConsumerB
+	    = new CorbaConsumer<MyService>(MyService.class); 
+                                    // will be deleted automatically
+			
+        CorbaPortMock port0 = new CorbaPortMock("name of port0");
+        try {
+            port0.registerProvider("MyServiceAA", "Generic", pMyServiceImplA);
+            port0.registerConsumer("MyServiceBB", "Generic", pMyServiceConsumerB);
+        } catch (ServantAlreadyActive e) {
+              e.printStackTrace();
+              fail();
+        } catch (WrongPolicy e) {
+              e.printStackTrace();
+              fail();
+        } catch (ObjectNotActive e) {
+              e.printStackTrace();
+              fail();
+        }
+
+        // Create port1.
+        MyService_impl pMyServiceImplB
+	    = new MyService_impl(); // will be deleted automatically
+        CorbaConsumer<MyService> pMyServiceConsumerA
+	    = new CorbaConsumer<MyService>(MyService.class); 
+                                    // will be deleted automatically
+			
+        CorbaPortMock port1 = new CorbaPortMock("name of port1");
+        try{
+            port1.registerProvider("MyServiceBB", "Generic", pMyServiceImplB);
+            port1.registerConsumer("MyServiceAA", "Generic", pMyServiceConsumerA);
+        } catch (ServantAlreadyActive e) {
+              e.printStackTrace();
+              fail();
+        } catch (WrongPolicy e) {
+              e.printStackTrace();
+              fail();
+        } catch (ObjectNotActive e) {
+              e.printStackTrace();
+              fail();
+        }
+			
+        //Create profile
+        ConnectorProfileHolder connProfile = new ConnectorProfileHolder(
+                ConnectorProfileFactory.create());
+        connProfile.value.connector_id = "";
+        connProfile.value.name = "name of connector profile";
+        connProfile.value.ports = new PortService[2];
+        connProfile.value.ports[0] = port0.getPortRef();
+        connProfile.value.ports[1] = port1.getPortRef();
+
+        //
+        port0.connect(connProfile);
+
+        //
+        assertTrue(! pMyServiceImplA.is_hello_world_called());
+        pMyServiceConsumerA._ptr().hello_world();
+        assertTrue(pMyServiceImplA.is_hello_world_called());
+        //
+        port0.disconnect(connProfile.value.connector_id);
+
+        //
+        port0.deactivateInterfaces_public();
+        port1.deactivateInterfaces_public();
+
+        port0.connect(connProfile);
+
+        //
+        try {
+            pMyServiceConsumerA._ptr().hello_world();
+	    fail("Couldn't catch no exceptions. Disconnection failed.");
+        }
+        catch(Exception ex) {
+        }
+
+			
+        ReturnCode_t ret;
+        //
+        ret = port0.disconnect(connProfile.value.connector_id);
+
+        port0.activateInterfaces_public();
+        port1.activateInterfaces_public();
+
+        ret = port0.connect(connProfile);
+
+        //
+        pMyServiceConsumerB._ptr().hello_world();
+
+        // 
+        port0.disconnect(connProfile.value.connector_id);
+    }
+		
 }

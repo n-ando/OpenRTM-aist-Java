@@ -290,7 +290,7 @@ public class ConfigAdmin {
     /**
      * <p>コンフィギュレーションセットに設定値を追加します。</p>
      * 
-     * @param configset 追加対象コンフィギュレーションセット
+     * @param config_set 追加対象コンフィギュレーションセット
      * @return 追加結果
      */
     public boolean addConfigurationSet(final Properties config_set) {
@@ -315,6 +315,9 @@ public class ConfigAdmin {
      * @return 削除結果
      */
     public boolean removeConfigurationSet(final String config_id) {
+        if (config_id.equals("default")) return false;
+        if (m_activeId.equals(config_id)) return false;
+
         for(int intIdx=0; intIdx<m_newConfig.size(); ++intIdx ) {
             if( m_newConfig.elementAt(intIdx).equals(config_id) ) {
                 Properties p = new Properties(m_configsets.getNode(config_id));
@@ -337,6 +340,9 @@ public class ConfigAdmin {
      */
     public boolean activateConfigurationSet(final String config_id) {
         if( config_id == null ) return false;
+        // '_<conf_name>' is special configuration set name
+        if (config_id.charAt(0) == '_') return false; 
+
         if( m_configsets.hasKey(config_id) == null ) return false;
         m_activeId = config_id;
         m_active = true;

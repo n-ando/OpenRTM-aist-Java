@@ -90,6 +90,8 @@ public class PublisherPeriodicTests extends TestCase {
         }
         public void publishInterfaceProfile(NVListHolder properties) {
         }
+        public void setConnector(OutPortConnector connector){
+        }
     };
 
     class CounterConsumer implements InPortConsumer {
@@ -136,6 +138,8 @@ public class PublisherPeriodicTests extends TestCase {
             return ReturnCode.PORT_OK;
         }
         public void publishInterfaceProfile(NVListHolder properties) {
+        }
+        public void setConnector(OutPortConnector connector) {
         }
     
         private int _count;

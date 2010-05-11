@@ -16,6 +16,7 @@ import RTC.PortServiceOperations;
 import RTC.PortProfile;
 import RTC.PortProfileListHolder;
 
+import jp.go.aist.rtm.RTC.log.Logbuf;
 /**
  * <p>Portの管理を行うクラスです。</p>
  */
@@ -30,6 +31,7 @@ public class PortAdmin {
     public PortAdmin(ORB orb, POA poa) {
 	this.m_pORB = orb;
         this.m_pPOA = poa;
+        rtcout = new Logbuf("PortAdmin");
     }
     
     /**
@@ -40,6 +42,22 @@ public class PortAdmin {
     public PortServiceListHolder getPortList() {
         return PortServiceListHolderFactory.clone(this.m_portRefs);
     }
+
+    /**
+     * {@.ja Port リストの取得}
+     * {@.en Get PortServiceList}
+     *
+     * <p>
+     * {@.ja addPort() により登録された Port の リストを取得する。}
+     * {@.en This operation returns the pointer to the PortServiceList of
+     * Ports registered by addPort().}
+     * </p>
+     *
+     * @return 
+     *   {@.ja Port リスト}
+     *   {@.en The pointer points PortServiceList}
+     *
+     */
     public PortServiceListHolder getPortServiceList() {
         return PortServiceListHolderFactory.clone(this.m_portRefs);
     }
@@ -69,9 +87,20 @@ public class PortAdmin {
     }
 
     /**
-     * <p>登録されているPortのリストを取得します。</p>
-     * 
-     * @return Portオブジェクトリストを内包するPortServiceListHolderオブジェクト
+     * {@.ja PorProfile リストの取得}
+     * {@.en Get PorProfileList}
+     *
+     * <p>
+     * {@.ja addPort() により登録された Port の Profile リストを取得する。}A
+     * {@.en This operation gets the Profile list of Ports registered by 
+     * addPort().}
+     * </p>
+     *
+     * @return 
+     *   {@.ja Portオブジェクトリストを
+     *   内包するPortServiceListHolderオブジェクト}
+     *   {@.en The pointer points PortProfile list}
+     *
      */
     public final PortProfileListHolder getPortProfileList() {
         PortProfileListHolder port_profs = new PortProfileListHolder();
@@ -87,17 +116,34 @@ public class PortAdmin {
     }
     
     /**
-     * <p>指定されたポート名を持つPortのCORBAオブジェクト参照を取得します。</p>
-     * 
-     * @param portName ポート名
-     * @return 指定されたポート名を持つPortのCORBAオブジェクト参照を返します。
-     * 合致するポート名を持つものが見つからない場合はnullを返します。
+     * {@.ja Port のオブジェクト参照の取得}
+     * {@.en Get the reference to Port object}
+     *
+     * <p>
+     * {@.ja port_name で指定した Port のオブジェクト参照を返す。
+     * port_name で指定する Port はあらかじめ addPort() で登録されてい
+     * なければならない。}
+     * {@.en This operation returns the reference of Port object specified
+     * by port_name.
+     * The port specified by port_name must be already registered in 
+     * addPort().}
+     * </p>
+     *
+     * @param portName 
+     *   {@.ja Portの名前}
+     *   {@.en The name of Port to be returned the reference.}
+     * @return PortService_ptr 
+     *   {@.ja 指定されたポート名を持つPortのCORBAオブジェクト参照を返します。
+     * 合致するポート名を持つものが見つからない場合はnullを返します。}
+     *   {@.en Port object reference.}
+     *
      */
     public PortService getPortRef(final String portName) {
         
         PortService port = null;
         
-        int index = CORBA_SeqUtil.find(this.m_portRefs, new find_port_name(portName));
+        int index 
+            = CORBA_SeqUtil.find(this.m_portRefs, new find_port_name(portName));
         if (index >= 0) {
             port = this.m_portRefs.value[index];
         }
@@ -106,13 +152,82 @@ public class PortAdmin {
     }
 
     /**
-     * <p>指定されたポート名を持つPortサーバントを取得します。</p>
-     * 
-     * @param portName ポート名
-     * @return 指定されたポート名を持つPortサーバントのオブジェクト
+     * {@.ja Port のサーバントのポインタの取得}
+     * {@.en Get pointer to the Port's servant}
+     *
+     * <p>
+     * {@.ja port_name で指定した Port のサーバントのポインタを返す。
+     * port_name で指定する Port はあらかじめ addPort() で登録されてい
+     * なければならない。}
+     * {@.en This operation returns the pointer to the PortBase servant 
+     * registered by addPort().
+     * The port specified by port_name must be already registered in 
+     * addPort().}
+     * </p>
+     *
+     * @param portName 
+     *   {@.ja Portの名前}
+     *   {@.en The name of Port}
+     * @return PortBase 
+     *   {@.ja 指定されたポート名を持つPortサーバントのオブジェクト}
+     *   {@.en The Ojbect to Port's servant.}
+     *
      */
     public PortBase getPort(final String portName) {
         return this.m_portServants.find(new find_port_name(portName));
+    }
+
+    /**
+     * <p> Regsiter the Port </p>
+     *
+     * This operation registers the Port's servant given by argument.
+     * The given Port's servant will be activated on the POA that is given
+     * to the constructor, and the created object reference is set
+     * to the Port's profile.
+     *
+     * @param port The Port's servant.
+     * @return Register result (Successful:true, Failed:false)
+     *
+     */
+    public boolean addPort(PortBase port) {
+        // Check for duplicate
+        int index = 
+            CORBA_SeqUtil.find(m_portRefs, new find_port_name(port.getName()));
+        if(index != -1){
+            return false;
+        }
+
+        // Store Port's ref to PortServiceList
+        CORBA_SeqUtil.push_back(m_portRefs, port.getPortRef());
+    
+        // Store Port servant
+        return m_portServants.registerObject(port, 
+                            new find_port_name(port.get_port_profile().name));
+    }
+
+    /**
+     *
+     * <p> Regsiter the Port </p>
+     *
+     * This operation registers the Port's servant given by argument.
+     * The given Port's servant will be activated on the POA that is given
+     * to the constructor, and the created object reference is set
+     * to the Port's profile.
+     *
+     * @param port The Port's servant.
+     * @return Register result (Successful:true, Failed:false)
+     *
+     */
+    public boolean addPort(PortService port) {
+        // Check for duplicate
+        PortProfile prof = port.get_port_profile();
+        String name = prof.name;
+        if (CORBA_SeqUtil.find(m_portRefs, new find_port_name(name)) != -1) {
+            return false;
+        }
+
+        CORBA_SeqUtil.push_back(m_portRefs, port);
+        return true;
     }
 
     /**
@@ -126,28 +241,55 @@ public class PortAdmin {
         CORBA_SeqUtil.push_back(this.m_portRefs, port.getPortRef());
 
         // Store Port servant
-        m_portServants.registerObject(port, new find_port_name(port.get_port_profile().name));
+        m_portServants.registerObject(port, 
+                            new find_port_name(port.get_port_profile().name));
     }
     
     /**
-     * <p> registerPort </p>
+     * {@.ja Port を登録する}
+     * {@.en Regsiter the Port}
      *
-     * @param port PortService
+     * <p>
+     * {@.ja 引数 port で指定された Port のサーバントを登録する。
+     * 登録された Port のサーバントはコンストラクタで与えられたPOA 上で
+     * activate され、そのオブジェクト参照はPortのProfileにセットされる。}
+     * {@.en This operation registers the Port's servant given by argument.
+     * The given Port's servant will be activated on the POA that is given
+     * to the constructor, and the created object reference is set
+     * to the Port's profile.}
+     * </p>
+     *
+     * @param port 
+     *   {@.ja Port サーバント}
+     *   {@.en The Port's servant.}
+     *
      */
     public void registerPort(PortService port) {
-	if (port == null) {
-	    System.out.println("registerPort() port is null.");
-	}
-        CORBA_SeqUtil.push_back(this.m_portRefs, port);
+        if(!addPort(port)){
+            rtcout.println(rtcout.ERROR, 
+                                    "registerPort(PortService_ptr) failed.");
+        }
     }
     
     /**
-     * <p>指定されたPortサーバントの登録を解除します。</p>
-     * 
-     * @param port 登録解除するPortサーバントのオブジェクト
+     * {@.ja Port の登録を解除する}
+     * {@.en Unregister the Port registration}
+     * <p>
+     * {@.ja 引数 port で指定された Port の登録を解除する。
+     * 削除時に Port は deactivate され、PortのProfileのリファレンスには、
+     * nil値が代入される。}
+     * {@.en This operation unregisters the Port registration.
+     * When the Port is unregistered, Port is deactivated, and the object
+     * reference in the Port's profile is set to nil.}
+     * </p>
+     * @param port
+     *   {@.ja Port サーバント}
+     *   {@.en The Port's servant.}
+     * @return
+     *   {@.ja 削除結果(削除成功:true，削除失敗:false)}
+     *   {@.en Unregister result (Successful:true, Failed:false)}
      */
-    public void deletePort(PortBase port) {
-        
+    public boolean removePort(PortBase port){
         try {
             port.disconnect_all();
             // port.shutdown();
@@ -158,40 +300,121 @@ public class PortAdmin {
             m_pPOA.deactivate_object(m_pPOA.servant_to_id(port));
             port.setPortRef(null);
 
-            m_portServants.unregisterObject(new find_port_name(tmp));
+            if(m_portServants.unregisterObject(new find_port_name(tmp))==null){
+                return false;
+            }
+            else{
+                return true;
+            }
             
         } catch(Exception ignored) {
             ignored.printStackTrace();
+            return false;
         }
     }
 
     /**
-     * <p> deletePort </p>
-     *
-     * @param port PortService
-     *
+     * {@.ja Port の登録を解除する}
+     * {@.en Unregister the Port registration}
+     * <p>
+     * {@.ja 引数 port で指定された Port の登録を解除する。
+     * 削除時に Port は deactivate され、PortのProfileのリファレンスには、
+     * nil値が代入される。}
+     * {@.en This operation unregisters the Port registration.
+     * When the Port is unregistered, Port is deactivated, and the object
+     * reference in the Port's profile is set to nil.}
+     * </p>
+     * @param port
+     *   {@.ja Port サーバント}
+     *   {@.en The Port's servant.}
+     * @return
+     *   {@.ja 削除結果(削除成功:true，削除失敗:false)}
+     *   {@.en Unregister result (Successful:true, Failed:false)}
      */
-    public void deletePort(PortService port) {
+    public boolean removePort(PortService port) {
         try {
             // port.disconnect_all();
             // port.shutdown();
 
-            final String tmp = port.get_port_profile().name;
-            CORBA_SeqUtil.erase_if(m_portRefs, new find_port_name(tmp));
+            // final String tmp = port.get_port_profile().name;
+            // CORBA_SeqUtil.erase_if(m_portRefs, new find_port_name(tmp));
+            CORBA_SeqUtil.erase_if(m_portRefs, new find_port(port));
 
             // m_pPOA.deactivate_object(m_pPOA.servant_to_id(port));
             // port.setPortRef(null);
 
             // m_portServants.unregisterObject(new find_port_name(tmp));
+            return true;
         } catch(Exception ignored) {
             ignored.printStackTrace();
+            return false;
         }
-  }
+    }
 
     /**
-     * <p>指定されたポート名を持つPortサーバントの登録を解除します。</p>
      * 
-     * @param portName ポート名
+     * {@.ja [local interface] Port の登録を削除する}
+     * {@.en [local interface] Unregister Port}
+     * <p>
+     * {@.ja 指定されたPortサーバントの登録を解除します。
+     *       削除時に Port は deactivate され、PortのProfileのリファレンスには、
+     *       nil値が代入される。}
+     * {@.en This operation unregisters a Port held by this RTC.
+     *       When the Port is unregistered, Port is deactivated, and the object
+     *       reference in the Port's profile is set to nil.}
+     * </p>
+     * @param port 
+     *   {@.ja Port サーバント}
+     *   {@.en The Port's servant.}
+     */
+    public void deletePort(PortBase port) {
+        
+        if (!removePort(port)) {
+            rtcout.println(rtcout.ERROR, "deletePort(PortBase&) failed.");
+        }
+    }
+
+    /**
+     * 
+     * {@.ja [local interface] Port の登録を削除する}
+     * {@.en [local interface] Unregister Port}
+     * <p>
+     * {@.ja 指定されたPortサーバントの登録を解除します。
+     *       削除時に Port は deactivate され、PortのProfileのリファレンスには、
+     *       nil値が代入される。}
+     * {@.en This operation unregisters a Port held by this RTC.
+     *       When the Port is unregistered, Port is deactivated, and the object
+     *       reference in the Port's profile is set to nil.}
+     * </p>
+     * @param port 
+     *   {@.ja Port サーバント}
+     *   {@.en The Port's servant.}
+     */
+    public void deletePort(PortService port) {
+
+        if (!removePort(port)) {
+            rtcout.println(rtcout.ERROR, "deletePort(PortService) failed.");
+        }
+    }
+
+    /**
+     * {@.ja 名称指定によりPort の登録を解除する}
+     * {@.en Unregister the Port's registration by its name}
+     *
+     * <p>
+     * {@.ja 引数で指定された名前を持つ Port の登録を削除する。
+     * 削除時に Port は deactivate され、PortのProfileのリファレンスには、
+     * nil値が代入される。}
+     * {@.en This operation unregister the Port's registration specified by
+     * port_ name.  When the Port is unregistered, Port is
+     * deactivated, and the object reference in the Port's profile is
+     * set to nil.}
+     * </p>
+     *
+     * @param portName 
+     *   {@.ja Port の名前}
+     *   {@.en The Port's name.}
+     *
      */
     public void deletePortByName(final String portName) {
         
@@ -199,11 +422,19 @@ public class PortAdmin {
             return;
         }
         
-        deletePort(this.m_portServants.find(new find_port_name(portName)));
+        removePort(this.m_portServants.find(new find_port_name(portName)));
     }
 
     /**
-     * <p>登録されているすべてのPortサーバントについて、deactivateしたうえで登録を解除します。</p>
+     * {@.ja 全ての Port をdeactivateし登録を削除する}
+     * {@.en Deactivate all Ports and unregister them}
+     *
+     * <p>
+     * {@.ja 登録されている全てのPortに対して、サーバントのdeactivateを行い、
+     * 登録リストから削除する。}
+     * {@.en This operation deactivates the all Port and deletes the all Port's
+     * registrations from the list.}
+     *
      */
     public void finalizePorts() {
         
@@ -234,6 +465,19 @@ public class PortAdmin {
         public String m_name;
     }
     
+    protected class find_port implements equalFunctor {
+        
+        public find_port(final PortService port ) {
+            this.m_port = port;
+        }
+
+        public boolean equalof(Object element) {
+            return m_port._is_equivalent((PortService)element);
+        }
+        
+        public PortService m_port;
+    }
+    
     // サーバントを直接格納するオブジェクトマネージャ
     private ObjectManager<String, PortBase> m_portServants = new ObjectManager<String, PortBase>();
     
@@ -251,4 +495,11 @@ public class PortAdmin {
         }
         private PortProfileListHolder m_p;
     }
+
+    /**
+     * {@.ja Logging用フォーマットオブジェクト}
+     */
+    private Logbuf rtcout;
+
+
 }

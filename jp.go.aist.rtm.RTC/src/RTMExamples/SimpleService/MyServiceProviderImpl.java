@@ -14,17 +14,17 @@ public class MyServiceProviderImpl  extends DataFlowComponentBase {
         super(manager);
         // <rtc-template block="initializer">
         m_MyServicePort = new CorbaPort("MyService");
-        // </rtc-template>
+    }
 
-        // Registration: InPort/OutPort/Service
-        // <rtc-template block="registration">
-        // Set InPort buffers
-        
-        // Set OutPort buffer
-        
+    // The initialize action (on CREATED->ALIVE transition)
+    // formaer rtc_init_entry() 
+    @Override
+    protected RTC.ReturnCode_t onInitialize() {
         // Set service provider to Ports
         try {
-            m_MyServicePort.registerProvider("myservice0", "MyService", m_myservice0);
+            m_MyServicePort.registerProvider("myservice0", 
+                                                "MyService", 
+                                                m_myservice0);
         } catch (ServantAlreadyActive e) {
             e.printStackTrace();
         } catch (WrongPolicy e) {
@@ -33,20 +33,10 @@ public class MyServiceProviderImpl  extends DataFlowComponentBase {
             e.printStackTrace();
         }
         
-        // Set service consumers to Ports
-        
         // Set CORBA Service Ports
-        registerPort(m_MyServicePort);
-        
-        // </rtc-template>
+        addPort(m_MyServicePort);
+        return super.onInitialize();
     }
-
-    // The initialize action (on CREATED->ALIVE transition)
-    // formaer rtc_init_entry() 
-//    @Override
-//    protected ReturnCode_t onInitialize() {
-//        return super.onInitialize();
-//    }
     // The finalize action (on ALIVE->END transition)
     // formaer rtc_exiting_entry()
 //    @Override

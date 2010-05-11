@@ -12,11 +12,16 @@ import org.omg.CORBA.portable.OutputStream;
 import org.omg.PortableServer.POA;
 import org.omg.CORBA.SystemException;
 
+import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.InPortConsumerFactory;
 import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 import jp.go.aist.rtm.RTC.PublisherBaseFactory;
+import jp.go.aist.rtm.RTC.PeriodicTask;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.buffer.RingBuffer;
+import jp.go.aist.rtm.RTC.buffer.CdrRingBuffer;
 import jp.go.aist.rtm.RTC.port.OutPortBase;
+import jp.go.aist.rtm.RTC.port.OutPortProvider;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherNew;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherPeriodic;
@@ -26,14 +31,169 @@ import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 
+import RTC.ConnectorProfileHolder;
 import RTC.ReturnCode_t;
+import _SDOPackage.NVListHolder;
 
 /**
  * <p>OutPortBaseクラスのためのテストケースです。</p>
  */
 public class OutPortBaseTest extends TestCase {
+
+  class OutPortPushConnector extends OutPortConnector {
+    public OutPortPushConnector(Profile profile,
+                         InPortConsumer consumer,
+                         BufferBase<OutputStream> buffer) throws Exception {
+        super(profile);
+        try {
+            _Constructor(profile,consumer,buffer);
+        }
+        catch(Exception e) {
+            throw new Exception("bad_alloc()");
+        } 
+    }
+
+    public OutPortPushConnector(Profile profile,
+                         InPortConsumer consumer )  throws Exception {
+        super(profile);
+        BufferBase<OutputStream> buffer = null;
+        try {
+            _Constructor(profile,consumer,buffer);
+        }
+        catch(Exception e) {
+            throw new Exception("bad_alloc()");
+        } 
+    }
+
+    private void _Constructor(Profile profile,
+                         InPortConsumer consumer,
+                         BufferBase<OutputStream> buffer) throws Exception {
+
+        if(profile.properties.getProperty("OutPortBaseTests").equals("bad_alloc")) {
+            throw new Exception("bad_alloc()");
+        }
+    }
+    public ReturnCode disconnect() {
+        return ReturnCode.PORT_OK;
+    }
+    public BufferBase<OutputStream> getBuffer() {
+        return new RingBufferMock();
+    }
+    public void activate() {
+        m_mock_logger.log("OutPortPushConnector.activate"); 
+    }
+    public void deactivate() {
+        m_mock_logger.log("OutPortPushConnector.deactivate"); 
+    }
+    public ReturnCode write(final OutputStream data_little,final OutputStream data_big){
+        return ReturnCode.PORT_OK;
+    }
+    protected PublisherBase createPublisher(Profile profile) {
+        return new PublisherFlush(); 
+    }
+    protected BufferBase<OutputStream> createBuffer(Profile profile) {
+      return new RingBufferMock();
+    }
+    public <DataType> ReturnCode write(final DataType data) {
+        return ReturnCode.PORT_OK;
+    }
+    public void setOutPortBase(OutPortBase outportbase){
+    } 
+
+  }
+  class OutPortPullConnector extends OutPortConnector {
+
+    public OutPortPullConnector(Profile profile,
+                         OutPortProvider provider,
+                         BufferBase<OutputStream> buffer) throws Exception {
+        super(profile);
+        if(profile.properties.getProperty("OutPortBaseTests").equals("bad_alloc")) {
+            throw new Exception("bad_alloc()");
+        }
+    }
+    public OutPortPullConnector(Profile profile,
+                         OutPortProvider provider )  throws Exception {
+        super(profile);
+        if(profile.properties.getProperty("OutPortBaseTests").equals("bad_alloc")) {
+            throw new Exception("bad_alloc()");
+        }
+    }
+    public ReturnCode write(final OutputStream data_little,final OutputStream data_big){
+        return ReturnCode.PORT_OK;
+    }
+    public BufferBase<OutputStream> getBuffer() {
+        return new RingBufferMock();
+    }
+    public ReturnCode disconnect() {
+        return ReturnCode.PORT_OK;
+    }
+    public void deactivate() {
+    }
+    public void activate() {
+    }
+    public void setOutPortBase(OutPortBase outportbase){
+    } 
+    public <DataType> ReturnCode write(final DataType data) {
+        return ReturnCode.PORT_OK;
+    }
+  }
+
+
+    public static <DataType> String toTypeCode(DataRef<DataType> value) { 
+        DataType data = value.v;
+        String typeName = value.v.getClass().getSimpleName();
+        return typeName;
+
+    }
+  /**
+   *
+   *
+   *
+   */
+  class InPortMock<DataType> extends InPortBase {
+    /**
+     * <p> toTypeCode </p>
+     * <p> This function gets TypeCode of data. </p>
+     *
+     * @param value data
+     * @return TypeCdoe(String)
+     */
+/*
+    private static <DataType> String toTypeCode(DataRef<DataType> value) { 
+        DataType data = value.v;
+        String typeName = value.v.getClass().getSimpleName();
+        return typeName;
+
+    }
+*/
+    public InPortMock(BufferBase<DataType> superClass,
+            final String name, DataRef<DataType> value,
+            boolean read_block, boolean write_block,
+            long read_timeout, long write_timeout) {
+        super(name, toTypeCode(value));
+    }
+    public InPortMock(final String name, DataRef<DataType> value) {
+        this( new RingBuffer<DataType>(8), name, value, false, false, 0, 0);
+    }
+    /**
+     * 
+     */
+    public ReturnCode_t publishInterfaces_public(ConnectorProfileHolder cprof) {
+        return publishInterfaces(cprof);
+     } 
+    /**
+     * 
+     */
+    public ReturnCode_t subscribeInterfaces_public(
+            final ConnectorProfileHolder cprof) {
+        return subscribeInterfaces(cprof);
+     } 
+  };
     /**
      * * 
      *
@@ -62,6 +222,24 @@ public class OutPortBaseTest extends TestCase {
    */
   class OutPortCorbaCdrProviderMock extends OutPortCorbaCdrProvider {
 
+    /**
+     * <p> creator_ </p>
+     * 
+     * @return Object Created instances
+     *
+     */
+    public OutPortProvider creator_() {
+        return new OutPortCorbaCdrProviderMock();
+    }
+    /**
+     * <p> destructor_ </p>
+     * 
+     * @param obj    The target instances for destruction
+     *
+     */
+    public void destructor_(java.lang.Object obj) {
+        obj = null;
+    }
       public OutPortCorbaCdrProviderMock() {
           setInterfaceType("corba_cdr");
           m_logger = null;
@@ -144,6 +322,24 @@ public class OutPortBaseTest extends TestCase {
    */
   class InPortCorbaCdrConsumerMock extends InPortCorbaCdrConsumer {
 
+    /**
+     * <p> creator_ </p>
+     * 
+     * @return Object Created instances
+     *
+     */
+    public InPortConsumer creator_() {
+        return new InPortCorbaCdrConsumerMock();
+    }
+    /**
+     * <p> destructor_ </p>
+     * 
+     * @param obj    The target instances for destruction
+     *
+     */
+    public void destructor_(java.lang.Object obj) {
+        obj = null;
+    }
       public InPortCorbaCdrConsumerMock()
        {
           m_logger = null;
@@ -299,6 +495,175 @@ public class OutPortBaseTest extends TestCase {
      
     }
 
+    /**
+     * 
+     * 
+     *
+     */
+    class RingBufferMock<DataType> extends RingBuffer<DataType>{
+        public RingBufferMock() {
+            m_logger = null;
+            m_mock_logger.log("RingBufferMock.Constructor");
+            m_read_return_value = jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK;
+            m_write_return_value = jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public void set_read_return_value(jp.go.aist.rtm.RTC.buffer.ReturnCode value) {
+            m_read_return_value = value;
+        }
+        /**
+         *
+         *
+         */
+        public void set_write_return_value(jp.go.aist.rtm.RTC.buffer.ReturnCode value) {
+            m_write_return_value = value;
+        }
+        /**
+         *
+         *
+         */
+        public  void init(final Properties prop) {
+        }
+        /**
+         *
+         *
+         */
+        public int length() {
+            return 0;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode length(int n) {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode reset() {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public DataType wptr(int n) {
+            return m_data;
+        }
+        /**
+         *
+         *
+         */
+        public  jp.go.aist.rtm.RTC.buffer.ReturnCode advanceWptr(int n) {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode put(final DataType value) {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode write(final DataType value,
+                                 int sec, int nsec) {
+            if (m_logger != null) {
+                m_logger.log("RingBufferMock.write");
+            }
+            m_mock_logger.log("RingBufferMock.write");
+            return m_write_return_value; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public  int writable() {
+            return 0;
+        }
+        /**
+         *
+         *
+         */
+        public boolean full() {
+              return true;
+        }
+        /**
+         *
+         *
+         */
+        public DataType rptr(int n ) {
+            return m_data;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode advanceRptr(int n) {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode get(DataType value) {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public DataType  get() {
+            return m_data;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode read(DataRef<DataType> value,
+                              int sec, int nsec) {
+            if (m_logger != null) {
+                m_logger.log("RingBufferMock.read");
+            }
+            m_mock_logger.log("RingBufferMock.read");
+            return m_read_return_value; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public int readable() {
+            return 0;
+        }
+        /**
+         *
+         *
+         */
+        public boolean empty() {
+            return true;
+        }
+        /**
+         *
+         *
+         */
+        public void setLogger(Logger logger) {
+            m_logger = logger;
+        }
+
+        private DataType m_data;
+        private Vector<DataType> m_buffer;
+        private Logger m_logger;
+        private jp.go.aist.rtm.RTC.buffer.ReturnCode m_read_return_value;
+        private jp.go.aist.rtm.RTC.buffer.ReturnCode m_write_return_value;
+//        public static Logger m_mock_logger = null;
+  };
     class PublisherA extends PublisherBase {
 
         public DataRef<String> m_str;
@@ -454,6 +819,43 @@ public class OutPortBaseTest extends TestCase {
             return "D";
         }
     }
+    /**
+     * 
+     * 
+     *
+     */
+    class CdrRingBufferMock extends CdrRingBuffer{
+    
+        /**
+         * <p> creator_ </p>
+         * 
+         * @return Object Created instances
+         *
+         */
+        public BufferBase<OutputStream> creator_() {
+            return new RingBufferMock<OutputStream>();
+        }
+        /**
+         * <p> destructor_ </p>
+         * 
+         * @param obj    The target instances for destruction
+         *
+         */
+        public void destructor_(Object obj) {
+            obj = null;
+        }
+
+    }
+
+        public void CdrRingBufferMockInit() {
+            final BufferFactory<RingBufferMock<OutputStream>,String> factory 
+                = BufferFactory.instance();
+
+            factory.addFactory("ring_buffer",
+                        new CdrRingBufferMock(),
+                        new CdrRingBufferMock());
+    
+        }
 
     String outport_name = "MyOutPort";
 
@@ -482,6 +884,8 @@ public class OutPortBaseTest extends TestCase {
         this.m_outport = new OutPortMock(this.outport_name);
     }
 
+    
+    public static Logger m_mock_logger = null;
     private ORB m_orb;
     private POA m_poa;
     protected static Logbuf rtcout = null;;
@@ -489,6 +893,9 @@ public class OutPortBaseTest extends TestCase {
     protected FileHandler m_fh;
     protected void setUp() throws Exception {
         super.setUp();
+        if (m_mock_logger == null){
+            m_mock_logger = new Logger();
+        }
         java.util.Properties props = new java.util.Properties();
         this.m_orb = ORBUtil.getOrb();
         this.m_poa = org.omg.PortableServer.POAHelper.narrow(
@@ -539,6 +946,8 @@ public class OutPortBaseTest extends TestCase {
         factory4.addFactory("flush",
                     new PublisherFlush(),
                     new PublisherFlush());
+        CdrRingBufferMockInit();
+//        PeriodicTask.PeriodicTaskInit();
     }
     
     protected void tearDown() throws Exception {
@@ -1085,5 +1494,956 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         assertTrue(str.equals(prop.getProperty("dataport.subscription_type")));
 
         portAdmin.deletePort(outPort);
+    }
+    /**
+     * @brief connectors(),getConnectorProfiles()
+     * 
+     */
+    public void test_connectors_getConnectorXX()
+    {
+        RTC.TimedDouble inbindValue = new RTC.TimedDouble();
+        DataRef<RTC.TimedDouble> ref 
+            = new DataRef<RTC.TimedDouble>(inbindValue);
+        InPortMock<RTC.TimedDouble> inPort 
+            = new InPortMock<RTC.TimedDouble>("in:OutPortBaseTest",ref);
+
+        OutPortBaseMock outPort 
+            = new OutPortBaseMock("OutPortBaseTest", "TimedDouble");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outPort); 
+        portAdmin.registerPort(inPort); 
+
+        RTC.ConnectorProfile inprof = new RTC.ConnectorProfile();
+        inprof.ports = new RTC.PortService[1];
+        inprof.ports[0] = outPort.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(inprof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "push"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "flush"));
+        inprof.properties = holder.value;
+        inprof.connector_id = "id0";
+        inprof.name = "bar";
+        inPort.init();
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(inprof);
+        inPort.publishInterfaces_public(profh);
+
+        String[] vstrid = {"id0","id1","id2","id3","id4",
+                                  "id5","id6","id7","id8","id9"};
+        String[] vstrname = {"foo0","foo1","foo2","foo3","foo4",
+                                    "foo5","foo6","foo7","foo8","foo9"};
+
+        String[] vstrinterface = {"corba_cdr","corba_cdr","corba_cdr",
+                                         "corba_cdr","corba_cdr","corba_cdr",
+                                         "corba_cdr","corba_cdr","corba_cdr",
+                                         "corba_cdr"};
+        String[] vstrdataflow = {"push","push","push",
+                                         "push","push","push",
+                                         "pull","pull","pull","pull"};
+
+        String[] vstrsubscription = {"flush","flush","flush",
+                                            "flush","flush","flush",
+                                            "flush","flush","flush","flush"};
+        
+        //
+        //connectors()
+        //
+        for(int ic=0;ic<10;++ic)
+        {
+            RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+            prof.ports = new RTC.PortService[1];
+            prof.ports[0] = outPort.get_port_profile().port_ref;
+            NVListHolder nholder = new NVListHolder(prof.properties);
+            CORBA_SeqUtil.push_back(nholder,
+                                     NVUtil.newNV("dataport.interface_type",
+                                                   vstrinterface[ic]));
+            CORBA_SeqUtil.push_back(nholder,
+                                     NVUtil.newNV("dataport.dataflow_type",
+                                                   vstrdataflow[ic]));
+            CORBA_SeqUtil.push_back(nholder,
+                                     NVUtil.newNV("dataport.subscription_type",
+                                                   vstrsubscription[ic]));
+            CORBA_SeqUtil.push_back(nholder,
+                                     NVUtil.newNV("dataport.corba_cdr.inport_ior",
+                                                   NVUtil.toString(new NVListHolder(inprof.properties),"dataport.corba_cdr.inport_ior")));
+            prof.properties = nholder.value;
+            prof.connector_id = vstrid[ic];
+            prof.name = vstrname[ic];
+
+
+            Properties prop = new Properties(outPort.properties());
+            Properties conn_prop = new Properties();
+            nholder = new NVListHolder(prof.properties);
+            NVUtil.copyToProperties(conn_prop, nholder);
+            prop.merge(conn_prop.getNode("dataport")); // merge ConnectorProfile
+            ConnectorProfileHolder cprofh =  new ConnectorProfileHolder(prof);
+            OutPortProvider provider = outPort.createProvider_public(cprofh, prop);
+            outPort.createConnector_public(cprofh,prop,provider);
+//            outPort.publishInterfaces_public(prof);
+
+            Vector<OutPortConnector> objs = outPort.connectors();
+
+            assertEquals("1:",(ic+1), objs.size());
+            assertTrue("2:",vstrid[ic].equals(objs.elementAt(ic).id()));
+            assertTrue("3:",vstrname[ic].equals(objs.elementAt(ic).name()));
+        }
+
+
+        //
+        //getConnectorProfiles()
+        //
+        Vector<ConnectorBase.Profile> list = outPort.getConnectorProfiles();
+        assertEquals(10, list.size());
+        for(int ic=0;ic<10;++ic)
+        {
+            assertTrue("4:",vstrid[ic].equals(list.elementAt(ic).id));
+            assertTrue("5:",vstrname[ic].equals(list.elementAt(ic).name));
+            assertEquals("6:",1, list.elementAt(ic).ports.size());
+            
+            assertTrue("7:",vstrinterface[ic].equals(
+                                 list.elementAt(ic).properties.getProperty("interface_type")));
+            assertTrue("8:",vstrdataflow[ic].equals(
+                                 list.elementAt(ic).properties.getProperty("dataflow_type")));
+            assertTrue("9:",vstrsubscription[ic].equals(
+                                 list.elementAt(ic).properties.getProperty("subscription_type")));
+
+        }
+
+        //
+        //getConnectorIds()
+        //
+        Vector<String> ids = outPort.getConnectorIds();
+        assertEquals(10, ids.size());
+        for(int ic=0;ic<10;++ic)
+        {
+            assertTrue("10:",vstrid[ic].equals(ids.elementAt(ic)));
+        }
+
+        //
+        //getConnectorNames()
+        //
+        Vector<String> names = outPort.getConnectorNames();
+        assertEquals(10, names.size());
+        for(int ic=0;ic<10;++ic)
+        {
+            assertTrue("11:",vstrname[ic].equals(names.elementAt(ic)));
+        }
+
+        //
+        //getConnectorProfileById()
+        //
+        for(int ic=0;ic<10;++ic)
+        {
+
+            Vector<String> vstr = new Vector<String>();
+            Properties prop = new Properties();
+            
+            ConnectorBase.Profile prof = new ConnectorBase.Profile("test","id",
+                                                vstr,prop);
+            ConnectorBase.ProfileHolder cbprofh 
+                = new ConnectorBase.ProfileHolder(prof);
+            boolean ret = outPort.getConnectorProfileById(vstrid[ic],cbprofh);
+            prof = cbprofh.value;
+            assertTrue("12:",ret);
+            assertTrue("13:",vstrinterface[ic].equals(
+                              prof.properties.getProperty("interface_type")));
+            assertTrue("14:",vstrdataflow[ic].equals(
+                                 prof.properties.getProperty("dataflow_type")));
+            assertTrue("15:",vstrsubscription[ic].equals(
+                                 prof.properties.getProperty("subscription_type")));
+        }
+        {
+            Vector<String> vstr = new Vector<String>();
+            Properties prop = new Properties();
+            
+            ConnectorBase.Profile prof = new ConnectorBase.Profile ("test","id",
+                                             vstr,prop);
+            ConnectorBase.ProfileHolder cbprofh 
+                = new ConnectorBase.ProfileHolder(prof);
+            boolean ret = outPort.getConnectorProfileById("foo",cbprofh);
+            assertTrue("16:",!ret);
+            ret = outPort.getConnectorProfileById("bar",cbprofh);
+            assertTrue("17:",!ret);
+        }
+
+        //
+        //getConnectorProfileByiName()
+        //
+        for(int ic=0;ic<10;++ic)
+        {
+            Vector<String> vstr = new Vector<String>();
+            Properties prop = new Properties();
+            
+            ConnectorBase.Profile prof = new ConnectorBase.Profile("test","id",
+                                                                     vstr,prop);
+            ConnectorBase.ProfileHolder cbprofh 
+                = new ConnectorBase.ProfileHolder(prof);
+            boolean ret = outPort.getConnectorProfileByName(vstrname[ic],
+                                                         cbprofh);
+            prof = cbprofh.value;
+            assertTrue("18:",ret);
+            assertTrue("19:",vstrinterface[ic].equals(
+                                 prof.properties.getProperty("interface_type")));
+            assertTrue("20:",vstrdataflow[ic].equals(
+                                 prof.properties.getProperty("dataflow_type")));
+            assertTrue("21:",vstrsubscription[ic].equals(
+                                 prof.properties.getProperty("subscription_type")));
+        }
+        {
+            Vector<String> vstr = new Vector<String>();
+            Properties prop = new Properties();
+            
+            ConnectorBase.Profile prof = new ConnectorBase.Profile("test","id",
+                                                                    vstr,prop);
+            ConnectorBase.ProfileHolder cbprofh 
+                = new ConnectorBase.ProfileHolder(prof);
+            boolean ret = outPort.getConnectorProfileByName("foo",cbprofh);
+            prof = cbprofh.value;
+            assertTrue("22:",!ret);
+            ret = outPort.getConnectorProfileByName("bar",cbprofh);
+            assertTrue("23:",!ret);
+        }
+
+/*
+        //
+        //publishInterfaceProfiles()
+        //
+        {
+            NVListHolder properties = NVListHolderFactory.create();
+            boolean ret = outPort.publishInterfaceProfiles(properties);
+            assertTrue(ret);
+            {
+                String value;
+                try {
+                    assertEquals("24:","corba_cdr",
+                    NVUtil.find(properties, 
+                          "dataport.data_type").extract_wstring());
+                }
+                catch(Exception e) {
+	            fail("dataport.data_type failure.");
+                }
+            }
+        }
+*/
+        portAdmin.deletePort(outPort);
+        portAdmin.deletePort(inPort);
+    }
+    /**
+     * @brief activateInterfaces(),deactivateInterfaces()
+     * 
+     */
+/*
+    public void test_activateInterfaces_deactivateInterfaces()
+    {
+        RTC.TimedDouble inbindValue = new RTC.TimedDouble();
+        DataRef<RTC.TimedDouble> ref = new DataRef<RTC.TimedDouble>(inbindValue);
+        InPortMock<RTC.TimedDouble> inPort = new InPortMock<RTC.TimedDouble>("in:OutPortBaseTest",ref);
+
+        OutPortBaseMock outPort = new OutPortBaseMock("out:OutPortBaseTest", "RTC.TimedDouble");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outPort); 
+        portAdmin.registerPort(inPort); 
+
+        RTC.ConnectorProfile inprof = new RTC.ConnectorProfile();
+        inprof.ports = new RTC.PortService[1];
+        inprof.ports[0] = outPort.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(inprof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "push"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "flush"));
+        inprof.properties = holder.value;
+        inprof.connector_id = "id0";
+        inprof.name = "bar";
+        inPort.init();
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(inprof);
+        inPort.publishInterfaces_public(profh);
+
+        String[] vstrid = {"id0","id1","id2","id3","id4",
+                                  "id5","id6","id7","id8","id9"};
+        String[] vstrname = {"foo0","foo1","foo2","foo3","foo4",
+                                    "foo5","foo6","foo7","foo8","foo9"};
+
+        String[] vstrinterface = {"corba_cdr","corba_cdr","corba_cdr",
+                                         "corba_cdr","corba_cdr","corba_cdr",
+                                         "corba_cdr","corba_cdr","corba_cdr",
+                                         "corba_cdr"};
+        String[] vstrdataflow = {"push","push","push",
+                                         "push","push","push",
+                                         "push","push","push","push"};
+
+        String[] vstrsubscription = {"flush","flush","flush",
+                                            "flush","flush","flush",
+                                            "flush","flush","flush","flush"};
+        //
+        //
+        for(int ic=0;ic<10;++ic)
+        {
+            RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+            prof.ports = new RTC.PortService[1];
+            prof.ports[0] = outPort.get_port_profile().port_ref;
+            NVListHolder nholder = new NVListHolder(prof.properties);
+            CORBA_SeqUtil.push_back(nholder,
+                                     NVUtil.newNV("dataport.interface_type",
+                                                   vstrinterface[ic]));
+            CORBA_SeqUtil.push_back(nholder,
+                                     NVUtil.newNV("dataport.dataflow_type",
+                                                   vstrdataflow[ic]));
+            CORBA_SeqUtil.push_back(nholder,
+                                     NVUtil.newNV("dataport.subscription_type",
+                                                   vstrsubscription[ic]));
+            CORBA_SeqUtil.push_back(nholder,
+                                     NVUtil.newNV("dataport.corba_cdr.inport_ior",
+                                                   NVUtil.toString(new NVListHolder(inprof.properties),"dataport.corba_cdr.inport_ior")));
+            prof.properties = nholder.value;
+            prof.connector_id = vstrid[ic];
+            prof.name = vstrname[ic];
+
+
+            ConnectorProfileHolder cprofh =  new ConnectorProfileHolder(prof);
+            outPort.subscribeInterfaces_public(cprofh);
+
+        }
+        int logcnt;
+        logcnt = m_mock_logger.countLog("OutPortPushConnector.activate"); 
+        outPort.activateInterfaces();
+        assertEquals("1:",logcnt+10,
+                  m_mock_logger.countLog("OutPortPushConnector.activate"));
+
+
+        logcnt = m_mock_logger.countLog("OutPortPushConnector.deactivate"); 
+        outPort.deactivateInterfaces();
+        assertEquals("2:",logcnt+10,
+                  m_mock_logger.countLog("OutPortPushConnector.deactivate"));
+
+        portAdmin.deletePort(outPort);
+        portAdmin.deletePort(inPort);
+
+    }
+*/
+    /**
+     * @brief publishInterfaces()
+     * 
+     */
+    public void test_publishInterfaces()
+    {
+        //
+        if( OutPortProviderFactory.instance().hasFactory("corba_cdr") )
+        {
+            OutPortProviderFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        OutPortProviderFactory.instance().addFactory("corba_cdr",
+                    new OutPortCorbaCdrProviderMock(),
+                    new OutPortCorbaCdrProviderMock());
+
+        //
+        if( InPortConsumerFactory.instance().hasFactory("corba_cdr") )
+        {
+            InPortConsumerFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        InPortConsumerFactory.instance().
+        addFactory("corba_cdr",
+                    new InPortCorbaCdrConsumerMock(),
+                    new InPortCorbaCdrConsumerMock());
+
+
+        OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
+                                "RTC.TimedFloat");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outport); 
+        RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+        prof.connector_id = "id0";
+        prof.name = "OutPortBaseTest0";
+        prof.ports = new RTC.PortService[1];
+        prof.ports[0] = outport.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(prof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "pull"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "new"));
+        prof.properties = holder.value;
+        RTC.ReturnCode_t retcode;
+        assertEquals(0,outport.get_m_connectors().size());
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.publishInterfaces_public(profh);
+        assertEquals(1,outport.get_m_connectors().size());
+        assertEquals(ReturnCode_t.RTC_OK,retcode);
+
+        prof.connector_id = "id1";
+        prof.name = "OutPortBaseTest1";
+        profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.publishInterfaces_public(profh);
+        assertEquals(2,(int)outport.get_m_connectors().size());
+        assertEquals(ReturnCode_t.RTC_OK,retcode);
+
+        portAdmin.deletePort(outport);
+    }
+    /**
+     * @brief publishInterfaces()
+     * 
+     */
+    public void test_publishInterfaces2()
+    {
+        //
+        //
+        //
+
+        //
+        if( OutPortProviderFactory.instance().hasFactory("corba_cdr") )
+        {
+            OutPortProviderFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        OutPortProviderFactory.instance().addFactory("corba_cdr",
+                    new OutPortCorbaCdrProviderMock(),
+                    new OutPortCorbaCdrProviderMock());
+
+        //
+        if( InPortConsumerFactory.instance().hasFactory("corba_cdr") )
+        {
+            InPortConsumerFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        InPortConsumerFactory.instance().
+        addFactory("corba_cdr",
+                    new InPortCorbaCdrConsumerMock(),
+                    new InPortCorbaCdrConsumerMock());
+
+        OutPortBaseMock outport = new OutPortBaseMock ("OutPortBaseTest", 
+                                "RTC.TimedFloat");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outport); 
+        RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+        prof.connector_id = "id0";
+        prof.name = "OutPortBaseTest0";
+        prof.ports = new RTC.PortService[1];
+        prof.ports[0] = outport.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(prof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "push"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "new"));
+        prof.properties = holder.value;
+        RTC.ReturnCode_t retcode;
+        assertEquals(0,outport.get_m_connectors().size());
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.publishInterfaces_public(profh);
+        assertEquals(0,outport.get_m_connectors().size());
+        assertEquals(ReturnCode_t.RTC_OK,retcode);
+
+
+        portAdmin.deletePort(outport);
+    }
+    /**
+     * @brief publishInterfaces()
+     * 
+     */
+    public void test_publishInterfaces3()
+    {
+        //
+        //
+        //
+
+        //
+        if( OutPortProviderFactory.instance().hasFactory("corba_cdr") )
+        {
+            OutPortProviderFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        OutPortProviderFactory.instance().addFactory("corba_cdr",
+                    new OutPortCorbaCdrProviderMock(),
+                    new OutPortCorbaCdrProviderMock());
+
+        //
+        if( InPortConsumerFactory.instance().hasFactory("corba_cdr") )
+        {
+            InPortConsumerFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        InPortConsumerFactory.instance().
+        addFactory("corba_cdr",
+                    new InPortCorbaCdrConsumerMock(),
+                    new InPortCorbaCdrConsumerMock());
+
+
+        OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
+                                "RTC.TimedFloat");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outport); 
+        RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+        prof.connector_id = "id0";
+        prof.name = "OutPortBaseTest0";
+        prof.ports = new RTC.PortService[1];
+        prof.ports[0] = outport.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(prof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "else"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "new"));
+        prof.properties = holder.value;
+        RTC.ReturnCode_t retcode;
+        assertEquals(0,outport.get_m_connectors().size());
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.publishInterfaces_public(profh);
+        assertEquals(0,outport.get_m_connectors().size());
+        assertEquals(ReturnCode_t.BAD_PARAMETER,retcode);
+
+
+        portAdmin.deletePort(outport);
+    }
+    /**
+     * @brief publishInterfaces()
+     * 
+     */
+    public void test_publishInterfaces4()
+    {
+        //
+        //
+        //
+
+        //
+        if( OutPortProviderFactory.instance().hasFactory("corba_cdr") )
+        {
+            OutPortProviderFactory.instance().removeFactory("corba_cdr");
+        }
+
+        //
+        if( InPortConsumerFactory.instance().hasFactory("corba_cdr") )
+        {
+            InPortConsumerFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        InPortConsumerFactory.instance().
+        addFactory("corba_cdr",
+                    new InPortCorbaCdrConsumerMock(),
+                    new InPortCorbaCdrConsumerMock());
+
+        OutPortBaseMock outport= new OutPortBaseMock("OutPortBaseTest", 
+                                "RTC.TimedFloat");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outport); 
+        RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+        prof.connector_id = "id0";
+        prof.name = ("OutPortBaseTest0");
+        prof.ports = new RTC.PortService[1];
+        prof.ports[0] = outport.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(prof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "pull"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "new"));
+        prof.properties = holder.value;
+        RTC.ReturnCode_t retcode;
+        assertEquals(0,outport.get_m_connectors().size());
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.publishInterfaces_public(profh);
+        assertEquals(0,outport.get_m_connectors().size());
+        assertEquals(ReturnCode_t.BAD_PARAMETER,retcode);
+
+
+        portAdmin.deletePort(outport);
+    }
+    /**
+     * @brief publishInterfaces()
+     * 
+     */
+/*
+    public void test_publishInterfaces5()
+    {
+        //
+        if( OutPortProviderFactory.instance().hasFactory("corba_cdr") )
+        {
+            OutPortProviderFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        OutPortProviderFactory.instance().addFactory("corba_cdr",
+                    new OutPortCorbaCdrProviderMock(),
+                    new OutPortCorbaCdrProviderMock());
+
+        //
+        if( InPortConsumerFactory.instance().hasFactory("corba_cdr") )
+        {
+            InPortConsumerFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        InPortConsumerFactory.instance().
+        addFactory("corba_cdr",
+                    new InPortCorbaCdrConsumerMock(),
+                    new InPortCorbaCdrConsumerMock());
+
+
+        OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
+                                "RTC.TimedFloat");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outport);
+
+        RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+        prof.connector_id = "id0";
+        prof.name = ("OutPortBaseTest0");
+        prof.ports = new RTC.PortService[1];
+        prof.ports[0] = outport.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(prof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "pull"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "new"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.OutPortBaseTests",
+                                 "bad_alloc"));
+        prof.properties = holder.value;
+        RTC.ReturnCode_t retcode;
+        assertEquals("1:",0,outport.get_m_connectors().size());
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.publishInterfaces_public(profh);
+        assertEquals("2:",0,outport.get_m_connectors().size());
+        assertEquals("3:",ReturnCode_t.RTC_ERROR,retcode);
+
+        portAdmin.deletePort(outport);
+    }
+*/
+    /**
+     * @brief subscribeInterfaces()
+     * 
+     */
+    public void test_subscribeInterfaces()
+    {
+        //
+        if( OutPortProviderFactory.instance().hasFactory("corba_cdr") )
+        {
+            OutPortProviderFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        OutPortProviderFactory.instance().addFactory("corba_cdr",
+                    new OutPortCorbaCdrProviderMock(),
+                    new OutPortCorbaCdrProviderMock());
+
+        //
+        if( InPortConsumerFactory.instance().hasFactory("corba_cdr") )
+        {
+            InPortConsumerFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        InPortConsumerFactory.instance().
+        addFactory("corba_cdr",
+                    new InPortCorbaCdrConsumerMock(),
+                    new InPortCorbaCdrConsumerMock());
+
+
+        OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
+                                "RTC.TimedFloat");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outport); 
+
+        RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+        prof.connector_id = "id0";
+        prof.name = ("OutPortBaseTest0");
+        prof.ports = new RTC.PortService[1];
+        prof.ports[0] = outport.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(prof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "push"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "flush"));
+//                                 "new"));
+        prof.properties = holder.value;
+        RTC.ReturnCode_t retcode;
+        assertEquals(0,outport.get_m_connectors().size());
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.subscribeInterfaces_public(profh);
+        assertEquals("1:",1,outport.get_m_connectors().size());
+        assertEquals("2:",ReturnCode_t.RTC_OK,retcode);
+
+        prof.connector_id = "id1";
+        prof.name = ("OutPortBaseTest1");
+        profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.subscribeInterfaces_public(profh);
+        assertEquals("3:",2,outport.get_m_connectors().size());
+        assertEquals("4:",ReturnCode_t.RTC_OK,retcode);
+
+        portAdmin.deletePort(outport);
+    }
+    /*!
+     * @brief subscribeInterfaces()
+     * 
+     */
+    public void test_subscribeInterfaces2()
+    {
+        //
+        if( OutPortProviderFactory.instance().hasFactory("corba_cdr") )
+        {
+            OutPortProviderFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        OutPortProviderFactory.instance().addFactory("corba_cdr",
+                    new OutPortCorbaCdrProviderMock(),
+                    new OutPortCorbaCdrProviderMock());
+
+        //
+        if( InPortConsumerFactory.instance().hasFactory("corba_cdr") )
+        {
+            InPortConsumerFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        InPortConsumerFactory.instance().
+        addFactory("corba_cdr",
+                    new InPortCorbaCdrConsumerMock(),
+                    new InPortCorbaCdrConsumerMock());
+
+
+        OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
+                                "RTC.TimedFloat");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outport); 
+
+        RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+        prof.connector_id = "id0";
+        prof.name = ("OutPortBaseTest0");
+        prof.ports = new RTC.PortService[1];
+        prof.ports[0] = outport.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(prof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "pull"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "new"));
+        prof.properties = holder.value;
+        RTC.ReturnCode_t retcode;
+        assertEquals(0,outport.get_m_connectors().size());
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.subscribeInterfaces_public(profh);
+        assertEquals(0,outport.get_m_connectors().size());
+        assertEquals(ReturnCode_t.RTC_OK,retcode);
+
+        portAdmin.deletePort(outport);
+    }
+    /**
+     * @brief subscribeInterfaces()
+     * 
+     */
+    public void test_subscribeInterfaces3()
+    {
+        //
+        if( OutPortProviderFactory.instance().hasFactory("corba_cdr") )
+        {
+            OutPortProviderFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        OutPortProviderFactory.instance().addFactory("corba_cdr",
+                    new OutPortCorbaCdrProviderMock(),
+                    new OutPortCorbaCdrProviderMock());
+
+        //
+        if( InPortConsumerFactory.instance().hasFactory("corba_cdr") )
+        {
+            InPortConsumerFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        InPortConsumerFactory.instance().
+        addFactory("corba_cdr",
+                    new InPortCorbaCdrConsumerMock(),
+                    new InPortCorbaCdrConsumerMock());
+
+
+        OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
+                                "RTC.TimedFloat");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outport); 
+
+        RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+        prof.connector_id = "id0";
+        prof.name = ("OutPortBaseTest0");
+        prof.ports = new RTC.PortService[1];
+        prof.ports[0] = outport.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(prof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "else"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "new"));
+        prof.properties = holder.value;
+        RTC.ReturnCode_t retcode;
+        assertEquals(0,outport.get_m_connectors().size());
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.subscribeInterfaces_public(profh);
+        assertEquals(0,outport.get_m_connectors().size());
+        assertEquals(ReturnCode_t.BAD_PARAMETER,retcode);
+
+        portAdmin.deletePort(outport);
+    }
+    /**
+     * @brief subscribeInterfaces()
+     * 
+     */
+    public void test_subscribeInterfaces4()
+    {
+        //
+        if( OutPortProviderFactory.instance().hasFactory("corba_cdr") )
+        {
+            OutPortProviderFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        OutPortProviderFactory.instance().addFactory("corba_cdr",
+                    new OutPortCorbaCdrProviderMock(),
+                    new OutPortCorbaCdrProviderMock());
+
+        //
+        if( InPortConsumerFactory.instance().hasFactory("corba_cdr") )
+        {
+            InPortConsumerFactory.instance().removeFactory("corba_cdr");
+        }
+
+
+        OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
+                                "RTC.TimedFloat");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outport); 
+
+        RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+        prof.connector_id = "id0";
+        prof.name = ("OutPortBaseTest0");
+        prof.ports = new RTC.PortService[1];
+        prof.ports[0] = outport.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(prof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "push"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "new"));
+        prof.properties = holder.value;
+        RTC.ReturnCode_t retcode;
+        assertEquals(0,outport.get_m_connectors().size());
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.subscribeInterfaces_public(profh);
+        assertEquals(0,outport.get_m_connectors().size());
+        assertEquals(ReturnCode_t.BAD_PARAMETER,retcode);
+
+        portAdmin.deletePort(outport);
+    }
+    /**
+     * @brief subscribeInterfaces()
+     * 
+     */
+    public void test_subscribeInterfaces5()
+    {
+        //
+        if( OutPortProviderFactory.instance().hasFactory("corba_cdr") )
+        {
+            OutPortProviderFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        OutPortProviderFactory.instance().addFactory("corba_cdr",
+                    new OutPortCorbaCdrProviderMock(),
+                    new OutPortCorbaCdrProviderMock());
+
+        //
+        if( InPortConsumerFactory.instance().hasFactory("corba_cdr") )
+        {
+            InPortConsumerFactory.instance().removeFactory("corba_cdr");
+        }
+        //
+        InPortConsumerFactory.instance().
+        addFactory("corba_cdr",
+                    new InPortCorbaCdrConsumerMock(),
+                    new InPortCorbaCdrConsumerMock());
+
+
+        OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
+                                "RTC.TimedFloat");
+
+        PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
+        portAdmin.registerPort(outport); 
+
+        RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
+        prof.connector_id = "id0";
+        prof.name = ("OutPortBaseTest0");
+        prof.ports = new RTC.PortService[1];
+        prof.ports[0] = outport.get_port_profile().port_ref;
+        NVListHolder holder = new NVListHolder(prof.properties);
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.interface_type",
+                                 "corba_cdr"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.dataflow_type",
+                                 "push"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.subscription_type",
+                                 "new"));
+        CORBA_SeqUtil.push_back(holder,
+                                 NVUtil.newNV("dataport.OutPortBaseTests",
+                                 "bad_alloc"));
+        prof.properties = holder.value;
+        RTC.ReturnCode_t retcode;
+        assertEquals("1:",0,outport.get_m_connectors().size());
+        ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
+        retcode = outport.subscribeInterfaces_public(profh);
+        assertEquals("2:",0,outport.get_m_connectors().size());
+        assertEquals("3:",ReturnCode_t.RTC_ERROR,retcode);
+
+        portAdmin.deletePort(outport);
     }
 }

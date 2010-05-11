@@ -34,17 +34,17 @@ module RTC
    * @if jp
    * @brief ReturnCode_t
    *
-   * OMG RTC 1.0 »ÅÍÍÃæ¤ÎÂ¿¤¯¤Î¥ª¥Ú¥ì¡¼¥·¥ç¥ó¤Ï¡¢¥¯¥é¥¤¥ó¤È¤ËÂĞ¤·¤Æ¹Í¤¨
-   * ¤é¤ì¤ë¥¨¥é¡¼¾õÂÖ¤òÊó¹ğ¤¹¤ëÉ¬Í×¤¬¤¢¤ë¡£¤³¤ì¤Ï¡¢ReturnCode_t·¿¤Î½ê°â
-   * ¥ê¥¿¡¼¥ó¥³¡¼¥É¤Ë¤è¤ê¹Ô¤ï¤ì¤ë¡£
+   * OMG RTC 1.0 d—l’†‚Ì‘½‚­‚ÌƒIƒyƒŒ[ƒVƒ‡ƒ“‚ÍAƒNƒ‰ƒCƒ“‚Æ‚É‘Î‚µ‚Äl‚¦
+   * ‚ç‚ê‚éƒGƒ‰[ó‘Ô‚ğ•ñ‚·‚é•K—v‚ª‚ ‚éB‚±‚ê‚ÍAReturnCode_tŒ^‚ÌŠˆà
+   * ƒŠƒ^[ƒ“ƒR[ƒh‚É‚æ‚ès‚í‚ê‚éB
    *
-   * OMG RTC 1.0 ¤Î PIM Æâ¤Ë¤ª¤¤¤Æ¡¢ReturnCode_t·¿¤ÎÃÍ¤òÊÖ¤µ¤Ê¤¤¥ª¥Ú¥ì¡¼¥·¥ç¥ó¤Ï
-   * ¤½¤ì¤é¤ÎÌá¤êÃÍ¤Î·¿¤Ë°ÍÂ¸¤·¤Æ¡¢¼¡¤ÎÊıË¡¤Ë¤è¤ê¥¨¥é¡¼¤òÊó¹ğ¤¹¤ë¤â¤Î¤È¤¹¤ë¡£
-   * -¥ª¥Ú¥ì¡¼¥·¥ç¥ó¤¬Àµ¿ôÃÍ¤òÊÖ¤¹¾ì¹ç (OMG RTC 1.0 Section 5.2.2.6.4 ¤Î
-   *  get_rate¤Î¤è¤¦¤Ë)¡¢Éé¿ôÃÍ¤òÊÖ¤¹¤³¤È¤Ë¤è¤ê¥¨¥é¡¼¤ò¼¨¤¹¤â¤Î¤È¤¹¤ë¡£
-   * - ¥ª¥Ú¥ì¡¼¥·¥ç¥ó¤¬¥ª¥Ö¥¸¥§¥¯¥È¥ê¥Õ¥¡¥ì¥ó¥¹(RTObject::get_component_profile
-   *   OMG RTC 1.0 5.4.2.2.1¤ò»²¾È) ¤òÄÌ¾ïÊÖ¤¹¾ì¹ç¡¢nil»²¾È¤òÊÖ¤¹¤³¤È¤Ë¤è¤ê
-   *   ¥¨¥é¡¼¤ò¼¨¤¹¤â¤Î¤È¤¹¤ë¡£
+   * OMG RTC 1.0 ‚Ì PIM “à‚É‚¨‚¢‚ÄAReturnCode_tŒ^‚Ì’l‚ğ•Ô‚³‚È‚¢ƒIƒyƒŒ[ƒVƒ‡ƒ“‚Í
+   * ‚»‚ê‚ç‚Ì–ß‚è’l‚ÌŒ^‚ÉˆË‘¶‚µ‚ÄAŸ‚Ì•û–@‚É‚æ‚èƒGƒ‰[‚ğ•ñ‚·‚é‚à‚Ì‚Æ‚·‚éB
+   * -ƒIƒyƒŒ[ƒVƒ‡ƒ“‚ª³”’l‚ğ•Ô‚·ê‡ (OMG RTC 1.0 Section 5.2.2.6.4 ‚Ì
+   *  get_rate‚Ì‚æ‚¤‚É)A•‰”’l‚ğ•Ô‚·‚±‚Æ‚É‚æ‚èƒGƒ‰[‚ğ¦‚·‚à‚Ì‚Æ‚·‚éB
+   * - ƒIƒyƒŒ[ƒVƒ‡ƒ“‚ªƒIƒuƒWƒFƒNƒgƒŠƒtƒ@ƒŒƒ“ƒX(RTObject::get_component_profile
+   *   OMG RTC 1.0 5.4.2.2.1‚ğQÆ) ‚ğ’Êí•Ô‚·ê‡AnilQÆ‚ğ•Ô‚·‚±‚Æ‚É‚æ‚è
+   *   ƒGƒ‰[‚ğ¦‚·‚à‚Ì‚Æ‚·‚éB
    *
    * @else
    * @brief ReturnCode_t
@@ -329,7 +329,7 @@ module RTC
      *
      * If the RTC is in the Error state relative to some execution
      * context when it would otherwise be invoked from that context
-     * (according to the context¡Çs ExecutionKind), this callback
+     * (according to the contextfs ExecutionKind), this callback
      * shall be invoked instead. For example,
      *
      * - If the ExecutionKind is PERIODIC, this operation shall be
@@ -408,7 +408,7 @@ module RTC
    * Relative to a given execution context, an RTC may either be
    * Active, Inactive, or in Error. When the RTC is Active in a
    * Running execution context, the ComponentAction callbacks (see
-   * Section 5.2.2.4) shall be invoked as appropriate for the context¡Ç
+   * Section 5.2.2.4) shall be invoked as appropriate for the contextf
    * s ExecutionKind. The callbacks shall not be invoked relative to
    * that context when either the RTC is Inactive in that context or
    * the context is Stopped. (Note that starting and stopping an
@@ -428,7 +428,7 @@ module RTC
    * corresponding to that context. While the RTC is in Error, the
    * ComponentAction::on_error callback will be invoked in place of
    * those callbacks that would otherwise have been invoked according
-   * to the context¡Çs ExecutionKind. For example, if the kind is
+   * to the contextfs ExecutionKind. For example, if the kind is
    * PERIODIC, on_error shall be invoked instead of the pair of
    * on_execute, and on_state_update.  When an RTC is in Error, it may
    * be reset. If resetting is successful, the RTC shall return to the
@@ -531,7 +531,7 @@ module RTC
      *
      * @section Description
      *
-     * Stop the RTC¡Çs execution context(s) and finalize it along with
+     * Stop the RTCfs execution context(s) and finalize it along with
      * its contents.
      *
      * @section Semantics
@@ -634,7 +634,7 @@ module RTC
      *
      * @section Description 
      *
-     * ¤³¤Î RTC ¤¬½êÍ­¤¹¤ë ExecutionContext ¤Î¥ê¥¹¥È¤ò¼èÆÀ¤¹¤ë¡£
+     * ‚±‚Ì RTC ‚ªŠ—L‚·‚é ExecutionContext ‚ÌƒŠƒXƒg‚ğæ“¾‚·‚éB
      * 
      * @else
      * @brief get_owned_contexts
@@ -654,13 +654,13 @@ module RTC
      *  
      * @section Description
      *
-     * ¤³¤Î RTC ¤¬»²²Ã¤·¤Æ¤¤¤ë¤¹¤Ù¤Æ¤Î ExecutionContext ¤Î¥ê¥¹¥È¤ò¼èÆÀ¤¹¤ë¡£
+     * ‚±‚Ì RTC ‚ªQ‰Á‚µ‚Ä‚¢‚é‚·‚×‚Ä‚Ì ExecutionContext ‚ÌƒŠƒXƒg‚ğæ“¾‚·‚éB
      *
      * @section Semantics
      *
-     * ¤³¤Î¥ê¥¹¥È¤Ë´Ş¤Ş¤ì¤ë¼Â¹Ô¥³¥ó¥Æ¥­¥¹¥È¤Ï¡¢attach_context ¤¬¸Æ¤Ó½Ğ
-     * ¤µ¤ì¤ë¤´¤È¤Ë¡¢¥ê¥¹¥È¤ËÄÉ²Ã¤µ¤ì¡¢detach_context ¤¬¸Æ¤Ó½Ğ¤µ¤ì¤ë¤´
-     * ¤È¤Ë¡¢¥ê¥¹¥È¤«¤éºï½ü¤µ¤ì¤ë¡£
+     * ‚±‚ÌƒŠƒXƒg‚ÉŠÜ‚Ü‚ê‚éÀsƒRƒ“ƒeƒLƒXƒg‚ÍAattach_context ‚ªŒÄ‚Ño
+     * ‚³‚ê‚é‚²‚Æ‚ÉAƒŠƒXƒg‚É’Ç‰Á‚³‚êAdetach_context ‚ªŒÄ‚Ño‚³‚ê‚é‚²
+     * ‚Æ‚ÉAƒŠƒXƒg‚©‚çíœ‚³‚ê‚éB
      *
      * @else
      * @brief* get_participating_contexts
@@ -682,8 +682,8 @@ module RTC
     
     /*!
      * @if jp
-     * ### [¸í¿¢] RTC.idl ¤Ë¤Ï´Ş¤Ş¤ì¤Æ¤¤¤Ê¤¤¤¬PIM¤Ë¤Ï´Ş¤Ş¤ì¤Æ¤¤¤ë¡£
-     * ### PIM¤¬Àµ¤·¤¤¡£
+     * ### [ŒëA] RTC.idl ‚É‚ÍŠÜ‚Ü‚ê‚Ä‚¢‚È‚¢‚ªPIM‚É‚ÍŠÜ‚Ü‚ê‚Ä‚¢‚éB
+     * ### PIM‚ª³‚µ‚¢B
      *
      * @brief 
      * @else
@@ -803,8 +803,8 @@ module RTC
    * indirectly. An RTC that owns one or more execution contexts is
    * known as an autonomous RTC.  An autonomous RTC and some subset of
    * the RTCs within it (to be defined by the application developer)
-   * shall be executed by the infrastructure according to the context¡Ç
-   * s execution kind, which defines when each RTC¡Çs operations will
+   * shall be executed by the infrastructure according to the contextf
+   * s execution kind, which defines when each RTCfs operations will
    * be invoked when and in which order. These RTCs are said to
    * participate in the context. The available execution kinds are
    * described in Section 5.2.2.7.  The relationship between RTCs and
@@ -819,7 +819,7 @@ module RTC
    *
    * Although an execution context represents a logical thread of
    * control, the choice of how it maps to a physical thread shall be
-   * left to the application¡Çs deployment
+   * left to the applicationfs deployment
    * environment. Implementations may elect to associate contexts with
    * threads with a one-to-one mapping, to serve multiple contexts
    * from a single thread, or by any other means. In the case where a
@@ -844,7 +844,7 @@ module RTC
      * @section Semantics
      *
      * While the context is Running, all Active RTCs participating in
-     * the context shall be executed according to the context¡Çs
+     * the context shall be executed according to the contextfs
      * execution kind.  
      *
      * @endif
@@ -952,7 +952,7 @@ module RTC
      * @section Description
      *
      * This operation shall set the rate (in hertz) at which this
-     * context¡Çs Active participating RTCs are being called.
+     * contextfs Active participating RTCs are being called.
      *
      * @section Semantics
      *
@@ -1051,7 +1051,7 @@ module RTC
      * @section Description
      *
      * The given participant RTC is Inactive and is therefore not
-     * being invoked according to the execution context¡Çs execution
+     * being invoked according to the execution contextfs execution
      * kind. This operation shall cause the RTC to transition to the
      * Active state such that it may subsequently be invoked in this
      * execution context.
@@ -1418,7 +1418,7 @@ module RTC
    *
    * @section Description
    *
-   * The ModeCapable interface provides access to an object¡Çs modes
+   * The ModeCapable interface provides access to an objectfs modes
    * and a means to set the current mode.
    *
    * @section Semantics
@@ -1442,13 +1442,13 @@ module RTC
    * Figure 5.26 depicts a state machine that describes mode
    * changes. Each parallel region in the composite state Mode Pending
    * represents an execution context. The trigger "sample" within
-   * that state is considered to have occurred: - ¡Äjust before the
+   * that state is considered to have occurred: - cjust before the
    * next call to on_execute (see Section 5.3.1.2.1) in the case where
-   * immediate is false and the execution kind is PERIODIC, ¡Ä
+   * immediate is false and the execution kind is PERIODIC, c
    *
-   * - ¡Äjust before the processing of the next stimulus in the case
+   * - cjust before the processing of the next stimulus in the case
    *   where immediate is false and the execution kind is
-   *   EVENT_DRIVEN, or ¡Ä- ¡Äimmediately in all other cases.
+   *   EVENT_DRIVEN, or c- cimmediately in all other cases.
    *
    * @endif
    */
@@ -1518,7 +1518,7 @@ module RTC
      * @section Description
      *
      * This operation shall return the last mode to have been passed
-     * to set_mode that has not yet stabilized. Once the RTC¡Çs mode
+     * to set_mode that has not yet stabilized. Once the RTCfs mode
      * has stabilized, this operation shall return nil.
      *
      * @endif
@@ -1825,7 +1825,7 @@ module RTC
    *
    * A PortProfile describes a port of an RTC (referred to as the
    * "target" RTC). This port is referred to as the "target" port.
-   * From this profile, other components and tools can obtain Port¡Çs
+   * From this profile, other components and tools can obtain Portfs
    * name, type, object reference, and so on.
    *
    * @endif
@@ -1945,7 +1945,7 @@ module RTC
      *
      * @section Description
      *
-     * This attribute stores the context¡Çs ExecutionKind.
+     * This attribute stores the contextfs ExecutionKind.
      *
      * @endif
      */
@@ -1991,7 +1991,7 @@ module RTC
      *
      * @section Description
      *
-     * This attribute stores references to the context¡Çs participant RTCs.
+     * This attribute stores references to the contextfs participant RTCs.
      *
      * @endif
      */

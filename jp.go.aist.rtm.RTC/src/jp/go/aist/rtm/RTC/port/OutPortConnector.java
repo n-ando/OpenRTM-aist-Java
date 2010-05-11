@@ -19,10 +19,10 @@ public abstract class OutPortConnector extends ConnectorBase {
     /**
      * <p> Constructor </p>
      */
-    public OutPortConnector(ConnectorBase.Profile profile) {
+    public OutPortConnector(ConnectorBase.ConnectorInfo profile) {
         rtcout = new Logbuf("OutPortConnector");
-        rtcout.setLevel("PARANOID");
         m_profile = profile;
+        m_isLittleEndian = true;
     }
 
     /**
@@ -30,7 +30,7 @@ public abstract class OutPortConnector extends ConnectorBase {
      * <p> This operation returns Connector Profile </p>
      *
      */
-    public final Profile profile() {
+    public final ConnectorInfo profile() {
         rtcout.println(rtcout.TRACE, "profile()");
         return m_profile;
     }
@@ -54,7 +54,23 @@ public abstract class OutPortConnector extends ConnectorBase {
         rtcout.println(rtcout.TRACE, "name() = " + profile().name);
         return profile().name;
     }
-
+    /**
+     *
+     * <p> Setting an endian type </p>
+     *
+     * <p> This operation set this connector's endian type </p>
+     *
+     */
+    public void setEndian(boolean isLittleEndian){
+        m_isLittleEndian = isLittleEndian;
+    }
+    /**
+     * <p> This value is true if the architecture is little-endian; false if it is big-endian.  </p>
+     * 
+     */
+    public boolean isLittleEndian(){
+        return m_isLittleEndian;
+    }
     /**
      * <p> Disconnect connection </p>
      * <p> This operation disconnect this connection </p>
@@ -74,9 +90,14 @@ public abstract class OutPortConnector extends ConnectorBase {
      * <p> The write function to write data from OutPort to Buffer </p>
      *
      */
-    public abstract ReturnCode write(final OutputStream data);
+    public abstract <DataType> ReturnCode write(final DataType data);
+
+    /**
+     */
+    public abstract void setOutPortBase(OutPortBase outportbase); 
 
     protected Logbuf rtcout;
-    protected Profile m_profile;
+    protected ConnectorInfo m_profile;
+    protected boolean m_isLittleEndian;
 }
 

@@ -1,8 +1,8 @@
 // -*- Java -*-
-/*!
- * @file  AutoTestOutImpl.java
- * @brief Sample component for auto test.
- * @date  $Date$
+/**
+ * AutoTestOutImpl.java
+ * Sample component for auto test.
+ * $Date$
  *
  * $Id$
  */
@@ -20,19 +20,18 @@ import jp.go.aist.rtm.RTC.port.CorbaPort;
 import RTC.ReturnCode_t;
 import java.io.*;
 
-/*!
- * @class AutoTestOutImpl
- * @brief Sample component for auto test.
+/**
+ * Sample component for auto test.
  *
  */
 public class AutoTestOutImpl extends DataFlowComponentBase {
     private int seq_d_len = 5;
 
-  /*!
-   * @brief constructor
+  /**
+   * constructor
    * @param manager Maneger Object
    */
-	public AutoTestOutImpl(Manager manager) {  
+    public AutoTestOutImpl(Manager manager) {  
         super(manager);
         // <rtc-template block="initializer">
         m_out_val = new TimedFloat();
@@ -48,24 +47,14 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
         // <rtc-template block="registration">
         // Set InPort buffers
         
-        // Set OutPort buffer
-        try {
-			registerOutPort(TimedFloat.class, "out", m_outOut);
-			registerOutPort(TimedFloatSeq.class, "seqout", m_seqoutOut);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        
-	m_out.v.tm = new RTC.Time(0,0);
-	m_seqout.v.tm = new RTC.Time(0,0);
-	m_seqout.v.data = new float[seq_d_len];
+        m_out.v.tm = new RTC.Time(0,0);
+        m_seqout.v.tm = new RTC.Time(0,0);
+        m_seqout.v.data = new float[seq_d_len];
         // Set service provider to Ports
         
         // Set service consumers to Ports
         m_MyServicePort.registerConsumer("myservice0", "MyService", m_myservice0Base);
         
-        // Set CORBA Service Ports
-        registerPort(m_MyServicePort);
         
         // </rtc-template>
     }
@@ -79,17 +68,22 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
      * 
      * 
      */
-//    @Override
-//    protected ReturnCode_t onInitialize() {
-//        return ReturnCode_t.RTC_OK;
-//    }
+    @Override
+    protected ReturnCode_t onInitialize() {
+        // Set OutPort buffer
+        addOutPort("out", m_outOut);
+        addOutPort("seqout", m_seqoutOut);
+        
+        // Set CORBA Service Ports
+        addPort(m_MyServicePort);
+        return super.onInitialize();
+    }
 
     /***
      *
      * The finalize action (on ALIVE->END transition)
      * formaer rtc_exiting_entry()
      *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -103,9 +97,6 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
      * The startup action when ExecutionContext startup
      * former rtc_starting_entry()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -119,9 +110,6 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
      * The shutdown action when ExecutionContext stop
      * former rtc_stopping_entry()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -143,13 +131,13 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
      */
     @Override
     protected ReturnCode_t onActivated(int ec_id) {
-	// Open data-file. data-file name is "original-data"
-	try {
-	    m_br  = new BufferedReader( new FileReader("original-data") );
-	}
-	catch (Exception e) {
-	    e.printStackTrace();
-	}
+        // Open data-file. data-file name is "original-data"
+        try {
+            m_br  = new BufferedReader( new FileReader("original-data") );
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return super.onActivated(ec_id);
     }
@@ -167,13 +155,13 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
      */
     @Override
     protected ReturnCode_t onDeactivated(int ec_id) {
-	// Close data-file.
-	try {
-	    m_br.close();
-	}
-	catch (Exception e) {
-	    e.printStackTrace();
-	}
+        // Close data-file.
+        try {
+            m_br.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return super.onDeactivated(ec_id);
     }
@@ -191,47 +179,47 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
      */
     @Override
     protected ReturnCode_t onExecute(int ec_id) {
-	String str = new String();
+        String str = new String();
 
 
-	try {
-	    str = m_br.readLine();
-	    if (str != null) {
-		Float fdata = new Float(str);
-		m_out.v.data = (float)fdata;
-	    }
-	    else {
-		return super.onExecute(ec_id);
-	    }
-	    
-	    str = m_br.readLine();
-	    if (str != null) {
-		String[] str_ele = str.split(" ");
-		for (int i=0; i<seq_d_len; ++i) {
-		    Float fdata = new Float(str_ele[i]);
-		    m_seqout.v.data[i] = (float)fdata;
-		}
-	    }
-	    else {
-		return super.onExecute(ec_id);
-	    }
+        try {
+            str = m_br.readLine();
+            if (str != null) {
+                Float fdata = new Float(str);
+                m_out.v.data = (float)fdata;
+            }
+            else {
+                return super.onExecute(ec_id);
+            }
+            
+            str = m_br.readLine();
+            if (str != null) {
+                String[] str_ele = str.split(" ");
+                for (int i=0; i<seq_d_len; ++i) {
+                    Float fdata = new Float(str_ele[i]);
+                    m_seqout.v.data[i] = (float)fdata;
+                }
+            }
+            else {
+                return super.onExecute(ec_id);
+            }
 
-	    str = m_br.readLine();
-	    if (str != null && m_myservice0Base._ptr() != null) {
-		m_outOut.write();
-		m_seqoutOut.write();
-		m_myservice0Base._ptr().echo(str);
-	    }
-	    else {
-		return super.onExecute(ec_id);
-	    }
-	}
-	catch (FileNotFoundException e) {
-	    //	    e.printStackTrace();
-	}
-	catch (Exception e) {
-	    //	    e.printStackTrace();
-	}
+            str = m_br.readLine();
+            if (str != null && m_myservice0Base._ptr() != null) {
+                m_outOut.write();
+                m_seqoutOut.write();
+                m_myservice0Base._ptr().echo(str);
+            }
+            else {
+                return super.onExecute(ec_id);
+            }
+        }
+        catch (FileNotFoundException e) {
+            //            e.printStackTrace();
+        }
+        catch (Exception e) {
+            //            e.printStackTrace();
+        }
 
         return super.onExecute(ec_id);
     }
@@ -241,9 +229,6 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
      * The aborting action when main logic error occurred.
      * former rtc_aborting_entry()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -257,9 +242,6 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
      * The error action in ERROR state
      * former rtc_error_do()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -273,9 +255,6 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
      * The reset action that is invoked resetting
      * This is same but different the former rtc_init_entry()
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -289,9 +268,6 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
      * The state update action that is invoked after onExecute() action
      * no corresponding operation exists in OpenRTm-aist-0.2.0
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -305,9 +281,6 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
      * The action that is invoked when execution context's rate is changed
      * no corresponding operation exists in OpenRTm-aist-0.2.0
      *
-     * @param ec_id target ExecutionContext Id
-     *
-     * @return RTC::ReturnCode_t
      * 
      * 
      */
@@ -325,13 +298,13 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
     // <rtc-template block="outport_declare">
     protected TimedFloat m_out_val;
     protected DataRef<TimedFloat> m_out;
-    /*!
+    /**
      */
     protected OutPort<TimedFloat> m_outOut;
 
     protected TimedFloatSeq m_seqout_val;
     protected DataRef<TimedFloatSeq> m_seqout;
-    /*!
+    /**
      */
     protected OutPort<TimedFloatSeq> m_seqoutOut;
 
@@ -340,7 +313,7 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
 
     // CORBA Port declaration
     // <rtc-template block="corbaport_declare">
-    /*!
+    /**
      */
     protected CorbaPort m_MyServicePort;
     
@@ -354,7 +327,7 @@ public class AutoTestOutImpl extends DataFlowComponentBase {
     // Consumer declaration
     // <rtc-template block="consumer_declare">
     protected CorbaConsumer<MyService> m_myservice0Base = new CorbaConsumer<MyService>(MyService.class);
-    /*!
+    /**
      */
     protected MyService m_myservice0;
     

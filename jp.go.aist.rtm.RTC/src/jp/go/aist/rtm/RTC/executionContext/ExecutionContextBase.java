@@ -45,4 +45,7 @@ public abstract class ExecutionContextBase extends
      * 
      */
     public abstract ExecutionContextService getObjRef();
+
+    public abstract boolean finalizeExecutionContext();
+
 }

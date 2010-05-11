@@ -76,4 +76,12 @@ public interface OutPortConsumer {
      *
      */
     public ReturnCode get(OutputStream data);
+    /**
+     * <p> setting Connector </p>
+     * 
+     * @param connector
+     */
+    public void setConnector(InPortConnector connector);
+    public void setListener(ConnectorBase.ConnectorInfo info, 
+                            ConnectorListeners listeners);
 }

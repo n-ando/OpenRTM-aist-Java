@@ -1,6 +1,8 @@
 package jp.go.aist.rtm.RTC.port;
 
 import java.util.UUID;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.omg.CORBA.SystemException;
 
@@ -21,7 +23,6 @@ import RTC.PortProfile;
 import RTC.RTObject;
 import RTC.ReturnCode_t;
 
-
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.ConnectorProfileFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
@@ -33,104 +34,115 @@ import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
 
-/*!
- * @if jp
- * @class PortBase
- * @brief Port の基底クラス
+/**
+ * {@.ja Port の基底クラス}
+ * {@.en Port base class}
  *
- * RTC::Port の基底となるクラス。
+ *<p>
+ *{@.ja RTC::Port の基底となるクラス。
  * RTC::Port はほぼ UML Port の概念を継承しており、ほぼ同等のものとみなす
  * ことができる。RT コンポーネントのコンセプトにおいては、
  * Port はコンポーネントに付属し、コンポーネントが他のコンポーネントと相互作用
  * を行う接点であり、通常幾つかのインターフェースと関連付けられる。
  * コンポーネントは Port を通して外部に対しインターフェースを提供または要求
  * することができ、Portはその接続を管理する役割を担う。
- * <p>
  * Port の具象クラスは、通常 RT コンポーネントインスタンス生成時に同時に
  * 生成され、提供・要求インターフェースを登録した後、RT コンポーネントに
  * 登録され、外部からアクセス可能な Port として機能することを想定している。
- * <p>
  * RTC::Port は CORBA インターフェースとして以下のオペレーションを提供する。
  *
- * - get_port_profile()
- * - get_connector_profiles()
- * - get_connector_profile()
- * - connect()
- * - notify_connect()
- * - disconnect()
- * - notify_disconnect()
- * - disconnect_all()
+ * <ul>
+ * <li> get_port_profile()
+ * <li> get_connector_profiles()
+ * <li> get_connector_profile()
+ * <li> connect()
+ * <li> notify_connect()
+ * <li> disconnect()
+ * <li> notify_disconnect()
+ * <li> disconnect_all()
+ * </ul>
  *
  * このクラスでは、これらのオペレーションの実装を提供する。
- * <p>
+ *
  * これらのオペレーションのうち、get_port_profile(), get_connector_profiles(),
  * get_connector_profile(), connect(), disconnect(), disconnect_all() は、
  * サブクラスにおいて特に振る舞いを変更する必要がないため、オーバーライド
  * することは推奨されない。
- * <p>
+ *
  * notify_connect(), notify_disconnect() については、サブクラスが提供・要求
  * するインターフェースの種類に応じて、振る舞いを変更する必要が生ずる
  * かもしれないが、これらを直接オーバーライドすることは推奨されず、
  * 後述の notify_connect(), notify_disconnect() の項においても述べられる通り
  * これらの関数に関連した protected 関数をオーバーライドすることにより
- * 振る舞いを変更することが推奨される。
+ * 振る舞いを変更することが推奨される。}
+ * {@.en This class is a base class of RTC::Port.
+ * RTC::Port inherits a concept of RT-Component, and can be regarded as almost
+ * the same as it. In the concept of RT-Component, Port is attached to the
+ * component, can mediate interaction between other components and usually is
+ * associated with some interfaces.
+ * Component can provide or require interface for outside via Port, and the
+ * Port plays a role to manage the connection.
  *
- * @else
+ * Concrete class of Port assumes to be usually created at the same time that
+ * RT-Component's instance is created, be registerd to RT-Component after
+ * provided and required interfaces are registerd, and function as accessible
+ * Port from outside.
  *
+ * RTC::Port provides the following operations as CORBA interface:
  *
- * @endif
- */
-/**
- * <p>Portサーバントのベース実装となるクラスです。</p>
- * 
- * <p>Portは、UMLにおけるポートの概念をほぼ継承しており、ほぼ同等のものとみなすことができます。
- * RTコンポーネントのコンセプトにおいては、Portはコンポーネントに付属するものであり、
- * コンポーネントが他のコンポーネントと相互作用を行う接点であり、
- * 通常は幾つかのインターフェースと関連付けられます。</p>
- * 
- * <p>コンポーネントはPortを通して外部に対してインターフェースを提供または要求
- * することができ、Portはその接続を管理する役割を担っています。</p>
- * 
- * <p>Portの具象クラスは、通常はRTコンポーネントインスタンス生成時に同時に生成され、
- * 提供・要求インターフェースを登録した後、RTコンポーネントに登録され、
- * 外部からアクセス可能なPortとして機能することを想定しています。</p>
- *
- * <p>Portは、CORBAインターフェースとして以下のオペレーションを提供します。
- * 
  * <ul>
- * <li>get_port_profile()</li>
- * <li>get_connector_profiles()</li>
- * <li>get_connector_profile()</li>
- * <li>connect()</li>
- * <li>notify_connect()</li>
- * <li>disconnect()</li>
- * <li>notify_disconnect()</li>
- * <li>disconnect_all()</li>
+ * <li> get_port_profile()
+ * <li> get_connector_profiles()
+ * <li> get_connector_profile()
+ * <li> connect()
+ * <li> notify_connect()
+ * <li> disconnect()
+ * <li> notify_disconnect()
+ * <li> disconnect_all()
  * </ul>
- * 
- * このクラスでは、これらのオペレーションの実装を提供しています。</p>
- * 
- * <p>上記のオペレーションのうち、get_port_profile(), get_connector_profiles(),
- * get_connector_profile(), connect(), disconnect(), disconnect_all()は、
- * サブクラスにおいて特に振る舞いを変更する必要がないため、オーバーライドすることは推奨されません。</p>
- * 
- * <p>notify_connect(), notify_disconnect()については、サブクラスが提供・要求するインターフェースの
- * 種類に応じて、振る舞いを変更する必要が生ずるかもしれませんが、これらを直接オーバーライドすることは
- * 推奨されず、後述のnotify_connect(), notify_disconnect()の項にも記述されている通りに、
- * これらのメソッドに関連したprotectedメソッドをオーバーライドすることにより振る舞いを変更することが
- * 推奨されます。</p>
+ *
+ * This class provides implementations of these operations.
+ *
+ * In these operations, as for get_port_profile(), get_connector_profiles(),
+ * get_connector_profile(), connect(), disconnect() and disconnect_all(),
+ * since their behaviors especially need not to be change in subclass, 
+ * overriding is not recommended.
+ *
+ * As for notify_connect() and notify_disconnect(), you may have to modify
+ * behavior according to the kind of interfaces that subclass provides and
+ * requires, however it is not recommended these are overriden directly.
+ * In the section of notify_connect() and notify_disconnect() as described
+ * below, it is recommended that you modify behavior by overriding the
+ * protected function related to these functions.}
+ *
  */
 public abstract class PortBase extends PortServicePOA {
     
     /**
-     * <p>本コンストラクタでは、オブジェクトの初期化処理を行うと同時に、
-     * 自身をCORBAオブジェクトとして活性化します。さらに、自分自身のPortProfileの
-     * port_refメンバに、自身のCORBAオブジェクト参照を格納します。</p>
-     * 
-     * @param name ポート名
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     * <p>
+     * {@.ja PortBase のコンストラクタは Port 名 name を引数に取り初期化を行う
+     * と同時に、自分自身を CORBA Object として活性化し、自身の PortProfile
+     * の port_ref に自身のオブジェクトリファレンスを格納する。}
+     * {@.en The constructor of the ProtBase class is given the name of 
+     * this Portand initialized. At the same time, 
+     * the PortBase activates itself as CORBA object 
+     * and stores its object reference to the PortProfile's * port_ref member.}
+     * </p>
+     *
+     * @param name 
+     *   {@.ja Port の名前(デフォルト値:"")}
+     *   {@.en The name of Port (The default value:"")}
+     *
      */
     public PortBase(final String name) {
-        this.m_profile.name = name;
+        m_ownerInstanceName = "unknown";
+        String portname = m_ownerInstanceName;
+        portname += ".";
+        portname += name;
+        this.m_profile.name = portname;
         this.m_profile.owner = null;
         this.m_profile.interfaces = new PortInterfaceProfile[0];
         this.m_profile.connector_profiles = new ConnectorProfile[0];
@@ -138,13 +150,13 @@ public abstract class PortBase extends PortServicePOA {
         this.m_objref = PortServiceHelper.narrow(this._this()._duplicate());
         this.m_profile.port_ref = this.m_objref;
         rtcout = new Logbuf(name);
-        rtcout.setLevel("PARANOID");
         m_onPublishInterfaces = null;
         m_onSubscribeInterfaces = null;
         m_onConnected = null;
         m_onUnsubscribeInterfaces = null;
         m_onDisconnected = null;
         m_onConnectionLost = null;
+        m_connectionLimit = 0;
     }
 
     /**
@@ -187,6 +199,9 @@ public abstract class PortBase extends PortServicePOA {
      * @return 本ポートに関するPortProfileオブジェクト
      */
     public PortProfile get_port_profile() {
+        rtcout.println(rtcout.TRACE, "get_port_profile()");
+
+        updateConnectors();
         synchronized (this.m_profile) {
             return PortProfileFactory.clone(this.m_profile);
         }
@@ -218,7 +233,9 @@ public abstract class PortBase extends PortServicePOA {
      * @return このポートに関連するConnectorProfileオブジェクトの配列
      */
     public RTC.ConnectorProfile[] get_connector_profiles() {
+        rtcout.println(rtcout.TRACE, "get_connector_profiles()");
 
+        updateConnectors();
         synchronized (this.m_profile) {
 
             int length = this.m_profile.connector_profiles.length;
@@ -241,6 +258,8 @@ public abstract class PortBase extends PortServicePOA {
     public ConnectorProfile get_connector_profile(final String connector_id) {
 
         rtcout.println(rtcout.TRACE, "get_connector_profile("+connector_id+")");
+
+        updateConnectors();
         synchronized (m_profile_mutex) {
 
             ConnectorProfileListHolder holder =
@@ -301,17 +320,6 @@ public abstract class PortBase extends PortServicePOA {
 	        }
             }
         }
-        //
-        NVListHolder nvholder = 
-                new NVListHolder(connector_profile.value.properties);
-            
-        Properties prop = new Properties();
-        NVUtil.copyToProperties(prop,nvholder);
-        if(null != prop.findNode("dataport")){
-            CORBA_SeqUtil.push_back(nvholder, 
-                NVUtil.newNV("dataport.serializer.cdr.endian", "little,big"));
-            connector_profile.value.properties = nvholder.value;
-        }
         
         try {
             ReturnCode_t ret 
@@ -327,84 +335,198 @@ public abstract class PortBase extends PortServicePOA {
     }
 
     /**
-     * <p>ポートの接続通知を行います。本メソッドは、ポート間で接続が行われる際に、
-     * ポート間で内部的に呼び出されます。</p>
-     * 
-     * @param connector_profile 接続プロファイル
-     * @return ReturnCode_t型の戻り値
+     * {@.ja [CORBA interface] Port の接続通知を行う}
+     * {@.en [CORBA interface] Notify the Ports connection}
+     *
+     * <p>
+     * {@.ja このオペレーションは、Port間の接続が行われる際に、Port間で内部的
+     * に呼ばれるオペレーションであって、通常アプリケーションプログラム
+     * や、Port以外のRTC関連オブジェクト等から呼び出されることは想定さ
+     * れていない。
+     *
+     * notify_connect() 自体はテンプレートメソッドパターンとして、サブ
+     * クラスで実装されることが前提の publishInterfaces(),
+     * subscribeInterfaces() の2つの関数を内部で呼び出す。処理の手順は
+     * 以下の通りである。
+     *
+     * - publishInterfaces(): インターフェース情報の公開
+     * - connectNext(): 次の Port の notify_connect() の呼び出し
+     * - subscribeInterfaces(): インターフェース情報の取得
+     * - 接続情報の保存
+     *
+     * notify_connect() は ConnectorProfile::ports に格納されている
+     * Port の順序に従って、カスケード状に呼び出しを行うことにより、イ
+     * ンターフェース情報の公開と取得を関連すすべてのポートに対して行う。
+     * このカスケード呼び出しは途中で中断されることはなく、必ず
+     * ConnectorProfile::ports に格納されている全ポートに対して行われる。
+     * </p>
+     * <p>
+     * 事前条件:<br>
+     * notify_connect() は ConnectorProfile::ports 内に格納されて
+     * いる Port 参照リストのうち、当該 Port 自身の参照の次に格納されて
+     * いる Port に対して notify_connect() を呼び出す。したがって
+     * ConnectorProfile::ports には当該 Port の参照が格納されている必要
+     * がある。もし、自身の参照が格納されていない場合、その他の処理によ
+     * りエラーが上書きされなければ、BAD_PARAMETER エラーが返される。
+     *
+     * 呼び出し時に ConnectorProfile::connector_id には一意なIDと
+     * して UUID が保持されている必要がある。通常 connector_id は
+     * connect() 関数により与えられ、空文字の場合は動作は未定義である。
+     * </p>
+     * <p>
+     * 事後条件:<br>
+     * ConnectorProfile::name, ConnectorProfile::connector_id,
+     * ConnectorProfile::ports は notify_connect() の呼び出しにより
+     * 書き換えられることはなく不変である。
+     *
+     * ConnectorProfile::properties は notify_connect() の内部で、
+     * 当該 Port が持つサービスインターフェースに関する情報を他の Port
+     * に伝えるために、プロパティ情報が書き込まれる。
+     *
+     * なお、ConnectorProfile::ports のリストの最初 Port の
+     * notify_connet() が終了した時点では、すべての関連する Port の
+     * notify_connect() の呼び出しが完了する。publishInterfaces(),
+     * connectNext(), subscribeInterfaces() および接続情報の保存のいず
+     * れかの段階でエラーが発生した場合でも、エラーコードは内部的に保持
+     * されており、最初に生じたエラーのエラーコードが返される。}
+     * {@.en This operation is usually called from other ports' connect() or
+     * notify_connect() operations when connection between ports is
+     * established.  This function is not premised on calling from
+     * other functions or application programs.
+     *
+     * According to the template method pattern, the notify_connect()
+     * calls "publishInterfaces()" and "subsctiveInterfaces()"
+     * functions, which are premised on implementing in the
+     * subclasses. The processing sequence is as follows.
+     *
+     * - publishInterfaces(): Publishing interface information
+     * - connectNext(): Calling notify_connect() of the next port
+     * - subscribeInterfaces(): Subscribing interface information
+     * - Storing connection profile
+     *
+     * According to the order of port's references stored in the
+     * ConnectorProfile::ports, publishing interface information to
+     * all the ports and subscription interface information from all
+     * the ports is performed by "notify_connect()"s.  This cascaded
+     * call never aborts in the halfway operations, and calling
+     * sequence shall be completed for all the ports.
+     * </p>
+     * <p>
+     * Precondition:<br>
+     * notify_connect() calls notify_connect() for the port's
+     * reference that is stored in next of this port's reference in
+     * the sequence of the ConnectorProfile::ports. Therefore the
+     * reference of this port shall be stored in the
+     * ConnectorProfile::ports. If this port's reference is not stored
+     * in the sequence, BAD_PARAMETER error will be returned, except
+     * the return code is overwritten by other operations.
+     *
+     * UUID shall be set to ConnectorProfile::connector_id as a
+     * unique identifier when this operation is called.  Usually,
+     * connector_id is given by a connect() function and, the behavior
+     * is undefined in the case of a null character.
+     * </p>
+     * <p>
+     * Postcondition:<br>
+     * ConnectorProfile::name, ConnectorProfile::connector_id,
+     * ConnectorProfile::ports are invariant, and they are never
+     * rewritten by notify_connect() operations.
+     *
+     * In order to transfer interface information to other
+     * ports, interface property information is stored into the
+     * ConnectorProfile::properties.
+     *
+     * At the end of notify_connect() operation for the first
+     * port stored in the ConnectorProfile::ports sequence, the
+     * related ports' notify_connect() invocations complete. Even if
+     * errors are raised at the halfway of publishInterfaces(),
+     * connectNext(), subscribeInterfaces() and storing process of
+     * ConnectorProfile, error codes are saved and the first error is
+     * returned.}
+     *
+     * @param connector_profile 
+     *   {@.ja ConnectorProfileHolder}
+     *   {@.en ConnectorProfileHolder}
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en ReturnCode_t The return code of ReturnCode_t type.}
+     *
      */
     public ReturnCode_t 
     notify_connect(ConnectorProfileHolder connector_profile) {
 
         rtcout.println(rtcout.TRACE, "notify_connect()");
 
-        ReturnCode_t[] retval = {ReturnCode_t.RTC_OK, ReturnCode_t.RTC_OK, 
+        synchronized (m_connectorsMutex){
+            ReturnCode_t[] retval = {ReturnCode_t.RTC_OK, ReturnCode_t.RTC_OK, 
                                  ReturnCode_t.RTC_OK}; 
-        //
-        // publish owned interface information to the ConnectorProfile
-        retval[0] = publishInterfaces(connector_profile);
-        if (! ReturnCode_t.RTC_OK.equals(retval[0])) {
-            rtcout.println(rtcout.ERROR, 
+            //
+            // publish owned interface information to the ConnectorProfile
+            retval[0] = publishInterfaces(connector_profile);
+            if (! ReturnCode_t.RTC_OK.equals(retval[0])) {
+                rtcout.println(rtcout.ERROR, 
                            "publishInterfaces() in notify_connect() failed.");
-        }
-        if (m_onPublishInterfaces != null) {
-            m_onPublishInterfaces.run(connector_profile);
-        }
+            }
+            if (m_onPublishInterfaces != null) {
+                m_onPublishInterfaces.run(connector_profile);
+            }
     
 
-        // call notify_connect() of the next Port
-        retval[1] = connectNext(connector_profile);
-        if (! ReturnCode_t.RTC_OK.equals(retval[1])) {
-            rtcout.println(rtcout.ERROR, 
-                           "connectNext() in notify_connect() failed.");
-        }
+            // call notify_connect() of the next Port
+            retval[1] = connectNext(connector_profile);
+            if (! ReturnCode_t.RTC_OK.equals(retval[1])) {
+                rtcout.println(rtcout.ERROR, 
+                               "connectNext() in notify_connect() failed.");
+            }
 
-        // subscribe interface from the ConnectorProfile's information
-        if (m_onSubscribeInterfaces != null) {
-            m_onSubscribeInterfaces.run(connector_profile);
-        }
-        retval[2] = subscribeInterfaces(connector_profile);
-        if (! ReturnCode_t.RTC_OK.equals(retval[2])) {
-            // cleanup this connection for downstream ports
-            rtcout.println(rtcout.ERROR, 
+            // subscribe interface from the ConnectorProfile's information
+            if (m_onSubscribeInterfaces != null) {
+                m_onSubscribeInterfaces.run(connector_profile);
+            }
+            retval[2] = subscribeInterfaces(connector_profile);
+            if (! ReturnCode_t.RTC_OK.equals(retval[2])) {
+                // cleanup this connection for downstream ports
+                rtcout.println(rtcout.ERROR, 
                            "subscribeInterfaces() in notify_connect() failed.");
-        }
+            }
 
-        rtcout.println(rtcout.PARANOID, 
-            m_profile.connector_profiles.length+" connectors are existing.");
+            rtcout.println(rtcout.PARANOID, 
+                m_profile.connector_profiles.length
+                +" connectors are existing.");
 
-        synchronized (m_profile_mutex) {
-            // update ConnectorProfile
-            int index = 
+            synchronized (m_profile_mutex) {
+                // update ConnectorProfile
+                int index = 
                      findConnProfileIndex(connector_profile.value.connector_id);
-            if (index < 0) {
-                ConnectorProfileListHolder holder =
-                  new ConnectorProfileListHolder(
+                if (index < 0) {
+                    ConnectorProfileListHolder holder =
+                      new ConnectorProfileListHolder(
                                              this.m_profile.connector_profiles);
-                CORBA_SeqUtil.push_back(holder, connector_profile.value);
-                this.m_profile.connector_profiles = holder.value;
-                rtcout.println(rtcout.PARANOID,
+                    CORBA_SeqUtil.push_back(holder, connector_profile.value);
+                    this.m_profile.connector_profiles = holder.value;
+                    rtcout.println(rtcout.PARANOID,
                                "New connector_id. Push backed.");
 
-            } else {
-                this.m_profile.connector_profiles[index] = 
+                } else {
+                    this.m_profile.connector_profiles[index] = 
                                                        connector_profile.value;
-                rtcout.println(rtcout.PARANOID,
-                               "Existing connector_id. Updated.");
-            } 
-        }
-
-        for (int i=0, len=retval.length; i < len; ++i) {
-            if (! ReturnCode_t.RTC_OK.equals(retval[i])) {
-                return retval[i];
+                    rtcout.println(rtcout.PARANOID,
+                                   "Existing connector_id. Updated.");
+                } 
             }
-        }
 
-        // connection established without errors
-        if (m_onConnected != null) {
-            m_onConnected.run(connector_profile);
+            for (int i=0, len=retval.length; i < len; ++i) {
+                if (! ReturnCode_t.RTC_OK.equals(retval[i])) {
+                    return retval[i];
+                }
+            }
+
+            // connection established without errors
+            if (m_onConnected != null) {
+                m_onConnected.run(connector_profile);
+            }
+            return ReturnCode_t.RTC_OK;
         }
-        return ReturnCode_t.RTC_OK;
     }
 
     /**
@@ -454,11 +576,96 @@ public abstract class PortBase extends PortServicePOA {
     }
 
     /**
-     * <p>ポートの接続解除通知を行います。本メソッドは、ポート間の接続解除が行われる際に、
-     * ポート間で内部的に呼び出されます。</p>
+     * {@.ja [CORBA interface] Port の接続解除通知を行う}
+     * {@.en [CORBA interface] Notify the Ports disconnection}
+     *
+     * <p>
+     * {@.ja このオペレーションは、Port間の接続解除が行われる際に、Port間で内
+     * 部的に呼ばれるオペレーションであり、通常アプリケーションプログラ
+     * ムや、 Port 以外の RTC 関連オブジェクト等から呼び出されることは
+     * 想定されていない。
+     *
+     * notify_disconnect() 自体はテンプレートメソッドパターンとして、サ
+     * ブクラスで実装されることが前提の unsubscribeInterfaces() 関数を
+     * 内部で呼び出す。処理の手順は以下の通りである。
+     *
+     * - ConnectorProfile の検索
+     * - 次の Port の notify_disconnect() 呼び出し
+     * - unsubscribeInterfaces()
+     * - ConnectorProfile の削除
+     *
+     * notify_disconnect() は ConnectorProfile::ports に格納されている
+     * Port の順序に従って、カスケード状に呼び出しを行うことにより、接
+     * 続の解除をすべての Port に通知する。
+     * </p>
+     * <p>
+     * 事前条件:<br>
+     * Port は与えられた connector_id に対応する ConnectorProfile
+     * を保持していなければならない。
+     * </p>
+     * <p>
+     * 事後条件:<br>
+     * connector_id に対応する ConnectorProfile が見つからない場
+     * 合はBAD_PARAMETER エラーを返す。
+     *
+     * カスケード呼び出しを行う際には ConnectorProfile::ports に
+     * 保持されている Port の参照リストのうち、自身の参照の次の参照に対
+     * して notify_disconnect() を呼び出すが、その呼び出しで例外が発生
+     * した場合には、呼び出しをスキップしリストの次の参照に対して
+     * notify_disconnect() を呼び出す。一つも呼び出しに成功しない場合、
+     * RTC_ERROR エラーコードを返す。
+     *
+     * なお、ConnectorProfile::ports のリストの最初 Port の
+     * notify_disconnet() が終了した時点では、すべての関連する Port の
+     * notify_disconnect() の呼び出しが完了する。}
+     * {@.en This operation is invoked between Ports internally when the
+     * connection is destroied. Generally it is not premised on
+     * calling from application programs or RTC objects except Port
+     * object.
+     *
+     * According to the template method pattern, the
+     * notify_disconnect() calls unsubsctiveInterfaces() function,
+     * which are premised on implementing in the subclasses. The
+     * processing sequence is as follows.
+     *
+     * - Searching ConnectorProfile
+     * - Calling notify_disconnect() for the next port
+     * - Unsubscribing interfaces
+     * - Deleting ConnectorProfile
+     *
+     * notify_disconnect() notifies disconnection to all the ports by
+     * cascaded call to the stored ports in the
+     * ConnectorProfile::ports in order.
+     *
+     * </p>
+     * <p>
+     * Precondition:<br>
+     * The port shall store the ConnectorProfile having same id
+     * with connector_id.
+     * </p>
+     * <p>
+     * Postcondition:<br>
+     * If ConnectorProfile of same ID with connector_id does not
+     * exist, it returns BAD_PARAMETER error.
+     * For the cascaded call, this operation calls
+     * noify_disconnect() for the port that is stored in the next of
+     * this port in the ConnectorProfile::ports.  If the operation
+     * call raises exception for some failure, it tries to call
+     * notify_disconnect() and skips until the operation succeeded.
+     * If none of operation call succeeded, it returns RTC_ERROR.
+     *
+     * At the end of notify_disconnect() operation for the first
+     * port stored in the ConnectorProfile::ports sequence, the
+     * related ports' notify_disconnect() invocations complete.}
      * 
-     * @param connector_id コネクタID
-     * @return ReturnCode_t型の戻り値
+     * @param connector_id
+     *   {@.ja ConnectorProfile の ID}
+     *   {@.en The ID of the ConnectorProfile.}
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type.}
+     *
+     *
      */
     public ReturnCode_t notify_disconnect(final String connector_id) {
 
@@ -470,52 +677,44 @@ public abstract class PortBase extends PortServicePOA {
         // The slave Ports have only responsibility of deleting its own
         // ConnectorProfile.
 
-        synchronized (m_profile_mutex) {
-            // find connector_profile
-            int index = findConnProfileIndex(connector_id);
-            if (index < 0) {
-                rtcout.println(rtcout.ERROR, 
+        synchronized (m_connectorsMutex){
+            synchronized (m_profile_mutex) {
+                // find connector_profile
+                int index = findConnProfileIndex(connector_id);
+                if (index < 0) {
+                    rtcout.println(rtcout.ERROR, 
                                "Invalid connector id: "+connector_id);
-	         return ReturnCode_t.BAD_PARAMETER;
-             }
-/* zxc
- Please delete this processing 
- if the unit test of this function is executed, 
- and the problem doesn't occur.
+	             return ReturnCode_t.BAD_PARAMETER;
+                 }
 
-            ConnectorProfile org_conn_prof 
-                               = this.m_profile.connector_profiles[index];
-            ConnectorProfile prof = new ConnectorProfile(
-                    org_conn_prof.name,
-                    org_conn_prof.connector_id,
-                    org_conn_prof.ports,
-                    org_conn_prof.properties);
-*/
+                ConnectorProfile prof 
+                    = this.m_profile.connector_profiles[index];
+                ReturnCode_t retval = disconnectNext(prof);
+                if (m_onUnsubscribeInterfaces != null) {
+                    ConnectorProfileHolder holder 
+                        = new ConnectorProfileHolder(prof);
+                    m_onUnsubscribeInterfaces.run(holder);
+                    prof = holder.value;
+                }
+                unsubscribeInterfaces(prof);
 
-            ConnectorProfile prof = this.m_profile.connector_profiles[index];
-            ReturnCode_t retval = disconnectNext(prof);
-            if (m_onUnsubscribeInterfaces != null) {
-                ConnectorProfileHolder holder 
-                    = new ConnectorProfileHolder(prof);
-                m_onUnsubscribeInterfaces.run(holder);
-                prof = holder.value;
-            }
-            unsubscribeInterfaces(prof);
+                if (m_onDisconnected != null) {
+                    ConnectorProfileHolder holder 
+                        = new ConnectorProfileHolder(prof);
+                    m_onDisconnected.run(holder);
+                    prof = holder.value;
+                }
 
-            if (m_onDisconnected != null) {
-                ConnectorProfileHolder holder 
-                    = new ConnectorProfileHolder(prof);
-                m_onDisconnected.run(holder);
-                prof = holder.value;
-            }
+                ConnectorProfileListHolder holder 
+                    = new ConnectorProfileListHolder(
+                        this.m_profile.connector_profiles);
 
-            ConnectorProfileListHolder holder =
-              new ConnectorProfileListHolder(this.m_profile.connector_profiles);
-            CORBA_SeqUtil.erase(holder, index);
-            this.m_profile.connector_profiles = holder.value;
+                CORBA_SeqUtil.erase(holder, index);
+                this.m_profile.connector_profiles = holder.value;
         
-            return retval;
-       }
+                return retval;
+           }
+        }
     }
 
     /**
@@ -574,6 +773,16 @@ public abstract class PortBase extends PortServicePOA {
     }
 
     /**
+     * <p> Get the name of this Port </p>
+     * <p> This operation returns the name of this Port. </p> 
+     * @return The name of this Port.
+     */
+    String getName() {
+        rtcout.println(rtcout.TRACE, "getName() = "+m_profile.name);
+        return m_profile.name;
+    }
+
+    /**
      * <p>当該ポートが保持しているPortProfileオブジェクトを取得します。</p>
      * 
      * @return 当該ポートが保持しているPortProfileオブジェクト
@@ -609,15 +818,31 @@ public abstract class PortBase extends PortServicePOA {
     }
 
     /**
-     * <p>当該ポートのオーナーRTObjectを設定します。
-     * 指定されたRTObjectオブジェクトが、PortProfileのownerメンバに設定されます。</p>
-     * 
-     * @param owner 当該ポートを所有するRTObjectのCORBAオブジェクト参照
+     * {@.ja Port の owner の RTObject を指定する}
+     * {@.en Set the owner RTObject of the Port}
+     *
+     * <p>
+     * {@.ja このオペレーションは Port の PortProfile.owner を設定する。}
+     * {@.en This operation sets the owner RTObject of this Port.}
+     * </p>
+     * @param owner 
+     *   {@.ja この Port を所有する RTObject の参照}
+     *   {@.en The owner RTObject's reference of this Port}
+     *
      */
     public void setOwner(RTObject owner) {
-        rtcout.println(rtcout.TRACE, "setOwner()");
+
+
+        RTC.ComponentProfile prof = owner.get_component_profile();
+        m_ownerInstanceName = prof.instance_name;
+        rtcout.println(rtcout.TRACE, "setOwner("+m_ownerInstanceName+")");
         synchronized (this.m_profile) {
+            String portname = m_profile.name;
+            String[] port = portname.split("\\.");
+            // Now Port name is <instance_name>.<port_name>. 
+            portname = m_ownerInstanceName +"."+ port[port.length-1];
             this.m_profile.owner = (RTObject)owner._duplicate();
+            this.m_profile.name = portname;
         }
     }
     //============================================================
@@ -788,20 +1013,39 @@ public abstract class PortBase extends PortServicePOA {
     protected abstract ReturnCode_t publishInterfaces(ConnectorProfileHolder connector_profile);
 
     /**
-     * <p>当該ポートの次のポートに対して接続通知を行います。</p>
-     * 
-     * <p>ConnectorProfile内に設定されているPortのシーケンスを調べて、
-     * 当該Portの次のPortを特定し、そのPortに対してnotify_connect()を呼び出します。</p>
-     * 
-     * @param connector_profile 接続プロファイル
+     * {@.ja 次の Port に対して notify_connect() をコールする}
+     * {@.en Call notify_connect() of the next Port}
+     *
+     * <p>
+     * {@.ja ConnectorProfile の port_ref 内に格納されている Port のオブジェクト
+     * リファレンスのシーケンスの中から、自身の Port の次の Port に対して
+     * notify_connect() をコールする。}
+     * {@.en This operation calls the notify_connect() of the next Port's 
+     * that stored in ConnectorProfile's port_ref sequence.}
+     * </p>
+     *
+     * @param connector_profile 
+     *   {@.ja 接続に関するプロファイル情報}
+     *   {@.en The connection profile information}
+     *
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type.}
+     *
      */
-    protected ReturnCode_t connectNext(ConnectorProfileHolder connector_profile) {
+    protected 
+    ReturnCode_t connectNext(ConnectorProfileHolder connector_profile) {
 
-        PortServiceListHolder portsHolder = new PortServiceListHolder(connector_profile.value.ports);
-        int index = CORBA_SeqUtil.find(portsHolder, new find_port_ref(this.m_profile.port_ref));
+        PortServiceListHolder portsHolder 
+            = new PortServiceListHolder(connector_profile.value.ports);
+        int index 
+            = CORBA_SeqUtil.find(portsHolder, 
+                                    new find_port_ref(this.m_profile.port_ref));
         connector_profile.value.ports = portsHolder.value;
         
-        if (index < 0) return ReturnCode_t.BAD_PARAMETER;
+        if (index < 0) {
+            return ReturnCode_t.BAD_PARAMETER;
+        }
         
         if (++index < connector_profile.value.ports.length) {
             PortService p = connector_profile.value.ports[index];
@@ -1119,6 +1363,7 @@ public abstract class PortBase extends PortServicePOA {
      */
     protected PortProfile m_profile = new PortProfile();
     protected static String m_profile_mutex = new String();
+    protected static String m_connectorsMutex = new String();
 
     /**
      * <p>当該ポートのCORBAオブジェクト参照です。</p>
@@ -1380,6 +1625,81 @@ public abstract class PortBase extends PortServicePOA {
         NVUtil.appendStringValue(holder, key, value);
         this.m_profile.properties = holder.value;
     }
+    /**
+     *
+     */
+    protected void updateConnectors() {
+        Vector<String> connector_ids = new Vector<String>();
+        {
+            synchronized (this.m_profile) {
+                RTC.ConnectorProfile[] clist = m_profile.connector_profiles;
+  
+                for (int i=0; i < clist.length; ++i) {
+                    if (!checkPorts(clist[i].ports)) {
+                        String id = clist[i].connector_id;
+                        connector_ids.add(id);
+                        rtcout.println(rtcout.WARN,"Dead connection:"+id);
+                    }
+                }
+            }
+        }
+  
+
+        Iterator it = connector_ids.iterator();
+        while (it.hasNext()) {
+            this.disconnect((String)it.next());
+        }
+    }
+    /**
+     *
+     */
+    protected boolean checkPorts(RTC.PortService[] ports) {
+        for (int i=0, len=ports.length; i < len; ++i) {
+            try {
+                if (ports[i]._non_existent()) {
+                    rtcout.println(rtcout.WARN,"Dead Port reference detected.");
+                    return false;
+                }
+            }
+            catch (Exception ex) {
+                return false;
+            }
+        }
+        return true;
+    }
+  
+    /**
+     * <p> Publish interface information </p>
+     *
+     * Publish interface information.
+     *
+     * @return The return code of ReturnCode_t type
+     */
+    protected ReturnCode_t _publishInterfaces() {
+        if(!(m_connectionLimit < 0)) {
+            if(m_connectionLimit<=m_profile.connector_profiles.length) {
+                rtcout.println(rtcout.PARANOID, 
+                    "Connected number has reached the limitation.");
+                rtcout.println(rtcout.PARANOID, 
+                    "Can connect the port up to "+m_connectionLimit+" ports.");
+                rtcout.println(rtcout.PARANOID, 
+                    m_profile.connector_profiles.length+" connectors are existing");
+                return ReturnCode_t.RTC_ERROR;
+             }
+        }
+        return ReturnCode_t.RTC_OK;
+    }
+
+    /**
+     * <p> Set the maximum number of connections </p>
+     *
+     * @param limit_value The maximum number of connections
+     *
+     */
+    protected void setConnectionLimit(int limit_value) {
+        m_connectionLimit = limit_value;
+    }
+
     protected Logbuf rtcout;
     /**
      * <p>Callback functor objects</p>
@@ -1390,4 +1710,16 @@ public abstract class PortBase extends PortServicePOA {
     protected ConnectionCallback m_onUnsubscribeInterfaces;
     protected ConnectionCallback m_onDisconnected;
     protected ConnectionCallback m_onConnectionLost;
+    /**
+     * <p> The maximum number of connections </p>
+     */
+    protected int m_connectionLimit;
+    /*!
+     * @if jp
+     * @brief インスタンス名
+     * @else
+     * @brief Instance name
+     * @endif
+     */
+    protected String m_ownerInstanceName;
 }

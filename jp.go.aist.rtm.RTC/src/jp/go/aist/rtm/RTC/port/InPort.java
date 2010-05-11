@@ -3,13 +3,11 @@ package jp.go.aist.rtm.RTC.port;
 import java.lang.ClassCastException;
 import org.omg.CORBA.TypeCodePackage.BadKind;
 import java.io.IOException;
-import com.sun.corba.se.spi.ior.iiop.GIOPVersion;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.portable.Streamable;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
-import com.sun.corba.se.impl.encoding.EncapsInputStream; 
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 import java.lang.reflect.Method;
@@ -179,102 +177,173 @@ public class InPort<DataType> extends InPortBase {
      *          false:Past data Data has already been readout.)
      * 
      */
+    /**
+     * {@.ja 最新データが存在するか確認する}
+     * {@.en Check whether the data is newest}
+     * 
+     * <p>
+     * {@.ja InPortに未読の最新データが到着しているかをbool値で返す。
+     * InPortが未接続の場合、および接続コネクタのバッファがEmpty
+     * の場合にはfalseを返す。}
+     * {@.en Check whether the data stored at a current buffer position is i
+     * newest.}
+     *
+     * @return 
+     *   {@.ja true 未読の最新データが存在する
+     *         false 未接続またはバッファにデータが存在しない。}
+     *   {@.en Newest data check result
+     *         ( true:Newest data. Data has not been readout yet.
+     *          false:Past data．Data has already been readout.)}
+     * 
+     */
     public boolean isNew() {
 
         rtcout.println(rtcout.TRACE, "isNew()");
+        int r = 0;
 
-        synchronized (m_connectors){
-            if (m_connectors.size() == 0) {
-                rtcout.println(rtcout.DEBUG, "no connectors");
-                return false;
+        synchronized (m_connectorsMutex){
+            synchronized (m_connectors){
+                if (m_connectors.size() == 0) {
+                    rtcout.println(rtcout.DEBUG, "no connectors");
+                    return false;
+                }
+                r = m_connectors.elementAt(0).getBuffer().readable();
             }
-            int r = m_connectors.elementAt(0).getBuffer().readable();
-            if (r > 0) {
-                rtcout.println(rtcout.DEBUG, 
-                               "isNew() = true, readable data: " + r);
-                return true;
-            }
-      
-            rtcout.println(rtcout.DEBUG, "isNew() = false, no readable data");
-            return false;
         }
+        if (r > 0) {
+            rtcout.println(rtcout.DEBUG, 
+                              "isNew() = true, readable data: " + r);
+            return true;
+        }
+  
+        rtcout.println(rtcout.DEBUG, "isNew() = false, no readable data");
+        return false;
     }
     
     
     /**
-     * <p>ポートからデータを読み出します。</p>
+     * {@.ja DataPort から値を読み出す}
+     * {@.en Readout the value from DataPort}
+     * <p>
+     * {@.ja InPortに書き込まれたデータを読みだす。接続数が0、またはバッファに
+     * データが書き込まれていない状態で読みだした場合の戻り値は不定である。
+     * バッファが空の状態のとき、
+     * 事前に設定されたモード (readback, do_nothing, block) に応じて、
+     * 以下のような動作をする。
      *
-     * <ul>
-     * <li>コールバックインタフェースOnReadがセットされている場合は、
-     * ポートが保持するバッファからデータを読み出す前にOnReadが呼ばれます。</li>
-     * <li>ポートが保持するバッファがアンダーフローを検出できるバッファで、
-     * かつ、読み出す際にバッファがアンダーフローを検出した場合は、
-     * コールバックインタフェースOnUnderflowが呼び出されます。</li>
-     * <li>コールバックインタフェースOnReadConvertがセットされている場合は、
-     * バッファからのデータ読み取り時に、OnReadConvert#operator()が呼び出され、
-     * その戻り値がread()の戻り値となります。</li>
-     * <li>setReadTimeout()により読み出し時のタイムアウトが設定されている場合は、
-     * バッファアンダーフロー状態が解除されるまでタイムアウト時間だけ待ち、
-     * OnUnderflowがセットされていれば、これを呼び出して戻ります。</li>
-     * </ul>
+     * - readback: 最後の値を読みなおす。
+     *
+     * - do_nothing: 何もしない
+     *
+     * - block: ブロックする。タイムアウトが設定されている場合は、
+     *       タイムアウトするまで待つ。
+     *
+     * バッファが空の状態では、InPortにバインドされた変数の値が返される。
+     * したがって、初回読み出し時には不定値を返す可能性がある。
+     * この関数を利用する際には、
+     *
+     * - isNew(), isEmpty() と併用し、事前にバッファ状態をチェックする。
      * 
-     * @return 読み出したデータ
+     * - 初回読み出し時に不定値を返さないようにバインド変数を事前に初期化する
+     * 
+     * - ReturnCode read(DataType& data) 関数の利用を検討する。
+     *
+     * ことが望ましい。
+     *
+     * 各コールバック関数は以下のように呼び出される。
+     * - OnRead: read() 関数が呼ばれる際に必ず呼ばれる。
+     * 
+     * - OnReadConvert: データの読み出しが成功した場合、読みだしたデータを
+     *       引数としてOnReadConvertが呼び出され、戻り値をread()が戻り値
+     *       として返す。
+     *
+     * - OnEmpty: バッファが空のためデータの読み出しに失敗した場合呼び出される。
+     *        OnEmpty の戻り値を read() の戻り値として返す。
+     *
+     * - OnBufferTimeout: データフロー型がPush型の場合に、読み出し
+     *        タイムアウトのためにデータの読み出しに失敗した場合に呼ばれる。
+     *
+     * - OnRecvTimeout: データフロー型がPull型の場合に、読み出しタイムアウト
+     *        のためにデータ読み出しに失敗した場合に呼ばれる。
+     *
+     * - OnReadError: 上記以外の理由で読みだしに失敗した場合に呼ばれる。
+     *        理由としては、バッファ設定の不整合、例外の発生などが考えられる
+     *        が通常は起こりえないためバグの可能性がある。}
+     * {@.en Readout the value from DataPort
+     *
+     * - When Callback functor OnRead is already set, OnRead will be invoked
+     *   before reading from the buffer held by DataPort.
+     * - When the buffer held by DataPort can detect the underflow,
+     *   and when it detected the underflow at reading, callback functor
+     *   OnUnderflow will be invoked.
+     * - When callback functor OnReadConvert is already set, the return value of
+     *   operator() of OnReadConvert will be the return value of read().
+     * - When timeout of reading is already set by setReadTimeout(),
+     *   it waits for only timeout time until the state of the buffer underflow
+     *   is reset, and if OnUnderflow is already set, this will be invoked to 
+     *   return.}
+     * </p>
+     * @return 
+     *   {@.ja 読み出し結果(読み出し成功:true, 読み出し失敗:false)}
+     *   {@.en Readout result (Successful:true, Failed:false)}
+     *
      */
-    public DataType read() {
+    public boolean read() {
         rtcout.println(rtcout.TRACE, "DataType read()");
 
 
-        synchronized (m_connectors){
+        synchronized (m_connectorsMutex){
 
             if (m_OnRead != null) {
                 m_OnRead.run();
                 rtcout.println(rtcout.TRACE, "OnRead called");
             }
 
-            if (m_connectors.size() == 0) {
-                rtcout.println(rtcout.DEBUG, "no connectors");
-                return m_value.v;
-            }
-
-//            OutputStream cdr = new EncapsOutputStream(m_spi_orb, 
-//                                                  isLittleEndian());
+            ReturnCode ret;
             EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
                                                         isLittleEndian());
+            DataRef<InputStream> dataref 
+                    = new DataRef<InputStream>(cdr.create_input_stream());
+            synchronized (m_connectors){
 
+                if (m_connectors.size() == 0) {
+                    rtcout.println(rtcout.DEBUG, "no connectors");
+                    return false;
+                }
 
-            DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
-            ReturnCode ret = m_connectors.elementAt(0).read(dataref);
+                ret = m_connectors.elementAt(0).read(dataref);
+            }
 
-            cdr = (EncapsOutputStream)dataref.v;
+//zxc            cdr = (EncapsOutputStream)dataref.v;
             if (ret.equals(ReturnCode.PORT_OK)) {
                 rtcout.println(rtcout.DEBUG, "data read succeeded");
-//                InputStream input_stream = cdr.create_input_stream();
-                byte[] ch = cdr.toByteArray();
-                InputStream input_stream = new EncapsInputStream(m_orb, 
-                                                             ch, 
-                                                             ch.length,
-                                                             isLittleEndian(),
-                                                             GIOPVersion.V1_2);
+//zxc                byte[] ch = cdr.toByteArray();
+//                InputStream input_stream = new EncapsInputStream(m_orb, 
+//                                                           ch, 
+//                                                           ch.length,
+//                                                           isLittleEndian(),
+//                                                           GIOPVersion.V1_2);
 
-                m_value.v = read_stream(m_value,input_stream);
+//zxc                m_value.v = read_stream(m_value,input_stream);
+                m_value.v = read_stream(m_value,dataref.v);
                 if (m_OnReadConvert != null) {
                     m_value.v = m_OnReadConvert.run(m_value.v);
                     rtcout.println(rtcout.DEBUG, "OnReadConvert called");
-                    return m_value.v;
+                    return true;
                 }
-                return m_value.v;
+                return true;
             }
             else if (ret.equals(ReturnCode.BUFFER_EMPTY)) {
                 rtcout.println(rtcout.WARN, "buffer empty");
-                return m_value.v;
+                return false;
             }
             else if (ret.equals(ReturnCode.BUFFER_TIMEOUT)) {
                 rtcout.println(rtcout.WARN, "buffer read timeout");
-                return m_value.v;
+                return false;
             }
             rtcout.println(rtcout.ERROR, 
                            "unknown retern value from buffer.read()");
-            return m_value.v;
+            return false;
 
         }
     }
@@ -285,6 +354,24 @@ public class InPort<DataType> extends InPortBase {
      */
     public void update() {
         this.read();
+    }
+
+    /**
+     * {@.ja T 型のデータへ InPort の最新値データを読み込む}
+     * {@.en Read the newly value data in InPort to type-T variable}
+     * <p>
+     * {@.ja InPort に設定されている最新データを読み込み、
+     *       指定されたデータ変数に設定する。}
+     * {@.en Read the newly data set in InPort and set to specified data 
+     *       variable.}
+     * </p>
+     * @return
+     *   {@.ja InPort バッファから値を読み込む T 型変数}
+     *   {@.en The type-T variable to read from InPort's buffer}
+     */
+    public DataType extract() {
+        this.read();
+        return m_value.v;
     }
     
     /**
@@ -351,31 +438,81 @@ public class InPort<DataType> extends InPortBase {
     
 
     /**
-     * <p>バッファが空である、つまり読み取れるデータがないかどうかを取得します。</p>
+     * {@.ja バッファが空かどうか確認する}
+     * {@.en Check whether the data is newest}
+     *
+     * <p> 
+     * {@.ja InPortのバッファが空かどうかを bool 値で返す。
+     * 空の場合は true, 未読データがある場合は false を返す。}
+     * {@.en Check whether the data stored at a current buffer position is 
+     * newest.}
+     *
+     * @return 
+     *   {@.ja true  バッファは空
+     *         false バッファに未読データがある}
+     *   {@.en Newest data check result
+     *         ( true:Newest data. Data has not been readout yet.
+     *          false:Past data．Data has already been readout.)}
      * 
-     * @return バッファが空の場合はtrueを、さもなくばfalseを返します。
+     *
      */
     public boolean isEmpty() {
         rtcout.println(rtcout.TRACE, "isEmpty()");
 
-        synchronized (m_connectors){
-            if (m_connectors.size() == 0) {
-                rtcout.println(rtcout.DEBUG, "no connectors");
-                return true;
+        int r = 0;
+        synchronized (m_connectorsMutex){
+            synchronized (m_connectors){
+                if (m_connectors.size() == 0) {
+                    rtcout.println(rtcout.DEBUG, "no connectors");
+                    return true;
+                }
+                r = m_connectors.elementAt(0).getBuffer().readable();
             }
-            int r = m_connectors.elementAt(0).getBuffer().readable();
-            if (r == 0) {
-                rtcout.println(rtcout.DEBUG, 
-                               "isEmpty() = true, buffer is empty");
-                return true;
-            }
-      
-            rtcout.println(rtcout.DEBUG, 
-                           "isEmpty() = false, data exists in the buffer");
-            return false;
         }
+        if (r == 0) {
+            rtcout.println(rtcout.DEBUG, 
+                           "isEmpty() = true, buffer is empty");
+            return true;
+        }
+          
+        rtcout.println(rtcout.DEBUG, 
+                   "isEmpty() = false, data exists in the buffer");
+        return false;
     }
     
+    /**
+     * {@.ja CDR化で使用するStreamableを設定する}
+     * {@.en Sets Streamable. }
+     *
+     * <p> 
+     * {@.ja 与えられたStreamableをCDR化で使用するStreamableへ設定する。
+     * また、与えられたStreamableからvalueフィールドを取得し保持する。}
+     * {@.en This method sets Streamable used when making it to CDR. 
+     * Moreover, this method acquires the value field from Streamable. }
+     *
+     * @param holderStreamable
+     *   {@.ja  HolderクラスのStreamable}
+     *   {@.en  Streamable of Holder class}
+     * @return 
+     *   {@.ja false 失敗}
+     *   {@.en false Failure}
+     * 
+     *
+     */
+    public boolean setStreamable(Streamable holderStreamable) {
+        try {
+            m_streamable = holderStreamable;
+            m_field = m_streamable.getClass().getField("value");
+            return true;
+        }
+        catch(NoSuchFieldException e){
+            //getField throws
+            rtcout.println(rtcout.WARN, 
+                   "Exception caught."+e.toString());
+        }
+        return false;
+    }
+
     private BufferBase<DataType> m_superClass;
     private String m_name;
     private DataRef<DataType> m_value;

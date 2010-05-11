@@ -4,15 +4,25 @@ package RTMExamples.SimpleIO;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Observer;
+import java.util.Observable;
 
 import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.port.OutPort;
+import jp.go.aist.rtm.RTC.port.ConnectorBase;
+import jp.go.aist.rtm.RTC.port.ConnectorListener;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListener;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerT;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import RTC.ReturnCode_t;
 import RTC.TimedLong;
 
-public class ConsoleInImpl  extends DataFlowComponentBase {
+import org.omg.CORBA.portable.OutputStream;
+
+public class ConsoleInImpl extends DataFlowComponentBase {
 
     public ConsoleInImpl(Manager manager) {
         super(manager);
@@ -27,13 +37,14 @@ public class ConsoleInImpl  extends DataFlowComponentBase {
         // Set InPort buffers
         
         // Set OutPort buffer
+/*
         try {
 //            registerOutPort(TimedLong.class, "out", m_outOut);  //v042
             registerOutPort("out", m_outOut);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+*/        
         // Set service provider to Ports
         
         // Set service consumers to Ports
@@ -46,9 +57,50 @@ public class ConsoleInImpl  extends DataFlowComponentBase {
     // The initialize action (on CREATED->ALIVE transition)
     // formaer rtc_init_entry() 
 //    @Override
-//    protected ReturnCode_t onInitialize() {
-//        return super.onInitialize();
-//    }
+    protected ReturnCode_t onInitialize() {
+
+        try {
+            addOutPort("out", m_outOut);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        m_outOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_WRITE,
+                            new DataListener("ON_BUFFER_WRITE"));
+        m_outOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_FULL, 
+                            new DataListener("ON_BUFFER_FULL"));
+        m_outOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT, 
+                            new DataListener("ON_BUFFER_WRITE_TIMEOUT"));
+        m_outOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_OVERWRITE, 
+                            new DataListener("ON_BUFFER_OVERWRITE"));
+        m_outOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_READ, 
+                            new DataListener("ON_BUFFER_READ"));
+        m_outOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_SEND, 
+                            new DataListener("ON_SEND"));
+        m_outOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVED,
+                            new DataListener("ON_RECEIVED"));
+        m_outOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVER_FULL, 
+                            new DataListener("ON_RECEIVER_FULL"));
+        m_outOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVER_TIMEOUT, 
+                            new DataListener("ON_RECEIVER_TIMEOUT"));
+        m_outOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVER_ERROR,
+                            new DataListener("ON_RECEIVER_ERROR"));
+
+        m_outOut.addConnectorListener(
+                            ConnectorListenerType.ON_CONNECT,
+                            new Listener("ON_CONNECT"));
+        return super.onInitialize();
+    }
     // The finalize action (on ALIVE->END transition)
     // formaer rtc_exiting_entry()
 //    @Override
@@ -102,7 +154,7 @@ public class ConsoleInImpl  extends DataFlowComponentBase {
         System.out.println("Sending to subscriber: "  + m_out_val.data);
         m_outOut.write();
 
-        return ReturnCode_t.RTC_OK;
+        return super.onExecute(ec_id);
     }
     //
     // The aborting action when main logic error occurred.
@@ -168,4 +220,41 @@ public class ConsoleInImpl  extends DataFlowComponentBase {
     
     // </rtc-template>
 
+    class DataListener extends ConnectorDataListenerT<TimedLong>{
+        public DataListener(final String name){
+            super(TimedLong.class);
+            m_name = name;
+        }
+
+        public void operator(final ConnectorBase.ConnectorInfo arg,
+                               final TimedLong data) {
+            ConnectorBase.ConnectorInfo info =(ConnectorBase.ConnectorInfo)arg;
+            System.out.println("------------------------------");
+            System.out.println("Listener:       "+m_name);
+            System.out.println("Profile::name:  "+info.name);
+            System.out.println("Profile::id:    "+info.id);
+//            System.out.println("Profile::properties: ");
+//            System.out.println(info.properties);
+            System.out.println("Data:           "+data.data);
+            System.out.println("------------------------------");
+        }
+        public String m_name;
+    }
+    class Listener extends ConnectorListener{
+        public Listener(final String name){
+            m_name = name;
+        }
+
+        public void operator(final ConnectorBase.ConnectorInfo arg){
+            System.out.println("------------------------------");
+            System.out.println("Listener:          "+m_name);
+            System.out.println("Profile::name:     "+arg.name);
+            System.out.println("Profile::id:       "+arg.id);
+            String str = new String();
+            System.out.println("Profile::data_type:"+arg.properties.getProperty("data_type"));
+            System.out.println("------------------------------");
+        }
+        public String m_name;
+    }
 }
+

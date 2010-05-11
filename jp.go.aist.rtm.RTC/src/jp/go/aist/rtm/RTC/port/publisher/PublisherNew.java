@@ -15,6 +15,10 @@ import jp.go.aist.rtm.RTC.TaskFuncBase;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.port.InPortConsumer;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
+import jp.go.aist.rtm.RTC.port.ConnectorListeners;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
@@ -27,8 +31,8 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
  */
 public class PublisherNew extends PublisherBase implements Runnable, ObjectCreator<PublisherBase>, ObjectDestructor{
     /**
-     * <p>コンストラクタです。</p>
-     * 
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      */
     public PublisherNew() {
         rtcout = new Logbuf("PublisherNew");
@@ -40,6 +44,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         m_skipn = 0;
         m_active = false;
         m_leftskip = 0;
+        m_listeners = null;
     }
     
     /**
@@ -101,15 +106,17 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         try {
             while (m_buffer.readable() > 0) {
                 OutputStream cdr = m_buffer.get();
+                onBufferRead(cdr);
+
+                onSend(cdr);
                 ReturnCode ret = m_consumer.put(cdr);
             
-                if (ret.equals(ReturnCode.SEND_FULL)) {
-                    return ReturnCode.SEND_FULL;
+                if (!ret.equals(ReturnCode.PORT_OK)) {
+                    rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
+                    return invokeListener(ret, cdr);
                 }
-                else if (!ret.equals(ReturnCode.PORT_OK)) {
-                    return ret;
-                }
-            
+                onReceived(cdr);
+
                 m_buffer.advanceRptr();
             }
             return ReturnCode.PORT_OK;
@@ -128,15 +135,17 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         rtcout.println(rtcout.TRACE, "pushFifo()");
         try {
             OutputStream cdr = m_buffer.get();
+            onBufferRead(cdr);
+
+            onSend(cdr);
             ReturnCode ret = m_consumer.put(cdr);
         
-            if (ret.equals(ReturnCode.SEND_FULL)) {
-                return ReturnCode.SEND_FULL;
+            if (!ret.equals(ReturnCode.PORT_OK)) {
+                rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
+                return invokeListener(ret, cdr);
             }
-            else if (!ret.equals(ReturnCode.PORT_OK)) {
-                return ret;
-            }
-        
+            onReceived(cdr);
+
             m_buffer.advanceRptr();
         
             return ret;
@@ -162,11 +171,16 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                 m_buffer.advanceRptr(postskip);
 
                 final OutputStream cdr = m_buffer.get();
+                onBufferRead(cdr);
+        
+                onSend(cdr);
                 ret = m_consumer.put(cdr);
-                if (ret != ReturnCode.PORT_OK) {
+                if (!ret.equals(ReturnCode.PORT_OK)) {
                     m_buffer.advanceRptr(-postskip);
-                    return ret;
+                    rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
+                    return invokeListener(ret, cdr);
                 }
+                onReceived(cdr);
                 postskip = m_skipn +1;
             }
             m_buffer.advanceRptr(m_buffer.readable());
@@ -199,11 +213,17 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             m_buffer.advanceRptr(m_buffer.readable() - 1);
         
             OutputStream cdr = m_buffer.get();
+            onBufferRead(cdr);
+
+            onSend(cdr);
             ReturnCode ret = m_consumer.put(cdr);
 
-            if (ret.equals(ReturnCode.PORT_OK)) {
-                m_buffer.advanceRptr();
+            if (!ret.equals(ReturnCode.PORT_OK)) {
+                rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
+                return invokeListener(ret, cdr);
             }
+            onReceived(cdr);
+            m_buffer.advanceRptr();
             return ret;
         }
         catch (Exception e) {
@@ -270,34 +290,45 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         rtcout.println(rtcout.TRACE, "init()");
         String str = new String();
         prop._dump(str,prop,0);
-        rtcout.println(rtcout.PARANOID, str);
+        rtcout.println(rtcout.DEBUG, str);
     
+        setPushPolicy(prop);
+        if (!createTask(prop)) {
+            return ReturnCode.INVALID_ARGS;
+        }
+        return ReturnCode.PORT_OK;
+    }
+    /**
+     * <p> Setting PushPolicy </p>
+     * @param prop Properties
+     */
+    protected void setPushPolicy(final Properties prop) {
         // push_policy default: NEW
         String push_policy = prop.getProperty("publisher.push_policy", "new");
         rtcout.println(rtcout.DEBUG, "push_policy: " + push_policy );
     
-        // skip_count default: 0
-        String skip_count = prop.getProperty("publisher.skip_count", "0");
-        rtcout.println(rtcout.DEBUG, "skip_count: " + skip_count );
-    
         push_policy = StringUtil.normalize(push_policy);
         if (push_policy.equals("all")) {
             m_pushPolicy = Policy.ALL;
-          }
+        }
         else if (push_policy.equals("fifo")) {
             m_pushPolicy = Policy.FIFO;
-          }
+        }
         else if (push_policy.equals("skip")) {
             m_pushPolicy = Policy.SKIP;
-          }
+        }
         else if (push_policy.equals("new")) {
             m_pushPolicy = Policy.NEW;
-          }
+        }
         else {
             rtcout.println(rtcout.ERROR, 
                            "invalid push_policy value: " + push_policy );
             m_pushPolicy = Policy.NEW;     // default push policy
-          }
+        }
+
+        // skip_count default: 0
+        String skip_count = prop.getProperty("publisher.skip_count", "0");
+        rtcout.println(rtcout.DEBUG, "skip_count: " + skip_count );
     
         try {
             m_skipn = Integer.parseInt(skip_count);
@@ -312,6 +343,14 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                            "invalid skip_count value: " + m_skipn );
             m_skipn = 0;           // default skip count
         }
+    }
+
+    /**
+     * <p> Setting Task </p>
+     * @param prop Properties
+     * @return false:Task creation failed
+     */
+    protected boolean createTask(final Properties prop) {
     
         PeriodicTaskFactory<PeriodicTaskBase,String> factory 
             = PeriodicTaskFactory.instance();
@@ -326,7 +365,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             rtcout.println(rtcout.ERROR, 
                            "Task creation failed: " 
                            + prop.getProperty("thread_type", "default"));
-            return ReturnCode.INVALID_ARGS;
+            return false;
         }
         rtcout.println(rtcout.PARANOID, "Task creation succeeded." );
     
@@ -361,8 +400,10 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         m_task._suspend();
         m_task.activate();
         m_task._suspend();
-        return ReturnCode.PORT_OK;
+
+        return true;
     }
+
     /**
      * <p> setConsumer </p>
      * <p> Store InPort consumer </p>
@@ -401,6 +442,22 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         return ReturnCode.PORT_OK;
     }
     /**
+     * <p> Setting buffer pointer </p>
+     */
+    public ReturnCode setListener(ConnectorBase.ConnectorInfo info,
+                           ConnectorListeners listeners) {
+        rtcout.println(rtcout.TRACE, "setListeners()" );
+
+        if (listeners == null) {
+            rtcout.println(rtcout.ERROR, 
+                           "setListeners(listeners == 0): invalid argument." );
+            return ReturnCode.INVALID_ARGS;
+          }
+        m_profile = info;
+        m_listeners = listeners;
+        return ReturnCode.PORT_OK;
+    }
+    /**
      * <p> write </p>
      *
      * @param data
@@ -408,16 +465,95 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @param usec
      * @return ReturnCode
      */
+    /**
+     * {@.ja データを書き込む}
+     * {@.en Write data }
+     *
+     * <p>
+     * {@.ja Publisher が保持するバッファに対してデータを書き込む。コンシュー
+     * マ、バッファ、リスナ等が適切に設定されていない等、Publisher オブ
+     * ジェクトが正しく初期化されていない場合、この関数を呼び出すとエラー
+     * コード PRECONDITION_NOT_MET が返され、バッファへの書き込み等の操
+     * 作は一切行われない。
+     *
+     * バッファへの書き込みと、InPortへのデータの送信は非同期的に行われ
+     * るため、この関数は、InPortへのデータ送信の結果を示す、
+     * CONNECTION_LOST, BUFFER_FULL などのリターンコードを返すことがあ
+     * る。この場合、データのバッファへの書き込みは行われない。
+     *
+     * バッファへの書き込みに対して、バッファがフル状態、バッファのエ
+     * ラー、バッファへの書き込みがタイムアウトした場合、バッファの事前
+     * 条件が満たされない場合にはそれぞれ、エラーコード BUFFER_FULL,
+     * BUFFER_ERROR, BUFFER_TIMEOUT, PRECONDITION_NOT_MET が返される。
+     *
+     * これら以外のエラーの場合、PORT_ERROR が返される。}
+     * </p>
+     * {@.en This function writes data into the buffer associated with this
+     * Publisher.  If a Publisher object calls this function, without
+     * initializing correctly such as a consumer, a buffer, listeners,
+     * etc., error code PRECONDITION_NOT_MET will be returned and no
+     * operation of the writing to a buffer etc. will be performed.
+     *
+     * Since writing into the buffer and sending data to InPort are
+     * performed asynchronously, occasionally this function returns
+     * return-codes such as CONNECTION_LOST and BUFFER_FULL that
+     * indicate the result of sending data to InPort. In this case,
+     * writing data into buffer will not be performed.
+     *
+     * When publisher writes data to the buffer, if the buffer is
+     * filled, returns error, is returned with timeout and returns
+     * precondition error, error codes BUFFER_FULL, BUFFER_ERROR,
+     * BUFFER_TIMEOUT and PRECONDITION_NOT_MET will be returned
+     * respectively.
+     *
+     * In other cases, PROT_ERROR will be returned.}
+     * 
+     *
+     * @param data 
+     *   {@.ja 書き込むデータ}
+     *   {@.en Data to be wrote to the buffer}
+     * @param sec 
+     *   {@.ja タイムアウト時間}
+     *   {@.en Timeout time in unit seconds}
+     * @param usec 
+     *   {@.ja タイムアウト時間}
+     *   {@.en Timeout time in unit micor-seconds}
+     *
+     * @return 
+     *   {@.ja PORT_OK             正常終了
+     *         PRECONDITION_NO_MET consumer, buffer, listener等が適切に設定
+     *                             されていない等、このオブジェクトの事前条件
+     *                             を満たさない場合。
+     *         CONNECTION_LOST     接続が切断されたことを検知した。
+     *         BUFFER_FULL         バッファがフル状態である。
+     *         BUFFER_ERROR        バッファに何らかのエラーが生じた場合。
+     *         NOT_SUPPORTED       サポートされない操作が行われた。
+     *         TIMEOUT             タイムアウトした。}
+     *
+     *
+     *
+     *   {@.en PORT_OK             Normal return
+     *         PRECONDITION_NO_MET Precondition does not met. A consumer,
+     *                             a buffer, listenes are not set properly.
+     *         CONNECTION_LOST     detected that the connection has been lost
+     *         BUFFER_FULL         The buffer is full status.
+     *         BUFFER_ERROR        Some kind of error occurred in the buffer.
+     *         NOT_SUPPORTED       Some kind of operation that is not supported
+     *                             has been performed.
+     *         TIMEOUT             Timeout occurred when writing to the buffer.}
+     *
+     */
     public ReturnCode write(final OutputStream data, int sec, int usec) {
         rtcout.println(rtcout.PARANOID, "write()" );
         if (m_consumer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_buffer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
+        if (m_listeners == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_retcode.equals(ReturnCode.CONNECTION_LOST)) {
             rtcout.println(rtcout.DEBUG, "write(): connection lost." );
             return m_retcode;
         }
     
-        if (m_retcode.equals(ReturnCode.BUFFER_FULL)) {
+        if (m_retcode.equals(ReturnCode.SEND_FULL)) {
             rtcout.println(rtcout.DEBUG, "write(): InPort buffer is full." );
             jp.go.aist.rtm.RTC.buffer.ReturnCode ret;
             ret  = m_buffer.write(data, sec, usec);
@@ -427,13 +563,14 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
     
         assert m_buffer != null;
     
+        onBufferWrite(data);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret;
         ret = m_buffer.write(data, sec, usec);
     
         m_task.signal();
         rtcout.println(rtcout.DEBUG, ret.name() +" = write()" );
     
-        return convertReturn(ret);
+        return convertReturn(ret,data);
     }
     public ReturnCode write(final OutputStream data) {
         return this.write(data, -1, 0);
@@ -506,19 +643,60 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * <p> convertReturn </p>
      *
      */
-    protected ReturnCode convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status) {
+    protected ReturnCode convertReturn(
+                                jp.go.aist.rtm.RTC.buffer.ReturnCode status, 
+                                final OutputStream data) {
         switch (status) {
             case BUFFER_OK:
                 return ReturnCode.PORT_OK;
-            case BUFFER_EMPTY:
-                return ReturnCode.BUFFER_EMPTY;
+            case BUFFER_ERROR:
+                // no callback
+                return ReturnCode.BUFFER_ERROR;
+            case BUFFER_FULL:
+                onBufferFull(data);
+                return ReturnCode.BUFFER_FULL;
+            case NOT_SUPPORTED:
+                // no callback
+                return ReturnCode.PORT_ERROR;
             case TIMEOUT:
+                onBufferWriteTimeout(data);
                 return ReturnCode.BUFFER_TIMEOUT;
             case PRECONDITION_NOT_MET:
                 return ReturnCode.PRECONDITION_NOT_MET;
             default:
                 return ReturnCode.PORT_ERROR;
         }
+    }
+    protected ReturnCode invokeListener(ReturnCode status,
+                                    final OutputStream data) {
+        // ret:
+        // PORT_OK, PORT_ERROR, SEND_FULL, SEND_TIMEOUT, CONNECTION_LOST,
+        // UNKNOWN_ERROR
+        switch (status) {
+            case PORT_ERROR:
+                onReceiverError(data);
+                return ReturnCode.PORT_ERROR;
+        
+            case SEND_FULL:
+                onReceiverFull(data);
+                return ReturnCode.SEND_FULL;
+        
+            case SEND_TIMEOUT:
+                onReceiverTimeout(data);
+                return ReturnCode.SEND_TIMEOUT;
+        
+            case CONNECTION_LOST:
+                onReceiverError(data);
+                return ReturnCode.CONNECTION_LOST;
+        
+            case UNKNOWN_ERROR:
+                onReceiverError(data);
+                return ReturnCode.UNKNOWN_ERROR;
+        
+            default:
+                onReceiverError(data);
+                return ReturnCode.PORT_ERROR;
+       }
     }
 
     /**
@@ -545,6 +723,72 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         SKIP,
         NEW
     }
+    /**
+     * <p> Connector data listener functions </p>
+     */
+    private void onBufferWrite(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
+    }
+
+    protected void onBufferFull(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_FULL].notify(m_profile, data);
+    }
+
+    protected void onBufferWriteTimeout(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT].notify(m_profile, data);
+    }
+
+    protected void onBufferWriteOverwrite(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
+    }
+
+    protected void onBufferRead(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
+    }
+
+    protected void onSend(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_SEND].notify(m_profile, data);
+    }
+
+    protected void onReceived(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
+    }
+
+    protected void onReceiverFull(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
+    }
+
+    protected void onReceiverTimeout(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_TIMEOUT].notify(m_profile, data);
+    }
+
+    protected void onReceiverError(final OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_ERROR].notify(m_profile, data);
+    }
+
+    /**
+     * <p> Connector listener functions </p>
+     */
+//    protected void onBufferEmpty() {
+//        m_listeners.connector_[ConnectorDataListenerType.ON_BUFFER_EMPTY].notify(m_profile);
+//    }
+
+//    protected void onBufferReadTimeout() {
+//        m_listeners.connector_[ConnectorDataListenerType.ON_BUFFER_READ_TIMEOUT].notify(m_profile);
+//    }
+
+//    protected void onSenderEmpty() {
+//        m_listeners.connector_[ConnectorDataListenerType.ON_SENDER_EMPTY].notify(m_profile);
+//    }
+
+//    protected void onSenderTimeout() {
+//        m_listeners.connector_[ConnectorDataListenerType.ON_SENDER_TIMEOUT].notify(m_profile);
+//    }
+
+    protected void onSenderError() {
+        m_listeners.connector_[ConnectorListenerType.ON_SENDER_ERROR].notify(m_profile);
+    }
+
     private Policy m_pushPolicy;
     private int m_skipn;
     private BufferBase<OutputStream> m_buffer;
@@ -552,4 +796,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
     private ReturnCode m_retcode;
     private int m_leftskip;
     private String m_retmutex = new String();;
+//zxc    private ConnectorListeners m_listeners = new  ConnectorListeners();
+    private ConnectorListeners m_listeners;
+    private ConnectorBase.ConnectorInfo m_profile;
 }
