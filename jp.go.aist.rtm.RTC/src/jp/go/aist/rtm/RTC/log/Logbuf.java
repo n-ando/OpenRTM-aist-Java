@@ -54,13 +54,17 @@ public class Logbuf {
         String str;
         if(name.equals("Manager")) {
             str = "OpenRTM-aist.logging." + name;
+            m_Logger = Logger.getLogger(str);
+            this.addStream(new NullHandler());
         } else if(parent >= 0) {
             m_Suffix = this.getLastName(name);
             str = "OpenRTM-aist.logging.Manager." + m_Suffix;
+            m_Logger = Logger.getLogger(str);
         } else {
             str = "OpenRTM-aist.logging.Manager." + name;
+            m_Logger = Logger.getLogger(str);
         }
-        m_Logger = Logger.getLogger(str);
+//        m_Logger = Logger.getLogger(str);
         _constructor();
     }
 
@@ -454,5 +458,14 @@ public class Logbuf {
     *    true:有効  false:無効
     */
     private static boolean m_Enabled = false;
+
+    class NullHandler extends Handler{
+        public void close() {
+        }
+        public void flush() {
+        }
+        public void publish(LogRecord record){
+        }
+    }
 
 }
