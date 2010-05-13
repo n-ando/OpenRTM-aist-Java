@@ -19,11 +19,6 @@ import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.NotEmpty;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
 
-//<+zxc
-import jp.go.aist.rtm.RTC.util.StringUtil;
-import jp.go.aist.rtm.RTC.log.Logbuf;
-import java.util.Properties;
-//+>
 
 /**
  *
@@ -57,14 +52,6 @@ public class CorbaNaming {
         m_nameServer = "";
         m_rootContext = null;
         m_blLength = 100;
-//<+zxc
-        Manager manager = Manager.instance();
-        rtcout = new Logbuf("Manager.CorbaNaming");
-        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-        //           "enable", "disable", false));
-//+>
     }
 
     /**
@@ -95,15 +82,6 @@ public class CorbaNaming {
         if (m_rootContext==null) {
             throw new Exception("bad_alloc()");
         }
-//<+zxc
-        Manager manager = Manager.instance();
-        rtcout = new Logbuf("Manager.CorbaNaming");
-        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-        //           "enable", "disable", false));
-rtcout.println(rtcout.TRACE, "CorbaNaming.CorbaNaming(" +name_server +")");//zxc
-//+>
     }
     
     /**
@@ -122,13 +100,11 @@ rtcout.println(rtcout.TRACE, "CorbaNaming.CorbaNaming(" +name_server +")");//zxc
      * @exception Exception
      */
     public void init (final String name_server) throws Exception {
-rtcout.println(rtcout.TRACE, "in  CorbaNaming.init(" +name_server +")");//zxc
         m_nameServer = name_server;
         m_nameServer = "corbaloc:iiop:1.2@" + m_nameServer + "/NameService";
         Object obj = m_varORB.string_to_object(m_nameServer);
         m_rootContext = NamingContextExtHelper.narrow(obj);
         if (m_rootContext==null) throw new Exception("bad_alloc()");
-rtcout.println(rtcout.TRACE, "out CorbaNaming.init(" +name_server +")");//zxc
     }
 
     public boolean isAlive() {
@@ -504,33 +480,27 @@ rtcout.println(rtcout.TRACE, "out CorbaNaming.init(" +name_server +")");//zxc
     public void rebind(final NameComponent[] name, 
                         Object obj, final boolean force)
         throws SystemException, NotFound, CannotProceed, InvalidName {
-rtcout.println(rtcout.TRACE, "in  CorbaNaming.rebind(" +name +"," +java.lang.Boolean.toString(force) +")");//zxc
 
 
         try {
             if( isNamingContext(obj) ) {
-rtcout.println(rtcout.TRACE, "    isNamingContext is true.");//zxc
                 m_rootContext.rebind(name, NamingContextExtHelper.narrow(obj));
             } else {
-rtcout.println(rtcout.TRACE, "    isNamingContext is false.");//zxc
                 m_rootContext.rebind(name, obj);
             }
         } catch(NotFound ex) {
-rtcout.println(rtcout.TRACE, "    !!NotFound ex");//zxc
             if( force ) {
                 rebindRecursive(m_rootContext, name, obj);
             } else {
                 throw ex;
             }
         } catch (CannotProceed ex) {
-rtcout.println(rtcout.TRACE, "    !!CannotProceed ex");//zxc
             if( force ) {
                 rebindRecursive(ex.cxt, ex.rest_of_name, obj);
             } else {
                 throw ex;
             }
         }
-rtcout.println(rtcout.TRACE, "out  CorbaNaming.rebind()");//zxc
     }
 
     /**
@@ -585,9 +555,7 @@ rtcout.println(rtcout.TRACE, "out  CorbaNaming.rebind()");//zxc
     public void rebindByString(final String string_name, 
                             Object obj, final boolean force)
         throws SystemException, NotFound, CannotProceed, InvalidName {
-rtcout.println(rtcout.TRACE, "in  CorbaNaming.rebindByString(" + string_name + ")");//zxc
             rebind(toName(string_name), obj, force);
-rtcout.println(rtcout.TRACE, "out CorbaNaming.rebindByString(" + string_name + ")");//zxc
     }
 
     /**
@@ -1448,11 +1416,5 @@ rtcout.println(rtcout.TRACE, "out CorbaNaming.rebindByString(" + string_name + "
     private int m_blLength;
 
 
-//<+zxc
-    /**
-     * <p>Logging用フォーマットオブジェクト</p>
-     */
-    protected Logbuf rtcout;
-//+>
 }
 
