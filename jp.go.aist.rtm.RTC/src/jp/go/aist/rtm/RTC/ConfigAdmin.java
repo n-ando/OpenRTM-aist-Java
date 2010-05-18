@@ -3,15 +3,14 @@ package jp.go.aist.rtm.RTC;
 import java.util.Iterator;
 import java.util.Vector;
 
+import jp.go.aist.rtm.RTC.util.OnActivateSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnAddConfigurationAddCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnRemoveConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnUpdateCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnUpdateParamCallbackFunc;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.ValueHolder;
-import jp.go.aist.rtm.RTC.util.OnUpdateCallbackFunc;
-import jp.go.aist.rtm.RTC.util.OnUpdateParamCallbackFunc;
-import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
-import jp.go.aist.rtm.RTC.util.OnAddConfigurationAddCallbackFunc;
-import jp.go.aist.rtm.RTC.util.OnRemoveConfigurationSetCallbackFunc;
-import jp.go.aist.rtm.RTC.util.OnActivateSetCallbackFunc;
-import jp.go.aist.rtm.RTC.executionContext.PeriodicECOrganization;
 
 /**
 * <p>コンフィギュレーション情報を管理するクラスです。</p>

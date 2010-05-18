@@ -1,12 +1,11 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.util.Properties;
+
+import org.omg.CORBA.portable.OutputStream;
 
 /**
  * <p> ConnectorBase </p>

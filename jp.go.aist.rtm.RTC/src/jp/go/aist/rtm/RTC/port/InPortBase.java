@@ -1276,7 +1276,7 @@ public abstract class InPortBase extends PortBase {
                                    "old compiler? new returned 0;");
                     return null;
                 }
-                rtcout.println(rtcout.TRACE, "InPortPushConnector create");
+                rtcout.println(rtcout.TRACE, "InPortPullConnector create");
 
                 m_connectors.add(connector);
                 rtcout.println(rtcout.PARANOID, 

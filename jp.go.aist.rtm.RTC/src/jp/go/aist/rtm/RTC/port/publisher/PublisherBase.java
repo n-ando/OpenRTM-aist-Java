@@ -1,6 +1,5 @@
 package jp.go.aist.rtm.RTC.port.publisher;
 
-import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
 import jp.go.aist.rtm.RTC.port.ReturnCode;

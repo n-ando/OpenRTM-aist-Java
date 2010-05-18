@@ -1,12 +1,10 @@
 package jp.go.aist.rtm.RTC.port;
 
-import java.util.Observer;
 import java.util.Observable;
+import java.util.Observer;
 
 import org.omg.CORBA.portable.OutputStream;
 
-import jp.go.aist.rtm.RTC.port.ConnectorBase;
-import jp.go.aist.rtm.RTC.util.DataRef;
 
   /**
    * {@.ja ConnectorDataListener クラス}

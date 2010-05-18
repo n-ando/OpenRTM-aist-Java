@@ -1,12 +1,9 @@
 package jp.go.aist.rtm.RTC;
 
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
 
-import jp.go.aist.rtm.RTC.ObjectCreator;
-import jp.go.aist.rtm.RTC.ObjectDestructor;
-import jp.go.aist.rtm.RTC.util.Properties;
 
 /**
  * <p>Java用コンポーネントファクトリの実装です。</p>

@@ -1,12 +1,10 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
-import org.omg.CORBA.SystemException;
-
 import jp.go.aist.rtm.RTC.Manager;
-import jp.go.aist.rtm.RTC.util.TimeValue;
-import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.TimeValue;
 
+import org.omg.CORBA.SystemException;
 /**
  * {@.ja ステップ実行が可能な ExecutionContext クラス}
  * {@.en ExecutionContext class that enables one step execution}

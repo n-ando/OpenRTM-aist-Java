@@ -1,8 +1,6 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
 import jp.go.aist.rtm.RTC.Manager;
-import jp.go.aist.rtm.RTC.RegisterModuleFunc;
-import jp.go.aist.rtm.RTC.util.TimeValue;
 
 import org.omg.CORBA.SystemException;
 

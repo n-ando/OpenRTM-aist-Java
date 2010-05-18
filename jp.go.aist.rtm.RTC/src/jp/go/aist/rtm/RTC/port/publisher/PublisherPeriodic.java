@@ -1,8 +1,6 @@
 package jp.go.aist.rtm.RTC.port.publisher;
 
-import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
-import java.util.Vector;
 import java.util.Set;
 
 import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
@@ -10,7 +8,6 @@ import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.PeriodicTaskBase;
-import jp.go.aist.rtm.RTC.TaskFuncBase;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.port.InPortConsumer;
 import jp.go.aist.rtm.RTC.port.ReturnCode;

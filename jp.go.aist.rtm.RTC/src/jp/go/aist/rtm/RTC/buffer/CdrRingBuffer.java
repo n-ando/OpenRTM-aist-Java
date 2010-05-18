@@ -1,11 +1,10 @@
 package jp.go.aist.rtm.RTC.buffer;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-
 import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
+
+import org.omg.CORBA.portable.OutputStream;
 
 /**
  *  <p> CdrRingBuffer </p>

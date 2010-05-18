@@ -1,16 +1,14 @@
 package jp.go.aist.rtm.RTC.log;
 
+import java.util.Date;
+import java.util.IllegalFormatException;
+import java.util.Vector;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.Vector;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.IllegalFormatException;
 
 /**
  * <p>ログ収集ON時のロギングクラスです。</p>

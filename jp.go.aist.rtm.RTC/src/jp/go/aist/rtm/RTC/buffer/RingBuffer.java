@@ -1,15 +1,11 @@
 package jp.go.aist.rtm.RTC.buffer;
 
 import java.util.Vector;
-import java.lang.Integer;
-import java.lang.Double;
-import java.lang.Thread;
-import java.lang.IllegalMonitorStateException; 
 
 import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.util.TimeValue;
-import jp.go.aist.rtm.RTC.util.Properties;
 
 /**
  * <p>リング状のバッファを持つバッファ実装です。

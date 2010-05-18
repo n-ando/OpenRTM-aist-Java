@@ -4,8 +4,6 @@ import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.SDOPackage.Configuration_impl;
 import jp.go.aist.rtm.RTC.port.CorbaPort;
-import jp.go.aist.rtm.RTC.port.DataInPort;
-import jp.go.aist.rtm.RTC.port.DataOutPort;
 import jp.go.aist.rtm.RTC.port.InPort;
 import jp.go.aist.rtm.RTC.port.OutPort;
 import jp.go.aist.rtm.RTC.port.PortAdmin;

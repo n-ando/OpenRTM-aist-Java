@@ -1,29 +1,17 @@
 package jp.go.aist.rtm.RTC.port;
 
-import java.lang.ClassCastException;
-import org.omg.CORBA.TypeCodePackage.BadKind;
-import java.io.IOException;
+import java.lang.reflect.Field;
+
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.buffer.RingBuffer;
+import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.portable.Streamable;
 import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
+
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
-
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.ClassNotFoundException;
-import java.lang.NoSuchFieldException;
-import java.lang.NoSuchMethodException;
-import java.lang.reflect.Field;
-
-import jp.go.aist.rtm.RTC.port.ReturnCode;
-import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.buffer.RingBuffer;
-import jp.go.aist.rtm.RTC.util.DataRef;
-import jp.go.aist.rtm.RTC.util.TypeCast;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
-
 
 /**
  * <p>入力ポートのためのベース実装クラスです。
@@ -47,7 +35,7 @@ public class InPort<DataType> extends InPortBase {
      * @return TypeCdoe(String)
      */
     private static <DataType> String toTypeCode(DataRef<DataType> value) { 
-        DataType data = value.v;
+//        DataType data = value.v;
         String typeName = value.v.getClass().getSimpleName();
         return typeName;
 
@@ -314,17 +302,9 @@ public class InPort<DataType> extends InPortBase {
                 ret = m_connectors.elementAt(0).read(dataref);
             }
 
-//zxc            cdr = (EncapsOutputStream)dataref.v;
             if (ret.equals(ReturnCode.PORT_OK)) {
                 rtcout.println(rtcout.DEBUG, "data read succeeded");
-//zxc                byte[] ch = cdr.toByteArray();
-//                InputStream input_stream = new EncapsInputStream(m_orb, 
-//                                                           ch, 
-//                                                           ch.length,
-//                                                           isLittleEndian(),
-//                                                           GIOPVersion.V1_2);
 
-//zxc                m_value.v = read_stream(m_value,input_stream);
                 m_value.v = read_stream(m_value,dataref.v);
                 if (m_OnReadConvert != null) {
                     m_value.v = m_OnReadConvert.run(m_value.v);

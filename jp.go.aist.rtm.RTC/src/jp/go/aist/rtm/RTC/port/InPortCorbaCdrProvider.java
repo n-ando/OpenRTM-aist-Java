@@ -1,8 +1,6 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
-import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 import org.omg.CORBA.SystemException;
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 

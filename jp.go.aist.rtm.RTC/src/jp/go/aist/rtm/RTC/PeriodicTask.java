@@ -1,17 +1,6 @@
 package jp.go.aist.rtm.RTC;
 
-
-import java.lang.Object;
-import java.lang.Thread;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.IllegalAccessException;
-
 import jp.go.aist.rtm.RTC.util.TimeValue;
-import jp.go.aist.rtm.RTC.TimeMeasure;
-import jp.go.aist.rtm.RTC.ObjectCreator;
-import jp.go.aist.rtm.RTC.ObjectDestructor;
-import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
 
 
 

@@ -2,12 +2,9 @@ package jp.go.aist.rtm.RTC.port;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 import org.omg.CORBA.TCKind;
 
-import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 import _SDOPackage.NVListHolder;

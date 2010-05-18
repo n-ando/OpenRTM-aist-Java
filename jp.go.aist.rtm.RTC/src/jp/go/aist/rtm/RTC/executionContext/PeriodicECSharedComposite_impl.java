@@ -137,7 +137,7 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
 
         Manager mgr = Manager.instance();
 
-        Vector<RTObject_impl> comps = mgr.getComponents();
+//        Vector<RTObject_impl> comps = mgr.getComponents();
         SDOListHolder sdos = new SDOListHolder();
         String[] str = m_members.toString().split(",");
 

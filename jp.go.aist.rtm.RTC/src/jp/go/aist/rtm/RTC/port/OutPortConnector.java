@@ -1,11 +1,9 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
+import org.omg.CORBA.portable.OutputStream;
 
 /**
  * <p> OutPortConnector </p>

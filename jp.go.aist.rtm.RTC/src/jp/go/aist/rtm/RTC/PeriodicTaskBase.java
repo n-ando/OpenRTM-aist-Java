@@ -1,10 +1,5 @@
 package jp.go.aist.rtm.RTC;
 
-import java.lang.Thread;
-import java.lang.reflect.Method;
-
-import jp.go.aist.rtm.RTC.TaskFuncBase;
-import jp.go.aist.rtm.RTC.TimeMeasure;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 
 /**

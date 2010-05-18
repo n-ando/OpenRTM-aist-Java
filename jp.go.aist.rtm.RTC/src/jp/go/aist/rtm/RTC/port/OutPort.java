@@ -3,22 +3,14 @@ package jp.go.aist.rtm.RTC.port;
 import java.util.Vector;
 
 import org.omg.CORBA.portable.Streamable;
-import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.ClassNotFoundException;
-import java.lang.NoSuchFieldException;
-import java.lang.NoSuchMethodException;
 import java.lang.reflect.Field;
 
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
-import jp.go.aist.rtm.RTC.util.TypeCast;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
-import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
 
 import RTC.Time;
@@ -38,7 +30,6 @@ public class OutPort<DataType> extends OutPortBase {
      * @return TypeCdoe(String)
      */
     private static <DataType> String toTypeCode(DataRef<DataType> value) { 
-        DataType data = value.v;
         String typeName = value.v.getClass().getSimpleName();
         return typeName;
 
