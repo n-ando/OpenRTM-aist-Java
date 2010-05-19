@@ -1,9 +1,7 @@
 package jp.go.aist.rtm.RTC;
 
 import java.util.Vector;
-import java.util.logging.FileHandler;
-import java.util.logging.ConsoleHandler;
-import java.io.IOException;
+
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.StringUtil;

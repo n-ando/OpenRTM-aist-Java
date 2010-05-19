@@ -1,28 +1,10 @@
 package jp.go.aist.rtm.RTC.port;
 
-import java.util.UUID;
 import java.util.Iterator;
+import java.util.UUID;
 import java.util.Vector;
 
-import org.omg.CORBA.SystemException;
-
-import _SDOPackage.NVListHolder;
-import _SDOPackage.NameValue;
-
-import RTC.ConnectorProfile;
-import RTC.ConnectorProfileHolder;
-import RTC.ConnectorProfileListHolder;
-import RTC.PortService;
-import RTC.PortServiceHelper;
-import RTC.PortInterfacePolarity;
-import RTC.PortInterfaceProfile;
-import RTC.PortInterfaceProfileListHolder;
-import RTC.PortServiceListHolder;
-import RTC.PortServicePOA;
-import RTC.PortProfile;
-import RTC.RTObject;
-import RTC.ReturnCode_t;
-
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.ConnectorProfileFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
@@ -30,8 +12,24 @@ import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.PortProfileFactory;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.util.operatorFunc;
-import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.log.Logbuf;
+
+import org.omg.CORBA.SystemException;
+
+import RTC.ConnectorProfile;
+import RTC.ConnectorProfileHolder;
+import RTC.ConnectorProfileListHolder;
+import RTC.PortInterfacePolarity;
+import RTC.PortInterfaceProfile;
+import RTC.PortInterfaceProfileListHolder;
+import RTC.PortProfile;
+import RTC.PortService;
+import RTC.PortServiceHelper;
+import RTC.PortServiceListHolder;
+import RTC.PortServicePOA;
+import RTC.RTObject;
+import RTC.ReturnCode_t;
+import _SDOPackage.NVListHolder;
+import _SDOPackage.NameValue;
 
 
 /**

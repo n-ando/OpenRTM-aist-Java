@@ -1,33 +1,23 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.ORB;
-import org.omg.CORBA.Any;
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-
-import _SDOPackage.NVListHolder;
-import OpenRTM.CdrDataHelper;
-import OpenRTM.CdrDataHolder;
-import OpenRTM.OutPortCdrPOA;
-import OpenRTM.OutPortCdrOperations;
-import OpenRTM.PortStatus;
-
-import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
+import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.buffer.ReturnCode;
-import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.NVUtil;
-import jp.go.aist.rtm.RTC.util.POAUtil;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
-import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
+
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.portable.OutputStream;
+
+import OpenRTM.OutPortCdrPOA;
+import _SDOPackage.NVListHolder;
 
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 

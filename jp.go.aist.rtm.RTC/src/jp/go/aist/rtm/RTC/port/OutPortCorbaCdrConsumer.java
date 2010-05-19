@@ -1,23 +1,21 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.ORB;
-import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.Object;
-import org.omg.CORBA.portable.OutputStream;
-import org.omg.CORBA.TCKind;
-
-import _SDOPackage.NVListHolder;
-import OpenRTM.CdrDataHolder;
-import OpenRTM.PortStatus;
-
 import jp.go.aist.rtm.RTC.Manager;
-import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
+import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
+
+import org.omg.CORBA.BAD_OPERATION;
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.Object;
+import org.omg.CORBA.TCKind;
+import org.omg.CORBA.portable.OutputStream;
+
+import _SDOPackage.NVListHolder;
 /**
  * <p> OutPortCorbaCdrConsumer </p>
  *

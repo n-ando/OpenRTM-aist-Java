@@ -1,22 +1,18 @@
 package jp.go.aist.rtm.RTC;
 
-import org.omg.CORBA.ORB;
-import org.omg.CORBA.LocalObject;
-import org.omg.CORBA.Any;
-import org.omg.CORBA.LocalObject;
-import org.omg.PortableServer.POA;
-import org.omg.PortableInterceptor.IORInterceptor;
-import org.omg.IOP.TAG_INTERNET_IOP;
-import org.omg.IOP.TAG_ALTERNATE_IIOP_ADDRESS;
-import org.omg.IOP.TaggedComponent;
-import org.omg.IOP.Codec;
-
 import java.util.ArrayList;
 
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.IiopAddressComp;
 import jp.go.aist.rtm.RTC.util.IiopAddressCompHelper;
 
-import jp.go.aist.rtm.RTC.log.Logbuf;
+import org.omg.CORBA.Any;
+import org.omg.CORBA.LocalObject;
+import org.omg.CORBA.ORB;
+import org.omg.IOP.Codec;
+import org.omg.IOP.TAG_INTERNET_IOP;
+import org.omg.IOP.TaggedComponent;
+import org.omg.PortableInterceptor.IORInterceptor;
 
 
 /**

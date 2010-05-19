@@ -1,39 +1,29 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
-import org.omg.CORBA.SystemException;
-
 import java.util.Vector;
-
-import RTC.RTObject;
-import RTC.RTObjectHelper;
-import RTC.ExecutionContext;
-import RTC.ExecutionContextService;
-import RTC.ReturnCode_t;
 
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.ValueHolder;
-import jp.go.aist.rtm.RTC.util.StringHolder;
-import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.POAUtil;
-import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
 import jp.go.aist.rtm.RTC.util.OnAddConfigurationAddCallbackFunc;
-import jp.go.aist.rtm.RTC.RtcDeleteFunc;
-import jp.go.aist.rtm.RTC.RtcNewFunc;
+import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.util.StringHolder;
 import jp.go.aist.rtm.RTC.log.Logbuf;
-import jp.go.aist.rtm.RTC.executionContext.PeriodicECOrganization;
-
-
-import _SDOPackage.Organization;
-import _SDOPackage.SDO;
-import _SDOPackage.SDOListHolder;
-import _SDOPackage.InvalidParameter;
-import _SDOPackage.InternalError;
-import _SDOPackage.NotAvailable;
 
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
+import RTC.ExecutionContext;
+import RTC.ExecutionContextService;
+import RTC.RTObject;
+import RTC.RTObjectHelper;
+import RTC.ReturnCode_t;
+import _SDOPackage.InternalError;
+import _SDOPackage.NotAvailable;
+import _SDOPackage.Organization;
+import _SDOPackage.SDO;
+import _SDOPackage.SDOListHolder;
 
 /**
 * <p>データフロー型RTコンポーネント基底クラスのインスタンスです。</p>

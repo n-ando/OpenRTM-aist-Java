@@ -1,8 +1,25 @@
 package jp.go.aist.rtm.RTC.util;
 
-import org.omg.CORBA.ORB;
 import java.util.Vector;
 
+import org.omg.CORBA.ORB;
+
+import RTC.ComponentProfile;
+import RTC.ComponentProfileListHolder;
+import RTC.ConnectorProfile;
+import RTC.ConnectorProfileListHolder;
+import RTC.ExecutionContext;
+import RTC.ExecutionContextListHolder;
+import RTC.ExecutionContextService;
+import RTC.ExecutionContextServiceListHolder;
+import RTC.PortService;
+import RTC.PortInterfaceProfile;
+import RTC.PortInterfaceProfileListHolder;
+import RTC.PortProfile;
+import RTC.PortProfileListHolder;
+import RTC.PortServiceListHolder;
+import RTC.RTCListHolder;
+import RTC.RTObject;
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
 import _SDOPackage.Organization;
@@ -11,25 +28,6 @@ import _SDOPackage.SDO;
 import _SDOPackage.SDOListHolder;
 import _SDOPackage.ServiceProfile;
 import _SDOPackage.ServiceProfileListHolder;
-import RTC.ComponentProfile;
-import RTC.ComponentProfileListHolder;
-import RTC.ConnectorProfile;
-import RTC.ConnectorProfileListHolder;
-import RTC.ExecutionContext;
-import RTC.ExecutionContextHelper;
-import RTC.ExecutionContextListHolder;
-import RTC.ExecutionContextService;
-import RTC.ExecutionContextServiceListHolder;
-import RTC.PortService;
-import RTC.PortInterfaceProfile;
-import RTC.PortInterfaceProfileListHolder;
-import RTC.PortServiceListHolder;
-import RTC.PortProfile;
-import RTC.PortProfileListHolder;
-import RTC.RTObject;
-import RTC.RTCListHolder;
-
-import jp.go.aist.rtm.RTC.Manager;
 
 /**
  * <p>CORBAシーケンスに対するユーティリティクラスです。各メソッドはスレッドセーフではないため、

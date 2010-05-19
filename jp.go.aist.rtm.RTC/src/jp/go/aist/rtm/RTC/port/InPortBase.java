@@ -1,30 +1,27 @@
 package jp.go.aist.rtm.RTC.port;
 
-import java.util.Vector;
-import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.Vector;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
+import jp.go.aist.rtm.RTC.BufferFactory;
+import jp.go.aist.rtm.RTC.InPortProviderFactory;
+import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.buffer.RingBuffer;
+import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.util.StringUtil;
+
 import org.omg.CORBA.TCKind;
+import org.omg.CORBA.portable.OutputStream;
 
 import _SDOPackage.NVListHolder;
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
 import RTC.ReturnCode_t;
-
-import jp.go.aist.rtm.RTC.BufferFactory;
-import jp.go.aist.rtm.RTC.InPortProviderFactory;
-import jp.go.aist.rtm.RTC.OutPortProviderFactory;
-import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
-import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.buffer.RingBuffer;
-import jp.go.aist.rtm.RTC.port.ReturnCode;
-import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.NVUtil;
-import jp.go.aist.rtm.RTC.util.StringUtil;
-import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 
  
 /**

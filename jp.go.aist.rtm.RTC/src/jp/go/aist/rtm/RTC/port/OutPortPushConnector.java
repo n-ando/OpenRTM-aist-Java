@@ -1,20 +1,20 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.portable.Streamable;
-import org.omg.CORBA.portable.OutputStream;
-
 import java.lang.reflect.Field;
 
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
-
-import jp.go.aist.rtm.RTC.PublisherBaseFactory;
-import jp.go.aist.rtm.RTC.InPortConsumerFactory;
 import jp.go.aist.rtm.RTC.BufferFactory;
+import jp.go.aist.rtm.RTC.InPortConsumerFactory;
+import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
-import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.StringUtil;
+
+import org.omg.CORBA.portable.OutputStream;
+import org.omg.CORBA.portable.Streamable;
+
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 public class OutPortPushConnector extends OutPortConnector {
     /**

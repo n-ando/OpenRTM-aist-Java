@@ -1,23 +1,24 @@
 package jp.go.aist.rtm.RTC.port.publisher;
 
-import org.omg.CORBA.portable.OutputStream;
 import java.util.Set;
 
-import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
-import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.PeriodicTaskBase;
+import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
+import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.port.ConnectorBase;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListeners;
 import jp.go.aist.rtm.RTC.port.InPortConsumer;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
-import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
-import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
-import jp.go.aist.rtm.RTC.port.ConnectorListeners;
-import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
-import jp.go.aist.rtm.RTC.log.Logbuf;
+
+import org.omg.CORBA.portable.OutputStream;
 /**
  * <p>一定時間おきにコンシューマの送出処理を呼び出すPublisherです。</p>
  */

@@ -1,35 +1,31 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
-import org.omg.CORBA.SystemException;
-
-import java.util.Vector;
 import java.util.Iterator;
-
-import RTC.ComponentProfile;
-import RTC.PortService;
-import RTC.PortProfile;
-import RTC.RTObject;
-import RTC.ExecutionContext;
-import RTC.ExecutionContextListHolder;
-import RTC.ExecutionContextService;
-
-import OpenRTM.DataFlowComponent;
-import OpenRTM.DataFlowComponentHelper;
-import OpenRTM.DataFlowComponentHolder;
-
-import _SDOPackage.Configuration;
-import _SDOPackage.Organization;
-import _SDOPackage.SDO;
-import _SDOPackage.SDOListHolder;
-import _SDOPackage.InterfaceNotImplemented;
-import _SDOPackage.InternalError;
-import _SDOPackage.InvalidParameter;
-import _SDOPackage.NotAvailable;
+import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.SDOPackage.Organization_impl;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.StringUtil;
+
+import org.omg.CORBA.SystemException;
+
+import OpenRTM.DataFlowComponent;
+import OpenRTM.DataFlowComponentHelper;
+import OpenRTM.DataFlowComponentHolder;
+import RTC.ComponentProfile;
+import RTC.ExecutionContext;
+import RTC.ExecutionContextListHolder;
+import RTC.PortProfile;
+import RTC.PortService;
+import RTC.RTObject;
+import _SDOPackage.Configuration;
+import _SDOPackage.InterfaceNotImplemented;
+import _SDOPackage.InternalError;
+import _SDOPackage.InvalidParameter;
+import _SDOPackage.NotAvailable;
+import _SDOPackage.Organization;
+import _SDOPackage.SDO;
 
 /**
  * <p> PeriodicECOrganizationクラス </p>

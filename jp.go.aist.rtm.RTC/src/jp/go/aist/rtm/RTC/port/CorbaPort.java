@@ -1,39 +1,32 @@
 package jp.go.aist.rtm.RTC.port;
 
-import java.util.Vector;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.Vector;
 
-import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
-import jp.go.aist.rtm.RTC.util.operatorFunc;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
-import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringHolder;
+import jp.go.aist.rtm.RTC.util.operatorFunc;
 
-import org.omg.CORBA.ORB;
-import org.omg.CORBA.BAD_OPERATION;
-import org.omg.CORBA.Object;
-import org.omg.CORBA.ObjectHelper;
 import org.omg.CORBA.Any;
+import org.omg.CORBA.BAD_OPERATION;
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.ObjectHelper;
 import org.omg.CORBA.TCKind;
 import org.omg.PortableServer.Servant;
 import org.omg.PortableServer.POAPackage.ObjectNotActive;
 import org.omg.PortableServer.POAPackage.ServantAlreadyActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
 
-import _SDOPackage.NVListHolder;
-import _SDOPackage.NameValue;
-
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
 import RTC.PortInterfacePolarity;
 import RTC.ReturnCode_t;
+import _SDOPackage.NVListHolder;
+import _SDOPackage.NameValue;
 
 /**
  * <p>CORBAを通信手段とするPortクラスです。</p>

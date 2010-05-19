@@ -8,8 +8,8 @@ import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 import org.omg.CORBA.ORB;
-import org.omg.CORBA.portable.Streamable;
 import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.Streamable;
 
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 

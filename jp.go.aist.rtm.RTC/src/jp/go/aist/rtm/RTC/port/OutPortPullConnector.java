@@ -1,13 +1,13 @@
 package jp.go.aist.rtm.RTC.port;
 
+import jp.go.aist.rtm.RTC.BufferFactory;
+import jp.go.aist.rtm.RTC.OutPortProviderFactory;
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+
 import org.omg.CORBA.portable.OutputStream;
 
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
-
-import jp.go.aist.rtm.RTC.BufferFactory;
-import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
-import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 
 public class OutPortPullConnector extends OutPortConnector {
     /**

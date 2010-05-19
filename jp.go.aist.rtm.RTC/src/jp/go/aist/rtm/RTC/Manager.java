@@ -7,8 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
-import java.util.Set;
-import java.util.Iterator;
 import java.util.logging.FileHandler;
 import java.util.logging.ConsoleHandler;
 
@@ -16,20 +14,18 @@ import jp.go.aist.rtm.RTC.executionContext.ECFactoryBase;
 import jp.go.aist.rtm.RTC.executionContext.ECFactoryJava;
 import jp.go.aist.rtm.RTC.executionContext.ExecutionContextBase;
 import jp.go.aist.rtm.RTC.executionContext.ExtTrigExecutionContext;
-import jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext;
 import jp.go.aist.rtm.RTC.executionContext.OpenHRPExecutionContext;
 import jp.go.aist.rtm.RTC.executionContext.PeriodicECSharedComposite;
-import jp.go.aist.rtm.RTC.FactoryInit;
+import jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.CallbackFunction;
+import jp.go.aist.rtm.RTC.util.IiopAddressComp;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.RTCUtil;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.Timer;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
-import jp.go.aist.rtm.RTC.util.IiopAddressComp;
-import jp.go.aist.rtm.RTC.util.CallbackFunction;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
@@ -37,12 +33,6 @@ import org.omg.CORBA.SystemException;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 import org.omg.PortableServer.POAManager;
-import org.omg.PortableServer.POAPackage.ObjectNotActive;
-import org.omg.PortableServer.POAPackage.ServantAlreadyActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
-import org.omg.IOP.TAG_INTERNET_IOP;
-
-import RTC.RTObject;
 import RTC.ReturnCode_t;
 
 /**

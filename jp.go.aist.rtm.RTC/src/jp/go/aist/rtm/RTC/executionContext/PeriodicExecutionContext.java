@@ -3,17 +3,15 @@ package jp.go.aist.rtm.RTC.executionContext;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.StateAction;
 import jp.go.aist.rtm.RTC.StateHolder;
 import jp.go.aist.rtm.RTC.StateMachine;
-import jp.go.aist.rtm.RTC.RTObject_impl;
-import jp.go.aist.rtm.RTC.util.TimeValue;
-import jp.go.aist.rtm.RTC.util.POAUtil;
-import jp.go.aist.rtm.RTC.util.StringUtil;
-import jp.go.aist.rtm.RTC.util.NVUtil;
-import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.equalFunctor;
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
 import RTC.ExecutionContextProfile;
@@ -24,7 +22,6 @@ import RTC.ExecutionKind;
 import RTC.LifeCycleState;
 import RTC.LightweightRTObject;
 import RTC.ReturnCode_t;
-import RTC.RTCListHolder;
 import _SDOPackage.NVListHolder;
 
 /**

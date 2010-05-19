@@ -1,10 +1,8 @@
 package jp.go.aist.rtm.RTC;
 
-import org.omg.CORBA.ORB;
-
 import jp.go.aist.rtm.RTC.log.Logbuf;
-import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.StringUtil;
+
+import org.omg.CORBA.ORB;
 /**
 * <p>CORBA用Naming Serviceクラスです。</p>
 */

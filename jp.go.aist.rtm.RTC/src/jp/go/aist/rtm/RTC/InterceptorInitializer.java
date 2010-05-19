@@ -1,23 +1,11 @@
 package jp.go.aist.rtm.RTC;
 
-import org.omg.PortableInterceptor.ORBInitInfo;
-import org.omg.PortableInterceptor.ORBInitializer;
-import org.omg.IOP.TAG_INTERNET_IOP;
-import org.omg.IOP.TAG_ALTERNATE_IIOP_ADDRESS;
-import org.omg.IOP.TAG_ORB_TYPE;
-import org.omg.IOP.TaggedProfile;
-import org.omg.IOP.TaggedComponent;
-import org.omg.IOP.IORHolder;
-import org.omg.IOP.IORHelper;
-import org.omg.CORBA.portable.OutputStream;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 
 import org.omg.CORBA.LocalObject;
-import org.omg.PortableInterceptor.IORInterceptor;
 import org.omg.IOP.Codec;
-
-import jp.go.aist.rtm.RTC.IopIorInterceptor;
-
-import jp.go.aist.rtm.RTC.log.Logbuf;
+import org.omg.PortableInterceptor.ORBInitInfo;
+import org.omg.PortableInterceptor.ORBInitializer;
 
 public class InterceptorInitializer 
       extends LocalObject

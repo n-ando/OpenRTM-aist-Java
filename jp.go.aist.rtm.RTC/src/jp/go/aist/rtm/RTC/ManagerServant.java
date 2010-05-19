@@ -1,39 +1,31 @@
 package jp.go.aist.rtm.RTC;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
+import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.util.equalFunctor;
+
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
 
-import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAHelper;
-import org.omg.PortableServer.Servant;
-
-import java.util.Vector;
-import java.util.List;
-import java.util.ArrayList;
-
-import RTM.ManagerPOA;
-import RTM.ManagerHelper;
-import RTM.ManagerProfile;
-import RTM.ModuleProfile;
-import RTM.ModuleProfileListHolder;
-
-import RTC.RTObject;
 import RTC.ComponentProfile;
 import RTC.ComponentProfileListHolder;
 import RTC.RTCListHolder;
+import RTC.RTObject;
 import RTC.ReturnCode_t;
-
+import RTM.ManagerHelper;
+import RTM.ManagerPOA;
+import RTM.ManagerProfile;
+import RTM.ModuleProfile;
 import _SDOPackage.NVListHolder;
-import _SDOPackage.NameValue;
-
-import jp.go.aist.rtm.RTC.util.NVUtil;
-import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.POAUtil;
-import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
-import jp.go.aist.rtm.RTC.util.StringUtil;
-import jp.go.aist.rtm.RTC.util.equalFunctor;
-import jp.go.aist.rtm.RTC.log.Logbuf;
 
 
 /**

@@ -2,14 +2,12 @@ package jp.go.aist.rtm.RTC.SDOPackage;
 
 import java.util.UUID;
 
-import jp.go.aist.rtm.RTC.Manager;
-import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
-import jp.go.aist.rtm.RTC.util.equalFunctor;
-import jp.go.aist.rtm.RTC.util.POAUtil;
-import jp.go.aist.rtm.RTC.util.StringUtil;
-import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.equalFunctor;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.SystemException;
@@ -20,9 +18,9 @@ import _SDOPackage.InvalidParameter;
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
 import _SDOPackage.NotAvailable;
-import _SDOPackage.OrganizationPOA;
 import _SDOPackage.Organization;
 import _SDOPackage.OrganizationHelper;
+import _SDOPackage.OrganizationPOA;
 import _SDOPackage.OrganizationProperty;
 import _SDOPackage.SDO;
 import _SDOPackage.SDOListHolder;

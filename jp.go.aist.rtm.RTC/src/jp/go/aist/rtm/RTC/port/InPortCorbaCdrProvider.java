@@ -1,30 +1,25 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.ORB;
-import org.omg.CORBA.portable.OutputStream;
-import org.omg.CORBA.SystemException;
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
-
-import java.io.IOException;
-
-import _SDOPackage.NVListHolder;
-import OpenRTM.CdrDataHolder;
-import OpenRTM.InPortCdrOperations;
-import OpenRTM.InPortCdrPOA;
-import OpenRTM.PortStatus;
-
-import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.InPortProviderFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.NVUtil;
-import jp.go.aist.rtm.RTC.util.POAUtil;
-import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
+
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.SystemException;
+import org.omg.CORBA.portable.OutputStream;
+
+import OpenRTM.InPortCdrPOA;
+import _SDOPackage.NVListHolder;
+
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 /**
  * <p> InPortCorbaCdrProvider </p>

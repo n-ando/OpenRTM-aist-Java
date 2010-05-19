@@ -5,15 +5,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
-import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.ConfigAdmin;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.StringUtil;
-import jp.go.aist.rtm.RTC.log.Logbuf;
 
 import org.omg.CORBA.Any;
 
