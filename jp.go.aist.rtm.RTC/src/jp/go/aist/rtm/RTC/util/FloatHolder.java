@@ -7,6 +7,7 @@ import java.io.Serializable;
 */
 public class FloatHolder implements ValueHolder, Serializable {
 
+    private static final long serialVersionUID = -6933849414043584352L;
     /**
      * <p>float型データ設定値</p>
      */

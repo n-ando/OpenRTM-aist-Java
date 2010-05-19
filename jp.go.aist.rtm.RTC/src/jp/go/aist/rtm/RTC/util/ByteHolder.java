@@ -7,6 +7,7 @@ import java.io.Serializable;
 */
 public class ByteHolder implements ValueHolder, Serializable {
 
+    private static final long serialVersionUID = 1259117692223412202L;
     /**
      * <p>byte型データ設定値</p>
      */

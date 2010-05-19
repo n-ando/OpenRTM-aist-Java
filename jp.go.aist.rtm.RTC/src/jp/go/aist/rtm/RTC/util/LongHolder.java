@@ -7,6 +7,7 @@ import java.io.Serializable;
 */
 public class LongHolder implements ValueHolder, Serializable {
 
+    private static final long serialVersionUID = 2583100398593700296L;
     /**
      * <p>long型データ設定値</p>
      */

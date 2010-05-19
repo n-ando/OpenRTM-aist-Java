@@ -9,7 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-
 /**
  * <p>ログ収集ON時のロギングクラスです。</p>
  *  ログ出力の可否は、デフォルトで無効とし、
@@ -226,6 +225,8 @@ public class Logbuf {
      * <p>OpenRTMログレベルクラス</p>
      */
     private class OpenRTMLevel  extends Level {
+
+        private static final long serialVersionUID = -9018991580877614607L;
 
         public OpenRTMLevel(String str, int val) {
             super(str, val);

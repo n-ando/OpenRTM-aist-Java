@@ -7,6 +7,8 @@ import java.io.Serializable;
 */
 public class ShortHolder implements ValueHolder, Serializable {
 
+    private static final long serialVersionUID = 7736076267074278241L;
+    
     /**
      * <p>short型データ設定値</p>
      */

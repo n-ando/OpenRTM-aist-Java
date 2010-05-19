@@ -11,6 +11,8 @@ public class InterceptorInitializer
       extends LocalObject
       implements ORBInitializer
 {
+    private static final long serialVersionUID = 5227697632011675642L;
+
     /**
      * {@.ja コンストラクタ. }
      * {@.en Constructor. }

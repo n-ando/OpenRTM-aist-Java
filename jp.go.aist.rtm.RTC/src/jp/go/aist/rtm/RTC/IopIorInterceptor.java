@@ -23,7 +23,8 @@ import org.omg.PortableInterceptor.IORInterceptor;
 public class IopIorInterceptor extends LocalObject 
     implements org.omg.PortableInterceptor.IORInterceptor{
 
-
+    private static final long serialVersionUID = 7953662324638701357L;
+    
     /**
      * {@.ja Codec}
      * {@.en Codec}

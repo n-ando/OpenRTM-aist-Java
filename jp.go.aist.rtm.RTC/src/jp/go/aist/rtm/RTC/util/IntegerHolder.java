@@ -7,6 +7,7 @@ import java.io.Serializable;
 */
 public class IntegerHolder implements ValueHolder, Serializable {
 
+    private static final long serialVersionUID = 4149201397182532484L;
     /**
      * <p>int型データ設定値</p>
      */
