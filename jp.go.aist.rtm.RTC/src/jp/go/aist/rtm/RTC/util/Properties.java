@@ -231,7 +231,7 @@ public class Properties {
             return (node.value.length() > 0) ? node.value : node.default_value;
         }
         
-        return this.EMPTY;
+        return Properties.EMPTY;
     }
     
     /**
@@ -266,7 +266,7 @@ public class Properties {
             return node.default_value;
         }
         
-        return this.EMPTY;
+        return Properties.EMPTY;
     }
     
     /**

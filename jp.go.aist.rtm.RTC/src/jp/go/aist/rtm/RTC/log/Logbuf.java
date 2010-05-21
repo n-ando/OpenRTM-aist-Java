@@ -110,7 +110,7 @@ public class Logbuf {
      */
     public void println(int level, String contents) {
         // logger.enable check
-        if(!m_Enabled) {
+        if(!Logbuf.m_Enabled) {
             return;
         }
         boolean bret = this.getPrintFlag();
@@ -379,7 +379,7 @@ public class Logbuf {
      *
      */
     public void setLevel(final String level) {
-        int lv = this.strToLogLevel(level);
+        int lv = Logbuf.strToLogLevel(level);
         String str = logLevelToStr(lv);
         Level clevel = Level.parse(str);
         m_Logger.setLevel(clevel);
@@ -401,7 +401,7 @@ public class Logbuf {
             formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date);
         } catch(IllegalFormatException ex){
             m_dateFormat = "%tb %td %tH:%tM:%tS";
-            this.println(this.ERROR, "The specified format is illegal.");
+            this.println(Logbuf.ERROR, "The specified format is illegal.");
         }
     }
 
@@ -421,7 +421,7 @@ public class Logbuf {
      *
      */
     public void setEnabled() {
-        this.m_Enabled = true;
+        Logbuf.m_Enabled = true;
     }
 
     /**
@@ -429,7 +429,7 @@ public class Logbuf {
      *
      */
     public void setDisabled() {
-        this.m_Enabled = false;
+        Logbuf.m_Enabled = false;
     }
 
    /**
