@@ -68,10 +68,10 @@ public class InPortPushConnector extends InPortConnector {
         }
         if (m_buffer == null || m_provider==null) {
             if(m_buffer == null){
-                rtcout.println(rtcout.PARANOID, "    m_buffer is null.");
+                rtcout.println(Logbuf.PARANOID, "    m_buffer is null.");
             }
             if(m_provider == null){
-                rtcout.println(rtcout.PARANOID, "    m_provider is null.");
+                rtcout.println(Logbuf.PARANOID, "    m_provider is null.");
             }
 
             throw new Exception("bad_alloc()");
@@ -119,7 +119,7 @@ public class InPortPushConnector extends InPortConnector {
      *
      */
     public ReturnCode read(DataRef<InputStream> data) {
-        rtcout.println(rtcout.TRACE, "read()");
+        rtcout.println(Logbuf.TRACE, "read()");
         /*
          * buffer returns
          *   BUFFER_OK
@@ -150,7 +150,7 @@ public class InPortPushConnector extends InPortConnector {
      * and the buffer.}
      */
     public ReturnCode disconnect() {
-        rtcout.println(rtcout.TRACE, "disconnect()");
+        rtcout.println(Logbuf.TRACE, "disconnect()");
         onDisconnect();
         // delete provider 
         if (m_provider != null) {

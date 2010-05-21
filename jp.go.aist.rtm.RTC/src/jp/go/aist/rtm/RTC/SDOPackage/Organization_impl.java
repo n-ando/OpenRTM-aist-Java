@@ -78,7 +78,7 @@ public class Organization_impl extends OrganizationPOA{
      * @exception InternalError 内部的エラーが発生した
      */
     public String get_organization_id() throws InvalidParameter, NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.get_organization_id() = " + m_pId);
+        rtcout.println(Logbuf.TRACE, "Organization_impl.get_organization_id() = " + m_pId);
         return m_pId;
     }
     /**
@@ -95,7 +95,7 @@ public class Organization_impl extends OrganizationPOA{
      */
     public synchronized OrganizationProperty get_organization_property() 
                                             throws NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                        "Organization_impl.get_organization_property()");
         try {
 	    OrganizationProperty prop;
@@ -130,7 +130,7 @@ public class Organization_impl extends OrganizationPOA{
      * @exception InternalError 内部的エラーが発生した
      */
     public Any get_organization_property_value(final String name) throws InvalidParameter, NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.get_organization_property_value("+name+")");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.get_organization_property_value("+name+")");
         if( name==null || name.equals("") ) throw new InvalidParameter("Rmpty name.");
         NVListHolder nvlist = new NVListHolder();
         nvlist.value = m_orgProperty.properties;
@@ -166,7 +166,7 @@ public class Organization_impl extends OrganizationPOA{
     //       ※ addOrganizationProperty に対応か？
     public boolean set_organization_property(final OrganizationProperty organization_property) 
             throws InvalidParameter, NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.set_organization_property()");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.set_organization_property()");
         try {
             if( m_orgProperty==null ) m_orgProperty = new OrganizationProperty();
             synchronized (m_orgProperty) {
@@ -187,7 +187,7 @@ public class Organization_impl extends OrganizationPOA{
      */
     public boolean add_organization_property(final OrganizationProperty organization_property) 
             throws SystemException, InvalidParameter, NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.add_organization_property()");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.add_organization_property()");
         try {
             if( m_orgProperty==null ) m_orgProperty = new OrganizationProperty();
             synchronized (m_orgProperty) {
@@ -219,7 +219,7 @@ public class Organization_impl extends OrganizationPOA{
      */
     public boolean set_organization_property_value(final String name, Any value)
                 throws InvalidParameter, NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.set_organization_property_value(name="+name+")");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.set_organization_property_value(name="+name+")");
         if( name==null || name.equals("") ) {
             throw new InvalidParameter("set_organization_property_value(): Enpty name.");
         }
@@ -256,7 +256,7 @@ public class Organization_impl extends OrganizationPOA{
      */
     public boolean remove_organization_property(final String name)
                 throws InvalidParameter, NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.remove_organization_property(name="+name+")");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.remove_organization_property(name="+name+")");
         if(name==null || name.equals("")) throw new InvalidParameter("remove_organization_property(): Enpty name.");
         
         NVListHolder nvlist = new NVListHolder();
@@ -287,7 +287,7 @@ public class Organization_impl extends OrganizationPOA{
      */
     public SDOSystemElement get_owner() 
             throws NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.get_owner()");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.get_owner()");
         return m_varOwner;
     }
 
@@ -309,7 +309,7 @@ public class Organization_impl extends OrganizationPOA{
      */
     public boolean set_owner(SDOSystemElement sdo) 
                 throws InvalidParameter, NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.set_owner()");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.set_owner()");
         if(sdo==null) throw new InvalidParameter("set_owner()");
         try {
             m_varOwner = sdo;
@@ -333,7 +333,7 @@ public class Organization_impl extends OrganizationPOA{
      * @exception InternalError 内部的エラーが発生した。
      */
     public SDO[] get_members() throws NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.get_members()");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.get_members()");
         try{
             SDOListHolder sdos = new SDOListHolder(m_memberList);
             return sdos.value;
@@ -361,7 +361,7 @@ public class Organization_impl extends OrganizationPOA{
      */
     public boolean set_members(SDO[] sdos)
                     throws InvalidParameter, NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.set_members()");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.set_members()");
         if( sdos==null || sdos.length==0 ) 
             throw new InvalidParameter("set_members(): SDOList is empty.");
         try{
@@ -389,7 +389,7 @@ public class Organization_impl extends OrganizationPOA{
      */
     public boolean add_members(SDO[] sdo_list)
             throws InvalidParameter, NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.add_members()");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.add_members()");
         try{
             SDOListHolder sdoList1 = new SDOListHolder();
             sdoList1.value = m_memberList;
@@ -419,7 +419,7 @@ public class Organization_impl extends OrganizationPOA{
      */
     public boolean remove_member(final String id)
                 throws InvalidParameter, NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.remove_member("+id+")");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.remove_member("+id+")");
         if(id==null || id.equals("") )
             throw new InvalidParameter("remove_member(): Enpty name.");
        
@@ -450,7 +450,7 @@ public class Organization_impl extends OrganizationPOA{
      *
      */
     public DependencyType get_dependency() throws NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.get_dependency()");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.get_dependency()");
         return m_dependency;
     }
 
@@ -473,7 +473,7 @@ public class Organization_impl extends OrganizationPOA{
      */
     public boolean set_dependency(DependencyType dependency)
             throws NotAvailable, InternalError {
-        rtcout.println(rtcout.TRACE, "Organization_impl.set_dependency()");
+        rtcout.println(Logbuf.TRACE, "Organization_impl.set_dependency()");
         try {
             m_dependency = dependency;
             return true;

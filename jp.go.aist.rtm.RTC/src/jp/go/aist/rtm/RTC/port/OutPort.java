@@ -6,6 +6,7 @@ import java.util.Vector;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 
@@ -45,11 +46,11 @@ public class OutPort<DataType> extends OutPortBase {
 
         }
         catch(IllegalAccessException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(IllegalArgumentException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
 
@@ -149,24 +150,24 @@ public class OutPort<DataType> extends OutPortBase {
 
         }
         catch(java.lang.InstantiationException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
          }
 
         catch(ClassNotFoundException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(NoSuchFieldException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(IllegalAccessException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(IllegalArgumentException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
     }
@@ -209,7 +210,7 @@ public class OutPort<DataType> extends OutPortBase {
      *
      */
     public boolean write(final DataType value) {
-        rtcout.println(rtcout.TRACE, "DataType write()");
+        rtcout.println(Logbuf.TRACE, "DataType write()");
 
         if (m_OnWrite != null) {
             m_OnWrite.run(value);
@@ -234,13 +235,13 @@ public class OutPort<DataType> extends OutPortBase {
                 ReturnCode ret;
                 // data -> (conversion) -> CDR stream
                 if (m_OnWriteConvert != null) {
-                    rtcout.println(rtcout.DEBUG, 
+                    rtcout.println(Logbuf.DEBUG, 
                                 "m_connectors.OnWriteConvert called");
                     ret = m_connectors.elementAt(i).write(
                                                 m_OnWriteConvert.run(value));
                 }
                 else{
-                    rtcout.println(rtcout.DEBUG, 
+                    rtcout.println(Logbuf.DEBUG, 
                                 "m_connectors.write called");
                     ret = m_connectors.elementAt(i).write(value);
                 }
@@ -255,7 +256,7 @@ public class OutPort<DataType> extends OutPortBase {
                 RTC.ConnectorProfile prof = findConnProfile(id);
 
                 if (ret.equals(ReturnCode.CONNECTION_LOST)) {
-                    rtcout.println(rtcout.TRACE, "connection_lost id: "+id);
+                    rtcout.println(Logbuf.TRACE, "connection_lost id: "+id);
                     if(m_onConnectionLost != null) {
                         RTC.ConnectorProfileHolder holder 
                             = new RTC.ConnectorProfileHolder(prof);
@@ -482,13 +483,13 @@ public class OutPort<DataType> extends OutPortBase {
      * 
      */
     public void onConnect(final String id, PublisherBase publisher) {
-        rtcout.println(rtcout.TRACE, "onConnect(id = "+id+")");
+        rtcout.println(Logbuf.TRACE, "onConnect(id = "+id+")");
     }
     /**
      * 
      */
     public void onDisconnect(final String id) {
-        rtcout.println(rtcout.TRACE, "onDisconnect(id = "+id+")");
+        rtcout.println(Logbuf.TRACE, "onDisconnect(id = "+id+")");
     }
 
     /**
@@ -518,7 +519,7 @@ public class OutPort<DataType> extends OutPortBase {
         }
         catch(NoSuchFieldException e){
             //getField throws
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         return false;

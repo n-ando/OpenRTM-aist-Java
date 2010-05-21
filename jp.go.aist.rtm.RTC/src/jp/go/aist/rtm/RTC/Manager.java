@@ -152,7 +152,7 @@ public class Manager {
      */
     public void shutdown() {
         
-        rtcout.println(rtcout.TRACE, "Manager.shutdown()");
+        rtcout.println(Logbuf.TRACE, "Manager.shutdown()");
         
         shutdownComponents();
         shutdownNaming();
@@ -165,8 +165,8 @@ public class Manager {
                 m_runner.wait();
                 
             } catch (InterruptedException e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught InterruptedException in Manager.shutdown().");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, "Exception: Caught InterruptedException in Manager.shutdown().");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
                 e.printStackTrace();
             }
         } else {
@@ -181,7 +181,7 @@ public class Manager {
      */
     public void join() {
         
-        rtcout.println(rtcout.TRACE, "Manager.join()");
+        rtcout.println(Logbuf.TRACE, "Manager.join()");
         
         synchronized (Integer.valueOf(m_terminate_waiting)) {
             ++m_terminate_waiting;
@@ -198,8 +198,8 @@ public class Manager {
                 Thread.sleep(100);
                 
             } catch (InterruptedException e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught InterruptedException in Manager.join().");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, "Exception: Caught InterruptedException in Manager.join().");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -255,20 +255,20 @@ public class Manager {
      */
     public boolean activateManager() {
         
-        rtcout.println(rtcout.TRACE, "Manager.activateManager()");
+        rtcout.println(Logbuf.TRACE, "Manager.activateManager()");
         
         try {
             if(this.getPOAManager() == null) {
-                rtcout.println(rtcout.ERROR, "Could not get POA manager.");
+                rtcout.println(Logbuf.ERROR, "Could not get POA manager.");
                 return false;
             }
             this.getPOAManager().activate();
-            rtcout.println(rtcout.TRACE, "POA Manager activated.");
+            rtcout.println(Logbuf.TRACE, "POA Manager activated.");
         } catch (Exception e) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                 "Exception: Caught unknown Exception in Manager.activateManager().");
-            rtcout.println(rtcout.DEBUG, "POA Manager activation failed.");
-            rtcout.println(rtcout.DEBUG, e.getMessage());
+            rtcout.println(Logbuf.DEBUG, "POA Manager activation failed.");
+            rtcout.println(Logbuf.DEBUG, e.getMessage());
             return false;
         }
 
@@ -302,11 +302,11 @@ public class Manager {
                 m_module.load(mods[i], "registerModule");
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
-                rtcout.println(rtcout.ERROR, "Module load error: " + mods[i]);
+                rtcout.println(Logbuf.ERROR, "Module load error: " + mods[i]);
             } catch (ClassNotFoundException e) {
-                rtcout.println(rtcout.ERROR, "Module not found: " + mods[i]);
+                rtcout.println(Logbuf.ERROR, "Module not found: " + mods[i]);
             } catch (Exception ex) {
-                rtcout.println(rtcout.ERROR, "Unknown Exception");
+                rtcout.println(Logbuf.ERROR, "Unknown Exception");
             }
         }
     }
@@ -347,16 +347,16 @@ public class Manager {
     public void runManager(boolean noBlocking) {
         
         if (noBlocking) {
-            rtcout.println(rtcout.TRACE, "Manager.runManager(): non-blocking mode");
+            rtcout.println(Logbuf.TRACE, "Manager.runManager(): non-blocking mode");
             
             m_runner = new OrbRunner(m_pORB);
             m_runner.open("");
         } else {
-            rtcout.println(rtcout.TRACE, "Manager.runManager(): blocking mode");
+            rtcout.println(Logbuf.TRACE, "Manager.runManager(): blocking mode");
             
             m_pORB.run();
 
-            rtcout.println(rtcout.TRACE, "Manager.runManager(): ORB was terminated");
+            rtcout.println(Logbuf.TRACE, "Manager.runManager(): ORB was terminated");
             
             join();
         }
@@ -382,7 +382,7 @@ public class Manager {
      */
     public String load(final String moduleFileName, final String initFunc) {
         
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                         "Manager.load("+moduleFileName+","+initFunc+")");
         
         String file_name = moduleFileName;
@@ -392,13 +392,13 @@ public class Manager {
                 init_func = "registerModule";
             }
             String path = m_module.load(file_name, init_func);
-            rtcout.println(rtcout.DEBUG, "module path: "+path);
+            rtcout.println(Logbuf.DEBUG, "module path: "+path);
             return path;
             
         } catch (Exception e) {
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                 "Exception: Caught unknown Exception in Manager.load().");
-            rtcout.println(rtcout.WARN, e.getMessage());
+            rtcout.println(Logbuf.WARN, e.getMessage());
         }
         return null;
     }
@@ -410,7 +410,7 @@ public class Manager {
      */ 
     public void unload(final String moduleFileName) throws Exception {
         
-        rtcout.println(rtcout.TRACE, "Manager.unload("+moduleFileName+")");
+        rtcout.println(Logbuf.TRACE, "Manager.unload("+moduleFileName+")");
         
         m_module.unload(moduleFileName);
     }
@@ -420,7 +420,7 @@ public class Manager {
      */ 
     public void unloadAll() {
         
-        rtcout.println(rtcout.TRACE, "Manager.unloadAll()");
+        rtcout.println(Logbuf.TRACE, "Manager.unloadAll()");
         
         m_module.unloadAll();
     }
@@ -432,7 +432,7 @@ public class Manager {
      */
     public Vector<Properties> getLoadedModules() {
         
-        rtcout.println(rtcout.TRACE, "Manager.getLoadedModules()");
+        rtcout.println(Logbuf.TRACE, "Manager.getLoadedModules()");
 
         return m_module.getLoadedModules();
 /*
@@ -456,7 +456,7 @@ public class Manager {
      */
     public Vector<Properties> getLoadableModules() {
         
-        rtcout.println(rtcout.TRACE, "Manager.getLoadableModules()");
+        rtcout.println(Logbuf.TRACE, "Manager.getLoadableModules()");
         
         return m_module.getLoadableModules();
     }
@@ -473,7 +473,7 @@ public class Manager {
     public boolean registerFactory(Properties profile, RtcNewFunc new_func,
             RtcDeleteFunc delete_func) {
         
-        rtcout.println(rtcout.TRACE, "Manager.registerFactory("
+        rtcout.println(Logbuf.TRACE, "Manager.registerFactory("
                 + profile.getProperty("type_name") + ")");
 
         try {
@@ -482,9 +482,9 @@ public class Manager {
             return true;
             
         } catch (Exception ex) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
            "Exception: Caught unknown Exception in Manager.registerFactory().");
-            rtcout.println(rtcout.DEBUG, ex.getMessage());
+            rtcout.println(Logbuf.DEBUG, ex.getMessage());
             return false;
         }
     }
@@ -494,7 +494,7 @@ public class Manager {
      *
      */
     public Vector<Properties> getFactoryProfiles() {
-        rtcout.println(rtcout.TRACE, "Manager.getFactoryProfiles()");
+        rtcout.println(Logbuf.TRACE, "Manager.getFactoryProfiles()");
 
         Vector<FactoryBase> factories = m_factory.getObjects();
         Vector<Properties> props = new Vector<Properties>();
@@ -513,7 +513,7 @@ public class Manager {
     */
     public boolean registerECFactory(final String name) {
         
-        rtcout.println(rtcout.TRACE, "Manager.registerECFactory(" + name + ")");
+        rtcout.println(Logbuf.TRACE, "Manager.registerECFactory(" + name + ")");
         
         try {
             ECFactoryBase factory = new ECFactoryJava(name);
@@ -527,8 +527,8 @@ public class Manager {
             return true;
             
         } catch (Exception ex) {
-            rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.registerECFactory().");
-            rtcout.println(rtcout.DEBUG, ex.getMessage());
+            rtcout.println(Logbuf.DEBUG, "Exception: Caught unknown Exception in Manager.registerECFactory().");
+            rtcout.println(Logbuf.DEBUG, ex.getMessage());
             return false;
         }
     }
@@ -540,7 +540,7 @@ public class Manager {
      */
     public Vector<String> getModulesFactories() {
         
-        rtcout.println(rtcout.TRACE, "Manager.getModulesFactories()");
+        rtcout.println(Logbuf.TRACE, "Manager.getModulesFactories()");
 
         Vector<String> factoryIds = new Vector<String>();
         for (int i=0, len=m_factory.m_objects.size(); i < len; ++i) {
@@ -618,7 +618,7 @@ public class Manager {
      */
     public RTObject_impl createComponent(final String comp_args) {
         
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                             "Manager.createComponent(" + comp_args + ")");
         
         if( comp_args == null || comp_args.equals("") ) {
@@ -666,13 +666,13 @@ public class Manager {
         int i,len;
         FactoryBase factory = findPropertyFormFactory(comp_id);
         if (factory == null) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                 "Factory not found: " 
                 + comp_id.getProperty("implementaion_id"));
 
             // automatic module loading
             Vector<Properties> mp = m_module.getLoadableModules();
-            rtcout.println(rtcout.INFO, 
+            rtcout.println(Logbuf.INFO, 
                 + mp.size() + " loadable modules found");
 
             boolean find = false;
@@ -686,24 +686,24 @@ public class Manager {
                 }
             }
             if(find==false){
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                 "No module for " 
                 + comp_id.getProperty("implementation_id")
                 +" in loadable modules list");
                 return null;
             }
             if(mprop.findNode("module_file_name")==null){
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                 "Hmm...module_file_name key not found. "); 
                 return null;
             }
             // module loading
-            rtcout.println(rtcout.INFO, 
+            rtcout.println(Logbuf.INFO, 
                 "Loading module: "+ mprop.getProperty("module_file_name"));
             load(mprop.getProperty("module_file_name"), "");
             factory = findPropertyFormFactory(comp_id);
             if (factory == null){
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                     "Factory not found for loaded module: "
                     + comp_id.getProperty("implementation_id"));
                 return null;
@@ -732,14 +732,14 @@ public class Manager {
 
         comp = factory.create(this);
         if (comp == null) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                 "RTC creation failed: " 
                 + comp_id.getProperty("implementaion_id"));
             return null;
         }
 
 
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
             "RTC Created: " + comp_id.getProperty("implementaion_id"));
 
         prop.merge(comp_prop);
@@ -781,18 +781,18 @@ public class Manager {
 
                 comp = m_factory.m_objects.elementAt(i).create(this);
                 if (comp == null) {
-                    rtcout.println(rtcout.ERROR, 
+                    rtcout.println(Logbuf.ERROR, 
                         "RTC creation failed: " 
                         + comp_id.getProperty("implementaion_id"));
                     return null;
                 }
-                rtcout.println(rtcout.TRACE, 
+                rtcout.println(Logbuf.TRACE, 
                     "RTC Created: " + comp_id.getProperty("implementaion_id"));
                 break;
             }
         }
         if(i == m_factory.m_objects.size()) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
             "Factory not found: " + comp_id.getProperty("implementaion_id"));
             return null;
         } 
@@ -813,13 +813,13 @@ public class Manager {
         //------------------------------------------------------------
         // Component initialization
         if( comp.initialize() != ReturnCode_t.RTC_OK ) {
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                 "RTC initialization failed: " 
                 + comp_id.getProperty("implementaion_id"));
             comp.exit();
             return null;
         }
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
             "RTC initialization succeeded: " 
             + comp_id.getProperty("implementaion_id"));
 
@@ -856,7 +856,7 @@ public class Manager {
      */
     public void cleanupComponent(RTObject_impl comp) {
         
-        rtcout.println(rtcout.TRACE, "Manager.cleanupComponent()");
+        rtcout.println(Logbuf.TRACE, "Manager.cleanupComponent()");
         
         unregisterComponent(comp);
     }
@@ -881,9 +881,9 @@ public class Manager {
      *
      */
     public void cleanupComponents() {
-        rtcout.println(rtcout.VERBOSE, "Manager.cleanupComponents()");
+        rtcout.println(Logbuf.VERBOSE, "Manager.cleanupComponents()");
         synchronized (m_finalized.mutex){
-            rtcout.println(rtcout.VERBOSE,  
+            rtcout.println(Logbuf.VERBOSE,  
                 m_finalized.comps.size()
                 +" components are marked as finalized.");
             for (int i=0; i < m_finalized.comps.size(); ++i) {
@@ -914,7 +914,7 @@ public class Manager {
      *
      */
     public void notifyFinalized(RTObject_impl comp) {
-        rtcout.println(rtcout.TRACE, "Manager.notifyFinalized()");
+        rtcout.println(Logbuf.TRACE, "Manager.notifyFinalized()");
         synchronized (m_finalized.mutex){
             m_finalized.comps.add(comp);
         }
@@ -931,15 +931,15 @@ public class Manager {
     public boolean procComponentArgs(final String comp_arg,
                                      Properties comp_id,
                                      Properties comp_conf) {
-        rtcout.println(rtcout.TRACE, "Manager.procComponentArgs("+comp_arg+")");
+        rtcout.println(Logbuf.TRACE, "Manager.procComponentArgs("+comp_arg+")");
 
         String[] id_and_conf = comp_arg.split("\\?");
         // arg should be "id?key0=value0&key1=value1...".
         // id is mandatory, conf is optional
         if (id_and_conf.length != 1 && id_and_conf.length != 2) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                 "args devided into " + id_and_conf.length);
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                 "Invalid arguments. Two or more '?' in arg : " + comp_arg);
             return false;
         }
@@ -952,7 +952,7 @@ public class Manager {
         // id should be devided into 1 or 5 elements
         // RTC:[vendor]:[category]:impl_id:[version] => 5
         if (id.length != 5) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                     "Invalid RTC id format.: " + id_and_conf[0]);
             return false;
         }
@@ -966,12 +966,12 @@ public class Manager {
         };
 
         if (id[0].trim().equals(prof[0]) == false) {
-            rtcout.println(rtcout.ERROR, "Invalid id type: " + id[0]);
+            rtcout.println(Logbuf.ERROR, "Invalid id type: " + id[0]);
             return false;
         }
         for (int i = 1; i < 5; ++i) {
             comp_id.setProperty(prof[i], id[i].trim());
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                 "RTC basic propfile " + prof[i] + ":" + id[i].trim());
         }
 
@@ -986,7 +986,7 @@ public class Manager {
                     continue; 
                 }
                 comp_conf.setProperty(keyval[0].trim(), keyval[1].trim());
-                rtcout.println(rtcout.TRACE, 
+                rtcout.println(Logbuf.TRACE, 
                     "RTC property " + keyval[0] + ":" + keyval[1]);
             }
         }
@@ -1001,7 +1001,7 @@ public class Manager {
      */
     public boolean registerComponent(RTObject_impl comp) {
         
-        rtcout.println(rtcout.TRACE, "Manager.registerComponent("
+        rtcout.println(Logbuf.TRACE, "Manager.registerComponent("
                 + comp.getInstanceName() + ")");
         
         // NamingManagerのみで代用可能
@@ -1009,7 +1009,7 @@ public class Manager {
         
         String[] names = comp.getNamingNames();
         for (int i = 0; i < names.length; ++i) {
-            rtcout.println(rtcout.TRACE, "Bind name: " + names[i]);
+            rtcout.println(Logbuf.TRACE, "Bind name: " + names[i]);
             
             m_namingManager.bindObject(names[i], comp);
         }
@@ -1024,7 +1024,7 @@ public class Manager {
      */
     public boolean unregisterComponent(RTObject_impl comp) {
         
-        rtcout.println(rtcout.TRACE, "Manager.unregisterComponent("
+        rtcout.println(Logbuf.TRACE, "Manager.unregisterComponent("
                 + comp.getInstanceName() + ")");
         
         // NamingManager のみで代用可能
@@ -1032,7 +1032,7 @@ public class Manager {
         
         String[] names = comp.getNamingNames();
         for (int i = 0; i < names.length; ++i) {
-            rtcout.println(rtcout.TRACE, "Unbind name: " + names[i]);
+            rtcout.println(Logbuf.TRACE, "Unbind name: " + names[i]);
             
             m_namingManager.unbindObject(names[i]);
         }
@@ -1048,8 +1048,8 @@ public class Manager {
      *
      */
     public ExecutionContextBase createContext(final String ec_args) {
-        rtcout.println(rtcout.TRACE, "Manager.createContext("+ec_args+")");
-        rtcout.println(rtcout.TRACE, "ExecutionContext type: " + m_config.getProperty("exec_cxt.periodic.type") );
+        rtcout.println(Logbuf.TRACE, "Manager.createContext("+ec_args+")");
+        rtcout.println(Logbuf.TRACE, "ExecutionContext type: " + m_config.getProperty("exec_cxt.periodic.type") );
 
         StringBuffer ec_id = new StringBuffer();
         Properties ec_prop = new Properties();
@@ -1060,7 +1060,7 @@ public class Manager {
         ECFactoryBase factory = (ECFactoryBase)m_ecfactory.find(new ECFactoryPredicate(ec_id.toString()));
 
         if(factory == null) {
-            rtcout.println(rtcout.ERROR, "Factory not found: " + ec_id);
+            rtcout.println(Logbuf.ERROR, "Factory not found: " + ec_id);
             return null;
         }
 
@@ -1082,15 +1082,15 @@ public class Manager {
                                    StringBuffer ec_id,
                                    Properties ec_conf) {
 
-        rtcout.println(rtcout.TRACE, "Manager.procContextArgs("+ec_args+","+ec_id.toString()+")");
+        rtcout.println(Logbuf.TRACE, "Manager.procContextArgs("+ec_args+","+ec_id.toString()+")");
 
         String[] id_and_conf = ec_args.split("\\?");
         if (id_and_conf.length != 1 && id_and_conf.length != 2) {
-            rtcout.println(rtcout.ERROR, "Invalid arguments. Two or more '?' in arg : " + ec_args);
+            rtcout.println(Logbuf.ERROR, "Invalid arguments. Two or more '?' in arg : " + ec_args);
             return false;
         }
         if (id_and_conf[0].length() == 0) {
-            rtcout.println(rtcout.ERROR, "Empty ExecutionContext's name");
+            rtcout.println(Logbuf.ERROR, "Empty ExecutionContext's name");
             return false;
         }
         ec_id.append(id_and_conf[0]);
@@ -1100,7 +1100,7 @@ public class Manager {
             for (int i=0, len=conf.length; i < len; ++i) {
                 String[] k = conf[i].split("=");
                 ec_conf.setProperty(k[0], k[1]);
-                rtcout.println(rtcout.TRACE, "EC property "+ k[0] + ":" + k[1]);
+                rtcout.println(Logbuf.TRACE, "EC property "+ k[0] + ":" + k[1]);
              }
         }
 
@@ -1115,8 +1115,8 @@ public class Manager {
 /*
     public boolean bindExecutionContext(RTObject_impl comp) {
         
-        rtcout.println(rtcout.TRACE, "Manager.bindExecutionContext()");
-        rtcout.println(rtcout.TRACE, "ExecutionContext type: "
+        rtcout.println(Logbuf.TRACE, "Manager.bindExecutionContext()");
+        rtcout.println(Logbuf.TRACE, "ExecutionContext type: "
                 + m_config.getProperty("exec_cxt.periodic.type"));
 
         RTObject rtobj = comp.getObjRef();
@@ -1136,16 +1136,16 @@ public class Manager {
                 m_objManager.activate(exec_cxt);
                 
             } catch (ServantAlreadyActive e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught ServantAlreadyActive Exception in Manager.bindExecutionContext() DataFlowParticipant.");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, "Exception: Caught ServantAlreadyActive Exception in Manager.bindExecutionContext() DataFlowParticipant.");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
                 
             } catch (WrongPolicy e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught WrongPolicy Exception in Manager.bindExecutionContext() DataFlowParticipant.");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, "Exception: Caught WrongPolicy Exception in Manager.bindExecutionContext() DataFlowParticipant.");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
                 
             } catch (ObjectNotActive e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught ObjectNotActive Exception in Manager.bindExecutionContext() DataFlowParticipant.");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, "Exception: Caught ObjectNotActive Exception in Manager.bindExecutionContext() DataFlowParticipant.");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
             }
             
             final String rate = m_config.getProperty("exec_cxt.periodic.rate");
@@ -1159,16 +1159,16 @@ public class Manager {
                 m_objManager.activate(exec_cxt);
                 
             } catch (ServantAlreadyActive e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught ServantAlreadyActive Exception in Manager.bindExecutionContext() FsmParticipant.");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, "Exception: Caught ServantAlreadyActive Exception in Manager.bindExecutionContext() FsmParticipant.");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
                 
             } catch (WrongPolicy e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught WrongPolicy Exception in Manager.bindExecutionContext() FsmParticipant.");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, "Exception: Caught WrongPolicy Exception in Manager.bindExecutionContext() FsmParticipant.");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
                 
             } catch (ObjectNotActive e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught ObjectNotActive Exception in Manager.bindExecutionContext() FsmParticipant.");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, "Exception: Caught ObjectNotActive Exception in Manager.bindExecutionContext() FsmParticipant.");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
             }
         }
 
@@ -1199,7 +1199,7 @@ public class Manager {
      *
      */
     public void deleteComponent(RTObject_impl comp) {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                 "Manager.deleteComponent(RTObject)");
         // cleanup from manager's table, and naming serivce
         unregisterComponent(comp);
@@ -1211,12 +1211,12 @@ public class Manager {
                   new FactoryPredicate(
                       comp.getProperties().getProperty("implementation_id")));
         if (factory == null) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                 "Factory not found: "+comp_id.getProperty("implementation_id"));
             return;
         }
         else {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                 "Factory not found: "+comp_id.getProperty("implementation_id"));
             factory.destroy(comp);
         } 
@@ -1251,12 +1251,12 @@ public class Manager {
      */
     public void deleteComponent(final String instanceName) {
         
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                 "Manager.deleteComponent(" + instanceName + ")");
         RTObject_impl comp = null;
         comp = m_compManager.find(new InstanceName(instanceName));
         if (comp == null) {
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                 "RTC "+instanceName+" was not found in manager.");
             return;
         }
@@ -1272,7 +1272,7 @@ public class Manager {
      */
     public RTObject_impl getComponent(final String instanceName) {
         
-        rtcout.println(rtcout.TRACE, "Manager.getComponent(" + instanceName + ")");
+        rtcout.println(Logbuf.TRACE, "Manager.getComponent(" + instanceName + ")");
         return m_compManager.find(new InstanceName(instanceName));
     }
     
@@ -1283,7 +1283,7 @@ public class Manager {
      */
     public Vector<RTObject_impl> getComponents() {
         
-        rtcout.println(rtcout.TRACE, "Manager.getComponents()");
+        rtcout.println(Logbuf.TRACE, "Manager.getComponents()");
         
         return m_compManager.getObjects();
     }
@@ -1295,7 +1295,7 @@ public class Manager {
      */
     public ORB getORB() {
         
-        rtcout.println(rtcout.TRACE, "Manager.getORB()");
+        rtcout.println(Logbuf.TRACE, "Manager.getORB()");
         
         return m_pORB;
     }
@@ -1307,7 +1307,7 @@ public class Manager {
      */
     public POA getPOA() {
         
-        rtcout.println(rtcout.TRACE, "Manager.getPOA()");
+        rtcout.println(Logbuf.TRACE, "Manager.getPOA()");
         
         return m_pPOA;
     }
@@ -1319,7 +1319,7 @@ public class Manager {
      */
     public POAManager getPOAManager() {
         
-        rtcout.println(rtcout.TRACE, "Manager.getPOAManager()");
+        rtcout.println(Logbuf.TRACE, "Manager.getPOAManager()");
         
         return m_pPOAManager;
     }
@@ -1355,7 +1355,7 @@ public class Manager {
             config = new ManagerConfig(argv);
         }
         catch(IllegalArgumentException e){
-            rtcout.println(rtcout.WARN, "Could not parse arguments.");
+            rtcout.println(Logbuf.WARN, "Could not parse arguments.");
         }
         if (m_config == null) {
             m_config = new Properties();
@@ -1413,7 +1413,7 @@ public class Manager {
      */
     protected void shutdownManager() {
         
-        rtcout.println(rtcout.TRACE, "Manager.shutdownManager()");
+        rtcout.println(Logbuf.TRACE, "Manager.shutdownManager()");
         m_timer.stop();
     }
     
@@ -1440,7 +1440,7 @@ public class Manager {
      *
      */
     protected void shutdownOnNoRtcs(){
-        rtcout.println(rtcout.TRACE, "Manager.shutdownOnNoRtcs()");
+        rtcout.println(Logbuf.TRACE, "Manager.shutdownOnNoRtcs()");
         if (StringUtil.toBool(
             m_config.getProperty("manager.shutdown_on_nortcs"), 
             "YES", "NO", true)) {
@@ -1495,15 +1495,17 @@ public class Manager {
 
             // Log stream mutex locking mode
             rtcout.setLogLock(StringUtil.toBool(
-                    m_config.getProperty("logger.stream_lock"), "enable", "disable", false));
+                    m_config.getProperty("logger.stream_lock"), 
+                                                        "enable", "disable", false));
 
-            rtcout.println(rtcout.INFO, m_config.getProperty("openrtm.version"));
-            rtcout.println(rtcout.INFO, "Copyright (C) 2003-2008");
-            rtcout.println(rtcout.INFO, "  Noriaki Ando");
-            rtcout.println(rtcout.INFO, "  Task-intelligence Research Group,");
-            rtcout.println(rtcout.INFO, "  Intelligent Systems Research Institute, AIST");
-            rtcout.println(rtcout.INFO, "Manager starting.");
-            rtcout.println(rtcout.INFO, "Starting local logging.");
+            rtcout.println(Logbuf.INFO, m_config.getProperty("openrtm.version"));
+            rtcout.println(Logbuf.INFO, "Copyright (C) 2003-2008");
+            rtcout.println(Logbuf.INFO, "  Noriaki Ando");
+            rtcout.println(Logbuf.INFO, "  Task-intelligence Research Group,");
+            rtcout.println(Logbuf.INFO, 
+                                    "  Intelligent Systems Research Institute, AIST");
+            rtcout.println(Logbuf.INFO, "Manager starting.");
+            rtcout.println(Logbuf.INFO, "Starting local logging.");
         } else {
             rtcout.setDisabled();
             m_config.setProperty("logger.log_level","SILENT");
@@ -1516,7 +1518,7 @@ public class Manager {
      * <p>System Loggerの終了処理を行います。</p>
      */
     protected void shutdownLogger() {
-        rtcout.println(rtcout.TRACE, "Manager.shutdownLogger()");
+        rtcout.println(Logbuf.TRACE, "Manager.shutdownLogger()");
     }
     
     /**
@@ -1532,7 +1534,7 @@ public class Manager {
      */
     protected boolean initORB() {
 
-        rtcout.println(rtcout.TRACE, "Manager.initORB()");
+        rtcout.println(Logbuf.TRACE, "Manager.initORB()");
         
         // Initialize ORB
         try {
@@ -1549,7 +1551,7 @@ public class Manager {
             Object obj = m_pORB.resolve_initial_references("RootPOA");
             m_pPOA = POAHelper.narrow(obj);
             if (m_pPOA == null) {
-                rtcout.println(rtcout.ERROR, "Could not resolve RootPOA.");
+                rtcout.println(Logbuf.ERROR, "Could not resolve RootPOA.");
                 return false;
             }
 
@@ -1559,9 +1561,9 @@ public class Manager {
             m_objManager = new CorbaObjectManager(m_pORB, m_pPOA);
             
         } catch (Exception ex) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                 "Exception: Caught unknown Exception in Manager.initORB().");
-            rtcout.println(rtcout.DEBUG, ex.getMessage());
+            rtcout.println(Logbuf.DEBUG, ex.getMessage());
             return false;
         }
         
@@ -1584,10 +1586,10 @@ public class Manager {
     protected String createORBOptions() {
         
         String opt = m_config.getProperty("corba.args");
-        rtcout.println(rtcout.DEBUG, "corba.args: "+opt);
+        rtcout.println(Logbuf.DEBUG, "corba.args: "+opt);
         String dumpString = new String();
         dumpString = m_config._dump(dumpString, m_config, 0);
-        rtcout.println(rtcout.DEBUG, dumpString);
+        rtcout.println(Logbuf.DEBUG, dumpString);
 
         Vector<String> endpoints = new Vector<String>();
         
@@ -1600,7 +1602,7 @@ public class Manager {
             Properties config = getConfig();
             String name = config.getProperty("manager.name");
             String mgrloc = "corbaloc:iiop:1.2@"+mm+"/"+name;
-            rtcout.println(rtcout.DEBUG, "corbaloc: "+mgrloc);
+            rtcout.println(Logbuf.DEBUG, "corbaloc: "+mgrloc);
             opt = opt + " -ORBInitRef manager="  + mgrloc +" ";
      
         }
@@ -1608,7 +1610,7 @@ public class Manager {
         createORBEndpoints(endpoints);
         createORBEndpointOption(opt, endpoints);
 */
-        rtcout.println(rtcout.PARANOID, "ORB options: "+opt);
+        rtcout.println(Logbuf.PARANOID, "ORB options: "+opt);
         
         return opt;
     }
@@ -1627,7 +1629,7 @@ public class Manager {
     protected void createORBEndpoints(Vector<String> endpoints) {
         // If this process has master manager,
         // master manager's endpoint inserted at the top of endpoints
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
             "manager.is_master: "+m_config.getProperty("manager.is_master"));
 
 /* zxc
@@ -1659,11 +1661,11 @@ public class Manager {
     protected void createORBEndpointOption(String opt, 
                                             Vector<String> endpoints) {
         String corba = m_config.getProperty("corba.id");
-        rtcout.println(rtcout.DEBUG, "corba.id: "+corba);
+        rtcout.println(Logbuf.DEBUG, "corba.id: "+corba);
 
         for (int i=0; i < endpoints.size(); ++i) {
             String endpoint = endpoints.elementAt(i);
-            rtcout.println(rtcout.DEBUG, "Endpoint is : "+endpoint);
+            rtcout.println(Logbuf.DEBUG, "Endpoint is : "+endpoint);
             if (endpoint.indexOf(":") == -1) {
                 endpoint += ":"; 
             }
@@ -1703,7 +1705,7 @@ public class Manager {
             if( !endPointInfo[0].equals("") ) {
             }
             else{
-                rtcout.println(rtcout.WARN, 
+                rtcout.println(Logbuf.WARN, 
                     "Host of corba.endpoints is illegal." +endPointInfo[0]);
                 return;
             }
@@ -1713,7 +1715,7 @@ public class Manager {
                     port = (short)Integer.parseInt(endPointInfo[1]);
                 }
                 catch(Exception ex){
-                    rtcout.println(rtcout.WARN, 
+                    rtcout.println(Logbuf.WARN, 
                         "Port of corba.endpoints is illegal." +endPointInfo[1]);
                 }
             }
@@ -1741,7 +1743,7 @@ public class Manager {
                     result.put("com.sun.CORBA.ORBServerPort", endPointInfo[1]);
                 }
                 catch(Exception ex){
-                    rtcout.println(rtcout.WARN, ""+endPointInfo[1]);
+                    rtcout.println(Logbuf.WARN, ""+endPointInfo[1]);
                 }
             }
         }
@@ -1864,39 +1866,39 @@ public class Manager {
      */
     protected void shutdownORB() {
         
-        rtcout.println(rtcout.TRACE, "Manager.shutdownORB()");
+        rtcout.println(Logbuf.TRACE, "Manager.shutdownORB()");
         
         try {
             while (m_pORB.work_pending()) {
-                rtcout.println(rtcout.PARANOID, "Pending work still exists.");
+                rtcout.println(Logbuf.PARANOID, "Pending work still exists.");
                 
                 if (m_pORB.work_pending()) {
                     m_pORB.perform_work();
                 }
             }
         } catch (Exception e) {
-            rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.shutdownORB().");
-            rtcout.println(rtcout.DEBUG, e.getMessage());
+            rtcout.println(Logbuf.DEBUG, "Exception: Caught unknown Exception in Manager.shutdownORB().");
+            rtcout.println(Logbuf.DEBUG, e.getMessage());
         }
         
-        rtcout.println(rtcout.DEBUG, "No pending works of ORB. Shutting down POA and ORB.");
+        rtcout.println(Logbuf.DEBUG, "No pending works of ORB. Shutting down POA and ORB.");
 
         if (m_pPOA != null) {
             try {
                 if (m_pPOAManager != null) {
                     m_pPOAManager.deactivate(false, true);
-                    rtcout.println(rtcout.DEBUG, "POA Manager was deactivated.");
+                    rtcout.println(Logbuf.DEBUG, "POA Manager was deactivated.");
                 }
                 
                 m_pPOA = null;
                 
-//                rtcout.println(rtcout.DEBUG, "POA was destroid.");
+//                rtcout.println(Logbuf.DEBUG, "POA was destroid.");
                 
             } catch (SystemException ex) {
-                rtcout.println(rtcout.ERROR, "Caught SystemException during root POA destruction");
+                rtcout.println(Logbuf.ERROR, "Caught SystemException during root POA destruction");
                 
             } catch (Exception ex) {
-                rtcout.println(rtcout.ERROR, "Caught unknown exception during POA destruction.");
+                rtcout.println(Logbuf.ERROR, "Caught unknown exception during POA destruction.");
             }
         }
 
@@ -1904,18 +1906,18 @@ public class Manager {
             try {
                 m_pORB.shutdown(true);
                 
-                rtcout.println(rtcout.DEBUG, "ORB was shutdown.");
-                rtcout.println(rtcout.DEBUG, "ORB was destroied.");
+                rtcout.println(Logbuf.DEBUG, "ORB was shutdown.");
+                rtcout.println(Logbuf.DEBUG, "ORB was destroied.");
                 
                 m_pORB.destroy();
                 m_pORB = null;
                 ORBUtil.clearOrb();
                 
             } catch (SystemException ex) {
-                rtcout.println(rtcout.ERROR, "Caught SystemException during ORB shutdown");
+                rtcout.println(Logbuf.ERROR, "Caught SystemException during ORB shutdown");
                 
             } catch (Exception ex) {
-                rtcout.println(rtcout.ERROR, "Caught unknown exception during ORB shutdown.");
+                rtcout.println(Logbuf.ERROR, "Caught unknown exception during ORB shutdown.");
             }
         }
     }
@@ -1925,7 +1927,7 @@ public class Manager {
      */
     protected boolean initNaming() {
         
-        rtcout.println(rtcout.TRACE, "Manager.initNaming()");
+        rtcout.println(Logbuf.TRACE, "Manager.initNaming()");
         
         m_namingManager = new NamingManager(this);
 
@@ -1941,7 +1943,7 @@ public class Manager {
             String names[] = m_config.getProperty(meth[i] + ".nameservers").split(",");
 
             for (int j = 0; j < names.length; ++j) {
-                rtcout.println(rtcout.TRACE, 
+                rtcout.println(Logbuf.TRACE, 
                     "Register Naming Server: " + meth[i] + " " + names[j]);
                 
                 String[] nameServer = names[j].split(":");
@@ -1978,7 +1980,7 @@ public class Manager {
      */
     protected void shutdownNaming() {
         
-        rtcout.println(rtcout.TRACE, "Manager.shutdownNaming()");
+        rtcout.println(Logbuf.TRACE, "Manager.shutdownNaming()");
         
         m_namingManager.unbindAll();
     }
@@ -1988,7 +1990,7 @@ public class Manager {
      */
     protected void shutdownComponents() {
         
-        rtcout.println(rtcout.TRACE, "Manager.shutdownComponents()");
+        rtcout.println(Logbuf.TRACE, "Manager.shutdownComponents()");
         
         Vector<RTObject_impl> comps = m_namingManager.getObjects();
         for (int i=0, len=comps.size(); i < len; ++i) {
@@ -2009,8 +2011,8 @@ public class Manager {
                 m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_ecs.elementAt(i)));
                 
             } catch (Exception e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.shutdownComponents().");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, "Exception: Caught unknown Exception in Manager.shutdownComponents().");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
             }
         }
     }
@@ -2058,16 +2060,16 @@ public class Manager {
                 name_prop.load(conff);
                 
             } catch (FileNotFoundException e) {
-                rtcout.println(rtcout.DEBUG, 
+                rtcout.println(Logbuf.DEBUG, 
                     "Exception: Caught FileNotFoundException"
                     +" in Manager.configureComponent() name_conf.");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
                 
             } catch (Exception e) {
-                rtcout.println(rtcout.DEBUG, 
+                rtcout.println(Logbuf.DEBUG, 
                     "Exception: Caught unknown"
                     +" in Manager.configureComponent() name_conf.");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
             }
         }
 
@@ -2080,17 +2082,17 @@ public class Manager {
                 type_prop.load(conff);
                 
             } catch (FileNotFoundException e) {
-                rtcout.println(rtcout.DEBUG, 
+                rtcout.println(Logbuf.DEBUG, 
                     "Exception: Caught FileNotFoundException"
                     +" in Manager.configureComponent() type_conf.");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
                 e.printStackTrace();
                 
             } catch (Exception e) {
-                rtcout.println(rtcout.DEBUG, 
+                rtcout.println(Logbuf.DEBUG, 
                     "Exception: Caught unknown Exception"
                     +" in Manager.configureComponent() type_conf.");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -2124,7 +2126,7 @@ public class Manager {
      */
     protected boolean initExecContext() {
         
-        rtcout.println(rtcout.TRACE, "Manager.initExecContext()");
+        rtcout.println(Logbuf.TRACE, "Manager.initExecContext()");
         
         PeriodicExecutionContext.PeriodicExecutionContextInit(this);
         ExtTrigExecutionContext.ExtTrigExecutionContextInit(this);
@@ -2139,7 +2141,7 @@ public class Manager {
      * @return boolan
      */
     protected boolean initComposite() {
-        rtcout.println(rtcout.TRACE, "Manager.initComposite()");
+        rtcout.println(Logbuf.TRACE, "Manager.initComposite()");
         PeriodicECSharedComposite.PeriodicECSharedCompositeInit(this);
 
         return true;
@@ -2151,7 +2153,7 @@ public class Manager {
      * @return boolan
      */
     protected boolean initFactories() {
-        rtcout.println(rtcout.TRACE, "Manager.initFactories()");
+        rtcout.println(Logbuf.TRACE, "Manager.initFactories()");
         FactoryInit.init();
         return true;
     }
@@ -2195,7 +2197,7 @@ public class Manager {
             return true;
         }
         if( m_mgrservant == null) {
-            rtcout.println(rtcout.ERROR, "ManagerServant is not created.");
+            rtcout.println(Logbuf.ERROR, "ManagerServant is not created.");
             return false;
         }
 
@@ -2262,7 +2264,7 @@ public class Manager {
     protected boolean mergeProperty(Properties properties, final String fileName) {
         
         if (fileName == null) {
-            rtcout.println(rtcout.ERROR, "Invalid configuration file name.");
+            rtcout.println(Logbuf.ERROR, "Invalid configuration file name.");
 
             return false;
         }
@@ -2277,13 +2279,15 @@ public class Manager {
                 return true;
 
             } catch (FileNotFoundException e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught FileNotFoundException in Manager.mergeProperty().");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, 
+                "Exception: Caught FileNotFoundException in Manager.mergeProperty().");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
                 e.printStackTrace();
 
             } catch (Exception e) {
-                rtcout.println(rtcout.DEBUG, "Exception: Caught unknown Exception in Manager.mergeProperty().");
-                rtcout.println(rtcout.DEBUG, e.getMessage());
+                rtcout.println(Logbuf.DEBUG, 
+                    "Exception: Caught unknown Exception in Manager.mergeProperty().");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
                 e.printStackTrace();
             }
         }

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 
@@ -56,12 +57,12 @@ public class InPort<DataType> extends InPortBase {
         }
         catch(IllegalAccessException e){
             //set throws
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(IllegalArgumentException e){
             //invoke throws
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
 
@@ -112,26 +113,26 @@ public class InPort<DataType> extends InPortBase {
         }
         catch(NoSuchFieldException e){
             //getField throws
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(java.lang.InstantiationException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(ClassNotFoundException e){
             //forName throws
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(IllegalAccessException e){
             //set throws
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(IllegalArgumentException e){
             //invoke throws
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
     }
@@ -186,25 +187,25 @@ public class InPort<DataType> extends InPortBase {
      */
     public boolean isNew() {
 
-        rtcout.println(rtcout.TRACE, "isNew()");
+        rtcout.println(Logbuf.TRACE, "isNew()");
         int r = 0;
 
         synchronized (m_connectorsMutex){
             synchronized (m_connectors){
                 if (m_connectors.size() == 0) {
-                    rtcout.println(rtcout.DEBUG, "no connectors");
+                    rtcout.println(Logbuf.DEBUG, "no connectors");
                     return false;
                 }
                 r = m_connectors.elementAt(0).getBuffer().readable();
             }
         }
         if (r > 0) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                               "isNew() = true, readable data: " + r);
             return true;
         }
   
-        rtcout.println(rtcout.DEBUG, "isNew() = false, no readable data");
+        rtcout.println(Logbuf.DEBUG, "isNew() = false, no readable data");
         return false;
     }
     
@@ -277,14 +278,14 @@ public class InPort<DataType> extends InPortBase {
      *
      */
     public boolean read() {
-        rtcout.println(rtcout.TRACE, "DataType read()");
+        rtcout.println(Logbuf.TRACE, "DataType read()");
 
 
         synchronized (m_connectorsMutex){
 
             if (m_OnRead != null) {
                 m_OnRead.run();
-                rtcout.println(rtcout.TRACE, "OnRead called");
+                rtcout.println(Logbuf.TRACE, "OnRead called");
             }
 
             ReturnCode ret;
@@ -295,7 +296,7 @@ public class InPort<DataType> extends InPortBase {
             synchronized (m_connectors){
 
                 if (m_connectors.size() == 0) {
-                    rtcout.println(rtcout.DEBUG, "no connectors");
+                    rtcout.println(Logbuf.DEBUG, "no connectors");
                     return false;
                 }
 
@@ -303,25 +304,25 @@ public class InPort<DataType> extends InPortBase {
             }
 
             if (ret.equals(ReturnCode.PORT_OK)) {
-                rtcout.println(rtcout.DEBUG, "data read succeeded");
+                rtcout.println(Logbuf.DEBUG, "data read succeeded");
 
                 m_value.v = read_stream(m_value,dataref.v);
                 if (m_OnReadConvert != null) {
                     m_value.v = m_OnReadConvert.run(m_value.v);
-                    rtcout.println(rtcout.DEBUG, "OnReadConvert called");
+                    rtcout.println(Logbuf.DEBUG, "OnReadConvert called");
                     return true;
                 }
                 return true;
             }
             else if (ret.equals(ReturnCode.BUFFER_EMPTY)) {
-                rtcout.println(rtcout.WARN, "buffer empty");
+                rtcout.println(Logbuf.WARN, "buffer empty");
                 return false;
             }
             else if (ret.equals(ReturnCode.BUFFER_TIMEOUT)) {
-                rtcout.println(rtcout.WARN, "buffer read timeout");
+                rtcout.println(Logbuf.WARN, "buffer read timeout");
                 return false;
             }
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "unknown retern value from buffer.read()");
             return false;
 
@@ -437,25 +438,25 @@ public class InPort<DataType> extends InPortBase {
      *
      */
     public boolean isEmpty() {
-        rtcout.println(rtcout.TRACE, "isEmpty()");
+        rtcout.println(Logbuf.TRACE, "isEmpty()");
 
         int r = 0;
         synchronized (m_connectorsMutex){
             synchronized (m_connectors){
                 if (m_connectors.size() == 0) {
-                    rtcout.println(rtcout.DEBUG, "no connectors");
+                    rtcout.println(Logbuf.DEBUG, "no connectors");
                     return true;
                 }
                 r = m_connectors.elementAt(0).getBuffer().readable();
             }
         }
         if (r == 0) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                            "isEmpty() = true, buffer is empty");
             return true;
         }
           
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
                    "isEmpty() = false, data exists in the buffer");
         return false;
     }
@@ -487,7 +488,7 @@ public class InPort<DataType> extends InPortBase {
         }
         catch(NoSuchFieldException e){
             //getField throws
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         return false;

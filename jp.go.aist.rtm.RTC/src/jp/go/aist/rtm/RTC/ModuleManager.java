@@ -143,7 +143,7 @@ public class ModuleManager {
      *
      */
     public String load(final String moduleName) throws Exception {
-        rtcout.println(rtcout.TRACE, "load(fname = " + moduleName +")");
+        rtcout.println(Logbuf.TRACE, "load(fname = " + moduleName +")");
         String module_path = null;
 
         if(moduleName==null || moduleName.length()==0) {
@@ -331,7 +331,7 @@ public class ModuleManager {
             urls[0] = uri.toURL();
         }
         catch(java.net.MalformedURLException ex){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                 "java.net.MalformedURLException: toURL() threw Exception."+ex);
             return null;
         }
@@ -376,7 +376,7 @@ public class ModuleManager {
      */
     public String load(final String moduleName, final String methodName)
             throws Exception {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                 "load(fname = "+moduleName+"   init_func = "+methodName+")");
         
         if (moduleName == null || moduleName.length() == 0) {
@@ -530,7 +530,7 @@ public class ModuleManager {
      *
      */
     public Vector<Properties> getLoadableModules() {
-        rtcout.println(rtcout.TRACE, "getLoadableModules()");
+        rtcout.println(Logbuf.TRACE, "getLoadableModules()");
         Vector<String> dlls = new Vector<String>();
         String separator =  System.getProperty("file.separator");
         for (int i=0; i < m_loadPath.size(); ++i) {
@@ -582,7 +582,7 @@ public class ModuleManager {
                 al.add(2,"module_file_path");
                 al.add(3,dlls.elementAt(ic));
                 props.add(new Properties((String[])al.toArray(new String[]{})));
-                rtcout.println(rtcout.TRACE, 
+                rtcout.println(Logbuf.TRACE, 
                                     "loadabe module:"+dlls.elementAt(ic));
             } 
             catch(Exception e){

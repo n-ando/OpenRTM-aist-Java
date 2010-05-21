@@ -45,7 +45,7 @@ public class NamingManager implements CallbackFunction {
      */
     public void registerNameServer(final String method, 
                                                 final String name_server) {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
             "NamingManager.registerNameServer(" 
             + method + ", " + name_server + ")");
         NamingBase name = createNamingObj(method, name_server);
@@ -76,7 +76,7 @@ public class NamingManager implements CallbackFunction {
      * 
      */
     public void bindObject(final String name, final RTObject_impl rtobj) {
-        rtcout.println(rtcout.TRACE, "NamingManager.bindObject(" + name + ")");
+        rtcout.println(Logbuf.TRACE, "NamingManager.bindObject(" + name + ")");
         synchronized (m_names) {
             int len = m_names.size();
             for(int intIdx=0; intIdx < len; ++intIdx ) {
@@ -120,7 +120,7 @@ public class NamingManager implements CallbackFunction {
      * 
      */
     public void bindObject(final String name, final ManagerServant mgr) {
-        rtcout.println(rtcout.TRACE, "NamingManager.bindObject(" + name + ")");
+        rtcout.println(Logbuf.TRACE, "NamingManager.bindObject(" + name + ")");
         synchronized (m_names) {
             int len = m_names.size();
             for(int intIdx=0; intIdx < len; ++intIdx ) {
@@ -150,7 +150,7 @@ public class NamingManager implements CallbackFunction {
      *
      */
     public void update(){
-        rtcout.println(rtcout.TRACE, "NamingManager.update()");
+        rtcout.println(Logbuf.TRACE, "NamingManager.update()");
         
         boolean rebind = StringUtil.toBool(
                     m_manager.getConfig().getProperty("naming.update.rebind"), 
@@ -160,7 +160,7 @@ public class NamingManager implements CallbackFunction {
             int len = m_names.size();
             for( int intIdx=0; intIdx < len; ++intIdx ) {
                 if( m_names.elementAt(intIdx).ns == null ) {
-                    rtcout.println(rtcout.DEBUG, "Retrying connection to " 
+                    rtcout.println(Logbuf.DEBUG, "Retrying connection to " 
                                  + m_names.elementAt(intIdx).method + "/" +
                                  m_names.elementAt(intIdx).nsname);
                     retryConnection(m_names.elementAt(intIdx));
@@ -172,7 +172,7 @@ public class NamingManager implements CallbackFunction {
                             bindCompsTo(m_names.elementAt(intIdx).ns);
                         }
                         if (!m_names.elementAt(intIdx).ns.isAlive()) {
-                            rtcout.println(rtcout.INFO, 
+                            rtcout.println(Logbuf.INFO, 
                                  "Name server: " 
                                  + m_names.elementAt(intIdx).nsname + " (" 
                                  + m_names.elementAt(intIdx).method 
@@ -182,7 +182,7 @@ public class NamingManager implements CallbackFunction {
                         }
                     }
                     catch(Exception ex){
-                        rtcout.println(rtcout.INFO, 
+                        rtcout.println(Logbuf.INFO, 
                                  "Name server: " 
                                  + m_names.elementAt(intIdx).nsname + " (" 
                                  + m_names.elementAt(intIdx).method 
@@ -214,7 +214,7 @@ public class NamingManager implements CallbackFunction {
         try {
             nsobj = createNamingObj(ns.method, ns.nsname);
             if (nsobj != null) {// if succeed
-                rtcout.println(rtcout.INFO, 
+                rtcout.println(Logbuf.INFO, 
                                  "Connected to a name server: " 
                                  + ns.nsname + "/" 
                                  + ns.method );
@@ -223,13 +223,13 @@ public class NamingManager implements CallbackFunction {
                 return;
             }
             else {
-                rtcout.println(rtcout.DEBUG, 
+                rtcout.println(Logbuf.DEBUG, 
                                  "Name service: " + ns.method + "/" 
                                  + ns.nsname  +" still not available.");
             }
         }
         catch (Exception ex) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                                  "Name service: " + ns.method + "/" 
                                  + ns.nsname  +" disappeared again.");
             if (nsobj != null) {
@@ -244,7 +244,7 @@ public class NamingManager implements CallbackFunction {
      * @param name unbind対象オブジェクト名
      */
     public void unbindObject(final String name) {
-        rtcout.println(rtcout.TRACE, "NamingManager.unbindObject(" + name + ")");
+        rtcout.println(Logbuf.TRACE, "NamingManager.unbindObject(" + name + ")");
         //
         synchronized (m_names) {
             int len = m_names.size();
@@ -268,7 +268,7 @@ public class NamingManager implements CallbackFunction {
      * 
      */
     protected void unbindAll() {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
             "NamingManager.unbindAll(): m_compNames=" 
             + Integer.toString(m_compNames.size()) 
             + " m_mgrNames=" + Integer.toString(m_mgrNames.size()));
@@ -331,7 +331,7 @@ public class NamingManager implements CallbackFunction {
      */
     protected NamingBase createNamingObj(final String method, 
                                             final String name_server) {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                     "createNamingObj(method = " 
                     + method + ", nameserver = )" + name_server);
         String m = method;
@@ -341,12 +341,12 @@ public class NamingManager implements CallbackFunction {
                     = new NamingOnCorba(m_manager.getORB(), name_server);
                 NamingBase name = nameb;
                 if( name == null ) return null;
-                rtcout.println(rtcout.INFO, 
+                rtcout.println(Logbuf.INFO, 
                     "NameServer connection succeeded: " 
                     + method + "/" + name_server);
                 return name;
             } catch (Exception ex) {
-                rtcout.println(rtcout.INFO, 
+                rtcout.println(Logbuf.INFO, 
                     "NameServer connection failed: " 
                     + method +"/" + name_server);
                 return null;

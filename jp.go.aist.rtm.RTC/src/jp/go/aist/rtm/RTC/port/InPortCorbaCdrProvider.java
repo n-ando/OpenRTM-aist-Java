@@ -72,7 +72,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
                 this.m_objref = 
                         OpenRTM.InPortCdrHelper.narrow(POAUtil.getRef(this));
             } catch (Exception e) {
-                rtcout.println(rtcout.WARN, "The exception was caught.");
+                rtcout.println(Logbuf.WARN, "The exception was caught.");
                 throw new IllegalStateException(e);
             }
         }
@@ -112,7 +112,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
     public OpenRTM.PortStatus put(byte[] data)
       throws SystemException {
 
-        rtcout.println(rtcout.PARANOID, "InPortCorbaCdrProvider.put()");
+        rtcout.println(Logbuf.PARANOID, "InPortCorbaCdrProvider.put()");
 
         if (m_buffer == null) {
             EncapsOutputStream cdr 
@@ -123,7 +123,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         }
 
 
-        rtcout.println(rtcout.PARANOID, "received data size: "+data.length);
+        rtcout.println(Logbuf.PARANOID, "received data size: "+data.length);
 
 
         EncapsOutputStream cdr 
@@ -131,7 +131,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         cdr.write_octet_array(data, 0, data.length);
 
         int len = cdr.toByteArray().length;
-        rtcout.println(rtcout.PARANOID, "converted CDR data size: "+len);
+        rtcout.println(Logbuf.PARANOID, "converted CDR data size: "+len);
         onReceived(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
         return convertReturn(ret,cdr);
@@ -245,8 +245,8 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      */
     public boolean publishInterface(NVListHolder properties) {
 
-        rtcout.println(rtcout.TRACE, "publishInterface()");
-        rtcout.println(rtcout.DEBUG, NVUtil.toString(properties));
+        rtcout.println(Logbuf.TRACE, "publishInterface()");
+        rtcout.println(Logbuf.DEBUG, NVUtil.toString(properties));
 
 
         if (! NVUtil.isStringValue(properties,
@@ -287,7 +287,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      * @param interfaceType インタフェースタイプ
      */
      protected void setInterfaceType(final String interfaceType) {
-        rtcout.println(rtcout.TRACE, "setInterfaceType("+interfaceType+")");
+        rtcout.println(Logbuf.TRACE, "setInterfaceType("+interfaceType+")");
         this.m_interfaceType = interfaceType;
     }
     
@@ -297,7 +297,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      * @param dataflowType データフロータイプ
      */
     protected void setDataFlowType(final String dataflowType) {
-        rtcout.println(rtcout.TRACE, "setDataFlowType("+dataflowType+")");
+        rtcout.println(Logbuf.TRACE, "setDataFlowType("+dataflowType+")");
         this.m_dataflowType = dataflowType;
     }
     
@@ -307,7 +307,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      * @param subscriptionType サブスクリプションタイプ
      */
     protected void setSubscriptionType(final String subscriptionType) {
-        rtcout.println(rtcout.TRACE,
+        rtcout.println(Logbuf.TRACE,
                        "setSubscriptionType("+subscriptionType+")");
         this.m_subscriptionType = subscriptionType;
     }

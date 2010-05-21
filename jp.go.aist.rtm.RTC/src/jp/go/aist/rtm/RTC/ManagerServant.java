@@ -45,7 +45,7 @@ public class ManagerServant extends ManagerPOA {
         if (StringUtil.toBool(config.getProperty("manager.is_master"), 
                                                     "YES", "NO", true)) {
             // this is master manager
-            rtcout.println(rtcout.TRACE, "This manager is master.");
+            rtcout.println(Logbuf.TRACE, "This manager is master.");
 
             try{
                 //Registers the reference
@@ -56,25 +56,25 @@ public class ManagerServant extends ManagerPOA {
                         "manager", m_mgr.getPOA().servant_to_reference(this) );
             }
             catch(Exception ex){
-                 rtcout.println(rtcout.WARN, 
+                 rtcout.println(Logbuf.WARN, 
                            "Manager CORBA servant creation failed."+ex);
                  return ;
             }
 
             if (!createINSManager()) {
-                rtcout.println(rtcout.WARN, 
+                rtcout.println(Logbuf.WARN, 
                     "Manager CORBA servant creation failed.");
                 return;
             
             }
             m_isMaster = true;
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                     "Manager CORBA servant was successfully created.");
 /*
 {
 String ior;
 ior = m_mgr.getORB().object_to_string(m_objref);
-rtcout.println(rtcout.DEBUG, 
+rtcout.println(Logbuf.DEBUG, 
         "Manager's IOR information: "+ior);
 System.err.println("Manager's IOR information: "+ior);
 }
@@ -82,12 +82,12 @@ System.err.println("Manager's IOR information: "+ior);
             return;
         }
         else { // manager is slave
-            rtcout.println(rtcout.TRACE, "This manager is slave.");
+            rtcout.println(Logbuf.TRACE, "This manager is slave.");
             try {
                 RTM.Manager owner;
                 owner = findManager(config.getProperty("corba.master_manager"));
                 if (owner == null) {
-                    rtcout.println(rtcout.INFO, "Master manager not found.");
+                    rtcout.println(Logbuf.INFO, "Master manager not found.");
                     return;
                 }
 
@@ -102,7 +102,7 @@ System.err.println("Manager's IOR information: "+ior);
                         "manager", m_mgr.getPOA().servant_to_reference(this) );
                 }
                 catch(Exception ex){
-                     rtcout.println(rtcout.WARN, 
+                     rtcout.println(Logbuf.WARN, 
                            "Manager CORBA servant creation failed."+ex);
                      return ;
                 }
@@ -110,7 +110,7 @@ System.err.println("Manager's IOR information: "+ior);
 
 
                 if (!createINSManager()) {
-                    rtcout.println(rtcout.WARN, 
+                    rtcout.println(Logbuf.WARN, 
                         "Manager CORBA servant creation failed.");
                     return;
                 }
@@ -120,7 +120,7 @@ System.err.println("Manager's IOR information: "+ior);
 {
 String ior;
 ior = m_mgr.getORB().object_to_string(m_objref);
-rtcout.println(rtcout.DEBUG, 
+rtcout.println(Logbuf.DEBUG, 
         "Manager's IOR information: "+ior);
 System.err.println("Manager's IOR information: "+ior);
 }
@@ -128,7 +128,7 @@ System.err.println("Manager's IOR information: "+ior);
                 return;
             }
             catch (Exception ex) {
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                         "Unknown exception caught.");
             }
         }
@@ -161,7 +161,7 @@ System.err.println("Manager's IOR information: "+ior);
      */
     public boolean createINSManager() {
 
-        rtcout.println(rtcout.DEBUG, "createINSManager()");
+        rtcout.println(Logbuf.DEBUG, "createINSManager()");
         try{
 /*
             //Registers the reference
@@ -173,7 +173,7 @@ System.err.println("Manager's IOR information: "+ior);
 */
 
             //
-            rtcout.println(rtcout.DEBUG, "gets object.");
+            rtcout.println(Logbuf.DEBUG, "gets object.");
             org.omg.CORBA.Object obj 
                     = m_mgr.getORB().resolve_initial_references("manager");
             this.m_objref = RTM.ManagerHelper.narrow(obj);
@@ -186,13 +186,13 @@ System.err.println("Manager's IOR information: "+ior);
             this.m_objref = ManagerHelper.narrow(ref);
         
             String ior = m_mgr.getORB().object_to_string(m_objref);
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                         "Manager's IOR information:"+ior);
  
 */
         }
         catch(Exception ex){
-             rtcout.println(rtcout.WARN, 
+             rtcout.println(Logbuf.WARN, 
                        "Manager CORBA servant creation failed."+ex);
              return false;
         }
@@ -208,13 +208,13 @@ System.err.println("Manager's IOR information: "+ior);
      *   {@.en Manager reference}
      */
     public RTM.Manager findManager(final String host_port) {
-        rtcout.println(rtcout.TRACE, "findManager(host_port = "+host_port+")");
+        rtcout.println(Logbuf.TRACE, "findManager(host_port = "+host_port+")");
 
         try{
             Properties config = m_mgr.getConfig();
             String name = config.getProperty("manager.name");
             String mgrloc = "corbaloc:iiop:1.2@"+host_port+"/"+name;
-            rtcout.println(rtcout.DEBUG, "corbaloc: "+mgrloc);
+            rtcout.println(Logbuf.DEBUG, "corbaloc: "+mgrloc);
 
             ORB orb = ORBUtil.getOrb();
             Object mobj;
@@ -227,18 +227,18 @@ System.err.println("Manager's IOR information: "+ior);
 
             String ior;
             ior = orb.object_to_string(mobj);
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                     "Manager's IOR information: "+ior);
      
             return mgr;
         }
         catch(org.omg.CORBA.SystemException ex) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                 "CORBA SystemException caught (CORBA."+ex.toString()+")");
             return (RTM.Manager)null;
         }
         catch (Exception ex) {
-            rtcout.println(rtcout.DEBUG, "Unknown exception caught.");
+            rtcout.println(Logbuf.DEBUG, "Unknown exception caught.");
             return (RTM.Manager)null;
         }
 
@@ -257,7 +257,7 @@ System.err.println("Manager's IOR information: "+ior);
      */
     public RTC.ReturnCode_t load_module(final String pathname, 
                                             final String initfunc) {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                     "ManagerServant.load_module("+pathname+", "+initfunc+")");
         m_mgr.load(pathname, initfunc);
         return ReturnCode_t.RTC_OK;
@@ -272,12 +272,12 @@ System.err.println("Manager's IOR information: "+ior);
      * @return The return code.
      */
     public RTC.ReturnCode_t unload_module(final String pathname) {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                         "ManagerServant.unload_module("+pathname+")");
         try {
             m_mgr.unload(pathname);
         } catch(Exception ex) {
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                     "Exception caught.Not Found:"+pathname+" "+ex.toString());
         }
         return ReturnCode_t.RTC_OK;
@@ -297,7 +297,7 @@ System.err.println("Manager's IOR information: "+ior);
      *
      */
     public RTM.ModuleProfile[] get_loadable_modules() {
-        rtcout.println(rtcout.TRACE, "get_loadable_modules()");
+        rtcout.println(Logbuf.TRACE, "get_loadable_modules()");
         // copy local module profiles
         Vector<Properties> prof = m_mgr.getLoadableModules();
         RTM.ModuleProfile[] cprof = new RTM.ModuleProfile[prof.size()];
@@ -305,7 +305,7 @@ System.err.println("Manager's IOR information: "+ior);
             String dumpString = new String();
             dumpString = prof.elementAt(i)._dump(dumpString, 
                                                     prof.elementAt(i), 0);
-            rtcout.println(rtcout.VERBOSE, dumpString);
+            rtcout.println(Logbuf.VERBOSE, dumpString);
             _SDOPackage.NVListHolder nvlist = new _SDOPackage.NVListHolder();
             NVUtil.copyFromProperties(nvlist, prof.elementAt(i));
             cprof[i] = new RTM.ModuleProfile(nvlist.value);
@@ -314,7 +314,7 @@ System.err.println("Manager's IOR information: "+ior);
         if (false) {
             // copy slaves' module profiles
             synchronized(m_slaveMutex) {
-                rtcout.println(rtcout.DEBUG,
+                rtcout.println(Logbuf.DEBUG,
                                     m_slaves.length+" slaves exists.");
                 for (int i=0, len=m_slaves.length; i < len; ++i) {
                     try {
@@ -332,7 +332,7 @@ System.err.println("Manager's IOR information: "+ior);
                         }
                     }
                     catch(Exception ex) {
-                        rtcout.println(rtcout.INFO,
+                        rtcout.println(Logbuf.INFO,
                                     "slave ("+i+") has disappeared.");
                         m_slaves[i] = (RTM.Manager)null;
                     }
@@ -376,7 +376,7 @@ System.err.println("Manager's IOR information: "+ior);
      * @return A module profile list.
      */
     public RTM.ModuleProfile[] get_loaded_modules() {
-        rtcout.println(rtcout.TRACE, "get_loaded_modules()");
+        rtcout.println(Logbuf.TRACE, "get_loaded_modules()");
 
         // copy local module profiles
         RTM.ModuleProfileListHolder cprof = new RTM.ModuleProfileListHolder();
@@ -397,7 +397,7 @@ System.err.println("Manager's IOR information: "+ior);
             // copy slaves' module profile
             synchronized(m_slaveMutex) {
 
-                rtcout.println(rtcout.DEBUG,
+                rtcout.println(Logbuf.DEBUG,
                                     m_slaves.length+" slave managers exists.");
                 for (int i=0, len= m_slaves.length; i < len; ++i) {
                     try {
@@ -411,7 +411,7 @@ System.err.println("Manager's IOR information: "+ior);
                         }
                     }
                     catch(Exception ex) {
-                        rtcout.println(rtcout.INFO,
+                        rtcout.println(Logbuf.INFO,
                                     "slave ("+i+") has disappeared.");
                         m_slaves[i] = (RTM.Manager)null;
                     }
@@ -454,7 +454,7 @@ System.err.println("Manager's IOR information: "+ior);
      * @return An RT-Component factory profile list.
      */
     public RTM.ModuleProfile[] get_factory_profiles() {
-        rtcout.println(rtcout.TRACE, "get_factory_profiles()");
+        rtcout.println(Logbuf.TRACE, "get_factory_profiles()");
 
         Vector<Properties> prof = m_mgr.getFactoryProfiles();
         ModuleProfile[] cprof = new ModuleProfile[prof.size()];
@@ -471,7 +471,7 @@ System.err.println("Manager's IOR information: "+ior);
         if (false) {
             // copy slaves' factory profile
             synchronized(m_slaveMutex) {
-                rtcout.println(rtcout.DEBUG,
+                rtcout.println(Logbuf.DEBUG,
                                     m_slaves.length+" slaves exists.");
                 for (int i=0, len=m_slaves.length; i < len; ++i) {
                     try {
@@ -488,7 +488,7 @@ System.err.println("Manager's IOR information: "+ior);
                         }
                     }
                     catch(Exception ex) {
-                        rtcout.println(rtcout.INFO,
+                        rtcout.println(Logbuf.INFO,
                                     "slave ("+i+") has disappeared.");
                         m_slaves[i] = (RTM.Manager)null;
                     }
@@ -518,7 +518,7 @@ System.err.println("Manager's IOR information: "+ior);
      *
      */
     public RTC.RTObject create_component(final String module_name) {
-        rtcout.println(rtcout.TRACE, "create_component("+module_name+")");
+        rtcout.println(Logbuf.TRACE, "create_component("+module_name+")");
 
         String arg = module_name;
         int pos0 = arg.indexOf("&manager=");
@@ -526,7 +526,7 @@ System.err.println("Manager's IOR information: "+ior);
 
         if (pos0 < 0 && pos1 < 0){
             if (false) { //is_master()
-                rtcout.println(rtcout.TRACE, 
+                rtcout.println(Logbuf.TRACE, 
                     "Master manager cannot create component: "+module_name);
                 return null;
             }
@@ -555,19 +555,19 @@ System.err.println("Manager's IOR information: "+ior);
             endpos = arg.length();
         }
         String mgrstr = arg.substring(pos + 1, endpos);
-        rtcout.println(rtcout.VERBOSE, "Manager arg: "+mgrstr);
+        rtcout.println(Logbuf.VERBOSE, "Manager arg: "+mgrstr);
         String[] mgrvstr = mgrstr.split(":");
         if (mgrvstr.length != 2) {
-            rtcout.println(rtcout.WARN, "Invalid manager name: "+mgrstr);
+            rtcout.println(Logbuf.WARN, "Invalid manager name: "+mgrstr);
             return null;
         }
         int  eqpos = mgrstr.indexOf("=");
         if (eqpos < 0) {
-            rtcout.println(rtcout.WARN, "Invalid argument: "+module_name);
+            rtcout.println(Logbuf.WARN, "Invalid argument: "+module_name);
             return null;
         }
         mgrstr =  mgrstr.substring(eqpos + 1);
-        rtcout.println(rtcout.DEBUG, "Manager is : "+mgrstr);
+        rtcout.println(Logbuf.DEBUG, "Manager is : "+mgrstr);
 
         // find manager
         RTM.Manager mgrobj = findManager(mgrstr);
@@ -584,13 +584,13 @@ System.err.println("Manager's IOR information: "+ior);
             cmd.add("-p");
             cmd.add(mgrvstr[1]); // port number
 
-            rtcout.println(rtcout.DEBUG, "Invoking command: "+cmd);
+            rtcout.println(Logbuf.DEBUG, "Invoking command: "+cmd);
             try{
                 ProcessBuilder pb = new ProcessBuilder(cmd);
                 Process p = pb.start();
             }
             catch(Exception ex){
-                rtcout.println(rtcout.DEBUG, cmd + ": failed");
+                rtcout.println(Logbuf.DEBUG, cmd + ": failed");
                 return null;
             }
 
@@ -618,22 +618,22 @@ System.err.println("Manager's IOR information: "+ior);
         }
 
         if (mgrobj == null) {
-            rtcout.println(rtcout.WARN, "Manager cannot be found.");
+            rtcout.println(Logbuf.WARN, "Manager cannot be found.");
             return null;
         }
     
         // create component on the manager    
         arg = arg.substring(0, pos);
-        rtcout.println(rtcout.DEBUG, "Creating component on "+mgrstr);
-        rtcout.println(rtcout.DEBUG, "arg: "+arg);
+        rtcout.println(Logbuf.DEBUG, "Creating component on "+mgrstr);
+        rtcout.println(Logbuf.DEBUG, "arg: "+arg);
         try {
             RTObject rtobj;
             rtobj = mgrobj.create_component(arg);
-            rtcout.println(rtcout.DEBUG, "Component created "+arg);
+            rtcout.println(Logbuf.DEBUG, "Component created "+arg);
             return rtobj;
         }
         catch (org.omg.CORBA.SystemException e) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                         "Exception was caught while creating component.");
             return null;
         }
@@ -650,7 +650,7 @@ System.err.println("Manager's IOR information: "+ior);
      *
      */
     public RTC.ReturnCode_t delete_component(final String instance_name) {
-        rtcout.println(rtcout.TRACE, "delete_component("+instance_name+")");
+        rtcout.println(Logbuf.TRACE, "delete_component("+instance_name+")");
 
         m_mgr.deleteComponent(instance_name);
         return ReturnCode_t.RTC_OK;
@@ -678,7 +678,7 @@ System.err.println("Manager's IOR information: "+ior);
      *
      */
     public RTC.RTObject[] get_components() {
-        rtcout.println(rtcout.TRACE, "get_component()");
+        rtcout.println(Logbuf.TRACE, "get_component()");
 
         Vector<RTObject_impl> rtcs = m_mgr.getComponents();
         RTCListHolder crtcs = new RTCListHolder();
@@ -688,7 +688,7 @@ System.err.println("Manager's IOR information: "+ior);
             crtcs.value[i] = rtcs.elementAt(i).getObjRef();
         }
         // get slaves' component references
-        rtcout.println(rtcout.DEBUG,
+        rtcout.println(Logbuf.DEBUG,
                                     m_slaves.length+" slaves exists.");
         for (int i=0, len=m_slaves.length; i < len; ++i) {
             try {
@@ -702,7 +702,7 @@ System.err.println("Manager's IOR information: "+ior);
                   }
             }
             catch(Exception ex) {
-                rtcout.println(rtcout.INFO,
+                rtcout.println(Logbuf.INFO,
                                     "slave ("+i+") has disappeared.");
                 m_slaves[i] = (RTM.Manager)null;
             }
@@ -723,7 +723,7 @@ System.err.println("Manager's IOR information: "+ior);
      * @return A list of RT-Components' profiles
      */
     public RTC.ComponentProfile[] get_component_profiles() {
-        rtcout.println(rtcout.TRACE, "get_component_profiles()");
+        rtcout.println(Logbuf.TRACE, "get_component_profiles()");
 
         ComponentProfileListHolder cprofs = new ComponentProfileListHolder();
         Vector<RTObject_impl> rtcs = m_mgr.getComponents();
@@ -734,7 +734,7 @@ System.err.println("Manager's IOR information: "+ior);
         }
         // copy slaves' component profiles
         synchronized(m_slaveMutex) {
-            rtcout.println(rtcout.DEBUG,
+            rtcout.println(Logbuf.DEBUG,
                                     m_slaves.length+" slaves exists.");
             for (int i=0, len=m_slaves.length; i < len; ++i) {
                 try {
@@ -750,7 +750,7 @@ System.err.println("Manager's IOR information: "+ior);
                       }
                 }
                 catch(Exception ex) {
-                    rtcout.println(rtcout.INFO,
+                    rtcout.println(Logbuf.INFO,
                                     "slave ("+i+") has disappeared.");
                     m_slaves[i] = (RTM.Manager)null;
                 }
@@ -771,7 +771,7 @@ System.err.println("Manager's IOR information: "+ior);
      * @return Manager's profile
      */
     public RTM.ManagerProfile get_profile() {
-        rtcout.println(rtcout.TRACE, "get_profile()");
+        rtcout.println(Logbuf.TRACE, "get_profile()");
 
         NVListHolder nvlist = new NVListHolder();
         ManagerProfile prof = new ManagerProfile();
@@ -788,7 +788,7 @@ System.err.println("Manager's IOR information: "+ior);
      * @return Manager's configuration
      */
     public _SDOPackage.NameValue[] get_configuration() {
-        rtcout.println(rtcout.TRACE, "get_configuration()");
+        rtcout.println(Logbuf.TRACE, "get_configuration()");
 
         NVListHolder nvlist = new NVListHolder();
         NVUtil.copyFromProperties(nvlist, m_mgr.getConfig());
@@ -805,7 +805,7 @@ System.err.println("Manager's IOR information: "+ior);
      */
     public RTC.ReturnCode_t set_configuration(final String name, 
                                                     final String value) {
-        rtcout.println(rtcout.TRACE, "set_configuration()");
+        rtcout.println(Logbuf.TRACE, "set_configuration()");
 
         m_mgr.getConfig().setProperty(name, value);
         return ReturnCode_t.RTC_OK;
@@ -818,7 +818,7 @@ System.err.println("Manager's IOR information: "+ior);
      * @return A boolean value that means it is master or not.
      */
     public boolean is_master() {
-        rtcout.println(rtcout.TRACE, "is_master(): "+m_isMaster);
+        rtcout.println(Logbuf.TRACE, "is_master(): "+m_isMaster);
         return m_isMaster;
 
     }
@@ -831,7 +831,7 @@ System.err.println("Manager's IOR information: "+ior);
      * @return Master manager list
      */
     public RTM.Manager[] get_master_managers() {
-        rtcout.println(rtcout.TRACE, "get_master_managers()");
+        rtcout.println(Logbuf.TRACE, "get_master_managers()");
 
         synchronized(m_masterMutex) {
             RTM.ManagerListHolder holder = new RTM.ManagerListHolder(m_masters);
@@ -849,20 +849,20 @@ System.err.println("Manager's IOR information: "+ior);
     public ReturnCode_t add_master_manager(RTM.Manager mgr) {
         synchronized(m_masterMutex) {
             long index;
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                     "add_master_manager(), "+m_masters.length+" masters");
 
             RTM.ManagerListHolder holder = new RTM.ManagerListHolder(m_masters);
             index = CORBA_SeqUtil.find(holder, new is_equiv(mgr));
     
             if (!(index < 0)) {// found in my list
-                rtcout.println(rtcout.ERROR, "Already exists.");
+                rtcout.println(Logbuf.ERROR, "Already exists.");
                 return ReturnCode_t.BAD_PARAMETER;
             }
     
             CORBA_SeqUtil.push_back(holder, (RTM.Manager)mgr._duplicate());
             m_masters = holder.value;
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                 "add_master_manager() done, "+m_masters.length+" masters");
             return ReturnCode_t.RTC_OK;
         }
@@ -876,7 +876,7 @@ System.err.println("Manager's IOR information: "+ior);
      */
     public ReturnCode_t remove_master_manager(RTM.Manager mgr) {
         synchronized(m_masterMutex) {
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                     "remove_master_manager(), "+m_masters.length+" masters");
 
             long index;
@@ -884,13 +884,13 @@ System.err.println("Manager's IOR information: "+ior);
             index = CORBA_SeqUtil.find(holder, new is_equiv(mgr));
     
             if (index < 0) { // not found in my list
-                rtcout.println(rtcout.ERROR, "Not found.");
+                rtcout.println(Logbuf.ERROR, "Not found.");
                 return ReturnCode_t.BAD_PARAMETER;
             }
     
             CORBA_SeqUtil.erase(holder, (int)index);
             m_masters = holder.value;
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                 "remove_master_manager() done, "+m_masters.length+" masters");
             return ReturnCode_t.RTC_OK;
         }
@@ -906,7 +906,7 @@ System.err.println("Manager's IOR information: "+ior);
      */
     public RTM.Manager[] get_slave_managers() {
         synchronized(m_masterMutex) {
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                 "get_slave_managers(), "+m_slaves.length+" slaves");
     
             RTM.ManagerListHolder holder = new RTM.ManagerListHolder(m_slaves);
@@ -922,7 +922,7 @@ System.err.println("Manager's IOR information: "+ior);
      */
     public ReturnCode_t add_slave_manager(RTM.Manager mgr) {
         synchronized(m_masterMutex) {
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                 "add_slave_manager(), "+m_slaves.length+" slaves");
     
             long index;
@@ -930,13 +930,13 @@ System.err.println("Manager's IOR information: "+ior);
             index = CORBA_SeqUtil.find(holder, new is_equiv(mgr));
     
             if (!(index < 0)) { // found in my list
-                rtcout.println(rtcout.ERROR, "Already exists.");
+                rtcout.println(Logbuf.ERROR, "Already exists.");
                 return ReturnCode_t.BAD_PARAMETER;
             }
     
             CORBA_SeqUtil.push_back(holder, (RTM.Manager)mgr._duplicate());
             m_slaves = holder.value;
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                 "add_slave_manager() done, "+m_slaves.length+" slaves");
             return ReturnCode_t.RTC_OK;
         }
@@ -950,20 +950,20 @@ System.err.println("Manager's IOR information: "+ior);
      */
     public ReturnCode_t remove_slave_manager(RTM.Manager mgr) {
         synchronized(m_masterMutex) {
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                 "remove_slave_manager(), "+m_slaves.length+" slaves");
             long index;
             RTM.ManagerListHolder holder = new RTM.ManagerListHolder(m_slaves);
             index = CORBA_SeqUtil.find(holder, new is_equiv(mgr));
     
             if (index < 0) {// not found in my list
-                rtcout.println(rtcout.ERROR, "Not found.");
+                rtcout.println(Logbuf.ERROR, "Not found.");
                 return ReturnCode_t.BAD_PARAMETER;
             }
     
             CORBA_SeqUtil.erase(holder, (int)index);
             m_slaves = holder.value;
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                 "remove_slave_manager() done, "+m_slaves.length+" slaves");
             return ReturnCode_t.RTC_OK;
         }

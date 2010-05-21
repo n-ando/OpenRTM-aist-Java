@@ -53,7 +53,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      *
      */
     public void init(Properties prop) {
-        rtcout.println(rtcout.TRACE, "OutPutCorbaCdrConsumer.init()");
+        rtcout.println(Logbuf.TRACE, "OutPutCorbaCdrConsumer.init()");
     }
 
     /**
@@ -69,7 +69,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      *
      */
     public void setBuffer(BufferBase<OutputStream> buffer) {
-        rtcout.println(rtcout.TRACE, "OutPutCorbaCdrConsumer.setBuffer()");
+        rtcout.println(Logbuf.TRACE, "OutPutCorbaCdrConsumer.setBuffer()");
         m_buffer = buffer;
     }
     /**
@@ -77,7 +77,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      */
     public void setListener(ConnectorBase.ConnectorInfo info, 
                             ConnectorListeners listeners) {
-        rtcout.println(rtcout.TRACE, "OutPutCorbaCdrConsumer.setListener()");
+        rtcout.println(Logbuf.TRACE, "OutPutCorbaCdrConsumer.setListener()");
         m_listeners = listeners;
         m_profile = info;
     }
@@ -93,22 +93,22 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      *
      */
     public ReturnCode get(OutputStream data) {
-        rtcout.println(rtcout.TRACE, "OutPutCorbaCdrConsumer.get()");
+        rtcout.println(Logbuf.TRACE, "OutPutCorbaCdrConsumer.get()");
         OpenRTM.CdrDataHolder cdr_data = new OpenRTM.CdrDataHolder();
         try {
             OpenRTM.PortStatus ret = _ptr().get(cdr_data);
             if (ret == OpenRTM.PortStatus.PORT_OK) {
-                rtcout.println(rtcout.DEBUG, "get() successful");
+                rtcout.println(Logbuf.DEBUG, "get() successful");
                 data.write_octet_array(cdr_data.value, 0, 
                                         cdr_data.value.length);
-                rtcout.println(rtcout.PARANOID, 
+                rtcout.println(Logbuf.PARANOID, 
                                 "CDR data length: "+cdr_data.value.length);
   
                 onReceived(data);
                 onBufferWrite(data);
 
                 if (m_buffer.full()) {
-                    rtcout.println(rtcout.INFO, 
+                    rtcout.println(Logbuf.INFO, 
                                 "InPort buffer is full.");
                     onBufferFull(data);
                     onReceiverFull(data);
@@ -123,7 +123,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
             return convertReturn(ret);
         }
         catch (Exception e) {
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                                 "Exception caought from OutPort.get().");
             return ReturnCode.CONNECTION_LOST;
         }
@@ -143,20 +143,20 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      */
     public boolean subscribeInterface(final NVListHolder properties) {
 
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                             "OutPortCorbaCdrConsumer.subscribeInterface()");
         int index;
         index = NVUtil.find_index(properties,
                                    "dataport.corba_cdr.outport_ior");
         if (index < 0) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                             "dataport.corba_cdr.outport_ior not found.");
             return false;
         }
     
         if (NVUtil.isString(properties,
                              "dataport.corba_cdr.outport_ior")) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                             "dataport.corba_cdr.outport_ior found.");
             final String ior;
             try {
@@ -168,24 +168,24 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
                 }
             }
             catch(BAD_OPERATION e) {
-                rtcout.println(rtcout.ERROR, "outport_ior has no string");
+                rtcout.println(Logbuf.ERROR, "outport_ior has no string");
                 return false;
             }
 
             ORB orb = Manager.instance().getORB();
             Object var = orb.string_to_object(ior);
             if (var==null) {
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                                     "invalid IOR string has been passed");
                 return false;
             }
     
             if (!super.setObject(var)) {
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                                     "Invalid object reference.");
                 return false;
             }
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                                 "CorbaConsumer was set successfully.");
             return true;
         }
@@ -202,13 +202,13 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      *
      */
     public void unsubscribeInterface(final NVListHolder properties) {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                             "OutPortCorbaCdrConsumer.unsubscribeInterface()");
         int index;
         index = NVUtil.find_index(properties,
                                   "dataport.corba_cdr.outport_ior");
         if (index < 0) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                             "dataport.corba_cdr.outport_ior not found.");
             return;
         }
@@ -223,20 +223,20 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
             }
         }
         catch(BAD_OPERATION e) {
-            rtcout.println(rtcout.ERROR, "inport_ior has no string");
+            rtcout.println(Logbuf.ERROR, "inport_ior has no string");
             return;
         }
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
                             "dataport.corba_cdr.outport_ior found.");
         ORB orb = Manager.instance().getORB();
         Object var = orb.string_to_object(ior);
         if (_ptr()._is_equivalent(var)) {
             releaseObject();
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                             "CorbaConsumer's reference was released.");
             return;
         }
-        rtcout.println(rtcout.ERROR, 
+        rtcout.println(Logbuf.ERROR, 
                             "hmm. Inconsistent object reference.");
     }
     

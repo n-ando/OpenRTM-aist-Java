@@ -197,7 +197,7 @@ public abstract class PortBase extends PortServicePOA {
      * @return 本ポートに関するPortProfileオブジェクト
      */
     public PortProfile get_port_profile() {
-        rtcout.println(rtcout.TRACE, "get_port_profile()");
+        rtcout.println(Logbuf.TRACE, "get_port_profile()");
 
         updateConnectors();
         synchronized (this.m_profile) {
@@ -231,7 +231,7 @@ public abstract class PortBase extends PortServicePOA {
      * @return このポートに関連するConnectorProfileオブジェクトの配列
      */
     public RTC.ConnectorProfile[] get_connector_profiles() {
-        rtcout.println(rtcout.TRACE, "get_connector_profiles()");
+        rtcout.println(Logbuf.TRACE, "get_connector_profiles()");
 
         updateConnectors();
         synchronized (this.m_profile) {
@@ -255,7 +255,7 @@ public abstract class PortBase extends PortServicePOA {
      */
     public ConnectorProfile get_connector_profile(final String connector_id) {
 
-        rtcout.println(rtcout.TRACE, "get_connector_profile("+connector_id+")");
+        rtcout.println(Logbuf.TRACE, "get_connector_profile("+connector_id+")");
 
         updateConnectors();
         synchronized (m_profile_mutex) {
@@ -300,7 +300,7 @@ public abstract class PortBase extends PortServicePOA {
      */
     public ReturnCode_t connect(ConnectorProfileHolder connector_profile) {
 
-        rtcout.println(rtcout.TRACE, "connect()");
+        rtcout.println(Logbuf.TRACE, "connect()");
         if (isEmptyId(connector_profile.value)) {
             
             synchronized (m_profile_mutex) {
@@ -313,7 +313,7 @@ public abstract class PortBase extends PortServicePOA {
         else {
             synchronized (m_profile_mutex) {
    	        if (isExistingConnId(connector_profile.value.connector_id)) {
-                    rtcout.println(rtcout.ERROR, "Connection already exists.");
+                    rtcout.println(Logbuf.ERROR, "Connection already exists.");
 	            return ReturnCode_t.PRECONDITION_NOT_MET;
 	        }
             }
@@ -323,7 +323,7 @@ public abstract class PortBase extends PortServicePOA {
             ReturnCode_t ret 
            = connector_profile.value.ports[0].notify_connect(connector_profile);
             if (!ret.equals(ReturnCode_t.RTC_OK)) {
-                rtcout.println(rtcout.ERROR, "Connection failed. cleanup.");
+                rtcout.println(Logbuf.ERROR, "Connection failed. cleanup.");
                 disconnect(connector_profile.value.connector_id);
             }
             return ret;
@@ -453,7 +453,7 @@ public abstract class PortBase extends PortServicePOA {
     public ReturnCode_t 
     notify_connect(ConnectorProfileHolder connector_profile) {
 
-        rtcout.println(rtcout.TRACE, "notify_connect()");
+        rtcout.println(Logbuf.TRACE, "notify_connect()");
 
         synchronized (m_connectorsMutex){
             ReturnCode_t[] retval = {ReturnCode_t.RTC_OK, ReturnCode_t.RTC_OK, 
@@ -462,7 +462,7 @@ public abstract class PortBase extends PortServicePOA {
             // publish owned interface information to the ConnectorProfile
             retval[0] = publishInterfaces(connector_profile);
             if (! ReturnCode_t.RTC_OK.equals(retval[0])) {
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                            "publishInterfaces() in notify_connect() failed.");
             }
             if (m_onPublishInterfaces != null) {
@@ -473,7 +473,7 @@ public abstract class PortBase extends PortServicePOA {
             // call notify_connect() of the next Port
             retval[1] = connectNext(connector_profile);
             if (! ReturnCode_t.RTC_OK.equals(retval[1])) {
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                                "connectNext() in notify_connect() failed.");
             }
 
@@ -484,11 +484,11 @@ public abstract class PortBase extends PortServicePOA {
             retval[2] = subscribeInterfaces(connector_profile);
             if (! ReturnCode_t.RTC_OK.equals(retval[2])) {
                 // cleanup this connection for downstream ports
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                            "subscribeInterfaces() in notify_connect() failed.");
             }
 
-            rtcout.println(rtcout.PARANOID, 
+            rtcout.println(Logbuf.PARANOID, 
                 m_profile.connector_profiles.length
                 +" connectors are existing.");
 
@@ -502,13 +502,13 @@ public abstract class PortBase extends PortServicePOA {
                                              this.m_profile.connector_profiles);
                     CORBA_SeqUtil.push_back(holder, connector_profile.value);
                     this.m_profile.connector_profiles = holder.value;
-                    rtcout.println(rtcout.PARANOID,
+                    rtcout.println(Logbuf.PARANOID,
                                "New connector_id. Push backed.");
 
                 } else {
                     this.m_profile.connector_profiles[index] = 
                                                        connector_profile.value;
-                    rtcout.println(rtcout.PARANOID,
+                    rtcout.println(Logbuf.PARANOID,
                                    "Existing connector_id. Updated.");
                 } 
             }
@@ -536,11 +536,11 @@ public abstract class PortBase extends PortServicePOA {
      */
     public ReturnCode_t disconnect(final String connector_id) {
 
-        rtcout.println(rtcout.TRACE, "disconnect("+connector_id+")");
+        rtcout.println(Logbuf.TRACE, "disconnect("+connector_id+")");
         // find connector_profile
         int index = findConnProfileIndex(connector_id);
         if (index < 0) {
-            rtcout.println(rtcout.ERROR, "Invalid connector id: "+connector_id);
+            rtcout.println(Logbuf.ERROR, "Invalid connector id: "+connector_id);
        	    return ReturnCode_t.BAD_PARAMETER;
         }
 
@@ -551,7 +551,7 @@ public abstract class PortBase extends PortServicePOA {
         }
 
         if (prof.ports.length < 1) {
-            rtcout.println(rtcout.FATAL, "ConnectorProfile has empty port list.");
+            rtcout.println(Logbuf.FATAL, "ConnectorProfile has empty port list.");
             return ReturnCode_t.PRECONDITION_NOT_MET;
         }
 
@@ -561,15 +561,15 @@ public abstract class PortBase extends PortServicePOA {
                 return p.notify_disconnect(connector_id);
             }
             catch (SystemException e) {
-                rtcout.println(rtcout.WARN, "Exception caught: minor code("+e.minor+")."+e.toString());
+                rtcout.println(Logbuf.WARN, "Exception caught: minor code("+e.minor+")."+e.toString());
                 continue;
             }
             catch (Exception e) {
-                rtcout.println(rtcout.WARN, "Unknown exception caught.");
+                rtcout.println(Logbuf.WARN, "Unknown exception caught.");
                 continue;
             }
         }
-        rtcout.println(rtcout.ERROR, "notify_disconnect() for all ports failed.");
+        rtcout.println(Logbuf.ERROR, "notify_disconnect() for all ports failed.");
         return ReturnCode_t.RTC_ERROR;
     }
 
@@ -667,7 +667,7 @@ public abstract class PortBase extends PortServicePOA {
      */
     public ReturnCode_t notify_disconnect(final String connector_id) {
 
-        rtcout.println(rtcout.TRACE, "notify_disconnect("+connector_id+")");
+        rtcout.println(Logbuf.TRACE, "notify_disconnect("+connector_id+")");
 
         // The Port of which the reference is stored in the beginning of
         // ConnectorProfile's PortList is master Port.
@@ -680,7 +680,7 @@ public abstract class PortBase extends PortServicePOA {
                 // find connector_profile
                 int index = findConnProfileIndex(connector_id);
                 if (index < 0) {
-                    rtcout.println(rtcout.ERROR, 
+                    rtcout.println(Logbuf.ERROR, 
                                "Invalid connector id: "+connector_id);
 	             return ReturnCode_t.BAD_PARAMETER;
                  }
@@ -722,7 +722,7 @@ public abstract class PortBase extends PortServicePOA {
      */
     public ReturnCode_t disconnect_all() {
 
-        rtcout.println(rtcout.TRACE, "disconnect_all()");
+        rtcout.println(Logbuf.TRACE, "disconnect_all()");
         ConnectorProfileListHolder plist = null;
         synchronized (m_profile_mutex) {
             plist = 
@@ -730,7 +730,7 @@ public abstract class PortBase extends PortServicePOA {
         }
         ReturnCode_t retcode = ReturnCode_t.RTC_OK;
         int len = plist.value.length;
-        rtcout.println(rtcout.DEBUG, "disconnecting "+len+" connections.");
+        rtcout.println(Logbuf.DEBUG, "disconnecting "+len+" connections.");
         for (int i=0; i < len; ++i) {
             ReturnCode_t tmpret;
             tmpret = this.disconnect(plist.value[i].connector_id);
@@ -776,7 +776,7 @@ public abstract class PortBase extends PortServicePOA {
      * @return The name of this Port.
      */
     String getName() {
-        rtcout.println(rtcout.TRACE, "getName() = "+m_profile.name);
+        rtcout.println(Logbuf.TRACE, "getName() = "+m_profile.name);
         return m_profile.name;
     }
 
@@ -833,7 +833,7 @@ public abstract class PortBase extends PortServicePOA {
 
         RTC.ComponentProfile prof = owner.get_component_profile();
         m_ownerInstanceName = prof.instance_name;
-        rtcout.println(rtcout.TRACE, "setOwner("+m_ownerInstanceName+")");
+        rtcout.println(Logbuf.TRACE, "setOwner("+m_ownerInstanceName+")");
         synchronized (this.m_profile) {
             String portname = m_profile.name;
             String[] port = portname.split("\\.");
@@ -1088,12 +1088,12 @@ public abstract class PortBase extends PortServicePOA {
                 return p.notify_disconnect(connector_profile.connector_id);
             }
             catch (SystemException e) {
-                rtcout.println(rtcout.WARN, 
+                rtcout.println(Logbuf.WARN, 
                                "Exception caught: minor code."+e.minor);
                 continue;
             } 
             catch (Exception e) {
-                rtcout.println(rtcout.WARN, 
+                rtcout.println(Logbuf.WARN, 
                                "Unknown exception caught.");
                 continue;
             }
@@ -1636,7 +1636,7 @@ public abstract class PortBase extends PortServicePOA {
                     if (!checkPorts(clist[i].ports)) {
                         String id = clist[i].connector_id;
                         connector_ids.add(id);
-                        rtcout.println(rtcout.WARN,"Dead connection:"+id);
+                        rtcout.println(Logbuf.WARN,"Dead connection:"+id);
                     }
                 }
             }
@@ -1655,7 +1655,7 @@ public abstract class PortBase extends PortServicePOA {
         for (int i=0, len=ports.length; i < len; ++i) {
             try {
                 if (ports[i]._non_existent()) {
-                    rtcout.println(rtcout.WARN,"Dead Port reference detected.");
+                    rtcout.println(Logbuf.WARN,"Dead Port reference detected.");
                     return false;
                 }
             }
@@ -1676,11 +1676,11 @@ public abstract class PortBase extends PortServicePOA {
     protected ReturnCode_t _publishInterfaces() {
         if(!(m_connectionLimit < 0)) {
             if(m_connectionLimit<=m_profile.connector_profiles.length) {
-                rtcout.println(rtcout.PARANOID, 
+                rtcout.println(Logbuf.PARANOID, 
                     "Connected number has reached the limitation.");
-                rtcout.println(rtcout.PARANOID, 
+                rtcout.println(Logbuf.PARANOID, 
                     "Can connect the port up to "+m_connectionLimit+" ports.");
-                rtcout.println(rtcout.PARANOID, 
+                rtcout.println(Logbuf.PARANOID, 
                     m_profile.connector_profiles.length+" connectors are existing");
                 return ReturnCode_t.RTC_ERROR;
              }

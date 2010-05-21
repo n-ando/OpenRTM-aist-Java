@@ -33,7 +33,7 @@ public class InterceptorInitializer
      *         operations by which Interceptors can be registered.} 
      */
     public void post_init(ORBInitInfo info) {
-        rtcout.println(rtcout.TRACE, "post_init");
+        rtcout.println(Logbuf.TRACE, "post_init");
         try {
 
             org.omg.IOP.Encoding encoding 

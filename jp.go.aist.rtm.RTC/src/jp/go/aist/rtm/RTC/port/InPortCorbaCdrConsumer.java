@@ -54,7 +54,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      *
      */
     public ReturnCode put(final OutputStream data) {
-        rtcout.println(rtcout.PARANOID, "put");
+        rtcout.println(Logbuf.PARANOID, "put");
         
         EncapsOutputStream cdr;
         cdr = (EncapsOutputStream)data;
@@ -95,14 +95,14 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      *
      */
     public boolean subscribeInterface(final NVListHolder properties) {
-        rtcout.println(rtcout.TRACE, "subscribeInterface()");
+        rtcout.println(Logbuf.TRACE, "subscribeInterface()");
         if(properties.value == null){
-            rtcout.println(rtcout.DEBUG, "NVListHolder is null.");
+            rtcout.println(Logbuf.DEBUG, "NVListHolder is null.");
             return false;
         }
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
                        "Length of NVListHolder:"+properties.value.length);
-        rtcout.println(rtcout.DEBUG, NVUtil.toString(properties));
+        rtcout.println(Logbuf.DEBUG, NVUtil.toString(properties));
     
         // getting InPort's ref from IOR string
         if (subscribeFromIor(properties)) { 
@@ -124,8 +124,8 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      *
      */
     public void unsubscribeInterface(final NVListHolder properties) {
-        rtcout.println(rtcout.TRACE, "unsubscribeInterface()");
-        rtcout.println(rtcout.DEBUG, NVUtil.toString(properties));
+        rtcout.println(Logbuf.TRACE, "unsubscribeInterface()");
+        rtcout.println(Logbuf.DEBUG, NVUtil.toString(properties));
     
         if (unsubscribeFromIor(properties)) { 
             return; 
@@ -140,21 +140,21 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      *
      */
     private boolean subscribeFromIor(final NVListHolder properties) {
-        rtcout.println(rtcout.TRACE, "subscribeFromIor()");
+        rtcout.println(Logbuf.TRACE, "subscribeFromIor()");
     
         int index;
         index = NVUtil.find_index(properties,
                                "dataport.corba_cdr.inport_ior");
         if (index < 0) {
-            rtcout.println(rtcout.ERROR, "inport_ior not found");
+            rtcout.println(Logbuf.ERROR, "inport_ior not found");
             return false;
         }
-        rtcout.println(rtcout.DEBUG, "index:"+index);
+        rtcout.println(Logbuf.DEBUG, "index:"+index);
     
         final String ior;
 
         try {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                             "type:"+properties.value[index].value.type());
             if( properties.value[index].value.type().kind() == 
                 TCKind.tk_wstring ) {
@@ -164,7 +164,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
             }
         }
         catch(BAD_OPERATION e) {
-            rtcout.println(rtcout.ERROR, "inport_ior has no string");
+            rtcout.println(Logbuf.ERROR, "inport_ior has no string");
             return false;
         }
     
@@ -172,12 +172,12 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
         org.omg.CORBA.Object obj = orb.string_to_object(ior);
     
         if (obj==null) {
-            rtcout.println(rtcout.ERROR, "invalid IOR string has been passed");
+            rtcout.println(Logbuf.ERROR, "invalid IOR string has been passed");
             return false;
         }
     
         if (!super.setObject(obj)) {
-            rtcout.println(rtcout.WARN, "Setting object to consumer failed.");
+            rtcout.println(Logbuf.WARN, "Setting object to consumer failed.");
             return false;
         }
         return true;
@@ -190,12 +190,12 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      *
      */
     private boolean subscribeFromRef(final NVListHolder properties) {
-        rtcout.println(rtcout.TRACE, "subscribeFromRef()");
+        rtcout.println(Logbuf.TRACE, "subscribeFromRef()");
         int index;
         index = NVUtil.find_index(properties,
                                    "dataport.corba_cdr.inport_ref");
         if (index < 0) {
-            rtcout.println(rtcout.ERROR, "inport_ref not found");
+            rtcout.println(Logbuf.ERROR, "inport_ref not found");
             return false;
         }
     
@@ -204,17 +204,17 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
             obj = properties.value[index].value.extract_Object();
         }
         catch(BAD_OPERATION e){
-            rtcout.println(rtcout.ERROR, "prop[inport_ref] is not objref");
+            rtcout.println(Logbuf.ERROR, "prop[inport_ref] is not objref");
             return true;
         }
     
         if (obj==null) {
-            rtcout.println(rtcout.ERROR, "prop[inport_ref] is not objref");
+            rtcout.println(Logbuf.ERROR, "prop[inport_ref] is not objref");
             return false;
         }
     
         if (!super.setObject(obj)) {
-            rtcout.println(rtcout.ERROR, "Setting object to consumer failed.");
+            rtcout.println(Logbuf.ERROR, "Setting object to consumer failed.");
             return false;
         }
         return true;
@@ -227,12 +227,12 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      *
      */
     private boolean unsubscribeFromIor(final NVListHolder properties) {
-        rtcout.println(rtcout.TRACE, "unsubscribeFromIor()");
+        rtcout.println(Logbuf.TRACE, "unsubscribeFromIor()");
         int index;
         index = NVUtil.find_index(properties,
                                    "dataport.corba_cdr.inport_ior");
         if (index < 0) {
-            rtcout.println(rtcout.ERROR, "inport_ior not found");
+            rtcout.println(Logbuf.ERROR, "inport_ior not found");
             return false;
         }
     
@@ -246,14 +246,14 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
             }
         }
         catch(BAD_OPERATION e) {
-            rtcout.println(rtcout.ERROR, "inport_ior has no string");
+            rtcout.println(Logbuf.ERROR, "inport_ior has no string");
             return false;
         }
     
         ORB orb = ORBUtil.getOrb();
         org.omg.CORBA.Object var = orb.string_to_object(ior);
         if (!(_ptr()._is_equivalent(var))) {
-            rtcout.println(rtcout.ERROR, "connector property inconsistency");
+            rtcout.println(Logbuf.ERROR, "connector property inconsistency");
             return false;
         }
     
@@ -268,7 +268,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      *
      */
     private boolean unsubscribeFromRef(final NVListHolder properties) {
-        rtcout.println(rtcout.TRACE, "unsubscribeFromRef()");
+        rtcout.println(Logbuf.TRACE, "unsubscribeFromRef()");
         int index;
         index = NVUtil.find_index(properties,
                                    "dataport.corba_cdr.inport_ref");
@@ -281,12 +281,12 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
             obj = properties.value[index].value.extract_Object();
         }
         catch(BAD_OPERATION e){
-            rtcout.println(rtcout.ERROR, "prop[inport_ref] is not objref");
+            rtcout.println(Logbuf.ERROR, "prop[inport_ref] is not objref");
             return false;
         }
     
         if (!(_ptr()._is_equivalent(obj))) {
-            rtcout.println(rtcout.ERROR, "connector property inconsistency");
+            rtcout.println(Logbuf.ERROR, "connector property inconsistency");
             return false;
         }
         

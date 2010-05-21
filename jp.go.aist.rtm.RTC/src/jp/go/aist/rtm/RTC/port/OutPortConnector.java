@@ -29,7 +29,7 @@ public abstract class OutPortConnector extends ConnectorBase {
      *
      */
     public final ConnectorInfo profile() {
-        rtcout.println(rtcout.TRACE, "profile()");
+        rtcout.println(Logbuf.TRACE, "profile()");
         return m_profile;
     }
 
@@ -39,7 +39,7 @@ public abstract class OutPortConnector extends ConnectorBase {
      *
      */
     public final String id() {
-        rtcout.println(rtcout.TRACE, "id() = " + profile().id);
+        rtcout.println(Logbuf.TRACE, "id() = " + profile().id);
         return profile().id;
     }
 
@@ -49,7 +49,7 @@ public abstract class OutPortConnector extends ConnectorBase {
      * 
      */
     public final String name(){
-        rtcout.println(rtcout.TRACE, "name() = " + profile().name);
+        rtcout.println(Logbuf.TRACE, "name() = " + profile().name);
         return profile().name;
     }
     /**

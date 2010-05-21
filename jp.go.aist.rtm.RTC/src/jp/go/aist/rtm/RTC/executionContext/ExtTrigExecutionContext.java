@@ -35,7 +35,7 @@ public class ExtTrigExecutionContext
      */
     public void tick() throws SystemException {
 
-        rtcout.println(rtcout.TRACE, "ExtTrigExecutionContext.tick()");
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.tick()");
 
         synchronized (m_worker) {
             m_worker._called = true;
@@ -49,7 +49,7 @@ public class ExtTrigExecutionContext
      */
     public int svc() {
 
-        rtcout.println(rtcout.TRACE, "ExtTrigExecutionContext.svc()");
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.svc()");
 
         do {
             TimeValue tv = new TimeValue(0, m_usec); // (s, us)

@@ -118,11 +118,11 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
      *
      */
     public OpenRTM.PortStatus get(OpenRTM.CdrDataHolder data) {
-        rtcout.println(rtcout.PARANOID, "OutPortCorbaCdrProvider.get()");
+        rtcout.println(Logbuf.PARANOID, "OutPortCorbaCdrProvider.get()");
 
         if (m_buffer == null) {
             onSenderError();
-            rtcout.println(rtcout.PARANOID, "m_buffer is null.");
+            rtcout.println(Logbuf.PARANOID, "m_buffer is null.");
             return OpenRTM.PortStatus.UNKNOWN_ERROR;
         }
 

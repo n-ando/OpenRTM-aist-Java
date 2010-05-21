@@ -108,7 +108,7 @@ class NamingOnCorba implements NamingBase {
      *
      */
     public void unbindObject(final String name) {
-        rtcout.println(rtcout.INFO, "unbindObject(name  = " +name+")");
+        rtcout.println(Logbuf.INFO, "unbindObject(name  = " +name+")");
         try {
             m_cosnaming.unbind(name);
         } catch (Exception ex) {
@@ -126,7 +126,7 @@ class NamingOnCorba implements NamingBase {
      * 
      */
     public boolean isAlive() {
-        rtcout.println(rtcout.TRACE, "isAlive()");
+        rtcout.println(Logbuf.TRACE, "isAlive()");
         return m_cosnaming.isAlive();
     }
 

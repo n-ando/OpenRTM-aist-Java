@@ -58,17 +58,17 @@ public class CorbaPort extends PortBase {
      * @param prop properties of the CorbaPort
      */
     public void init(Properties prop) {
-        rtcout.println(rtcout.TRACE, "init()");
-        rtcout.println(rtcout.PARANOID, "given properties:");
+        rtcout.println(Logbuf.TRACE, "init()");
+        rtcout.println(Logbuf.PARANOID, "given properties:");
         String dumpString = new String();
         dumpString = prop._dump(dumpString, prop, 0);
-        rtcout.println(rtcout.DEBUG, dumpString);
+        rtcout.println(Logbuf.DEBUG, dumpString);
 
         m_properties.merge(prop);
 
-        rtcout.println(rtcout.PARANOID, "updated properties:");
+        rtcout.println(Logbuf.PARANOID, "updated properties:");
         dumpString = m_properties._dump(dumpString, m_properties, 0);
-        rtcout.println(rtcout.DEBUG, dumpString);
+        rtcout.println(Logbuf.DEBUG, dumpString);
 
         int num = -1;
         String limit = m_properties.getProperty("connection_limit","-1");
@@ -76,7 +76,7 @@ public class CorbaPort extends PortBase {
             num = Integer.parseInt(limit);
         }
         catch(Exception ex){
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                     "invalid connection_limit value: "+limit );
         }
         setConnectionLimit(num);
@@ -132,7 +132,7 @@ public class CorbaPort extends PortBase {
 				    final String type_name, Servant provider)
 	throws ServantAlreadyActive, WrongPolicy, ObjectNotActive {
 
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
         "registerProvider(instance="+instance_name+",type_name="+type_name+")");
 
         try{ 
@@ -141,7 +141,7 @@ public class CorbaPort extends PortBase {
                                                   provider));
         }
         catch(Exception ex){
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                         "appending provider interface failed");
             return false;
         }
@@ -194,7 +194,7 @@ public class CorbaPort extends PortBase {
 				    final String type_name,
 				    CorbaConsumerBase consumer) {
         
-        rtcout.println(rtcout.TRACE, "registerConsumer()");
+        rtcout.println(Logbuf.TRACE, "registerConsumer()");
         if (! appendInterface(instance_name, type_name,
 			      PortInterfacePolarity.REQUIRED)) {
             return false;
@@ -334,7 +334,7 @@ public class CorbaPort extends PortBase {
     protected 
     ReturnCode_t publishInterfaces(ConnectorProfileHolder connector_profile) {
         
-        rtcout.println(rtcout.TRACE, "publishInterfaces()");
+        rtcout.println(Logbuf.TRACE, "publishInterfaces()");
 
         ReturnCode_t returnvalue = _publishInterfaces();
         if(returnvalue!=ReturnCode_t.RTC_OK) {
@@ -371,7 +371,7 @@ public class CorbaPort extends PortBase {
         
         String dumpString = new String();
         dumpString = NVUtil.toString(holder);
-        rtcout.println(rtcout.DEBUG, dumpString);
+        rtcout.println(Logbuf.DEBUG, dumpString);
 
         return ReturnCode_t.RTC_OK;
     }
@@ -506,7 +506,7 @@ public class CorbaPort extends PortBase {
     protected ReturnCode_t 
     subscribeInterfaces(final ConnectorProfileHolder connector_profile) {
 
-        rtcout.println(rtcout.TRACE, "subscribeInterfaces()");
+        rtcout.println(Logbuf.TRACE, "subscribeInterfaces()");
         final NVListHolder nv 
             = new NVListHolder(connector_profile.value.properties);
 
@@ -532,7 +532,7 @@ public class CorbaPort extends PortBase {
             else if (strictness.equals("strict")) { 
                 strict = true; 
             }
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                 "Connetion strictness is: "+ strictness);
         }
 
@@ -553,12 +553,12 @@ public class CorbaPort extends PortBase {
             // never come here without error
             // if strict connection option is set, error is returned.
             if (strict) {
-                rtcout.println(rtcout.ERROR, "subscribeInterfaces() failed.");
+                rtcout.println(Logbuf.ERROR, "subscribeInterfaces() failed.");
                 return ReturnCode_t.RTC_ERROR; 
             }
             
         }
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
             "subscribeInterfaces() successfully finished.");
 
         return ReturnCode_t.RTC_OK;
@@ -583,23 +583,23 @@ public class CorbaPort extends PortBase {
     protected void 
     unsubscribeInterfaces(final ConnectorProfile connector_profile) {
         
-        rtcout.println(rtcout.TRACE, "unsubscribeInterfaces()");
+        rtcout.println(Logbuf.TRACE, "unsubscribeInterfaces()");
 
         final NVListHolder nv = new NVListHolder(connector_profile.properties);
-        rtcout.println(rtcout.DEBUG, NVUtil.toString(nv));
+        rtcout.println(Logbuf.DEBUG, NVUtil.toString(nv));
 
 	Iterator it = m_consumers.iterator();
 	while(it.hasNext()) {
             StringHolder ior = new StringHolder();
             CorbaConsumerHolder cons = (CorbaConsumerHolder)it.next();
             if (findProvider(nv, cons, ior)) { 
-                rtcout.println(rtcout.DEBUG, "Correspoinding consumer found.");
+                rtcout.println(Logbuf.DEBUG, "Correspoinding consumer found.");
                 releaseObject(ior.value, cons);
                 continue; 
             }
 
             if (findProviderOld(nv, cons, ior)) { 
-                rtcout.println(rtcout.DEBUG, "Correspoinding consumer found.");
+                rtcout.println(Logbuf.DEBUG, "Correspoinding consumer found.");
                 releaseObject(ior.value, cons);
                 continue; 
             }
@@ -633,7 +633,7 @@ public class CorbaPort extends PortBase {
                 m_oid = _default_POA().servant_to_id(servant);
             }
             catch (Exception e) {
-                rtcout.println(rtcout.WARN, 
+                rtcout.println(Logbuf.WARN, 
                     "Exception caught."+e.toString());
             }
            try {
@@ -748,7 +748,7 @@ public class CorbaPort extends PortBase {
             ORB orb = ORBUtil.getOrb();
 	    org.omg.CORBA.Object obj = orb.string_to_object(ior);
 	    if (obj == null) {
-		rtcout.println(rtcout.ERROR, 
+		rtcout.println(Logbuf.ERROR, 
                     "Extracted object is nul reference");
                 return false;
 	    }
@@ -942,7 +942,7 @@ public class CorbaPort extends PortBase {
         }
  
         iorstr.value = ior;
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                     "interface matched with new descriptor:"+newdesc);
   
         return true;
@@ -1005,7 +1005,7 @@ public class CorbaPort extends PortBase {
         }
  
         iorstr.value = ior;
-        rtcout.println(rtcout.INFO, 
+        rtcout.println(Logbuf.INFO, 
                     "interface matched with old descriptor:"+olddesc);
 
         return true;
@@ -1051,14 +1051,14 @@ public class CorbaPort extends PortBase {
         }
         // set IOR to the consumer
         if (!cons.setObject(ior)) {
-            rtcout.println(rtcout.ERROR, "Cannot narrow reference");
+            rtcout.println(Logbuf.ERROR, "Cannot narrow reference");
             return false;
         }
         if(!cons.setObject(ior)){
-            rtcout.println(rtcout.ERROR, "Cannot narrow reference");
+            rtcout.println(Logbuf.ERROR, "Cannot narrow reference");
             return false;
         }
-        rtcout.println(rtcout.TRACE, "setObject() done");
+        rtcout.println(Logbuf.TRACE, "setObject() done");
         return true;
     }
     /**
@@ -1088,11 +1088,11 @@ public class CorbaPort extends PortBase {
     private boolean releaseObject(final String ior, CorbaConsumerHolder cons){
         if (ior == cons.getIor()) {
             cons.releaseObject();
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                                 "Consumer "+cons.descriptor()+" released.");
             return true;
         }
-        rtcout.println(rtcout.WARN, 
+        rtcout.println(Logbuf.WARN, 
                         "IORs between Consumer and Connector are different.");
         return false;
     }

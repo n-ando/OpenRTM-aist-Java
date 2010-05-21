@@ -266,7 +266,7 @@ public class PortAdmin {
      */
     public void registerPort(PortService port) {
         if(!addPort(port)){
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                                     "registerPort(PortService_ptr) failed.");
         }
     }
@@ -370,7 +370,7 @@ public class PortAdmin {
     public void deletePort(PortBase port) {
         
         if (!removePort(port)) {
-            rtcout.println(rtcout.ERROR, "deletePort(PortBase&) failed.");
+            rtcout.println(Logbuf.ERROR, "deletePort(PortBase&) failed.");
         }
     }
 
@@ -393,7 +393,7 @@ public class PortAdmin {
     public void deletePort(PortService port) {
 
         if (!removePort(port)) {
-            rtcout.println(rtcout.ERROR, "deletePort(PortService) failed.");
+            rtcout.println(Logbuf.ERROR, "deletePort(PortService) failed.");
         }
     }
 

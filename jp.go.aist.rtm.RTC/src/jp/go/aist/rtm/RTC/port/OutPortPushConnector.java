@@ -98,13 +98,13 @@ public class OutPortPushConnector extends OutPortConnector {
         }
         if (m_publisher == null || m_buffer == null || m_consumer == null) { 
             if (m_publisher == null) { 
-                rtcout.println(rtcout.PARANOID, "m_publisher is null");
+                rtcout.println(Logbuf.PARANOID, "m_publisher is null");
             }
             if (m_buffer == null) { 
-                rtcout.println(rtcout.PARANOID, "m_buffer is null");
+                rtcout.println(Logbuf.PARANOID, "m_buffer is null");
             }
             if (m_consumer == null) { 
-                rtcout.println(rtcout.PARANOID, "m_consumer is null");
+                rtcout.println(Logbuf.PARANOID, "m_consumer is null");
             }
             throw new Exception("bad_alloc()");
         }
@@ -136,7 +136,7 @@ public class OutPortPushConnector extends OutPortConnector {
      *
      */
     public <DataType> ReturnCode write(final DataType data) {
-        rtcout.println(rtcout.TRACE, "write()");
+        rtcout.println(Logbuf.TRACE, "write()");
         OutPort out = (OutPort)m_outport;
         OutputStream cdr 
             = new EncapsOutputStream(m_spi_orb,m_isLittleEndian);
@@ -154,11 +154,11 @@ public class OutPortPushConnector extends OutPortConnector {
      * and the buffer.}
      */
     public ReturnCode disconnect() {
-        rtcout.println(rtcout.TRACE, "disconnect()");
+        rtcout.println(Logbuf.TRACE, "disconnect()");
         onDisconnect();
         // delete publisher
         if (m_publisher != null) {
-            rtcout.println(rtcout.DEBUG, "delete publisher");
+            rtcout.println(Logbuf.DEBUG, "delete publisher");
             PublisherBaseFactory<PublisherBase,String> pfactory 
                 = PublisherBaseFactory.instance();
             pfactory.deleteObject(m_publisher.getName(),m_publisher);
@@ -167,7 +167,7 @@ public class OutPortPushConnector extends OutPortConnector {
     
         // delete consumer
         if (m_consumer != null) {
-            rtcout.println(rtcout.DEBUG, "delete consumer");
+            rtcout.println(Logbuf.DEBUG, "delete consumer");
             InPortConsumerFactory<InPortConsumer,String> cfactory 
                 = InPortConsumerFactory.instance();
             cfactory.deleteObject(m_consumer);
@@ -176,13 +176,13 @@ public class OutPortPushConnector extends OutPortConnector {
 
         // delete buffer
         if (m_buffer != null) {
-            rtcout.println(rtcout.DEBUG, "delete buffer");
+            rtcout.println(Logbuf.DEBUG, "delete buffer");
             BufferFactory<BufferBase<OutputStream>,String> bfactory 
                 = BufferFactory.instance();
             bfactory.deleteObject(m_buffer);
         }
         m_buffer = null;
-        rtcout.println(rtcout.TRACE, "disconnect() done");
+        rtcout.println(Logbuf.TRACE, "disconnect() done");
         return ReturnCode.PORT_OK;
     
     }

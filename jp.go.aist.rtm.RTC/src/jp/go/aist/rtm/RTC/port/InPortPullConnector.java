@@ -88,7 +88,7 @@ public class InPortPullConnector extends InPortConnector {
      *
      */
     public ReturnCode read(DataRef<InputStream> data){
-        rtcout.println(rtcout.TRACE, "InPortPullConnector.read()");
+        rtcout.println(Logbuf.TRACE, "InPortPullConnector.read()");
         if (m_consumer == null) {
             return ReturnCode.PORT_ERROR;
         }
@@ -109,11 +109,11 @@ public class InPortPullConnector extends InPortConnector {
      * </p>
      */
     public ReturnCode disconnect() {
-        rtcout.println(rtcout.TRACE, "disconnect()");
+        rtcout.println(Logbuf.TRACE, "disconnect()");
         onDisconnect();
         // delete consumer
         if (m_consumer != null) {
-            rtcout.println(rtcout.DEBUG, "delete consumer");
+            rtcout.println(Logbuf.DEBUG, "delete consumer");
             OutPortConsumerFactory<OutPortConsumer,String> cfactory 
                 = OutPortConsumerFactory.instance();
             cfactory.deleteObject(m_consumer);

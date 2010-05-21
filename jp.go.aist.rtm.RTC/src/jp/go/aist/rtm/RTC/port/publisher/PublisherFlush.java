@@ -91,10 +91,10 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      */ 
     public ReturnCode setListener(ConnectorBase.ConnectorInfo info,
                               ConnectorListeners listeners) {
-        rtcout.println(rtcout.TRACE, "setListeners()" );
+        rtcout.println(Logbuf.TRACE, "setListeners()" );
 
         if (listeners == null) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                 "setListeners(listeners == 0): invalid argument" );
             return ReturnCode.INVALID_ARGS;
         }
@@ -173,7 +173,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
             return ReturnCode.PRECONDITION_NOT_MET; 
         }
         if (m_retcode.equals(ReturnCode.CONNECTION_LOST)) {
-            rtcout.println(rtcout.DEBUG, "write(): connection lost." );
+            rtcout.println(Logbuf.DEBUG, "write(): connection lost." );
             return m_retcode;
         }
 

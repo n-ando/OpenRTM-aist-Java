@@ -138,7 +138,7 @@ public class IopIorInterceptor extends LocalObject
      *   {@.en IORInfo}
      */
     public void establish_components(org.omg.PortableInterceptor.IORInfo info){
-        rtcout.println(rtcout.TRACE, "establish_components()");
+        rtcout.println(Logbuf.TRACE, "establish_components()");
 
         //Gets any type.
         ORB orb = ORB.init();
@@ -155,7 +155,7 @@ public class IopIorInterceptor extends LocalObject
                 by = codec.encode_value(any);
             }
             catch (Exception ex){
-                rtcout.println(rtcout.WARN, 
+                rtcout.println(Logbuf.WARN, 
                     "Invalid Type For Encoding:" +lp.HostID+","+lp.Port);
                 continue;
             }

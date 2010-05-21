@@ -3,6 +3,7 @@ package jp.go.aist.rtm.RTC.port;
 import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 import org.omg.CORBA.portable.OutputStream;
@@ -77,7 +78,7 @@ public class OutPortPullConnector extends OutPortConnector {
      *
      */
     public <DataType> ReturnCode write(final DataType data) {
-        rtcout.println(rtcout.TRACE, "write()");
+        rtcout.println(Logbuf.TRACE, "write()");
         OutPort out = (OutPort)m_outport;
         OutputStream cdr 
             = new EncapsOutputStream(m_spi_orb,m_isLittleEndian);

@@ -104,7 +104,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
     public PeriodicExecutionContext(DataFlowComponent owner, double rate) {
         super();
         rtcout = new Logbuf("PeriodicExecutionContext");
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                     "PeriodicExecutionContext(owner,rate="+rate+")");
         m_running = false;
         m_svc = true;
@@ -174,7 +174,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public void setObjRef(final ExecutionContextService ref) {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.setObjRef()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.setObjRef()");
 
         m_ref = ref;
     }
@@ -185,7 +185,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ExecutionContextService getObjRef() {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.getObjRef()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.getObjRef()");
 
         return m_ref;
     }
@@ -196,7 +196,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ExecutionContextService getRef() {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.getRef()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.getRef()");
 
         return m_ref;
     }
@@ -206,7 +206,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public int open() {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.open()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.open()");
 
         if(m_thread==null) {
             m_thread = new Thread(this, "PeriodicExecutionContext");
@@ -221,7 +221,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public int svc() {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.svc()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.svc()");
 
         do {
 	    synchronized (m_worker) {
@@ -256,7 +256,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public void run() {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.run()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.run()");
 
         this.svc();
     }
@@ -266,7 +266,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public int close(long flags) {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.close()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.close()");
 
       // At this point, this component have to be finished.
       // Current state and Next state should be RTC_EXITING.
@@ -284,7 +284,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public boolean is_running() {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.is_running()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.is_running()");
 
         return m_running;
     }
@@ -296,7 +296,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ReturnCode_t start() {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.start()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.start()");
 
         if( m_running ) return ReturnCode_t.PRECONDITION_NOT_MET;
 
@@ -323,7 +323,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ReturnCode_t stop(){
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.stop()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.stop()");
 
         if( !m_running ) return ReturnCode_t.PRECONDITION_NOT_MET;
 
@@ -348,7 +348,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public double get_rate() {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.get_rate()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_rate()");
 
         return m_profile.rate;
     }
@@ -360,7 +360,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ReturnCode_t set_rate(double rate) {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.set_rate("+rate+")");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.set_rate("+rate+")");
 
         if( rate<=0.0 ) return ReturnCode_t.BAD_PARAMETER;
 
@@ -382,7 +382,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ReturnCode_t activate_component(LightweightRTObject comp) {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.activate_component()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.activate_component()");
 
         // コンポーネントが参加者リストに無ければ BAD_PARAMETER を返す
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
@@ -408,7 +408,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ReturnCode_t deactivate_component(LightweightRTObject comp) {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.deactivate_component()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.deactivate_component()");
 
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
@@ -433,7 +433,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ReturnCode_t reset_component(LightweightRTObject comp){
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.reset_component()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.reset_component()");
 
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
@@ -458,7 +458,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public LifeCycleState get_component_state(LightweightRTObject comp) {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.get_component_state()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_component_state()");
 
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
@@ -476,7 +476,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ExecutionKind get_kind() {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.get_kind()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_kind()");
 
         return m_profile.kind;
     }
@@ -510,7 +510,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ReturnCode_t add_component(LightweightRTObject comp) {
 
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                             "PeriodicExecutionContext.add_component()");
 
         if( comp==null ) return ReturnCode_t.BAD_PARAMETER;
@@ -556,7 +556,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ReturnCode_t bindComponent(RTObject_impl rtc) {
 
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                     "PeriodicExecutionContext.bindComponent()");
 
         if (rtc == null) return ReturnCode_t.BAD_PARAMETER;
@@ -567,10 +567,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
 
         int id = rtc.bindContext(m_ref);
 	if (id < 0 || id > RTObject_impl.ECOTHER_OFFSET) {
-	    rtcout.println(rtcout.ERROR, "bindContext returns invalid id: "+id);
+	    rtcout.println(Logbuf.ERROR, "bindContext returns invalid id: "+id);
 	    return ReturnCode_t.RTC_ERROR;
 	}
-	rtcout.println(rtcout.DEBUG, "bindComponent() returns id = "+id);
+	rtcout.println(Logbuf.DEBUG, "bindComponent() returns id = "+id);
         m_comps.add(new Comp((LightweightRTObject)comp._duplicate(),
                              (DataFlowComponent)dfp._duplicate(),
                              id));
@@ -607,7 +607,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ReturnCode_t remove_component(LightweightRTObject comp) {
 
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                         "PeriodicExecutionContext.remove_component()");
 
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
@@ -620,7 +620,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
                 m_comps.remove(m_comps.elementAt(intIdx));
                 RTC.RTObject rtcomp = RTC.RTObjectHelper.narrow(comp);
                 if(rtcomp == null){
-                    rtcout.println(rtcout.ERROR,"Invalid object reference."); 
+                    rtcout.println(Logbuf.ERROR,"Invalid object reference."); 
                     return ReturnCode_t.RTC_ERROR;
                 }
                 long index;
@@ -629,7 +629,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
                 index = CORBA_SeqUtil.find(holder, new is_equiv(rtcomp));
     
                 if (index < 0) { // not found in my list
-                    rtcout.println(rtcout.ERROR, "Not found.");
+                    rtcout.println(Logbuf.ERROR, "Not found.");
                     return ReturnCode_t.BAD_PARAMETER;
                 }
     
@@ -652,7 +652,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ExecutionContextProfile get_profile() {
 
-        rtcout.println(rtcout.TRACE, "PeriodicExecutionContext.get_profile()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_profile()");
 
         ExecutionContextProfileHolder p = new ExecutionContextProfileHolder(m_profile);
         return p.value;
