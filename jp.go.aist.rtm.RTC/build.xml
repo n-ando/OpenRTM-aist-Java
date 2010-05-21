@@ -129,6 +129,10 @@
 	</target>
 
 	<target name="createExe" description="exeファイルを作成します">
+		<delete file="rtcd.jsmooth" />
+		<copy file="rtcd.jsmooth.in" tofile="rtcd.jsmooth"/>
+		<replace file="rtcd.jsmooth" token="@version@" 
+			value="${version}" />
 		<taskdef name="jsmoothgen"
 		classname="net.charabia.jsmoothgen.ant.JSmoothGen"
 		classpath="${dir.jsmooth}/lib/jsmoothgen-ant.jar"/>
