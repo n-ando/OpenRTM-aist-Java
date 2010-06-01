@@ -150,10 +150,13 @@
 		</delete>
 		<javac srcdir="${util.source}" destdir="${util.source}" 
 			encoding="Shift-JIS" />
+		<mkdir dir="${build.doc}" />
 		<javadoc 
-                        sourcepath="${source}" destdir="${build.doc}"
+                        Locale="ja_JP"
 			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
+                        sourcepath="${source}" destdir="${build.doc}"
                         encoding="UTF-8"
+                        docencoding="UTF-8"
 			author="true" doctitle="OpenRTM-aist Java" 
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 
