@@ -153,7 +153,7 @@
 		<mkdir dir="${build.doc}" />
 		<javadoc 
                         Locale="ja_JP"
-			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
+			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
                         sourcepath="${source}" destdir="${build.doc}"
                         encoding="UTF-8"
                         docencoding="UTF-8"
@@ -169,7 +169,7 @@
 		<mkdir dir="${build.doc.us}" />
 		<javadoc 
                         Locale="en_US"
-			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
+			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
                         sourcepath="${source}" destdir="${build.doc.us}"
                         encoding="UTF-8"
                         docencoding="UTF-8"
