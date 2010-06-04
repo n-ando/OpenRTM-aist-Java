@@ -775,7 +775,7 @@ public abstract class PortBase extends PortServicePOA {
      * <p> This operation returns the name of this Port. </p> 
      * @return The name of this Port.
      */
-    String getName() {
+    public final String getName() {
         rtcout.println(Logbuf.TRACE, "getName() = "+m_profile.name);
         return m_profile.name;
     }
