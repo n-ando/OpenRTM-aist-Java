@@ -17,10 +17,13 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
- * <p>Managerのコンフィグレーションを表現するクラスです。
- * コマンドライン引数や環境変数、設定ファイルを読み込み・解析してコンフィグレーション情報を生成します。</p>
- * 
- * <p>各設定の優先度は次の通りです。
+ * {@.ja Managerのコンフィグレーションを表現するクラスです。}
+ * {@.en Modify Manager's configuration.}
+ *
+ * <p>
+ * {@.ja コマンドライン引数や環境変数、設定ファイルを読み込み・解析して
+ * コンフィグレーション情報を生成します。
+ * 各設定の優先度は次の通りです。
  * <ol>
  * <li>コマンドラインオプション -f</li>
  * <li>環境変数 RTC_MANAGER_CONFIG</li>
@@ -31,15 +34,34 @@ import org.apache.commons.cli.ParseException;
  * <li>デフォルト設定ファイル /usr/local/etc/rtc/rtc.conf</li>
  * <li>埋め込みコンフィギュレーション値</li>
  * </ol>
- * </p>
- * 
- * <p>ただし、コマンドラインオプション -d が指定された場合は、
- * （たとえ -f で設定ファイルを指定しても）埋め込みコンフィグレーション値を優先的に使用します。</p>
+ * ただし、コマンドラインオプション -d が指定された場合は、
+ * （たとえ -f で設定ファイルを指定しても）埋め込みコンフィグレーション値を
+ * 優先的に使用します。}
+ * {@.en This class receives the command line arguments and will be 
+ * instantiated.
+ * Set property information of Manager with the configuration file specified
+ * by the command line argument or the environment variable etc.
+ *
+ * The priorities of each configuration are as follows:
+ * <OL>
+ * <LI>Command option "-f"
+ * <LI>Environment variable "RTC_MANAGER_CONFIG"
+ * <LI>Default configuration file "./rtc.conf"
+ * <LI>Default configuration file "/etc/rtc.conf"
+ * <LI>Default configuration file "/etc/rtc/rtc.conf"
+ * <LI>Default configuration file "/usr/local/etc/rtc.conf"
+ * <LI>Default configuration file "/usr/local/etc/rtc/rtc.conf"
+ * <LI>Embedded configuration value
+ *</OL>
+ * If the command option "-d" is specified (even if specify configuration file
+ * by "-f" option), the embedded configuration values will be used.}
+ *
  */
 class ManagerConfig {
 
     /**
-     * <p>Managerのデフォルト・コンフィグレーションのファイル・パス</p>
+     * {@.ja Managerのデフォルト・コンフィグレーションのファイル・パス}
+     * {@.en The default configuration file path for manager}
      */
     public static final String[] CONFIG_FILE_PATH = {
         "./rtc.conf",
@@ -51,22 +73,32 @@ class ManagerConfig {
     };
     
     /**
-     * <p>デフォルト・コンフィグレーションのファイル・パスを識別する環境変数です。</p>
+     * {@.ja デフォルト・コンフィグレーションのファイル・パスを識別する
+     * 環境変数です。}
+     * {@.en The environment variable to distinguish the default configuration
+     * file path}
      */
     public static final String CONFIG_FILE_ENV = "RTC_MANAGER_CONFIG";
 
     /**
-     * <p>デフォルトコンストラクタです。
-     * ManagerConfigオブジェクトを生成するのみであり、何も処理は行われません。</p>
+     * {@.ja コンストラクタ。}
+     * {@.en Constructor}
      */
     public ManagerConfig() {
         m_isMaster = false;
     }
 
     /**
-     * <p>コンストラクタです。コマンドライン引数を受け取り、コンフィグレーション情報を構成します。</p>
-     * 
-     * @param args コマンドライン引数
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     * <p>
+     * {@.ja 与えられた引数によりコンフィギュレーション情報の初期化を行う。}
+     * {@.en Initialize configuration information by given arguments.}
+     *
+     * @param args 
+     *   {@.ja コマンドライン引数}
+     *   {@.en The command line arguments}
      */
     public ManagerConfig(String[] args) throws Exception {
         m_isMaster = false;
@@ -74,18 +106,33 @@ class ManagerConfig {
     }
 
     /**
-     * <p>初期化を行います。コマンドライン引数を受け取り、コンフィグレーション情報を構成します。</p>
+     * {@.ja 初期化を行います。}
+     * {@.en Initialization}
      * 
-     * <p>コマンドラインオプションには、以下のものを使用できます。
+     * <p>
+     * {@.ja ココマンドライン引数を受け取り、
+     * コンフィグレーション情報を構成します。
+     * マンドラインオプションには、以下のものを使用できます。
      * <ul>
      * <li>-f filePath : コンフィグレーションファイルのパスを指定します。</li>
      * <li>-l module : ロードするモジュールを指定します。（未実装）</li>
      * <li>-o options : その他のオプションを指定します。（未実装）</li>
      * <li>-d : デフォルトコンフィグレーションを使用します。（未実装）</li>
-     * </ul>
-     * </p>
+     * </ul>}
+     *
+     * {@.en Initialize with command line options. The following command options
+     * are available.
+     * <ul>
+     * <li>-f file   : Specify the configuration file.
+     * <li>-l module : Specify modules to be loaded. (Not implemented)
+     * <li>-o options: Specify other options. (Not implemented)
+     * <li>-d        : Use default static configuration. (Not implemented)
+     * </ul>}
+     *
+     * @param args 
+     *   {@.ja コマンドライン引数}
+     *   {@.en The command line arguments}
      * 
-     * @param args コマンドライン引数
      */
     public void init(String[] args) throws Exception {
         parseArgs(args);
@@ -136,7 +183,7 @@ class ManagerConfig {
     }
     
     /**
-     * {@.ja コマンド引数をパースする}
+     * {@.ja コマンド引数をパースする。}
      * {@.en Parse the command arguments}
      *
      * <p>
@@ -222,10 +269,14 @@ class ManagerConfig {
     }
     
     /**
-     * <p>使用すべきコンフィグレーションファイルを検索して特定します。
-     * すでに特定済みの場合は、そのファイルの存在有無のみをチェックします。</p>
+     * {@.ja Configuration file の検索。}
+     * {@.en Find the configuration file}
+     *
+     * <p>
+     * {@.ja 使用すべきコンフィグレーションファイルを検索して特定します。
+     * すでに特定済みの場合は、そのファイルの存在有無のみをチェックします。
      * 
-     * <p>なお、次の順序でコンフィグレーションファイルを検索します。
+     * なお、次の順序でコンフィグレーションファイルを検索します。
      * <ol>
      * <li>コマンドラインオプション -f</li>
      * <li>環境変数 RTC_MANAGER_CONFIG</li>
@@ -234,11 +285,36 @@ class ManagerConfig {
      * <li>デフォルト設定ファイル /etc/rtc/rtc.conf</li>
      * <li>デフォルト設定ファイル /usr/local/etc/rtc.conf</li>
      * <li>デフォルト設定ファイル /usr/local/etc/rtc/rtc.conf</li>
-     * </ol>
-     * </p>
+     * </ol>}
+     * {@.en Find the configuration file and configure it.
+     * Confirm the file existence when the configuration file has 
+     * already configured.
+     * The configuration file is retrieved in the following order. 
+     * <ol>
+     * <li>The command line option -f</li>
+     * <li>The environment variable RTC_MANAGER_CONFIG</li>
+     * <li>Default configuration file ./rtc.conf</li>
+     * <li>Default configuration file /etc/rtc.conf</li>
+     * <li>Default configuration file /etc/rtc/rtc.conf</li>
+     * <li>Default configuration file /usr/local/etc/rtc.conf</li>
+     * <li>Default configuration file /usr/local/etc/rtc/rtc.conf</li>
+     * </ol>}
      * 
-     * @return コンフィグレーションファイル未特定の場合 : 使用すべきコンフィグレーションファイルを検索・特定できた場合はtrueを、さもなくばfalseを返します。<br />
-     * コンフィグレーションファイル特定済みの場合 : 特定済みのコンフィグレーションファイルが存在すればtrueを、さもなくばfalseを返します。
+     * @return 
+     *   {@.ja <ul>
+     *   <li>コンフィグレーションファイル未特定の場合 : 
+     *   使用すべきコンフィグレーションファイルを検索・特定できた場合は
+     *   trueを、さもなくばfalseを返します。
+     *   <li>コンフィグレーションファイル特定済みの場合 : 
+     *   特定済みのコンフィグレーションファイルが存在すればtrueを、
+     *   さもなくばfalseを返します。}
+     *   {@.en <ul>
+     *   <li>When the configuration file is the unspecific: 
+     *   True is returned when the configuration file can be retrieved and, 
+     *   otherwise, false is returned.
+     *   <li>When the configuration file is a specific settlement: 
+     *   If the configuration file exists, true is returned and, 
+     *   otherwise, false is returned.}
      */
     protected boolean findConfigFile() {
         
@@ -270,9 +346,36 @@ class ManagerConfig {
     }
     
     /**
-     * <p>システム情報を、指定されたPropertiesオブジェクトに追加します。</p>
+     * {@.ja システム情報を設定する。}
+     * {@.en Set system information}
+     *
+     * <p>
+     * {@.ja システム情報を取得しプロパティにセットする。
+     * 設定されるキーは以下の通り。
+     * <ul>
+     * <li> manager.os.name    : OS名
+     * <li> manager.os.release : OSリリース名
+     * <li> maanger.os.version : OSバージョン名
+     * <li> manager.os.arch    : OSアーキテクチャ
+     * <li> manager.os.hostname: ホスト名
+     * <li> manager.pid        : プロセスID
+     * </ul>}
+     * {@.en Get the following system info. and set them to Manager's 
+     * properties.
+     * <ul>
+     * <li> manager.os.name    : OS name
+     * <li> manager.os.release : OS release name
+     * <li> manager.os.version : OS version
+     * <li> manager.os.arch    : OS architecture
+     * <li> manager.os.hostname: Hostname
+     * <li> manager.pid        : process ID
+     * </ul>}
+     *
      * 
-     * @param properties システム情報追加先のPropertiesオブジェクト
+     * @param properties 
+     *   {@.ja システム情報を設定したプロパティ}
+     *   {@.en Properties to set system information}
+     *
      */
     protected void setSystemInformation(Properties properties) {
 
@@ -319,22 +422,36 @@ class ManagerConfig {
     }
 
     /**
-     * <p>ファイルの存在有無を判定します。</p>
-     * 
-     * @param filePath ファイルパス
-     * @return ファイルが存在する場合はtrueを、さもなくばfalseを返します。
+     * {@.ja ファイルの存在確認}
+     * {@.en Check the file existence}
+     *
+     * <p>
+     * {@.ja 指定されたファイルが存在するか確認する。}
+     * {@.en Confirm whether the specified file exists}
+     *
+     * @param filePath 
+     *   {@.ja ファイルパス}
+     *   {@.en The target confirmation file}
+     *
+     * @return 
+     *   {@.ja 対象ファイル確認結果(存在する場合にtrue)}
+     *   {@.en file existance confirmation (True if the file exists.)}
      */
     protected boolean fileExist(String filePath) {
         return (new File(filePath)).exists();
     }
     
     /**
-     * <p>使用されるコンフィグレーションファイルのパス<p>
+     * {@.ja 使用されるコンフィグレーションファイルのパス}
+     * {@.en Manager's configuration file path}
      */
     protected String m_configFile;
     /**
-     * <p> Manager master flag </p>
-     * <p> true:master,false:slave </p>
+     * {@.ja Manager マスタフラグ}
+     * {@.en Manager master flag}
+     *
+     * {@.ja true:マスタ,false:スレーブ}
+     * {@.en true:master,false:slave}
      */
     protected boolean m_isMaster;
     /**
