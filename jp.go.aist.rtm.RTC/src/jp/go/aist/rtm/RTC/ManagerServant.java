@@ -28,13 +28,23 @@ import RTM.ModuleProfile;
 import _SDOPackage.NVListHolder;
 
 
-/**
- * <p> ManagerServant </p>
- */
+  /**
+   * {@.ja ManagerのCORBA化クラス}
+   * {@.en Manager CORBA class}
+   *
+   * <p>
+   * {@.ja ManagerをCORBAサーバント化し、外部からコンポーネントの生成・削除、
+   * システム状態の取得などが行える。}
+   * {@.en This class changes Manager to CORBA Servant.
+   * Generation/deletion of the component, to get the state of the system, 
+   * etc. can be done from the outside.}
+   *
+   */
 public class ManagerServant extends ManagerPOA {
 
     /**
-     * <p> Constructor </p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      */
     public ManagerServant() {
         rtcout = new Logbuf("ManagerServant");
@@ -136,10 +146,16 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> _this </p>
+     * {@.ja CORBAオブジェクトの取得。}
+     * {@.en Gets CORBA object.}
      *
-     * @return RTM.Manager
-     *
+     * <p>
+     * {@.ja CORBAオブジェクト参照を取得する。}
+     * {@.en Gets RTM.Manager object.}
+     * 
+     * @return 
+     *   {@.ja CORBAオブジェクト}
+     *   {@.en RTM.Manager object.}
      */
     public RTM.Manager _this() {
         if (this.m_objref == null) {
@@ -245,15 +261,24 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> load_module </p>
+     * {@.ja モジュールをロードする}
+     * {@.en Loading a module}
      *
-     * <p> Loading a module </p>
-     * <p> This operation loads a specified loadable module and perform
-     * initialization with the specified function. </p>
+     * <p> 
+     * {@.ja 当該マネージャに指定されたモジュールをロードし、指定された初期化
+     * 関数で初期化を行う。}
+     * {@.en This operation loads a specified loadable module and perform
+     * initialization with the specified function.}
      *
-     * @param pathname A path to a loading module.
-     * @param initfunc Module initialization function.
-     * @return The return code.
+     * @param pathname 
+     *   {@.ja モジュールへのパス}
+     *   {@.en A path to a loading module.}
+     * @param initfunc 
+     *   {@.ja モジュールの初期化関数}
+     *   {@.en Module initialization function.}
+     * @return 
+     *   {@.ja リターンコード}
+     *   {@.en The return code.}
      */
     public RTC.ReturnCode_t load_module(final String pathname, 
                                             final String initfunc) {
@@ -264,12 +289,18 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> unload_module </p>
+     * {@.ja モジュールをアンロードする}
+     * {@.en Unloading a module}
      *
-     * <p> Unloading a module </p >
-     * <p> This operation unloads a specified loadable module. </p >
-     * @param pathname A path to a loading module.
-     * @return The return code.
+     * <p> 
+     * {@.ja 当該マネージャに指定されたモジュールをアンロードする。}
+     * {@.en This operation unloads a specified loadable module.}
+     * @param pathname 
+     *   {@.ja モジュールへのパス}
+     *   {@.en A path to a loading module.}
+     * @return 
+     *   {@.ja リターンコード}
+     *   {@.en The return code.}
      */
     public RTC.ReturnCode_t unload_module(final String pathname) {
         rtcout.println(Logbuf.TRACE, 
@@ -370,10 +401,18 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> get_loaded_modules </p>
-     * <p> Getting loaded module profiles </p>
-     * <p> This operation returns loaded module profiles. </p>
-     * @return A module profile list.
+     * {@.ja モジュールのプロファイルを取得}
+     * {@.en Getting loaded module profiles}
+     *
+     * <p>
+     * {@.ja ロード済みのモジュールのプロファイルを取得する。}
+     * {@.en This operation returns loaded module profiles.}
+     *
+     *
+     * @return 
+     *   {@.ja モジュールプロファイル}
+     *   {@.en A module profile list.}
+     *
      */
     public RTM.ModuleProfile[] get_loaded_modules() {
         rtcout.println(Logbuf.TRACE, "get_loaded_modules()");
@@ -447,11 +486,18 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> get_factory_profiles </p>
-     * <p> Getting component factory profiles </p>
-     * <p> This operation returns component factory profiles from loaded
-     * RT-Component module factory profiles. </p>
-     * @return An RT-Component factory profile list.
+     * {@.ja コンポーネントファクトリのプロファイルを取得する}
+     * {@.en Getting component factory profiles}
+     *
+     * <p>
+     * {@.ja ロード済みのモジュールのうち、RTコンポーネントのモジュールが持つ
+     * ファクトリのプロファイルのリストを取得する。}
+     * {@.en This operation returns component factory profiles from loaded
+     * RT-Component module factory profiles.}
+     *
+     * @return 
+     *   {@.ja コンポーネントファクトリのプロファイルリスト}
+     *   {@.en An RT-Component factory profile list.}
      */
     public RTM.ModuleProfile[] get_factory_profiles() {
         rtcout.println(Logbuf.TRACE, "get_factory_profiles()");
@@ -640,13 +686,20 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> delete_component </p>
-     * <p> Deleting an RT-Component </p>
-     * <p> This operation delete an RT-Component according to the string
-     * argument. </p>
+     * {@.ja コンポーネントを削除する}
+     * {@.en Deleting an RT-Component}
+     *
+     * <p>
+     * {@.ja 引数に指定されたコンポーネントを削除する。}
+     * {@.en This operation delete an RT-Component according to the string
+     * argument.}
      *
      * @param instance_name
-     * @return Return code
+     *   {@.ja インスタンス名}
+     *   {@.en Instance name}
+     * @return 
+     *   {@.ja リターンコード}
+     *   {@.en Return code}
      *
      */
     public RTC.ReturnCode_t delete_component(final String instance_name) {
@@ -656,13 +709,6 @@ System.err.println("Manager's IOR information: "+ior);
         return ReturnCode_t.RTC_OK;
     }
 
-    /**
-     * <p> get_components </p>
-     * <p> Getting RT-Component list running on this manager </p>
-     * <p> This operation returns RT-Component list running 
-     * on this manager. </p>
-     * @return A list of RT-Components
-     */
     /**
      * {@.ja 起動中のコンポーネントのリストを取得する}
      * {@.en Getting RT-Component list running on this manager}
@@ -716,11 +762,19 @@ System.err.println("Manager's IOR information: "+ior);
     }
   
     /**
-     * <p> get_component_profiles </p>
-     * <p> Getting RT-Component's profile list running on this manager </p>
-     * <p> This operation returns RT-Component's profile list running on
-     * this manager. </p>
-     * @return A list of RT-Components' profiles
+     * {@.ja 起動中のコンポーネントプロファイルのリストを取得する}
+     * {@.en Getting RT-Component's profile list running on this manager}
+     *
+     * <p>
+     * {@.ja 現在当該マネージャ上で起動中のコンポーネントのプロファイルのリス
+     * トを返す。}
+     * {@.en This operation returns RT-Component's profile list running on
+     * this manager.}
+     *
+     * @return 
+     *   {@.ja RTコンポーネントプロファイルのリスト}
+     *   {@.en A list of RT-Components' profiles}
+     *
      */
     public RTC.ComponentProfile[] get_component_profiles() {
         rtcout.println(Logbuf.TRACE, "get_component_profiles()");
@@ -765,10 +819,17 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> get_profile </p>
-     * <p> Getting this manager's profile. </p>
-     * <p> This operation returns this manager's profile. </p>
-     * @return Manager's profile
+     * {@.ja マネージャのプロファイルを取得する}
+     * {@.en Getting this manager's profile.}
+     *
+     * <p>
+     * {@.ja 現在当該マネージャのプロファイルを取得する。}
+     * {@.en This operation returns this manager's profile.}
+     *
+     * @return 
+     *   {@.ja マネージャプロファイル}
+     *   {@.en Manager's profile}
+     *
      */
     public RTM.ManagerProfile get_profile() {
         rtcout.println(Logbuf.TRACE, "get_profile()");
@@ -782,10 +843,17 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> get_configuration </p>
-     * <p> Getting this manager's configuration. </p>
-     * <p> This operation returns this manager's configuration. </p>
-     * @return Manager's configuration
+     * {@.ja マネージャのコンフィギュレーションを取得する}
+     * {@.en Getting this manager's configuration.}
+     *
+     * <p>
+     * {@.ja 現在当該マネージャのコンフィギュレーションを取得する。}
+     * {@.en This operation returns this manager's configuration.}
+     *
+     * @return 
+     *   {@.ja マネージャコンフィギュレーション}
+     *   {@.en Manager's configuration}
+     *
      */
     public _SDOPackage.NameValue[] get_configuration() {
         rtcout.println(Logbuf.TRACE, "get_configuration()");
@@ -796,12 +864,22 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> set_configuration </p>
-     * <p> Setting manager's configuration </p>
-     * <p> This operation sets managers configuration. </p>
-     * @param name A configuration key name to be set
-     * @param value A configuration value to be set
-     * @return Return code
+     * {@.ja マネージャのコンフィギュレーションを設定する}
+     * {@.en Setting manager's configuration}
+     *
+     * <p>
+     * {@.ja 現在当該マネージャのコンフィギュレーションを設定する。}
+     * {@.en This operation sets managers configuration.}
+     *
+     * @param name 
+     *   {@.ja セットするコンフィギュレーションのキー名}
+     *   {@.en A configuration key name to be set}
+     * @param value 
+     *   {@.ja セットするコンフィギュレーションの値}
+     *   {@.en A configuration value to be set}
+     * @return 
+     *   {@.ja リターンコード}
+     *   {@.en Return code}
      */
     public RTC.ReturnCode_t set_configuration(final String name, 
                                                     final String value) {
@@ -812,10 +890,18 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> Whether this manager is master or not </p>
-     * <p> It returns "True" if this manager is a master, and it returns
-     * "False" in other cases. </p>
-     * @return A boolean value that means it is master or not.
+     * {@.ja マネージャがマスターかどうか。}
+     * {@.en Whether this manager is master or not}
+     *
+     * <p>
+     * {@.ja この関数はマネージャがマスターかどうかを返す。Trueならば、当該マ
+     * ネージャはマスターであり、それ以外は False を返す。}
+     * {@.en It returns "True" if this manager is a master, and it returns
+     * "False" in other cases.}
+     *
+     * @return 
+     *   {@.ja マスターマネージャかどうかのbool値}
+     *   {@.en A boolean value that means it is master or not.}
      */
     public boolean is_master() {
         rtcout.println(Logbuf.TRACE, "is_master(): "+m_isMaster);
@@ -824,11 +910,20 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> Getting master managers </p>
-     * <p> This operation returns master manager list if this manager is
+     * {@.ja マスターマネージャの取得。}
+     * {@.en Getting master managers}
+     *
+     * <p>
+     * {@.ja このマネージャがスレーブマネージャの場合、マスターとなっているマ
+     * ネージャのリストを返す。このマネージャがマスターの場合、空のリス
+     * トが返る。}
+     * {@.en This operation returns master manager list if this manager is
      * slave. If this manager is master, an empty sequence would be
-     * returned. </p>
-     * @return Master manager list
+     * returned.}
+     *
+     * @return 
+     *   {@.ja マスターマネージャのリスト}
+     *   {@.en Master manager list}
      */
     public RTM.Manager[] get_master_managers() {
         rtcout.println(Logbuf.TRACE, "get_master_managers()");
@@ -840,11 +935,23 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> Getting a master manager </p>
-     * <p> This operation returns a master manager with specified id. If
+     * {@.ja マスターマネージャの追加。}
+     * {@.en Getting a master manager}
+     *
+     * <p>
+     * {@.ja このマネージャのマスタとしてマネージャを一つ追加する。戻り値には、
+     * 当該マネージャ上で追加されたマスターマネージャを識別するユニーク
+     * なIDが返される。このマネージャがマスタの場合、当該IDで指定された
+     * マスターマネージャを返す。IDで指定されたマスターマネージャがない
+     * 場合、nilオブジェクトが返る。}
+     * {@.en This operation returns a master manager with specified id. If
      * the manager with the specified id does not exist, nil object
-     * reference would be returned. </p>
-     * @return ReturnCode_t
+     * reference would be returned.}
+     *
+     * @return 
+     *   {@.ja マスターマネージャ}
+     *   {@.en A master manager}
+     *
      */
     public ReturnCode_t add_master_manager(RTM.Manager mgr) {
         synchronized(m_masterMutex) {
@@ -869,10 +976,20 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> Removing a master manager </p>
-     * <p> This operation removes a master manager from this manager. </p>
-     * @param mgr A master manager
-     * @return ReturnCode_t 
+     * {@.ja マスターマネージャの削除}
+     * {@.en Removing a master manager}
+     *
+     * <p>
+     * {@.ja このマネージャが保持するマスタのうち、指定されたものを削除する。}
+     * {@.en This operation removes a master manager from this manager.}
+     *
+     * @param mgr 
+     *   {@.ja マスターマネージャ}
+     *   {@.en A master manager}
+     * @return 
+     *   {@.ja ReturnCode_t}
+     *   {@.en ReturnCode_t}
+     *
      */
     public ReturnCode_t remove_master_manager(RTM.Manager mgr) {
         synchronized(m_masterMutex) {
@@ -898,11 +1015,21 @@ System.err.println("Manager's IOR information: "+ior);
 
 
     /**
-     * <p> Getting slave managers </p>
-     * <p> This operation returns slave manager list if this manager is
+     * {@.ja スレーブマネージャの取得。}
+     * {@.en Getting slave managers}
+     *
+     * <p>
+     * {@.ja このマネージャがスレーブマネージャの場合、スレーブとなっているマ
+     * ネージャのリストを返す。このマネージャがスレーブの場合、空のリス
+     * トが返る。}
+     * {@.en This operation returns slave manager list if this manager is
      * slave. If this manager is slave, an empty sequence would be
-     * returned. </p>
-     * @return Slave manager list
+     * returned.}
+     *
+     * @return 
+     *   {@.ja スレーブマネージャのリスト}
+     *   {@.en Slave manager list}
+     *
      */
     public RTM.Manager[] get_slave_managers() {
         synchronized(m_masterMutex) {
@@ -915,10 +1042,19 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> Getting a slave manager </p>
-     * <p> This operation add a slave manager to this manager. </p>
-     * @param mgr A slave manager
-     * @return ReturnCode_t
+     * {@.ja スレーブマネージャの追加}
+     * {@.en Getting a slave manager}
+     *
+     * <p>
+     * {@.ja このマネージャのマスタとしてマネージャを一つ追加する。}
+     * {@.en This operation add a slave manager to this manager.}
+     *
+     * @param mgr 
+     *   {@.ja スレーブマネージャ}
+     *   {@.en A slave manager}
+     * @return 
+     *   {@.ja ReturnCode_t}
+     *   {@.en ReturnCode_t}
      */
     public ReturnCode_t add_slave_manager(RTM.Manager mgr) {
         synchronized(m_masterMutex) {
@@ -943,10 +1079,19 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> Removing a slave manager </p>
-     * <p> This operation removes a slave manager from this manager. </p>
-     * @param mgr A slave manager
-     * @return ReturnCode_t 
+     * {@.ja スレーブマネージャの削除}
+     * {@.en Removing a slave manager}
+     *
+     * <p>
+     * {@.ja このマネージャが保持するマスタのうち、指定されたものを削除する。}
+     * {@.en This operation removes a slave manager from this manager.}
+     *
+     * @param mgr 
+     *   {@.ja スレーブマネージャ}
+     *   {@.en A slave manager}
+     * @return 
+     *   {@.ja ReturnCode_t}
+     *   {@.en ReturnCode_t}
      */
     public ReturnCode_t remove_slave_manager(RTM.Manager mgr) {
         synchronized(m_masterMutex) {
@@ -1014,7 +1159,12 @@ System.err.println("Manager's IOR information: "+ior);
 */
 
     /**
-     * <p> fork </p>
+     * {@.ja プロセスのコピーを生成する}
+     * {@.en The copy of the process is generated.}
+     * 
+     * @return 
+     *   {@.ja ReturnCode_t}
+     *   {@.en ReturnCode_t}
      */
     public RTC.ReturnCode_t fork() {
     //    m_mgr.fork();
@@ -1022,7 +1172,11 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> shutdown </p>
+     * {@.ja shutdownする}
+     * {@.en This method shutdowns RTC.}
+     * @return 
+     *   {@.ja ReturnCode_t}
+     *   {@.en ReturnCode_t}
      */
     public RTC.ReturnCode_t shutdown() {
         m_mgr.terminate();
@@ -1030,7 +1184,11 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> restart </p>
+     * {@.ja 再起動する。}
+     * {@.en This method restarts RTC.}
+     * @return
+     *   {@.ja ReturnCode_t}
+     *   {@.en ReturnCode_t}
      */
     public ReturnCode_t restart() {
     //    m_mgr.restart();
@@ -1038,14 +1196,22 @@ System.err.println("Manager's IOR information: "+ior);
     }
 
     /**
-     * <p> get_service </p>
+     * {@.ja RTCのリファレンスを取得する。}
+     * {@.en Get the reference of RTC.}
+     * @return 
+     *   {@.ja RTCのリファレンス}
+     *   {@.en RTC reference}
      */
     public org.omg.CORBA.Object get_service(final String name) {
         return null;
     }
 
     /**
-     * <p> getObjRef </p>
+     * {@.ja Managerのリファレンスを取得する。}
+     * {@.en Get the reference of Manager.}
+     * @return 
+     *   {@.ja Managerのリファレンス}
+     *   {@.en Manager reference}
      */
     public RTM.Manager getObjRef() {
         return (RTM.Manager)m_objref;
@@ -1054,9 +1220,11 @@ System.err.println("Manager's IOR information: "+ior);
     /**
      * <p> setObjRef </p>
      */
+/*
     public void setObjRef(final RTM.Manager rtobj) {
         m_objref = rtobj;
     }
+*/
 
     /**
      * <p></p>
@@ -1068,6 +1236,10 @@ System.err.println("Manager's IOR information: "+ior);
      */
     private RTM.Manager m_objref;
 
+    /**
+     * {@.ja ロガーストリーム}
+     * {@.en Logger stream}
+     */
     protected Logbuf rtcout;
     private boolean m_isMaster;
     private String m_masterMutex = new String();
