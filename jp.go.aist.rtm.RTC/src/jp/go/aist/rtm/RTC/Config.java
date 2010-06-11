@@ -3,7 +3,7 @@ package jp.go.aist.rtm.RTC;
 import jp.go.aist.rtm.RTC.util.ValueHolder;
 
 /**
- * {@.ja コンフィギュレーション情報を保持するクラスです。}
+ * {@.ja コンフィギュレーション情報を保持するクラス。}
  * {@.en Class to hold the configuration parameter information.}
  */
 public class Config extends ConfigBase{
@@ -28,7 +28,7 @@ public class Config extends ConfigBase{
     }
     
     /**
-     * {@.ja バインドパラメータ値を更新}
+     * {@.ja バインドパラメータ値を更新。}
      * {@.en Update a bind parameter value}
      * <p>
      * {@.ja コンフィギュレーション設定値でコンフィギュレーションパラメータを

@@ -1,15 +1,21 @@
 package jp.go.aist.rtm.RTC;
 
 /**
- * <p>コンポーネント生成用インタフェースです。</p>
+ * {@.ja コンポーネント生成用インタフェース。}
+ * {@.en Interface for component Creation}
  */
 public interface RtcNewFunc {
     
     /**
-     * <p>コンポーネントの生成処理を行います。</p>
+     * {@.ja コンポーネントの生成処理を行う。}
+     * {@.en Creates the component.}
      * 
-     * @param mgr Managerオブジェクト
-     * @return 生成されたコンポーネントオブジェクト
+     * @param mgr 
+     *   {@.ja Managerオブジェクト}
+     *   {@.en Manager object}
+     * @return 
+     *   {@.ja 生成されたコンポーネントオブジェクト}
+     *   {@.en Generated component object}
      */
     public RTObject_impl createRtc(Manager mgr);
 

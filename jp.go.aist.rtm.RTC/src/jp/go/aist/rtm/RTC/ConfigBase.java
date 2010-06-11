@@ -1,8 +1,12 @@
 package jp.go.aist.rtm.RTC;
 
   /**
-   * {@.ja コンフィギュレーション情報保持用クラスの基底抽象クラス。
-   * 各種コンフィギュレーション情報を保持するための抽象クラス。具象コン
+   * {@.ja コンフィギュレーション情報保持用クラスの基底抽象クラス。}
+   * {@.en This is the abstract interface class to hold various configuration 
+   * information.}
+   *
+   * <p>
+   * {@.ja 各種コンフィギュレーション情報を保持するための抽象クラス。具象コン
    * フィギュレーションクラスは、以下の純粋仮想関数の実装を提供しなけれ
    * ばならない。
    *
@@ -11,10 +15,8 @@ package jp.go.aist.rtm.RTC;
    * <li> update(): コンフィギュレーションパラメータ値の更新
    * </ul>}
    *
-   * {@.en This is the abstract interface class to hold various configuration 
-   * information.
-   * Concrete configuration classes must implement the following pure virtual
-   * functions.
+   * {@.en Concrete configuration classes must implement the following pure 
+   * virtual functions.
    *
    * This class provides public interface as follows.
    * <ul>
@@ -43,7 +45,7 @@ abstract class ConfigBase {
     }
 
     /**
-     * {@.ja コンフィギュレーションパラメータ値更新用純粋仮想関数}
+     * {@.ja コンフィギュレーションパラメータ値更新用純粋仮想関数。}
      * {@.en Pure virtual function to update configuration parameter values}
      * 
      * <p>

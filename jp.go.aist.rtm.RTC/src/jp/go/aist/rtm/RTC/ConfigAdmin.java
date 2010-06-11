@@ -14,13 +14,16 @@ import jp.go.aist.rtm.RTC.util.ValueHolder;
 
 /**
  * 
- * {@.ja 各種コンフィギュレーション情報を管理するクラス。
- * 用語を以下のように定義する。
+ * {@.ja 各種コンフィギュレーション情報を管理するクラス。}
+ * {@.en Class to manage various configuration information.}
+ *
+ * <p>
+ * {@.ja 用語を以下のように定義する。
  * <ul>
  * <li>コンフィギュレーション: コンポーネントの設定情報。
  *
  * <li>(コンフィギュレーション)パラメータ： key-value からなる設定情報。
- *   coil::Properties 変数として扱われ、key、value 共に文字列として保
+ *   util.Properties 変数として扱われ、key、value 共に文字列として保
  *   持される。key をコンフィギュレーションパラメータ名、value をコン
  *   フィギュレーションパラメータ値と呼ぶ。
  *
@@ -85,15 +88,14 @@ import jp.go.aist.rtm.RTC.util.ValueHolder;
  *
  *
  * 
- * {@.en Class to manage various configuration information.
- * Now terms for this class are defined as follows.
+ * {@.en Now terms for this class are defined as follows.
  *
  * <ul>
  * <li> Configurations: The configuration information for the RTCs.
  *
  * <li> (Configuration) parameters: Configuration information that
  *   consists of a key-value pair. The "key" and the "value" are
- *   both stored as character string values in a coil::Properties
+ *   both stored as character string values in a util.Properties
  *   variable in this class. The "key" is called the "configuration
  *   parameter name", and the "value" is called the "configuration
  *   parameter value".
@@ -167,49 +169,106 @@ import jp.go.aist.rtm.RTC.util.ValueHolder;
 public class ConfigAdmin {
 
     /**
-     * OnUpdateCallbackクラス
+     * {@.ja OnUpdateCallbackクラス}
+     * {@.en OnUpdateCallback class}
      */
     class OnUpdateCallback implements OnUpdateCallbackFunc {
+        /**
+         * {@.ja 対象のオブジェクトに対して操作を行う。}
+         * {@.en Operates the object.}
+         *
+         * @param config_set 
+         *   {@.ja コンフィグレーション}
+         *   {@.en configuration}
+         */
         public void operator(String config_set) {
         }
     };
 
     /**
-     * OnUpdateParamCallbackクラス
+     * {@.ja OnUpdateParamCallbackクラス}
+     * {@.en OnUpdateParamCallback class}
      */
     class OnUpdateParamCallback implements OnUpdateParamCallbackFunc {
+        /**
+         * {@.ja 対象のオブジェクトに対して操作を行う。}
+         * {@.en Operates the object.}
+         *
+         * @param config_set 
+         *   {@.ja コンフィグレーション}
+         *   {@.en configuration}
+         * @param config_param 
+         *   {@.ja パラメータ}
+         *   {@.en paramter}
+         */
         public void operator(String config_set, String config_param) {
         }
     };
 
     /**
-     * OnSetConfigurationSetCallbackクラス
+     * {@.ja OnSetConfigurationSetCallbackクラス}
+     * {@.en OnSetConfigurationSetCallback class}
      */
     class OnSetConfigurationSetCallback implements OnSetConfigurationSetCallbackFunc {
+        /**
+         * {@.ja 対象のオブジェクトに対して操作を行う。}
+         * {@.en Operates the object.}
+         *
+         * @param config_set 
+         *   {@.ja コンフィグレーション}
+         *   {@.en configuration}
+         */
         public void operator(Properties config_set) {
         }
     };
 
     /**
-     * OnAddConfigurationAddCallbackクラス
+     * {@.ja OnAddConfigurationAddCallbackクラス}
+     * {@.en OnAddConfigurationAddCallback class}
      */
     class OnAddConfigurationAddCallback implements OnAddConfigurationAddCallbackFunc {
+        /**
+         * {@.ja 対象のオブジェクトに対して操作を行う。}
+         * {@.en Operates the object.}
+         *
+         * @param config_set 
+         *   {@.ja コンフィグレーション}
+         *   {@.en configuration}
+         */
         public void operator(Properties config_set) {
         }
     };
 
     /**
-     * OnRemoveConfigurationSetCallbackクラス
+     * {@.ja OnRemoveConfigurationSetCallbackクラス}
+     * {@.en OnRemoveConfigurationSetCallback class}
      */
     class OnRemoveConfigurationSetCallback implements OnRemoveConfigurationSetCallbackFunc {
+        /**
+         * {@.ja 対象のオブジェクトに対して操作を行う。}
+         * {@.en Operates the object.}
+         *
+         * @param config_set 
+         *   {@.ja コンフィグレーション}
+         *   {@.en configuration}
+         */
         public void operator(String config_set) {
         }
     };
 
     /**
-     * OnActivateSetCallbackクラス
+     * {@.ja OnActivateSetCallbackクラス}
+     * {@.en OnActivateSetCallback class}
      */
     class OnActivateSetCallback implements OnActivateSetCallbackFunc {
+        /**
+         * {@.ja 対象のオブジェクトに対して操作を行う。}
+         * {@.en Operates the object.}
+         *
+         * @param config_id 
+         *   {@.ja コンフィグレーションID}
+         *   {@.en configuration ID}
+         */
         public void operator(String config_id) {
         }
     };
@@ -264,7 +323,7 @@ public class ConfigAdmin {
     }
     
     /**
-     * {@.ja コンフィギュレーションパラメータの設定}
+     * {@.ja コンフィギュレーションパラメータの設定。}
      * {@.en Setup for configuration parameters}
      *
      * <p>
@@ -300,7 +359,7 @@ public class ConfigAdmin {
     }
 
     /**
-     * {@.ja コンフィギュレーションパラメータの更新(ID指定)}
+     * {@.ja コンフィギュレーションパラメータの更新(ID指定)。}
      * {@.en Update configuration parameter (By ID)}
      * 
      * <p>
@@ -342,7 +401,7 @@ public class ConfigAdmin {
 
     /**
      * {@.ja コンフィギュレーションパラメータの更新
-     *        (アクティブコンフィギュレーションセット)}
+     *        (アクティブコンフィギュレーションセット)。}
      * {@.en Update the values of configuration parameters
      *        (Active configuration set)}
      * 
@@ -369,7 +428,7 @@ public class ConfigAdmin {
     }
 
     /**
-     * {@.ja コンフィギュレーションパラメータの更新(名称指定)}
+     * {@.ja コンフィギュレーションパラメータの更新(名称指定)。}
      * {@.en Update the values of configuration parameters (By name)}
      * 
      * <p>
@@ -415,7 +474,7 @@ public class ConfigAdmin {
     }
     
     /**
-     * {@.ja コンフィギュレーションパラメータの存在確認}
+     * {@.ja コンフィギュレーションパラメータの存在確認。}
      * {@.en Check the existence of configuration parameters}
      * 
      * <p>
@@ -445,7 +504,7 @@ public class ConfigAdmin {
     }
     
     /**
-     * {@.ja コンフィギュレーションパラメータの変更確認}
+     * {@.ja コンフィギュレーションパラメータの変更確認。}
      * {@.en Confirm to change configuration parameters}
      *
      * <p> 
@@ -462,7 +521,7 @@ public class ConfigAdmin {
     }
     
     /**
-     * {@.ja アクティブ・コンフィギュレーションセットIDの取得}
+     * {@.ja アクティブ・コンフィギュレーションセットIDの取得。}
      * {@.en Get ID of active configuration set}
      * 
      * <p>
@@ -479,7 +538,7 @@ public class ConfigAdmin {
     }
 
     /**
-     * {@.ja コンフィギュレーションセットの存在確認}
+     * {@.ja コンフィギュレーションセットの存在確認。}
      * {@.en Check the existence of configuration set}
      * 
      * <p>
@@ -501,7 +560,7 @@ public class ConfigAdmin {
     }
     
     /**
-     * {@.ja コンフィギュレーションセットのアクティブ化確認}
+     * {@.ja コンフィギュレーションセットのアクティブ化確認。}
      * {@.en Confirm to activate configuration set}
      *
      * <p> 
@@ -519,7 +578,7 @@ public class ConfigAdmin {
     }
     
     /**
-     * {@.ja 全コンフィギュレーションセットの取得}
+     * {@.ja 全コンフィギュレーションセットの取得。}
      * {@.en Get all configuration sets}
      * 
      * <p>
@@ -536,7 +595,7 @@ public class ConfigAdmin {
     }
 
     /**
-     * {@.ja 指定したIDのコンフィギュレーションセットの取得}
+     * {@.ja 指定したIDのコンフィギュレーションセットの取得。}
      * {@.en Get a configuration set by specified ID}
      * 
      * <p>
@@ -563,7 +622,7 @@ public class ConfigAdmin {
     }
 
     /**
-     * {@.ja 指定したプロパティのコンフィギュレーションセットへの追加}
+     * {@.ja 指定したプロパティのコンフィギュレーションセットへの追加。}
      * {@.en Add to configuration set from specified property}
      *
      * <p> 
@@ -600,7 +659,7 @@ public class ConfigAdmin {
     }
     
     /**
-     * {@.ja アクティブ・コンフィギュレーションセットを取得}
+     * {@.ja アクティブ・コンフィギュレーションセットを取得。}
      * {@.en Get the active configuration set}
      * 
      * <p>
@@ -626,7 +685,7 @@ public class ConfigAdmin {
     }
 
     /**
-     * {@.ja コンフィギュレーションセットに設定値を追加}
+     * {@.ja コンフィギュレーションセットに設定値を追加。}
      * {@.en Add the configuration value to configuration set}
      * 
      * <p>
@@ -657,7 +716,7 @@ public class ConfigAdmin {
     }
 
     /**
-     * {@.ja コンフィギュレーションセットの削除}
+     * {@.ja コンフィギュレーションセットの削除。}
      * {@.en Remove the configuration set}
      * 
      * <p>
@@ -722,13 +781,7 @@ public class ConfigAdmin {
     }
 
     /**
-     * <p>指定したコンフィギュレーションセットをアクティブにします。</p>
-     * 
-     * @param config_id アクティブにするコンフィギュレーションセットID
-     * @return Activate結果
-     */
-    /**
-     * {@.ja コンフィギュレーションセットのアクティブ化}
+     * {@.ja コンフィギュレーションセットのアクティブ化。}
      * {@.en Activate the configuration set}
      * 
      * <p>
@@ -878,7 +931,7 @@ public class ConfigAdmin {
 
 
     /**
-     * {@.ja コンフィギュレーションパラメータの更新(ID指定)時にコールされる}
+     * {@.ja コンフィギュレーションパラメータの更新(ID指定)時にコールされる。}
      * {@.en When the configuration parameter is updated, it is called.}
      *
      * <p>
@@ -896,7 +949,7 @@ public class ConfigAdmin {
     }
 
     /**
-     * {@.ja コンフィギュレーションパラメータの更新(名称指定)時にコールされる}
+     * {@.ja コンフィギュレーションパラメータの更新(名称指定)時にコールされる。}
      * {@.en When the configuration parameter is updated, it is called.}
      *
      * <p>
@@ -918,7 +971,7 @@ public class ConfigAdmin {
     }
 
     /**
-     * {@.ja コンフィギュレーションセットへの追加時にコールされる}
+     * {@.ja コンフィギュレーションセットへの追加時にコールされる。}
      * {@.en Called when the property is added to the configuration set}
      *
      * <p>

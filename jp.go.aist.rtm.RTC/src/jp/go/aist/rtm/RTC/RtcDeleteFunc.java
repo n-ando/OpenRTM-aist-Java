@@ -1,14 +1,18 @@
 package jp.go.aist.rtm.RTC;
 
 /**
- * <p>コンポーネント破棄用インタフェースです。</p>
+ * {@.ja コンポーネント破棄用インタフェース}
+ * {@.en Interface for component destruction}
  */
 public interface RtcDeleteFunc {
     
     /**
-     * <p>コンポーネントの破棄処理を行います。</p>
+     * {@.ja コンポーネントの破棄処理を行う。}
+     * {@.en Deletes the component.}
      * 
-     * @param component 破棄対象コンポーネントのオブジェクト
+     * @param component 
+     *   {@.ja 破棄対象コンポーネントのオブジェクト}
+     *   {@.en Object of component for destruction}
      */
     public void deleteRtc(RTObject_impl component);
 

@@ -1,13 +1,17 @@
 package jp.go.aist.rtm.RTC;
 /**
- * <p>  </p>
+ * {@.ja オブジェクト生成用インターフェース}
+ * {@.en Interface for object generation}
  */
 public interface ObjectCreator<ABSTRACTCLASS>{
     
     /**
-     * <p> creator_ </p>
+     * {@.ja インスタンスを生成する。}
+     * {@.en Generates the instance.}
      * 
-     * @return Object Created instances
+     * @return 
+     *   {@.ja 生成したインスタンス}
+     *   {@.en Object Created instances}
      *
      */
     public ABSTRACTCLASS creator_();

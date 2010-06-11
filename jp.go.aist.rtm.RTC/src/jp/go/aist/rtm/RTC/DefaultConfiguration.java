@@ -3,12 +3,14 @@ package jp.go.aist.rtm.RTC;
 import jp.go.aist.rtm.Version;
 
 /**
- * <p>Managerのデフォルトコンフィグレーションを定義するインタフェースです。</p>
+ * {@.ja Managerのデフォルトコンフィグレーションを定義するインタフェース}
+ * {@.en Default configuration for Manager}
  */
 interface DefaultConfiguration {
 
     /**
-     * <p>Managerのデフォルトコンフィグレーションを取得します。</p>
+     * {@.ja Managerのデフォルトコンフィグレーションを定義}
+     * {@.en The default configurations of Manager are defined.}
      */
     public static final String[] default_config = {
         
