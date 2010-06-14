@@ -1,7 +1,7 @@
 package jp.go.aist.rtm.RTC;
 
 /**
- * {@.ja CdrBuffer用ファクトリの実装です。}
+ * {@.ja CdrBuffer用ファクトリの実装。}
  * {@.en This class is a factory for CdrBuffer.}
  */
 public class BufferFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {

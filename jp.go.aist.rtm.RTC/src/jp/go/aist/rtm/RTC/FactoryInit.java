@@ -10,10 +10,22 @@ import jp.go.aist.rtm.RTC.port.InPortCorbaCdrConsumer;
 import jp.go.aist.rtm.RTC.port.OutPortCorbaCdrProvider;
 import jp.go.aist.rtm.RTC.port.OutPortCorbaCdrConsumer;
 
+/**
+ * {@.ja Factory初期処理用クラス}
+ * {@.en Class for Factory initial processing}
+ */
 public class FactoryInit {
+    /**
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     */
     public FactoryInit() {
     }
 
+    /**
+     * {@.ja Factory初期化処理}
+     * {@.en Factory initialization}
+     */
     public static void init() {
 	// Buffers
 	CdrRingBuffer.CdrRingBufferInit();
