@@ -4,13 +4,33 @@ import jp.go.aist.rtm.RTC.util.TimeValue;
 
 
 
-/**
-* <p>PeriodicTask</p>
-*/
+  /**
+   * {@.ja 周期タスクスレッド実行クラス。}
+   * {@.en PeriodicTask class}
+   *
+   * <p>
+   * {@.ja 特定の関数を周期実行するためのスレッドオブジェクトを実現する。
+   * 使用手順は以下の通り。
+   * 
+   * <ol>
+   * <li>task; // インスタンス生成
+   * <li>task.setTask(TaskFuncBase(obj, mem_func)); // 実行する関数を与える
+   * <li>task.activate(); // スレッドをスタートさせる
+   * </ol>
+   *
+   * <ul>
+   * <li>task.suspend(); // 周期実行を止める
+   * <li>task.signal(); // 1周期だけ実行
+   * <li>task.resume(); // 周期実行を再開
+   *
+   * <li>task.finalize(); // タスクを終了させる</ul>}
+   * 
+   */
 public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<PeriodicTaskBase>, ObjectDestructor{
 
     /**
-     * <p> ctor </p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      */
     public PeriodicTask() {
         m_nowait = false;
@@ -30,13 +50,17 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
     
     /**
-     * <p> Starting the task </p>
+     * {@.ja タスク実行を開始する}
+     * {@.en Starting the task}
      *
-     * Starting a thread to execute a task.  If the task/thread is
+     * <p>
+     * {@.ja タスクの実行を開始するためにスレッドをスタートさせる。  タスクが
+     * 正常に開始された場合は true が返り、すでにタスクが開始済み、また
+     * は実行するタスクが設定されていなければ false を返す。}
+     * {@.en Starting a thread to execute a task.  If the task/thread is
      * started properly, it will return 'TRUE'.  if the task/thread
      * are already started or task function object is not set, 'FALSE'
-     * will be returned.
-     *
+     * will be returned.}
      *
      */
     public void activate() {
