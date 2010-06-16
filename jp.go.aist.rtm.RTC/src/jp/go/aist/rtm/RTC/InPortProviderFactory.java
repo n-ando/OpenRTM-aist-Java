@@ -1,21 +1,30 @@
 package jp.go.aist.rtm.RTC;
 
 /**
- * <p>InPortProvider用ファクトリの実装です。</p>
+ * {@.ja InPortProvider用ファクトリの実装}
+ * {@.en Implement of factory for InPortProvider} 
  */
 public class InPortProviderFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
 
     /**
-     * <p> constructor </p>
+     * {@.ja コンストラクタ。}
+     * {@.en Constructor}
      */
     private InPortProviderFactory() {
 
     }
 
     /**
-     * <p> instance </p>
+     * {@.ja インスタンス生成。}
+     * {@.en Create instance}
      *
-     * @return InPortProviderFactory object
+     * <p>
+     * {@.ja インスタンスを生成する。}
+     *
+     * @return 
+     *   {@.ja インスタンス}
+     *   {@.en InPortProviderFactory object}
+     *
      */
     public static InPortProviderFactory instance() {
         if (factory_global == null) {
