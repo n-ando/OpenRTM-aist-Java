@@ -1,20 +1,29 @@
 package jp.go.aist.rtm.RTC;
 
 /**
- * <p>PeriodicTask用ファクトリの実装です。</p>
+ * {@.ja PeriodicTask用ファクトリの実装}
+ * {@.en Implement of factory for PeriodicTask} 
  */
 public class PeriodicTaskFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
 
     /**
-     * <p> constructor </p>
+     * {@.ja コンストラクタ。}
+     * {@.en Constructor}
      */
     private PeriodicTaskFactory() {
 
     }
     /**
-     * <p> instance </p>
+     * {@.ja インスタンス生成。}
+     * {@.en Create instance}
      *
-     * @return PeriodicTaskFactory object
+     * <p>
+     * {@.ja インスタンスを生成する。}
+     *
+     * @return 
+     *   {@.ja インスタンス}
+     *   {@.en PeriodicTaskFactory object}
+     *
      */
     public static PeriodicTaskFactory instance() {
         if (factory_global == null) {

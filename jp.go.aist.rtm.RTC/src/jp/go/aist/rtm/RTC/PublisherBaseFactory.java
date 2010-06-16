@@ -1,20 +1,26 @@
 package jp.go.aist.rtm.RTC;
 
 /**
- * <p>Publisher用ファクトリの実装です。</p>
+ * {@.ja Publisher用ファクトリの実装}
+ * {@.en Implement of factory for Publisher} 
  */
 public class PublisherBaseFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
 
     /**
-     * <p> constructor </p>
+     * {@.ja コンストラクタ。}
+     * {@.en Constructor}
      */
     private PublisherBaseFactory() {
 
     }
     /**
-     * <p> instance </p>
+     * {@.ja インスタンス生成。}
+     * {@.en Create instance}
      *
-     * @return PublisherBaseFactory object
+     * @return 
+     *   {@.ja インスタンス}
+     *   {@.en PublisherBaseFactory object}
+     *
      */
     public static PublisherBaseFactory instance() {
         if (factory_global == null) {
