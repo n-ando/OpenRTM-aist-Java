@@ -62,10 +62,6 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_profile.rate = 0.0;
         m_profile.owner = (RTC.RTObject)null;
         m_profile.participants = new RTC.RTObject[0];
-        NVListHolder holder  = new NVListHolder(m_profile.properties);
-        CORBA_SeqUtil.push_back(holder,
-                                NVUtil.newNV("", "", String.class));
-        m_profile.properties = holder.value;
     }
 
     /**
@@ -122,10 +118,6 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_profile.rate = rate;
         m_profile.owner = owner;
         m_profile.participants = new RTC.RTObject[0];
-        NVListHolder holder  = new NVListHolder(m_profile.properties);
-        CORBA_SeqUtil.push_back(holder,
-                                NVUtil.newNV("", "", String.class));
-        m_profile.properties = holder.value;
     }
 
     /**
