@@ -87,7 +87,13 @@ public class CorbaNaming {
         m_blLength = 100;
         
         Object obj;
-        m_nameServer = "corbaloc::" + m_nameServer + "/NameService";
+        int pos = m_nameServer.indexOf("iiop:");
+        if(pos==0){
+            m_nameServer = "corbaloc:" + m_nameServer + "/NameService";
+        }
+        else{
+            m_nameServer = "corbaloc::" + m_nameServer + "/NameService";
+        }
 //        m_nameServer = "corbaloc:iiop:1.2@" + m_nameServer + "/NameService";
 
         obj = m_varORB.string_to_object(m_nameServer);
@@ -114,7 +120,13 @@ public class CorbaNaming {
      */
     public void init (final String name_server) throws Exception {
         m_nameServer = name_server;
-        m_nameServer = "corbaloc::" + m_nameServer + "/NameService";
+        int pos = m_nameServer.indexOf("iiop:");
+        if(pos==0){
+            m_nameServer = "corbaloc:" + m_nameServer + "/NameService";
+        }
+        else{
+            m_nameServer = "corbaloc::" + m_nameServer + "/NameService";
+        }
 //        m_nameServer = "corbaloc:iiop:1.2@" + m_nameServer + "/NameService";
         Object obj = m_varORB.string_to_object(m_nameServer);
         m_rootContext = NamingContextExtHelper.narrow(obj);
