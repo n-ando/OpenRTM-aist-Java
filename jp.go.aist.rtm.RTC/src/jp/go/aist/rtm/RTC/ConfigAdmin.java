@@ -1104,15 +1104,42 @@ public class ConfigAdmin {
 }
 
 /**
-*
-* コンフィギュレーションセット検索用ヘルパークラス
-*
-*/
+ *
+ * {@.ja コンフィギュレーションセット検索用ヘルパークラス}
+ * {@.en Helper class to find configuration-set}
+ *
+ */
 class find_conf {
     private String m_name;
+    /**
+     * {@.ja コンストラクタ}
+     * {@.en constructor}
+     *
+     * @param name 
+     *   {@.ja コンフィギュレーション名}
+     *   {@.en Configuration name}
+     *
+     */
     public find_conf(final String name) {
         m_name = name;
     }
+    /**
+     * {@.ja コンフィギュレーション検索。}
+     * {@.en Finds configuration-set}
+     *
+     * <p>
+     * {@.ja 指定されたコンフィギュレーションを検索する}
+     * {@.en The specified configuration is found.}
+     *
+     * @param conf 
+     *   {@.ja コンフィギュレーション情報}
+     *   {@.en Configuration}
+     *
+     * @return 
+     *   {@.ja 存在する場合はtrue}
+     *   {@.en Returns true when existing.}
+     *
+     */
     public boolean equalof(ConfigBase conf) {
         return m_name.equals(conf.name);
     }
