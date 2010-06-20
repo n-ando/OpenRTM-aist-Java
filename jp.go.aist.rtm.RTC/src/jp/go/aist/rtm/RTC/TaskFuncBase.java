@@ -1,13 +1,22 @@
 package jp.go.aist.rtm.RTC;
 
 import java.lang.reflect.Method;
-/**
- * <p>  </p>
- *
- */
+  /**
+   * {@.ja TaskFuncBase クラス}
+   * {@.en TaskFuncBase class}
+   */
 public class TaskFuncBase {
     /**
-     * <p>  </p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     * @param obj 
+     *   {@.ja オブジェクト}
+     *   {@.en obj Object.}
+     * @param func 
+     *   {@.ja 関数}
+     *   {@.en func Function.}
+     *
      */
     public TaskFuncBase(Object obj, String func) {
         m_obj = obj;
@@ -20,8 +29,14 @@ public class TaskFuncBase {
             //getMethod throws
         }
     }
+
     /**
-     * <p>  </p>
+     * {@.ja オブジェクトの関数実行。}
+     * {@.en Functor}
+     *
+     * <p>
+     * {@.ja オブジェクトの関数を実行する。}
+     * {@.en Execute a function of the object.}
      */
     public int svc() {
         if(m_method != null && m_class != null){
@@ -42,7 +57,19 @@ public class TaskFuncBase {
         }
         return 0;
     }
+    /**
+     * {@.ja メソッド}
+     * {@.en method}
+     */
     protected Method m_method = null;
+    /**
+     * {@.ja クラス}
+     * {@.en class}
+     */
     protected Class m_class = null;
+    /**
+     * {@.ja オブジェクト}
+     * {@.en object}
+     */
     protected Object m_obj = null;
 };
