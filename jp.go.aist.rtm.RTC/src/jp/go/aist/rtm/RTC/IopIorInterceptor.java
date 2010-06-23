@@ -38,8 +38,8 @@ public class IopIorInterceptor extends LocalObject
                                         =  new ArrayList<IiopAddressComp>();
 
     /**
-     * {@.ja エンドポイントを設定. }
-     * {@.en Sets the end points. }
+     * {@.ja エンドポイントを設定.}
+     * {@.en Sets the end points.}
      * @param  endpoints 
      *   {@.ja エンドポイント} 
      *   {@.en endpoints}
@@ -50,8 +50,8 @@ public class IopIorInterceptor extends LocalObject
     }
 
     /**
-     * {@.ja エンドポイントを設定. }
-     * {@.en Sets the end points. }
+     * {@.ja エンドポイントを設定.}
+     * {@.en Sets the end points.}
      * @param  hostString 
      *   {@.ja ホスト} 
      *   {@.en host}
@@ -73,8 +73,8 @@ public class IopIorInterceptor extends LocalObject
     }
 
     /**
-     * {@.ja エンドポイントを書き換える. }
-     * {@.en Replaces the end point the end point. }
+     * {@.ja エンドポイントを書き換える.}
+     * {@.en Replaces the end point the end point.}
      * <p>
      * {@.ja エンドポイントリスト内のポート番号が 0 のエンドポイントを
      * 与えられたポート番号に置き換える。}
@@ -123,10 +123,23 @@ public class IopIorInterceptor extends LocalObject
         this.codec = codec;
     }
 
+    /**
+     * {@.ja インターセプタ名を返す}
+     * {@.en Returns the name of the interceptor.}
+     * @return 
+     *   {@.ja インターセプタ名} 
+     *   {@.en the name of the interceptor.}
+     *
+     */
     public String name() {
         return IORInterceptor.class.getName();
     }
 
+    /**
+     * {@.ja インターセプタの破棄}
+     * {@.en Destroys he interceptor.}
+     *
+     */
     public void destroy() {
     }
 
