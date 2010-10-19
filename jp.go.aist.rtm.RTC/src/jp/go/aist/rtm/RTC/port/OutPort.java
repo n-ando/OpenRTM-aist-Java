@@ -56,11 +56,33 @@ public class OutPort<DataType> extends OutPortBase {
 
     }
     /**
-     * <p> set_timestamp </p>
-     * <p> This function sets the timestamp.  </p>
-     *
-     * @param data  data   
+     * {@.ja タイムスタンプを設定する。}
+     * {@.en Sets timestamp.}
+     * <p>
+     * {@.ja This function sets the timestamp.}
+     * {@.en This function sets the timestamp.}
+     * </p>
+     * @param data 
+     *   {@.ja 対象データ}
+     *   {@.en The target data}
      */
+    public void setTimestamp(DataType data) {
+        long nanotime = System.nanoTime();
+        RTC.Time tm = new RTC.Time((int)(nanotime/1000000000),
+                                   (int)(nanotime%1000000000));
+        Class cl = data.getClass();
+        String str = cl.getName();
+        try {
+            cl.getField("tm").set(data,tm);
+        }
+        catch(NoSuchFieldException e){
+            //getField throws
+        }
+        catch(IllegalAccessException e){
+            //set throws
+        }
+         
+    }
     private void set_timestamp(DataType data) {
         long nanotime = System.nanoTime();
         RTC.Time tm = new RTC.Time((int)(nanotime/1000000000),
@@ -79,7 +101,7 @@ public class OutPort<DataType> extends OutPortBase {
          
     }
     /**
-     * <p> set_timestamp </p>
+     * <p> get_timestamp </p>
      * <p> This function sets the timestamp.  </p>
      *
      * @return RTC.Time
