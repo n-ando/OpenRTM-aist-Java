@@ -221,6 +221,9 @@ public class ModuleManager {
                         StringHolder packageModuleName = new StringHolder();
                         target = getClassFromName(url,name,packageModuleName);
                         module_path = packageModuleName.value;
+                        if(target!=null){
+                            break;
+                        }
                     }
                 }
                 else{
