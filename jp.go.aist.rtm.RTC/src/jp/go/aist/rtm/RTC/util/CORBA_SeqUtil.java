@@ -277,7 +277,7 @@ public class CORBA_SeqUtil {
      *   ConnectorProfileListHolderオブジェクト}
      *   {@.en ConnectorProfileListHolder object that hold 
      *   ConnectorProfile object sequence internally.}
-     * @param func 
+     * @param f 
      *   {@.ja 合致判定を行うequalFunctorオブジェクト}
      *   {@.en equalFunctor object that does agreement judgment}
      * @return 
@@ -310,7 +310,7 @@ public class CORBA_SeqUtil {
      *   ExecutionContextServiceListHolderオブジェクト}
      *   {@.en ExecutionContextServiceListHolder object that hold 
      *   ExecutionContextService object sequence internally.}
-     * @param func 
+     * @param f 
      *   {@.ja 合致判定を行うequalFunctorオブジェクト}
      *   {@.en equalFunctor object that does agreement judgment}
      * @return 
@@ -344,7 +344,7 @@ public class CORBA_SeqUtil {
      *   RTM.ManagerListHolderオブジェクト}
      *   {@.en RTM.ManagerListHolder object that hold 
      *   RTM.Manager object sequence internally.}
-     * @param func 
+     * @param f 
      *   {@.ja 合致判定を行うequalFunctorオブジェクト}
      *   {@.en equalFunctor object that does agreement judgment}
      * @return 
@@ -378,7 +378,7 @@ public class CORBA_SeqUtil {
      *   RTC.RTCListHolderオブジェクト}
      *   {@.en RTC.RTCListHolder object that hold 
      *   RTC.RTC object sequence internally.}
-     * @param func 
+     * @param f 
      *   {@.ja 合致判定を行うequalFunctorオブジェクト}
      *   {@.en equalFunctor object that does agreement judgment}
      * @return 
