@@ -205,7 +205,7 @@ public class TypeCast<T> {
      * {@.ja T型に変換する}
      * {@.en Converts the data into T type}
      * 
-     * @param data 
+     * @param obj 
      *   {@.ja 変換対象のデータ}
      *   {@.en data}
      * @return 
