@@ -4,14 +4,18 @@ import RTC.PortService;
 import RTC.PortServiceListHolder;
 
 /**
- * <p>Java用ポートサービスリストホルダーファクトリの実装です。</p>
+ * {@.ja Java用ポートサービスリストホルダーファクトリの実装}
+ * {@.en Implementation of port service list holder factory}
  */
 public class PortServiceListHolderFactory {
 
     /**
-     * <p>ポートサービスリストホルダーを生成します。</p>
+     * {@.ja ポートサービスリストホルダーを生成する}
+     * {@.en Creates port service list holder}
      * 
-     * @return 生成されたPortServiceListHolderオブジェクト
+     * @return 
+     *   {@.ja 生成されたPortServiceListHolderオブジェクト}
+     *   {@.en Created PortServiceListHolder object}
      */
     public static PortServiceListHolder create() {
         
@@ -19,10 +23,15 @@ public class PortServiceListHolderFactory {
     }
 
     /**
-     * <p>ポートサービスリストホルダーの複製を生成します。</p>
+     * {@.ja ポートサービスリストホルダーの複製を生成する}
+     * {@.en Creates the clone of port service list holder}
      * 
-     * @param rhs PortServiceListHolderオブジェクト
-     * @return コピーされたPortServiceListHolderオブジェクト
+     * @param rhs 
+     *   {@.ja PortServiceListHolderオブジェクト}
+     *   {@.en PortServiceListHolder object}
+     * @return 
+     *   {@.ja コピーされたPortServiceListHolderオブジェクト}
+     *   {@.en Created PortServiceListHolde object}
      */
     public static PortServiceListHolder clone(PortServiceListHolder rhs) {
         
