@@ -3,14 +3,19 @@ package jp.go.aist.rtm.RTC.util;
 import jp.go.aist.rtm.RTC.util.Properties;
 
 /**
- * <p>Callbackクラスのインターフェースです。</p>
+ * {@.ja Callbackクラスのインターフェース}
+ * {@.en Interface of Callback class}
  */
 public interface OnAddConfigurationAddCallbackFunc {
     
     /**
-     * <p>対象のオブジェクトに対して操作を行います。</p>
+     * {@.ja 対象のオブジェクトに対して操作を行う}
+     * {@.en Operates object}
      *
-     * @param config_set コンフィグレーション
+     * @param config_set 
+     *   {@.ja コンフィグレーション}
+     *   {@.en Configuration}
+     *
      */
 
     public void operator(Properties config_set);

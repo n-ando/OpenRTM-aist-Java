@@ -1,14 +1,21 @@
 package jp.go.aist.rtm.RTC.util;
 
 /**
- * <p>Callbackクラスのインターフェースです。</p>
+ * {@.ja Callbackクラスのインターフェース}
+ * {@.en Interface of Callback class}
  */
 public interface OnUpdateParamCallbackFunc {
     
     /**
-     * <p>対象のオブジェクトに対して操作を行います。</p>
+     * {@.ja 対象のオブジェクトに対して操作を行う}
+     * {@.en Operates object}
      *
-     * @param config_set コンフィグレーション
+     * @param config_set 
+     *   {@.ja コンフィグレーション}
+     *   {@.en Configuration}
+     * @param config_param 
+     *   {@.ja パラメータ}
+     *   {@.en Parameter}
      */
 
     public void operator(String config_set, String config_param);

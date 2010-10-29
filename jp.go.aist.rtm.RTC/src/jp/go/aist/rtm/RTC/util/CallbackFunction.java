@@ -1,11 +1,13 @@
 package jp.go.aist.rtm.RTC.util;
 
 /**
- * <p>タイマーから起動されるコールバック関数用インタフェースです。</p>
+ * {@.ja タイマーから起動されるコールバック関数用インタフェース}
+ * {@.en Interface for the callback function started when the timer ends. }
  */
 public interface CallbackFunction {
     /**
-     * <p>タイマーから起動されるコールバックメソッドです。</p>
+     * {@.ja タイマーから起動されるコールバックメソッド}
+     * {@.en Method of the callback started from Timer.}
      */
     public void doOperate();
 }
