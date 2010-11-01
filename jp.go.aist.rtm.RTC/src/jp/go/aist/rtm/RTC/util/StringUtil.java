@@ -8,11 +8,19 @@ import java.util.ArrayList;
 public class StringUtil {
 
     /**
-     * <p> 文字列がエスケープされているか判断する。 </p> 
+     * {@.ja 文字列がエスケープされているか判断する。}
+     * {@.en Judges whether to be escaped.}
      *
-     * @param  str エスケープされているかどうか判断する文字を含む文字列
-     * @param  pos エスケープされているかどうか判断する文字の位置
-     * @return 指定した文字がエスケープされていれば true, それ以外は false
+     * @param  str
+     *   {@.ja エスケープされているかどうか判断する文字を含む文字列}
+     *   {@.en Character string including character that judges whether to be 
+     *   escaped}
+     * @param  pos 
+     *   {@.ja エスケープされているかどうか判断する文字の位置}
+     *   {@.en Position of character that judges whether to be escaped}
+     * @return 
+     *   {@.ja 指定した文字がエスケープされていれば true, それ以外は false}
+     *   {@.en The character string is true if escaped.}
      */
     public static boolean isEscaped(final String str, int pos) {
         
@@ -24,18 +32,32 @@ public class StringUtil {
     }
     
     /**
-     * 文字列をエスケープする。<br />
-     * 次の文字をエスケープシーケンスに変換する。<br />
+     * {@.ja 文字列をエスケープする}
+     * {@.en Escapes in the character string.}
+     * <p>
+     * {@.ja 次の文字をエスケープシーケンスに変換する。
      * <ul>
      * <li>HT -> "\t"</li>
      * <li>LF -> "\n"</li>
      * <li>CR -> "\r"</li>
      * <li>FF -> "\f"</li>
      * </ul>
-     * なお、シングルクオート、ダブルクオートについては処理はしない。<br />
-     * <br />
-     * @param str エスケープ処理対象の文字列
-     * @return エスケープ処理後の文字列
+     * なお、シングルクオート、ダブルクオートについては処理はしない。}
+     * {@.en Converts the following character into the escape sequence.
+     * <ul>
+     * <li>HT -> "\t"</li>
+     * <li>LF -> "\n"</li>
+     * <li>CR -> "\r"</li>
+     * <li>FF -> "\f"</li>
+     * </ul>
+     * Processes neither a single quart nor a double quart.}
+     *
+     * @param str 
+     *   {@.ja エスケープ処理対象の文字列}
+     *   {@.en Character string of escape processing object}
+     * @return 
+     *   {@.ja エスケープ処理後の文字列}
+     *   {@.en Character string after escape is processed}
      */
     public static String escape(final String str) {
         
@@ -78,8 +100,10 @@ public class StringUtil {
     }
 
     /**
-     * 文字列をアンエスケープする。<br />
-     * 次のエスケープシーケンスを文字に変換する。<br />
+     * {@.ja 文字列をアンエスケープする}
+     * {@.en Unescapes in the character string.}
+     * <p>
+     * {@.ja 次のエスケープシーケンスを文字に変換する。
      * <ul>
      * <li>"\t" -> HT</li>
      * <li>"\n" -> LF</li>
@@ -88,10 +112,25 @@ public class StringUtil {
      * <li>"\"" -> "</li>
      * <li>"\'" -> '</li>
      * </ul>
-     * espace()の完全な逆変換にはなっていない点に注意すること。<br />
-     * <br />
-     * @param str アンエスケープ対象の文字列
-     * @return アンエスケープ後の文字列
+     * espace()の完全な逆変換にはなっていない点に注意すること。}
+     * {@.en Converts the following escape sequence into the character. 
+     * <ul>
+     * <li>"\t" -> HT</li>
+     * <li>"\n" -> LF</li>
+     * <li>"\r" -> CR</li>
+     * <li>"\f" -> FF</li>
+     * <li>"\"" -> "</li>
+     * <li>"\'" -> '</li>
+     * </ul>
+     * Note the point that doesn't become it in a complete inversion of 
+     * espace().}
+     *
+     * @param str 
+     *   {@.ja アンエスケープ対象の文字列}
+     *   {@.en Character string where to be unescaped}
+     * @return 
+     *   {@.ja アンエスケープ後の文字列}
+     *   {@.en Character string after it unescapes} 
      */
     public static String unescape(final String str) {
         
@@ -136,14 +175,28 @@ public class StringUtil {
     }
 
     /**
-     * <p> 与えられた文字列をbool値に変換する。 </p> 
-     * <p> Erase the head/tail blank and replace upper case to lower case </p>
+     * {@.ja 与えられた文字列をbool値に変換する}
+     * {@.en Cconverts the given character string into bool value.}
+     * <p>
+     * {@.en Erase the head/tail blank and replace upper case to lower case}
      * 
-     * @param  target 判断対象文字列値
-     * @param  yes true表現文字列
-     * @param  no false表現文字列
-     * @param  default_value デフォルト値
-     * @return 比較結果を返す。true表現文字列、false表現文字列のどちらとも一致しない場合は、デフォルト値を返す。
+     * @param  target 
+     *   {@.ja 判断対象文字列値}
+     *   {@.en Strig for judgment}
+     * @param  yes 
+     *   {@.ja true表現文字列}
+     *   {@.en Charactor string that expresses true.}
+     * @param  no 
+     *   {@.ja false表現文字列}
+     *   {@.en Charactor string that expresses false.}
+     * @param  default_value 
+     *   {@.ja デフォルト値}
+     *   {@.en default}
+     * @return 
+     *   {@.ja 比較結果を返す。
+     *         true表現文字列、false表現文字列のどちらとも一致しない場合は、
+     *         デフォルト値を返す。}
+     *   {@.en Comparative result}
      */
     public static boolean toBool(String target, String yes, String no, boolean default_value) {
         if( target.toUpperCase().contains(yes.toUpperCase()) ) {
@@ -156,12 +209,17 @@ public class StringUtil {
     }
 
     /**
-     * <p> 与えられた文字列リストから重複を削除する。 </p> 
+     * {@.ja 与えられた文字列リストから重複を削除する}
+     * {@.en Deletes repetition from the given character string list.}
+     * <p>
+     * {@.ja 引数で与えられた文字列リストから重複を削除したリストを作成する。}
      *
-     * 引数で与えられた文字列リストから重複を削除したリストを作成する。
-     *
-     * @param  sv 確認元文字列リスト
-     * @return 重複削除処理結果リスト
+     * @param  sv
+     *   {@.ja 確認元文字列リスト}
+     *   {@.en Character string list}
+     * @return 
+     *   {@.ja 重複削除処理結果リスト}
+     *   {@.en List of character string of result}
      */
     public static Vector<String> unique_sv(String[] sv) {
         Vector<String> str = new Vector<String>();
@@ -174,13 +232,18 @@ public class StringUtil {
     }
 
     /**
-     * <p> 与えられた文字列リストからCSVを生成する。 </p> 
+     * {@.ja 与えられた文字列リストからCSVを生成する}
+     * {@.en Creates CSV from the given character string list.}
+     * <p>
+     * {@.ja 引数で与えられた文字列リストの各要素を並べたCSVを生成する。
+     * 文字列リストが空の場合には空白文字を返す。}
      *
-     * 引数で与えられた文字列リストの各要素を並べたCSVを生成する。
-     * 文字列リストが空の場合には空白文字を返す。
-     *
-     * @param  sv CSV変換対象文字列リスト
-     * @return CSV変換結果文字列
+     * @param  sv 
+     *   {@.ja CSV変換対象文字列リスト}
+     *   {@.en Character string list to be converted}
+     * @return 
+     *   {@.ja CSV変換結果文字列}
+     *   {@.en Character string of conversion result}
      */
     public static String flatten(Vector<String> sv) {
         if( sv.size() == 0) return "";
@@ -194,13 +257,18 @@ public class StringUtil {
     }
 
     /**
-     * <p> 与えられた文字列リストからCSVを生成する。 </p> 
+     * {@.ja 与えられた文字列リストからCSVを生成する}
+     * {@.en generates CSV from the given character string list.}
+     * <p>
+     * {@.ja 引数で与えられた文字列リストの各要素を並べたCSVを生成する。
+     * 文字列リストが空の場合には空白文字を返す。}
      *
-     * 引数で与えられた文字列リストの各要素を並べたCSVを生成する。
-     * 文字列リストが空の場合には空白文字を返す。
-     *
-     * @param  sv CSV変換対象文字列リスト
-     * @return CSV変換結果文字列
+     * @param  sv 
+     *   {@.ja CSV変換対象文字列リスト}
+     *   {@.en Character string list to be converted}
+     * @return 
+     *   {@.ja CSV変換結果文字列}
+     *   {@.en Character string of conversion result}
      */
     public static String flatten(Set sv) {
         if( sv.size() == 0) return "";
@@ -219,13 +287,20 @@ public class StringUtil {
     }
 
     /**
-     * <p> 文字列を分割文字で分割する。 </p> 
+     * {@.ja 文字列を分割文字で分割する}
+     * {@.en divides the character string by the division character.}
+     * <p>
+     * {@.ja 設定された文字列を与えられたデリミタで分割する。}
      *
-     * 設定された文字列を与えられたデリミタで分割する。
-     *
-     * @param  input 分割対象文字列
-     * @param  delimiter 分割文字列(デリミタ)
-     * @return 文字列分割結果リスト
+     * @param  input 
+     *   {@.ja 分割対象文字列}
+     *   {@.en Character string to be divided}
+     * @param  delimiter 
+     *   {@.ja 分割文字列(デリミタ)}
+     *   {@.en Delimiter}
+     * @return 
+     *   {@.ja 文字列分割結果リスト}
+     *   {@.en Result}
      */
     public static Vector<String> split(final String input, final String delimiter) {
         Vector<String> result = new Vector<String>();
@@ -242,15 +317,19 @@ public class StringUtil {
     }
 
     /**
-     * <p> 文字列を正規化する。 </p> 
+     * {@.ja 文字列を正規化する}
+     * {@.en Erase the head/tail blank and replace upper case to lower case}
      *
-     * 与えられた文字列の先頭および末尾に存在する空白文字を削除し、
-     * 英字をすべて小文字に変換する。
+     * {@.ja 与えられた文字列の先頭および末尾に存在する空白文字を削除し、
+     * 英字をすべて小文字に変換する。}
      *
-     * <p> Erase the head/tail blank and replace upper case to lower case </p>
      * 
-     * @param  str 処理対象文字列
-     * @return 変換後の文字列
+     * @param  str 
+     *   {@.ja 処理対象文字列}
+     *   {@.en String}
+     * @return 
+     *   {@.ja 変換後の文字列}
+     *   {@.en Result}
      */
     public static String normalize(String str) {
         str = str.trim();
@@ -258,10 +337,22 @@ public class StringUtil {
         return str;
     }
     /**
-     *  <p> includes </p>
+     *  {@.ja 指定した文字列が、指定した文字列のリストに含まれているかを
+     *  チェックする。}
+     *  {@.en Checks whether the specified character string is included in the
+     *  list of the specified character string.}
      *  @param list
+     *    {@.ja 文字列のリスト}
+     *    {@.en the list of the string}
      *  @param value
+     *    {@.ja 文字列}
+     *    {@.en String}
      *  @param ignore_case
+     *    {@.ja 大文字小文字無視フラグ}
+     *    {@.en Capital letters and small letters flag}
+     *  @return
+     *    {@.ja 含まれていればtrue}
+     *    {@.en It is true if included.}
      */
     public static boolean includes(final Vector<String> list, String value, 
                                    boolean ignore_case) {
@@ -286,8 +377,14 @@ public class StringUtil {
     }
 
     /**
-     * <p> 与えられた文字列が絶対パスかどうかを判断する </p>
+     * {@.ja 与えられた文字列が絶対パスかどうかを判断する}
+     * {@.en Judges whether it is an absolute path the given String.}
      * @param str
+     *   {@.ja 文字列}
+     *   {@.en String}
+     * @return
+     *   {@.ja 絶対パスならtrue}
+     *   {@.en an absolute path is true}
      */
     public static boolean isAbsolutePath(final String str) {
 	// UNIX absolute path is begun from '/'
