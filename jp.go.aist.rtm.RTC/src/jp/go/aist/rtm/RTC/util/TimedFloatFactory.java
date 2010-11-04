@@ -4,17 +4,17 @@ import RTC.Time;
 import RTC.TimedFloat;
 
 /**
- * {@.ja TimedFloat�̃t�@�N�g��}
+ * {@.ja TimedFloatのファクトリ}
  * {@.en Implementation of TimedFloat factory}
  */
 public class TimedFloatFactory {
 
     /**
-     * {@.ja TimedFloat�𐶐�����B}
+     * {@.ja TimedFloatを生成する。}
      * {@.en Creates TimedFloat}
      * 
      * @return 
-     *   {@.ja �������ꂽTimedFloat�I�u�W�F�N�g}
+     *   {@.ja 生成されたTimedFloatオブジェクト}
      *   {@.en Created TimedFloat object}
      */
     public static TimedFloat create() {
