@@ -3,14 +3,18 @@ package jp.go.aist.rtm.RTC.util;
 import _SDOPackage.NameValue;
 
 /**
- * <p>NamaValueオブジェクト生成のためのユーティリティクラスです。</p>
+ * {@.ja NamaValueオブジェクト生成のためのユーティリティクラス}
+ * {@.en Implementation of NamaValue factory}
  */
 public class NameValueFactory {
 
     /**
-     * <p>デフォルト内容でNameValueオブジェクトを生成します。</p>
+     * {@.ja デフォルト内容でNameValueオブジェクトを生成する。}
+     * {@.en Creates NameValue object}
      * 
-     * @return 生成されたNameValueオブジェクト
+     * @return 
+     *   {@.ja 生成されたNameValueオブジェクト}
+     *   {@.en Created NameValue object}
      */
     public static NameValue create() {
         
@@ -21,10 +25,15 @@ public class NameValueFactory {
     }
     
     /**
-     * <p>指定されたNameValueオブジェクトの複製を生成します。</p>
+     * {@.ja 指定されたNameValueオブジェクトの複製を生成する。}
+     * {@.en Creates the clone of NameValue}
      * 
-     * @param rhs 複製元となるNameValueオブジェクト
-     * @return 生成されたNameValueオブジェクト
+     * @param rhs 
+     *   {@.ja 複製元となるNameValueオブジェクト}
+     *   {@.en NameValue object}
+     * @return 
+     *   {@.ja 生成されたNameValueオブジェクト}
+     *   {@.en Copied NameValue object}
      */
     public static NameValue clone(final NameValue rhs) {
         

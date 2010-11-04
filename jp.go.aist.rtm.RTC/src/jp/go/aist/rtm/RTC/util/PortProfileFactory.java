@@ -8,14 +8,18 @@ import RTC.PortProfile;
 import RTC.RTObject;
 
 /**
- * <p>Java用ポートプロファイルファクトリの実装です。</p>
+ * {@.ja Java用ポートプロファイルファクトリの実装}
+ * {@.en Implementation of PortProfile factory}
  */
 public class PortProfileFactory {
 
     /**
-     * <p>ポートプロファイルを生成します。</p>
+     * {@.ja ポートプロファイルを生成する。}
+     * {@.en Creates PortProfile}
      * 
-     * @return 生成されたPortProfileオブジェクト
+     * @return 
+     *   {@.ja 生成されたPortProfileオブジェクト}
+     *   {@.en Created PortProfile object}
      */
     public static PortProfile create() {
         
@@ -30,10 +34,15 @@ public class PortProfileFactory {
     }
     
     /**
-     * <p>ポートプロファイルの複製を生成します。</p>
+     * {@.ja ポートプロファイルの複製を生成する。}
+     * {@.en Creates the clone of PortProfile}
      * 
-     * @param rhs PortProfileオブジェクト
-     * @return コピーされたPortProfileオブジェクト
+     * @param rhs 
+     *   {@.ja PortProfileオブジェクト}
+     *   {@.en PortProfile object}
+     * @return 
+     *   {@.ja コピーされたPortProfileオブジェクト}
+     *   {@.en Copied PortProfile object}
      */
     public static PortProfile clone(final PortProfile rhs) {
         
