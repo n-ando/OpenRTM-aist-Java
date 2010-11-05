@@ -1,21 +1,26 @@
 package jp.go.aist.rtm.RTC.util;
 
 /**
- * <p>タイマーに登録するリスナー用クラスです。</p>
+ * {@.ja タイマーに登録するリスナー用クラス}
+ * {@.en Class for listener registered in timer}
  */
 public class ListenerObject implements ListenerBase {
 
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      * 
-     * @param cbf コールバック関数用インスタンス
+     * @param cbf 
+     *   {@.ja コールバック関数用インスタンス}
+     *   {@.en Instance of callback function}
      */
     public ListenerObject(CallbackFunction cbf) {
         m_cbf = cbf;
     }
 
     /**
-     * <p>登録先のタイマーから呼び出されるメソッドです。</p>
+     * {@.ja 登録先のタイマーから呼び出されるメソッド}
+     * {@.en Method that calls from timer at registration destination}
      */
     public void invoke() {
         m_cbf.doOperate();
