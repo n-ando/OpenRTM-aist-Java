@@ -26,20 +26,27 @@ import RTC.ReturnCode_t;
 
  
 /**
- * <p> InPortBase </p>
- * <p> Port for InPort </p>
+ * 
+ * {@.ja InPort 用 Port}
+ * {@.en Port for InPort}
  *
- * <p> This is an implementation class for the data input port. <p>
+ * <p>
+ * {@.en データ入力ポートの実装クラス。}
+ * {@.en This is an implementation class for the data input port.}
  *
  */
 public abstract class InPortBase extends PortBase {
 
 
     /**
-     *
-     * <p> Constructor </p>
-     * @param name Port name
-     * @param data_type Specify the data type used in the InPort object.
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     * @param name 
+     *   {@.ja ポート名称}
+     *   {@.en Port name}
+     * @param data_type 
+     *   {@.ja データタイプ}
+     *   {@.en Specify the data type used in the InPort object.}
      */
     public InPortBase(final String name, final String data_type) {
         super(name);
@@ -59,9 +66,15 @@ public abstract class InPortBase extends PortBase {
     
     /**
      *
-     * <p> Get properties </p>
-     * <p> This method gets properties in the port.  </p>
-     * @return Properties Properties
+     * {@.ja プロパティを取得する}
+     * {@.en Get properties}
+     *
+     * <p> 
+     * {@.ja ポートのプロパティを取得する。}
+     * {@.en This method gets properties in the port.}
+     * @return 
+     *   {@.ja プロパティ}
+     *   {@.en Properties Properties}
      * 
      */
     public Properties properties() {
@@ -117,9 +130,15 @@ public abstract class InPortBase extends PortBase {
 
     /**
      *
-     * <p> ConnectorId list </p>
-     * <p> This operation returns ConnectorId list </p>
-     * @return Vector<String> connector list
+     * {@.ja ConnectorId を取得}
+     * {@.en ConnectorId list}
+     *
+     * <p> 
+     * {@.ja 現在所有しているコネクタのIDを取得する。}
+     * {@.en This operation returns ConnectorId list}
+     * @return 
+     *   {@.ja ConnectorId のリスト}
+     *   {@.en Vector<String> connector list}
      * 
      */
     public Vector<String> getConnectorIds() {
@@ -133,9 +152,14 @@ public abstract class InPortBase extends PortBase {
 
     /**
      *
-     * <p> Connector name list </p>
-     * <p> This operation returns Connector name list </p>
-     * @return Vector<String> connector name list
+     * {@.ja Connectorの名前を取得}
+     * {@.en Connector name list}
+     * <p> 
+     * {@.ja 現在所有しているコネクタの名前を取得する。}
+     * {@.en This operation returns Connector name list}
+     * @return 
+     *   {@.en Connector名のリスト}
+     *   {@.en Vector<String> connector name list}
      *
      */
     public Vector<String> getConnectorNames() {
@@ -148,10 +172,18 @@ public abstract class InPortBase extends PortBase {
     }
 
     /** 
-     * <p> Getting ConnectorProfile by ID </p>
-     * <p> This operation returns Connector specified by ID. </p>
-     * @param id Connector ID
-     * @return InPortConnector connector
+     * {@.ja ConnectorProfileをIDで取得}
+     * {@.en Getting ConnectorProfile by ID}
+     *
+     * <p> 
+     * {@.ja 現在所有しているコネクタをIDで取得する。}
+     * {@.en This operation returns Connector specified by ID.}
+     * @param id 
+     *   {@.ja Connector ID}
+     *   {@.en Connector ID}
+     * @return 
+     *   {@.ja コネクタへのポインタ}
+     *   {@.en InPortConnector connector}
      */
     public InPortConnector getConnectorById(final String id) {
         rtcout.println(Logbuf.TRACE, "getConnectorById(id = "+id+")");
@@ -168,10 +200,17 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * <p> Getting Connector by name </p>
-     * <p> This operation returns Connector specified by name. </p>
-     * @param name Connector ID
-     * @return InPortConnector connector
+     * {@.ja ConnectorProfileを名前で取得}
+     * {@.en Getting Connector by name}
+     * <p> 
+     * {@.ja 現在所有しているコネクタを名前で取得する。}
+     * {@.en This operation returns Connector specified by name.}
+     * @param name 
+     *   {@.ja Connector name}
+     *   {@.en Connector ID}
+     * @return 
+     *   {@.ja コネクタへのポインタ}
+     *   {@.en InPortConnector connector}
      *
      */
     public InPortConnector getConnectorByName(final String name){
@@ -189,11 +228,20 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * <p> Getting ConnectorProfile by name </p>
-     * <p> This operation returns ConnectorProfile specified by name </p>
-     * @param id Connector ID
-     * @param prof ConnectorProfileHolder
-     * @return boolean false specified ID does not exist
+     * {@.ja ConnectorProfileをIDで取得}
+     * {@.en Getting ConnectorProfile by name}
+     * <p> 
+     * {@.ja 現在所有しているコネクタをIDで取得する。}
+     * {@.en This operation returns ConnectorProfile specified by name}
+     * @param id 
+     *   {@.ja Connector ID}
+     *   {@.en Connector ID}
+     * @param prof 
+     *   {@.ja ConnectorProfileHolder}
+     *   {@.en ConnectorProfileHolder}
+     * @return 
+     *   {@.ja false 指定したIDがない}
+     *   {@.en false specified ID does not exist}
      *
      */
     public boolean getConnectorProfileById(final String id, 
@@ -210,12 +258,22 @@ public abstract class InPortBase extends PortBase {
 
     /**
      *
-     * <p> Getting ConnectorProfile by name </p>
-     * <p>This operation returns ConnectorProfile specified by name </p>
+     * {@.ja ConnectorProfileを名前で取得}
+     * {@.en Getting ConnectorProfile by name}
      *
-     * @param name Connector ID
-     * @param prof ConnectorProfile
-     * @return boolean false specified name does not exist
+     * <p>
+     * {@.ja 現在所有しているコネクタを名前で取得する。}
+     * {@.en This operation returns ConnectorProfile specified by name}
+     *
+     * @param name 
+     *   {@.ja Connector name}
+     *   {@.en Connector ID}
+     * @param prof 
+     *   {@.ja ConnectorProfile}
+     *   {@.en ConnectorProfile}
+     * @return 
+     *   {@.ja false 指定した名前がない}
+     *   {@.en false specified name does not exist}
      *
      */
     public boolean getConnectorProfileByName(final String name, 
@@ -231,9 +289,14 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * <p> Initializing properties </p>
-     * <p> This method initializes the port in the specified property.  </p>
-     * @param prop Property for setting ports
+     * {@.ja プロパティの初期化}
+     * {@.en Initializing properties}
+     * <p> 
+     * {@.ja 指定されたプロパティで初期化する。}
+     * {@.en This method initializes the port in the specified property.}
+     * @param prop 
+     *   {@.ja 設定するプロパティ}
+     *   {@.en Property for setting ports}
      */
     public void init(Properties prop) {
         rtcout.println(Logbuf.TRACE, "init()");
@@ -283,10 +346,13 @@ public abstract class InPortBase extends PortBase {
     public abstract boolean read();
 
     /**
-     * <p> Activate all Port interfaces </p>
+     * {@.ja InPortを activates する}
+     * {@.en Activate all Port interfaces}
      *
-     * <p> This operation activate all interfaces that is registered in the </p>
-     * <p> ports. </p>
+     * <p> 
+     * {@.ja Port に登録されている全てのインターフェースを activate する。}
+     * {@.en This operation activate all interfaces that is registered in the
+     * ports.}
      *
      */
     public void activateInterfaces() {
@@ -306,10 +372,13 @@ public abstract class InPortBase extends PortBase {
 
     /**
      *
-     * <p> Deactivate all Port interfaces </p>
+     * {@.ja 全ての Port のインターフェースを deactivates する}
+     * {@.en Deactivate all Port interfaces}
      *
-     * <p> This operation deactivate all interfaces that is registered in the </p>
-     * <p> ports. </p>
+     * <p> 
+     * {@.ja Port に登録されている全てのインターフェースを deactivate する。}
+     * {@.en This operation deactivate all interfaces that is registered in 
+     * the ports.} 
      *
      */
     public void deactivateInterfaces() {
@@ -328,26 +397,31 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * <p> Connect the Port </p>
+     * {@.ja [CORBA interface] Port の接続を行う}
+     * {@.en Connect the Port}
      *
-     * <p> This operation establishes connection according to the given
+     * <p> 
+     * {@.ja 与えられた ConnectoionProfile の情報に基づき、Port間の接続を確立
+     * する。この関数は主にアプリケーションプログラムやツールから呼び出
+     * すことを前提としている。}
+     * {@.en This operation establishes connection according to the given
      * ConnectionProfile inforamtion. This function is premised on
-     * calling from mainly application program or tools.</p> 
+     * calling from mainly application program or tools.
      *
-     * <p> To establish the connection among Ports of RT-Components,
+     * To establish the connection among Ports of RT-Components,
      * application programs must call this operation giving
-     * ConnectorProfile with valid values as an argument.</p> 
+     * ConnectorProfile with valid values as an argument.
      *
-     * <p> Out of ConnectorProfile member variables, "name", "ports"
+     * Out of ConnectorProfile member variables, "name", "ports"
      * and "properties" members shall be set valid
      * data. "connector_id" shall be set as empty string value or
-     * valid string UUID value. </p> 
+     * valid string UUID value. 
      *
-     * <p> ConnectorProfile::name that is connection identifier shall
-     * be any valid CORBA::string. </p> 
+     * ConnectorProfile::name that is connection identifier shall
+     * be any valid CORBA::string. 
      * 
      *
-     * <p> ConnectorProfile::connector_id shall be set unique
+     * ConnectorProfile::connector_id shall be set unique
      * identifier (usually UUID is used) for all connections. Since
      * UUID string value is usually set in the connect() function,
      * caller should just set empty string. If the connect() is called
@@ -355,24 +429,24 @@ public abstract class InPortBase extends PortBase {
      * returns PRECONDITION_NOT_MET error. However, in order to update
      * the existing connection profile, the "connect()" operation with
      * existing connector ID might be used as valid method by future
-     * extension </p> 
+     * extension
      *
-     * <p> ConnectorProfile::ports, which is sequence of
+     * ConnectorProfile::ports, which is sequence of
      * RTC::PortService references, shall store usually two or more
      * ports' references. As exceptions, the "connect()" operation
      * might be called with only one reference in ConnectorProfile, in
      * case of just getting interfaces information from the port, or
      * connecting a special port (i.e. the peer port except
-     * RTC::PortService on CORBA). </p> 
+     * RTC::PortService on CORBA). 
      *
-     * <p> ConnectorProfile::properties might be used to give certain
+     * ConnectorProfile::properties might be used to give certain
      * properties to the service interfaces associated with the port.
      * The properties is a sequence variable with a pair of key string
      * and Any type value. Although the A variable can store any type
-     * of values, it is not recommended except string.</p> 
+     * of values, it is not recommended except string.
      *
-     * <p> The following is the summary of the ConnectorProfile
-     * member to be set when this operation is called.</p> 
+     * The following is the summary of the ConnectorProfile
+     * member to be set when this operation is called.
      *
      * <ul>
      * <li>- ConnectorProfile::name: The any name of connection</li>
@@ -381,33 +455,37 @@ public abstract class InPortBase extends PortBase {
      * <li>- ConnectorProfile::properties: Properties for the interfaces</li>
      * </ul>
      *
-     * <p> connect() operation will call the first port in the
-     * sequence of the ConnectorProfile.</p>
+     * connect() operation will call the first port in the
+     * sequence of the ConnectorProfile.
      *
-     * <p> "noify_connect()"s perform cascaded call to the ports
+     * "noify_connect()"s perform cascaded call to the ports
      * stored in the ConnectorProfile::ports by order. Even if errors
      * are raised by intermediate notify_connect() operation, as long
      * as ports' object references are valid, it is guaranteed that
      * this cascaded call is completed in all the ports.  If invalid
      * or dead ports exist in the port's sequence, the ports are
-     * skipped and notify_connect() is called for the next valid port.</p>
+     * skipped and notify_connect() is called for the next valid port.
      *
-     * <p> connect() function returns RTC_OK if all the
+     * connect() function returns RTC_OK if all the
      * notify_connect() return RTC_OK. At this time the connection is
      * completed.  If notify_connect()s return except RTC_OK,
      * connect() calls disconnect() operation with the connector_id to
      * destruct the connection, and then it returns error code from
-     * notify_connect().</p>
+     * notify_connect().
      *
-     * <p> The ConnectorProfile argument of the connect() operation
+     * The ConnectorProfile argument of the connect() operation
      * returns ConnectorProfile::connector_id and various information
      * about service interfaces that is published by
      * publishInterfaces() in the halfway ports. The connect() and
      * halfway notify_connect() functions never change
-     * ConnectorProfile::{name, ports}.</p>
+     * ConnectorProfile::(name, ports)}
      *
-     * @param connector_profile The ConnectorProfile.
-     * @return ReturnCode_t The return code of ReturnCode_t type.
+     * @param connector_profile 
+     *   {@.ja ConnectorProfile}
+     *   {@.en The ConnectorProfile.}
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type.}
      */
     public ReturnCode_t connect(ConnectorProfileHolder connector_profile) {
         //
@@ -431,14 +509,14 @@ public abstract class InPortBase extends PortBase {
 
     /**
      * {@.ja Interface情報を公開する}
-     * [@.en Publish interface information}
+     * {@.en Publish interface information}
      *
      * <p>
      * {@.ja Interface情報を公開する。
      *       引数の ConnectorProfile に格納されている dataflow_type が push 型
      *       の場合は、指定された interface_type の InPortProvider に関する情報
      *       を ConnectorProfile::properties に書込み呼び出し側に戻す。}
-     * [@.en Publish interface information.
+     * {@.en Publish interface information.
      *       Assign the Provider information that owned by this port
      *       to ConnectorProfile#properties}
      * </p>
@@ -721,13 +799,20 @@ public abstract class InPortBase extends PortBase {
     }
     
     /**
-     * <p> Disconnect the interface connection </p>
+     * {@.ja Interfaceへの接続を解除する}
+     * {@.en Disconnect the interface connection}
      *
-     * <p> Disconnect the interface connection. </p>
-     * <p> Release all objects set in Consumer associated with </p>
-     * <p> given ConnectorProfile and unscribe the interface. </p>
+     * <p> 
+     * {@.ja Interfaceへの接続を解除する。
+     * 与えられたConnectorProfileに関連するConsumerに設定された全てのObjectを
+     * 解放し接続を解除する。}
+     * {@.en Disconnect the interface connection.
+     * Release all objects set in Consumer associated with
+     * given ConnectorProfile and unscribe the interface.}
      *
-     * @param connector_profile The connector profile
+     * @param connector_profile 
+     *   {@.ja コネクタ・プロファイル}
+     *   {@.en The connector profile}
      *
      */
     protected void
@@ -996,7 +1081,8 @@ public abstract class InPortBase extends PortBase {
 
 
     /**
-     * <p> InPort provider initialization </p>
+     * {@.ja InPort provider の初期化}
+     * {@.en InPort provider initialization}
      */
     protected void initProviders() {
         rtcout.println(Logbuf.TRACE, "initProviders()");
@@ -1050,7 +1136,8 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * <p> OutPort consumer initialization </p>
+     * {@.ja OutPort consumer の初期化}
+     * {@.en OutPort consumer initialization}
      */
     protected void initConsumers() {
         rtcout.println(Logbuf.TRACE, "iinitConsumers()");
@@ -1104,10 +1191,16 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * <p> InPort provider creation </p>
-     * <p> InPortProvider is created, </p>
-     * <p> and information is published to ConnectorProfile. </p>
-     * <p> null is returned if failing in creation. </p>
+     * {@.ja InPort provider の生成}
+     * {@.en InPort provider creation}
+     *
+     * <p> 
+     * {@.ja InPortProvider を生成し、情報を ConnectorProfile に公開する。}
+     * {@.en InPortProvider is created,
+     * and information is published to ConnectorProfile.}
+     * @return
+     *   {@.ja 生成に失敗した場合 0 を返す。}
+     *   {@.en null is returned if failing in creation.}
      */
     protected InPortProvider
     createProvider(ConnectorProfileHolder cprof, Properties prop) {
@@ -1150,9 +1243,15 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * <p> InPort provider creation </p>
-     * <p> OutPortConsumer is created. </p>
-     * <p> null is returned if failing in creation. </p>
+     * {@.ja OutPort consumer の生成}
+     * {@.en InPort provider creation}
+     *
+     * <p> 
+     * {@.ja OutPortConsumer を生成する。}
+     * {@.en OutPortConsumer is created.}
+     * @return
+     *   {@.ja 生成に失敗した場合 0 を返す。}
+     *   {@.en null is returned if failing in creation.}
      */
     protected OutPortConsumer
     createConsumer(final ConnectorProfileHolder cprof, Properties prop) {
@@ -1194,10 +1293,15 @@ public abstract class InPortBase extends PortBase {
         return null;
     }
     /**
-     * <p> InPortPushConnector creation </p>
-     * <p> Connector is created, </p>
-     * <p> preserves it in m_connectors. </p>
-     * <p> null is returned if failing in creation. </p>
+     * {@.ja InPortPushConnector の生成}
+     * {@.en InPortPushConnector creation}
+     * <p> 
+     * {@.ja Connector を生成し、生成が成功すれば m_connectors に保存する。}
+     * {@.en Connector is created,
+     * preserves it in m_connectors.}
+     * @return
+     *   {@.ja 生成に失敗した場合 0 を返す。}
+     *   {@.en null is returned if failing in creation. }
      */
     protected InPortConnector
     createConnector(ConnectorProfileHolder cprof, Properties prop,
@@ -1241,10 +1345,15 @@ public abstract class InPortBase extends PortBase {
         }
     }
     /**
-     * <p> InPortPullConnector creation </p>
-     * <p> Connector is created, </p>
-     * <p> preserves it in m_connectors. </p>
-     * <p> 0 is returned if failing in creation. </p>
+     * {@.ja InPortPullConnector の生成}
+     * {@.en InPortPullConnector creation}
+     * <p> 
+     * {@.ja Connector を生成し、生成が成功すれば m_connectors に保存する。}
+     * {@.en Connector is created,
+     * preserves it in m_connectors.}
+     * @return
+     *   {@.ja 生成に失敗した場合 0 を返す。}
+     *   {@.en 0 is returned if failing in creation.}
      */
     protected InPortConnector
     createConnector(final ConnectorProfileHolder cprof, Properties prop,
@@ -1289,6 +1398,12 @@ public abstract class InPortBase extends PortBase {
         }
     }
     /**
+     * {@.ja endian 設定を返す}
+     * {@.en Returns endian}.
+     *
+     * @return 
+     *   {@.ja m_littleEndian がlittleの場合true、bigの場合false を返す。}
+     *   {@.en Returns the endian setting.}
      * 
      */
     public boolean isLittleEndian(){
