@@ -27,8 +27,12 @@ import RTC.ConnectorProfileHolder;
 import RTC.ReturnCode_t;
 
 /**
- * <p>出力ポートのベース実装クラスです。
- * Publisherの登録やPublisherへのデータ更新通知などの実装を提供します。</p>
+ * {@.ja 出力ポートのベース実装クラス}
+ * {@.en Base implementation class for OutPort}
+ * <p>
+ * {@.ja Publisherの登録やPublisherへのデータ更新通知などの実装を提供する。}
+ * {@.en The implementation such as the registration of Pubilsher and
+ * notification to Publisher.}
  */
 public abstract class OutPortBase extends PortBase {
 
