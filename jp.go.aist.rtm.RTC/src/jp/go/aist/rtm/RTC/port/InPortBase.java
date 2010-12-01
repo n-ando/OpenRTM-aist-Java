@@ -1399,7 +1399,7 @@ public abstract class InPortBase extends PortBase {
     }
     /**
      * {@.ja endian 設定を返す}
-     * {@.en Returns endian}.
+     * {@.en Returns endian}
      *
      * @return 
      *   {@.ja m_littleEndian がlittleの場合true、bigの場合false を返す。}
