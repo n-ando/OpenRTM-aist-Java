@@ -359,7 +359,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
     }
     /**
      * {@.ja OutPortCorbaCdrConsumer を生成する}
-     * {@.en Creats OutPortCorbaCdrProvider}
+     * {@.en Creats OutPortCorbaCdrConsumer}
      * 
      * @return 
      *   {@.ja 生成されたOutPortConsumer}
@@ -370,12 +370,6 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
     public OutPortConsumer creator_() {
         return new OutPortCorbaCdrConsumer();
     }
-    /**
-     * <p> destructor_ </p>
-     * 
-     * @param obj    The target instances for destruction
-     *
-     */
     /**
      * {@.ja Object を破棄する}
      * {@.en Destructs Object}
