@@ -1043,6 +1043,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         for(int i=0, len=m_ecMine.value.length; i < len; ++i) {
             if (m_ecMine.value[i] == null) {
                 m_ecMine.value[i] = (ExecutionContextService)ecs._duplicate();
+                onAttachExecutionContext(i);
                 return i;
             }
         }
@@ -1050,8 +1051,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
         // no space in the list, push back ec to the last.
         CORBA_SeqUtil.push_back(m_ecMine, 
                                 (ExecutionContextService)ecs._duplicate());
-
-        return (m_ecMine.value.length - 1);
+        int ec_id = (m_ecMine.value.length - 1);
+        onDetachExecutionContext(ec_id);
+        return ec_id;
     }
 
 
@@ -1164,7 +1166,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
         for(int i=0, len=m_ecOther.value.length; i < len; ++i) {
             if (m_ecOther.value[i] == null) {
                 m_ecOther.value[i] = (ExecutionContextService)ecs._duplicate();
-                return (i + ECOTHER_OFFSET);
+                int ec_id = (i + ECOTHER_OFFSET);
+                onAttachExecutionContext(ec_id);
+                return (ec_id);
             }
         }
 
@@ -1172,7 +1176,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
         CORBA_SeqUtil.push_back(m_ecOther, 
                                 (ExecutionContextService)ecs._duplicate());
     
-        return ((m_ecOther.value.length - 1) + ECOTHER_OFFSET);
+        int ec_id =  (m_ecOther.value.length - 1) + ECOTHER_OFFSET;
+        onAttachExecutionContext(ec_id);
+        return ec_id;
 
     }
     /**
@@ -1259,7 +1265,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            preOnInitialize(0);
             ret = onInitialize();
+            postOnInitialize(0, ret);
             String active_set;
             active_set 
                 = m_properties.getProperty("configuration.active_config",
@@ -1300,7 +1308,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            preOnFinalize(0);
             ret = onFinalize();
+            postOnFinalize(0, ret);
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1336,7 +1346,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            preOnStartup(ec_id);
             ret = onStartup(ec_id);
+            postOnStartup(ec_id, ret);
         } catch (Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1371,7 +1383,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            preOnShutdown(ec_id);
             ret = onShutdown(ec_id);
+            postOnShutdown(ec_id, ret);
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1405,9 +1419,11 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            preOnActivated(ec_id);
             m_configsets.update();
             ret = onActivated(ec_id);
             m_portAdmin.activatePorts();
+            postOnActivated(ec_id, ret);
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1442,8 +1458,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            preOnDeactivated(ec_id);
             m_portAdmin.deactivatePorts();
             ret = onDeactivated(ec_id);
+            postOnDeactivated(ec_id, ret);
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1483,7 +1501,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            preOnAborting(ec_id);
             ret = onAborting(ec_id);
+            postOnAborting(ec_id, ret);
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1536,8 +1556,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            preOnError(ec_id);
             ret = onError(ec_id);
             m_configsets.update();
+            postOnError(ec_id, ret);
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1579,7 +1601,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            preOnReset(ec_id);
             ret = onReset(ec_id);
+            postOnReset(ec_id, ret);
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1607,6 +1631,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            preOnExecute(ec_id);
             if(m_readAll){
                 readAll();
             }
@@ -1614,6 +1639,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             if(m_writeAll){
                 writeAll();
             }
+            postOnExecute(ec_id, ret);
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1668,8 +1694,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret =ReturnCode_t.RTC_ERROR;
         try {
+            preOnStateUpdate(ec_id);
             ret = onStateUpdate(ec_id);
             m_configsets.update();
+            postOnStateUpdate(ec_id, ret);
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -1719,7 +1747,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
+            preOnRateChanged(ec_id);
             ret = onRateChanged(ec_id);
+            postOnRateChanged(ec_id, ret);
         } catch(Exception ex) {
             return ReturnCode_t.RTC_ERROR;
         }
@@ -2639,6 +2669,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         rtcout.println(Logbuf.TRACE, "addPort(PortBase)");
 
         port.setOwner(this.getObjRef());
+        onAddPort(port.getPortProfile());
 
         return m_portAdmin.addPort(port);
     }
@@ -3077,6 +3108,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public boolean removePort(PortBase port){
         rtcout.println(Logbuf.TRACE, "removePort(PortBase)");
+        onRemovePort(port.getPortProfile());
         return m_portAdmin.removePort(port);
     }
 
@@ -3115,6 +3147,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public boolean removePort(CorbaPort port) {
         rtcout.println(Logbuf.TRACE, "removePort(CorbaPortort)");
+        onRemovePort(port.getPortProfile());
         return m_portAdmin.removePort((PortBase)port);
     }
 
@@ -3426,7 +3459,872 @@ public class RTObject_impl extends DataFlowComponentPOA {
             m_eclist.clear();
         }
     }
+    /**
+     * {@.ja PreComponentActionListener リスナを追加する}
+     * {@.en Adding PreComponentAction type listener}
+     * <p>
+     * {@.ja ComponentAction 実装関数の呼び出し直前のイベントに関連する各種リ
+     * スナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> PRE_ON_INITIALIZE:    onInitialize 直前
+     * <li> PRE_ON_FINALIZE:      onFinalize 直前
+     * <li> PRE_ON_STARTUP:       onStartup 直前
+     * <li> PRE_ON_SHUTDOWN:      onShutdown 直前
+     * <li> PRE_ON_ACTIVATED:     onActivated 直前
+     * <li> PRE_ON_DEACTIVATED:   onDeactivated 直前
+     * <li> PRE_ON_ABORTED:       onAborted 直前
+     * <li> PRE_ON_ERROR:         onError 直前
+     * <li> PRE_ON_RESET:         onReset 直前
+     * <li> PRE_ON_EXECUTE:       onExecute 直前
+     * <li> PRE_ON_STATE_UPDATE:  onStateUpdate 直前
+     * </ul>
+     *
+     * リスナは PreComponentActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PreComponentActionListener::operator()(int ec_id)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePreComponentActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to ComponentActions
+     * pre events.
+     * The following listener types are available.
+     * <ul>
+     * <li> PRE_ON_INITIALIZE:    before onInitialize
+     * <li> PRE_ON_FINALIZE:      before onFinalize
+     * <li> PRE_ON_STARTUP:       before onStartup
+     * <li> PRE_ON_SHUTDOWN:      before onShutdown
+     * <li> PRE_ON_ACTIVATED:     before onActivated
+     * <li> PRE_ON_DEACTIVATED:   before onDeactivated
+     * <li> PRE_ON_ABORTED:       before onAborted
+     * <li> PRE_ON_ERROR:         before onError
+     * <li> PRE_ON_RESET:         before onReset
+     * <li> PRE_ON_EXECUTE:       before onExecute
+     * <li> PRE_ON_STATE_UPDATE:  before onStateUpdate
+     * </ul>
+     *
+     * Listeners should have the following function operator().
+     *
+     * PreComponentActionListener::operator()(int ec_id)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePreComponentActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     * 
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
+     *   {@.en A flag for automatic listener destruction}
+     */
+    /*
+    typedef PreComponentActionListener PreCompActionListener;
+    typedef PreComponentActionListenerType PreCompActionListenerType;
+    */
+    public void 
+    addPreComponentActionListener(int listener_type,
+                                  PreComponentActionListener listener,
+                                  boolean autoclean) {
+        if (listener_type < PreComponentActionListenerType.PRE_COMPONENT_ACTION_LISTENER_NUM ) {
+            rtcout.println(Logbuf.TRACE,
+                    "addPreComponentActionListener("
+                    +PreComponentActionListenerType.toString(listener_type)
+                    +")");
+            m_actionListeners.
+              preaction_[listener_type].addObserver(listener);
+            return;
+        }
+        rtcout.println(Logbuf.ERROR, 
+                    "addPreComponentActionListener(): Invalid listener type.");
+        return;
+    }
+    public void 
+    addPreComponentActionListener(int listener_type,
+                                  PreComponentActionListener listener) {
+        this.addPreComponentActionListener(listener_type,listener,true);
+    }
 
+
+    /*
+    template <class Listener>
+    PreComponentActionListener*
+    addPortComponentActionListener(int listener_type,
+                                   Listener& obj,
+                                   void (Listener::*memfunc)(int ec_id))
+    {
+      class Noname
+        : public PreComponentActionListener
+      {
+      public:
+        Noname(Listener& obj, void (Listener::*memfunc)(int))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        void operator()(int ec_id)
+        {
+          (m_obj.*m_memfunc)(ec_id);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(int ec_id);
+        Memfunc& m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addPreComponentActionListener(listener_type, listener, true);
+      return listener;
+    }
+    */
+
+    /**
+     * {@.ja PreComponentActionListener リスナを削除する}
+     * {@.en Removing PreComponentAction type listener}
+     * <p>
+     * {@.ja 設定した各種リスナを削除する。}
+     * {@.en This operation removes a specified listener.}
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     */
+    public void 
+    removePreComponentActionListener( int listener_type,
+                                      PreComponentActionListener listener){
+
+        if (listener_type < PreComponentActionListenerType.PRE_COMPONENT_ACTION_LISTENER_NUM ) {
+            rtcout.println(Logbuf.TRACE,
+                    "removePreComponentActionListener("
+                    +PreComponentActionListenerType.toString(listener_type)
+                    +")");
+            m_actionListeners.
+              preaction_[listener_type].deleteObserver(listener);
+            return;
+        }
+        rtcout.println(Logbuf.ERROR, 
+                "removePreComponentActionListener(): Invalid listener type.");
+        return;
+    }
+
+    /**
+     * {@.ja PostComponentActionListener リスナを追加する}
+     * {@.en Adding PostComponentAction type listener}
+     * <p>
+     * {@.ja ComponentAction 実装関数の呼び出し直後のイベントに関連する各種リ
+     * スナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> POST_ON_INITIALIZE:    onInitialize 直後
+     * <li> POST_ON_FINALIZE:      onFinalize 直後
+     * <li> POST_ON_STARTUP:       onStartup 直後
+     * <li> POST_ON_SHUTDOWN:      onShutdown 直後
+     * <li> POST_ON_ACTIVATED:     onActivated 直後
+     * <li> POST_ON_DEACTIVATED:   onDeactivated 直後
+     * <li> POST_ON_ABORTED:       onAborted 直後
+     * <li> POST_ON_ERROR:         onError 直後
+     * <li> POST_ON_RESET:         onReset 直後
+     * <li> POST_ON_EXECUTE:       onExecute 直後
+     * <li> POST_ON_STATE_UPDATE:  onStateUpdate 直後
+     * </ul>
+     *
+     * リスナは PostComponentActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PostComponentActionListener::operator()(int ec_id, ReturnCode_t ret)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePostComponentActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {This operation adds certain listeners related to ComponentActions
+     * post events.
+     * The following listener types are available.
+     * <ul>
+     * <li> POST_ON_INITIALIZE:    after onInitialize
+     * <li> POST_ON_FINALIZE:      after onFinalize
+     * <li> POST_ON_STARTUP:       after onStartup
+     * <li> POST_ON_SHUTDOWN:      after onShutdown
+     * <li> POST_ON_ACTIVATED:     after onActivated
+     * <li> POST_ON_DEACTIVATED:   after onDeactivated
+     * <li> POST_ON_ABORTED:       after onAborted
+     * <li> POST_ON_ERROR:         after onError
+     * <li> POST_ON_RESET:         after onReset
+     * <li> POST_ON_EXECUTE:       after onExecute
+     * <li> POST_ON_STATE_UPDATE:  after onStateUpdate
+     * </ul>
+     *
+     * Listeners should have the following function operator().
+     *
+     * PostComponentActionListener::operator()(int ec_id, ReturnCode_t ret)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePostComponentActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
+     *   {@.en A flag for automatic listener destruction}
+     */
+    /*
+    typedef PostComponentActionListener PostCompActionListener;
+    typedef PostComponentActionListenerType PostCompActionListenerTypec;
+    */
+    public void 
+    addPostComponentActionListener( int listener_type,
+                                    PostComponentActionListener listener,
+                                    boolean autoclean){
+        if (listener_type < PostComponentActionListenerType.POST_COMPONENT_ACTION_LISTENER_NUM) {
+            rtcout.println(Logbuf.TRACE,
+                    "addPostComponentActionListener("
+                    +PostComponentActionListenerType.toString(listener_type)
+                    +")");
+            m_actionListeners.postaction_[listener_type].addObserver(listener);
+            return;
+        }
+        rtcout.println(Logbuf.ERROR, 
+                    "addPostComponentActionListener(): Invalid listener type.");
+        return;
+    }
+    public void 
+    addPostComponentActionListener( int listener_type,
+                                    PostComponentActionListener listener){
+        this.addPostComponentActionListener(listener_type,listener,true);
+    }
+    /*
+    template <class Listener>
+    PostComponentActionListener*
+    addPostComponentActionListener(int listener_type,
+                                   Listener& obj,
+                                   void (Listener::*memfunc)(int ec_id,
+                                                             ReturnCode_t ret))
+    {
+      class Noname
+        : public PostComponentActionListener
+      {
+      public:
+        Noname(Listener& obj, void (Listener::*memfunc)(int, ReturnCode_t))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        void operator()(int ec_id, ReturnCode_t ret)
+        {
+          (m_obj.*m_memfunc)(ec_id, ret);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(int ec_id, ReturnCode_t ret);
+        Memfunc& m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addPostComponentActionListener(listener_type, listener, true);
+      return listener;
+    }
+    */
+
+    /**
+     * {@.ja PostComponentActionListener リスナを削除する}
+     * {@.en Removing PostComponentAction type listener}
+     * <p>
+     * {@.ja 設定した各種リスナを削除する。}
+     * {@.en This operation removes a specified listener.}
+     * 
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     */
+    public void 
+    removePostComponentActionListener( int listener_type,
+                                       PostComponentActionListener listener){
+        if (listener_type < PostComponentActionListenerType.POST_COMPONENT_ACTION_LISTENER_NUM) {
+            rtcout.println(Logbuf.TRACE,
+                    "removePostComponentActionListener("
+                    +PostComponentActionListenerType.toString(listener_type)
+                    +")");
+            m_actionListeners.postaction_[listener_type].deleteObserver(listener);
+            return;
+        }
+        rtcout.println(Logbuf.ERROR, 
+                "removePostComponentActionListener(): Invalid listener type.");
+        return;
+    }
+
+
+
+    /**
+     * {@.ja PortActionListener リスナを追加する}
+     * {@.en Adding PortAction type listener}
+     * <p>
+     * {@.ja Portの追加、削除時にコールバックされる各種リスナを設定する。
+     * 
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> ADD_PORT:    Port追加時
+     * <li> REMOVE_PORT: Port削除時
+     *
+     * リスナは PortActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PortActionListener::operator()(PortProfile& pprof)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePortActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to ComponentActions
+     * post events.
+     * The following listener types are available.
+     * <ul>
+     * <li> ADD_PORT:    At adding Port
+     * <li> REMOVE_PORT: At removing Port
+     * </ul>
+     * Listeners should have the following function operator().
+     *
+     * PortActionListener::operator()(RTC::PortProfile pprof)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePortActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
+     *   {@.en A flag for automatic listener destruction}
+     *
+     */
+    public void 
+    addPortActionListener(int listener_type,
+                          PortActionListener listener,
+                          boolean autoclean){
+        if (listener_type < PortActionListenerType.PORT_ACTION_LISTENER_NUM) {
+            rtcout.println(Logbuf.TRACE,
+                    "addPortActionListener("
+                    +PortActionListenerType.toString(listener_type)
+                    +")");
+            m_actionListeners.portaction_[listener_type].addObserver(listener);
+            return;
+        }
+        rtcout.println(Logbuf.ERROR, 
+                    "addPortActionListener(): Invalid listener type.");
+        return;
+    }
+    public void 
+    addPortActionListener(int listener_type,
+                          PortActionListener listener){
+        this.addPortActionListener(listener_type,listener,true);
+    }
+    
+    /*
+    template <class Listener>
+    PortActionListener*
+    addPortActionListener(int listener_type,
+                          Listener& obj,
+                          void (Listener::*memfunc)(const RTC::PortProfile&))
+    {
+      class Noname
+        : public PortActionListener
+      {
+      public:
+        Noname(Listener& obj, void (Listener::*memfunc)(int))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        void operator()(const RTC::PortProfile& pprofile)
+        {
+          (m_obj.*m_memfunc)(pprofile);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(const RTC::PortProfile&);
+        Memfunc& m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addPortActionListener(listener_type, listener, true);
+      return listener;
+    }
+    }
+    */
+  
+
+    /**
+     * {@.ja PortActionListener リスナを削除する}
+     * {@.en Removing PortAction type listener}
+     * <p>
+     * {@.ja 設定した各種リスナを削除する。}
+     * {@.en This operation removes a specified listener.}
+     * 
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     */
+    public void 
+    removePortActionListener(int listener_type,
+                             PortActionListener listener)
+    {
+        if (listener_type < PortActionListenerType.PORT_ACTION_LISTENER_NUM) {
+            rtcout.println(Logbuf.TRACE,
+                    "removePortActionListener("
+                    +PortActionListenerType.toString(listener_type)
+                    +")");
+            m_actionListeners.portaction_[listener_type].deleteObserver(listener);
+            return;
+        }
+        rtcout.println(Logbuf.ERROR, 
+                    "removePortActionListener(): Invalid listener type.");
+        return;
+    }
+
+
+
+    /**
+     * {@.ja ExecutionContextActionListener リスナを追加する}
+     * {@.en Adding ExecutionContextAction type listener}
+     * <p>
+     * {@.ja ExecutionContextの追加、削除時にコールバックされる各種リスナを設定する。
+     * 
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> ATTACH_EC:    ExecutionContext アタッチ時
+     * <li> DETACH_EC:    ExecutionContext デタッチ時
+     * </ul>
+     * リスナは ExecutionContextActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * ExecutionContextActionListener::operator()(int　ec_id)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removeExecutionContextActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to ComponentActions
+     * post events.
+     * The following listener types are available.
+     * <ul>
+     * <li> ADD_PORT:    At adding ExecutionContext
+     * <li> REMOVE_PORT: At removing ExecutionContext
+     * </ul>
+     * Listeners should have the following function operator().
+     *
+     * ExecutionContextActionListener::operator()(int ec_id)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removeExecutionContextActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
+     *   {@.en A flag for automatic listener destruction}
+     *
+     *
+     */
+    /*
+    typedef ExecutionContextActionListenerType ECActionListenerType;
+    typedef ExecutionContextActionListener ECActionListener;
+    */
+    public void 
+    addExecutionContextActionListener( int listener_type,
+                                       ExecutionContextActionListener listener,
+                                       boolean autoclean)
+    {
+        if (listener_type < ExecutionContextActionListenerType.EC_ACTION_LISTENER_NUM) {
+            rtcout.println(Logbuf.TRACE,
+                    "addExecutionContextActionListener("
+                    +ExecutionContextActionListenerType.toString(listener_type)
+                    +")");
+            m_actionListeners.ecaction_[listener_type].addObserver(listener);
+            return;
+        }
+        rtcout.println(Logbuf.ERROR, 
+                    "addExecutionContextActionListener(): Invalid listener type.");
+        return;
+    }
+    public void 
+    addExecutionContextActionListener( int listener_type,
+                                       ExecutionContextActionListener listener)
+    {
+        this.addExecutionContextActionListener(listener_type,listener, true);
+    }
+    /*
+    template <class Listener>
+    ExecutionContextActionListener*
+    addExecutionContextActionListener( int listener_type,
+                                       Listener& obj,
+                                       void (Listener::*memfunc)(int))
+    {
+      class Noname
+        : public ExecutionContextActionListener
+      {
+      public:
+        Noname(Listener& obj, void (Listener::*memfunc)(int))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        void operator()(int ec_id)
+        {
+          (m_obj.*m_memfunc)(ec_id);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(int);
+        Memfunc& m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addExecutionContextActionListener(listener_type, listener, true);
+      return listener;
+    }
+    */
+    
+
+    /**
+     * {@.ja ExecutionContextActionListener リスナを削除する}
+     * {@.en @brief Removing ExecutionContextAction type listener}
+     * <p>
+     * {@.ja 設定した各種リスナを削除する。}
+     * {@.en This operation removes a specified listener.}
+     * 
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     *
+     */
+    public void 
+    removeExecutionContextActionListener( int listener_type,
+                                     ExecutionContextActionListener listener)
+    {
+        if (listener_type < ExecutionContextActionListenerType.EC_ACTION_LISTENER_NUM) {
+            rtcout.println(Logbuf.TRACE,
+                    "removeExecutionContextActionListener("
+                    +ExecutionContextActionListenerType.toString(listener_type)
+                    +")");
+            m_actionListeners.ecaction_[listener_type].deleteObserver(listener);
+            return;
+        }
+        rtcout.println(Logbuf.ERROR, 
+                    "removeexecutionContextActionListener(): Invalid listener type.");
+        return;
+    }
+
+
+    /**
+     * {@.ja ConfigurationParamListener を追加する}
+     * {@.en Adding ConfigurationParamListener}
+     * <p>
+     * {@.ja update(const char* config_set, const char* config_param) が呼ばれた際に
+     * コールされるリスナ ConfigurationParamListener を追加する。
+     * type には現在のところ ON_UPDATE_CONFIG_PARAM のみが入る。}
+     * {@.en This function adds a listener object which is called when
+     * update(const char* config_set, const char* config_param) is
+     * called. In the type argument, currently only
+     * ON_UPDATE_CONFIG_PARAM is allowed.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationParamListenerType型の値。
+     *         ON_UPDATE_CONFIG_PARAM がある。}
+     *   {@.en ConfigurationParamListenerType value
+     *         ON_UPDATE_CONFIG_PARAM is only allowed.}
+     * @param listener 
+     *   {@.ja ConfigurationParamListener 型のリスナオブジェクト。}
+     *   {@.en ConfigurationParamListener listener object.}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトを自動で削除するかどうかのフラグ}
+     *   {@.en a flag whether if the listener object autocleaned.}
+     *
+     */
+    /*
+    void addConfigurationParamListener(ConfigurationParamListenerType type,
+                                       ConfigurationParamListener* listener,
+                                       boolean autoclean = true)
+    {
+    }
+    */
+    /*
+    template <class Listener>
+    ConfigurationParamListener*
+    addConfigurationParamListener(int listener_type,
+                                  Listener& obj,
+                                  void (Listener::*memfunc)(const char*,
+                                                            const char*))
+    {
+      class Noname
+        : public ConfigurationParamListener
+      {
+      public:
+        Noname(Listener& obj,
+               void (Listener::*memfunc)(const char*, const char*))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        void operator()(const char* config_set_name,
+                        const char* config_param_name)
+        {
+          (m_obj.*m_memfunc)(config_set_name, config_param_name);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(const char*, const char*);
+        Memfunc& m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addConfigurationParamListener(listener_type, listener, true);
+      return listener;
+    }
+    */
+
+    /**
+     * {@.ja ConfigurationParamListener を削除する}
+     * {@.en Removing ConfigurationParamListener}
+     * <p>
+     * {@.ja addConfigurationParamListener で追加されたリスナオブジェクトを削除する。}
+     * {@.en This function removes a listener object which is added by
+     * addConfigurationParamListener() function.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationParamListenerType型の値。
+     *         ON_UPDATE_CONFIG_PARAM がある。}
+     *   {@.en ConfigurationParamListenerType value
+     *         ON_UPDATE_CONFIG_PARAM is only allowed.}
+     * @param listener 
+     *   {@.ja 与えたリスナオブジェクトへのポインタ}
+     *   {@.en a pointer to ConfigurationParamListener listener object.}
+     */
+    /*
+    void removeConfigurationParamListener(ConfigurationParamListenerType type,
+                                          ConfigurationParamListener* listener)
+    {
+    }
+    */
+    /**
+     * {@.ja ConfigurationSetListener を追加する}
+     * {@.en Adding ConfigurationSetListener }
+     * <p>
+     * {@.ja ConfigurationSet が更新されたときなどに呼ばれるリスナ
+     * ConfigurationSetListener を追加する。設定可能なイベントは以下の
+     * 2種類がある。
+     * <ul>
+     * <li> ON_SET_CONFIG_SET: setConfigurationSetValues() で
+     *                      ConfigurationSet に値が設定された場合。</li>
+     * <li> ON_ADD_CONFIG_SET: addConfigurationSet() で新しい
+     *                      ConfigurationSet が追加された場合。</li></ul>}
+     * {@.en This function add a listener object which is called when
+     * ConfigurationSet is updated. Available events are the followings.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationSetListenerType型の値。}
+     *   {@.en ConfigurationSetListenerType value}
+     * @param listener 
+     *   {@.ja ConfigurationSetListener 型のリスナオブジェクト。}
+     *   {@.en ConfigurationSetListener listener object.}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトを自動で削除するかどうかのフラグ}
+     *   {@.en a flag whether if the listener object autocleaned.}
+     */
+    /*
+    void addConfigurationSetListener(ConfigurationSetListenerType type,
+                                     ConfigurationSetListener* listener,
+                                     boolean autoclean = true)
+    {
+    
+    }
+    */
+    /*
+    template <class Listener>
+    ConfigurationSetListener*
+    addConfigurationSetListener(int listener_type,
+                                Listener& obj,
+                                void (Listener::*memfunc)
+                                (const coil::Properties& config_set))
+    {
+      class Noname
+        : public ConfigurationSetListener
+      {
+      public:
+        Noname(Listener& obj,
+               void (Listener::*memfunc)(const coil::Properties& config_set))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        virtual void operator()(const coil::Properties& config_set)
+        {
+          (m_obj.*m_memfunc)(config_set);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(const coil::Properties& config_set);
+        Memfunc& m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addConfigurationSetListener(listener_type, listener, true);
+      return listener;
+    }
+    */
+
+    /**
+     * {@.ja ConfigurationSetListener を削除する}
+     * {@.en Removing ConfigurationSetListener}
+     * <p>
+     * {@.ja addConfigurationSetListener で追加されたリスナオブジェクトを削除する。}
+     * {@.en This function removes a listener object which is added by
+     * addConfigurationSetListener() function.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationSetListenerType型の値。}
+     *   {@.en ConfigurationSetListenerType value}
+     * @param listener
+     *   {@.ja 与えたリスナオブジェクトへのポインタ}
+     *   {@.en a pointer to ConfigurationSetListener listener object.}
+     *
+     */
+    /*
+    void removeConfigurationSetListener(ConfigurationSetListenerType type,
+                                        ConfigurationSetListener* listener)
+    {
+    ;
+    }
+    */
+    /**
+     * {@.ja ConfigurationSetNameListener を追加する}
+     * {@.en Adding ConfigurationSetNameListener}
+     * <p>
+     * {@.ja ConfigurationSetName が更新されたときなどに呼ばれるリスナ
+     * ConfigurationSetNameListener を追加する。設定可能なイベントは以下の
+     * 3種類がある。
+     * <ul>
+     * <li> ON_UPDATE_CONFIG_SET: ある ConfigurationSet がアップデートされた
+     * <li> ON_REMOVE_CONFIG_SET: ある ConfigurationSet が削除された
+     * <li> ON_ACTIVATE_CONFIG_SET: ある ConfigurationSet がアクティブ化された
+     * </ul>}
+     * {@.en This function add a listener object which is called when
+     * ConfigurationSetName is updated. Available events are the followings.
+     * <ul>
+     * <li> ON_UPDATE_CONFIG_SET: A ConfigurationSet has been updated.
+     * <li> ON_REMOVE_CONFIG_SET: A ConfigurationSet has been deleted.
+     * <li> ON_ACTIVATE_CONFIG_SET: A ConfigurationSet has been activated.
+     * </ul>}
+     * @param type 
+     *   {@.ja ConfigurationSetNameListenerType型の値。}
+     *   {@.en ConfigurationSetNameListenerType value}
+     * @param listener 
+     *   {@.ja ConfigurationSetNameListener 型のリスナオブジェクト。}
+     *   {@.en ConfigurationSetNameListener listener object.}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトを自動で削除するかどうかのフラグ}
+     *   {@.en a flag whether if the listener object autocleaned.}
+     */
+    /*
+    void 
+    addConfigurationSetNameListener(ConfigurationSetNameListenerType type,
+                                    ConfigurationSetNameListener* listener,
+                                    boolean autoclean = true)
+    {
+    }
+    */
+    /*
+    template <class Listener>
+    ConfigurationSetNameListener*
+    addConfigurationSetNameListener(ConfigurationSetNameListenerType type,
+                                    Listener& obj,
+                                    void (Listener::*memfunc)(const char*))
+    {
+      class Noname
+        : public ConfigurationSetNameListener
+      {
+      public:
+        Noname(Listener& obj, void (Listener::*memfunc)(const char*))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        virtual void operator()(const char* config_set_name)
+        {
+          (m_obj.*m_memfunc)(config_set_name);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(const char*);
+        Memfunc& m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addConfigurationSetNameListener(type, listener, true);
+      return listener;
+    }
+    */
+    /**
+     * {@.ja  ConfigurationSetNameListener を削除する}
+     * {@.en  Removing ConfigurationSetNameListener}
+     * <p> 
+     * {@.ja addConfigurationSetNameListener で追加されたリスナオブジェクトを
+     * 削除する。}
+     * {@.en This function removes a listener object which is added by
+     * addConfigurationSetNameListener() function.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationSetNameListenerType型の値。
+     *         ON_UPDATE_CONFIG_PARAM がある。}
+     *   {@.en ConfigurationSetNameListenerType value
+     *         ON_UPDATE_CONFIG_PARAM is only allowed.}
+     * @param listener 
+     *   {@.ja 与えたリスナオブジェクトへのポインタ}
+     *   {@.en a pointer to ConfigurationSetNameListener
+     *             listener object.}
+     * 
+     */
+    /*
+    void
+    removeConfigurationSetNameListener(ConfigurationSetNameListenerType type,
+                                       ConfigurationSetNameListener* listener)
+    {
+     ;
+    }
+    */
     /**
      * {@.ja RTC を終了する。}
      * {@.en Shutdown RTC}
@@ -3452,7 +4350,147 @@ public class RTObject_impl extends DataFlowComponentPOA {
         if( m_pManager != null) {
             m_pManager.cleanupComponent(this);
         }
-   }
+    }
+    protected void preOnInitialize(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_INITIALIZE].notify(ec_id);
+    }
+
+    protected void preOnFinalize(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_FINALIZE].notify(ec_id);
+    }
+
+    protected void preOnStartup(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_STARTUP].notify(ec_id);
+    }
+
+    protected void preOnShutdown(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_SHUTDOWN].notify(ec_id);
+    }
+
+    protected void preOnActivated(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_ACTIVATED].notify(ec_id);
+    }
+
+    protected void preOnDeactivated(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_DEACTIVATED].notify(ec_id);
+    }
+
+    protected void preOnAborting(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_ABORTING].notify(ec_id);
+    }
+
+    protected void preOnError(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_ERROR].notify(ec_id);
+    }
+
+    protected void preOnReset(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_RESET].notify(ec_id);
+    }
+
+    protected void preOnExecute(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_EXECUTE].notify(ec_id);
+    }
+
+    protected void preOnStateUpdate(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_STATE_UPDATE].notify(ec_id);
+    }
+
+    protected void preOnRateChanged(int ec_id)
+    {
+      m_actionListeners.preaction_[PreComponentActionListenerType.PRE_ON_RATE_CHANGED].notify(ec_id);
+    }
+
+    protected void postOnInitialize(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_INITIALIZE].notify(ec_id, ret);
+    }
+
+    protected void postOnFinalize(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_FINALIZE].notify(ec_id, ret);
+    }
+
+    protected void postOnStartup(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_STARTUP].notify(ec_id, ret);
+    }
+
+    protected void postOnShutdown(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_SHUTDOWN].notify(ec_id, ret);
+    }
+
+    protected void postOnActivated(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_ACTIVATED].notify(ec_id, ret);
+    }
+
+    protected void postOnDeactivated(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_DEACTIVATED].notify(ec_id, ret);
+    }
+
+    protected void postOnAborting(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_ABORTING].notify(ec_id, ret);
+    }
+
+    protected void postOnError(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_ERROR].notify(ec_id, ret);
+    }
+
+    protected void postOnReset(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_RESET].notify(ec_id, ret);
+    }
+
+    protected void postOnExecute(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_EXECUTE].notify(ec_id, ret);
+    }
+
+    protected void postOnStateUpdate(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_STATE_UPDATE].notify(ec_id, ret);
+    }
+
+    protected void postOnRateChanged(int ec_id, ReturnCode_t ret)
+    {
+      m_actionListeners.postaction_[PostComponentActionListenerType.POST_ON_RATE_CHANGED].notify(ec_id, ret);
+    }
+
+    protected void onAddPort(final PortProfile pprof)
+    {
+      m_actionListeners.portaction_[PortActionListenerType.ADD_PORT].notify(pprof);
+    }
+    
+    protected void onRemovePort(final PortProfile pprof)
+    {
+      m_actionListeners.portaction_[PortActionListenerType.REMOVE_PORT].notify(pprof);
+    }
+    
+    protected void onAttachExecutionContext(int ec_id)
+    {
+      m_actionListeners.ecaction_[ExecutionContextActionListenerType.ATTACH_EC].notify(ec_id);
+    }
+    
+    protected void onDetachExecutionContext(int ec_id)
+    {
+      m_actionListeners.ecaction_[ExecutionContextActionListenerType.DETACH_EC].notify(ec_id);
+    }
+    
 
     /**
      * {@.ja マネージャオブジェクト}
@@ -3798,4 +4836,13 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * {@.en false:End when error occurs during writeAll().}
      */
     protected boolean m_writeAllCompletion;
+    /**
+     * {@.ja ComponentActionListenerホルダ}
+     * {@.en ComponentActionListener holder}
+     * <p>
+     * {@.ja ComponentActionListenrを保持するホルダ}
+     * {@.en Holders of ComponentActionListeners}
+     *
+     */
+    protected ComponentActionListeners m_actionListeners = new ComponentActionListeners();
 }

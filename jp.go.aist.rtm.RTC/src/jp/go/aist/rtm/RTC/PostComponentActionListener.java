@@ -70,7 +70,6 @@ public abstract class PostComponentActionListener implements Observer{
      * {@.ja PostComponentActionListener のコールバック関数}
      * {@.en This is a the Callback function for PostComponentActionListener.}
      *
-     * @endif
      */
     public abstract void operator(final int exec_handle, RTC.ReturnCode_t ret);
 }

@@ -71,7 +71,6 @@ public abstract class PreComponentActionListener implements Observer{
      * {@.ja PreComponentActionListener のコールバック関数}
      * {@.en This is a the Callback function for PreComponentActionListener.}
      *
-     * @endif
      */
     public abstract void operator(final int exec_handle);
 }
