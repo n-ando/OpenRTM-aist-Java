@@ -14,9 +14,9 @@ import jp.go.aist.rtm.RTC.util.Properties;
    */
 
 public class ConfigurationSetNameListenerHolder extends Observable{
-    public void notify(final Properties config_set) {
+    public void notify(final String config_set_name) {
         super.setChanged();
-        super.notifyObservers(config_set);
+        super.notifyObservers(config_set_name);
         super.clearChanged();
     }
 }

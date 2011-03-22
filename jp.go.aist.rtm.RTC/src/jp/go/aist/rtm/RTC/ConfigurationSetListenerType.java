@@ -14,10 +14,12 @@ package jp.go.aist.rtm.RTC;
    * </p>
    */
 public class ConfigurationSetListenerType {
-    public static final int ON_ADD_CONFIG_SET = 0;
-    public static final int CONFIG_SET_LISTENER_NUM = 1;
+    public static final int ON_SET_CONFIG_SET = 0;
+    public static final int ON_ADD_CONFIG_SET = 1;
+    public static final int CONFIG_SET_LISTENER_NUM = 2;
 
     private static final String[] TypeString = {
+        "ON_SET_CONFIG_SET",
         "ON_ADD_CONFIG_SET",
         "CONFIG_SET_LISTENER_NUM",
     };

@@ -31,7 +31,7 @@ import jp.go.aist.rtm.RTC.util.Properties;
 
 public abstract class ConfigurationSetNameListener implements Observer{
     public void update(Observable o, Object obj) {
-           Properties arg = (Properties)obj;
+           String arg = (String)obj;
            operator(arg);
     }
     /**
@@ -42,5 +42,5 @@ public abstract class ConfigurationSetNameListener implements Observer{
      * {@.en This is a the Callback function for ConfigurationSetNameListener.}
      *
      */
-    public abstract void operator(final Properties config_set);
+    public abstract void operator(final String config_set_name);
 }
