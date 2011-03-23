@@ -43,7 +43,7 @@ public class ConfigurationListeners {
         for(int ic=0;ic<ConfigurationParamListenerType.CONFIG_PARAM_LISTENER_NUM;++ic){
             configparam_[ic] = new ConfigurationParamListenerHolder();
         }
-        for(int ic=0;ic<ConfigurationParamListenerType.CONFIG_PARAM_LISTENER_NUM;++ic){
+        for(int ic=0;ic<ConfigurationSetListenerType.CONFIG_SET_LISTENER_NUM;++ic){
             configset_[ic] = new ConfigurationSetListenerHolder();
         }
         for(int ic=0;ic<ConfigurationSetNameListenerType.CONFIG_SET_NAME_LISTENER_NUM;++ic){

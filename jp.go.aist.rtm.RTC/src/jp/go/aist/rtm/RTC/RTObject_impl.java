@@ -4080,13 +4080,17 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *   {@.en a flag whether if the listener object autocleaned.}
      *
      */
-    /*
-    void addConfigurationParamListener(ConfigurationParamListenerType type,
-                                       ConfigurationParamListener* listener,
-                                       boolean autoclean = true)
+    public void addConfigurationParamListener(int type,
+                                       ConfigurationParamListener listener,
+                                       boolean autoclean)
     {
+        m_configsets.addConfigurationParamListener(type,listener,autoclean);
     }
-    */
+    public void addConfigurationParamListener(int type,
+                                       ConfigurationParamListener listener)
+    {
+        addConfigurationParamListener(type,listener,true);
+    }
     /*
     template <class Listener>
     ConfigurationParamListener*
@@ -4137,12 +4141,11 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *   {@.ja 与えたリスナオブジェクトへのポインタ}
      *   {@.en a pointer to ConfigurationParamListener listener object.}
      */
-    /*
-    void removeConfigurationParamListener(ConfigurationParamListenerType type,
-                                          ConfigurationParamListener* listener)
+    public void removeConfigurationParamListener(int type,
+                                          ConfigurationParamListener listener)
     {
+        m_configsets.removeConfigurationParamListener(type,listener);
     }
-    */
     /**
      * {@.ja ConfigurationSetListener を追加する}
      * {@.en Adding ConfigurationSetListener }
@@ -4168,14 +4171,17 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *   {@.ja リスナオブジェクトを自動で削除するかどうかのフラグ}
      *   {@.en a flag whether if the listener object autocleaned.}
      */
-    /*
-    void addConfigurationSetListener(ConfigurationSetListenerType type,
-                                     ConfigurationSetListener* listener,
-                                     boolean autoclean = true)
+    public void addConfigurationSetListener(int type,
+                                     ConfigurationSetListener listener,
+                                     boolean autoclean)
     {
-    
+        m_configsets.addConfigurationSetListener(type,listener,autoclean);
     }
-    */
+    public void addConfigurationSetListener(int type,
+                                     ConfigurationSetListener listener)
+    {
+        addConfigurationSetListener(type,listener,true);
+    }
     /*
     template <class Listener>
     ConfigurationSetListener*
@@ -4224,13 +4230,11 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *   {@.en a pointer to ConfigurationSetListener listener object.}
      *
      */
-    /*
-    void removeConfigurationSetListener(ConfigurationSetListenerType type,
-                                        ConfigurationSetListener* listener)
+    public void removeConfigurationSetListener(int type,
+                                        ConfigurationSetListener listener)
     {
-    ;
+        m_configsets.removeConfigurationSetListener(type,listener);
     }
-    */
     /**
      * {@.ja ConfigurationSetNameListener を追加する}
      * {@.en Adding ConfigurationSetNameListener}
@@ -4260,14 +4264,19 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *   {@.ja リスナオブジェクトを自動で削除するかどうかのフラグ}
      *   {@.en a flag whether if the listener object autocleaned.}
      */
-    /*
-    void 
-    addConfigurationSetNameListener(ConfigurationSetNameListenerType type,
-                                    ConfigurationSetNameListener* listener,
-                                    boolean autoclean = true)
+    public void 
+    addConfigurationSetNameListener(int type,
+                                    ConfigurationSetNameListener listener,
+                                    boolean autoclean)
     {
+        m_configsets.addConfigurationSetNameListener(type,listener,autoclean);
     }
-    */
+    public void 
+    addConfigurationSetNameListener(int type,
+                                    ConfigurationSetNameListener listener)
+    {
+        addConfigurationSetNameListener(type,listener, true);
+    }
     /*
     template <class Listener>
     ConfigurationSetNameListener*
@@ -4317,14 +4326,12 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *             listener object.}
      * 
      */
-    /*
-    void
-    removeConfigurationSetNameListener(ConfigurationSetNameListenerType type,
-                                       ConfigurationSetNameListener* listener)
+    public void
+    removeConfigurationSetNameListener(int type,
+                                       ConfigurationSetNameListener listener)
     {
-     ;
+        m_configsets.removeConfigurationSetNameListener(type,listener);
     }
-    */
     /**
      * {@.ja RTC を終了する。}
      * {@.en Shutdown RTC}

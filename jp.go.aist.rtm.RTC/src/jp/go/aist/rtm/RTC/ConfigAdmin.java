@@ -9,6 +9,7 @@ import jp.go.aist.rtm.RTC.util.OnRemoveConfigurationSetCallbackFunc;
 import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
 import jp.go.aist.rtm.RTC.util.OnUpdateCallbackFunc;
 import jp.go.aist.rtm.RTC.util.OnUpdateParamCallbackFunc;
+
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.ValueHolder;
 
@@ -172,7 +173,7 @@ public class ConfigAdmin {
      * {@.ja OnUpdateCallbackクラス}
      * {@.en OnUpdateCallback class}
      */
-    class OnUpdateCallback implements OnUpdateCallbackFunc {
+//    class OnUpdateCallback implements OnUpdateCallbackFunc {
         /**
          * {@.ja 対象のオブジェクトに対して操作を行う。}
          * {@.en Operates the object.}
@@ -181,15 +182,16 @@ public class ConfigAdmin {
          *   {@.ja コンフィグレーション}
          *   {@.en configuration}
          */
-        public void operator(String config_set) {
-        }
-    };
+//        public void operator(String config_set) {
+//        }
+//    };
+
 
     /**
      * {@.ja OnUpdateParamCallbackクラス}
      * {@.en OnUpdateParamCallback class}
      */
-    class OnUpdateParamCallback implements OnUpdateParamCallbackFunc {
+//    class OnUpdateParamCallback implements OnUpdateParamCallbackFunc {
         /**
          * {@.ja 対象のオブジェクトに対して操作を行う。}
          * {@.en Operates the object.}
@@ -201,15 +203,17 @@ public class ConfigAdmin {
          *   {@.ja パラメータ}
          *   {@.en paramter}
          */
-        public void operator(String config_set, String config_param) {
-        }
-    };
+//        public void operator(String config_set, String config_param) {
+//        }
+//    };
+
 
     /**
      * {@.ja OnSetConfigurationSetCallbackクラス}
      * {@.en OnSetConfigurationSetCallback class}
      */
-    class OnSetConfigurationSetCallback implements OnSetConfigurationSetCallbackFunc {
+
+//    class OnSetConfigurationSetCallback implements OnSetConfigurationSetCallbackFunc {
         /**
          * {@.ja 対象のオブジェクトに対して操作を行う。}
          * {@.en Operates the object.}
@@ -218,15 +222,16 @@ public class ConfigAdmin {
          *   {@.ja コンフィグレーション}
          *   {@.en configuration}
          */
-        public void operator(Properties config_set) {
-        }
-    };
+//        public void operator(Properties config_set) {
+//        }
+//    };
+
 
     /**
      * {@.ja OnAddConfigurationAddCallbackクラス}
      * {@.en OnAddConfigurationAddCallback class}
      */
-    class OnAddConfigurationAddCallback implements OnAddConfigurationAddCallbackFunc {
+//    class OnAddConfigurationAddCallback implements OnAddConfigurationAddCallbackFunc {
         /**
          * {@.ja 対象のオブジェクトに対して操作を行う。}
          * {@.en Operates the object.}
@@ -235,15 +240,16 @@ public class ConfigAdmin {
          *   {@.ja コンフィグレーション}
          *   {@.en configuration}
          */
-        public void operator(Properties config_set) {
-        }
-    };
+//        public void operator(Properties config_set) {
+//        }
+//    };
+
 
     /**
      * {@.ja OnRemoveConfigurationSetCallbackクラス}
      * {@.en OnRemoveConfigurationSetCallback class}
      */
-    class OnRemoveConfigurationSetCallback implements OnRemoveConfigurationSetCallbackFunc {
+//    class OnRemoveConfigurationSetCallback implements OnRemoveConfigurationSetCallbackFunc {
         /**
          * {@.ja 対象のオブジェクトに対して操作を行う。}
          * {@.en Operates the object.}
@@ -252,15 +258,16 @@ public class ConfigAdmin {
          *   {@.ja コンフィグレーション}
          *   {@.en configuration}
          */
-        public void operator(String config_set) {
-        }
-    };
+//        public void operator(String config_set) {
+//        }
+//    };
+
 
     /**
      * {@.ja OnActivateSetCallbackクラス}
      * {@.en OnActivateSetCallback class}
      */
-    class OnActivateSetCallback implements OnActivateSetCallbackFunc {
+//    class OnActivateSetCallback implements OnActivateSetCallbackFunc {
         /**
          * {@.ja 対象のオブジェクトに対して操作を行う。}
          * {@.en Operates the object.}
@@ -269,9 +276,10 @@ public class ConfigAdmin {
          *   {@.ja コンフィグレーションID}
          *   {@.en configuration ID}
          */
-        public void operator(String config_id) {
-        }
-    };
+//        public void operator(String config_id) {
+//        }
+//    };
+
 
 
     /**
@@ -290,12 +298,14 @@ public class ConfigAdmin {
         this.m_active = true;
         this.m_changed = false;
 
+/*
         this.m_updateCb = null;
         this.m_updateParamCb = null;
         this.m_setConfigSetCb = null;
         this.m_addConfigSetCb = null;
         this.m_removeConfigSetCb = null;
         this.m_activateSetCb = null;
+*/
     }
 
     /**
@@ -825,12 +835,14 @@ public class ConfigAdmin {
      *   {@.ja OnUpdateCallback型のオブジェクト}
      *   {@.en OnUpdateCallback type object}
      */
+/*
     public void setOnUpdate(OnUpdateCallbackFunc cb) {
 //        if (m_updateCb != 0) {
 //            m_updateCb = null;
 //        }
         m_updateCb = cb;
     }
+*/
 
     /**
      * {@.ja OnUpdateParam のコールバックの設定}
@@ -844,12 +856,14 @@ public class ConfigAdmin {
      *   {@.en OnUpdateParamCallback type object}
      *
      */
+/*
     public void setOnUpdateParam(OnUpdateParamCallbackFunc cb) {
 //        if (m_updateParamCb != 0) {
 //            m_updateParamCb = null;
 //        }
         m_updateParamCb = cb;
     }
+*/
 
     /**
      * {@.ja OnSetConfigurationSet のコールバックの設定}
@@ -863,12 +877,14 @@ public class ConfigAdmin {
      *   {@.ja OnSetConfigurationSetCallback型のオブジェクト}
      *   {@.en OnSetConfigurationSetCallback type object}
      */
+
     public void setOnSetConfigurationSet(OnSetConfigurationSetCallbackFunc cb) {
 //        if (m_setConfigSetCb != 0) {
 //            m_setConfigSetCb = null;
 //      }
-        m_setConfigSetCb = cb;
+//        m_setConfigSetCb = cb;
     }
+
 
     /**
      * {@.ja OnAddConfigurationSet のコールバックの設定}
@@ -883,12 +899,14 @@ public class ConfigAdmin {
      *   {@.en OnSetConfigurationSetCallback type object}
      *
      */
+
     public void setOnAddConfigurationSet(OnAddConfigurationAddCallbackFunc cb) {
 //        if (m_addConfigSetCb != 0) {
 //            m_addConfigSetCb = null;
 //        }
-        m_addConfigSetCb = cb;
+//        m_addConfigSetCb = cb;
     }
+
 
     /**
      * {@.ja OnRemoveConfigurationSet のコールバックの設定}
@@ -903,12 +921,14 @@ public class ConfigAdmin {
      *   {@.en OnRemoveConfigurationSetCallback type object}
      *
      */
+/*
     public void setOnRemoveConfigurationSet(OnRemoveConfigurationSetCallbackFunc cb) {
 //        if (m_removeConfigSetCb != 0) {
 //            m_removeConfigSetCb = null;
 //        }
         m_removeConfigSetCb = cb;
     }
+*/
 
     /**
      * {@.ja OnActivateSet のコールバックの設定}
@@ -922,12 +942,14 @@ public class ConfigAdmin {
      *   {@.en OnActivateSetCallback type object}
      *
      */
+/*
     public void setOnActivateSet(OnActivateSetCallbackFunc cb) {
 //        if (m_activateSetCb != 0) {
 //            m_activateSetCb = null;
 //        }
         m_activateSetCb = cb;
     }
+*/
 
 
     /**
@@ -943,9 +965,7 @@ public class ConfigAdmin {
      *   {@.en The target configuration set's ID to setup}
      */
     public void onUpdate(String config_set) {
-        if (m_updateCb != null) {
-            m_updateCb.operator(config_set);
-        }
+        m_listeners.configsetname_[ConfigurationSetNameListenerType.ON_UPDATE_CONFIG_SET].notify(config_set);
     }
 
     /**
@@ -965,9 +985,8 @@ public class ConfigAdmin {
      *
      */
     public void onUpdateParam(String config_set, String config_param) {
-        if (m_updateParamCb != null) {
-            m_updateParamCb.operator(config_set, config_param);
-        }
+        m_listeners.configparam_[ConfigurationParamListenerType.ON_UPDATE_CONFIG_PARAM].notify(config_set,
+                                                            config_param);
     }
 
     /**
@@ -983,10 +1002,9 @@ public class ConfigAdmin {
      *   {@.en property}
      */
     public void onSetConfigurationSet(Properties config_set) {
-        if (m_setConfigSetCb != null) {
-            m_setConfigSetCb.operator(config_set);
-        }
+        m_listeners.configset_[ConfigurationSetListenerType.ON_SET_CONFIG_SET].notify(config_set);
     }
+
 
     /**
      * {@.ja 設定値が追加されたときにコールされる。}
@@ -1001,11 +1019,11 @@ public class ConfigAdmin {
      *   {@.en property}
      *
      */
+
     public void onAddConfigurationSet(Properties config_set) {
-        if (m_addConfigSetCb != null) {
-            m_addConfigSetCb.operator(config_set);
-        }
+        m_listeners.configset_[ConfigurationSetListenerType.ON_ADD_CONFIG_SET].notify(config_set);
     }
+
 
     /**
      * {@.ja セットが削除されてるときにコールされる。}
@@ -1020,11 +1038,11 @@ public class ConfigAdmin {
      *   {@.en property}
      *
      */
+
     public void onRemoveConfigurationSet(String config_id) {
-        if (m_removeConfigSetCb != null) {
-            m_removeConfigSetCb.operator(config_id);
-        }
+        m_listeners.configsetname_[ConfigurationSetNameListenerType.ON_REMOVE_CONFIG_SET].notify(config_id);
     }
+
 
     /**
      * {@.ja セットがアクティブ化されたときにコールされる。}
@@ -1039,11 +1057,312 @@ public class ConfigAdmin {
      *   {@.en property}
      *
      */
+
     public void onActivateSet(String config_id) {
-        if (m_activateSetCb != null) {
-            m_activateSetCb.operator(config_id);
-        }
+        m_listeners.configsetname_[ConfigurationSetNameListenerType.ON_ACTIVATE_CONFIG_SET].notify(config_id);
     }
+    /**
+     * {@.ja ConfigurationParamListener を追加する}
+     * {@.en Adding ConfigurationParamListener}
+     * <p>
+     * {@.ja update(const char* config_set, const char* config_param) が呼ばれた際に
+     * コールされるリスナ ConfigurationParamListener を追加する。
+     * type には現在のところ ON_UPDATE_CONFIG_PARAM のみが入る。}
+     * {@.en This function adds a listener object which is called when
+     * update(const char* config_set, const char* config_param) is
+     * called. In the type argument, currently only
+     * ON_UPDATE_CONFIG_PARAM is allowed.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationParamListenerType型の値。
+     *         ON_UPDATE_CONFIG_PARAM がある。}
+     *   {@.en ConfigurationParamListenerType value
+     *         ON_UPDATE_CONFIG_PARAM is only allowed.}
+     * @param listener 
+     *   {@.ja ConfigurationParamListener 型のリスナオブジェクト。}
+     *   {@.en ConfigurationParamListener listener object.}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトを自動で削除するかどうかのフラグ}
+     *   {@.en a flag whether if the listener object autocleaned.}
+     *
+     */
+    public void addConfigurationParamListener(int type,
+                                       ConfigurationParamListener listener,
+                                       boolean autoclean)
+    {
+        if (type < ConfigurationParamListenerType.CONFIG_PARAM_LISTENER_NUM) {
+            m_listeners.configparam_[type].addObserver(listener);
+            return;
+        }
+        return;
+    }
+    public void addConfigurationParamListener(int type,
+                                       ConfigurationParamListener listener)
+    {
+        addConfigurationParamListener(type,listener,true);
+    }
+    /*
+    template <class Listener>
+    ConfigurationParamListener*
+    addConfigurationParamListener(int listener_type,
+                                  Listener& obj,
+                                  void (Listener::*memfunc)(const char*,
+                                                            const char*))
+    {
+      class Noname
+        : public ConfigurationParamListener
+      {
+      public:
+        Noname(Listener& obj,
+               void (Listener::*memfunc)(const char*, const char*))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        void operator()(const char* config_set_name,
+                        const char* config_param_name)
+        {
+          (m_obj.*m_memfunc)(config_set_name, config_param_name);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(const char*, const char*);
+        Memfunc& m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addConfigurationParamListener(listener_type, listener, true);
+      return listener;
+    }
+    */
+
+    /**
+     * {@.ja ConfigurationParamListener を削除する}
+     * {@.en Removing ConfigurationParamListener}
+     * <p>
+     * {@.ja addConfigurationParamListener で追加されたリスナオブジェクトを削除する。}
+     * {@.en This function removes a listener object which is added by
+     * addConfigurationParamListener() function.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationParamListenerType型の値。
+     *         ON_UPDATE_CONFIG_PARAM がある。}
+     *   {@.en ConfigurationParamListenerType value
+     *         ON_UPDATE_CONFIG_PARAM is only allowed.}
+     * @param listener 
+     *   {@.ja 与えたリスナオブジェクトへのポインタ}
+     *   {@.en a pointer to ConfigurationParamListener listener object.}
+     */
+    public void removeConfigurationParamListener(int type,
+                                          ConfigurationParamListener listener)
+    {
+        if (type < ConfigurationParamListenerType.CONFIG_PARAM_LISTENER_NUM) {
+            m_listeners.configparam_[type].deleteObserver(listener);
+            return;
+        }
+        return;
+    }
+    /**
+     * {@.ja ConfigurationSetListener を追加する}
+     * {@.en Adding ConfigurationSetListener }
+     * <p>
+     * {@.ja ConfigurationSet が更新されたときなどに呼ばれるリスナ
+     * ConfigurationSetListener を追加する。設定可能なイベントは以下の
+     * 2種類がある。
+     * <ul>
+     * <li> ON_SET_CONFIG_SET: setConfigurationSetValues() で
+     *                      ConfigurationSet に値が設定された場合。</li>
+     * <li> ON_ADD_CONFIG_SET: addConfigurationSet() で新しい
+     *                      ConfigurationSet が追加された場合。</li></ul>}
+     * {@.en This function add a listener object which is called when
+     * ConfigurationSet is updated. Available events are the followings.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationSetListenerType型の値。}
+     *   {@.en ConfigurationSetListenerType value}
+     * @param listener 
+     *   {@.ja ConfigurationSetListener 型のリスナオブジェクト。}
+     *   {@.en ConfigurationSetListener listener object.}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトを自動で削除するかどうかのフラグ}
+     *   {@.en a flag whether if the listener object autocleaned.}
+     */
+    public void addConfigurationSetListener(int type,
+                                     ConfigurationSetListener listener,
+                                     boolean autoclean)
+    {
+        if (type < ConfigurationSetListenerType.CONFIG_SET_LISTENER_NUM) {
+            m_listeners.configset_[type].addObserver(listener);
+            return;
+        }
+        return;
+    }
+    public void addConfigurationSetListener(int type,
+                                     ConfigurationSetListener listener)
+    {
+        addConfigurationSetListener(type,listener,true);
+    }
+    /*
+    template <class Listener>
+    ConfigurationSetListener*
+    addConfigurationSetListener(int listener_type,
+                                Listener& obj,
+                                void (Listener::*memfunc)
+                                (const coil::Properties& config_set))
+    {
+      class Noname
+        : public ConfigurationSetListener
+      {
+      public:
+        Noname(Listener& obj,
+               void (Listener::*memfunc)(const coil::Properties& config_set))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        virtual void operator()(const coil::Properties& config_set)
+        {
+          (m_obj.*m_memfunc)(config_set);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(const coil::Properties& config_set);
+        Memfunc& m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addConfigurationSetListener(listener_type, listener, true);
+      return listener;
+    }
+    */
+
+    /**
+     * {@.ja ConfigurationSetListener を削除する}
+     * {@.en Removing ConfigurationSetListener}
+     * <p>
+     * {@.ja addConfigurationSetListener で追加されたリスナオブジェクトを削除する。}
+     * {@.en This function removes a listener object which is added by
+     * addConfigurationSetListener() function.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationSetListenerType型の値。}
+     *   {@.en ConfigurationSetListenerType value}
+     * @param listener
+     *   {@.ja 与えたリスナオブジェクトへのポインタ}
+     *   {@.en a pointer to ConfigurationSetListener listener object.}
+     *
+     */
+    public void removeConfigurationSetListener(int type,
+                                        ConfigurationSetListener listener)
+    {
+        if (type < ConfigurationSetListenerType.CONFIG_SET_LISTENER_NUM) {
+            m_listeners.configset_[type].deleteObserver(listener);
+            return;
+        }
+        return;
+    }
+    /**
+     * {@.ja ConfigurationSetNameListener を追加する}
+     * {@.en Adding ConfigurationSetNameListener}
+     * <p>
+     * {@.ja ConfigurationSetName が更新されたときなどに呼ばれるリスナ
+     * ConfigurationSetNameListener を追加する。設定可能なイベントは以下の
+     * 3種類がある。
+     * <ul>
+     * <li> ON_UPDATE_CONFIG_SET: ある ConfigurationSet がアップデートされた
+     * <li> ON_REMOVE_CONFIG_SET: ある ConfigurationSet が削除された
+     * <li> ON_ACTIVATE_CONFIG_SET: ある ConfigurationSet がアクティブ化された
+     * </ul>}
+     * {@.en This function add a listener object which is called when
+     * ConfigurationSetName is updated. Available events are the followings.
+     * <ul>
+     * <li> ON_UPDATE_CONFIG_SET: A ConfigurationSet has been updated.
+     * <li> ON_REMOVE_CONFIG_SET: A ConfigurationSet has been deleted.
+     * <li> ON_ACTIVATE_CONFIG_SET: A ConfigurationSet has been activated.
+     * </ul>}
+     * @param type 
+     *   {@.ja ConfigurationSetNameListenerType型の値。}
+     *   {@.en ConfigurationSetNameListenerType value}
+     * @param listener 
+     *   {@.ja ConfigurationSetNameListener 型のリスナオブジェクト。}
+     *   {@.en ConfigurationSetNameListener listener object.}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトを自動で削除するかどうかのフラグ}
+     *   {@.en a flag whether if the listener object autocleaned.}
+     */
+    public void 
+    addConfigurationSetNameListener(int type,
+                                    ConfigurationSetNameListener listener,
+                                    boolean autoclean)
+    {
+        if (type < ConfigurationSetNameListenerType.CONFIG_SET_NAME_LISTENER_NUM) {
+            m_listeners.configsetname_[type].addObserver(listener);
+            return;
+        }
+        return;
+    }
+    public void 
+    addConfigurationSetNameListener(int type,
+                                    ConfigurationSetNameListener listener)
+    {
+        addConfigurationSetNameListener(type,listener, true);
+    }
+    /*
+    template <class Listener>
+    ConfigurationSetNameListener*
+    addConfigurationSetNameListener(ConfigurationSetNameListenerType type,
+                                    Listener& obj,
+                                    void (Listener::*memfunc)(const char*))
+    {
+      class Noname
+        : public ConfigurationSetNameListener
+      {
+      public:
+        Noname(Listener& obj, void (Listener::*memfunc)(const char*))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        virtual void operator()(const char* config_set_name)
+        {
+          (m_obj.*m_memfunc)(config_set_name);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(const char*);
+        Memfunc& m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addConfigurationSetNameListener(type, listener, true);
+      return listener;
+    }
+    */
+    /**
+     * {@.ja  ConfigurationSetNameListener を削除する}
+     * {@.en  Removing ConfigurationSetNameListener}
+     * <p> 
+     * {@.ja addConfigurationSetNameListener で追加されたリスナオブジェクトを
+     * 削除する。}
+     * {@.en This function removes a listener object which is added by
+     * addConfigurationSetNameListener() function.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationSetNameListenerType型の値。
+     *         ON_UPDATE_CONFIG_PARAM がある。}
+     *   {@.en ConfigurationSetNameListenerType value
+     *         ON_UPDATE_CONFIG_PARAM is only allowed.}
+     * @param listener 
+     *   {@.ja 与えたリスナオブジェクトへのポインタ}
+     *   {@.en a pointer to ConfigurationSetNameListener
+     *             listener object.}
+     * 
+     */
+    public void
+    removeConfigurationSetNameListener(int type,
+                                       ConfigurationSetNameListener listener)
+    {
+        if (type < ConfigurationSetNameListenerType.CONFIG_SET_NAME_LISTENER_NUM) {
+            m_listeners.configsetname_[type].deleteObserver(listener);
+            return;
+        }
+        return;
+    }
+
 
 
     /**
@@ -1094,12 +1413,15 @@ public class ConfigAdmin {
      */
     private Vector<String> m_newConfig = new Vector<String>();
 
+    private ConfigurationListeners m_listeners = new ConfigurationListeners();
+/*
     private OnUpdateCallbackFunc m_updateCb;
     private OnUpdateParamCallbackFunc m_updateParamCb;
     private OnSetConfigurationSetCallbackFunc m_setConfigSetCb;
     private OnAddConfigurationAddCallbackFunc m_addConfigSetCb;
     private OnRemoveConfigurationSetCallbackFunc m_removeConfigSetCb;
     private OnActivateSetCallbackFunc m_activateSetCb;
+*/
 
 }
 
