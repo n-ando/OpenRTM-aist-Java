@@ -71,12 +71,17 @@ public class OutPort<DataType> extends OutPortBase {
      * {@.ja タイムスタンプを設定する。}
      * {@.en Sets timestamp.}
      * <p>
-     * {@.ja This function sets the timestamp.}
-     * {@.en This function sets the timestamp.}
+     * {@.ja データポートのデータに対してタイムスタンプをセットする。
+     * データポートのデータは構造体のメンバーとして 
+     * tm.sec, tm.nsec を持つ必要がある。}
+     * {@.en This function sets timestamp to data of data port. This data should
+     * have tm.sec, tm.nsec as members of the structure.}
      * </p>
      * @param data 
-     *   {@.ja 対象データ}
-     *   {@.en The target data}
+     *   {@.ja タイムスタンプをセットするデータ。実行後実行時のタイムス
+     *   タンプがセットされる}
+     *   {@.en Data to be set timestamp. After executing this
+     *   function, current timestamp is set to the data.}
      */
     public void setTimestamp(DataType data) {
         long nanotime = System.nanoTime();
