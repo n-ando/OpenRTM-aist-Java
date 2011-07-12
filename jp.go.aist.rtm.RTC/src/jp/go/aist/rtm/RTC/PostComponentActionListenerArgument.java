@@ -2,7 +2,7 @@ package jp.go.aist.rtm.RTC;
 
 import RTC.ReturnCode_t;
   /**
-   * {@.ja PostComponentActionListenerArgument ･ｯ･鬣ｹ}
+   * {@.ja PostComponentActionListenerArgument クラス}
    * {@.en PostComponentActionListenerArgumen class}
    *
    *

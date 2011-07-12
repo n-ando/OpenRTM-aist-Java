@@ -1,5 +1,6 @@
 package jp.go.aist.rtm.RTC;
 
+import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -81,6 +82,32 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         return factory_global;
     }
 
+    /**
+     * {@.ja FactoryGlobalをインスタス化する。}
+     * {@.en Creates FactoryGlobal.}
+     * @param clazz
+     *   {@.ja class name}
+     *   {@.en class name}
+     * @return 
+     *   {@.ja オブジェクト}
+     *   {@.en object}
+     */
+    public static Object instance(String clazz) {
+        Object obj = (Object)factory_table.get(clazz);
+        if(obj != null){
+            return obj;
+        } 
+        else {
+            try{
+                Object obj2 = (Object)(Class.forName(clazz).newInstance());
+                factory_table.put(clazz,obj2);
+                return obj2;
+            }
+            catch(Exception e){
+                return null;
+            }
+        }
+    }
     /**
      * <p>コンポーネントを生成します。</p>
      * 
@@ -339,6 +366,8 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         INVALID_ARG,
         UNKNOWN_ERROR
       };
+
+    private static Hashtable factory_table = new Hashtable();
 
 }
 
