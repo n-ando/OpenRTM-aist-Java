@@ -1,20 +1,29 @@
 package jp.go.aist.rtm.RTC;
 
 /**
- * <p>OutPortProvider用ファクトリの実装です。</p>
+ * {@.ja OutPortProvider用ファクトリの実装}
+ * {@.en Implement of factory for OutPortProvider} 
  */
 public class OutPortProviderFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
 
     /**
-     * <p> constructor </p>
+     * {@.ja コンストラクタ。}
+     * {@.en Constructor}
      */
     private OutPortProviderFactory() {
 
     }
     /**
-     * <p> instance </p>
+     * {@.ja インスタンス生成。}
+     * {@.en Create instance}
      *
-     * @return OutPortProviderFactory object
+     * <p>
+     * {@.ja インスタンスを生成する。}
+     *
+     * @return 
+     *   {@.ja インスタンス}
+     *   {@.en OutPortProviderFactory object}
+     *
      */
     public static OutPortProviderFactory instance() {
         if (factory_global == null) {
@@ -32,7 +41,8 @@ public class OutPortProviderFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlo
         return factory_global;
     }
     /**
-     *  <p> mutex </p>
+     * {@.ja 排他制御用変数}
+     * {@.en Variable for exclusive control}
      */
     private static String factory_global_mutex = new String();
     /**

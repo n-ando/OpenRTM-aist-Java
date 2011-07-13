@@ -14,15 +14,24 @@ import RTC.MultiModeObjectHelper;
 
 
 /**
- * <p>RTコンポーネントのコンポーネント型を判別するためのクラスです。</p>
+ * {@.ja RTコンポーネントのコンポーネント型を判別するためのクラス}
+ * {@.en Class to distinguish component type of RT component}
+ *
  */
 public class RTCUtil {
     
     /**
-     * <p>RTコンポーネントのインスタンスがDataFlowComponentであるかどうか判断します。</p>
+     * {@.ja RTコンポーネントのインスタンスが
+     * DataFlowComponentであるかどうか判断する}
+     * {@.en Confirms whether specified RT-Component is DataFlowComponent}
      * 
-     * @param obj 判断対象のオブジェクト
-     * @return DataFlowComponentのインスタンスであればtrueを、さもなくばfalseを返します。
+     * @param obj 
+     *   {@.ja 判断対象のオブジェクト}
+     *   {@.en The target CORBA object for the investigation}
+     * @return 
+     *   {@.ja DataFlowComponentのインスタンスであればtrueを、
+     *   さもなくばfalseを返す}
+     *   {@.en Investigation result of DataFlowComponent}
      */
     public static boolean isDataFlowComponent(Object obj) {
         
@@ -36,10 +45,17 @@ public class RTCUtil {
     }
     
     /**
-     * <p>RTコンポーネントのインスタンスがFsmParticipantであるかどうか判断します。</p>
+     * {@.ja RTコンポーネントのインスタンスが
+     * FsmParticipantであるかどうか判断する}
+     * {@.en Confirms whether specified RT-Component is FsmParticipant}
      * 
-     * @param obj 判断対象のオブジェクト
-     * @return FsmParticipantのインスタンスであればtrueを、さもなくばfalseを返します。
+     * @param obj 
+     *   {@.ja 判断対象のオブジェクト}
+     *   {@.en The target CORBA object for the investigation}
+     * @return 
+     *   {@.ja FsmParticipantのインスタンスであればtrueを、
+     *   さもなくばfalseを返す}
+     *   {@.en Investigation result of FsmParticipant}
      */
     public static boolean isFsmParticipant(Object obj) {
         
@@ -53,10 +69,16 @@ public class RTCUtil {
     }
     
     /**
-     * <p>RTコンポーネントのインスタンスがFsmObjectであるかどうか判断します。</p>
+     * {@.ja RTコンポーネントのインスタンスが
+     * FsmObjectであるかどうか判断する}
+     * {@.en Confirms whether specified RT-Component is Fsm}
      * 
-     * @param obj 判断対象のオブジェクト
-     * @return FsmObjectのインスタンスであればtrueを、さもなくばfalseを返します。
+     * @param obj 
+     *   {@.ja 判断対象のオブジェクト}
+     *   {@.en The target CORBA object for the investigation}
+     * @return 
+     *   {@.ja FsmObjectのインスタンスであればtrueを、さもなくばfalseを返す}
+     *   {@.en Investigation result of Fsm}
      */
     public static boolean isFsmObject(Object obj) {
         
@@ -67,13 +89,20 @@ public class RTCUtil {
             return false;
         }
         return true;
-}
+    }
     
     /**
-     * <p>RTコンポーネントのインスタンスがMultiModeObjectであるかどうか判断します。</p>
+     * {@.ja RTコンポーネントのインスタンスが
+     * MultiModeObjectであるかどうか判断する}
+     * {@.en Confirms whether specified RT-Component is multiModeComponent}
      * 
-     * @param obj 判断対象のオブジェクト
-     * @return MultiModeObjectのインスタンスであればtrueを、さもなくばfalseを返します。
+     * @param obj 
+     *   {@.ja 判断対象のオブジェクト}
+     *   {@.en The target CORBA object for the investigation}
+     * @return 
+     *   {@.ja MultiModeObjectのインスタンスであればtrueを、
+     *   さもなくばfalseを返す}
+     *   {@.en Investigation result of multiModeComponent}
      */
     public static boolean isMultiModeObject(Object obj) {
         

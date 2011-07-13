@@ -1,50 +1,45 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.ORB;
-import org.omg.CORBA.Any;
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-
-import _SDOPackage.NVListHolder;
-import OpenRTM.CdrDataHelper;
-import OpenRTM.CdrDataHolder;
-import OpenRTM.OutPortCdrPOA;
-import OpenRTM.OutPortCdrOperations;
-import OpenRTM.PortStatus;
-
-import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
+import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.buffer.ReturnCode;
-import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.NVUtil;
-import jp.go.aist.rtm.RTC.util.POAUtil;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
-import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
+
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.portable.OutputStream;
+
+import OpenRTM.OutPortCdrPOA;
+import _SDOPackage.NVListHolder;
 
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 /**
- * <p> OutPortCorbaCdrProvider </p>
- * <p> OutPortCorbaCdrProvider class </p>
+ * {@.ja OutPortCorbaCdrProvider クラス}
+ * {@.en OutPortCorbaCdrProvider class}
+ * <p>
+ * {@.ja データ転送に CORBA の OpenRTM::OutPortCdr インターフェースを利用し
+ * た、pull 型データフロー型を実現する OutPort プロバイダクラス。}
+ * {@.en This is an implementation class of OutPort Provider that uses
+ * CORBA for mean of communication.}
  *
- * <p> This is an implementation class of OutPort Provider that uses </p>
- * <p> CORBA for mean of communication. </p>
- *
- * @param DataType Data type held by the buffer that is assigned to this 
- *        provider
+ * @param DataType 
+ *   {@.ja プロバイダに割り当てられたバッファによって確保されたDataType}
+ *   {@.en Data type held by the buffer that is assigned to this 
+ *        provider}
  *
  */
 public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortProvider, ObjectCreator<OutPortProvider>, ObjectDestructor {
     /**
-     * <p> Constructor </p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      *
      */
     public OutPortCorbaCdrProvider() {
@@ -68,6 +63,12 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
                                  m_objref, OpenRTM.OutPortCdr.class ));
     }
     /**
+     * {@.ja 当該OpenRTM.OutPortCdrのCORBAオブジェクト参照を取得する。}
+     * {@.en Gets CORBA object referense of this OpenRTM.OutPortCdr}
+     * 
+     * @return 
+     *   {@.ja 当該PortのCORBAオブジェクト参照}
+     *   {@.en CORBA object referense of this OpenRTM.OutPortCdr}
      * 
      */
     public OpenRTM.OutPortCdr _this() {
@@ -87,31 +88,47 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
 
     /**
      *
-     * <p> Initializing configuration </p>
+     * {@.ja 設定初期化}
+     * {@.en Initializing configuration}
+     * <p>
+     * {@.ja OutPortCorbaCdrProvider の各種設定を行う。与えられた
+     * Propertiesから必要な情報を取得して各種設定を行う。この init() 関
+     * 数は、OutPortProvider生成直後および、接続時にそれぞれ呼ばれる可
+     * 能性がある。したがって、この関数は複数回呼ばれることを想定して記
+     * 述されるべきである。}
+     * {@.en This operation would be called to configure in initialization. 
+     * In the concrete class, configuration should be performed 
+     * getting appropriate information from the given Properties data.
+     * This function might be called right after instantiation and
+     * connection sequence respectivly.  Therefore, this function
+     * should be implemented assuming multiple call.}
      *
-     * <p> This operation would be called to configure in initialization. </p>
-     * <p> In the concrete class, configuration should be performed </p>
-     * <p> getting appropriate information from the given Properties data. </p>
-     * <p> This function might be called right after instantiation and </p>
-     * <p> connection sequence respectivly.  Therefore, this function </p>
-     * <p> should be implemented assuming multiple call. </p>
-     *
-     * @param prop Configuration information
+     * @param prop 
+     *   {@.ja 設定情報}
+     *   {@.en Configuration information}
      *
      */
     public void init(Properties prop) {
     }
 
     /**
-     * <p> Setting outside buffer's pointer </p>
-     *
-     * <p> A pointer to a buffer from which OutPortProvider retrieve data. </p>
-     * <p> If already buffer is set, previous buffer's pointer will be </p>
-     * <p> overwritten by the given pointer to a buffer.  Since </p>
-     * <p> OutPortProvider does not assume ownership of the buffer </p>
-     * <p> pointer, destructor of the buffer should be done by user. </p>
+     * {@.ja バッファをセットする}
+     * {@.en Setting outside buffer's pointer}
+     * <p>
+     * {@.ja OutPortProvider がデータを取り出すバッファをセットする。
+     * すでにセットされたバッファがある場合、以前のバッファへの
+     * ポインタに対して上書きされる。
+     * OutPortProviderはバッファの所有権を仮定していないので、
+     * バッファの削除はユーザの責任で行わなければならない。}
+     * {@.en A pointer to a buffer from which OutPortProvider retrieve data.
+     * If already buffer is set, previous buffer's pointer will be 
+     * overwritten by the given pointer to a buffer.  Since
+     * OutPortProvider does not assume ownership of the buffer
+     * pointer, destructor of the buffer should be done by user.}
      * 
-     * @param buffer A pointer to a data buffer to be used by OutPortProvider
+     * @param buffer 
+     *   {@.ja OutPortProviderがデータを取り出すバッファへのポインタ}
+     *   {@.en A pointer to a data buffer to be used by OutPortProvider}
      *
      */
     public void setBuffer(BufferBase<OutputStream> buffer){
@@ -119,20 +136,28 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
     }
     
     /**
-     * <p> [CORBA interface] Get data from the buffer </p>
+     * {@.ja [CORBA interface] バッファからデータを取得する}
+     * {@.en [CORBA interface] Get data from the buffer}
      *
-     * <p> Get data from the internal buffer. </p>
+     * <p>
+     * {@.ja 設定された内部バッファからデータを取得する。}
+     * {@.en Get data from the internal buffer.}
      *
      * @param data
-     * @return Data got from the buffer.
+     *   {@.ja 取得データを格納するバッファ}
+     *   {@.en The buffer to get data.}
+     *
+     * @return
+     *   {@.ja ステータス}
+     *   {@.en Prot status}
      *
      */
     public OpenRTM.PortStatus get(OpenRTM.CdrDataHolder data) {
-        rtcout.println(rtcout.PARANOID, "OutPortCorbaCdrProvider.get()");
+        rtcout.println(Logbuf.PARANOID, "OutPortCorbaCdrProvider.get()");
 
         if (m_buffer == null) {
             onSenderError();
-            rtcout.println(rtcout.PARANOID, "m_buffer is null.");
+            rtcout.println(Logbuf.PARANOID, "m_buffer is null.");
             return OpenRTM.PortStatus.UNKNOWN_ERROR;
         }
 
@@ -151,8 +176,15 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
         return convertReturn(ret);
     }
     /**
-     * <p> convertReturn </p>
-     *
+     * {@.ja ReturnCodeをPortStatusに変換する。}
+     * {@.en Converts ReturnCode into PortStatus.}
+     * 
+     * @param status
+     *   {@.ja ReturnCode}
+     *   {@.en ReturnCode}
+     * @return
+     *   {@.ja PortStatus}
+     *   {@.en PortStatus}
      */
     protected OpenRTM.PortStatus 
     convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status) {
@@ -173,18 +205,24 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
 
     
     /**
-     * <p> creator_ </p>
+     * {@.ja OutPortCorbaCdrProvider を生成する}
+     * {@.en Creats OutPortCorbaCdrProvider}
      * 
-     * @return Object Created instances
+     * @return 
+     *   {@.ja 生成されたOutPortProvider}
+     *   {@.en Object Created instances}
      *
      */
     public OutPortProvider creator_() {
         return new OutPortCorbaCdrProvider();
     }
     /**
-     * <p> destructor_ </p>
+     * {@.ja OutPortCorbaCdrProvider を破棄する}
+     * {@.en Destructs OutPortCorbaCdrProvider}
      * 
-     * @param obj    The target instances for destruction
+     * @param obj
+     *   {@.ja 破棄するインタスタンス}
+     *   {@.en The target instances for destruction}
      *
      */
     public void destructor_(Object obj) {
@@ -198,7 +236,12 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
         obj = null;
     }
     /**
-     * <p> OutPortCorbaCdrProviderInit </p>
+     * {@.ja モジュール初期化関数}
+     * {@.en Module initialization}
+     * <p>
+     * {@.ja OutPortCorbaCdrProvider のファクトリを登録する初期化関数。}
+     * {@.en This initialization function registers OutPortCorbaCdrProvider's
+     * factory.}
      *
      */
     public static void OutPortCorbaCdrProviderInit() {
@@ -212,9 +255,22 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
     }
 
     /**
-     * <p> publishInterfaceProfile </p>
+     * {@.ja InterfaceProfile情報を公開する}
+     * {@.en Publish InterfaceProfile information}
+     * 
+     * <p>
+     * {@.ja InterfaceProfile情報を公開する。
+     * 引数で指定するプロパティ情報内の NameValue オブジェクトの
+     * dataport.interface_type 値を調べ、当該ポートに設定されている
+     * インターフェースタイプと一致する場合のみ情報を取得する。}
+     * {@.en Publish interfaceProfile information.
+     * Check the dataport.interface_type value of the NameValue object 
+     * specified by an argument in property information and get information
+     * only when the interface type of the specified port is matched.}
      *
      * @param properties 
+     *   {@.ja InterfaceProfile情報を受け取るプロパティ}
+     *   {@.en Properties to get InterfaceProfile information}
      *
      */
     public void publishInterfaceProfile(NVListHolder properties) {
@@ -229,10 +285,26 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
                 this.m_subscriptionType);
     }
     /**
-     * <p> publishInterface </p>
+     * {@.ja Interface情報を公開する}
+     * {@.en Publish interface information}
+     * <p>
+     * {@.ja Interface情報を公開する。引数で指定するプロパティ情報内の
+     * NameValue オブジェクトのdataport.interface_type 値を調べ、当該ポー
+     * トに設定されていなければNameValue に情報を追加する。すでに同一イ
+     * ンターフェースが登録済みの場合は何も行わない。}
+     * {@.en Publish interface information.  Check the
+     * dataport.interface_type value of the NameValue object specified
+     * by an argument in the property information, and add the
+     * information to the NameValue if this port is not specified.
+     * This does not do anything if the same interface is already
+     * subscribed.}
      *
      * @param properties 
-     * @return boolean
+     *   {@.ja Interface情報を受け取るプロパティ}
+     *   {@.en Properties to receive interface information}
+     * @return 
+     *   {@.ja true: 正常終了}
+     *   {@.en true: normal return}
      */
     public boolean publishInterface(NVListHolder properties) {
         
@@ -246,16 +318,33 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
         return true;
     }
     /**
-     * <p> setConnecotor </p>
-     * @param connector
+     * {@.ja Connectorを設定する。}
+     * {@.en set Connector}
+     * <p>
+     * {@.ja OutPort は接続確立時に OutPortConnector オブジェクトを生成し、生
+     * 成したオブジェクトのポインタと共にこの関数を呼び出す。所有権は
+     * OutPort が保持するので OutPortProvider は OutPortConnector を削
+     * 除してはいけない。}
+     * {@.en OutPort creates OutPortConnector object when it establishes
+     * connection between OutPort and InPort, and it calls this
+     * function with a pointer to the connector object. Since the
+     * OutPort has the ownership of this connector, OutPortProvider
+     * should not delete it.}
+     *
+     * @param connector 
+     *   {@.ja OutPortConnector}
+     *   {@.en OutPortConnector}
      */
     public void setConnector(OutPortConnector connector) {
         m_connector = connector;
     }
     /**
-     * <p>インタフェースプロフィールのポートタイプを設定します。</p>
+     * {@.ja インタフェースプロフィールのポートタイプを設定する。}
+     * {@.en Sets PortProfile of the interface profile}
      * 
-     * @param portType ポートタイプ
+     * @param portType 
+     *   {@.ja ポートタイプ}
+     *   {@.en port type}
      */
     protected void setPortType(final String portType) {
         
@@ -263,9 +352,12 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
     }
     
     /**
-     * <p>インタフェースポロフィールのデータタイプを設定します。</p>
+     * {@.ja インタフェースプロフィールのデータタイプを設定する。}
+     * {@.en Sets DataType of the interface profile}
      * 
-     * @param dataType データタイプ
+     * @param dataType 
+     *   {@.ja データタイプ}
+     *   {@.en dataType} 
      */
     protected void setDataType(final String dataType) {
         
@@ -273,9 +365,12 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
     }
     
     /**
-     * <p>インタフェースプロフィールのインタフェースタイプを設定します。<//p>
+     * {@.ja インタフェースプロフィールのインタフェースタイプを設定する。}
+     * {@.en Sets interface Type of the interface profile}
      * 
-     * @param interfaceType インタフェースタイプ
+     * @param interfaceType 
+     *   {@.ja インタフェースタイプ}
+     *   {@.en Intereface Type}
      */
     protected void setInterfaceType(final String interfaceType) {
         
@@ -283,9 +378,12 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
     }
     
     /**
-     * <p>インタフェースプロフィールのデータフロータイプを設定します。</p>
+     * {@.ja インタフェースプロフィールのデータフロータイプを設定する。}
+     * {@.en Sets data flow type of the interface profile}
      * 
-     * @param dataFlowType データフロータイプ
+     * @param dataFlowType 
+     *   {@.ja データフロータイプ}
+     *   {@.en Data flow type}
      */
     protected void setDataFlowType(final String dataFlowType) {
         
@@ -293,16 +391,56 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
     }
     
     /**
-     * <p>インタフェースプロフィールのサブスクリプションタイプを設定します。</p>
+     * {@.ja インタフェースプロフィールのサブスクリプションタイプを設定する。}
+     * {@.en Sets subscription type of the interface profile}
      * 
-     * @param subscriptionType サブスクリプションタイプ
+     * @param subscriptionType 
+     *   {@.ja サブスクリプションタイプ}
+     *   {@.en Subscription type}
      */
     protected void setSubscriptionType(final String subscriptionType) {
         
         this.m_subscriptionType = subscriptionType;
     }
     /**
-     * <p> Set the listener.  </p>
+     * {@.ja リスナを設定する。}
+     * {@.en Set the listener.}
+     *
+     * <p>
+     * {@.ja OutPort はデータ送信処理における各種イベントに対して特定のリスナ
+     * オブジェクトをコールするコールバック機構を提供する。詳細は
+     * ConnectorListener.h の ConnectorDataListener, ConnectorListener
+     * 等を参照のこと。OutPortCorbaCdrProvider では、以下のコールバック
+     * が提供される。
+     * <ol>
+     * <li>- ON_BUFFER_READ
+     * <li>- ON_SEND
+     * <li>- ON_BUFFER_EMPTY
+     * <li>- ON_BUFFER_READ_TIMEOUT
+     * <li>- ON_SENDER_EMPTY
+     * <li>- ON_SENDER_TIMEOUT
+     * <li>- ON_SENDER_ERROR </ol>}
+     * {@.en OutPort provides callback functionality that calls specific
+     * listener objects according to the events in the data publishing
+     * process. For details, see documentation of
+     * ConnectorDataListener class and ConnectorListener class in
+     * ConnectorListener.h. In this OutPortCorbaCdrProvider provides
+     * the following callbacks.
+     * <ol>
+     * <li>- ON_BUFFER_READ
+     * <li>- ON_SEND
+     * <li>- ON_BUFFER_EMPTY
+     * <li>- ON_BUFFER_READ_TIMEOUT
+     * <li>- ON_SENDER_EMPTY
+     * <li>- ON_SENDER_TIMEOUT
+     * <li>- ON_SENDER_ERROR </ol>}
+     *
+     * @param info 
+     *   {@.ja 接続情報}
+     *   {@.en @param info Connector information}
+     * @param listeners 
+     *   {@.ja リスナオブジェクト}
+     *   {@.en Listener objects}
      */
     public void setListener(ConnectorBase.ConnectorInfo info,
                              ConnectorListeners listeners) {

@@ -22,13 +22,14 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
         // Set InPort buffers
         
         // Set OutPort buffer
+/*
         try {
 //            registerInPort(TimedLong.class, "in", m_inIn);  //v042
             registerInPort("in", m_inIn);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+*/
         // Set service provider to Ports
         
         // Set service consumers to Ports
@@ -41,9 +42,15 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
     // The initialize action (on CREATED->ALIVE transition)
     // formaer rtc_init_entry() 
 //    @Override
-//    protected ReturnCode_t onInitialize() {
-//        return super.onInitialize();
-//    }
+    protected ReturnCode_t onInitialize() {
+        try {
+            addInPort("in", m_inIn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return super.onInitialize();
+    }
     // The finalize action (on ALIVE->END transition)
     // formaer rtc_exiting_entry()
 //    @Override

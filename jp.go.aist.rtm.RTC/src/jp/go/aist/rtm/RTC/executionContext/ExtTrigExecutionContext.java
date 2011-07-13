@@ -1,31 +1,32 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
-import org.omg.CORBA.SystemException;
-
 import jp.go.aist.rtm.RTC.Manager;
-import jp.go.aist.rtm.RTC.util.TimeValue;
-import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.TimeValue;
 
+import org.omg.CORBA.SystemException;
 /**
- * <p>１周期毎の実行が可能なPeriodic Sampled Data Processing(周期実行用)ExecutionContextクラスです。
- * 外部からのメソッド呼びだしによって時間が１周期づつ進みます。</p>
+ * {@.ja ステップ実行が可能な ExecutionContext クラス}
+ * {@.en ExecutionContext class that enables one step execution}
+ * <p>
+ * {@.ja １周期毎の実行が可能なPeriodic Sampled Data Processing(周期実行用)
+ * ExecutionContextクラスです。
+ * 外部からのメソッド呼びだしによって時間が１周期づつ進みます。}
+ * {@.en ExecutionContext class that can execute every one cycle for Periodic
+ * Sampled Data Processing.
+ * Time(Tick) advances one cycle by invoking method externally.}
  */
 public class ExtTrigExecutionContext
         extends PeriodicExecutionContext implements Runnable {
 
     /**
-     * <p>デフォルト・コンストラクタです。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      */
     public ExtTrigExecutionContext() {
         super();
 
-        Manager manager = Manager.instance();
         rtcout = new Logbuf("Manager.ExtTrigExecutionContext");
-        // rtcout.setLevel(manager.getConfig().getProperty("logger.log_level"));
-        // rtcout.setDateFormat(manager.getConfig().getProperty("logger.date_format"));
-        // rtcout.setLogLock(StringUtil.toBool(manager.getConfig().getProperty("logger.stream_lock"),
-        //            "enable", "disable", false));
 
     }
     
@@ -34,7 +35,7 @@ public class ExtTrigExecutionContext
      */
     public void tick() throws SystemException {
 
-        rtcout.println(rtcout.TRACE, "ExtTrigExecutionContext.tick()");
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.tick()");
 
         synchronized (m_worker) {
             m_worker._called = true;
@@ -48,7 +49,7 @@ public class ExtTrigExecutionContext
      */
     public int svc() {
 
-        rtcout.println(rtcout.TRACE, "ExtTrigExecutionContext.svc()");
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.svc()");
 
         do {
             TimeValue tv = new TimeValue(0, m_usec); // (s, us)

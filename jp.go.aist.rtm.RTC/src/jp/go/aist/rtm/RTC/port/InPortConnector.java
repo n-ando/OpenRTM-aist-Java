@@ -4,20 +4,28 @@ import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 /**
- * <p> InPortConnector </p>
- * <p> InPortConnector base class </p>
- *
- * <p> The base class to derive subclasses for InPort's Push/Pull Connectors </p>
+ * {@.ja InPortConnector 基底クラス}
+ * {@.en InPortConnector base class}
+ * <p>
+ * {@.ja InPort の Push/Pull 各種 Connector を派生させるための基底クラス。}
+ * {@.en The base class to derive subclasses for InPort's Push/Pull Connectors}
  */
 public abstract class InPortConnector extends ConnectorBase {
     /**
-     * <p> Constructor </p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     * @param profile 
+     *   {@.ja 接続情報を含む ConnectorInfo オブジェクト}
+     *   {@.en ConnectorInfo object which includes connection information}
+     * @param buffer 
+     *   {@.ja このコネクタのバッファへのポインタ}
+     *   {@.en A pointer to the buffer of the connector}
      */
     public InPortConnector(ConnectorBase.ConnectorInfo profile,
                     BufferBase<OutputStream> buffer) {
@@ -31,81 +39,128 @@ public abstract class InPortConnector extends ConnectorBase {
 
 
     /**
-     * <p> Getting Profile </p>
+     * {@.ja ConnectorInfo 取得}
+     * {@.en Getting ConnectorInfo}
+     * <p>
+     * {@.ja Connector ConnectorInfo を取得する}
+     * {@.en This operation returns ConnectorInfo}
      *
-     * <p> This operation returns Connector Profile </p>
-     *
+     * @return 
+     *   {@.ja このコネクタが保持する ConnectorInfo オブジェクト}
+     *   {@.en ConnectorInfo object which is owned by this connector}
      */
     public final ConnectorInfo profile() {
-        rtcout.println(rtcout.TRACE, "profile()");
+        rtcout.println(Logbuf.TRACE, "profile()");
         return m_profile;
     }
     /**
-     * <p> Getting Connector ID </p>
+     * {@.ja Connector ID 取得}
+     * {@.en Getting Connector ID}
+     * <p>
+     * {@.ja Connector ID を取得する}
+     * {@.en This operation returns Connector ID}
      *
-     * <p> This operation returns Connector ID </p>
-     *
+     * @return 
+     *   {@.ja コネクタ ID 文字列へのポインタ}
+     *   {@.en A pointer to the connector id string}
      */
     public final String id() {
-        rtcout.println(rtcout.TRACE, "id() = "+profile().id);
+        rtcout.println(Logbuf.TRACE, "id() = "+profile().id);
         return profile().id;
     }
 
     /**
-     * <p> Getting Connector name </p>
+     * {@.ja Connector 名取得}
+     * {@.en Getting Connector name}
+     * <p>
+     * {@.ja Connector 名を取得する}
+     * {@.en This operation returns Connector name}
      *
-     * <p> This operation returns Connector name </p>
-     *
+     * @return 
+     *   {@.ja コネクタ名文字列へのポインタ}
+     *   {@.en A pointer to the connector's name string}
      */
     public final String name() {
-        rtcout.println(rtcout.TRACE, "name() = "+profile().name);
+        rtcout.println(Logbuf.TRACE, "name() = "+profile().name);
         return profile().name;
     }
 
     /**
-     * <p> Disconnect connection </p>
+     * {@.ja 接続解除関数}
+     * {@.en Disconnect connection}
+     * <p>
+     * {@.ja Connector が保持している接続を解除する}
+     * {@.en This operation disconnect this connection}
      *
-     * <p> This operation disconnect this connection </p>
-     *
+     * @return 
+     *   {@.ja ReturnCode}
+     *   {@.en ReturnCode}
      */
     public abstract ReturnCode disconnect();
 
     /**
+     * {@.ja Buffer を取得する}
+     * {@.en Getting Buffer}
+     * <p>
+     * {@.ja Connector が保持している Buffer を返す}
+     * {@.en This operation returns this connector's buffer}
      *
-     * <p> Getting Buffer </p>
-     *
-     * <p> This operation returns this connector's buffer </p>
+     * @return 
+     *   {@.ja このコネクタが保持するバッファへのポインタ}
+     *   {@.en A pointer to the buffer owned by this connector}
      *
      */
     public BufferBase<OutputStream> getBuffer() {
         return m_buffer;
     }
     /**
+     * {@.ja endianタイプ設定}
+     * {@.en Setting an endian type}
+     * <p>
+     * {@.ja  endianタイプを設定する}
+     * {@.en This operation set this connector's endian type}
      *
-     * <p> Setting an endian type </p>
-     *
-     * <p> This operation set this connector's endian type </p>
-     *
+     * @param isLittleEndian
+     *   {@.ja true: little, false: big}
+     *   {@.en true: little, false: big}
      */
     public void setEndian(boolean isLittleEndian){
         m_isLittleEndian = isLittleEndian;
     }
     /**
-     * <p> This value is true if the architecture is little-endian; false if it is big-endian.  </p>
+     * {@.ja endian 設定を返す}
+     * {@.en Returns endian}
+     * <p> 
+     * {@.en This value is true if the architecture is little-endian; 
+     *  false if it is big-endian.}
+     *
+     * @return 
+     *   {@.ja m_littleEndian がlittleの場合true、bigの場合false を返す。}
+     *   {@.en Returns the endian setting.}
      * 
      */
     public boolean isLittleEndian(){
         return m_isLittleEndian;
     }
+    /**
+     * {@.ja リスナを設定する。}
+     * {@.en Set the listener.}
+     *
+     * @param profile 
+     *   {@.ja 接続情報}
+     *   {@.en Connector information}
+     * @param listeners 
+     *   {@.ja リスナオブジェクト}
+     *   {@.en Listener objects}
+     */
     public abstract void setListener(ConnectorInfo profile, 
                             ConnectorListeners listeners);
     
 
     /**
      *
-     * <p> Destructor </p>
-     *
-     * <p> The read function to read data from buffer to InPort </p>
+     * {@.ja read 関数}
+     * {@.en Reading data}
      *
      */
     public abstract ReturnCode read(DataRef<InputStream> data);

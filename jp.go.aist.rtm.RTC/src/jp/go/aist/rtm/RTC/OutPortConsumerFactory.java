@@ -1,20 +1,29 @@
 package jp.go.aist.rtm.RTC;
 
 /**
- * <p>OutPortConsumer用ファクトリの実装です。</p>
+ * {@.ja OutPortConsumer用ファクトリの実装}
+ * {@.en Implement of factory for OutPortConsumer} 
  */
 public class OutPortConsumerFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
 
     /**
-     * <p> constructor </p>
+     * {@.ja コンストラクタ。}
+     * {@.en Constructor}
      */
     private OutPortConsumerFactory() {
 
     }
     /**
-     * <p> instance </p>
+     * {@.ja インスタンス生成。}
+     * {@.en Create instance}
      *
-     * @return OutPortConsumerFactory object
+     * <p>
+     * {@.ja インスタンスを生成する。}
+     *
+     * @return 
+     *   {@.ja インスタンス}
+     *   {@.en OutPortConsumerFactory object}
+     *
      */
     public static OutPortConsumerFactory instance() {
         if (factory_global == null) {

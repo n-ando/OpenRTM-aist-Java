@@ -3,12 +3,14 @@ package jp.go.aist.rtm.RTC;
 import jp.go.aist.rtm.Version;
 
 /**
- * <p>Managerのデフォルトコンフィグレーションを定義するインタフェースです。</p>
+ * {@.ja Managerのデフォルトコンフィグレーションを定義するインタフェース}
+ * {@.en Default configuration for Manager}
  */
 interface DefaultConfiguration {
 
     /**
-     * <p>Managerのデフォルトコンフィグレーションを取得します。</p>
+     * {@.ja Managerのデフォルトコンフィグレーションを定義}
+     * {@.en The default configurations of Manager are defined.}
      */
     public static final String[] default_config = {
         
@@ -27,7 +29,7 @@ interface DefaultConfiguration {
         "logger.enable",          "YES",
         "logger.file_name",       "./rtc%p.log",
         "logger.date_format",     "%b %d %H:%M:%S",
-        "logger.log_level",       "PARANOID",
+        "logger.log_level",       "INFO",
         "logger.stream_lock",     "NO",
         "logger.master_logger",   "",
         "module.conf_path",       "",

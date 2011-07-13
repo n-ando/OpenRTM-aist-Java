@@ -1,18 +1,20 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.util.Properties;
 
+import org.omg.CORBA.portable.OutputStream;
+
 /**
- * <p> ConnectorBase </p>
- * <p> Connector Base class </p>
- * <p> The base class to derive subclasses for InPort/OutPort, </p>
- * <p> Push/Pull Connectors </p>
+ * {@.ja Connector 基底クラス}
+ * {@.en Connector Base class}
+ * <p>
+ * {@.ja InPort/OutPort, Push/Pull 各種 Connector を派生させるための
+ * 基底クラス。}
+ * {@.en The base class to derive subclasses for InPort/OutPort,
+ * Push/Pull Connectors}
  *
  */
 
@@ -53,35 +55,48 @@ public abstract class ConnectorBase {
 //    typedef std::vector<ConnectorBase*> ConnectorList;
 
     /**
-     * <p> Getting Profile </p>
-     * <p> This operation returns Connector Profile </p>
+     * {@.ja Profile 取得}
+     * {@.en Getting Profile}
+     * <p>
+     * {@.ja Connector Profile を取得する}
+     * {@.en This operation returns Connector Profile}
      */
     public abstract ConnectorInfo profile();
 
     /**
-     * <p> Getting Connector ID </p>
-     * <p> This operation returns Connector ID </p>
+     * {@.ja Connector ID 取得}
+     * {@.en Getting Connector ID}
+     * <p>
+     * {@.ja Connector ID を取得する}
+     * {@.en This operation returns Connector ID}
      *
      */
     public abstract String id();
 
     /**
-     * <p> Getting Connector name </p>
-     * <p> This operation returns Connector name </p>
+     * {@.ja Connector 名取得}
+     * {@.en Getting Connector name}
+     * <p>
+     * {@.ja Connector 名を取得する}
+     * {@.en This operation returns Connector name}
      */
     public abstract String name();
 
     /**
-     * <p> Disconnect connection </p>
-     * <p> This operation disconnect this connection </p>
-     *
+     * {@.ja 接続解除関数}
+     * {@.en Disconnect connection}
+     * <p>
+     * {@.ja Connector が保持している接続を解除する}
+     * {@.en This operation disconnect this connection}
      */
     public abstract ReturnCode disconnect();
 
     /**
-     * <p> Getting Buffer </p>
-     * <p> This operation returns this connector's buffer </p>
-     *
+     * {@.ja Buffer を取得する}
+     * {@.en Getting Buffer}
+     * <p>
+     * {@.ja Connector が保持している Buffer を返す}
+     * {@.en This operation returns this connector's buffer}
      */
     public abstract BufferBase<OutputStream> getBuffer();
 

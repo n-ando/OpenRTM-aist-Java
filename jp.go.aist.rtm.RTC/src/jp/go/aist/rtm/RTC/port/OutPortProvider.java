@@ -1,12 +1,12 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.portable.InputStream;
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.util.Properties;
+
 import org.omg.CORBA.portable.OutputStream;
 
 import _SDOPackage.NVListHolder;
 
-import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.util.Properties;
 /**
  * <p>OutPortに対して何を提供しているかを宣言するインタフェースです。</p>
  */

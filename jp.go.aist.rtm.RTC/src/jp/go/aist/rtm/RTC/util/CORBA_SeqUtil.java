@@ -1,8 +1,25 @@
 package jp.go.aist.rtm.RTC.util;
 
-import org.omg.CORBA.ORB;
 import java.util.Vector;
 
+import org.omg.CORBA.ORB;
+
+import RTC.ComponentProfile;
+import RTC.ComponentProfileListHolder;
+import RTC.ConnectorProfile;
+import RTC.ConnectorProfileListHolder;
+import RTC.ExecutionContext;
+import RTC.ExecutionContextListHolder;
+import RTC.ExecutionContextService;
+import RTC.ExecutionContextServiceListHolder;
+import RTC.PortService;
+import RTC.PortInterfaceProfile;
+import RTC.PortInterfaceProfileListHolder;
+import RTC.PortProfile;
+import RTC.PortProfileListHolder;
+import RTC.PortServiceListHolder;
+import RTC.RTCListHolder;
+import RTC.RTObject;
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
 import _SDOPackage.Organization;
@@ -11,38 +28,39 @@ import _SDOPackage.SDO;
 import _SDOPackage.SDOListHolder;
 import _SDOPackage.ServiceProfile;
 import _SDOPackage.ServiceProfileListHolder;
-import RTC.ComponentProfile;
-import RTC.ComponentProfileListHolder;
-import RTC.ConnectorProfile;
-import RTC.ConnectorProfileListHolder;
-import RTC.ExecutionContext;
-import RTC.ExecutionContextHelper;
-import RTC.ExecutionContextListHolder;
-import RTC.ExecutionContextService;
-import RTC.ExecutionContextServiceListHolder;
-import RTC.PortService;
-import RTC.PortInterfaceProfile;
-import RTC.PortInterfaceProfileListHolder;
-import RTC.PortServiceListHolder;
-import RTC.PortProfile;
-import RTC.PortProfileListHolder;
-import RTC.RTObject;
-import RTC.RTCListHolder;
-
-import jp.go.aist.rtm.RTC.Manager;
 
 /**
- * <p>CORBAシーケンスに対するユーティリティクラスです。各メソッドはスレッドセーフではないため、
- * 必要に応じて呼び出し側で適切に排他処理を行ってください。</p>
+ * {@.ja CORBAシーケンスに対するユーティリティクラス。}
+ * {@.en Utility class to CORBA sequence.}
+ * <p>
+ * {@.ja 各メソッドはスレッドセーフではないため、
+ * 必要に応じて呼び出し側で適切に排他処理を行ってください。}
+ * {@.en Each method is not thread-safe. 
+ * Please do the exclusive operation appropriately if necessary 
+ * on the call side.}
  */
 public class CORBA_SeqUtil {
 
     /**
-     * <p>指定されたシーケンス内の各NameValueオブジェクト対して、順次、指定された操作を行います。</p>
+     * {@.ja CORBA sequence に対して functor を適用する。}
+     * {@.en Apply the functor to all CORBA sequence elements}
+     *
+     * <p>
+     * {@.ja 指定されたシーケンス内の各NameValueオブジェクト対して、順次、
+     * 指定された操作を行う。}
+     * {@.en Apply the given functor to the given CORBA sequence.}
      * 
-     * @param seq NameValueオブジェクトシーケンスを内部に保持するNVListHolderオブジェクト
-     * @param func 各NameValueオブジェクトに適用するoperatorFuncオブジェクト
-     * @return 引数で指定されたoperatorFuncオブジェクト
+     * @param seq 
+     *   {@.ja NameValueオブジェクトシーケンスを
+     *   内部に保持するNVListHolderオブジェクト}
+     *   {@.en NVListHolder object that hold NameValue object sequence 
+     *   internally.}
+     * @param func 
+     *   {@.ja 各NameValueオブジェクトに適用するoperatorFuncオブジェクト}
+     *   {@.en OperatorFunc object applied to each NameValue object}
+     * @return 
+     *   {@.ja 引数で指定されたoperatorFuncオブジェクト}
+     *   {@.en OperatorFunc object specified by argument}
      */
     public static operatorFunc for_each(NVListHolder seq, operatorFunc func) {
         if( seq.value == null ) return null;
@@ -54,11 +72,25 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>指定されたシーケンス内の各ConnectorProfileオブジェクトに対して、順次、指定された操作を行います。</p>
+     * {@.ja CORBA sequence に対して functor を適用する。}
+     * {@.en Apply the functor to all CORBA sequence elements}
+     *
+     * <p>
+     * {@.ja 指定されたシーケンス内の各ConnectorProfileオブジェクト対して、
+     * 順次、指定された操作を行う。}
+     * {@.en Apply the given functor to the given CORBA sequence.}
      * 
-     * @param seq ConnectorProfileオブジェクトシーケンスを内部に保持するConnectorProfileListHolderオブジェクト
-     * @param func 各ConnectorProfileオブジェクトに適用するoperatorFuncオブジェクト
-     * @return 引数で指定されたoperatorFuncオブジェクト
+     * @param seq 
+     *   {@.ja ConnectorProfileオブジェクトシーケンスを
+     *   内部に保持するConnectorProfileListHolderオブジェクト}
+     *   {@.en ConnectorProfileHolder object that hold ConnectorProfile 
+     *   object sequence internally.}
+     * @param func 
+     *   {@.ja 各ConnectorProfileオブジェクトに適用するoperatorFuncオブジェクト}
+     *   {@.en OperatorFunc object applied to each ConnectorProfile object}
+     * @return
+     *   {@.ja 引数で指定されたoperatorFuncオブジェクト}
+     *   {@.en OperatorFunc object specified by argument}
      */
     public static operatorFunc for_each(ConnectorProfileListHolder seq, operatorFunc func) {
         if( seq.value == null ) return null;
@@ -71,11 +103,28 @@ public class CORBA_SeqUtil {
     
 
     /**
-     * <p>指定されたシーケンス内の各ExecutionContextServiceオブジェクトに対して、順次、指定された操作を行います。</p>
+     * {@.ja CORBA sequence に対して functor を適用する。}
+     * {@.en Apply the functor to all CORBA sequence elements}
+     *
+     * <p>
+     * {@.ja 指定されたシーケンス内の各ExecutionContextServiceオブジェクトに
+     * 対して、順次、指定された操作を行う。}
+     * {@.en Apply the given functor to the given CORBA sequence.}
      * 
-     * @param seq ExecutionContextServiceオブジェクトシーケンスを内部に保持するExecutionContextServiceListHolderオブジェクト
-     * @param func 各ExecutionContextServiceオブジェクトに適用するoperatorFuncオブジェクト
-     * @return 引数で指定されたoperatorFuncオブジェクト
+     * @param seq 
+     *   {@.ja ExecutionContextServiceオブジェクトシーケンスを
+     *   内部に保持するExecutionContextServiceListHolderオブジェクト}
+     *   {@.en ExecutionContextServiceListHolder object that hold 
+     *   ExecutionContextService object sequence internally.}
+     * 
+     * @param func 
+     *   {@.ja 各ExecutionContextServiceオブジェクトに適用する
+     *   operatorFuncオブジェクト}
+     *   {@.en OperatorFunc object applied to each ExecutionContextService 
+     *   object}
+     * @return
+     *   {@.ja 引数で指定されたoperatorFuncオブジェクト}
+     *   {@.en OperatorFunc object specified by argument}
      */
     public static operatorFunc for_each(ExecutionContextServiceListHolder seq, operatorFunc func) {
         if( seq.value == null ) return null;
@@ -87,11 +136,29 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>指定されたシーケンス内の各PortServiceListHolderオブジェクトに対して、順次、指定された操作を行います。</p>
+     * {@.ja CORBA sequence に対して functor を適用する。}
+     * {@.en Apply the functor to all CORBA sequence elements}
+     *
+     * <p>
+     * {@.ja 指定されたシーケンス内の各PortServiceListHolderオブジェクトに
+     * 対して、順次、指定された操作を行う。}
+     * {@.en Apply the given functor to the given CORBA sequence.}
      * 
-     * @param seq PortServiceListHolderオブジェクトシーケンスを内部に保持するPortServiceListHolderオブジェクト
-     * @param func 各PortServiceListHolderオブジェクトに適用するoperatorFuncオブジェクト
-     * @return 引数で指定されたoperatorFuncオブジェクト
+     * @param seq 
+     *   {@.ja PortServiceListHolderオブジェクトシーケンスを
+     *   内部に保持するPortServiceListHolderオブジェクト}
+     *   {@.en PortServiceListHolder object that hold 
+     *   PortServiceListHolder object sequence internally.}
+     *
+     * @param func 
+     *   {@.ja 各PortServiceListHolderオブジェクトに適用する
+     *   operatorFuncオブジェクト}
+     *   {@.en OperatorFunc object applied to each PortServiceListHolder
+     *   object}
+     *
+     * @return
+     *   {@.ja 引数で指定されたoperatorFuncオブジェクト}
+     *   {@.en OperatorFunc object specified by argument}
      *
      */
     public static operatorFunc for_each(PortServiceListHolder seq, operatorFunc func) {
@@ -104,12 +171,25 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>指定されたシーケンス内の指定条件に合致するNameValueオブジェクトのインデクスを取得します。</p>
+     * {@.ja 指定されたシーケンス内の指定条件に合致するNameValueオブジェクトの
+     * インデクスを取得する。}
+     * {@.en Return the index of CORBA sequence element that functor matches}
      * 
-     * @param seq NameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
-     * @param func 合致判定を行うequalFunctorオブジェクト
-     * @return 合致するNameValueオブジェクトが存在する場合は、そのオブジェクトのシーケンス内でのインデクスを返します。<br />
-     * 合致するNameValueオブジェクトが存在しない場合は、-1を返します。
+     * @param seq 
+     *   {@.ja NameValueオブジェクトシーケンスを保持する
+     *   NVListHolderオブジェクト}
+     *   {@.en NVListHolderHolder object that hold 
+     *   NameValue object sequence internally.}
+     * @param func 
+     *   {@.ja 合致判定を行うequalFunctorオブジェクト}
+     *   {@.en equalFunctor object that does agreement judgment}
+     * @return 
+     *   {@.ja 合致するNameValueオブジェクトが存在する場合は、
+     *   そのオブジェクトのシーケンス内でのインデクスを返す。
+     *   合致するNameValueオブジェクトが存在しない場合は、-1を返す。}
+     *   {@.en When the agreeing NameValue object exists, 
+     *   the index in the sequence of the object is returned. 
+     *   When the agreeing NameValue object doesn't exist, -1 is returned.} 
      */
     public static int find(final NVListHolder seq, equalFunctor func) {
         if( seq.value == null ) return -1;
@@ -123,12 +203,25 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>指定されたシーケンス内の指定条件に合致するPortオブジェクトのインデクスを取得します。</p>
+     * {@.ja 指定されたシーケンス内の指定条件に合致するPortオブジェクトの
+     * インデクスを取得する。}
+     * {@.en Return the index of CORBA sequence element that functor matches}
      * 
-     * @param seq Portオブジェクトシーケンスを保持するPortServiceListHolderオブジェクト
-     * @param func 合致判定を行うequalFunctorオブジェクト
-     * @return 合致するPortオブジェクトが存在する場合は、そのオブジェクトのシーケンス内でのインデクスを返します。<br />
-     * 合致するPortオブジェクトが存在しない場合は、-1を返します。
+     * @param seq 
+     *   {@.ja Portオブジェクトシーケンスを保持する
+     *   PortServiceListHolderオブジェクト}
+     *   {@.en PortServiceListHolder object that hold 
+     *   Port object sequence internally.}
+     * @param func 
+     *   {@.ja 合致判定を行うequalFunctorオブジェクト}
+     *   {@.en equalFunctor object that does agreement judgment}
+     * @return 
+     *   {@.ja 合致するPortオブジェクトが存在する場合は、
+     *   そのオブジェクトのシーケンス内でのインデクスを返す。
+     *   合致するPortオブジェクトが存在しない場合は、-1を返す。}
+     *   {@.en When the agreeing Port object exists, 
+     *   the index in the sequence of the object is returned. 
+     *   When the agreeing Port object doesn't exist, -1 is returned.} 
      */
     public static int find(final PortServiceListHolder seq, equalFunctor func) {
         if( seq.value == null ) return -1;
@@ -142,12 +235,26 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>指定されたシーケンス内の指定条件に合致するPortInterfaceProfileオブジェクトのインデクスを取得します。</p>
+     * {@.ja 指定されたシーケンス内の指定条件に合致する
+     * PortInterfaceProfileオブジェクトのインデクスを取得する。}
+     * {@.en Return the index of CORBA sequence element that functor matches}
      * 
-     * @param seq PortInterfaceProfileオブジェクトシーケンスを保持するPortInterfaceProfileListHolderオブジェクト
-     * @param func 合致判定を行うequalFunctorオブジェクト
-     * @return 合致するPortInterfaceProfileオブジェクトが存在する場合は、そのオブジェクトのシーケンス内でのインデクスを返します。<br />
-     * 合致するPortInterfaceProfileオブジェクトが存在しない場合は、-1を返します。
+     * @param seq 
+     *   {@.ja PortInterfaceProfileオブジェクトシーケンスを保持する
+     *   PortInterfaceProfileListHolderオブジェクト}
+     *   {@.en PortInterfaceProfileListHolder object that hold 
+     *   PortInterfaceProfile object sequence internally.}
+     * @param func 
+     *   {@.ja 合致判定を行うequalFunctorオブジェクト}
+     *   {@.en equalFunctor object that does agreement judgment}
+     * @return 
+     *   {@.ja 合致するPortInterfaceProfileオブジェクトが存在する場合は、
+     *   そのオブジェクトのシーケンス内でのインデクスを返す。
+     *   合致するPortInterfaceProfileオブジェクトが存在しない場合は、-1を返す。}
+     *   {@.en When the agreeing PortInterfaceProfile object exists, 
+     *   the index in the sequence of the object is returned. 
+     *   When the agreeing PortInterfaceProfile object doesn't exist,
+     *   -1 is returned.} 
      */
     public static int find(final PortInterfaceProfileListHolder seq, equalFunctor func) {
         if( seq.value == null ) return -1;
@@ -161,12 +268,26 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>指定されたシーケンス内の指定条件に合致するConnectorProfileオブジェクトのインデクスを取得します。</p>
+     * {@.ja 指定されたシーケンス内の指定条件に合致する
+     * ConnectorProfileオブジェクトのインデクスを取得する。}
+     * {@.en Return the index of CORBA sequence element that functor matches}
      * 
-     * @param seq ConnectorProfileオブジェクトシーケンスを保持するConnectorProfileListHolderオブジェクト
-     * @param f 合致判定を行うequalFunctorオブジェクト
-     * @return 合致するConnectorProfileオブジェクトが存在する場合は、そのオブジェクトのシーケンス内でのインデクスを返します。<br />
-     * 合致するConnectorProfileオブジェクトが存在しない場合は、-1を返します。
+     * @param seq 
+     *   {@.ja ConnectorProfileオブジェクトシーケンスを保持する
+     *   ConnectorProfileListHolderオブジェクト}
+     *   {@.en ConnectorProfileListHolder object that hold 
+     *   ConnectorProfile object sequence internally.}
+     * @param f 
+     *   {@.ja 合致判定を行うequalFunctorオブジェクト}
+     *   {@.en equalFunctor object that does agreement judgment}
+     * @return 
+     *   {@.ja 合致するConnectorProfileオブジェクトが存在する場合は、
+     *   そのオブジェクトのシーケンス内でのインデクスを返す。
+     *   合致するConnectorProfileオブジェクトが存在しない場合は、-1を返す。}
+     *   {@.en When the agreeing ConnectorProfile object exists, 
+     *   the index in the sequence of the object is returned. 
+     *   When the agreeing ConnectorProfile object doesn't exist,
+     *   -1 is returned.} 
      */
     public static int find(final ConnectorProfileListHolder seq, equalFunctor f) {
         if( seq.value == null ) return -1;
@@ -180,12 +301,27 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>指定されたシーケンス内の指定条件に合致するExecutionContextServiceオブジェクトのインデクスを取得します。</p>
+     * {@.ja 指定されたシーケンス内の指定条件に合致する
+     * ExecutionContextServiceオブジェクトのインデクスを取得する。}
+     * {@.en Return the index of CORBA sequence element that functor matches}
      * 
-     * @param seq ExecutionContextServiceオブジェクトシーケンスを保持するExecutionContextServiceListHolderオブジェクト
-     * @param f 合致判定を行うequalFunctorオブジェクト
-     * @return 合致するExecutionContextServiceオブジェクトが存在する場合は、そのオブジェクトのシーケンス内でのインデクスを返します。<br />
-     * 合致するConnectorProfileオブジェクトが存在しない場合は、-1を返します。
+     * @param seq 
+     *   {@.ja ExecutionContextServiceオブジェクトシーケンスを保持する
+     *   ExecutionContextServiceListHolderオブジェクト}
+     *   {@.en ExecutionContextServiceListHolder object that hold 
+     *   ExecutionContextService object sequence internally.}
+     * @param f 
+     *   {@.ja 合致判定を行うequalFunctorオブジェクト}
+     *   {@.en equalFunctor object that does agreement judgment}
+     * @return 
+     *   {@.ja 合致するExecutionContextServiceオブジェクトが存在する場合は、
+     *   そのオブジェクトのシーケンス内でのインデクスを返す。
+     *   合致するExecutionContextServiceオブジェクトが存在しない場合は、
+     *   -1を返す。}
+     *   {@.en When the agreeing ExecutionContextService object exists, 
+     *   the index in the sequence of the object is returned. 
+     *   When the agreeing ExecutionContextService object doesn't exist,
+     *   -1 is returned.} 
      */
     public static int find(final ExecutionContextServiceListHolder seq, equalFunctor f) {
         if( seq.value == null ) return -1;
@@ -199,7 +335,27 @@ public class CORBA_SeqUtil {
     }
     
     /**
+     * {@.ja 指定されたシーケンス内の指定条件に合致する
+     * RTM.Managerオブジェクトのインデクスを取得する。}
+     * {@.en Return the index of CORBA sequence element that functor matches}
      * 
+     * @param seq 
+     *   {@.ja RTM.Managerオブジェクトシーケンスを保持する
+     *   RTM.ManagerListHolderオブジェクト}
+     *   {@.en RTM.ManagerListHolder object that hold 
+     *   RTM.Manager object sequence internally.}
+     * @param f 
+     *   {@.ja 合致判定を行うequalFunctorオブジェクト}
+     *   {@.en equalFunctor object that does agreement judgment}
+     * @return 
+     *   {@.ja 合致するRTM.Managerオブジェクトが存在する場合は、
+     *   そのオブジェクトのシーケンス内でのインデクスを返す。
+     *   合致するRTM.Managerオブジェクトが存在しない場合は、
+     *   -1を返す。}
+     *   {@.en When the agreeing RTM.Manager object exists, 
+     *   the index in the sequence of the object is returned. 
+     *   When the agreeing RTM.Manager object doesn't exist,
+     *   -1 is returned.} 
      */
     public static int find(final RTM.ManagerListHolder seq, equalFunctor f) {
         if( seq.value == null ) return -1;
@@ -213,7 +369,27 @@ public class CORBA_SeqUtil {
     }
 
     /**
+     * {@.ja 指定されたシーケンス内の指定条件に合致する
+     * RTC.RTCオブジェクトのインデクスを取得する。}
+     * {@.en Return the index of CORBA sequence element that functor matches}
      * 
+     * @param seq 
+     *   {@.ja RTC.RTCオブジェクトシーケンスを保持する
+     *   RTC.RTCListHolderオブジェクト}
+     *   {@.en RTC.RTCListHolder object that hold 
+     *   RTC.RTC object sequence internally.}
+     * @param f 
+     *   {@.ja 合致判定を行うequalFunctorオブジェクト}
+     *   {@.en equalFunctor object that does agreement judgment}
+     * @return 
+     *   {@.ja 合致するRTC.RTCオブジェクトが存在する場合は、
+     *   そのオブジェクトのシーケンス内でのインデクスを返す。
+     *   合致するRTC.RTCオブジェクトが存在しない場合は、
+     *   -1を返す。}
+     *   {@.en When the agreeing RTC.RTC object exists, 
+     *   the index in the sequence of the object is returned. 
+     *   When the agreeing RTC.RTC object doesn't exist,
+     *   -1 is returned.} 
      */
     public static int find(final RTC.RTCListHolder seq, equalFunctor f) {
         if( seq.value == null ) return -1;
@@ -225,11 +401,18 @@ public class CORBA_SeqUtil {
         
         return -1;
     }
+
     /**
-     * <p>シーケンスの末尾にNameValueオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先NameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
-     * @param elem 追加するNameValueオブジェクト
+     * {@.ja シーケンスの末尾にNameValueオブジェクトを追加する。}
+     * {@.en Adds NameValue at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja NameValueオブジェクトを追加するNVListHolderオブジェクト}
+     *   {@.en NVListHolder object that adds NameValue object.}
+     * @param elem 
+     *   {@.ja 追加するNameValueオブジェクト}
+     *   {@.en NameValue to be added to the CORBA sequence.}
+     *
      */
     public static void push_back(NVListHolder seq, NameValue elem) {
         int len;
@@ -247,10 +430,17 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾にServiceProfileオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先ServiceProfileオブジェクトシーケンスを保持するServiceProfileListHolderオブジェクト
-     * @param elem 追加するServiceProfileオブジェクト
+     * {@.ja シーケンスの末尾にServiceProfileオブジェクトを追加する。}
+     * {@.en Adds ServiceProfile at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja ServiceProfileオブジェクトを追加する
+     *   ServiceProfileListHolderオブジェクト}
+     *   {@.en ServiceProfileListHolder object that adds ServiceProfile object.}
+     * @param elem 
+     *   {@.ja 追加するServiceProfileオブジェクト}
+     *   {@.en ServiceProfile to be added to the CORBA sequence.}
+     *
      */
     public static void push_back(ServiceProfileListHolder seq, ServiceProfile elem) {
         int len;
@@ -268,10 +458,17 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾にOrganizationオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先Organizationオブジェクトシーケンスを保持するOrganizationListHolderオブジェクト
-     * @param elem 追加するOrganizationオブジェクト
+     * {@.ja シーケンスの末尾にOrganizationオブジェクトを追加する。}
+     * {@.en Adds Organization at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja Organizationオブジェクトを追加する
+     *   OrganizationListHolderオブジェクト}
+     *   {@.en OrganizationListHolder object that adds Organization object.}
+     * @param elem 
+     *   {@.ja 追加するOrganizationオブジェクト}
+     *   {@.en Organization to be added to the CORBA sequence.}
+     *
      */
     public static void push_back(OrganizationListHolder seq, Organization elem) {
         int len;
@@ -289,10 +486,18 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾にExecutionContextServiceオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先ExecutionContextServiceオブジェクトシーケンスを保持するExecutionContextServiceListHolderオブジェクト
-     * @param elem 追加するExecutionContextServiceオブジェクト
+     * {@.ja シーケンスの末尾にExecutionContextServiceオブジェクトを追加する。}
+     * {@.en Adds ExecutionContextService at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja ExecutionContextServiceオブジェクトを追加する
+     *   ExecutionContextServiceListHolderオブジェクト}
+     *   {@.en ExecutionContextServiceListHolder object that adds 
+     *   ExecutionContextService object.}
+     * @param elem 
+     *   {@.ja 追加するExecutionContextServiceオブジェクト}
+     *   {@.en ExecutionContextService to be added to the CORBA sequence.}
+     *
      */
     public static void push_back(ExecutionContextServiceListHolder seq, ExecutionContextService elem) {
         int len;
@@ -310,10 +515,18 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾にPortServiceオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先PortServiceオブジェクトシーケンスを保持するPortServiceListHolderオブジェクト
-     * @param elem 追加するPortServiceオブジェクト
+     * {@.ja シーケンスの末尾にPortServiceオブジェクトを追加する。}
+     * {@.en Adds PortService at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja PortServiceオブジェクトを追加する
+     *   PortServiceListHolderオブジェクト}
+     *   {@.en PortServiceListHolder object that adds 
+     *   PortService object.}
+     * @param elem 
+     *   {@.ja 追加するPortServiceオブジェクト}
+     *   {@.en PortService to be added to the CORBA sequence.}
+     *
      */
     public static void push_back(PortServiceListHolder seq, PortService elem) {
         int len;
@@ -331,10 +544,18 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾にConnectorProfileオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先ConnectorProfileオブジェクトシーケンスを保持するConnectorProfileListHolderオブジェクト
-     * @param elem 追加するConnectorProfileオブジェクト
+     * {@.ja シーケンスの末尾にConnectorProfileオブジェクトを追加する。}
+     * {@.en Adds ConnectorProfile at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja ConnectorProfileオブジェクトを追加する
+     *   ConnectorProfileListHolderオブジェクト}
+     *   {@.en ConnectorProfileListHolder object that adds 
+     *   ConnectorProfile object.}
+     * @param elem 
+     *   {@.ja 追加するConnectorProfileオブジェクト}
+     *   {@.en ConnectorProfile to be added to the CORBA sequence.}
+     *
      */
     public static void push_back(ConnectorProfileListHolder seq, ConnectorProfile elem) {
         int len;
@@ -352,10 +573,18 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾にPortInterfaceProfileオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先PortInterfaceProfileオブジェクトシーケンスを保持するPortInterfaceProfileListHolderオブジェクト
-     * @param elem 追加するPortInterfaceProfileオブジェクト
+     * {@.ja シーケンスの末尾にPortInterfaceProfileオブジェクトを追加する。}
+     * {@.en Adds PortInterfaceProfile at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja PortInterfaceProfileオブジェクトを追加する
+     *   PortInterfaceProfileListHolderオブジェクト}
+     *   {@.en PortInterfaceProfileListHolder object that adds 
+     *   PortInterfaceProfile object.}
+     * @param elem 
+     *   {@.ja 追加するPortInterfaceProfileオブジェクト}
+     *   {@.en PortInterfaceProfile to be added to the CORBA sequence.}
+     *
      */
     public static void push_back(PortInterfaceProfileListHolder seq, PortInterfaceProfile elem) {
         int len;
@@ -373,10 +602,18 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>シーケンスの末尾にPortProfileオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先PortProfileオブジェクトシーケンスを保持するPortProfileListHolderオブジェクト
-     * @param elem 追加するPortProfileオブジェクト
+     * {@.ja シーケンスの末尾にPortProfileオブジェクトを追加する。}
+     * {@.en Adds PortInterfaceProfile at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja PortProfileオブジェクトを追加する
+     *   PortProfileListHolderオブジェクト}
+     *   {@.en PortProfileListHolder object that adds 
+     *   PortProfile object.}
+     * @param elem 
+     *   {@.ja 追加するPortProfileオブジェクト}
+     *   {@.en PortProfile to be added to the CORBA sequence.}
+     *
      */
     public static void push_back(PortProfileListHolder seq, PortProfile elem) {
         int len;
@@ -394,10 +631,17 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾にExecutionContextオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先ExecutionContextオブジェクトシーケンスを保持するExecutionContextListHolderオブジェクト
-     * @param elem 追加するExecutionContextオブジェクト
+     * {@.ja シーケンスの末尾にExecutionContextオブジェクトを追加する。}
+     * {@.en Adds ExecutionContext at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja ExecutionContextオブジェクトを追加する
+     *   ExecutionContextListHolderオブジェクト}
+     *   {@.en ExecutionContextListHolder object that adds 
+     *   ExecutionContext object.}
+     * @param elem 
+     *   {@.ja 追加するExecutionContextオブジェクト}
+     *   {@.en ExecutionContext to be added to the CORBA sequence.}
      *
      */
     public static void push_back(ExecutionContextListHolder seq, ExecutionContext elem) {
@@ -416,10 +660,17 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾にSDOオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先SDOオブジェクトシーケンスを保持するSDOListHolderオブジェクト
-     * @param elem 追加するSDOオブジェクト
+     * {@.ja シーケンスの末尾にSDOオブジェクトを追加する。}
+     * {@.en Adds SDO at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja SDOオブジェクトを追加する
+     *   SDOListHolderオブジェクト}
+     *   {@.en SDOListHolder object that adds 
+     *   SDO object.}
+     * @param elem 
+     *   {@.ja 追加するSDOオブジェクト}
+     *   {@.en SDO to be added to the CORBA sequence.}
      *
      */
     public static void push_back(SDOListHolder seq, SDO elem) {
@@ -438,10 +689,17 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾にComponentProfileオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先ComponentProfileオブジェクトシーケンスを保持するComponentProfileListHolderオブジェクト
-     * @param elem 追加するComponentProfileオブジェクト
+     * {@.ja シーケンスの末尾にComponentProfileオブジェクトを追加する。}
+     * {@.en Adds ComponentProfile at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja ComponentProfileオブジェクトを追加する
+     *   ComponentProfileListHolderオブジェクト}
+     *   {@.en ComponentProfileListHolder object that adds 
+     *   ComponentProfile object.}
+     * @param elem 
+     *   {@.ja 追加するComponentProfileオブジェクト}
+     *   {@.en ComponentProfile to be added to the CORBA sequence.}
      *
      */
     public static void push_back(ComponentProfileListHolder seq, ComponentProfile elem) {
@@ -460,10 +718,17 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾にRTObjectオブジェクトを追加します。</p>
-     * 
-     * @param seq 追加先RTObjectオブジェクトシーケンスを保持するRTCListHolderオブジェクト
-     * @param elem 追加するRTObjectオブジェクト
+     * {@.ja シーケンスの末尾にRTObjectオブジェクトを追加する。}
+     * {@.en Adds RTObject at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja RTObjectオブジェクトを追加する
+     *   RTCListHolderオブジェクト}
+     *   {@.en RTCListHolder object that adds 
+     *   RTObject object.}
+     * @param elem 
+     *   {@.ja 追加するRTObjectオブジェクト}
+     *   {@.en RTObject to be added to the CORBA sequence.}
      *
      */
     public static void push_back(RTCListHolder seq, RTObject elem) {
@@ -482,6 +747,17 @@ public class CORBA_SeqUtil {
     }
 
     /**
+     * {@.ja シーケンスの末尾にRTM.Managerオブジェクトを追加する。}
+     * {@.en Adds RTM.Manager at the end of CORBA sequence.} 
+     *
+     * @param seq 
+     *   {@.ja RTM.Managerオブジェクトを追加する
+     *   RTM.ManagerListHolderオブジェクト}
+     *   {@.en RTM.ManagerListHolder object that adds 
+     *   RTM.Manager object.}
+     * @param elem 
+     *   {@.ja 追加するRTM.Managerオブジェクト}
+     *   {@.en RTM.Manager to be added to the CORBA sequence.}
      *
      */
     public static void push_back(RTM.ManagerListHolder seq, RTM.Manager elem) {
@@ -500,10 +776,19 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾に、別のNameValueオブジェクトシーケンスを追加します。</p>
-     * 
-     * @param seq1 追加先のNameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
-     * @param seq2 追加するNameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
+     * {@.ja シーケンスの末尾に別のNameValueオブジェクトシーケンスを追加する。}
+     * {@.en Adds another NameValue object sequence 
+     * to the end of the sequence.} 
+     *
+     * @param seq1
+     *   {@.ja 追加先のNameValueオブジェクトシーケンスを保持する
+     *   NVListHolderオブジェクト}
+     *   {@.en It is added to this NVListHolder object.}
+     * @param seq2 
+     *   {@.ja 追加するNameValueオブジェクトシーケンスを保持する
+     *   NVListHolderオブジェクト}
+     *   {@.en This NVListHolder object is added.}
+     *
      */
     public static void push_back_list(NVListHolder seq1, NVListHolder seq2) {
         int len1, len2;
@@ -529,10 +814,20 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンスの末尾に、別の_SDOPackage.SDOオブジェクトシーケンスを追加します。</p>
-     * 
-     * @param seq1 追加先の_SDOPackage.SDOオブジェクトシーケンスを保持するSDOListHolderオブジェクト
-     * @param seq2 追加する_SDOPackage.SDOオブジェクトシーケンスを保持するSDOListHolderオブジェクト
+     * {@.ja シーケンスの末尾に別の_SDOPackage.SDOオブジェクトシーケンスを
+     * 追加する。}
+     * {@.en Adds another _SDOPackage.SDO object sequence 
+     * to the end of the sequence.} 
+     *
+     * @param seq1
+     *   {@.ja 追加先の_SDOPackage.SDOオブジェクトシーケンスを保持する
+     *   SDOListHolderオブジェクト}
+     *   {@.en It is added to this SDOListHolder object.}
+     * @param seq2 
+     *   {@.ja 追加する_SDOPackage.SDOオブジェクトシーケンスを保持する
+     *   SDOListHolderオブジェクト}
+     *   {@.en This SDOListHolder object is added.}
+     *
      */
     public static void push_back_list(SDOListHolder seq1, SDOListHolder seq2) {
         int len1, len2;
@@ -558,7 +853,19 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * 
+     * {@.ja シーケンスの末尾に別のRTM.ModuleProfileオブジェクトシーケンスを
+     * 追加する。}
+     * {@.en Adds another RTM.ModuleProfile object sequence 
+     * to the end of the sequence.} 
+     *
+     * @param seq1
+     *   {@.ja 追加先のRTM.ModuleProfileオブジェクトシーケンスを保持する
+     *   RTM.ModuleProfileListHolderオブジェクト}
+     *   {@.en It is added to this RTM.ModuleProfileListHolder object.}
+     * @param seq2 
+     *   {@.ja 追加するRTM.ModuleProfileオブジェクトシーケンスを保持する
+     *   RTM.ModuleProfileListHolderオブジェクト}
+     *   {@.en This RTM.ModuleProfileListHolder object is added.}
      *
      */
     public static void push_back_list(RTM.ModuleProfileListHolder seq1, 
@@ -587,7 +894,19 @@ public class CORBA_SeqUtil {
     
 
     /**
-     * 
+     * {@.ja シーケンスの末尾に別のRTC.RTObjectオブジェクトシーケンスを
+     * 追加する。}
+     * {@.en Adds another RTC.RTObject object sequence 
+     * to the end of the sequence.} 
+     *
+     * @param seq1
+     *   {@.ja 追加先のRTC.RTObjectオブジェクトシーケンスを保持する
+     *   RTC.RTCListHolderオブジェクト}
+     *   {@.en It is added to this RTC.RTCListHolder object.}
+     * @param seq2 
+     *   {@.ja 追加するRTC.RTObjectオブジェクトシーケンスを保持する
+     *   RTC.RTCListHolderオブジェクト}
+     *   {@.en This RTC.RTCListHolder object is added.}
      *
      */
     public static void push_back_list(RTC.RTCListHolder seq1, 
@@ -615,7 +934,19 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * 
+     * {@.ja シーケンスの末尾に別のRTC.ComponentProfileオブジェクトシーケンスを
+     * 追加する。}
+     * {@.en Adds another RTC.ComponentProfile object sequence 
+     * to the end of the sequence.} 
+     *
+     * @param seq1
+     *   {@.ja 追加先のRTC.ComponentProfileオブジェクトシーケンスを保持する
+     *   RTC.ComponentProfileListHolderオブジェクト}
+     *   {@.en It is added to this RTC.ComponentProfileListHolder object.}
+     * @param seq2 
+     *   {@.ja 追加するRTC.ComponentProfileオブジェクトシーケンスを保持する
+     *   RTC.ComponentProfileListHolderオブジェクト}
+     *   {@.en This RTC.ComponentProfileListHolder object is added.}
      *
      */
     public static void push_back_list(RTC.ComponentProfileListHolder seq1, 
@@ -643,11 +974,21 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンス内の指定された位置にNameValueオブジェクトを挿入します。</p>
-     * 
-     * @param seq 挿入先のNameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
-     * @param elem 挿入するNameValueオブジェクト
-     * @param index 挿入先を指すインデクス
+     * {@.ja シーケンス内の指定された位置にNameValueオブジェクトを挿入する。}
+     * {@.en Inserts the NameValue object in the specified position 
+     * in the sequence.} 
+     *
+     * @param seq
+     *   {@.ja 挿入先のNameValueオブジェクトシーケンスを保持する
+     *   NVListHolderオブジェクト}
+     *   {@.en NVListHolder object.}
+     * @param elem 
+     *   {@.ja 挿入するNameValueオブジェクト}
+     *   {@.en NameValue object}
+     * @param index 
+     *   {@.ja 挿入先を指すインデクス}
+     *   {@.en Index that indicates insertion destination}
+     *
      */
     public static void insert(NVListHolder seq, NameValue elem, int index) {
         int len;
@@ -672,28 +1013,48 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>シーケンス内の先頭NameValueオブジェクトを取得します。</p>
+     * {@.ja シーケンス内の先頭NameValueオブジェクトを取得する}
+     * {@.en Get the front element of the CORBA sequence}
+     *
+     * @param seq 
+     *   {@.ja 要素を取得する CORBA sequence}
+     *   {@.en CORBA sequence which acquires an element}
      * 
-     * @return シーケンス内の先頭NameValueオブジェクト
+     * @return 
+     *   {@.ja シーケンス内の先頭NameValueオブジェクト}
+     *   {@.en An acquisition element}
      */
     public static NameValue front(NVListHolder seq) {
         return seq.value[0];
     }
     
     /**
-     * <p>シーケンス内の末尾NameValueオブジェクトを取得します。</p>
+     * {@.ja シーケンス内の末尾NameValueオブジェクトを取得する}
+     * {@.en Get the last element of the CORBA sequence}
      * 
-     * @return シーケンス内の末尾NameValueオブジェクト
+     * @param seq 
+     *   {@.ja 要素を取得する CORBA sequence}
+     *   {@.en The CORBA sequence to be get the element}
+     * @return 
+     *   {@.ja シーケンス内の末尾NameValueオブジェクト}
+     *   {@.en An acquisition element}
+     *
      */
     public static NameValue back(NVListHolder seq) {
         return seq.value[seq.value.length - 1];
     }
     
     /**
-     * <p>シーケンス内の指定された位置の要素を削除します。</p>
+     * {@.ja シーケンス内の指定された位置の要素を削除する}
+     * {@.en Erase the element of the specified index}
      * 
-     * @param seq 削除対象のNameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
-     * @param index 削除要素のシーケンス内インデクス
+     * @param seq 
+     *   {@.ja 削除対象のNameValueオブジェクトシーケンスを保持する
+     *   NVListHolderオブジェクト}
+     *   {@.en The CORBA sequence to be get the element}
+     * @param index 
+     *   {@.ja 削除要素のシーケンス内インデクス}
+     *   {@.en The index of the element to be removed}
      */
     public static void erase(NVListHolder seq, int index) {
         if( seq.value == null ) return;
@@ -710,10 +1071,16 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>シーケンス内の指定された位置の要素を削除します。</p>
+     * {@.ja シーケンス内の指定された位置の要素を削除する}
+     * {@.en Erase the element of the specified index}
      * 
-     * @param seq 削除対象の_SDOPackage.SDOオブジェクトシーケンスを保持するSDOListHolderオブジェクト
-     * @param index 削除要素のシーケンス内インデクス
+     * @param seq 
+     *   {@.ja 削除対象の_SDOPackage.SDOオブジェクトシーケンスを保持する
+     *   SDOListHolderオブジェクト}
+     *   {@.en The CORBA sequence to be get the element}
+     * @param index 
+     *   {@.ja 削除要素のシーケンス内インデクス}
+     *   {@.en The index of the element to be removed}
      */
     public static void erase(SDOListHolder seq, int index) {
         if( seq.value == null ) return;
@@ -730,10 +1097,16 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>シーケンス内の指定された位置の要素を削除します。</p>
+     * {@.ja シーケンス内の指定された位置の要素を削除する}
+     * {@.en Erase the element of the specified index}
      * 
-     * @param seq 削除対象のServiceProfileオブジェクトシーケンスを保持するServiceProfileListHolderオブジェクト
-     * @param index 削除要素のシーケンス内インデクス
+     * @param seq 
+     *   {@.ja 削除対象のServiceProfileオブジェクトシーケンスを保持する
+     *   ServiceProfileListHolderオブジェクト}
+     *   {@.en The CORBA sequence to be get the element}
+     * @param index 
+     *   {@.ja 削除要素のシーケンス内インデクス}
+     *   {@.en The index of the element to be removed}
      */
     public static void erase(ServiceProfileListHolder seq, int index) {
         if( seq.value == null ) return;
@@ -750,10 +1123,16 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>シーケンス内の指定された位置の要素を削除します。</p>
+     * {@.ja シーケンス内の指定された位置の要素を削除する}
+     * {@.en Erase the element of the specified index}
      * 
-     * @param seq 削除対象のOrganizationオブジェクトシーケンスを保持するOrganizationListHolderオブジェクト
-     * @param index 削除要素のシーケンス内インデクス
+     * @param seq 
+     *   {@.ja 削除対象のOrganizationオブジェクトシーケンスを保持する
+     *   OrganizationListHolderオブジェクト}
+     *   {@.en The CORBA sequence to be get the element}
+     * @param index 
+     *   {@.ja 削除要素のシーケンス内インデクス}
+     *   {@.en The index of the element to be removed}
      */
     public static void erase(OrganizationListHolder seq, int index) {
         if( seq.value == null ) return;
@@ -770,10 +1149,16 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>シーケンス内の指定された位置の要素を削除します。</p>
+     * {@.ja シーケンス内の指定された位置の要素を削除する}
+     * {@.en Erase the element of the specified index}
      * 
-     * @param seq 削除対象のPortServiceオブジェクトシーケンスを保持するPortServiceListHolderオブジェクト
-     * @param index 削除要素のシーケンス内インデクス
+     * @param seq 
+     *   {@.ja 削除対象のPortServiceオブジェクトシーケンスを保持する
+     *   PortServiceListHolderオブジェクト}
+     *   {@.en The CORBA sequence to be get the element}
+     * @param index 
+     *   {@.ja 削除要素のシーケンス内インデクス}
+     *   {@.en The index of the element to be removed}
      */
     public static void erase(PortServiceListHolder seq, int index) {
         if( seq.value == null ) return;
@@ -790,10 +1175,16 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>シーケンス内の指定された位置の要素を削除します。</p>
+     * {@.ja シーケンス内の指定された位置の要素を削除する}
+     * {@.en Erase the element of the specified index}
      * 
-     * @param seq 削除対象のConnectorProfileオブジェクトシーケンスを保持するConnectorProfileListHolderオブジェクト
-     * @param index 削除要素のシーケンス内インデクス
+     * @param seq 
+     *   {@.ja 削除対象のConnectorProfileオブジェクトシーケンスを保持する
+     *   ConnectorProfileListHolderオブジェクト}
+     *   {@.en The CORBA sequence to be get the element}
+     * @param index 
+     *   {@.ja 削除要素のシーケンス内インデクス}
+     *   {@.en The index of the element to be removed}
      */
     public static void erase(ConnectorProfileListHolder seq, int index) {
         if( seq.value == null ) return;
@@ -810,10 +1201,16 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンス内の指定された位置の要素を削除します。</p>
+     * {@.ja シーケンス内の指定された位置の要素を削除する}
+     * {@.en Erase the element of the specified index}
      * 
-     * @param seq 削除対象のPortInterfaceProfileオブジェクトシーケンスを保持するPortInterfaceProfileListHolderオブジェクト
-     * @param index 削除要素のシーケンス内インデクス
+     * @param seq 
+     *   {@.ja 削除対象のPortInterfaceProfileオブジェクトシーケンスを保持する
+     *   PortInterfaceProfileListHolderオブジェクト}
+     *   {@.en The CORBA sequence to be get the element}
+     * @param index 
+     *   {@.ja 削除要素のシーケンス内インデクス}
+     *   {@.en The index of the element to be removed}
      */
     public static void erase(PortInterfaceProfileListHolder seq, int index) {
         if( seq.value == null ) return;
@@ -830,11 +1227,16 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>シーケンス内の指定された位置の要素を削除します。</p>
+     * {@.ja シーケンス内の指定された位置の要素を削除する}
+     * {@.en Erase the element of the specified index}
      * 
-     * @param seq 削除対象のExecutionContextServiceオブジェクトシーケンスを保持するExecutionContextServiceListHolderオブジェクト
-     * @param index 削除要素のシーケンス内インデクス
-     *
+     * @param seq 
+     *   {@.ja 削除対象のExecutionContextServiceオブジェクトシーケンスを保持する
+     *   ExecutionContextServiceListHolderオブジェクト}
+     *   {@.en The CORBA sequence to be get the element}
+     * @param index 
+     *   {@.ja 削除要素のシーケンス内インデクス}
+     *   {@.en The index of the element to be removed}
      */
     public static void erase(ExecutionContextServiceListHolder seq, int index) {
         if ( seq.value == null ) return;
@@ -851,8 +1253,16 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     *
-     *
+     * {@.ja シーケンス内の指定された位置の要素を削除する}
+     * {@.en Erase the element of the specified index}
+     * 
+     * @param seq 
+     *   {@.ja 削除対象のRTM.Managerオブジェクトシーケンスを保持する
+     *   RTM.ManagerListHolderオブジェクト}
+     *   {@.en The CORBA sequence to be get the element}
+     * @param index 
+     *   {@.ja 削除要素のシーケンス内インデクス}
+     *   {@.en The index of the element to be removed}
      */
     public static void erase(RTM.ManagerListHolder seq, int index) {
         if ( seq.value == null ) return;
@@ -869,8 +1279,16 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     *
-     *
+     * {@.ja シーケンス内の指定された位置の要素を削除する}
+     * {@.en Erase the element of the specified index}
+     * 
+     * @param seq 
+     *   {@.ja 削除対象のRTC.RTObjectオブジェクトシーケンスを保持する
+     *   RTC.RTCListHolderオブジェクト}
+     *   {@.en The CORBA sequence to be get the element}
+     * @param index 
+     *   {@.ja 削除要素のシーケンス内インデクス}
+     *   {@.en The index of the element to be removed}
      */
     public static void erase(RTC.RTCListHolder seq, int index) {
         if ( seq.value == null ) return;
@@ -886,10 +1304,16 @@ public class CORBA_SeqUtil {
         seq.value = newlist;
     }
     /**
-     * <p>シーケンス内の条件に合致する要素を削除します。</p>
+     * {@.ja シーケンス内の条件に合致する要素を削除する}
+     * {@.en Remove an element of a sequence according to a predicate}
      * 
-     * @param seq NameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
-     * @param func 合致判定を行うequalFunctorオブジェクト
+     * @param seq 
+     *   {@.ja NameValueオブジェクトシーケンスを保持するi
+     *   NVListHolderオブジェクト}
+     *   {@.en target CORBA sequence}
+     * @param func 
+     *   {@.ja 合致判定を行うequalFunctorオブジェクト}
+     *   {@.en predicate which decides a sequence to remove}
      */
     public static void erase_if(NVListHolder seq, equalFunctor func) {
         
@@ -901,10 +1325,16 @@ public class CORBA_SeqUtil {
     }
     
     /**
-     * <p>シーケンス内の条件に合致する要素を削除します。</p>
+     * {@.ja シーケンス内の条件に合致する要素を削除する}
+     * {@.en Remove an element of a sequence according to a predicate}
      * 
-     * @param seq PortServiceオブジェクトシーケンスを保持するPortServiceListHolderオブジェクト
-     * @param f 合致判定を行うequalFunctorオブジェクト
+     * @param seq 
+     *   {@.ja PortServiceオブジェクトシーケンスを保持するi
+     *   PortServiceListHolderオブジェクト}
+     *   {@.en target CORBA sequence}
+     * @param f 
+     *   {@.ja 合致判定を行うequalFunctorオブジェクト}
+     *   {@.en predicate which decides a sequence to remove}
      */
     public static void erase_if(PortServiceListHolder seq, equalFunctor f) {
         
@@ -916,18 +1346,27 @@ public class CORBA_SeqUtil {
     }
 
     /**
-     * <p>指定されたシーケンスの全要素を削除します。</p>
+     * {@.ja 指定されたシーケンスの全要素を削除}
+     * {@.en Erase all the elements of the CORBA sequence}
      * 
-     * @param seq NameValueオブジェクトシーケンスを保持するNVListHolderオブジェクト
+     * @param seq 
+     *   {@.ja NameValueオブジェクトシーケンスを保持する
+     *   NVListHolderオブジェクト}
+     *   {@.en NVListHolder object} 
      */
     public static void clear(NVListHolder seq) {
         seq.value = new NameValue[0];
     }
 
     /**
-     *  <p> refToVstring </p>
+     *  {@.ja オブジェクトをIORに変換する}
+     *  {@.en converts the object into IOR}
      *  @param objlist
+     *    {@.ja オブジェクトのリスト}
+     *    {@.en List of object}
      *  @return Vector<String>
+     *    {@.ja List of object}
+     *    {@.en List of character string}
      */
     public static <T> Vector<String> refToVstring(final T[] objlist) {
         Vector<String> iorlist = new Vector<String>();

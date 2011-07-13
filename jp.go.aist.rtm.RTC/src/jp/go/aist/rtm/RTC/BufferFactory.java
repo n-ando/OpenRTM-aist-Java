@@ -1,20 +1,24 @@
 package jp.go.aist.rtm.RTC;
 
 /**
- * <p>CdrBuffer用ファクトリの実装です。</p>
+ * {@.ja CdrBuffer用ファクトリの実装。}
+ * {@.en This class is a factory for CdrBuffer.}
  */
 public class BufferFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
 
     /**
-     * <p> constructor </p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      */
     private BufferFactory() {
 
     }
     /**
-     * <p> instance </p>
-     *
-     * @return BufferFactory object
+     * {@.ja BufferFactoryのインスタンスを生成する。} 
+     * {@.en Creates a instance of BufferFactory.}
+     * @return
+     *   {@.ja BufferFactoryオブジェクト}
+     *   {@.en BufferFactory object}
      */
     public static BufferFactory instance() {
         if (factory_global == null) {

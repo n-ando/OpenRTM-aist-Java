@@ -9,13 +9,18 @@ import java.util.Map;
 import java.util.Vector;
 
 /**
- * <p>キーと値のセットからなるプロパティセットを表します。
- * ストリームへ保管したり、ストリームからロードしたりできます。
- * 各プロパティのキー、およびそれに対応する値は文字列です。<p />
- * 
- * <p>プロパティセットには、デフォルトを指定することができ、
+ * {@.ja キーと値のセットからなるプロパティセットを表す。}
+ * {@.en Property set that consists of key and value}
+ * <p>
+ * {@.ja ストリームへ保管したり、ストリームからロードしたりできる。
+ * 各プロパティのキー、およびそれに対応する値は文字列。
+ * プロパティセットには、デフォルトを指定することができ、
  * 元のプロパティセットで指定されたキーが見つからない場合には、
- * この２番目のプロパティセットが検索されます。<p />
+ * この２番目のプロパティセットが検索される。}
+ * {@.en Can keep in the stream, and load it from the stream. 
+ * The key to each property and the value corresponding to it are character.
+ * When default can be specified for the property set, and the key specified by
+ * former property set is not found, this second property set is retrieved.} 
  * 
  */
 public class Properties {
@@ -28,7 +33,8 @@ public class Properties {
     private static final String EMPTY = "";
 	
     /**
-     * <p>デフォルトコンストラクタです。</p>
+     * {@.ja デフォルトコンストラクタ}
+     * {@.en Default constructor}
      */
     public Properties() {
         
@@ -36,10 +42,18 @@ public class Properties {
     }
     
     /**
-     * <p>コンストラクタです。指定されたキーを持つプロパティが初期設定されます。
-     * 指定されたキーに対応する値は空文字列となります。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     * <p>
+     * {@.ja 指定されたキーを持つプロパティが初期設定される。
+     * 指定されたキーに対応する値は空文字列となる。}
+     * {@.en The property with the specified key is initialized. 
+     * The value corresponding to the specified key becomes a null character
+     * string.}
      * 
-     * @param key キー
+     * @param key 
+     *   {@.ja キー}
+     *   {@.en key}
      */
     public Properties(String key) {
         
@@ -47,10 +61,18 @@ public class Properties {
     }
     
     /**
-     * <p>コンストラクタです。指定されたキーおよび値を持つプロパティが初期設定されます。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     * <p>
+     * {@.ja 指定されたキーおよび値を持つプロパティが初期設定される。}
+     * {@.en The property with specified key and value is initialized.}
      * 
-     * @param key キー
-     * @param value 値
+     * @param key 
+     *   {@.ja キー}
+     *   {@.en key}
+     * @param value 
+     *   {@.ja 値}
+     *   {@.en value}
      */
     public Properties(final String key, final String value) {
 		
@@ -63,9 +85,15 @@ public class Properties {
     }
 	
     /**
-     * <p>コンストラクタです。指定されたデータでデフォルトが初期設定されます。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     * <p>
+     * {@.ja 指定されたデータでデフォルトが初期設定される}
+     * {@.en Default is initialized by the specified data.}
      * 
-     * @param defaults デフォルトとなるキーと値を持つMapオブジェクト
+     * @param defaults 
+     *   {@.ja デフォルトとなるキーと値を持つMapオブジェクト}
+     *   {@.en Map object with key and value of default}
      */
     public Properties(Map<String, String> defaults) {
 		
@@ -84,9 +112,15 @@ public class Properties {
     }
 	
     /**
-     * <p>コンストラクタです。指定されたデータでデフォルトが初期設定されます。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     * <p>
+     * {@.ja 指定されたデータでデフォルトが初期設定される。}
+     * {@.en Default is initialized by the specified data.}
      * 
-     * @param defaults デフォルト値を、キー・値の順に交互に並べたもの
+     * @param defaults 
+     *   {@.ja デフォルト値を、キー・値の順に交互に並べたもの}
+     *   {@.en Default value alternately arranged in order of key and value}
      */
     public Properties(final String[] defaults) {
 		
@@ -101,10 +135,17 @@ public class Properties {
     }
 
     /**
-     * <p>コピーコンストラクタです。コピー元となるPropertiesオブジェクトと同内容を持つ
-     * 別のPropertiesオブジェクトを新たに作成します。</p>
+     * {@.ja コピーコンストラクタ}
+     * {@.en Cpoy constructor}
+     *
+     * <p>
+     * {@.ja コピー元となるPropertiesオブジェクトと同内容を持つ
+     * 別のPropertiesオブジェクトを新たに作成する。}
+     * {@.en copies the Properties object.}
      * 
-     * @param prop コピー元となるPropertiesオブジェクト
+     * @param prop 
+     *   {@.ja コピー元となるPropertiesオブジェクト}
+     *   {@.en Properties object that becomes copy origin}
      */
     public Properties(final Properties prop) {
 		
@@ -124,9 +165,13 @@ public class Properties {
     }
 
     /**
-     * <p>指定されたPropertiesオブジェクトの内容を、当該Propertiesオブジェクトに設定します。</p>
-     * 
-     * @param prop コピー元となるPropertiesオブジェクト
+     * {@.ja 指定されたPropertiesオブジェクトの内容を、
+     * 当該Propertiesオブジェクトに設定する。}
+     * {@.en copies the Properties object.}
+     *
+     * @param prop 
+     *   {@.ja コピー元となるPropertiesオブジェクト}
+     *   {@.en Properties object that becomes copy origin}
      */
     public void substitute(final Properties prop) {
 		
@@ -146,8 +191,15 @@ public class Properties {
     }
 	
     /**
-     * <p>削除処理を行います。当該Propertiesオブジェクトの内容をクリアして、
-     * 親ノードから切り離します。また、すべての子ノードについても削除処理を行います。</p>
+     * {@.ja 削除処理を行う。}
+     * {@.en Destructor processing}
+     * <p>
+     * {@.ja 当該Propertiesオブジェクトの内容をクリアして、
+     * 親ノードから切り離す。
+     * また、すべての子ノードについても削除処理を行う。}
+     * {@.en It separates from the parent node clearing the content of the
+     * Properties object. 
+     * Moreover, the destructor of all the child nodes is processed. }
      */
     public void destruct() {
 		
@@ -170,57 +222,77 @@ public class Properties {
     }
 	
     /**
-     * <p>当該Propertiesオブジェクトのキーを取得します。</p>
+     * {@.ja 当該Propertiesオブジェクトのキーを取得する。}
+     * {@.en Gets the key to an object concerned Properties.}
      * 
-     * @return キー
+     * @return 
+     *   {@.ja キー}
+     *   {@.en key}
      */
     public String getName() {
         return this.name;
     }
 
     /**
-     * <p>当該Propertiesオブジェクトの値を取得します。</p>
+     * {@.ja 当該Propertiesオブジェクトの値を取得する。}
+     * {@.en Gets the value to an object concerned Properties.}
      * 
-     * @return 値
+     * @return 
+     *   {@.ja 値}
+     *   {@.en value}
      */
     public String getValue() {
         return this.value;
     }
 
     /**
-     * <p>当該Propertiesオブジェクトのデフォルト値を取得します。</p>
+     * {@.ja 当該Propertiesオブジェクトのデフォルト値を取得する。}
+     * {@.en Gets the default value to an object concerned Properties.}
      * 
-     * @return デフォルト値
+     * @return 
+     *   {@.ja デフォルト値}
+     *   {@.en default value}
      */
     public String getDefaultValue() {
         return this.default_value;
     }
 
     /**
-     * <p>当該Propertiesオブジェクトの子ノード群を取得します。</p>
+     * {@.ja 当該Propertiesオブジェクトの子ノード群を取得する。}
+     * {@.en Gets the leaf to an object concerned Properties.}
      * 
-     * @return 子ノードPropertiesオブジェクトリスト
+     * @return 
+     *   {@.ja 子ノードPropertiesオブジェクトリスト}
+     *   {@.en Child node Properties object list}
      */
     public Vector<Properties> getLeaf() {
         return this.leaf;
     }
 
     /**
-     * <p>当該Propertiesオブジェクトの親ノードを取得します。</p>
+     * {@.ja 当該Propertiesオブジェクトの親ノードを取得する。}
+     * {@.en Gets the root to an object concerned Properties.}
      * 
-     * @return 親ノードPropertiesオブジェクト
+     * @return 
+     *   {@.ja 親ノードPropertiesオブジェクト}
+     *   {@.en root Properties object list}
      */
     public Properties getRoot() {
         return this.root;
     }
     
     /**
-     * <p>指定されたキーに対応する値を取得します。</p>
+     * {@.ja 指定されたキーに対応する値を取得する。}
+     * {@.en acquires the value corresponding to the specified key.}
      * 
-     * @param key キー
-     * @return 指定されたキーに対応する値を返します。<br />
-     * 指定されたキーが存在するが値が設定されていない場合は、デフォルト値を返します。<br />
-     * また、指定されたキーが存在しない場合は空文字列を返します。
+     * @param key 
+     *   {@.ja キー}
+     *   {@.en key}
+     * @return 
+     *   {@.ja 指定されたキーに対応する値を返す。
+     *   指定されたキーが存在するが値が設定されていない場合は、
+     *   デフォルト値を返す。
+     *   また、指定されたキーが存在しない場合は空文字列を返す。}
      */
     public String getProperty(final String key) {
         
@@ -231,17 +303,33 @@ public class Properties {
             return (node.value.length() > 0) ? node.value : node.default_value;
         }
         
-        return this.EMPTY;
+        return Properties.EMPTY;
     }
     
     /**
-     * 指定されたキーに対応する値を取得します。ただし、指定されたキーが存在しない場合や、
-     * キーに対応する値が空文字列である場合は、指定された代替値が取得されます。
+     * {@.ja 指定されたキーに対応する値を取得する。}
+     * {@.en Gets the value corresponding to the specified key.}
+     * <p>
+     * {@.ja ただし、指定されたキーが存在しない場合や、
+     * キーに対応する値が空文字列である場合は、指定された代替値が取得される。}
+     * {@.en When the specified key doesn't exist or the value corresponding to
+     * the key is a null character string, the specified alternative value is
+     * gotten.} 
      * 
-     * @param key キー
-     * @param alternative 代替値
-     * @return 指定されたキーに対応する値を返します。<br />
-     * 指定されたキーが存在しない場合や、キーに対応する値が空文字列である場合は、代替値を返します。
+     * @param key i
+     *   {@.ja キー}
+     *   {@.en key}
+     * @param alternative 
+     *   {@.ja 代替値}
+     *   {@.en Alternative value}
+     * @return 
+     *   {@.ja 指定されたキーに対応する値を返す。
+     *         指定されたキーが存在しない場合や、
+     *         キーに対応する値が空文字列である場合は、代替値を返す。}
+     *   {@.en Returns the value corresponding to the specified key.
+     *         When the specified key doesn't exist, and the value
+     *         corresponding to the key is a null character string, an
+     *         alternative value is returned. }
      */
     public String getProperty(final String key, final String alternative) {
         
@@ -251,11 +339,19 @@ public class Properties {
     }
     
     /**
-     * <p>指定されたキーに対応するデフォルト値を取得します。</p>
+     * {@.ja 指定されたキーに対応するデフォルト値を取得する。}
+     * {@.en Gets the default value corresponding to the specified key.}
      * 
-     * @param key キー
-     * @return 指定されたキーが存在する場合は、それに対応するデフォルト値を返します。<br />
-     * 指定されたキーが存在しない場合は、空文字列を返します。
+     * @param key 
+     *   {@.ja キー}
+     *   {@.en key}
+     * @return 
+     *   {@.ja 指定されたキーが存在する場合は、
+     *   それに対応するデフォルト値を返す。
+     *   指定されたキーが存在しない場合は、空文字列を返す。}
+     *   {@.en When the specified key exists, the default value corresponding
+     *   to it is returned.  When the specified key doesn't exist, the null
+     *   character string is returned.}
      */
     public String getDefault(final String key) {
         
@@ -266,15 +362,24 @@ public class Properties {
             return node.default_value;
         }
         
-        return this.EMPTY;
+        return Properties.EMPTY;
     }
     
     /**
-     * <p>指定されたキーに対応する値を登録します。</p>
+     * {@.ja 指定されたキーに対応する値を登録する。}
+     * {@.en Registers the value corresponding to the specified key.}
      * 
-     * @param key キー
-     * @param value キーに対応する値
-     * @return 以前の設定値を返します。以前の設定値が存在しない場合は、デフォルト値を返します。
+     * @param key 
+     *   {@.ja キー}
+     *   {@.en key}
+     * @param value 
+     *   {@.ja キーに対応する値}
+     *   {@.en value}
+     * @return 
+     *   {@.ja 以前の設定値を返す。
+     *   以前の設定値が存在しない場合は、デフォルト値を返す。}
+     *   {@.en A set value is returned. When a set value doesn't exist, the
+     *   default value is returned.}
      */
     public String setProperty(final String key, final String value) {
         
@@ -299,10 +404,15 @@ public class Properties {
     }
     
     /**
-     * <p>指定されたキーに対応するデフォルト値を設定します。</p>
+     * {@.ja 指定されたキーに対応するデフォルト値を設定する。}
+     * {@.en sets the default value corresponding to the specified key.}
      * 
-     * @param key キー
-     * @param defaultValue キーに対応する新たなデフォルト値
+     * @param key 
+     *   {@.ja キー}
+     *   {@.en key}
+     * @param defaultValue 
+     *   {@.ja キーに対応する新たなデフォルト値}
+     *   {@.en Default value}
      */
     public String setDefault(final String key, final String defaultValue) {
         
@@ -325,9 +435,12 @@ public class Properties {
     }
     
     /**
-     * <p>指定されたキーに対応するデフォルト値を設定します。</p>
+     * {@.ja 指定されたキーに対応するデフォルト値を設定する。}
+     * {@.en Sets the default value corresponding to the specified key.}
      * 
-     * @param defaults デフォルト値を、キー・値の順に交互に並べたもの
+     * @param defaults 
+     *   {@.ja デフォルト値を、キー・値の順に交互に並べたもの}
+     *   {@.en Default value in which key and value are alternately displayed}
      */
     public void setDefaults(final String[] defaults) {
 		
@@ -343,18 +456,27 @@ public class Properties {
     }
 
     /**
-     * <p>指定された出力ストリームに、当該Propertiesオブジェクトの内容を出力します。</p>
+     * {@.ja 指定された出力ストリームに、
+     * 当該Propertiesオブジェクトの内容を出力する。}
+     * {@.en outputs the content of a Properties object to the specified output
+     * stream. }
      * 
-     * @param out 出力先ストリーム
+     * @param out 
+     *   {@.ja 出力先ストリーム}
+     *   {@.en output stream}
      */
     public void list(OutputStream out) {
         _store(out, "", this);
     }
     
     /**
-     * <p>指定されたリーダーから、キーと値が対となったプロパティセットを読み込みます。</p>
+     * {@.ja 指定されたリーダーから、
+     * キーと値が対となったプロパティセットを読み込む。}
+     * {@.en Reads the property set from the specified buffer.}
      * 
-     * @param reader 読み込み元となるリーダー。
+     * @param reader 
+     *   {@.ja 読み込み元となるリーダー。}
+     *   {@.en buffer}
      */
     public void load(BufferedReader reader) throws IOException {
         
@@ -395,20 +517,32 @@ public class Properties {
     }
     
     /**
-     * <p>当該Propertiesオブジェクトの内容を、指定されたストリームに出力します。</p>
+     * {@.ja 当該Propertiesオブジェクトの内容を、
+     * 指定されたストリームに出力する。}
+     * {@.en Outputs the content of a Properties to the specified stream.}
      * 
-     * @param out 出力先ストリーム
-     * @param header 出力内容の先頭に付加されるヘッダコメント文字列
+     * @param out 
+     *   {@.ja 出力先ストリーム}
+     *   {@.en output stream}
+     * @param header 
+     *   {@.ja 出力内容の先頭に付加されるヘッダコメント文字列}
+     *   {@.en String added to head of content of output}
      */
     public void save(OutputStream out, final String header) {
         store(out, header);
     }
     
     /**
-     * <p>当該Propertiesオブジェクトの内容を、指定されたストリームに出力します。</p>
+     * {@.ja 当該Propertiesオブジェクトの内容を、
+     * 指定されたストリームに出力する。}
+     * {@.en Outputs the content of a Properties to the specified stream.}
      * 
-     * @param out 出力先ストリーム
-     * @param header 出力内容の先頭に付加されるヘッダコメント文字列
+     * @param out 
+     *   {@.ja 出力先ストリーム}
+     *   {@.en output stream}
+     * @param header 
+     *   {@.ja 出力内容の先頭に付加されるヘッダコメント文字列}
+     *   {@.en String added to head of content of output}
      */
     public void store(OutputStream out, final String header) {
 
@@ -422,9 +556,14 @@ public class Properties {
     }
     
     /**
-     * <p>当該Propertiesオブジェクトおよび子ノード内に存在するキーのリストを取得します。</p>
+     * {@.ja 当該Propertiesオブジェクトおよび子ノード内に存在するキーの
+     * リストを取得する。}
+     * {@.en acquires the list of the key that exists among the Properties
+     * object and the child nodes.}
      * 
-     * @return キーのリスト
+     * @return
+     *   {@.ja キーのリスト}
+     *   {@.en list of key}
      */
     public final Vector<String> propertyNames() {
         
@@ -437,16 +576,30 @@ public class Properties {
     }
     
     /**
-     * <p>当該Propertiesオブジェクトおよび子ノード内に存在するプロパティの数を取得します。
+     * {@.ja 当該Propertiesオブジェクトおよび子ノード内に存在するプロパティの
+     * 数を取得する。}
+     * {@.en acquires the number of properties that exist among the Properties
+     * object and the child nodes.} 
      * 
-     * @return プロパティ数
+     * @return 
+     *   {@.ja プロパティ数}
+     *   {@.en the number of properties}
      */
     public final int size() {
         return propertyNames().size();
     }
     
     /**
-     * <p>ノードを検索する</p>
+     * {@.ja ノードを検索する}
+     * {@.en Finds node.}
+     *
+     * @param key
+     *   {@.ja キー}
+     *   {@.en key}
+     *
+     * @return
+     *   {@.ja Properties}
+     *   {@.en Properties}
      */
     public final Properties findNode(final String key) {
 	if (key.length() == 0) { return null; }
@@ -456,10 +609,19 @@ public class Properties {
     }
 
     /**
-     * <p>指定されたキーに対応する値を直接保持しているPropertiesオブジェクトを取得します。</p>
+     * {@.ja 指定されたキーに対応する値を直接保持しているProperties
+     * オブジェクトを取得する}
+     * {@.en acquires the Properties object that maintains the value
+     * corresponding to the specified key.}
      * 
-     * @param key キー
-     * @return 指定されたキーに対応する値を直接保持しているPropertiesオブジェクト
+     * @param key 
+     *   {@.ja キー}
+     *   {@.en key}
+     * @return 
+     *   {@.ja 指定されたキーに対応する値を直接保持しているProperties
+     *   オブジェクト}
+     *   {@.en Properties object that maintains value corresponding to
+     *   specified key}
      */
     public final Properties getNode(final String key) {
 	if (key.length() == 0) { return this; }
@@ -472,11 +634,17 @@ public class Properties {
     }
     
     /**
-     * <p>指定されたキーのPropertiesオブジェクトを、当該Propertiesオブジェクト内に
-     * 子ノードとして作成します。</p>
+     * {@.ja 指定されたキーのPropertiesオブジェクトを、
+     * 当該Propertiesオブジェクト内に子ノードとして作成する。}
+     * {@.en makes the child node the Properties object of the specified key.}
      * 
-     * @param key キー
-     * @return 指定されたキーがすでに存在していた場合はfalseを、さもなくばtrueを返します。
+     * @param key 
+     *   {@.ja キー}
+     *   {@.en key}
+     * @return 
+     *   {@.ja 指定されたキーがすでに存在していた場合はfalseを、
+     *   さもなくばtrueを返す。}
+     *   {@.en When the specified key has already existed, false is returned.}
      */
     public boolean createNode(final String key) {
 	if (key.length() == 0) { return false; }
@@ -490,12 +658,18 @@ public class Properties {
     }
     
     /**
-     * <p>指定されたキーの子ノードPropertiesオブジェクトを、
-     * 当該Propertiesオブジェクトから切り離します。</p>
+     * {@.ja 指定されたキーの子ノードPropertiesオブジェクトを、
+     * 当該Propertiesオブジェクトから切り離す。}
+     * {@.en Separates child node Properties of the specified key from
+     * concerned Properties.}
      * 
-     * @param name 切り離したい子ノードのキー
-     * @return 切り離された子ノードPropertiesオブジェクトを返します。<br />
-     * 指定されたキーに対応する子ノードが存在しない場合は、nullを返します。
+     * @param name 
+     *   {@.ja 切り離したい子ノードのキー}
+     *   {@.en Key to child node that separates}
+     * @return 
+     *   {@.ja 切り離された子ノードPropertiesオブジェクトを返す。
+     *   指定されたキーに対応する子ノードが存在しない場合は、nullを返す。}
+     *   {@.en The separated child node Properties object is returned.}
      */
     public Properties removeNode(String name) {
         
@@ -512,13 +686,22 @@ public class Properties {
     }
     
     /**
-     * <p>当該Propertiesオブジェクトの直接の子ノード（つまり、孫ノード以下は含まない）の中に、
-     * 指定されたキーを持つものが存在するかどうか調べます。存在する場合には、
-     * そのPropertiesオブジェクトを取得します。</p>
+     * {@.ja 当該Propertiesオブジェクトの
+     * 直接の子ノード（つまり、孫ノード以下は含まない）の中に、
+     * 指定されたキーを持つものが存在するかどうか調べる。存在する場合には、
+     * そのPropertiesオブジェクトを取得する。}
+     * {@.en examines whether something with the specified key exists in the
+     * child node of the Properties object.}
      * 
-     * @param key キー
-     * @return 指定されたキーに対応するPropertiesオブジェクトを返します。<br />
-     * 指定されたキーに対応するPropertiesオブジェクトが存在しない場合は、nullを返します。
+     * @param key 
+     *   {@.ja キー}
+     *   {@.en key}
+     * @return 
+     *   {@.ja 指定されたキーに対応するPropertiesオブジェクトを返す。
+     *   指定されたキーに対応するPropertiesオブジェクトが存在しない場合は、
+     *   nullを返す。}
+     *   {@.en The Properties object corresponding to the specified key is
+     *   returned.}
      */
     public final Properties hasKey(final String key) {
         
@@ -532,7 +715,8 @@ public class Properties {
     }
     
     /**
-     * <p>子ノードを全て削除します。</p>
+     * {@.ja 子ノードを全て削除する。}
+     * {@.en Deletes all his child nodes.}
      */
     public void clear() {
         
@@ -545,10 +729,16 @@ public class Properties {
     }
     
     /**
-     * <p>指定されたPropertiesオブジェクト内のプロパティセットを、当該Properties
-     * オブジェクト内にマージします。ただし、デフォルト値はマージされません。</p>
+     * {@.ja 指定されたPropertiesオブジェクト内のプロパティセットを、
+     * 当該Propertiesオブジェクト内にマージする。}
+     * {@.en merges the specified Properties object with an object concerned
+     * Properties.}
+     * <p>
+     * {@.ja ただし、デフォルト値はマージされない。}
      * 
-     * @param prop マージ元となるPropertiesオブジェクト
+     * @param prop 
+     *   {@.ja マージ元となるPropertiesオブジェクト}
+     *   {@.en Properties object in merging origin}
      */
     public void merge(final Properties prop) {
         
@@ -560,10 +750,14 @@ public class Properties {
     }
     
     /**
-     * <p>指定された文字列を、所定のデリミタによってキーと値のペアに分離します。</p>
+     * {@.ja 指定された文字列を、
+     * 所定のデリミタによってキーと値のペアに分離する。}
      * 
-     * @param str 分離対象となる文字列。通常は、キーと値がデリミタで区切られている文字列。
-     * @return キーと値を格納するPairオブジェクト。
+     * @param str 
+     *   {@.ja 分離対象となる文字列。
+     *   通常は、キーと値がデリミタで区切られている文字列。}
+     * @return 
+     *   {@.ja キーと値を格納するPairオブジェクト。}
      */
     protected Pair<String, String> splitKeyValue(final String str) {
         
@@ -584,11 +778,14 @@ public class Properties {
     }
     
     /**
-     * <p>指定された文字列を指定したデリミタで分離した結果を取得します。</p>
+     * {@.ja 指定された文字列を指定したデリミタで分離した結果を取得する。}
      * 
-     * @param str 分離対象となる文字列
-     * @param delim デリミタ
-     * @return 分離された文字列のリスト
+     * @param str 
+     *   {@.ja 分離対象となる文字列}
+     * @param delim 
+     *   {@.ja デリミタ}
+     * @return 
+     *   {@.ja 分離された文字列のリスト}
      */
     protected boolean split(final String str, final char delim, Vector<String> values) {
         
@@ -705,6 +902,20 @@ public class Properties {
         
         return out;
     }
+    /**
+     * {@.ja Propertiesの内容を文字列にする。}
+     * {@.en makes the content of Properties a character string.}
+     * 
+     * @param out 
+     *   {@.ja 出力用文字列}
+     *   {@.en String for output}
+     * @param curr 
+     *   {@.ja Properties}
+     *   {@.en Properties}
+     * @param index
+     *   {@.ja 階層}
+     *   {@.en Hierarchy}
+     */
     public String _dump(String out, final Properties curr, int index) {
         
         String crlf = System.getProperty("line.separator");

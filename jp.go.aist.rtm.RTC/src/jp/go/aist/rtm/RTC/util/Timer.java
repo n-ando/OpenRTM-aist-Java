@@ -9,9 +9,12 @@ import java.util.Vector;
 public class Timer implements Runnable {
 
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタ。}
+     * {@.en Constructor}
      * 
-     * @param interval  タイマー起動周期
+     * @param interval  
+     *   {@.ja タイマー起動周期}
+     *   {@.en Timer start cycle}
      */
     public Timer(TimeValue interval) {
         m_interval = new TimeValue(interval);
@@ -19,7 +22,16 @@ public class Timer implements Runnable {
     }
 
     /**
-     * <p>タイマー用スレッドを生成します。</p>
+     * {@.ja スレッドを生成。}
+     * {@.en Creates the thread.}
+     * <p>
+     * {@.ja タイマー用スレッドを生成する。}
+     * {@.en Creates the thread for the timer.}
+     *
+     * @return
+     *   {@.ja 常に0を返す。}
+     *   {@.en Always returns 0.}
+     *
      */
     public int open() {
         Thread t = new Thread(this);
@@ -28,12 +40,19 @@ public class Timer implements Runnable {
     }
 
     /**
-     * <p>タイマーの周期処理です。
-     * invokeを起動します。</p>
+     * {@.ja タイマーの周期処理。}
+     * {@.en Processing at cycle of timer}
+     * <p>
+     * {@.ja invokeを起動する。}
+     * {@.en Starts invoke(). }
      * 
-     * @return 処理結果
+     * @return 
+     *   {@.ja 処理結果
      * 　　　　　正常終了　：0
-     * 　　　　　異常発生時：例外
+     * 　　　　　異常発生時：例外}
+     *   {@.en Result
+     * 　　　　　Normal termination:Returns 0.
+     * 　　　　　At abnormal generation:Throws out the exception.}
      */
     public int svc() {
         while(m_running) {
@@ -51,14 +70,16 @@ public class Timer implements Runnable {
     }
 
     /**
-     * <p>タイマーを起動します。</p>
+     * {@.ja タイマー周期処理の起動}
+     * {@.en Starts the timer cycle processing.}
      */
     public void run() {
         this.svc();
     }
 
     /**
-     * <p>タイマーを起動します。</p>
+     * {@.ja タイマー起動}
+     * {@.en Starts the timer.}
      */
     public synchronized void start(){
         if(!m_running) {
@@ -68,19 +89,27 @@ public class Timer implements Runnable {
     }
 
     /**
-     * <p>タイマーを停止します。</p>
+     * {@.ja タイマー停止}
+     * {@.en Stops the timer.}
      */
     public synchronized void stop() {
         m_running = false;
     }
         
     /**
-     * <p>タイマーの周期処理です。(起動周期毎に実行)
+     * {@.ja タイマーの周期処理。(起動周期毎に実行)}
+     * {@.en Processing at cycle of timer}
+     * <p>
+     * {@.ja 
      * <ul>
      * <li>登録されたタスク毎にタイマー残時間をチェック</li>
      * <li>起動周期を超えていた場合，各タスクのinvokeを起動</li>
-     * <li>次回起動までの周期を設定</li>
-     * </ul>
+     * <li>次回起動までの周期を設定</li></ul>}
+     * {@.en 
+     * <ul>
+     * <li>Checks the timer remainder time of each registered task.</li>
+     * <li>When the start cycle is exceeded, invoke of each task is started.
+     * <li>Sets the cycle until the next starting. </ul>}
      */
     public void invoke(){
         if( m_tasks==null ) m_tasks = new Vector<Task>();
@@ -94,10 +123,15 @@ public class Timer implements Runnable {
     }
         
     /**
-     * <p>タイマー処理用リスナーを登録します。</p>
+     * {@.ja タイマー処理用リスナーを登録する。}
+     * {@.en Registers the listener for the timer processing.}
      * 
-     * @param listener  タイマー処理用リスナー
-     * @param tm  起動周期
+     * @param listener 
+     *   {@.ja タイマー処理用リスナー}
+     *   {@.en The listener for the timer processing.} 
+     * @param tm  
+     *   {@.ja 起動周期}
+     *   {@.en Start cycle}
      */
     public synchronized ListenerBase registerListener(ListenerBase listener, TimeValue tm) {
         
@@ -114,19 +148,27 @@ public class Timer implements Runnable {
     }
 
     /**
-     * <p>タイマーから起動するコールバック関数を登録します。</p>
+     * {@.ja タイマーから起動するコールバック関数を登録する。}
+     * {@.en Registers the callback function started with the timer.}
      * 
-     * @param cbf  起動対象コールバック関数
-     * @param tm  起動周期
+     * @param cbf  
+     *   {@.ja 起動対象コールバック関数}
+     *   {@.en the callback function}
+     * @param tm  
+     *   {@.ja 起動周期}
+     *   {@.en cycle} 
      */
     public ListenerBase registerListenerObj(CallbackFunction cbf, TimeValue tm){
         return registerListener(new ListenerObject(cbf), tm);
     }
 
     /**
-     * <p>タイマー処理用リスナーを削除します。</p>
+     * {@.ja タイマー処理用リスナーを削除する。}
+     * {@.en Deletes the callback function for the timer processing.}
      * 
-     * @param id  削除対象リスナーID
+     * @param id  
+     *   {@.ja 削除対象リスナーID}
+     *   {@.en Listener ID}
      */
     public synchronized boolean unregisterListener(ListenerBase id) {
         for(int intidx=0; intidx<m_tasks.size(); ++intidx) {

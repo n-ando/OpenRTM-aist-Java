@@ -1,22 +1,18 @@
 package jp.go.aist.rtm.RTC;
 
-import org.omg.CORBA.ORB;
-import org.omg.CORBA.LocalObject;
-import org.omg.CORBA.Any;
-import org.omg.CORBA.LocalObject;
-import org.omg.PortableServer.POA;
-import org.omg.PortableInterceptor.IORInterceptor;
-import org.omg.IOP.TAG_INTERNET_IOP;
-import org.omg.IOP.TAG_ALTERNATE_IIOP_ADDRESS;
-import org.omg.IOP.TaggedComponent;
-import org.omg.IOP.Codec;
-
 import java.util.ArrayList;
 
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.IiopAddressComp;
 import jp.go.aist.rtm.RTC.util.IiopAddressCompHelper;
 
-import jp.go.aist.rtm.RTC.log.Logbuf;
+import org.omg.CORBA.Any;
+import org.omg.CORBA.LocalObject;
+import org.omg.CORBA.ORB;
+import org.omg.IOP.Codec;
+import org.omg.IOP.TAG_INTERNET_IOP;
+import org.omg.IOP.TaggedComponent;
+import org.omg.PortableInterceptor.IORInterceptor;
 
 
 /**
@@ -27,7 +23,8 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
 public class IopIorInterceptor extends LocalObject 
     implements org.omg.PortableInterceptor.IORInterceptor{
 
-
+    private static final long serialVersionUID = 7953662324638701357L;
+    
     /**
      * {@.ja Codec}
      * {@.en Codec}
@@ -41,8 +38,8 @@ public class IopIorInterceptor extends LocalObject
                                         =  new ArrayList<IiopAddressComp>();
 
     /**
-     * {@.ja エンドポイントを設定. }
-     * {@.en Sets the end points. }
+     * {@.ja エンドポイントを設定.}
+     * {@.en Sets the end points.}
      * @param  endpoints 
      *   {@.ja エンドポイント} 
      *   {@.en endpoints}
@@ -53,8 +50,8 @@ public class IopIorInterceptor extends LocalObject
     }
 
     /**
-     * {@.ja エンドポイントを設定. }
-     * {@.en Sets the end points. }
+     * {@.ja エンドポイントを設定.}
+     * {@.en Sets the end points.}
      * @param  hostString 
      *   {@.ja ホスト} 
      *   {@.en host}
@@ -76,8 +73,8 @@ public class IopIorInterceptor extends LocalObject
     }
 
     /**
-     * {@.ja エンドポイントを書き換える. }
-     * {@.en Replaces the end point the end point. }
+     * {@.ja エンドポイントを書き換える.}
+     * {@.en Replaces the end point the end point.}
      * <p>
      * {@.ja エンドポイントリスト内のポート番号が 0 のエンドポイントを
      * 与えられたポート番号に置き換える。}
@@ -126,10 +123,23 @@ public class IopIorInterceptor extends LocalObject
         this.codec = codec;
     }
 
+    /**
+     * {@.ja インターセプタ名を返す}
+     * {@.en Returns the name of the interceptor.}
+     * @return 
+     *   {@.ja インターセプタ名} 
+     *   {@.en the name of the interceptor.}
+     *
+     */
     public String name() {
         return IORInterceptor.class.getName();
     }
 
+    /**
+     * {@.ja インターセプタの破棄}
+     * {@.en Destroys he interceptor.}
+     *
+     */
     public void destroy() {
     }
 
@@ -141,7 +151,7 @@ public class IopIorInterceptor extends LocalObject
      *   {@.en IORInfo}
      */
     public void establish_components(org.omg.PortableInterceptor.IORInfo info){
-        rtcout.println(rtcout.TRACE, "establish_components()");
+        rtcout.println(Logbuf.TRACE, "establish_components()");
 
         //Gets any type.
         ORB orb = ORB.init();
@@ -158,7 +168,7 @@ public class IopIorInterceptor extends LocalObject
                 by = codec.encode_value(any);
             }
             catch (Exception ex){
-                rtcout.println(rtcout.WARN, 
+                rtcout.println(Logbuf.WARN, 
                     "Invalid Type For Encoding:" +lp.HostID+","+lp.Port);
                 continue;
             }

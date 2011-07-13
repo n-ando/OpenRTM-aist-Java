@@ -1,27 +1,92 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.portable.InputStream;
+import jp.go.aist.rtm.RTC.BufferFactory;
+import jp.go.aist.rtm.RTC.OutPortProviderFactory;
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+
 import org.omg.CORBA.portable.OutputStream;
 
 import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
-import jp.go.aist.rtm.RTC.BufferFactory;
-import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
-import jp.go.aist.rtm.RTC.OutPortProviderFactory;
-
+  /**
+   * {@.ja OutPortPullConnector クラス}
+   * {@.en OutPortPullConnector class}
+   * <p>
+   * {@.ja OutPort の pull 型データフローのための Connector クラス。このオブ
+   * ジェクトは、接続時に dataflow_type に pull が指定された場合、
+   * OutPort によって生成・所有され、InPortPullConnector と対になって、
+   * データポートの pull 型のデータフローを実現する。一つの接続に対して、
+   * 一つのデータストリームを提供する唯一の Connector が対応する。
+   * Connector は 接続時に生成される UUID 形式の ID により区別される。
+   *
+   * OutPortPullConnector は以下の三つのオブジェクトを所有し管理する。
+   * <ul>
+   * <li>- InPortConsumer
+   * <li>- Buffer
+   * </ul>
+   * OutPort に書き込まれたデータは OutPortPullConnector::write() に渡
+   * され Buffer に書き込まれる。InPortPullConnector が
+   * OutPortPullConnector からデータを読み出すことで InPort にデータが
+   * 転送される。}
+   * {@.en Connector class of OutPort for pull type dataflow. When "pull" is
+   * specified as dataflow_type at the time of establishing
+   * connection, this object is generated and owned by the OutPort.
+   * This connector and InPortPullConnector make a pair and realize
+   * pull type dataflow of data ports. One connector corresponds to
+   * one connection which provides a data stream. Connector is
+   * distinguished by ID of the UUID that is generated at establishing
+   * connection.
+   *
+   * OutPortPullConnector owns and manages the following objects.
+   * <ul>
+   * <li>- InPortConsumer
+   * <li>- Buffer
+   * </ul>
+   * Data written into the OutPort is passed to
+   * OutPortPullConnector::write(), and it is written into the buffer.
+   * By reading data from OutPortPullConnector to InPortPullConnector,
+   * data transfer is realized.}
+   */
 public class OutPortPullConnector extends OutPortConnector {
     /**
-     * <p> Constructor </p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      *
-     * <p> OutPortPullConnector assume ownership of InPortConsumer.
-     * <p> Therefore, OutPortProvider will be deleted when OutPortPushConnector
-     * <p> is destructed.
+     * <p>
+     * {@.ja OutPortPullConnector のコンストラクタはオブジェクト生成時に下記
+     * を引数にとる。ConnectorInfo は接続情報を含み、この情報に従いバッ
+     * ファ等を生成する。OutPort インターフェースのプロバイダオブジェク
+     * トへのポインタを取り、所有権を持つので、OutPortPullConnector は
+     * OutPortProvider の解体責任を持つ。各種イベントに対するコールバッ
+     * ク機構を提供する ConnectorListeners を持ち、適切なタイミングでコー
+     * ルバックを呼び出す。データバッファがもし OutPortBase から提供さ
+     * れる場合はそのポインタを取る。}
+     * {@.en OutPortPullConnector's constructor is given the following
+     * arguments.  According to ConnectorInfo which includes
+     * connection information, a buffer is created.  It is also given
+     * a pointer to the provider object for the OutPort interface.
+     * The owner-ship of the pointer is owned by this
+     * OutPortPullConnector, it has responsibility to destruct the
+     * OutPortProvider.  OutPortPullConnector also has
+     * ConnectorListeners to provide event callback mechanisms, and
+     * they would be called at the proper timing.  If data buffer is
+     * given by OutPortBase, the pointer to the buffer is also given
+     * as arguments.}
      *
-     * @param profile pointer to a ConnectorProfile
-     * @param provider pointer to an OutPortProvider
-     * @param buffer pointer to a buffer
-     *
+     * @param profile 
+     *   {@.ja ConnectorInfo}
+     *   {@.en ConnectorInfo}
+     * @param provider 
+     *   {@.ja OutPortProvider}
+     *   {@.en OutPortProvider}
+     * @param listeners 
+     *   {@.ja ConnectorListeners 型のリスナオブジェクトリスト}
+     *   {@.en ConnectorListeners type lsitener object list}
+     * @param buffer 
+     *   {@.ja CdrBufferBase 型のバッファ}
+     *   {@.en CdrBufferBase type buffer}
      */
     public OutPortPullConnector(ConnectorInfo profile,
                          OutPortProvider provider,
@@ -30,6 +95,38 @@ public class OutPortPullConnector extends OutPortConnector {
         super(profile);
         _constructor(profile, provider, listeners, buffer);
     }
+    /**
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     * <p>
+     * {@.ja OutPortPullConnector のコンストラクタはオブジェクト生成時に下記
+     * を引数にとる。ConnectorInfo は接続情報を含み、この情報に従いバッ
+     * ファ等を生成する。OutPort インターフェースのプロバイダオブジェク
+     * トへのポインタを取り、所有権を持つので、OutPortPullConnector は
+     * OutPortProvider の解体責任を持つ。各種イベントに対するコールバッ
+     * ク機構を提供する ConnectorListeners を持ち、適切なタイミングでコー
+     * ルバックを呼び出す。}
+     * {@.en OutPortPullConnector's constructor is given the following
+     * arguments.  According to ConnectorInfo which includes
+     * connection information, a buffer is created.  It is also given
+     * a pointer to the provider object for the OutPort interface.
+     * The owner-ship of the pointer is owned by this
+     * OutPortPullConnector, it has responsibility to destruct the
+     * OutPortProvider.  OutPortPullConnector also has
+     * ConnectorListeners to provide event callback mechanisms, and
+     * they would be called at the proper timing.}
+     *
+     * @param profile 
+     *   {@.ja ConnectorInfo}
+     *   {@.en ConnectorInfo}
+     * @param provider 
+     *   {@.ja OutPortProvider}
+     *   {@.en OutPortProvider}
+     * @param listeners 
+     *   {@.ja ConnectorListeners 型のリスナオブジェクトリスト}
+     *   {@.en ConnectorListeners type lsitener object list}
+     */
     public OutPortPullConnector(ConnectorInfo profile,
                          OutPortProvider provider, 
                          ConnectorListeners listeners)  throws Exception {
@@ -69,16 +166,17 @@ public class OutPortPullConnector extends OutPortConnector {
     }
 
     /**
-     * <p> Writing data </p>
-     * <p> This operation writes data into publisher and then the data </p>
-     * <p> will be transferred to correspondent InPort. </p>
-     *
-     * @param data
-     * @return ReturnCode
+     * {@.ja データの書き込み}
+     * {@.en Writing data}
+     * <p>
+     * {@.ja Publisherに対してデータを書き込み、これにより対応するInPortへ
+     * データが転送される。}
+     * {@.en This operation writes data into publisher and then the data
+     * will be transferred to correspondent InPort.}
      *
      */
     public <DataType> ReturnCode write(final DataType data) {
-        rtcout.println(rtcout.TRACE, "write()");
+        rtcout.println(Logbuf.TRACE, "write()");
         OutPort out = (OutPort)m_outport;
         OutputStream cdr 
             = new EncapsOutputStream(m_spi_orb,m_isLittleEndian);
@@ -118,16 +216,28 @@ public class OutPortPullConnector extends OutPortConnector {
     }
 
     /**
-     * <p> Getting Buffer </p>
-     * <p> This operation returns this connector's buffer </p>
-     *
+     * {@.ja Buffer を取得する}
+     * {@.en Getting Buffer}
+     * <p>
+     * {@.ja Connector が保持している Buffer を返す}
+     * {@.en This operation returns this connector's buffer}
+     * @return
+     *   {@.ja Buffer を返す}
+     *   {@.en This connector's buffer}
      */
     public BufferBase<OutputStream> getBuffer() {
         return m_buffer;
     }
 
     /**
-     * <p> create buffer </p>
+     * {@.ja Bufferの生成}
+     * {@.en create buffer}
+     * @param profile
+     *   {@.ja バッファ種類を指定}
+     *   {@.en specify the buffer kind}
+     * @return
+     *   {@.ja 生成されたバッファ}
+     *   {@.en Buffer created}
      */
     protected BufferBase<OutputStream> createBuffer(ConnectorInfo profile) {
         String buf_type;
@@ -139,7 +249,8 @@ public class OutPortPullConnector extends OutPortConnector {
     }
 
     /**
-     * <p> Invoke callback when connection is established </p>
+     * {@.ja 接続確立時にコールバックを呼ぶ}
+     * {@.en Invoke callback when connection is established}
      */
     protected void onConnect() {
         m_listeners.connector_[ConnectorListenerType.ON_CONNECT].notify(m_profile);
@@ -154,22 +265,33 @@ public class OutPortPullConnector extends OutPortConnector {
                                                                     m_profile);
     }
     /**
-     * <p> Connector activation </p>
-     * <p> This operation activates this connector </p>
-     *
+     * {@.ja アクティブ化}
+     * {@.en Connector activation}
+     * <p>
+     * {@.ja このコネクタをアクティブ化する}
+     * {@.en This operation activates this connector}
      */
     public void activate(){
     } // do nothing
 
     /**
-     * <p> Connector deactivation </p>
-     * <p> This operation deactivates this connector </p>
-     *
+     * {@.ja 非アクティブ化}
+     * {@.en Connector deactivation}
+     * <p>
+     * {@.ja このコネクタを非アクティブ化する}
+     * {@.en This operation deactivates this connector}
      */
     public void deactivate(){
     } // do nothing
 
     /**
+     * {@.ja OutPortBaseを格納する。}
+     * {@.en Stores OutPortBase.}
+     *
+     * @param outportbase
+     *   {@.ja OutPortBase}
+     *   {@.en OutPortBase}
+     *
      */
     public void setOutPortBase(OutPortBase outportbase) {
         m_outport = outportbase;

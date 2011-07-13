@@ -3,44 +3,80 @@ package jp.go.aist.rtm.RTC.buffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.Properties;
 
-/**
- * <p>バッファ長1固定のバッファ実装です。</p>
- *
- * @param <DataType> バッファ内のデータ型を指定します。
- */
+  /**
+   * {@.ja ダミーバッファ実装クラス。}
+   * {@.en Concrete buffer class for dummy.}
+   * 
+   * <p>
+   * {@.ja バッファ長が１固定のダミーバッファ実装クラス。
+   * \<DataType\>としてバッファ内で保持するデータ型を指定する。}
+   *
+   * {@.en Concrete buffer class for dummy. Buffer length is fixed to 1.
+   * The users specify data type to hold it in a buffer as \<DataType\>.}
+   *
+   * @param <DataType>
+   *   {@.ja バッファ内のデータ型を指定する。}
+   *   {@.en Data type to hold in a buffer}
+   */
 //public class NullBuffer<DataType> implements BufferBase<DataType> {
 public class NullBuffer<DataType> {
 
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタ。}
+     * {@.en Constructer.}
+     * <p>
+     * {@.ja バッファ長を1(固定)で初期化する。}
+     * {@.en Initialize buffer length to always 1.}
      * 
-     * @param size バッファ長
+     * @param size 
+     *   {@.ja バッファ長}
+     *   {@.en Buffer length}
      */
     public NullBuffer(long size) {
         m_length = 1;
     }
     
     /**
-     * <p>デフォルトコンストラクタです。</p>
+     * {@.ja デフォルトコンストラクタ。}
+     * {@.en Default Constructer.}
      */
     public NullBuffer() {
         this(1);
     }
     
     /**
-     * <p>バッファ長を取得します。</p>
+     * {@.ja バッファ長(1固定)を取得する。}
+     * {@.en Get the buffer length (always 1)}
      * 
-     * @return バッファ長
+     * <p>
+     * {@.ja バッファ長を取得する。(常に1を返す。)}
+     * {@.en Get the buffer length. (Return always 1.)}
+     * 
+     * @return 
+     *   {@.ja バッファ長(1固定)}
+     *   {@.en buffer length(always 1)}
+     * 
      */
     public int length() {
         return this.m_length;
     }
 
     /**
-     * <p>バッファにデータを書き込みます。</p>
+     * {@.ja バッファにデータを書き込む。}
+     * {@.en Write data into the buffer}
      * 
-     * @param value 書き込むデータ
-     * @return 書き込みに成功した場合はtrueを、さもなくばfalseを返します。
+     * <p>
+     * {@.ja 引数で与えられたデータをバッファに書き込む。}
+     * {@.en Write data which were given with an argument into the buffer.}
+     * 
+     * @param value 
+     *   {@.ja 書き込み対象データ}
+     *   {@.en Target data to write.}
+     *
+     * @return 
+     *   {@.ja データ書き込み結果(true:書き込み成功，false:書き込み失敗)}
+     *   {@.en Result of having written in data (true:Successful, false:Failed)}
+     *
      */
     public ReturnCode write(final DataType value) {
         this.m_data = value;
@@ -48,10 +84,21 @@ public class NullBuffer<DataType> {
     }
 
     /**
-     * <p>バッファからデータを読み込みます。</p>
+     * {@.ja バッファからデータを読み出す。}
+     * {@.en Read data from the buffer}
      * 
-     * @param valueRef 読み込んだデータを受け取るためのDataRefオブジェクト
-     * @return 読み込みに成功した場合はtrueを、さもなくばfalseを返します。
+     * <p>
+     * {@.ja バッファに格納されたデータを読み出す。}
+     * {@.en Read data stored in the buffer.}
+     * 
+     * @param valueRef 
+     *   {@.ja 読み込んだデータを受け取るためのDataRefオブジェクト}
+     *   {@.en Object of DataRef type to receive read data}
+     *
+     * @return 
+     *   {@.ja データ読み出し結果(true:読み出し成功，false:読み出し失敗)}
+     *   {@.en Result of having read (true:Successful, false:Failed)}
+     *
      */
     public boolean read(DataRef<DataType> valueRef) {
         valueRef.v = this.m_data;
@@ -59,27 +106,50 @@ public class NullBuffer<DataType> {
     }
 
     /**
-     * <p>バッファがフルかどうか判定します。</p>
+     * {@.ja バッファがフルかどうか判定する。}
+     * {@.en Check on whether the buffer is full.}
      * 
-     * @return バッファがフルならばtrue、さもなくばfalseを返します。
+     * <p>
+     * {@.ja バッファfullをチェックする。(常にfalseを返す。)}
+     * {@.en Check on whether the buffer is full. (Always false.)}
+     *
+     * @return 
+     *   {@.ja fullチェック結果(常にfalse)}
+     *   {@.en Always false.}
+     *
      */
     public boolean isFull() {
         return false;
     }
 
     /**
-     * <p>バッファが空かどうか判定します。</p>
+     * {@.ja バッファが空かどうか判定する。}
+     * {@.en Check on whether the buffer is empty.}
      * 
-     * @return バッファが空ならばtrue、さもなくばfalseを返します。
+     * <p>
+     * {@.ja バッファemptyをチェックする。(常にfalseを返す。)}
+     * {@.en Check on whether the buffer is empty. (Always false.)}
+     *
+     * @return 
+     *   {@.ja emptyチェック結果(常にfalse)}
+     *   {@.en Always false.}
+     *
      */
     public boolean isEmpty() {
         return false;
     }
 
     /**
-     * <p>バッファにデータを書き込みます。</p>
+     * {@.ja バッファにデータを書き込む。}
+     * {@.en Store data into the buffer}
      * 
-     * @param data 書き込むデータ
+     * <p>
+     * {@.ja 引数で与えられたデータをバッファに格納する。}
+     * {@.en Store data which were given with an argument into the buffer.}
+     * 
+     * @param data 
+     *   {@.ja 書き込むデータ}
+     *   {@.en Target data to store.}
      */
     public ReturnCode put(final DataType data) {
         this.m_data = data;
@@ -87,26 +157,44 @@ public class NullBuffer<DataType> {
     }
 
     /**
-     * <p>バッファからデータを読み込みます。</p>
-     * 
-     * @return 読み込んだデータ
+     * {@.ja バッファからデータを読み込む。}
+     * {@.en Get data from the buffer}
+     *
+     * <p>
+     * {@.ja バッファに格納されたデータを取得する。}
+     * {@.en Get data from the buffer.}
+     *
+     * @return 
+     *   {@.ja 取得データ}
+     *   {@.en Data got from buffer.}
+     *
      */
     public DataType get() {
         return this.m_data;
     }
 
     /**
-     * <p>バッファ中に、まだ読み取られていないデータがあるかどうか判定します。</p>
+     * {@.ja 最新データが存在するか確認する。}
+     * {@.en Check whether the data is newest}
+     * <p>
+     * {@.ja バッファ中に、まだ読み取られていないデータがあるかどうか
+     * 判定する。}
+     * {@.en Check whether the data stored at a current buffer position 
+     * is newest.}
      * 
-     * @return 読み取られていないデータがあればtrueを、さもなくばfalseを返します。
+     * @return 
+     *   {@.ja true 未読の最新データが存在する
+     *         false 未接続またはバッファにデータが存在しない。}
+     *   {@.en Newest data check result
+     *         ( true:Newest data. Data has not been readout yet.
+     *          false:Past data．Data has already been readout.)}
      */
     public boolean isNew() {
         return false;
     }
 
     /**
-     * <p> get </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      * @param value
      * @return ReturnCode
      */
@@ -115,16 +203,14 @@ public class NullBuffer<DataType> {
 
     }
     /**
-     * <p> init </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      *
      * @param prop
      */
     public void init(final Properties prop) {
     }
     /**
-     * <p> reset </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      *
      * @return ReturnCode
      */
@@ -132,8 +218,7 @@ public class NullBuffer<DataType> {
         return ReturnCode.BUFFER_OK;
     }
     /**
-     * <p> wptr </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      * @param  n 
      * @return DataType
      */
@@ -141,16 +226,14 @@ public class NullBuffer<DataType> {
         return m_data;
     }
     /**
-     * <p> wptr </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      * @return DataType
      */
     public DataType wptr() {
         return m_data;
     }
     /**
-     * <p> advanceWptr </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      *
      * @param  n
      * @return ReturnCode
@@ -159,8 +242,7 @@ public class NullBuffer<DataType> {
         return ReturnCode.BUFFER_OK;
     }
     /**
-     * <p> advanceWptr </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented.
      *
      * @return ReturnCode
      */
@@ -168,16 +250,14 @@ public class NullBuffer<DataType> {
         return ReturnCode.BUFFER_OK;
     }
     /**
-     * <p> writable </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      * @return int 
      */
     public int writable() {
         return 0;
     }
     /**
-     * <p> full </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      *
      * @return boolean 
      */
@@ -185,8 +265,7 @@ public class NullBuffer<DataType> {
         return true;
     }
     /**
-     * <p> rptr </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      * @param  n
      * @return DataType 
      */
@@ -194,16 +273,14 @@ public class NullBuffer<DataType> {
         return m_data;
     }
     /**
-     * <p> rptr </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      * @return DataType 
      */
     public DataType rptr() {
         return m_data;
     }
     /**
-     * <p> advanceRptr </p>
-     * <p> This function is not implemented. </p>
+     *  This function is not implemented. 
      * @param  n 
      * @return ReturnCode 
      */
@@ -212,8 +289,7 @@ public class NullBuffer<DataType> {
         return ReturnCode.BUFFER_OK;
     }
     /**
-     * <p> advanceRptr </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      * @return ReturnCode 
      */
     public ReturnCode advanceRptr()
@@ -221,16 +297,14 @@ public class NullBuffer<DataType> {
         return ReturnCode.BUFFER_OK;
     }
     /**
-     * <p> readable </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      * @return int 
      */
     public int readable() {
         return 0;
     }     
     /**
-     * <p> empty </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      *
      * @return boolean 
      */
@@ -238,8 +312,7 @@ public class NullBuffer<DataType> {
         return true;
     }
     /**
-     * <p> length </p>
-     * <p> This function is not implemented. </p>
+     * This function is not implemented. 
      *
      * @param  n
      * @return ReturnCode 

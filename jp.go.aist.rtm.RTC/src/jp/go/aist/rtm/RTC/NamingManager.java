@@ -1,20 +1,23 @@
 package jp.go.aist.rtm.RTC;
 
 import java.util.Vector;
-import java.util.logging.FileHandler;
-import java.util.logging.ConsoleHandler;
-import java.io.IOException;
+
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 
-/**
-* <p>Naming Service管理クラスです。コンポーネントの登録・解除などを管理します。</p>
-*/
+  /**
+   * {@.ja NamingServer 管理クラス。}
+   * {@.en NamingServer management class}
+   *
+   * <p>
+   * {@.ja コンポーネントのNamingServiceへの登録、解除などを管理する。}
+   * {@.en Manage to register and unregister components to NamingService.}
+   */
 public class NamingManager implements CallbackFunction {
 
     /**
-     * {@.ja コンストラクタです。}
+     * {@.ja コンストラクタ。}
      * {@.en Constructor}
      * 
      * @param manager 
@@ -28,7 +31,7 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * {@.ja NameServer の登録}
+     * {@.ja NameServer の登録。}
      * {@.en Regster the NameServer}
      *
      * <p>
@@ -38,7 +41,7 @@ public class NamingManager implements CallbackFunction {
      * Currently. only CORBA can be specified.}
      *
      * @param method 
-     *   {@.ja NamingService の形式}
+     *   {@.ja NamingService の形式。}
      *   {@.en Format of NamingService}
      * @param name_server 
      *   {@.ja 登録する NameServer の名称}
@@ -47,7 +50,7 @@ public class NamingManager implements CallbackFunction {
      */
     public void registerNameServer(final String method, 
                                                 final String name_server) {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
             "NamingManager.registerNameServer(" 
             + method + ", " + name_server + ")");
         NamingBase name = createNamingObj(method, name_server);
@@ -59,7 +62,7 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * {@.ja 指定したオブジェクトのNamingServiceへバインド}
+     * {@.ja 指定したオブジェクトのNamingServiceへバインド。}
      * {@.en Bind the specified objects to NamingService}
      * 
      * <p>
@@ -78,7 +81,7 @@ public class NamingManager implements CallbackFunction {
      * 
      */
     public void bindObject(final String name, final RTObject_impl rtobj) {
-        rtcout.println(rtcout.TRACE, "NamingManager.bindObject(" + name + ")");
+        rtcout.println(Logbuf.TRACE, "NamingManager.bindObject(" + name + ")");
         synchronized (m_names) {
             int len = m_names.size();
             for(int intIdx=0; intIdx < len; ++intIdx ) {
@@ -96,13 +99,7 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * <p> bindObject </p> 
-     *
-     * @param name bind時の名称
-     * @param mgr bind対象マネージャサーバント
-     */
-    /**
-     * {@.ja 指定したManagerServantのNamingServiceへバインド}
+     * {@.ja 指定したManagerServantのNamingServiceへバインド。}
      * {@.en Bind the specified ManagerServants to NamingService}
      *
      * <p> 
@@ -122,7 +119,7 @@ public class NamingManager implements CallbackFunction {
      * 
      */
     public void bindObject(final String name, final ManagerServant mgr) {
-        rtcout.println(rtcout.TRACE, "NamingManager.bindObject(" + name + ")");
+        rtcout.println(Logbuf.TRACE, "NamingManager.bindObject(" + name + ")");
         synchronized (m_names) {
             int len = m_names.size();
             for(int intIdx=0; intIdx < len; ++intIdx ) {
@@ -140,7 +137,7 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * {@.ja NamingServer の情報の更新}
+     * {@.ja NamingServer の情報の更新。}
      * {@.en Update information of NamingServer}
      * 
      * <p>
@@ -152,7 +149,7 @@ public class NamingManager implements CallbackFunction {
      *
      */
     public void update(){
-        rtcout.println(rtcout.TRACE, "NamingManager.update()");
+        rtcout.println(Logbuf.TRACE, "NamingManager.update()");
         
         boolean rebind = StringUtil.toBool(
                     m_manager.getConfig().getProperty("naming.update.rebind"), 
@@ -162,7 +159,7 @@ public class NamingManager implements CallbackFunction {
             int len = m_names.size();
             for( int intIdx=0; intIdx < len; ++intIdx ) {
                 if( m_names.elementAt(intIdx).ns == null ) {
-                    rtcout.println(rtcout.DEBUG, "Retrying connection to " 
+                    rtcout.println(Logbuf.DEBUG, "Retrying connection to " 
                                  + m_names.elementAt(intIdx).method + "/" +
                                  m_names.elementAt(intIdx).nsname);
                     retryConnection(m_names.elementAt(intIdx));
@@ -174,7 +171,7 @@ public class NamingManager implements CallbackFunction {
                             bindCompsTo(m_names.elementAt(intIdx).ns);
                         }
                         if (!m_names.elementAt(intIdx).ns.isAlive()) {
-                            rtcout.println(rtcout.INFO, 
+                            rtcout.println(Logbuf.INFO, 
                                  "Name server: " 
                                  + m_names.elementAt(intIdx).nsname + " (" 
                                  + m_names.elementAt(intIdx).method 
@@ -184,7 +181,7 @@ public class NamingManager implements CallbackFunction {
                         }
                     }
                     catch(Exception ex){
-                        rtcout.println(rtcout.INFO, 
+                        rtcout.println(Logbuf.INFO, 
                                  "Name server: " 
                                  + m_names.elementAt(intIdx).nsname + " (" 
                                  + m_names.elementAt(intIdx).method 
@@ -198,7 +195,7 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * {@.ja コンポネントをリバインドする}
+     * {@.ja コンポネントをリバインドする。}
      * {@.en Rebind the component to NameServer}
      * 
      * <p>
@@ -216,7 +213,7 @@ public class NamingManager implements CallbackFunction {
         try {
             nsobj = createNamingObj(ns.method, ns.nsname);
             if (nsobj != null) {// if succeed
-                rtcout.println(rtcout.INFO, 
+                rtcout.println(Logbuf.INFO, 
                                  "Connected to a name server: " 
                                  + ns.nsname + "/" 
                                  + ns.method );
@@ -225,13 +222,13 @@ public class NamingManager implements CallbackFunction {
                 return;
             }
             else {
-                rtcout.println(rtcout.DEBUG, 
+                rtcout.println(Logbuf.DEBUG, 
                                  "Name service: " + ns.method + "/" 
                                  + ns.nsname  +" still not available.");
             }
         }
         catch (Exception ex) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                                  "Name service: " + ns.method + "/" 
                                  + ns.nsname  +" disappeared again.");
             if (nsobj != null) {
@@ -241,12 +238,19 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * <p>オブジェクトをNameServerからunbindします。</p>
+     * {@.ja 指定したオブジェクトをNamingServiceからアンバインド。}
+     * {@.en Unbind the specified objects from NamingService}
      * 
-     * @param name unbind対象オブジェクト名
+     * <p>
+     * {@.ja 指定したオブジェクトを NamingService からアンバインドする。}
+     * {@.en Unbind the specified objects from NamingService.}
+     * 
+     * @param name 
+     *   {@.ja アンバインド対象オブジェクト}
+     *   {@.en The target objects for the unbinding}
      */
     public void unbindObject(final String name) {
-        rtcout.println(rtcout.TRACE, "NamingManager.unbindObject(" + name + ")");
+        rtcout.println(Logbuf.TRACE, "NamingManager.unbindObject(" + name + ")");
         //
         synchronized (m_names) {
             int len = m_names.size();
@@ -261,7 +265,7 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * {@.ja 全てのオブジェクトをNamingServiceからアンバインド}
+     * {@.ja 全てのオブジェクトをNamingServiceからアンバインド。}
      * {@.en Unbind all objects from NamingService}
      *  
      * <p>
@@ -270,7 +274,7 @@ public class NamingManager implements CallbackFunction {
      * 
      */
     protected void unbindAll() {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
             "NamingManager.unbindAll(): m_compNames=" 
             + Integer.toString(m_compNames.size()) 
             + " m_mgrNames=" + Integer.toString(m_mgrNames.size()));
@@ -297,9 +301,16 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * <p>NameServerに登録されているオブジェクトを取得します。</p>
+     * {@.ja バインドされている全てのオブジェクトを取得。}
+     * {@.en Get all bound objects}
      * 
-     * @return 登録オブジェクトのリスト
+     * <p>
+     * {@.ja バインドされている全てのオブジェクトを 取得する。}
+     *
+     * @return 
+     *   {@.ja バインド済みオブジェクト リスト}
+     *   {@.en Bound object list}
+     * 
      */
     protected synchronized Vector<RTObject_impl> getObjects() {
         Vector<RTObject_impl> comps = new Vector<RTObject_impl>();
@@ -311,7 +322,7 @@ public class NamingManager implements CallbackFunction {
     }
     
     /**
-     * {@.ja NameServer 管理用オブジェクトの生成}
+     * {@.ja NameServer 管理用オブジェクトの生成。}
      * {@.en Create objects for NameServer management}
      * 
      * <p>
@@ -333,7 +344,7 @@ public class NamingManager implements CallbackFunction {
      */
     protected NamingBase createNamingObj(final String method, 
                                             final String name_server) {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                     "createNamingObj(method = " 
                     + method + ", nameserver = )" + name_server);
         String m = method;
@@ -343,12 +354,12 @@ public class NamingManager implements CallbackFunction {
                     = new NamingOnCorba(m_manager.getORB(), name_server);
                 NamingBase name = nameb;
                 if( name == null ) return null;
-                rtcout.println(rtcout.INFO, 
+                rtcout.println(Logbuf.INFO, 
                     "NameServer connection succeeded: " 
                     + method + "/" + name_server);
                 return name;
             } catch (Exception ex) {
-                rtcout.println(rtcout.INFO, 
+                rtcout.println(Logbuf.INFO, 
                     "NameServer connection failed: " 
                     + method +"/" + name_server);
                 return null;
@@ -358,9 +369,16 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * <p>オブジェクトをNameServerにbindします。</p>
+     * {@.ja 設定済みコンポーネントを NameServer に登録。}
+     * {@.en Register the configured component to NameServer}
      * 
-     * @param ns bind対象オブジェクト
+     * <p>
+     * {@.ja 設定済みコンポーネントを指定した NameServer に登録する。}
+     * {@.en Register the already configured components to NameServer.}
+     *
+     * @param ns 
+     *   {@.ja 登録対象 NameServer}
+     *   {@.en The target NameServer for the registration}
      */
     protected void bindCompsTo(NamingBase ns) {
         int len = m_compNames.size();
@@ -370,11 +388,20 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * <p>コンポーネントを登録します。
-     * 対象コンポーネントが既に登録済みの場合は何もしません。</p>
+     * {@.ja NameServer に登録するコンポーネントの設定。}
+     * {@.en Configure the components that will be registered to NameServer}
      * 
-     * @param name bind時の名称
-     * @param rtobj bind対象オブジェクト
+     * <p>
+     * {@.ja NameServer に登録するコンポーネントを設定する。
+     * 対象コンポーネントが既に登録済みの場合は何もしない。}
+     * {@.en Configure the components that will be registered to NameServer.}
+     *
+     * @param name 
+     *   {@.ja コンポーネントの登録時名称}
+     *   {@.en Names of components at the registration}
+     * @param rtobj 
+     *   {@.ja 登録対象オブジェクト}
+     *   {@.en The target objects for registration}
      */
     protected void registerCompName(final String name, final RTObject_impl rtobj) {
         int len = m_compNames.size();
@@ -389,11 +416,22 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * <p>マネージャサーバントを登録します。
-     * 対象マネージャサーバントが既に登録済みの場合は何もしません。</p>
+     * {@.ja NameServer に登録するManagerServantの設定。}
+     * {@.en Configure the ManagerServants that will be registered 
+     * to NameServer}
+     * 
+     * <p>
+     * {@.ja NameServer に登録するManagerServantを設定する。
+     * 対象マネージャサーバントが既に登録済みの場合は何もしない。}
+     * {@.en Configure the ManagerServants that will be registered 
+     * to NameServer.}
      *
-     * @param name bind時の名称
-     * @param mgr bind対象マネージャサーバント
+     * @param name 
+     *   {@.ja ManagerServantの登録時名称}
+     *   {@.en Names of ManagerServants at the registration}
+     * @param mgr 
+     *   {@.ja 登録対象ManagerServant}
+     *   {@.en The target ManagerServants for registration}
      */
     protected void registerMgrName(final String name, final ManagerServant mgr) {
         int len = m_mgrNames.size();
@@ -408,9 +446,15 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * <p>登録済みコンポーネントの登録を解除します。</p>
+     * {@.ja NameServer に登録するコンポーネントの設定解除。}
+     * {@.en Unregister the components that will be registered to NameServer}
      * 
-     * @param name 解除対象コンポーネントの名称
+     * <p>
+     * {@.ja NameServer に登録するコンポーネントの設定を解除する。}
+     *
+     * @param name 
+     *   {@.ja 設定解除対象コンポーネントの名称}
+     *   {@.en Names of the target components for unregistration}
      */
     protected void unregisterCompName(final String name) {
         int len = m_compNames.size();
@@ -424,9 +468,17 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-     * <p>登録済みマネージャサーバントの登録を解除します。</p>
+     * {@.ja NameServer に登録するManagerServantの設定解除。}
+     * {@.en Unregister the ManagerServants that will be registered 
+     * to NameServer}
      * 
-     * @param name 解除対象マネージャサーバントの名称
+     * <p>
+     * {@.ja NameServer に登録するManagerServantの設定を解除する。}
+     *
+     * @param name 
+     *   {@.ja 設定解除対象ManagerServantの名称}
+     *   {@.en Names of the target ManagerServants for unregistration}
+     * 
      */
     protected void unregisterMgrName(final String name) {
         int len = m_mgrNames.size();
@@ -440,15 +492,24 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
-    * <p>Naming Serviceクラスです。</p>
-    */
+     * {@.ja NameServer 管理用クラス}
+     * {@.en Class for NameServer management}
+     */
     protected class Names {
         /**
-         * <p>コンストラクタです。</p>
+         * {@.ja コンストラクタ。}
+         * {@.en Constructor}
          * 
-         * @param meth NamingServerタイプ
-         * @param name NamingServer名称
-         * @param naming NameServerオブジェクト
+         * @param meth 
+         *   {@.ja NamingServerタイプ}
+         *   {@.en NamingServer type}
+         * @param name 
+         *   {@.ja NamingServer名称}
+         *   {@.en NamingServer name}
+         * @param naming 
+         *   {@.ja NameServerオブジェクト}
+         *   {@.en NamingServer object}
+         *
          */
         public Names(final String meth, final String name, NamingBase naming) {
             method = meth;
@@ -457,92 +518,117 @@ public class NamingManager implements CallbackFunction {
         }
 
         /**
-         * <p>NamingServerタイプ</p>
+         * {@.ja NamingServerタイプ}
+         * {@.en NamingServer type}
          */
         public String method;
         /**
-         * <p>NamingServer名称</p>
+         * {@.ja NamingServer名称}
+         * {@.en NamingServer name}
          */
         public String nsname;
         /**
-         * <p>NameServerオブジェクト</p>
+         * {@.ja NameServerオブジェクト}
+         * {@.en NameServer object}
          */
         public NamingBase ns;
     }
     /**
-     * <p>登録されたNameServer</p>
+     * {@.ja 登録された NameServer リスト}
+     * {@.en NameServer list}
      */
     protected Vector<Names> m_names = new Vector<Names>();
     /**
-     * <p>Naming Service登録用コンポーネントクラスです。</p>
+     * {@.ja Naming Service登録用コンポーネントクラス}
+     * {@.en Class for component management}
      */
     protected class Comps {
         /**
-         * <p>コンストラクタです。</p>
+         * {@.ja コンストラクタ。}
+         * {@.en Constructor}
          * 
-         * @param n コンポーネント名称
-         * @param obj 登録対象オブジェクト
+         * @param n 
+         *   {@.ja コンポーネント名称}
+         *   {@.en Component name}
+         * @param obj 
+         *   {@.ja 登録対象オブジェクト}
+         *   {@.en object}
          */
         public Comps(final String n, final RTObject_impl obj) {
             name = n;
             rtobj = obj;
         }
         /**
-         * <p>コンポーネント名称</p>
+         * {@.ja コンポーネント名称}
+         * {@.en Component name}
          */
         public String name;
         /**
-         * <p>登録対象オブジェクト</p>
+         * {@.ja 登録対象オブジェクト}
+         * {@.en object}
          */
         public RTObject_impl rtobj;
     }
     
     /**
-     * <p>Naming Service登録用マネージャサーバントクラスです。</p>
+     * {@.ja Naming Service登録用マネージャサーバントクラス}
+     * {@.en Class for ManagerServant management}
      */
     protected class Mgr {
         /**
-         * <p> constructor </p>
+         * {@.ja コンストラクタ。}
+         * {@.en Constructor}
          * 
          * @param n
+         *   {@.ja 名称}
+         *   {@.en name}
          * @param obj
+         *   {@.ja オブジェクト}
+         *   {@.en object}
          */
         public Mgr(final String n, final ManagerServant obj) {
             name = n;
             mgr = obj;
         }
         /**
-         * <p>コンポーネント名称</p>
+         * {@.ja コンポーネント名称}
+         * {@.en Component name}
          */
         public String name;
         /**
-         * <p>登録対象マネージャサーバント</p>
+         *  {@.ja 登録対象マネージャサーバント}
+         *  {@.en ManagerServant}
          */
         public ManagerServant mgr;
     }
     /**
-     * <p>登録されたコンポーネント</p>
+     * {@.ja 登録されたコンポーネントリスト}
+     * {@.en Component list}
      */
     protected Vector<Comps> m_compNames = new Vector<Comps>();
 
     /**
-     * <p>登録されたマネージャサーバント</p>
+     * {@.ja 登録されたManagerServantリスト}
+     * {@.en ManagerServant list}
      */
     protected Vector<Mgr> m_mgrNames = new Vector<Mgr>();
 
     /**
-     * <p>タイマーに登録されたリスナーから呼び出されるメソッドです。</p>
+     * {@.ja タイマーに登録されたリスナーから呼び出されるメソッド}
+     * {@.en Method that calls from listener registered in timer}
      */
     public void doOperate() {
         this.update();
     }
 
     /**
-     * <p>Managerオブジェクト</p>
+     * {@.ja Managerオブジェクト}
+     * {@.en Manager object}
      */
     protected Manager m_manager;
     /**
-     * <p>Logging用フォーマットオブジェクト</p>
+     * {@.ja Logging用フォーマットオブジェクト}
+     * {@.en Format object for Logging}
      */
     protected Logbuf rtcout;
 }

@@ -1,14 +1,20 @@
 package jp.go.aist.rtm.RTC;
 
 /**
-* <p>ステートマシン起動アクション用インターフェースです。</p>
-* @param STATE ステートマシンが管理する状態の型(LifeCycleState)
+* {@.ja ステートマシン起動アクション用インターフェース}
+* {@.en Interface for state machine start action}
+* @param STATE 
+*   {@.ja ステートマシンが管理する状態の型(LifeCycleState)}
+*   {@.en Type in state that state machine manages}
 */
 public interface StateAction<STATE> { 
     /**
-     * <p>ステートマシンから起動されるアクションです。</p>
+     * {@.ja ステートマシンから起動されるアクション。}
+     * {@.en This is an action started from the state machine.}
      * 
-     * @param state  状態遷移履歴
+     * @param state  
+     *   {@.ja 状態}
+     *   {@.en State holder}
      */
     public void doAction(StateHolder<STATE> state);
 }

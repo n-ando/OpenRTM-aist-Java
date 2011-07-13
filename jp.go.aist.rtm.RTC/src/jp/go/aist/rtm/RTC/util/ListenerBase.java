@@ -1,11 +1,13 @@
 package jp.go.aist.rtm.RTC.util;
 
 /**
- * <p>タイマーに登録するリスナー用インタフェースです。</p>
+ * {@.ja タイマーに登録するリスナー用インタフェース}
+ * {@.en Interface for listener registers in timer}
  */
 public interface ListenerBase {
     /**
-     * <p>タイマーがリスナーの処理を実行するためのメソッドです。</p>
+     * {@.ja タイマーがリスナーの処理を実行するためのメソッド}
+     * {@.en Method for execution of timer of listener processing}
      */
     public void invoke();
 }

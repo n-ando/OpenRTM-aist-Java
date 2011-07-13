@@ -1,11 +1,9 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-
-import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
+
+import org.omg.CORBA.portable.OutputStream;
 
 import _SDOPackage.NVListHolder;
 

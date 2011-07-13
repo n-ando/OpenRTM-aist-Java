@@ -1,20 +1,20 @@
 package jp.go.aist.rtm.RTC;
 
-import java.util.Iterator;
+import java.util.Hashtable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
 
-import jp.go.aist.rtm.RTC.ObjectCreator;
-import jp.go.aist.rtm.RTC.ObjectDestructor;
-import jp.go.aist.rtm.RTC.util.Properties;
 
 /**
- * <p>Java用コンポーネントファクトリの実装です。</p>
+ * {@.ja ファクトリ管理クラス}
+ * {@.en Factory Management class}
  */
 public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
 
     /**
-     * <p> FactoryGlobal constructor </p>
+     * {@.ja コンストラクタ}
+     * {@.en FactoryGlobal constructor}
      */
     protected FactoryGlobal() {
         m_New = null;
@@ -59,9 +59,12 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
 */
     
     /**
-     * <p> instance </p>
+     * {@.ja FactoryGlobalをインスタス化する。}
+     * {@.en Creates FactoryGlobal.}
      *
-     * @return FactoryGlobal object
+     * @return 
+     *   {@.ja FactoryGlobal オブジェクト}
+     *   {@.en FactoryGlobal object}
      */
     public static FactoryGlobal instance() {
         if (factory_global == null) {
@@ -79,6 +82,32 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         return factory_global;
     }
 
+    /**
+     * {@.ja FactoryGlobalをインスタス化する。}
+     * {@.en Creates FactoryGlobal.}
+     * @param clazz
+     *   {@.ja class name}
+     *   {@.en class name}
+     * @return 
+     *   {@.ja オブジェクト}
+     *   {@.en object}
+     */
+    public static Object instance(String clazz) {
+        Object obj = (Object)factory_table.get(clazz);
+        if(obj != null){
+            return obj;
+        } 
+        else {
+            try{
+                Object obj2 = (Object)(Class.forName(clazz).newInstance());
+                factory_table.put(clazz,obj2);
+                return obj2;
+            }
+            catch(Exception e){
+                return null;
+            }
+        }
+    }
     /**
      * <p>コンポーネントを生成します。</p>
      * 
@@ -124,15 +153,19 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
 */
         
     /**
-     * <p>コンポーネント生成用インタフェース</p>
+     * {@.ja コンポーネント生成インタフェース格納用変数}
+     * {@.en Interface for component creation variable}
      */
     protected RtcNewFunc m_New;
     /**
-     * <p>コンポーネント破棄用インタフェース</p>
+     * {@.ja コンポーネント破棄インタフェース格納用変数}
+     * {@.en Interface for component destruction variable}
      */
     protected RtcDeleteFunc m_Delete;
     /**
-     * <p>コンポーネント生成時のナンバーリング・ポリシ(命名ポリシー)管理用クラス</p>
+     * {@.ja コンポーネント生成時のナンバーリング・ポリシ(命名ポリシー)管理用
+     * クラス}
+     * {@.en Class for numbering policy (naming policy) management.}
      */
     protected NumberingPolicy m_policy;
     /**
@@ -144,35 +177,48 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
      */
     private static FactoryGlobal factory_global;
     /**
-     *  <p> Map of FactoryEntry </p>
+     *  {@.ja FactoryEntry のマップ}
+     *  {@.en Map of FactoryEntry}
      */
     protected HashMap<IDENTIFIER, FactoryEntry> m_creators = new HashMap<IDENTIFIER, FactoryEntry>();
 
     /**
-     * <p> hasFactory </p>
+     * {@.ja Identifierがマップに存在するかチェックする。}
+     * {@.en Checks whether Identifier exists in the map.}
      *
      * @param id
+     *   {@.ja Identifier}
+     *   {@.en Identifier}
      * @return boolean
+     *   {@.ja 指定のIDを保持してる場合に true}
      */
     public boolean hasFactory(final IDENTIFIER id) {
         return m_creators.containsKey(id);
     }
     /**
-     * <p> getIdentifiers </p>
+     * {@.ja マップの Identifiers を返す}
+     * {@.en Returns Identifiers of the map.}
      *
-     * @return Set<IDENTIFIER>
+     * @return 
+     *   {@.ja Identifiers}
+     *   {@.en Identifiers}
      */
     public Set<IDENTIFIER> getIdentifiers()
     {
         return m_creators.keySet();
     }
     /**
-     * <p> addFactory </p>
+     * {@.ja Factory をマップへ登録する。}
+     * {@.en Resters Factory to the map.}
      *
-     * @param id         
-     * @param creator    creation function
-     * @param destructor destruction function
-     * @return The return code of ReturnCode type. 
+     * @param id
+     *   {@.en Identifier}
+     * @param creator    
+     *   {@.en creation function}
+     * @param destructor 
+     *   {@.en destruction function}
+     * @return 
+     *   {@.en The return code of ReturnCode type.}
      */
     public ReturnCode addFactory(final IDENTIFIER id,
                           ObjectCreator creator,
@@ -186,10 +232,16 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         return ReturnCode.FACTORY_OK;
     }
     /**
-     * <p> removeFactory </p>
+     * {@.ja マップからFactoryを削除する。}
+     * {@.en Removes Factory from the map.}
      *
      * @param id         
-     * @return The return code of ReturnCode type. 
+     *   {@.ja 削除するIdentifier}
+     *   {@.en Identifier}
+     * @return 
+     *   {@.ja リターンコード}
+     *   {@.en The return code of ReturnCode type.}
+     * 
      */
     public ReturnCode removeFactory(final IDENTIFIER id)
     {
@@ -200,10 +252,20 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         return ReturnCode.FACTORY_OK;
     }
     /**
-     * <p> createObject </p>
+     * {@.ja オブジェクト生成。}
+     * {@.en Object generation processing}
      *
-     * @param id         
-     * @return Created object. 
+     * <p>
+     * {@.ja Identifierで指定されたFactoryでObjectを生成する。}
+     * {@.en This method creates the object with factory specified 
+     * with identifier.}
+     *
+     * @param id
+     *   {@.ja 生成するオブジェクトのIdentifier}
+     *   {@.en Identifier of created object}
+     * @return 
+     *   {@.ja 生成したオブジェクト}
+     *   {@.en Created object.}
      */
     public ABSTRACTCLASS createObject(final IDENTIFIER id)
     {
@@ -213,10 +275,19 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         return m_creators.get(id).creator_.creator_();
     }
     /**
-     * <p> deleteObject </p>
+     * {@.ja オブジェクト削除。}
+     * {@.en Deletes the object.}
      *
+     * <p>
+     * {@.ja Identifierで指定されたFactoryでObjectを削除する。}
+     * {@.en This method deletes the object with factory specified 
+     * with identifier.}
      * @param id         
+     *   {@.ja 削除するオブジェクトのIdentifier}
+     *   {@.en Identifier of deleted object}
      * @param obj    
+     *   {@.ja 削除するオブジェクト}
+     *   {@.en Deleteed object.}
      * 
      */
     public void deleteObject(final IDENTIFIER id, ABSTRACTCLASS obj) {
@@ -226,9 +297,16 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         m_creators.get(id).destructor_.destructor_(obj);
     }
     /**
-     * <p> deleteObject </p>
+     * {@.ja オブジェクト削除。}
+     * {@.en Deletes the object.}
      *
-     * @param obj
+     * {@.ja 指定したObjectを削除する。}
+     * {@.en This method deletes specified Object.}
+     * with identifier.}
+     *
+     * @param obj    
+     *   {@.ja 削除するオブジェクト}
+     *   {@.en Deleteed object.}
      */
     public void deleteObject(ABSTRACTCLASS obj) {
         Iterator it = m_creators.keySet().iterator();
@@ -238,20 +316,48 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         }
     }
 
-    class FactoryEntry
-    {
-      public FactoryEntry()
-      {
-      }
-      public FactoryEntry(ObjectCreator creator, ObjectDestructor destructor)
-      {
+    /**
+     * {@.ja 生成/削除インターフェース管理用クラス}
+     * {@.en Class for creation/destruction interface management}
+     */
+    class FactoryEntry {
+        /**
+         * {@.ja コンストラクタ}
+         * {@.en Constructor}
+         */
+        public FactoryEntry() {
+        }
+        /**
+         * {@.ja コンストラクタ}
+         * {@.en Constructor}
+         * @param creator
+         *   {@.ja 生成インターフェース}    
+         *   {@.en Creation interface}    
+         * @param destructor    
+         *   {@.ja 削除インターフェース}    
+         *   {@.en Destruction interface}    
+         */
+        public FactoryEntry(ObjectCreator creator, 
+                                                ObjectDestructor destructor) {
           creator_ = creator;
           destructor_ = destructor;
-      }
-      public ObjectCreator<ABSTRACTCLASS> creator_;
-      public ObjectDestructor destructor_;
+        }
+        /**
+         * {@.ja 生成インターフェース保存用変数}
+         * {@.en Creation interface variable}
+         */
+        public ObjectCreator<ABSTRACTCLASS> creator_;
+        /**
+         * {@.ja 削除インターフェース保存用変数}
+         * {@.en Destruction interface variable}
+         */
+        public ObjectDestructor destructor_;
     };
-   public enum ReturnCode
+    /**
+     * {@.ja リターンコード}
+     * {@.en Return code}
+     */
+    public enum ReturnCode
       {
         FACTORY_OK,
         FACTORY_ERROR,
@@ -260,6 +366,8 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         INVALID_ARG,
         UNKNOWN_ERROR
       };
+
+    private static Hashtable factory_table = new Hashtable();
 
 }
 

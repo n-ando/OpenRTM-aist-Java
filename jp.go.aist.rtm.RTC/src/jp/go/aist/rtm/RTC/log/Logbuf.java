@@ -1,16 +1,13 @@
 package jp.go.aist.rtm.RTC.log;
 
+import java.util.Date;
+import java.util.IllegalFormatException;
+import java.util.Vector;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.Vector;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.IllegalFormatException;
 
 /**
  * <p>ログ収集ON時のロギングクラスです。</p>
@@ -54,13 +51,17 @@ public class Logbuf {
         String str;
         if(name.equals("Manager")) {
             str = "OpenRTM-aist.logging." + name;
+            m_Logger = Logger.getLogger(str);
+            this.addStream(new NullHandler());
         } else if(parent >= 0) {
             m_Suffix = this.getLastName(name);
             str = "OpenRTM-aist.logging.Manager." + m_Suffix;
+            m_Logger = Logger.getLogger(str);
         } else {
             str = "OpenRTM-aist.logging.Manager." + name;
+            m_Logger = Logger.getLogger(str);
         }
-        m_Logger = Logger.getLogger(str);
+//        m_Logger = Logger.getLogger(str);
         _constructor();
     }
 
@@ -109,7 +110,7 @@ public class Logbuf {
      */
     public void println(int level, String contents) {
         // logger.enable check
-        if(!m_Enabled) {
+        if(!Logbuf.m_Enabled) {
             return;
         }
         boolean bret = this.getPrintFlag();
@@ -224,6 +225,8 @@ public class Logbuf {
      * <p>OpenRTMログレベルクラス</p>
      */
     private class OpenRTMLevel  extends Level {
+
+        private static final long serialVersionUID = -9018991580877614607L;
 
         public OpenRTMLevel(String str, int val) {
             super(str, val);
@@ -376,7 +379,7 @@ public class Logbuf {
      *
      */
     public void setLevel(final String level) {
-        int lv = this.strToLogLevel(level);
+        int lv = Logbuf.strToLogLevel(level);
         String str = logLevelToStr(lv);
         Level clevel = Level.parse(str);
         m_Logger.setLevel(clevel);
@@ -398,7 +401,7 @@ public class Logbuf {
             formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date);
         } catch(IllegalFormatException ex){
             m_dateFormat = "%tb %td %tH:%tM:%tS";
-            this.println(this.ERROR, "The specified format is illegal.");
+            this.println(Logbuf.ERROR, "The specified format is illegal.");
         }
     }
 
@@ -418,7 +421,7 @@ public class Logbuf {
      *
      */
     public void setEnabled() {
-        this.m_Enabled = true;
+        Logbuf.m_Enabled = true;
     }
 
     /**
@@ -426,7 +429,7 @@ public class Logbuf {
      *
      */
     public void setDisabled() {
-        this.m_Enabled = false;
+        Logbuf.m_Enabled = false;
     }
 
    /**
@@ -454,5 +457,14 @@ public class Logbuf {
     *    true:有効  false:無効
     */
     private static boolean m_Enabled = false;
+
+    class NullHandler extends Handler{
+        public void close() {
+        }
+        public void flush() {
+        }
+        public void publish(LogRecord record){
+        }
+    }
 
 }

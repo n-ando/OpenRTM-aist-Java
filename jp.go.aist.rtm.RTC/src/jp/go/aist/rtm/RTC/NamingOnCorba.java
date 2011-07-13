@@ -1,13 +1,18 @@
 package jp.go.aist.rtm.RTC;
 
-import org.omg.CORBA.ORB;
-
 import jp.go.aist.rtm.RTC.log.Logbuf;
-import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.StringUtil;
-/**
-* <p>CORBA用Naming Serviceクラスです。</p>
-*/
+
+import org.omg.CORBA.ORB;
+  /**
+   * {@.ja CORBA 用 NamingServer 管理クラス。}
+   * {@.en NamingServer management class for CORBA}
+   *
+   * <p>
+   * {@.ja CORBA 用 NamingServer 管理用クラス。
+   * CORBA コンポーネントの NamingService への登録、解除などを管理する。}
+   * {@.en NamingServer management class for CORBA.
+   * Manage to register and unregister CORBA components to NamingService.}
+   */
 class NamingOnCorba implements NamingBase {
 
     /**
@@ -81,11 +86,15 @@ class NamingOnCorba implements NamingBase {
     }
 
     /**
-     * <p> bindObject </p>
+     * {@.ja 指定したManagerServantをNamingServiceへバインド}
+     * {@.en Bind the specified ManagerServants to NamingService}
      *
-     * @param name bind時の名称
-     * @param mgr bind対象マネージャサーバント
-     *
+     * @param name 
+     *   {@.ja バインド時の名称}
+     *   {@.en Names at the binding}
+     * @param mgr 
+     *   {@.ja バインド対象ManagerServant}
+     *   {@.en The target ManagerServants for the binding}
      */
     public void bindObject(final String name, final ManagerServant mgr) {
         try{
@@ -110,7 +119,7 @@ class NamingOnCorba implements NamingBase {
      *
      */
     public void unbindObject(final String name) {
-        rtcout.println(rtcout.INFO, "unbindObject(name  = " +name+")");
+        rtcout.println(Logbuf.INFO, "unbindObject(name  = " +name+")");
         try {
             m_cosnaming.unbind(name);
         } catch (Exception ex) {
@@ -128,13 +137,14 @@ class NamingOnCorba implements NamingBase {
      * 
      */
     public boolean isAlive() {
-        rtcout.println(rtcout.TRACE, "isAlive()");
+        rtcout.println(Logbuf.TRACE, "isAlive()");
         return m_cosnaming.isAlive();
     }
 
     private CorbaNaming m_cosnaming;
     /**
      * {@.ja Logging用フォーマットオブジェクト}
+     * {@.en Format object for Logging}
      */
     protected Logbuf rtcout;
 }

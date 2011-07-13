@@ -1,27 +1,36 @@
 package jp.go.aist.rtm.RTC;
 
-
-import java.lang.Object;
-import java.lang.Thread;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.IllegalAccessException;
-
 import jp.go.aist.rtm.RTC.util.TimeValue;
-import jp.go.aist.rtm.RTC.TimeMeasure;
-import jp.go.aist.rtm.RTC.ObjectCreator;
-import jp.go.aist.rtm.RTC.ObjectDestructor;
-import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
 
 
 
-/**
-* <p>PeriodicTask</p>
-*/
+  /**
+   * {@.ja 周期タスクスレッド実行クラス。}
+   * {@.en PeriodicTask class}
+   *
+   * <p>
+   * {@.ja 特定の関数を周期実行するためのスレッドオブジェクトを実現する。
+   * 使用手順は以下の通り。
+   * 
+   * <ol>
+   * <li>task; // インスタンス生成
+   * <li>task.setTask(TaskFuncBase(obj, mem_func)); // 実行する関数を与える
+   * <li>task.activate(); // スレッドをスタートさせる
+   * </ol>
+   *
+   * <ul>
+   * <li>task.suspend(); // 周期実行を止める
+   * <li>task.signal(); // 1周期だけ実行
+   * <li>task.resume(); // 周期実行を再開
+   *
+   * <li>task.finalize(); // タスクを終了させる</ul>}
+   * 
+   */
 public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<PeriodicTaskBase>, ObjectDestructor{
 
     /**
-     * <p> ctor </p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      */
     public PeriodicTask() {
         m_nowait = false;
@@ -41,13 +50,17 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
     
     /**
-     * <p> Starting the task </p>
+     * {@.ja タスク実行を開始する。}
+     * {@.en Starting the task}
      *
-     * Starting a thread to execute a task.  If the task/thread is
+     * <p>
+     * {@.ja タスクの実行を開始するためにスレッドをスタートさせる。タスクが
+     * 正常に開始された場合は true が返り、すでにタスクが開始済み、また
+     * は実行するタスクが設定されていなければ false を返す。}
+     * {@.en Starting a thread to execute a task.  If the task/thread is
      * started properly, it will return 'TRUE'.  if the task/thread
      * are already started or task function object is not set, 'FALSE'
-     * will be returned.
-     *
+     * will be returned.}
      *
      */
     public void activate() {
@@ -61,10 +74,12 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
 
     /**
+     * {@.ja タスク実行を終了する。}
+     * {@.en Finalizing the task}
      *
-     * <p> Finalizing the task </p>
-     *
-     * Finalizing the task running.
+     * <p>
+     * {@.ja 実行中のタスクを終了する。}
+     * {@.en Finalizing the task running.}
      *
      */
     public void _finalize() {
@@ -82,9 +97,12 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
 
     /**
-     * <p> Suspending the task </p>
+     * {@.ja タスク実行を中断する。}
+     * {@.en Suspending the task}
      *
-     * Suspending the task running.
+     * <p>
+     * {@.ja 実行中のタスクを中断する。}
+     * {@.en Suspending the task running.}
      *
      */
     public int _suspend() {
@@ -95,9 +113,11 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
 
     /**
-     * <p> Resuming the suspended task </p> 
-     *
-     * Resuming the suspended task
+     * {@.ja 中断されているタスクを再開する。}
+     * {@.en Resuming the suspended task}
+     * <p>
+     * {@.ja 中断されているタスクを再開する}
+     * {@.en Resuming the suspended task}
      *
      */
     public int _resume() {
@@ -116,9 +136,12 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
 
     /**
-     * <p> Executing the suspended task one tick </p>
+     * {@.ja 中断されているタスクを1周期だけ実行する。}
+     * {@.en Executing the suspended task one tick}
      *
-     * Executing the suspended task one tick
+     * <p>
+     * {@.ja 中断されているタスクを1周期だけ実行する}
+     * {@.en Executing the suspended task one tick}
      *
      */
     public void signal() {
@@ -132,12 +155,19 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
 
     /**
-     * <p> Setting task execution function </p>
+     * {@.ja タスク実行関数をセットする。}
+     * {@.en Setting task execution function}
+     *
      *
      * @param obj 
-     * @param delete_in_dtor
-     * @return boolean
-     *
+     *   {@.ja オブジェクト}
+     *   {@.en Object}
+     * @param func 
+     *   {@.ja 関数名}
+     *   {@.en Function name}
+     * @param delete_in_dtor 
+     *   {@.ja 削除フラグ}
+     *   {@.en Delete flag.}
      */
     public boolean setTask(Object obj, String func, boolean delete_in_dtor) {
         if (obj == null) { 
@@ -148,27 +178,55 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
         return true;
     }
     /**
-     * <p> Setting task execution function </p>
+     * {@.ja タスク実行関数をセットする。}
+     * {@.en Setting task execution function}
      *
-     * @param obj Set int (*)() type function pointer
-     * @return boolean
-     *
+     * 
+     * @param obj 
+     *   {@.ja オブジェクト}
+     *   {@.en object}
      */
     public boolean setTask(Object obj) {
         return setTask(obj, "svc", true);
     }
 
+    /**
+     * {@.ja タスク実行関数をセットする。}
+     * {@.en Setting task execution function}
+     *
+     *
+     * @param obj 
+     *   {@.ja オブジェクト}
+     *   {@.en Object}
+     * @param func 
+     *   {@.ja 関数名}
+     *   {@.en Function name}
+     */
     public boolean setTask(Object obj,  String func) {
         return setTask(obj, func, true);
     }
 
+    /**
+     * {@.ja タスク実行関数をセットする。}
+     * {@.en Setting task execution function}
+     *
+     * @param obj 
+     *   {@.ja オブジェクト。}
+     *   {@.en Object}
+     * @param delete_in_dtor 
+     *   {@.ja 削除フラグ}
+     *   {@.en Delete flag.}
+     */
     public boolean setTask(Object obj, boolean delete_in_dtor) {
         return setTask(obj, "svc", delete_in_dtor);
     }
     /**
-     * <p> Setting task execution period </p>
+     * {@.ja タスク実行周期をセットする。}
+     * {@.en Setting task execution period}
      *
-     * @param period Execution period [sec]
+     * @param period 
+     *   {@.ja 実行周期 [sec]}
+     *   {@.en Execution period [sec]}
      *
      */
     public void setPeriod(double period) {
@@ -184,9 +242,12 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
 
     /**
-     * <p> Setting task execution period </p>
+     * {@.ja タスク実行周期をセットする。}
+     * {@.en Setting task execution period}
      *
-     * @param period Execution period
+     * @param period 
+     *   {@.ja 実行周期}
+     *   {@.en period Execution period}
      *
      */
     public void setPeriod(TimeValue period) {
@@ -202,45 +263,76 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
 
     /**
-     * <p> This function can set the measurement of the execution time 
-     * effective/invalidly.  </p>
-     * @param  value true:effectuation
+     * {@.ja タスク関数実行時間計測を有効にするか。}
+     * {@.en Validate a Task execute time measurement}
+     *
+     * <p> 
+     * {@.en This function can set the measurement of the execution time 
+     * effective/invalidly. }
+     *
+     * @param value 
+     *   {@.ja フラグ(true: 有効, false: 無効)}
+     *   {@.en true:effectuation}
      */
     public void executionMeasure(boolean value) {
         m_execMeasure = value;
     }
     
     /**
-     * <p> This function sets the cycle to measure the execution time.  </p>
+     * {@.ja タスク周期時間計測周期。}
+     * {@.en Task period time measurement count}
      *
-     * @param n  Cycle frequency
+     * <p>
+     * {@.en This function sets the cycle to measure the execution time.}
+     *
+     * @param n  
+     *   {@.ja 計測周期}
+     *   {@.en Cycle frequency}
+     *
      */
     public void executionMeasureCount(int n) {
         m_execCountMax = n;
     }
     
     /**
-     * <p> This function can set the measurement of the execution time i
-     * effective/invalidly. </p> 
-     * @param  value true:effectuation
+     * {@.ja タスク周期時間計測を有効にするか。}
+     * {@.en Validate a Task period time measurement}
+     *
+     * <p> 
+     * {@.en This function can set the measurement of the execution time
+     * effective/invalidly.}
+     * @param  value 
+     *   {@.ja フラグ(true: 有効, false: 無効)}
+     *   {@.en true:effectuation}
      */
     public void periodicMeasure(boolean value) {
         m_periodMeasure = value;
     }
     
     /**
-     * <p> This function sets the cycle to measure the execution time.  </p>
+     * {@.ja タスク周期時間計測周期。}
+     * {@.en Task period time measurement count}
      *
-     * @param n  Cycle frequency
+     * <p>
+     * {@.en  This function sets the cycle to measure the execution time.}
+     *
+     * @param n  
+     *   {@.ja 計測周期}
+     *   {@.en Cycle frequency}
      */
     public void periodicMeasureCount(int n) {
         m_periodCountMax = n;
     }
     
     /**
-     * <p> This function acquires the measurement result of the execution 
-     * time.  </p> 
-     * @return TimeMeasure.Statistics
+     * {@.ja タスク関数実行時間計測結果を取得。}
+     * {@.en Get a result in task execute time measurement}
+     * <p> 
+     * {@.en This function acquires the measurement result of the execution 
+     * time.}
+     * @return
+     *   {@.ja 実行時間の統計}
+     *   {@.en Statistics}
      */
     public TimeMeasure.Statistics getExecStat() {
         synchronized (m_execStat.mutex) {
@@ -249,9 +341,15 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
     
     /**
-     * <p> This function acquires the measurement result at time of the 
-     * cycle.  </p>
-     * @return TimeMeasure.Statistics
+     * {@.ja タスク周期時間計測結果を取得。}
+     * {@.en Get a result in task period time measurement}
+     *
+     * <p> 
+     * {@.en This function acquires the measurement result at time of the 
+     * cycle.}
+     * @return
+     *   {@.ja 実行時間の統計}
+     *   {@.en Statistics}
      */
     public TimeMeasure.Statistics getPeriodStat() {
         synchronized (m_periodStat.mutex) {
@@ -261,10 +359,8 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
 
     
     /**
-     * <p> svc </p>
-     *
-     * @return int
-     * 
+     * {@.ja PeriodicTask 用のスレッド実行}
+     * {@.en Thread execution for PeriodicTask}
      */
     protected int svc() {
         while (m_alive.value){ // needs lock?
@@ -302,15 +398,16 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
         return 0;
     }
     /**
-     * <p> run </p>
+     * {@.ja スレッド実行}
+     * {@.en Thread execution}
      */
     public void run() {
 
         this.svc();
     }
     /**
-     * <p> sleep </p>
-     * 
+     * {@.ja スレッド休止}
+     * {@.en Thread sleep}
      */
     protected void sleep() { 
         if (m_nowait) {
@@ -328,8 +425,8 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
         }
     }
     /**
-     * <p> updateExecStat </p>
-     * 
+     * {@.ja 実行状態更新}
+     * {@.en Update for execute state}
      */
     protected void updateExecStat() {
         if (m_execCount > m_execCountMax) {
@@ -341,8 +438,8 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
         ++m_execCount;
     }
     /**
-     * <p> updatePeriodStat </p>
-     * 
+     * {@.ja 周期状態更新}
+     * {@.en Update for period state}
      */
     protected void updatePeriodStat() {
         if (m_periodCount > m_periodCountMax) {
@@ -355,67 +452,181 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
 
     // execution period
+    /**
+     * {@.ja タスク実行周期}
+     * {@.en Task execution period}
+     */
     protected TimeValue m_period = new TimeValue(0.0);
+    /**
+     * {@.ja スレッド休止フラグ}
+     * {@.en Thread sleep flag}
+     */
     protected boolean m_nowait;
+    /**
+     * {@.ja タスク実行関数}
+     * {@.en Task execution function}
+     */
     protected TaskFuncBase m_func;
+    /**
+     * {@.ja タスク実行関数削除フラグ}
+     * {@.en Task execution function delete flag}
+     */
     protected boolean m_deleteInDtor;
 
     // alive flag
+    /**
+     * {@.ja alive_t クラス}
+     * {@.en alive_t class}
+     */
     protected class alive_t
     {
+      /**
+       * {@.ja コンストラクタ}
+       * {@.en Constructor}
+       */
       public alive_t(boolean val) {
           value = val;
       }
+      /**
+       * {@.ja フラグ格納用変数}
+       * {@.en Variable for flag storage}
+       */
       public boolean value;
+      /**
+       * {@.ja 排他制御用変数}
+       * {@.en Variable for exclusive control}
+       */
       public String mutex = new String();
     };
+    /**
+     * {@.ja タスク生存フラグ}
+     * {@.en Task alive flag}
+     */
     protected alive_t m_alive = new alive_t(false);
 
     // suspend flag
+    /**
+     * {@.ja タスク中断管理用クラス}
+     * {@.en Class for task suspend management}
+     */
     protected class suspend_t
     {
+      /**
+       * {@.ja コンストラクタ}
+       * {@.en Constructor}
+       */
       public suspend_t(boolean sus){
           suspend = sus;
       }
+      /**
+       * {@.ja フラグ格納用変数}
+       * {@.en Variable for flag storage}
+       */
       public boolean suspend;
+      /**
+       * {@.ja 排他制御用変数}
+       * {@.en Variable for exclusive control}
+       */
       public String mutex = new String();
     };
+    /**
+     * {@.ja タスク中断情報}
+     * {@.en Task suspend infomation}
+     */
     protected suspend_t m_suspend = new suspend_t(false);
       
     // time measurement statistics struct
+    /**
+     * {@.ja タスク実行時間計測管理用クラス}
+     * {@.en Structure for task execution time measurement management}
+     */
     protected class statistics_t
     {
+      /**
+       * {@.ja 計測時間}
+       * {@.en Measurement time}
+       */
       public TimeMeasure.Statistics stat;
+      /**
+       * {@.ja 排他制御用変数}
+       * {@.en Variable for exclusive control}
+       */
       public String mutex = new String();
     };
 
     // variables for execution time measurement
+    /**
+     * {@.ja タスク実行時間計測フラグ}
+     * {@.en Task execution time measurement flag}
+     */
     protected boolean              m_execMeasure;
+    /**
+     * {@.ja タスク実行時間計測回数}
+     * {@.en Task execution time measurement count}
+     */
     protected int      m_execCount;
+    /**
+     * {@.ja タスク実行時間計測周期}
+     * {@.en Task execution time measurement max count}
+     */
     protected int      m_execCountMax;
+    /**
+     * {@.ja タスク実行時間計測統計}
+     * {@.en Task execution time measurement statistics}
+     */
     protected statistics_t m_execStat;
+    /**
+     * {@.ja タスク実行時間計測情報}
+     * {@.en Task execution time  measurement infomation}
+     */
     protected TimeMeasure m_execTime;
 
     // variables for period time measurement
+    /**
+     * {@.ja タスク周期時間計測フラグ}
+     * {@.en Task periodic time measurement flag}
+     */
     protected boolean              m_periodMeasure;
+    /**
+     * {@.ja タスク周期時間計測回数}
+     * {@.en Task periodic time measurement count}
+     */
     protected int      m_periodCount;
+    /**
+     * {@.ja タスク周期時間計測最大数}
+     * {@.en Task periodic time measurement max count}
+     */
     protected int      m_periodCountMax;
+    /**
+     * {@.ja タスク周期時間計測統計}
+     * {@.en Task periodic time measurement statistics}
+     */
     protected statistics_t m_periodStat;
+    /**
+     * {@.ja タスク周期時間計測情報}
+     * {@.en Task periodic time  measurement infomation}
+     */
     protected TimeMeasure m_periodTime;
 
     /**
-     * <p> creator_ </p>
+     * {@.ja PeriodicTaskを生成する。}
+     * {@.en Creats PeriodicTask.}
      * 
-     * @return Object Created instances
+     * @return 
+     *   {@.ja 生成したインスタンスのPeriodicTaskBase}
+     *   {@.en Object Created PeriodicTaskBase}
      *
      */
     public PeriodicTaskBase creator_() {
         return new PeriodicTask();
     }
     /**
-     * <p> destructor_ </p>
+     * {@.ja インスタンスを破棄する。}
+     * {@.en Destroys the object.}
      * 
-     * @param obj    The target instances for destruction
+     * @param obj    
+     *   {@.ja 破壊するインスタンス}
+     *   {@.en The target instances for destruction}
      *
      */
     public void destructor_(Object obj) {
@@ -431,7 +642,11 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     }
 
     /**
-     * <p> PeriodicTaskInit </p>
+     * {@.ja 初期化処理。}
+     * {@.en Initialization}
+     * <p>
+     * {@.ja ファクトリへオブジェクトを追加する。}
+     * {@.en Adds the object to the factory.}
      *
      */
     public static void PeriodicTaskInit() {

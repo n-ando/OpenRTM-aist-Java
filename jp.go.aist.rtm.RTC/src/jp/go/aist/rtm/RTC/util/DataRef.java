@@ -1,19 +1,26 @@
 package jp.go.aist.rtm.RTC.util;
 
-import org.omg.CORBA.Any;
 /**
- * <p>データ参照を表現するクラスです。
- * あるメソッドに対してデータを引数で渡した際に、データオブジェクトそのものを操作して
- * 値を変更することができない場合で、メソッド内でデータ書き換えをする場合に有用です。</p>
+ * {@.ja データ参照を表現するクラス}
+ * {@.en Class that expresses data reference}
+ * <p>
+ * {@.ja あるメソッドに対してデータを引数で渡した際に、
+ * データオブジェクトそのものを操作して値を変更することができない場合で、
+ * メソッド内でデータ書き換えをする場合に有用である}
  * 
- * @param <T> データ型を指定します。
+ * @param <T> 
+ *   {@.ja データ型を指定}
+ *   {@.en Data type}
  */
 public class DataRef<T> {
 
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      * 
-     * @param v 初期状態で割り当てるデータ
+     * @param v 
+     *   {@.ja 初期状態で割り当てるデータ}
+     *   {@.en Data allocated in initial state}
      */
     public DataRef(T v) {
         
@@ -21,13 +28,22 @@ public class DataRef<T> {
     }
     
     /**
-     * <p>等価演算子です。引数にDataRef型オブジェクトが指定された場合には、
-     * それに内包されているデータと当該オブジェクトに内包するデータとの間で等価判断を行います。
+     * {@.ja 等価演算子}
+     * {@.en Processing that judges equivalence}
+     * <p>
+     * {@.ja 引数にDataRef型オブジェクトが指定された場合には、
+     * それに内包されているデータと当該オブジェクトに内包するデータとの間で
+     * 等価判断を行う。
      * また、本メソッドの引数に比較したいデータそのものを指定した場合には、
-     * 当該オブジェクトに内包するデータと引数で指定されたデータとの間で等価判断を行います。</p>
+     * 当該オブジェクトに内包するデータと引数で指定されたデータとの間で
+     * 等価判断を行う。}
      * 
-     * @param rhs 等価判断対象のオブジェクト
-     * @return 等価である場合はtrueを、さもなくばfalseを返します。
+     * @param rhs 
+     *   {@.ja 等価判断対象のオブジェクト}
+     *   {@.en Object of equivalent judgment}
+     * @return 
+     *   {@.ja 等価である場合はtrueを、さもなくばfalseを返す。}
+     *   {@.en Equivalence is true.}
      */
     public boolean equals(Object rhs) {
 
@@ -43,9 +59,12 @@ public class DataRef<T> {
     }
     
     /**
-     * <p>ハッシュコード値を取得します。</p>
+     * {@.ja ハッシュコード値を取得する}
+     * {@.en Gets the hush code value.} 
      * 
-     * @return ハッシュコード値
+     * @return 
+     *   {@.ja ハッシュコード値}
+     *   {@.en hush code}
      */
     public int hashCode() {
         
@@ -53,8 +72,10 @@ public class DataRef<T> {
     }
 
     /**
-     * <p>当該オブジェクトが内包しているデータです。
-     * アクセスを容易にするためにpublicメンバとなっています。</p>
+     * {@.ja 当該オブジェクトが内包しているデータ}
+     * {@.en Data where object concerned is stored}
+     * <p>
+     * {@.ja アクセスを容易にするためにpublicメンバとなっている}
      */
     public T v;
 }

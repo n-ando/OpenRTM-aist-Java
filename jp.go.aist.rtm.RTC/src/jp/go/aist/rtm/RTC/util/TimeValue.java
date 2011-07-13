@@ -1,14 +1,16 @@
 package jp.go.aist.rtm.RTC.util;
 
 /**
-* <p>時間を表現するクラスです。</p>
+* {@.ja 時間を表現するクラス}
+* {@.en Class that expresses time}
 */
 public class TimeValue {
     private final int TIMEVALUE_ONE_SECOND_IN_USECS =  1000000; // 1 [sec] = 1000000 [μsec]
 
 
     /**
-     * <p>デフォルトコンストラクタです。</p>
+     * {@.ja デフォルトコンストラクタ}
+     * {@.en Default constructor}
      */
     public TimeValue() {
         this.tv_sec = 0;
@@ -17,19 +19,26 @@ public class TimeValue {
     }
 
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      * 
-     * @param sec  設定値(秒)
-     * @param usec  設定値(マイクロ秒)
+     * @param sec
+     *   {@.ja 設定値(秒)}
+     *   {@.en Second}
+     * @param usec  
+     *   {@.ja 設定値(マイクロ秒)}
+     *   {@.en Micro second}
      */
     public TimeValue(long sec, long usec) {
         this.tv_sec = sec;
         this.tv_usec = usec;
     }
     /**
-     * <p> TimeValue </p>
+     * {@.ja コンストラクタ}
      * 
      * @param timeval
+     *   {@.ja 設定値}
+     *   {@.en Set value}
      */
     public TimeValue(double timeval) {
         double dbHalfAdj;
@@ -47,9 +56,12 @@ public class TimeValue {
     }
   
     /**
-     * <p>コピーコンストラクタです。</p>
+     * {@.ja コピーコンストラクタ}
+     * {@.en Copy constructor}
      * 
-     * @param tm  コピー元
+     * @param tm  
+     *   {@.ja コピー元}
+     *   {@.en Copy origin}
      */
     public TimeValue(TimeValue tm) {
         this.tv_sec = tm.tv_sec;
@@ -57,29 +69,40 @@ public class TimeValue {
     }
     
     /**
-     * <p>設定時間(秒)を取得します。</p>
+     * {@.ja 設定時間(秒)を取得する}
+     * {@.en Gets the set time (second).}
      * 
-     * @return 設定時間(秒)
+     * @return 
+     *   {@.ja 設定時間(秒)}
+     *   {@.en set time (second)}
      */
     public long getSec() {
         return tv_sec;
     }
     
     /**
-     * <p>設定時間(マイクロ秒)を取得します。</p>
+     * {@.ja 設定時間(マイクロ秒)を取得する}
+     * {@.en Gets the set time (micro second).}
      * 
-     * @return 設定時間(マイクロ秒)
+     * @return 
+     *   {@.ja 設定時間(マイクロ秒)}
+     *   {@.en set time (micro second)}
      */
     public long getUsec() {
         return tv_usec;
     }
 
     /**
-     * <p>時間を減算します。</p>
+     * {@.ja 時間を減算する}
+     * {@.en Subtracts time.}
      * 
-     * @param tm  減算する時間
+     * @param tm  
+     *   {@.ja 減算する時間}
+     *   {@.en Subtacted time}
      * 
-     * @return 減算結果
+     * @return 
+     *   {@.ja 減算結果}
+     *   {@.en Subtraction result}
      */
     public TimeValue minus(TimeValue tm) {
         TimeValue res = new TimeValue();
@@ -105,11 +128,16 @@ public class TimeValue {
     }
 
     /**
-     * <p>時間を加算します。</p>
+     * {@.ja 時間を加算する}
+     * {@.en Adds time.} 
      * 
-     * @param tm  加算する時間
+     * @param tm  
+     *   {@.ja 加算する時間}
+     *   {@.en Added time}
      * 
-     * @return 加算結果
+     * @return 
+     *   {@.ja 加算結果}
+     *   {@.en Addition result}
      */
     public TimeValue plus(TimeValue tm) {
         TimeValue res = new TimeValue();
@@ -124,11 +152,16 @@ public class TimeValue {
     }
 
     /**
-     * <p>数字→時間へ変換します。</p>
+     * {@.ja 数字→時間へ変換する}
+     * {@.en Converts the numerical itno time}
      * 
-     * @param time  変換元の数値
+     * @param time  
+     *   {@.ja 変換元の数値}
+     *   {@.en Numerical value of conversion origin}
      * 
-     * @return 時間変換結果
+     * @return 
+     *   {@.ja 時間変換結果}
+     *   {@.en Conversion result}
      */
     public TimeValue convert(double time) {
         double dbHalfAdj;
@@ -148,9 +181,12 @@ public class TimeValue {
     }
 
     /**
-     * <p>時間→数字へ変換します。</p>
+     * {@.ja 時間→数字へ変換する}
+     * {@.en Converts time into the numerical}
      * 
-     * @return 数字変換結果
+     * @return 
+     *   {@.ja 数字変換結果}
+     *   {@.en Conversion result}
      */
     public double toDouble(){
         normalize();
@@ -158,21 +194,32 @@ public class TimeValue {
     }
     
     /**
-     * <p> sec </p>
+     * {@.ja sec}
+     * {@.en Gets sec}
+     * return 
+     *   {@.ja sec}
+     *   {@.en sec}
      */
     public long sec() {
         return tv_sec;
     }
     /**
-     * <p> usec </p>
+     * {@.ja usec}
+     * {@.en Gets usec}
+     * return 
+     *   {@.ja usec}
+     *   {@.en usec}
      */
     public long usec() {
         return tv_usec;
     }
     /**
-     * <p>保持している内容の符号を判定する。</p>
+     * {@.ja 保持している内容の符号を判定する}
+     * {@.en Judges the sign of the maintained content}
      * 
-     * @return 正ならば1を、負ならば-1を、0ならば0
+     * @return 
+     *   {@.ja 正ならば1を、負ならば-1を、0ならば0}
+     *   {@.en positive is 1,negative is -1,0 is 0} 
      */
     public int sign() {
         normalize();
@@ -183,7 +230,8 @@ public class TimeValue {
         return 0;
     }
     /**
-     * <p>値の表現を正準形式に正規化する。</p>
+     * {@.ja 値の表現を正準形式に正規化する}
+     * {@.en Regularizes the value}
      * 
      */
     private void normalize() {
@@ -209,11 +257,11 @@ public class TimeValue {
     }
 
     /**
-    * <p>設定された時間(秒単位)</p>
+    * {@.ja 設定された時間(秒単位)}
     */   
     private long tv_sec;
     /**
-     * <p>設定された時間(マイクロ秒単位)</p>
+     * {@.ja 設定された時間(マイクロ秒単位)}
      */   
     private long tv_usec;
 }

@@ -51,16 +51,23 @@ import RTC.TimedUShortSeq;
 import RTC.TimedUShortSeqHelper;
 
 /**
- * <p>各種データ型とAny型との間を型変換するユーティリティクラスです。</p>
+ * {@.ja 各種データ型とAny型との間を型変換するユーティリティクラス}
+ * {@.en It is a utility class that converts the type 
+ * as for various data types/Any type. }
  *
- * @param &lt;DataType&gt; Any型との変換相手となるデータ型を指定します。
+ * @param &lt;DataType&gt; 
+ *   {@.ja Any型との変換相手となるデータ型を指定}
+ *   {@.en data type}
  */
 public class TypeCast<T> {
 
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      * 
-     * @param klass 変換相手となるクラスのClassオブジェクト
+     * @param klass 
+     *   {@.ja 変換相手となるクラスのClassオブジェクト}
+     *   {@.en class object}
      */
     public TypeCast(Class<T> klass) {
         
@@ -69,11 +76,18 @@ public class TypeCast<T> {
     }
     
     /**
-     * <p>Any型のデータを、&lt;DataType&gt;型に変換します。</p>
+     * {@.ja Any型のデータを、&lt;DataType&gt;型に変換する}
+     * {@.en Converts the data of Any type into DataType type}
      * 
-     * @param data 変換対象のデータ
-     * @return 変換後のデータ
-     * @throws ClassCastException 変換できない場合
+     * @param data 
+     *   {@.ja 変換対象のデータ}
+     *   {@.en data}
+     * @return 
+     *   {@.ja 変換後のデータ}
+     *   {@.en Converted data}
+     * @throws ClassCastException 
+     *   {@.ja 変換できない場合}
+     *   {@.en Filed in conversion}
      */
     public T castType(Any data) {
         
@@ -187,6 +201,17 @@ public class TypeCast<T> {
         }
     }
     
+    /**
+     * {@.ja T型に変換する}
+     * {@.en Converts the data into T type}
+     * 
+     * @param obj 
+     *   {@.ja 変換対象のデータ}
+     *   {@.en data}
+     * @return 
+     *   {@.ja 変換後のデータ}
+     *   {@.en Converted data}
+     */
     public T castType(org.omg.CORBA.Object obj)
         throws ClassNotFoundException, SecurityException, NoSuchMethodException,
         IllegalArgumentException, IllegalAccessException, InvocationTargetException {
@@ -207,14 +232,26 @@ public class TypeCast<T> {
     }
     
     /**
-     * <p>&lt;DataType&gt;型のデータを、Any型のデータに変換します。</p>
-     * <p>引数にnullが指定された場合には、&lt;DataType&gt;型のデフォルト値が
-     * 指定されたものとして処理します。また、データ変換対象のデータがTimed*クラスのオブジェクトであり、
-     * そのオブジェクトのTime属性がnullの場合は、自動的に現在時刻をセットします。</p>
+     * {@.ja &lt;DataType&gt;型のデータを、Any型のデータに変換する}
+     * {@.en Cconverts the data of DataType type into the data of Any type}
+     *
+     * <p>
+     * {@.ja 引数にnullが指定された場合には、&lt;DataType&gt;型のデフォルト値が
+     * 指定されたものとして処理する。
+     * また、データ変換対象のデータが
+     * Timed*クラスのオブジェクトであり、
+     * そのオブジェクトのTime属性がnullの場合は、
+     * 自動的に現在時刻をセットする。}
      * 
-     * @param data 変換対象のデータ
-     * @return 変換後のデータ
-     * @throws ClassCastException 変換できない場合
+     * @param data 
+     *  {@.ja 変換対象のデータ}
+     *  {@.en data}
+     * @return 
+     *  {@.ja 変換後のデータ}
+     *  {@.en Converted data}
+     * @throws ClassCastException 
+     *   {@.ja 変換できない場合}
+     *   {@.en Filed in conversion}
      */
     public Any castAny(T data) {
     
@@ -410,10 +447,17 @@ public class TypeCast<T> {
     }
 
     /**
-     * <p>指定されたClassオブジェクトに対応するクラスのデータ型名称を取得します。</p>
+     * {@.ja 指定されたClassオブジェクトに対応するクラスのデータ型名称を
+     * 取得する}
+     * {@.en Gets the data type name of the class corresponding 
+     *  to the specified Class object}
      * 
-     * @param klass データ型名称を取得したいクラスのClassオブジェクト
-     * @return 指定されたClassオブジェクトに対応するクラスのデータ型名称
+     * @param klass
+     *   {@.ja データ型名称を取得したいクラスのClassオブジェクト}
+     *   {@.en Class object}
+     * @return 
+     *   {@.ja 指定されたClassオブジェクトに対応するクラスのデータ型名称}
+     *   {@.en Data type name of class}
      */
     public static String getDataTypeCodeName(Class klass) {
 
@@ -421,9 +465,13 @@ public class TypeCast<T> {
     }
 
     /**
-     * <p>Genericsの型パラメータで指定されたデータ型の名称を取得します。</p>
+     * {@.ja Genericsの型パラメータで指定されたデータ型の名称を取得する}
+     * {@.en Gets the name of the data type specified by the type parameter 
+     * of Generics}
      * 
-     * @return Genericsの型パラメータで指定されたデータ型の名称
+     * @return 
+     *   {@.ja Genericsの型パラメータで指定されたデータ型の名称}
+     *   {@.en Name of data type specified by type parameter of Generics}
      */
     public String getDataTypeCodeName() {
         

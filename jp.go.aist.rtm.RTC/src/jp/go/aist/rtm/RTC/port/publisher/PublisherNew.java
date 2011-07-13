@@ -1,27 +1,24 @@
 package jp.go.aist.rtm.RTC.port.publisher;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-import java.util.Vector;
 import java.util.Set;
-import java.lang.Thread;
 
-import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
-import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.PeriodicTaskBase;
-import jp.go.aist.rtm.RTC.TaskFuncBase;
+import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
+import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.port.InPortConsumer;
-import jp.go.aist.rtm.RTC.port.ReturnCode;
-import jp.go.aist.rtm.RTC.port.ConnectorListeners;
+import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
 import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
-import jp.go.aist.rtm.RTC.port.ConnectorBase;
+import jp.go.aist.rtm.RTC.port.ConnectorListeners;
+import jp.go.aist.rtm.RTC.port.InPortConsumer;
+import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
-import jp.go.aist.rtm.RTC.log.Logbuf;
+
+import org.omg.CORBA.portable.OutputStream;
 
 /**
  * <p>データ送出タイミングを待つコンシューマを、送出する側とは異なるスレッドで動作させる場合に使用します。</p>
@@ -102,7 +99,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @return ReturnCode
      */
     protected ReturnCode pushAll() {
-        rtcout.println(rtcout.TRACE, "pushAll()");
+        rtcout.println(Logbuf.TRACE, "pushAll()");
         try {
             while (m_buffer.readable() > 0) {
                 OutputStream cdr = m_buffer.get();
@@ -112,7 +109,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                 ReturnCode ret = m_consumer.put(cdr);
             
                 if (!ret.equals(ReturnCode.PORT_OK)) {
-                    rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
+                    rtcout.println(Logbuf.DEBUG, ret + " = consumer.put()");
                     return invokeListener(ret, cdr);
                 }
                 onReceived(cdr);
@@ -132,7 +129,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @return ReturnCode
      */
     protected ReturnCode pushFifo() {
-        rtcout.println(rtcout.TRACE, "pushFifo()");
+        rtcout.println(Logbuf.TRACE, "pushFifo()");
         try {
             OutputStream cdr = m_buffer.get();
             onBufferRead(cdr);
@@ -141,7 +138,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             ReturnCode ret = m_consumer.put(cdr);
         
             if (!ret.equals(ReturnCode.PORT_OK)) {
-                rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
+                rtcout.println(Logbuf.DEBUG, ret + " = consumer.put()");
                 return invokeListener(ret, cdr);
             }
             onReceived(cdr);
@@ -161,7 +158,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @return ReturnCode
      */
     protected ReturnCode pushSkip() {
-        rtcout.println(rtcout.TRACE, "pushSkip()");
+        rtcout.println(Logbuf.TRACE, "pushSkip()");
         try {
             ReturnCode ret = ReturnCode.PORT_OK;
             int preskip = (m_buffer.readable() + m_leftskip);
@@ -177,7 +174,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                 ret = m_consumer.put(cdr);
                 if (!ret.equals(ReturnCode.PORT_OK)) {
                     m_buffer.advanceRptr(-postskip);
-                    rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
+                    rtcout.println(Logbuf.DEBUG, ret + " = consumer.put()");
                     return invokeListener(ret, cdr);
                 }
                 onReceived(cdr);
@@ -208,7 +205,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @return ReturnCode
      */
     protected ReturnCode pushNew() {
-        rtcout.println(rtcout.TRACE, "pushNew()");
+        rtcout.println(Logbuf.TRACE, "pushNew()");
         try {
             m_buffer.advanceRptr(m_buffer.readable() - 1);
         
@@ -219,7 +216,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             ReturnCode ret = m_consumer.put(cdr);
 
             if (!ret.equals(ReturnCode.PORT_OK)) {
-                rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
+                rtcout.println(Logbuf.DEBUG, ret + " = consumer.put()");
                 return invokeListener(ret, cdr);
             }
             onReceived(cdr);
@@ -287,10 +284,10 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @return ReturnCode
      */
     public ReturnCode init(Properties prop) {
-        rtcout.println(rtcout.TRACE, "init()");
+        rtcout.println(Logbuf.TRACE, "init()");
         String str = new String();
         prop._dump(str,prop,0);
-        rtcout.println(rtcout.DEBUG, str);
+        rtcout.println(Logbuf.DEBUG, str);
     
         setPushPolicy(prop);
         if (!createTask(prop)) {
@@ -305,7 +302,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
     protected void setPushPolicy(final Properties prop) {
         // push_policy default: NEW
         String push_policy = prop.getProperty("publisher.push_policy", "new");
-        rtcout.println(rtcout.DEBUG, "push_policy: " + push_policy );
+        rtcout.println(Logbuf.DEBUG, "push_policy: " + push_policy );
     
         push_policy = StringUtil.normalize(push_policy);
         if (push_policy.equals("all")) {
@@ -321,25 +318,25 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             m_pushPolicy = Policy.NEW;
         }
         else {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "invalid push_policy value: " + push_policy );
             m_pushPolicy = Policy.NEW;     // default push policy
         }
 
         // skip_count default: 0
         String skip_count = prop.getProperty("publisher.skip_count", "0");
-        rtcout.println(rtcout.DEBUG, "skip_count: " + skip_count );
+        rtcout.println(Logbuf.DEBUG, "skip_count: " + skip_count );
     
         try {
             m_skipn = Integer.parseInt(skip_count);
         }
         catch(NumberFormatException e){
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "invalid skip_count value: " + skip_count );
             m_skipn = 0;           // default skip count
         }
         if (m_skipn < 0) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "invalid skip_count value: " + m_skipn );
             m_skipn = 0;           // default skip count
         }
@@ -356,18 +353,18 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             = PeriodicTaskFactory.instance();
     
         Set hs = factory.getIdentifiers();
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
                        "available task types: " + hs.toString());
     
         m_task = factory.createObject(prop.getProperty(
                                                    "thread_type", "default"));
         if (m_task == null) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "Task creation failed: " 
                            + prop.getProperty("thread_type", "default"));
             return false;
         }
-        rtcout.println(rtcout.PARANOID, "Task creation succeeded." );
+        rtcout.println(Logbuf.PARANOID, "Task creation succeeded." );
     
         Properties mprop = prop.getNode("measurement");
     
@@ -412,10 +409,10 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @return ReturnCode
      */
     public ReturnCode setConsumer(InPortConsumer consumer) {
-        rtcout.println(rtcout.TRACE, "setConsumer()" );
+        rtcout.println(Logbuf.TRACE, "setConsumer()" );
     
         if (consumer == null) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "setConsumer(consumer = null): invalid argument." );
             return ReturnCode.INVALID_ARGS;
           }
@@ -430,11 +427,11 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @return ReturnCode
      */
     public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
-        rtcout.println(rtcout.TRACE, "setBuffer()" );
+        rtcout.println(Logbuf.TRACE, "setBuffer()" );
 
         if (buffer == null)
           {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "setBuffer(buffer = null): invalid argument." );
             return ReturnCode.INVALID_ARGS;
           }
@@ -446,10 +443,10 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      */
     public ReturnCode setListener(ConnectorBase.ConnectorInfo info,
                            ConnectorListeners listeners) {
-        rtcout.println(rtcout.TRACE, "setListeners()" );
+        rtcout.println(Logbuf.TRACE, "setListeners()" );
 
         if (listeners == null) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "setListeners(listeners == 0): invalid argument." );
             return ReturnCode.INVALID_ARGS;
           }
@@ -544,17 +541,17 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      *
      */
     public ReturnCode write(final OutputStream data, int sec, int usec) {
-        rtcout.println(rtcout.PARANOID, "write()" );
+        rtcout.println(Logbuf.PARANOID, "write()" );
         if (m_consumer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_buffer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_listeners == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_retcode.equals(ReturnCode.CONNECTION_LOST)) {
-            rtcout.println(rtcout.DEBUG, "write(): connection lost." );
+            rtcout.println(Logbuf.DEBUG, "write(): connection lost." );
             return m_retcode;
         }
     
         if (m_retcode.equals(ReturnCode.SEND_FULL)) {
-            rtcout.println(rtcout.DEBUG, "write(): InPort buffer is full." );
+            rtcout.println(Logbuf.DEBUG, "write(): InPort buffer is full." );
             jp.go.aist.rtm.RTC.buffer.ReturnCode ret;
             ret  = m_buffer.write(data, sec, usec);
             m_task.signal();
@@ -568,7 +565,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         ret = m_buffer.write(data, sec, usec);
     
         m_task.signal();
-        rtcout.println(rtcout.DEBUG, ret.name() +" = write()" );
+        rtcout.println(Logbuf.DEBUG, ret.name() +" = write()" );
     
         return convertReturn(ret,data);
     }

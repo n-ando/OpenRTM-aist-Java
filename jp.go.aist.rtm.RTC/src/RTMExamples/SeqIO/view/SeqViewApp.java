@@ -36,6 +36,10 @@ public class SeqViewApp extends JFrame {
         frame.setTitle(title);
     }
 
+    public void setOctetVal(byte oc) {
+        _updater.setOctetVal(oc);
+    }
+
     public void setShortVal(short sh) {
         _updater.setShortVal(sh);
     }
@@ -52,8 +56,12 @@ public class SeqViewApp extends JFrame {
         _updater.setDoubleVal(db);
     }
 
+    public void setOctetSeqVal(byte[] oc) {
+        _updater.setOctetSeqVal(oc);
+    }
+    
     public void setShortSeqVal(short[] sh) {
-        _updater.setShrotSeqVal(sh);
+        _updater.setShortSeqVal(sh);
     }
     
     public void setLongSeqVal(int[] lg) {
@@ -81,6 +89,9 @@ public class SeqViewApp extends JFrame {
             
             synchronized (this) {
                 
+                if (_octetValMarked) {
+                    _view.setOctetVal(_octetVal);
+                }
                 if (_shortValMarked) {
                     _view.setShortVal(_shortVal);
                 }
@@ -94,6 +105,9 @@ public class SeqViewApp extends JFrame {
                     _view.setDoubleVal(_doubleVal);
                 }
     
+                if (_octetSeqVal != null) {
+                    _view.setOctetSeqVal(_octetSeqVal);
+                }
                 if (_shortSeqVal != null) {
                     _view.setShortSeqVal(_shortSeqVal);
                 }
@@ -111,6 +125,13 @@ public class SeqViewApp extends JFrame {
             }
         }
         
+        synchronized public void setOctetVal(byte value) {
+            
+            _octetValMarked = true;
+            _octetVal = value;
+            registInvoker();
+        }
+
         synchronized public void setShortVal(short value) {
             
             _shortValMarked = true;
@@ -139,7 +160,13 @@ public class SeqViewApp extends JFrame {
             registInvoker();
         }
         
-        synchronized public void setShrotSeqVal(short[] values) {
+        synchronized public void setOctetSeqVal(byte[] values) {
+            
+            _octetSeqVal = values;
+            registInvoker();
+        }
+        
+        synchronized public void setShortSeqVal(short[] values) {
             
             _shortSeqVal = values;
             registInvoker();
@@ -165,11 +192,13 @@ public class SeqViewApp extends JFrame {
         
         private void reset() {
             
+            _octetValMarked = false;
             _shortValMarked = false;
             _longValMarked = false;
             _floatValMarked = false;
             _doubleValMarked = false;
             
+            _octetSeqVal = null;
             _shortSeqVal = null;
             _longSeqVal = null;
             _floatSeqVal = null;
@@ -186,6 +215,8 @@ public class SeqViewApp extends JFrame {
             }
         }
         
+        private boolean _octetValMarked;
+        private byte _octetVal;
         private boolean _shortValMarked;
         private short _shortVal;
         private boolean _longValMarked;
@@ -195,6 +226,7 @@ public class SeqViewApp extends JFrame {
         private boolean _doubleValMarked;
         private double _doubleVal;
         
+        private byte[] _octetSeqVal;
         private short[] _shortSeqVal;
         private int[] _longSeqVal;
         private float[] _floatSeqVal;

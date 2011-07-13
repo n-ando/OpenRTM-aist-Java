@@ -1,29 +1,67 @@
 package jp.go.aist.rtm.RTC;
 
-/**
- * <p>Naming Service管理用インターフェースです。</p>
- */
+  /**
+   * {@.ja Naming Service管理用インターフェース。}
+   * {@.en NamingService management interface}
+   *
+   * <p>
+   * {@.ja NamingServer 管理用抽象インターフェースクラス。
+   * 具象管理クラスは、以下の純粋仮想関数の実装を提供しなければならない。
+   * <ul>
+   * <li> bindObject() : 指定したオブジェクトのNamingServiceへのバインド
+   * <li> unbindObject() : 指定したオブジェクトのNamingServiceからのアンバインド
+   * <li> isAlive() : ネームサーバの生存を確認
+   * </ul>}
+   * {@.en This is the abstract interface class for NamingServer management.
+   * Concrete management classes must implement the following pure virtual 
+   * functions.
+   * <ul>
+   * <li> bindObject() : Bind the specified object to NamingService
+   * <li> unbindObject() : Unbind the specified object from NamingService
+   * <li> isAlive() : Check if the name service is alive
+   * </ul>}
+   *
+   */
 public interface NamingBase {
     /**
-     * <p>オブジェクトをNameServerにbindします。</p>
+     * {@.ja 指定したオブジェクトをNamingServiceへバインドする純粋仮想関数}
+     * {@.en Pure virtual function to bind the specified objects
+     *        to the NamingService}
      * 
-     * @param name bind時の名称
-     * @param rtobj bind対象オブジェクト
+     * <p>
+     * @param name 
+     *   {@.ja バインド時の名称}
+     *   {@.en The name to be bound to the NamingService}
+     * @param rtobj 
+     *   {@.ja バインド対象オブジェクト}
+     *   {@.en The target objects to be bound to the NamingSerivce}
      */
     public void bindObject(final String name, final RTObject_impl rtobj);
 
     /**
-     * <p>オブジェクトをNameServerにbindします。</p>
+     * {@.ja 指定したManagerServantをNamingServiceへバインドする純粋仮想関数}
+     * {@.en Pure virtual function to bind the specified ManagerServants 
+     *        to NamingService}
      *
-     * @param name bind時の名称
-     * @param mgr bind対象マネージャサーバント
+     * @param name 
+     *   {@.ja バインド時の名称}
+     *   {@.en The name to be bound to the NamingService}
+     * @param mgr 
+     *   {@.ja バインド対象ManagerServant}
+     *   {@.en The target objects to be bound to the NamingSerivce}
      */
     public void bindObject(final String name, final ManagerServant mgr);
 
     /**
-     * <p>オブジェクトをNameServerからunbindします。</p>
-     * 
-     * @param name unbind対象オブジェクト名
+     * {@.ja 指定したオブジェクトをNamingServiceからアンバインドするための
+     *        純粋仮想関数}
+     * {@.en Pure virtual function to unbind the specified objects from 
+     *        NamingService}
+     *
+     * @param name 
+     *   {@.ja アンバインド対象オブジェクト名}
+     *   {@.en The name of the object released from NamingService}
+     *
      */
     public void unbindObject(final String name);
 

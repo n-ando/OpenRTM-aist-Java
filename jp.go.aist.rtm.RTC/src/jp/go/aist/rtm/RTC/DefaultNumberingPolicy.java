@@ -3,24 +3,43 @@ package jp.go.aist.rtm.RTC;
 import java.util.Vector;
 
 /**
-* <p>オブジェクト生成時のデフォルト・ナンバーリング・ポリシー(命名規則)管理クラスです。</p>
-*/
+ * {@.ja オブジェクト生成時ネーミング・ポリシー(命名規則)管理用クラス}
+ * {@.en Class for naming policy management when creating objects}
+ *
+ * <p>
+ * {@.ja オブジェクトを生成する際のネーミング・ポリシー(命名規則)を
+ * 管理するためのクラス。}
+ * {@.en This is a class to manage the naming policy when creating objects.}
+ */
 class DefaultNumberingPolicy implements NumberingPolicy {
 
-    /**
-     * <p>デフォルト・コンストラクタです。</p>
-     */
+  /**
+   * {@.ja コンストラクタ}
+   * {@.en Constructor}
+   */
     public DefaultNumberingPolicy() {
         m_num = 0;
     }
 
-    /**
-     * <p>オブジェクト生成時に対象オブジェクトの名称を決定します。</p>
-     * 
-     * @param obj 命名対象オブジェクト
-     * 
-     * @return オブジェクト名
-     */
+  /**
+   * {@.ja オブジェクト生成時の名称作成。}
+   * {@.en Create the name when creating object}
+   *
+   * <p>
+   * {@.ja オブジェクト生成時の名称を生成する。
+   * 生成済みインスタンスの数に応じた名称を生成する。}
+   * {@.en Create the name when creating object.
+   * Create the name corresponding to the number of generated instances.}
+   * 
+   * @param obj 
+   *   {@.ja 名称生成対象オブジェクト}
+   *   {@.en The target object for the name creation}
+   *
+   * @return 
+   *   {@.ja 生成したオブジェクト名称}
+   *   {@.en Names of the created object}
+   *
+   */
     public String onCreate(RTObject_impl obj) {
         long pos;
         
@@ -36,11 +55,20 @@ class DefaultNumberingPolicy implements NumberingPolicy {
         }
     }
 
-    /**
-     * <p>削除対象のオブジェクト名を解除します。</p>
-     * 
-     * @param obj 削除対象オブジェクト
-     */
+  /**
+   * {@.ja オブジェクト削除時の名称解放。}
+   * {@.en Delete the name when deleting object}
+   *
+   * <p>
+   * {@.ja オブジェクト削除時に名称を解放する。
+   * オブジェクト削除時に生成済みインスタンス数を減算する。}
+   * {@.en Delete the name when deleting object.
+   * Substract the generated number of instances when deleting the object.}
+   * 
+   * @param obj 
+   *   {@.ja 名称解放対象オブジェクト}
+   *   {@.en The target object for the name delete}
+   */
     public void onDelete(RTObject_impl obj) {
         long pos = 0;
         try {
@@ -62,8 +90,29 @@ class DefaultNumberingPolicy implements NumberingPolicy {
      * 
      * @return オブジェクト・インデックス
      * 
-     * @exception Exception 検索対象オブジェクトが存在しない。
      */
+  /**
+   * {@.ja オブジェクトの検索}
+   * {@.en Find the object}
+   *
+   * <p>
+   * {@.ja オブジェクトリストから指定されたオブジェクトを検索し、
+   * 該当するオブジェクトが格納されている場合にはインデックスを返す。}
+   * {@.en Find the specified object in the object list and return its index
+   * when it is stored.}
+   * 
+   * @param obj 
+   *   {@.ja 検索対象オブジェクト}
+   *   {@.en The target object for the find}
+   *
+   * @return 
+   *   {@.ja オブジェクト格納インデックス}
+   *   {@.en Object index for storage}
+   *
+   * @exception Exception 
+   *   {@.ja 検索対象オブジェクトが存在しない。}
+   *   {@.en The object doesn't exist.}
+   */
     protected long find(Object obj) throws Exception {
         for(int intIdx=0;intIdx<m_objects.size();++intIdx) {
             if(m_objects.elementAt(intIdx) == obj) return intIdx;

@@ -4,36 +4,66 @@ import java.util.Vector;
 import java.lang.System;
 import java.lang.Math;
 import jp.go.aist.rtm.RTC.util.TimeValue;
-/**
-* <p>TimeMeasure</p>
-*/
-  
-  /*!
-   * TimeMeasure object
+  /**
+   * {@.ja TimeMeasure クラス。}
+   * {@.en TimeMeasure class}
    *
-   * This object is used for getting statistics of code execution time. 
+   * <p>
+   * {@.ja このクラスは、コード実行時間の統計を取る為に使用します。
+   * get_stat を使用してコード実行の最大・最小・平均・標準偏差時間を
+   * 計測できます。}
+   * {@.en This class is used for getting statistics of code execution time. 
    * Using get_stat you can get maximum, minimum, mean and standard
-   * deviation time for code execution.
+   * deviation time for code execution.}
+   *
    */
 public class TimeMeasure {
 
+    /**
+     * {@.ja 時間統計用クラス。}
+     * {@.en Class for time statistics}
+     */
     public class Statistics {
+        /**
+         * {@.ja コンストラクタ}
+         * {@.en Constructor}
+         */
         public Statistics() {
             max_interval = 0.0;
             min_interval = 0.0;
             mean_interval = 0.0;
             std_deviation = 0.0;
         }
+        /**
+         * {@.ja 最大値}
+         * {@.en max interval}
+         */
         public double max_interval;
+        /**
+         * {@.ja 最小値}
+         * {@.en minimum interval}
+         */
         public double min_interval;
+        /**
+         * {@.ja 平均値}
+         * {@.en mean interval}
+         */
         public double mean_interval;
+        /**
+         * {@.ja 標準偏差}
+         * {@.en Standard deviation}
+         */
         public double std_deviation;
     };
 
-    /*!
-     * @brief Time statictics object for profiling.
-     * 
-     * Constructor
+    /**
+     * {@.ja コンストラクタ。}
+     * {@.en Constructor}
+     *
+     * <p>
+     * {@.ja 時間統計のプロファイリング}
+     * {@.en Time Statistics object for profiling.}
+     *
      */
     public TimeMeasure(int buflen) {
         m_begin.convert(0.0);
@@ -48,10 +78,14 @@ public class TimeMeasure {
           }
     }
 
-    /*!
-     * @brief Time statictics object for profiling.
-     * 
-     * Constructor
+    /**
+     * {@.ja コンストラクタ。}
+     * {@.en Constructor}
+     *
+     * <p>
+     * {@.ja 時間統計のプロファイリング}
+     * {@.en Time Statistics object for profiling.}
+     *
      */
     public TimeMeasure() {
         int buflen = 100;
@@ -67,10 +101,11 @@ public class TimeMeasure {
           }
     }
 
-    /*!
-     * @brief Begin time measurement for time statistics.
+    /**
+     * {@.ja 時間統計の計測を開始する。}
+     * {@.en Begin time measurement for time statistics.}
      *
-     * Begin time measurement for time statistics
+     *
      */
     public void tick() {
         double dtm = (double)System.currentTimeMillis();
@@ -78,10 +113,12 @@ public class TimeMeasure {
 
     }
 
-    /*!
-     * @brief Finish time measurement for time statistics.
+    /**
+     * {@.ja 時間統計の計測を終了する。}
+     * {@.en Finish time measurement for time statistics}
+     * <p>
+     * {@.en End of time measurement for time statistics.}
      *
-     * End of time measurement for time statistics
      */
     public void tack() {
         if (m_begin.sec() == 0) {
@@ -99,7 +136,12 @@ public class TimeMeasure {
     }
 
     /**
-     * <p> interval </p>
+     * {@.ja 経過時間を取得する。}
+     * {@.en Get a interval time}
+     *
+     * @return 
+     *   {@.ja TimeValue オブジェクト}
+     *   {@.en TimeValue object}
      *
      */
     public TimeValue interval() {
@@ -107,8 +149,8 @@ public class TimeMeasure {
     }
 
     /**
-     * <p> reset </p>
-     *
+     * {@.ja 統計関連データの初期化。}
+     * {@.en Initialize for statistics related data}
      */
     public void reset() {
         m_count = 0;
@@ -117,20 +159,32 @@ public class TimeMeasure {
     }
   
     
-    /*!
-     * Get number of time measurement buffer
+    /**
+     * {@.ja 時間統計バッファサイズを取得する。}
+     * {@.en Get number of time measurement buffer}
      *
-     * @brief Get number of time measurement buffer.
+     * @return 
+     *   {@.ja 計測件数}
+     *   {@.en Measurement count}
      *
      */
     public int count() {
         return m_recurred ? m_record.size() : m_count;
     }
     
-    /*!
-     * @brief Get total statistics.
-     * Get total statistics
-     * s Statistics Class
+    /**
+     * {@.ja 統計データの総計を取得する。}
+     * {@.en Get total statistics}
+     *
+     *
+     * @param s
+     *   {@.ja Statistics クラス}
+     *   {@.en Statistics Class}
+     *
+     * @return 
+     *   {@.ja true: データあり, false: データなし}
+     *   {@.en true: Data found, false: Data not found}
+     *
      */
     public boolean getStatistics(Statistics s) {
         s.max_interval = (double)0;
@@ -163,7 +217,13 @@ public class TimeMeasure {
     }
     
     /**
-     * <p> getStatistics </p>
+     * {@.ja 統計結果を取得する。}
+     * {@.en Get statistics result}
+     *
+     *
+     * @return 
+     *   {@.ja 統計結果}
+     *   {@.en Statistics result}
      *
      */
     public Statistics getStatistics() {
@@ -174,7 +234,12 @@ public class TimeMeasure {
     }
 
     /**
-     * <p> createStatistics </p>
+     * {@.ja Statistics クラスの生成。}
+     * {@.en Creation of Statistics class.}
+     *
+     * <p>
+     * {@.ja Statisticsクラスを生成する。}
+     * {@.en Creates Statistics class.}
      *
      */
     public Statistics createStatistics() {

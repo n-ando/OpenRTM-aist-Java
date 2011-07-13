@@ -129,6 +129,10 @@
 	</target>
 
 	<target name="createExe" description="exeファイルを作成します">
+		<delete file="rtcd.jsmooth" />
+		<copy file="rtcd.jsmooth.in" tofile="rtcd.jsmooth"/>
+		<replace file="rtcd.jsmooth" token="@version@" 
+			value="${version}" />
 		<taskdef name="jsmoothgen"
 		classname="net.charabia.jsmoothgen.ant.JSmoothGen"
 		classpath="${dir.jsmooth}/lib/jsmoothgen-ant.jar"/>
@@ -146,10 +150,13 @@
 		</delete>
 		<javac srcdir="${util.source}" destdir="${util.source}" 
 			encoding="Shift-JIS" />
+		<mkdir dir="${build.doc}" />
 		<javadoc 
+                        Locale="ja_JP"
+			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
                         sourcepath="${source}" destdir="${build.doc}"
-			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
                         encoding="UTF-8"
+                        docencoding="UTF-8"
 			author="true" doctitle="OpenRTM-aist Java" 
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 
@@ -159,11 +166,13 @@
                         <taglet name="JaOnTaglet" path="./util"/>
                         <taglet name="EnOffTaglet"  path="./util"/>
                 </javadoc>
+		<mkdir dir="${build.doc.us}" />
 		<javadoc 
                         Locale="en_US"
-			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,RTMExamples.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
+			packagenames="jp.go.aist.rtm.*,jp.go.aist.rtm.RTC.*,_SDOPackage.*,RTC.*,OpenRTM.*,RTM.*" 
                         sourcepath="${source}" destdir="${build.doc.us}"
                         encoding="UTF-8"
+                        docencoding="UTF-8"
 			author="true" doctitle="OpenRTM-aist Java" 
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 

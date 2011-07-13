@@ -13,6 +13,8 @@ import RTC.TimedLong;
 import RTC.TimedLongSeq;
 import RTC.TimedShort;
 import RTC.TimedShortSeq;
+import RTC.TimedOctet;
+import RTC.TimedOctetSeq;
 import RTMExamples.SeqIO.view.SeqViewApp;
 
 public class SeqOutImpl  extends DataFlowComponentBase {
@@ -20,6 +22,9 @@ public class SeqOutImpl  extends DataFlowComponentBase {
     public SeqOutImpl(Manager manager) {
         super(manager);
         // <rtc-template block="initializer">
+        m_Octet_val = new TimedOctet();
+        m_Octet = new DataRef<TimedOctet>(m_Octet_val);
+        m_OctetOut = new OutPort<TimedOctet>("Octet", m_Octet);
         m_Short_val = new TimedShort();
         m_Short = new DataRef<TimedShort>(m_Short_val);
         m_ShortOut = new OutPort<TimedShort>("Short", m_Short);
@@ -33,6 +38,9 @@ public class SeqOutImpl  extends DataFlowComponentBase {
         m_Double = new DataRef<TimedDouble>(m_Double_val);
         m_DoubleOut = new OutPort<TimedDouble>("Double", m_Double);
         //
+        m_OctetSeq_val = new TimedOctetSeq();
+        m_OctetSeq = new DataRef<TimedOctetSeq>(m_OctetSeq_val);
+        m_OctetSeqOut = new OutPort<TimedOctetSeq>("OctetSeq", m_OctetSeq);
         m_ShortSeq_val = new TimedShortSeq();
         m_ShortSeq = new DataRef<TimedShortSeq>(m_ShortSeq_val);
         m_ShortSeqOut = new OutPort<TimedShortSeq>("ShortSeq", m_ShortSeq);
@@ -81,25 +89,30 @@ public class SeqOutImpl  extends DataFlowComponentBase {
         m_FloatSeq.v.data = new float[10];
         m_LongSeq.v.data = new int[10];
         m_ShortSeq.v.data = new short[10];
+        m_OctetSeq.v.data = new byte[10];
 
         m_Double.v.tm = new RTC.Time(0,0);
         m_Float.v.tm = new RTC.Time(0,0);
         m_Long.v.tm = new RTC.Time(0,0);
         m_Short.v.tm = new RTC.Time(0,0);
+        m_Octet.v.tm = new RTC.Time(0,0);
         m_DoubleSeq.v.tm = new RTC.Time(0,0);
         m_FloatSeq.v.tm = new RTC.Time(0,0);
         m_LongSeq.v.tm = new RTC.Time(0,0);
         m_ShortSeq.v.tm = new RTC.Time(0,0);
+        m_OctetSeq.v.tm = new RTC.Time(0,0);
     }
 
     // The initialize action (on CREATED->ALIVE transition)
     // formaer rtc_init_entry() 
     @Override
     protected ReturnCode_t onInitialize() {
+        addOutPort("Octet", m_OctetOut);
         addOutPort("Short", m_ShortOut);
         addOutPort("Long", m_LongOut);
         addOutPort("Float", m_FloatOut);
         addOutPort("Double", m_DoubleOut);
+        addOutPort("OctetSeq", m_OctetSeqOut);
         addOutPort("ShortSeq", m_ShortSeqOut);
         addOutPort("LongSeq", m_LongSeqOut);
         addOutPort("FloatSeq", m_FloatSeqOut);
@@ -146,6 +159,7 @@ public class SeqOutImpl  extends DataFlowComponentBase {
     // former rtc_active_do()
     @Override
     protected ReturnCode_t onExecute(int ec_id) {
+        m_Octet.v.data = (byte)(Math.random() * Byte.MAX_VALUE - Byte.MAX_VALUE/2);
         m_Short.v.data = (short)(Math.random() * Short.MAX_VALUE -  Short.MAX_VALUE/2);
         m_Long.v.data = (int)(Math.random() * Integer.MAX_VALUE - Integer.MAX_VALUE/2);
         m_Float.v.data = (float)(Math.random() * Float.MAX_VALUE) - Float.MAX_VALUE/2;
@@ -156,27 +170,32 @@ public class SeqOutImpl  extends DataFlowComponentBase {
             m_FloatSeq.v.data[intIdx] = (float)(Math.random() * Float.MAX_VALUE) - Float.MAX_VALUE/2;
             m_LongSeq.v.data[intIdx] = (int)(Math.random() * Integer.MAX_VALUE - Integer.MAX_VALUE/2);
             m_ShortSeq.v.data[intIdx] = (short)(Math.random() * Short.MAX_VALUE -  Short.MAX_VALUE/2);
+            m_OctetSeq.v.data[intIdx] = (byte)(Math.random() * Byte.MAX_VALUE - Byte.MAX_VALUE/2);
         }
         
         m_DoubleOut.write();
         m_FloatOut.write();
         m_LongOut.write();
         m_ShortOut.write();
+        m_OctetOut.write();
 
         m_DoubleSeqOut.write();
         m_FloatSeqOut.write();
         m_LongSeqOut.write();
         m_ShortSeqOut.write();
+        m_OctetSeqOut.write();
 
         if( m_Double.v!=null ) seqOutView.setDoubleVal(m_Double.v.data);
         if( m_Float.v!=null ) seqOutView.setFloatVal(m_Float.v.data);
         if( m_Long.v!=null ) seqOutView.setLongVal(m_Long.v.data);
         if( m_Short.v!=null ) seqOutView.setShortVal(m_Short.v.data);
+        if( m_Octet.v!=null ) seqOutView.setOctetVal(m_Octet.v.data);
         //
         if( m_DoubleSeq.v!=null ) seqOutView.setDoubleSeqVal(m_DoubleSeq.v.data);
         if( m_FloatSeq.v!=null ) seqOutView.setFloatSeqVal(m_FloatSeq.v.data);
         if( m_LongSeq.v!=null ) seqOutView.setLongSeqVal(m_LongSeq.v.data);
         if( m_ShortSeq.v!=null ) seqOutView.setShortSeqVal(m_ShortSeq.v.data);
+        if( m_OctetSeq.v!=null ) seqOutView.setOctetSeqVal(m_OctetSeq.v.data);
 
         try {
             Thread.sleep(10);
@@ -224,6 +243,9 @@ public class SeqOutImpl  extends DataFlowComponentBase {
 //
     // DataInPort declaration
     // <rtc-template block="inport_declare">
+    protected TimedOctet m_Octet_val;
+    protected DataRef<TimedOctet> m_Octet;
+    protected OutPort<TimedOctet> m_OctetOut;
     protected TimedShort m_Short_val;
     protected DataRef<TimedShort> m_Short;
     protected OutPort<TimedShort> m_ShortOut;
@@ -237,6 +259,9 @@ public class SeqOutImpl  extends DataFlowComponentBase {
     protected DataRef<TimedDouble> m_Double;
     protected OutPort<TimedDouble> m_DoubleOut;
     //
+    protected TimedOctetSeq m_OctetSeq_val;
+    protected DataRef<TimedOctetSeq> m_OctetSeq;
+    protected OutPort<TimedOctetSeq> m_OctetSeqOut;
     protected TimedShortSeq m_ShortSeq_val;
     protected DataRef<TimedShortSeq> m_ShortSeq;
     protected OutPort<TimedShortSeq> m_ShortSeqOut;

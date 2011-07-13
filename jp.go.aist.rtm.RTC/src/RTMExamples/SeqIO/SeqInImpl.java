@@ -13,6 +13,8 @@ import RTC.TimedLong;
 import RTC.TimedLongSeq;
 import RTC.TimedShort;
 import RTC.TimedShortSeq;
+import RTC.TimedOctet;
+import RTC.TimedOctetSeq;
 import RTMExamples.SeqIO.view.SeqViewApp;
 
 public class SeqInImpl  extends DataFlowComponentBase {
@@ -20,6 +22,9 @@ public class SeqInImpl  extends DataFlowComponentBase {
     public SeqInImpl(Manager manager) {
         super(manager);
         // <rtc-template block="initializer">
+        m_Octet_val = new TimedOctet();
+        m_Octet = new DataRef<TimedOctet>(m_Octet_val);
+        m_OctetIn = new InPort<TimedOctet>("Octet", m_Octet);
         m_Short_val = new TimedShort();
         m_Short = new DataRef<TimedShort>(m_Short_val);
         m_ShortIn = new InPort<TimedShort>("Short", m_Short);
@@ -33,6 +38,9 @@ public class SeqInImpl  extends DataFlowComponentBase {
         m_Double = new DataRef<TimedDouble>(m_Double_val);
         m_DoubleIn = new InPort<TimedDouble>("Double", m_Double);
         //
+        m_OctetSeq_val = new TimedOctetSeq();
+        m_OctetSeq = new DataRef<TimedOctetSeq>(m_OctetSeq_val);
+        m_OctetSeqIn = new InPort<TimedOctetSeq>("OctetSeq", m_OctetSeq);
         m_ShortSeq_val = new TimedShortSeq();
         m_ShortSeq = new DataRef<TimedShortSeq>(m_ShortSeq_val);
         m_ShortSeqIn = new InPort<TimedShortSeq>("ShortSeq", m_ShortSeq);
@@ -82,10 +90,12 @@ public class SeqInImpl  extends DataFlowComponentBase {
     // formaer rtc_init_entry() 
     @Override
     protected ReturnCode_t onInitialize() {
+        addInPort("Octet", m_OctetIn);
         addInPort("Short", m_ShortIn);
         addInPort("Long", m_LongIn);
         addInPort("Float", m_FloatIn);
         addInPort("Double", m_DoubleIn);
+        addInPort("OctetSeq", m_OctetSeqIn);
         addInPort("ShortSeq", m_ShortSeqIn);
         addInPort("LongSeq", m_LongSeqIn);
         addInPort("FloatSeq", m_FloatSeqIn);
@@ -136,20 +146,24 @@ public class SeqInImpl  extends DataFlowComponentBase {
         m_FloatIn.read();
         m_LongIn.read();
         m_ShortIn.read();
+        m_OctetIn.read();
         m_DoubleSeqIn.read();
         m_FloatSeqIn.read();
         m_LongSeqIn.read();
         m_ShortSeqIn.read();
+        m_OctetSeqIn.read();
         
         if( m_Double.v!=null ) seqInView.setDoubleVal(m_Double.v.data);
         if( m_Float.v!=null ) seqInView.setFloatVal(m_Float.v.data);
         if( m_Long.v!=null ) seqInView.setLongVal(m_Long.v.data);
         if( m_Short.v!=null ) seqInView.setShortVal(m_Short.v.data);
+        if( m_Octet.v!=null ) seqInView.setOctetVal(m_Octet.v.data);
         //
         if( m_DoubleSeq.v!=null ) seqInView.setDoubleSeqVal(m_DoubleSeq.v.data);
         if( m_FloatSeq.v!=null ) seqInView.setFloatSeqVal(m_FloatSeq.v.data);
         if( m_LongSeq.v!=null ) seqInView.setLongSeqVal(m_LongSeq.v.data);
         if( m_ShortSeq.v!=null ) seqInView.setShortSeqVal(m_ShortSeq.v.data);
+        if( m_OctetSeq.v!=null ) seqInView.setOctetSeqVal(m_OctetSeq.v.data);
         //
         return super.onExecute(ec_id);
     }
@@ -191,6 +205,9 @@ public class SeqInImpl  extends DataFlowComponentBase {
 //
     // DataInPort declaration
     // <rtc-template block="inport_declare">
+    protected TimedOctet m_Octet_val;
+    protected DataRef<TimedOctet> m_Octet;
+    protected InPort<TimedOctet> m_OctetIn;
     protected TimedShort m_Short_val;
     protected DataRef<TimedShort> m_Short;
     protected InPort<TimedShort> m_ShortIn;
@@ -204,6 +221,9 @@ public class SeqInImpl  extends DataFlowComponentBase {
     protected DataRef<TimedDouble> m_Double;
     protected InPort<TimedDouble> m_DoubleIn;
     //
+    protected TimedOctetSeq m_OctetSeq_val;
+    protected DataRef<TimedOctetSeq> m_OctetSeq;
+    protected InPort<TimedOctetSeq> m_OctetSeqIn;
     protected TimedShortSeq m_ShortSeq_val;
     protected DataRef<TimedShortSeq> m_ShortSeq;
     protected InPort<TimedShortSeq> m_ShortSeqIn;

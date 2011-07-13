@@ -1,11 +1,10 @@
 package jp.go.aist.rtm.RTC.buffer;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-
 import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
+
+import org.omg.CORBA.portable.OutputStream;
 
 /**
  *  <p> CdrRingBuffer </p>
@@ -14,18 +13,24 @@ import jp.go.aist.rtm.RTC.ObjectDestructor;
 public class CdrRingBuffer implements ObjectCreator<BufferBase<OutputStream>>, ObjectDestructor {
     
     /**
-     * <p> creator_ </p>
+     * {@.ja RingBufferを生成する。}
+     * {@.en Creats RingBuffer.}
      * 
-     * @return Object Created instances
+     * @return 
+     *   {@.ja 生成したインスタンスのRingBuffer}
+     *   {@.en Object Created RingBuffer}
      *
      */
     public BufferBase<OutputStream> creator_() {
         return new RingBuffer<OutputStream>();
     }
     /**
-     * <p> destructor_ </p>
+     * {@.ja インスタンスを破棄する。}
+     * {@.en Destroys the object.}
      * 
-     * @param obj    The target instances for destruction
+     * @param obj    
+     *   {@.ja 破壊するインスタンス}
+     *   {@.en The target instances for destruction}
      *
      */
     public void destructor_(Object obj) {
@@ -33,7 +38,11 @@ public class CdrRingBuffer implements ObjectCreator<BufferBase<OutputStream>>, O
     }
 
     /**
-     * <p> CdrRingBufferInit </p>
+     * {@.ja 初期化処理。}
+     * {@.en Initialization}
+     * <p>
+     * {@.ja ファクトリへオブジェクトを追加する。}
+     * {@.en Adds the object to the factory.}
      *
      */
     public static void CdrRingBufferInit() {

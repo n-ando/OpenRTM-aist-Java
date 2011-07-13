@@ -1,20 +1,27 @@
 package jp.go.aist.rtm.RTC;
 
 /**
- * <p>ログ同期用インターフェースです。</p>
+ * {@.ja ログ同期用インターフェース}
+ * {@.en Interface for log synchronization}
  */
 class SyncCallback {
     /**
-     * <p>デフォルトコンストラクタです。</p>
+     * {@.ja コンストラクタ。}
+     * {@.en Constructor}
      */
     public SyncCallback() {
     }
     /**
-     * <p>ログを同期します。(未実装)</p>
+     * {@.ja ログを同期します(未実装)。}
+     * {@.en Synchronizes the log.(no implement)}
      * 
-     * @param s　ログ出力文字列
+     * @param s
+     *   {@.ja ログ出力文字列}
+     *   {@.en Log output string}
      * 
-     * @return 実行結果
+     * @return 
+     *   {@.ja 実行結果}
+     *   {@.en result}
      */
     public int operator(final String s){
         return 0;

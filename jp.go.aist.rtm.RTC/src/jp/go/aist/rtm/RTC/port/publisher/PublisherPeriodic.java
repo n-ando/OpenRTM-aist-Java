@@ -1,26 +1,24 @@
 package jp.go.aist.rtm.RTC.port.publisher;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-import java.util.Vector;
 import java.util.Set;
 
-import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
-import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.PeriodicTaskBase;
-import jp.go.aist.rtm.RTC.TaskFuncBase;
+import jp.go.aist.rtm.RTC.PeriodicTaskFactory;
+import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.port.ConnectorBase;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListeners;
 import jp.go.aist.rtm.RTC.port.InPortConsumer;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
-import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
-import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
-import jp.go.aist.rtm.RTC.port.ConnectorListeners;
-import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
-import jp.go.aist.rtm.RTC.log.Logbuf;
+
+import org.omg.CORBA.portable.OutputStream;
 /**
  * <p>一定時間おきにコンシューマの送出処理を呼び出すPublisherです。</p>
  */
@@ -82,7 +80,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * @return ReturnCode
      */
     protected ReturnCode pushAll() {
-        rtcout.println(rtcout.TRACE, "pushAll()");
+        rtcout.println(Logbuf.TRACE, "pushAll()");
 
         while (m_buffer.readable() > 0) {
             final OutputStream cdr = m_buffer.get();
@@ -92,7 +90,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             ReturnCode ret = m_consumer.put(cdr);
 
             if (!ret.equals(ReturnCode.PORT_OK)) {
-                rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
+                rtcout.println(Logbuf.DEBUG, ret + " = consumer.put()");
                 return invokeListener(ret, cdr);
             }
             onReceived(cdr);
@@ -107,10 +105,10 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * @return ReturnCode
      */
     protected ReturnCode pushFifo() {
-        rtcout.println(rtcout.TRACE, "pushFifo()");
+        rtcout.println(Logbuf.TRACE, "pushFifo()");
 
         if (m_buffer.empty() && !m_readback) {
-            rtcout.println(rtcout.DEBUG, "buffer empty");
+            rtcout.println(Logbuf.DEBUG, "buffer empty");
             return ReturnCode.BUFFER_EMPTY;
         }
         final OutputStream cdr = m_buffer.get();
@@ -119,7 +117,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         onSend(cdr);
         ReturnCode ret = m_consumer.put(cdr);
         if (!ret.equals(ReturnCode.PORT_OK)) {
-            rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
+            rtcout.println(Logbuf.DEBUG, ret + " = consumer.put()");
             return invokeListener(ret, cdr);
         }
         onReceived(cdr);
@@ -135,9 +133,9 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * @return ReturnCode
      */
     protected ReturnCode pushSkip() {
-        rtcout.println(rtcout.TRACE, "pushSkip()");
+        rtcout.println(Logbuf.TRACE, "pushSkip()");
         if (m_buffer.empty() && !m_readback) {
-            rtcout.println(rtcout.DEBUG, "buffer empty");
+            rtcout.println(Logbuf.DEBUG, "buffer empty");
             return ReturnCode.BUFFER_EMPTY;
         }
 
@@ -154,7 +152,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             ret = m_consumer.put(cdr);
             if (!ret.equals(ReturnCode.PORT_OK)) {
                 m_buffer.advanceRptr(-postskip);
-                rtcout.println(rtcout.DEBUG, ret + " = consumer.put()");
+                rtcout.println(Logbuf.DEBUG, ret + " = consumer.put()");
                 return invokeListener(ret, cdr);
             }
             onReceived(cdr);
@@ -172,10 +170,10 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * @return ReturnCode
      */
     protected ReturnCode pushNew() {
-        rtcout.println(rtcout.TRACE, "pushNew()");
+        rtcout.println(Logbuf.TRACE, "pushNew()");
 
         if (m_buffer.empty() && !m_readback) {
-            rtcout.println(rtcout.DEBUG, "buffer empty");
+            rtcout.println(Logbuf.DEBUG, "buffer empty");
             return ReturnCode.BUFFER_EMPTY;
         }
     
@@ -188,7 +186,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         onSend(cdr);
         ReturnCode ret = m_consumer.put(cdr);
         if (!ret.equals(ReturnCode.PORT_OK)) {
-            rtcout.println(rtcout.DEBUG, ret +  " = consumer.put()");
+            rtcout.println(Logbuf.DEBUG, ret +  " = consumer.put()");
             return invokeListener(ret, cdr);
         }
 
@@ -296,10 +294,10 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      *
      */
     public ReturnCode init(Properties prop) {
-        rtcout.println(rtcout.TRACE, "init()");
+        rtcout.println(Logbuf.TRACE, "init()");
         String str = new String();
         prop._dump(str,prop,0);
-        rtcout.println(rtcout.PARANOID, str);
+        rtcout.println(Logbuf.PARANOID, str);
     
         setPushPolicy(prop);
         if (!createTask(prop)) {
@@ -314,7 +312,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     protected void setPushPolicy(final Properties prop) {
         // push_policy default: NEW
         String push_policy = prop.getProperty("publisher.push_policy", "new");
-        rtcout.println(rtcout.DEBUG, "push_policy: " + push_policy );
+        rtcout.println(Logbuf.DEBUG, "push_policy: " + push_policy );
     
         push_policy = StringUtil.normalize(push_policy);
         if (push_policy.equals("all")) {
@@ -330,25 +328,25 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             m_pushPolicy = Policy.NEW;
         }
         else {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "invalid push_policy value: " + push_policy );
             m_pushPolicy = Policy.NEW;     // default push policy
         }
 
         // skip_count default: 0
         String skip_count = prop.getProperty("publisher.skip_count", "0");
-        rtcout.println(rtcout.DEBUG, "skip_count: " + skip_count );
+        rtcout.println(Logbuf.DEBUG, "skip_count: " + skip_count );
     
         try {
             m_skipn = Integer.parseInt(skip_count);
         }
         catch(NumberFormatException e){
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "invalid skip_count value: " + skip_count );
             m_skipn = 0;           // default skip count
         }
         if (m_skipn < 0) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "invalid skip_count value: " + m_skipn );
             m_skipn = 0;           // default skip count
         }
@@ -363,18 +361,18 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             = PeriodicTaskFactory.instance();
     
         Set hs = factory.getIdentifiers();
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
                        "available task types: " + hs.toString());
     
         m_task = factory.createObject(prop.getProperty(
                                                    "thread_type", "default"));
         if (m_task == null) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "Task creation failed: " 
                            + prop.getProperty("thread_type", "default"));
             return false;
         }
-        rtcout.println(rtcout.PARANOID, "Task creation succeeded." );
+        rtcout.println(Logbuf.PARANOID, "Task creation succeeded." );
     
         // setting task function
         m_task.setTask(this);
@@ -384,7 +382,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         if(rate.equals("")){
             rate = prop.getProperty("push_rate");
             if(rate.equals("")){
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                         "publisher.push_rate/push_rate were not found." );
                 return false;
             }
@@ -392,7 +390,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         double hz;
         hz = Double.valueOf(rate).doubleValue();
         if (hz <= 0) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                         "invalid period: "+hz+"[s]" );
             return false;
         }
@@ -439,10 +437,10 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * @return ReturnCode
      */
     public ReturnCode setConsumer(InPortConsumer consumer) {
-        rtcout.println(rtcout.TRACE, "setConsumer()" );
+        rtcout.println(Logbuf.TRACE, "setConsumer()" );
     
         if (consumer == null) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "setConsumer(consumer = null): invalid argument." );
             return ReturnCode.INVALID_ARGS;
         }
@@ -457,11 +455,11 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      * @return ReturnCode
      */
     public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
-        rtcout.println(rtcout.TRACE, "setBuffer()" );
+        rtcout.println(Logbuf.TRACE, "setBuffer()" );
 
         if (buffer == null)
           {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "setBuffer(buffer = null): invalid argument." );
             return ReturnCode.INVALID_ARGS;
           }
@@ -473,10 +471,10 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      */
     public ReturnCode setListener(ConnectorBase.ConnectorInfo info,
                            ConnectorListeners listeners) {
-        rtcout.println(rtcout.TRACE, "setListeners()" );
+        rtcout.println(Logbuf.TRACE, "setListeners()" );
 
         if (listeners == null) {
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "setListeners(listeners == 0): invalid argument" );
             return ReturnCode.INVALID_ARGS;
         }
@@ -561,17 +559,17 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      *         TIMEOUT             Timeout occurred when writing to the buffer.}
      */
     public ReturnCode write(final OutputStream data, int sec, int usec) {
-        rtcout.println(rtcout.PARANOID, "write()" );
+        rtcout.println(Logbuf.PARANOID, "write()" );
         if (m_consumer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_buffer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_listeners == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_retcode.equals(ReturnCode.CONNECTION_LOST)) {
-            rtcout.println(rtcout.DEBUG, "write(): connection lost." );
+            rtcout.println(Logbuf.DEBUG, "write(): connection lost." );
             return m_retcode;
         }
     
         if (m_retcode.equals(ReturnCode.SEND_FULL)) {
-            rtcout.println(rtcout.DEBUG, "write(): InPort buffer is full." );
+            rtcout.println(Logbuf.DEBUG, "write(): InPort buffer is full." );
             m_buffer.write(data, sec, usec);
             return ReturnCode.BUFFER_FULL;
         }
@@ -579,7 +577,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         onBufferWrite(data);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret;
         ret = m_buffer.write(data, sec, usec);
-        rtcout.println(rtcout.DEBUG, ret.name() +" = write()" );
+        rtcout.println(Logbuf.DEBUG, ret.name() +" = write()" );
         m_task._resume();
     
         return convertReturn(ret,data);

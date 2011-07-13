@@ -5,14 +5,18 @@ import RTC.ConnectorProfile;
 import RTC.PortService;
 
 /**
- * <p>Java用コネクタープロファイルファクトリの実装です。</p>
+ * {@.ja Java用コネクタープロファイルファクトリの実装}
+ * {@.en Implementation of connector profile factory}
  */
 public class ConnectorProfileFactory {
 
     /**
-     * <p>コネクタープロファイルを生成します。</p>
+     * {@.ja コネクタープロファイルを生成する。}
+     * {@.en Creates ConnectorProfile.}
      * 
-     * @return 生成されたConnectorProfileオブジェクト
+     * @return 
+     *   {@.ja 生成されたConnectorProfileオブジェクト}
+     *   {@.en Created ConnectorProfle object}
      */
     public static ConnectorProfile create() {
 
@@ -25,10 +29,15 @@ public class ConnectorProfileFactory {
     }
     
     /**
-     * <p>コネクタープロファイルの複製を生成します。</p>
+     * {@.ja コネクタープロファイルの複製を生成する。}
+     * {@.en Creates the clone of ConnectorProfile}
      * 
-     * @param rhs ConnectorProfileオブジェクト
-     * @return コピーされたConnectorProfileオブジェクト
+     * @param rhs 
+     *   {@.ja ConnectorProfileオブジェクト}
+     *   {@.en ConnectorProfile object}
+     * @return 
+     *   {@.ja コピーされたConnectorProfileオブジェクト}
+     *   {@.en Copied ConnectorProfile object}
      */
     public static ConnectorProfile clone(final ConnectorProfile rhs) {
         

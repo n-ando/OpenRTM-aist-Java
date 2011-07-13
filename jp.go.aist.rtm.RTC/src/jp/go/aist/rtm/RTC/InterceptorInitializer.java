@@ -1,49 +1,54 @@
 package jp.go.aist.rtm.RTC;
 
-import org.omg.PortableInterceptor.ORBInitInfo;
-import org.omg.PortableInterceptor.ORBInitializer;
-import org.omg.IOP.TAG_INTERNET_IOP;
-import org.omg.IOP.TAG_ALTERNATE_IIOP_ADDRESS;
-import org.omg.IOP.TAG_ORB_TYPE;
-import org.omg.IOP.TaggedProfile;
-import org.omg.IOP.TaggedComponent;
-import org.omg.IOP.IORHolder;
-import org.omg.IOP.IORHelper;
-import org.omg.CORBA.portable.OutputStream;
-
-import org.omg.CORBA.LocalObject;
-import org.omg.PortableInterceptor.IORInterceptor;
-import org.omg.IOP.Codec;
-
-import jp.go.aist.rtm.RTC.IopIorInterceptor;
-
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
+import org.omg.CORBA.LocalObject;
+import org.omg.IOP.Codec;
+import org.omg.PortableInterceptor.ORBInitInfo;
+import org.omg.PortableInterceptor.ORBInitializer;
+
+  /**
+   * {@.ja インタセプタの登録と ORB の初期化をするクラス。}
+   * {@.en Class that registration and ORB of Interceptor initialize.}
+   *
+   */
 public class InterceptorInitializer 
       extends LocalObject
       implements ORBInitializer
 {
+    private static final long serialVersionUID = 5227697632011675642L;
+
     /**
-     * {@.ja コンストラクタ. }
-     * {@.en Constructor. }
+     * {@.ja コンストラクタ.}
+     * {@.en Constructor.}
      */
     public InterceptorInitializer() {
         rtcout = new Logbuf("InterceptorInitializer");
     }
 
+    /**
+     * {@.ja IorInterceptorを初期化する。}
+     * {@.en Iinitializes IorInterceptor.}
+     * @param info
+     *   {@.ja インタセプタを登録するための初期化属性とオペレーションを
+     *   提供するORBInitInfo}
+     *   {@.en rovides initialization attributes and 
+     *         operations by which Interceptors can be registered.} 
+     */
     public void pre_init(ORBInitInfo info) {
       // do nothing
     }
     /**
-     * {@.ja IorInterceptorを初期化します。}
+     * {@.ja IorInterceptorを初期化する。}
      * {@.en Iinitializes IorInterceptor.}
      * @param info
-     *   {@.ja インタセプタを登録するための初期化属性とオペレーションを提供する}
+     *   {@.ja インタセプタを登録するための初期化属性とオペレーションを
+     *   提供する}
      *   {@.en rovides initialization attributes and 
      *         operations by which Interceptors can be registered.} 
      */
     public void post_init(ORBInitInfo info) {
-        rtcout.println(rtcout.TRACE, "post_init");
+        rtcout.println(Logbuf.TRACE, "post_init");
         try {
 
             org.omg.IOP.Encoding encoding 

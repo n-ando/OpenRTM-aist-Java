@@ -1,31 +1,35 @@
 package jp.go.aist.rtm.RTC;
 
-import org.omg.CORBA.portable.Streamable;
-
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.io.File;
-import java.net.URI;
-import java.net.URLClassLoader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
-import java.util.Set;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.util.StringHolder;
+import jp.go.aist.rtm.RTC.util.StringUtil;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
 
-/**
-* <p>モジュール管理クラスです。モジュールのロード・アンロードなどを管理します。</p>
-*/
+  /**
+   * {@.ja モジュールマネージャクラス}
+   * {@.en ModuleManager class}
+   *
+   * <p>
+   * {@.ja モジュールのロード、アンロードなどを管理するクラス}
+   * {@.en This is a class to manage for loading and unloading modules.}
+   *
+   */
 public class ModuleManager {
     
     private final String CONFIG_EXT = "manager.modules.config_ext";
@@ -41,10 +45,10 @@ public class ModuleManager {
     private final String MOD_PRELOAD = "manager.modules.preload";
 
     /**
-     * {@.ja コンストラクタです。}
+     * {@.ja コンストラクタ。}
      * {@.en Constructor}
      * <p>
-     * {@.ja 指定されたPropertiesオブジェクト内の情報に基づいてi
+     * {@.ja 指定されたPropertiesオブジェクト内の情報に基づいて
      * 初期化を行います。}
      * {@.en Initialize based on information in the set Property object.}
      *
@@ -84,15 +88,22 @@ public class ModuleManager {
     }
     
     /**
-     * <p>デストラクタです。ロード済みモジュールのアンロードなど、リソースの解放処理を行います。
-     * 当該ModuleManagerオブジェクトの使用を終えた際に、明示的に呼び出してください。</p>
+     * {@.ja デストラクタ。}
+     * {@.en destructer}
+     * 
+     * <p>
+     * {@.ja ロード済みモジュールのアンロードなど、
+     * リソースの解放処理を行います。
+     * 当該ModuleManagerオブジェクトの使用を終えた際に、
+     * 明示的に呼び出してください。}
      */
     public void destruct() {
         unloadAll();
     }
     
     /**
-     * <p>ファイナライザです。</p>
+     * {@.ja ファイナライザ。}
+     * {@.en finalize}
      */
     protected void finalize() throws Throwable {
         
@@ -105,7 +116,7 @@ public class ModuleManager {
     }
 
     /**
-     * {@.ja モジュールのロード}
+     * {@.ja モジュールのロード。}
      * {@.en Load the module}
      *
      * <p>
@@ -145,7 +156,7 @@ public class ModuleManager {
      *
      */
     public String load(final String moduleName) throws Exception {
-        rtcout.println(rtcout.TRACE, "load(fname = " + moduleName +")");
+        rtcout.println(Logbuf.TRACE, "load(fname = " + moduleName +")");
         String module_path = null;
 
         if(moduleName==null || moduleName.length()==0) {
@@ -210,6 +221,9 @@ public class ModuleManager {
                         StringHolder packageModuleName = new StringHolder();
                         target = getClassFromName(url,name,packageModuleName);
                         module_path = packageModuleName.value;
+                        if(target!=null){
+                            break;
+                        }
                     }
                 }
                 else{
@@ -333,7 +347,7 @@ public class ModuleManager {
             urls[0] = uri.toURL();
         }
         catch(java.net.MalformedURLException ex){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                 "java.net.MalformedURLException: toURL() threw Exception."+ex);
             return null;
         }
@@ -342,7 +356,7 @@ public class ModuleManager {
     }
 
     /**
-     * {@.ja モジュールのアンロード}
+     * {@.ja モジュールのアンロード。}
      * {@.en Load and intialize the module}
      *
      * <p>
@@ -378,7 +392,7 @@ public class ModuleManager {
      */
     public String load(final String moduleName, final String methodName)
             throws Exception {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                 "load(fname = "+moduleName+"   init_func = "+methodName+")");
         
         if (moduleName == null || moduleName.length() == 0) {
@@ -416,9 +430,16 @@ public class ModuleManager {
     }
     
     /**
-     * <p>指定されたモジュールをアンロードします。</p>
-     * 
-     * @param moduleName アンロードするモジュール名
+     * {@.ja モジュールのアンロード}
+     * {@.en Unload the module}
+     *
+     * <p>
+     * {@.ja 指定したロード済みモジュールをクローズし、アンロードする。}
+     * {@.en Close and unload the specified module that has been loaded.}
+     *
+     * @param moduleName 
+     *   {@.ja アンロード対象モジュール名}
+     *   {@.en Name of module for the unloading}
      */
     public void unload(String moduleName) throws Exception {
         if( !m_modules.containsKey(moduleName) ) 
@@ -427,7 +448,13 @@ public class ModuleManager {
     }
     
     /**
-     * <p>すべてのモジュールをアンロードします。</p>
+     * {@.ja 全モジュールのアンロード}
+     * {@.en Unload all modules}
+     *
+     * <p>
+     * {@.ja 全てのロード済みモジュールをアンロードする。}
+     * {@.en Unload all modules that have been loaded.}
+     *
      */
     public void unloadAll() {
         m_modules = new HashMap<String, DLLEntity>();
@@ -470,6 +497,22 @@ public class ModuleManager {
     /**
      * <p>初期化関数シンボルを生成する</p>
      */
+    /**
+     * {@.ja 初期化関数シンボルを生成する}
+     * {@.en Create initialization function symbol}
+     *
+     * <p>
+     * {@.ja 初期化関数の名称を組み立てる。}
+     * {@.en Assemble names of the initialization functions.}
+     *
+     * @param class_path 
+     *   {@.ja 初期化対象モジュール名称}
+     *   {@.en Name of module for initialization}
+     *
+     * @return 
+     *   {@.ja 初期化関数名称組み立て結果}
+     *   {@.en Assembly result of initialization function name}
+     */
     public String getInitFuncName(String class_path) {
         if( class_path==null || class_path.length()==0 ) return null;
         String base_names[] = class_path.split("\\.");
@@ -478,36 +521,66 @@ public class ModuleManager {
     }
 
     /**
-     * <p>規定となるモジュールロードパスを指定します。</p>
+     * {@.ja モジュールロードパスを指定する。}
+     * {@.en Set the module load path}
      * 
-     * @param loadPath 規定ロードパス
+     * <p>
+     * {@.ja モジュールロード時に対象モジュールを検索するパスを指定する。}
+     * {@.en Specify searching path to find the target module when loading 
+     * module.}
+     *
+     * @param loadPath 
+     *   {@.ja 規定ロードパス}
+     *   {@.en List of module search path}
      */
     public void setLoadpath(final Vector<String> loadPath) {
         m_loadPath = new Vector<String>(loadPath);
     }
     
     /**
-    * <p>規定となるモジュールロードパスを取得します。</p>
-    *
-    * @return 規定モジュールロードパス
-    */
+     * {@.ja モジュールロードパスを取得する。}
+     * {@.en Get the module load path}
+     * 
+     * <p>
+     * {@.ja 設定されているモジュールを検索対象パスリストを取得する。}
+     * {@.en Get the search path of the set module.}
+     * 
+     * @return
+     *   {@.ja 規定モジュールロードパス}
+     *   {@.en List of module search path}
+     *
+     */
     public Vector<String> getLoadPath() {
         return new Vector<String>(m_loadPath);
     }
 
     /**
-     * <p>規定となるモジュールロードパスを追加します。</p>
+     * {@.ja モジュールロードパスを追加する。}
+     * {@.en Add the module load path}
      * 
-     * @param loadPath 追加する規定ロードパス
+     * <p>
+     * {@.ja 指定されたパスリストを検索対象パスリストに追加する。}
+     * {@.en Add specified path list to search path list.}
+     * 
+     * @param loadPath
+     *   {@.ja 追加する規定ロードパス}
+     *   {@.en List of additional module search path}
      */
     public void addLoadPath(final Vector<String> loadPath) {
         m_loadPath.addAll(loadPath);
     }
     
     /**
-     * <p>ロード済みのモジュールリストを取得します。</p>
+     * {@.ja ロード済みのモジュールリストを取得する}
+     * {@.en Get the module list that has been loaded}
      *
-     * @return ロード済みモジュールリスト
+     * <p>
+     * {@.ja 既にロード済みのモジュールリストを取得する。}
+     * {@.en Get the module list that has been loaded.}
+     *
+     * @return 
+     *   {@.ja ロード済みモジュールリスト}
+     *   {@.en List of module that has been loaded}
      */
     public Vector<Properties> getLoadedModules() {
         Vector<Properties> props = new Vector<Properties>();
@@ -532,7 +605,7 @@ public class ModuleManager {
      *
      */
     public Vector<Properties> getLoadableModules() {
-        rtcout.println(rtcout.TRACE, "getLoadableModules()");
+        rtcout.println(Logbuf.TRACE, "getLoadableModules()");
         Vector<String> dlls = new Vector<String>();
         String separator =  System.getProperty("file.separator");
         for (int i=0; i < m_loadPath.size(); ++i) {
@@ -584,7 +657,7 @@ public class ModuleManager {
                 al.add(2,"module_file_path");
                 al.add(3,dlls.elementAt(ic));
                 props.add(new Properties((String[])al.toArray(new String[]{})));
-                rtcout.println(rtcout.TRACE, 
+                rtcout.println(Logbuf.TRACE, 
                                     "loadabe module:"+dlls.elementAt(ic));
             } 
             catch(Exception e){
@@ -596,40 +669,67 @@ public class ModuleManager {
     }
     
     /**
-     * <p>モジュールのフルクラス名指定を指定します。</p>
+     * {@.ja モジュールの絶対パス指定許可。}
+     * {@.en Allow absolute path when specify module path}
+     *
+     * <p>
+     * {@.ja ロード対象モジュールの絶対パス指定を許可するように設定する。}
+     * {@.en Set to allow the absolute path when specify the module for 
+     * the load.}
      */
     public void allowAbsolutePath() {
         m_absoluteAllowed = true;
     }
     
     /**
-     * <p>モジュールのフルクラス名指定解除を指定します。</p>
+     * {@.ja モジュールの絶対パス指定禁止}
+     * {@.en Disallow absolute path when specify module path}
+     *
+     * <p>
+     * {@.ja ロード対象モジュールの絶対パス指定を禁止するように設定する。}
+     * {@.en Set to disallow the absolute path when specify the module for 
+     * the load.}
      */
     public void disallowAbsolutePath() {
         m_absoluteAllowed = false;
     }
     
     /**
-     * <p>モジュールのダウンロード許可を指定します。</p>
+     * {@.ja モジュールのURL指定許可。}
+     * {@.en Allow URL when specify module path}
+     *
+     * <p>
+     * {@.ja ロード対象モジュールのURL指定を許可する。
+     * 本設定が許可されている場合、モジュールをダウンロードしてロードすることが
+     * 許可される。}
+     * {@.en Allow URL when specify module for the load.
+     * When this setup is allowed, downloading and loading the module will
+     * be allowed.}
      */
     public void allowModuleDownload() {
         m_downloadAllowed = true;
     }
     
     /**
-     * <p>モジュールのダウンロード許可を解除します。</p>
+     * {@.ja モジュールのURL指定禁止}
+     * {@.en Disallow URL when specify module path}
+     *
+     * <p>
+     * {@.ja ロード対象モジュールのURL指定を禁止する。}
+     * {@.en Disallow URL when specify module for the load.}
      */
     public void disallowModuleDownload() {
         m_downloadAllowed = false;
     }
     
     /**
-     * <p>ModuleManagerプロパティ</p>
+     * {@.ja Module Manager プロパティ}
+     * {@.en Module Manager properties}
      */
     protected Properties m_properties;
     /**
-     * <p>ロード済みモジュール</p>
-     * <p> Module list that has already loaded </p>
+     * {@.ja ロード済みモジュール}
+     * {@.en Module list that has already loaded}
      */
 
     protected Map<String, DLLEntity> m_modules 
@@ -640,27 +740,33 @@ public class ModuleManager {
     }
 
     /**
-     * <p>モジュールロードパス</p>
+     * {@.ja モジュール・ロード・パス・リスト}
+     * {@.en Module load path list}
      */
     protected Vector<String> m_loadPath = new Vector<String>();
     /**
-     * <p>コンフィギュレーションパス</p>
+     * {@.ja コンフィギュレーション・パス・リスト}
+     * {@.en Configuration path list}
      */
     protected Vector<String> m_configPath = new Vector<String>();
     /**
-     * <p>モジュールダウンロード許可フラグ</p>
+     * {@.ja モジュールURL指定許可フラグ}
+     * {@.en Flag of URL when specify module for the load.}
      */
     protected boolean m_downloadAllowed;
     /**
-     * <p>モジュール絶対パス指定許可フラグ</p>
+     * {@.ja モジュール絶対パス指定許可フラグ}
+     * {@.en Flag of absolute path when specify module for the load.}
      */
     protected boolean m_absoluteAllowed;
     /**
-     * <p>初期実行関数サフィックス</p>
+     * {@.ja 初期実行関数サフィックス}
+     * {@.en Initial execution function suffix}
      */
     protected String m_initFuncSuffix = new String();
     /**
-     * <p>初期実行関数プリフィックス</p>
+     * {@.ja 初期実行関数プリフィックス}
+     * {@.en Initial execution function prefix}
      */
     protected String m_initFuncPrefix = new String();
 

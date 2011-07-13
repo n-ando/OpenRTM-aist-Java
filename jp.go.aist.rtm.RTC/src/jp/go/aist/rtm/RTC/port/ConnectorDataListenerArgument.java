@@ -2,14 +2,18 @@ package jp.go.aist.rtm.RTC.port;
 
 import org.omg.CORBA.portable.OutputStream;
 
-import jp.go.aist.rtm.RTC.port.ConnectorBase;
-import jp.go.aist.rtm.RTC.util.DataRef;
   /**
-   * <p> ConnectorDataListenerArgument class </p>
+   * {@.ja ConnectorDataListener クラス}
+   * {@.en ConnectorDataListenerArgument class}
    *
    *
    */
 public class ConnectorDataListenerArgument {
+    /**
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     */
     public ConnectorDataListenerArgument(ConnectorBase.ConnectorInfo info,
                                          OutputStream data){
         m_info = info; 

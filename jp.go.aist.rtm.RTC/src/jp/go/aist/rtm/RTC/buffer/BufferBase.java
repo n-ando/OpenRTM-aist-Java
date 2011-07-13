@@ -5,146 +5,441 @@ import jp.go.aist.rtm.RTC.util.Properties;
 
 import jp.go.aist.rtm.RTC.buffer.ReturnCode;
 
-/**
- * <p>バッファのインタフェースです。</p>
- *
- * @param <DataType> バッファ内のデータ型を指定します。
- */
+  /**
+   * {@.ja BufferBase インターフェース。}
+   * {@.en BufferBase Interface.}
+   * 
+   * <p>
+   * {@.ja 種々のバッファのための抽象インターフェースクラス。
+   * 具象バッファクラスは、以下の純粋仮想関数の実装を提供しなければならない。
+   * \<DataType\>としてバッファ内で保持するデータ型を指定する。
+   *
+   * publicインターフェースとして以下のものを提供する。<ul>
+   * <li> length(): バッファの長さを返す
+   * <li> length(n): バッファ長をnにセットする
+   * <li> reset(): バッファのポインタをリセットする</li></ul>
+   *
+   * 書込み関連<ul>
+   * <li> wptr(n=0): 現在の書き込み対象の要素のn個先のポインタを返す。
+   * <li> advanceWptr(n=1): 書込みポインタをn進める。
+   * <li> put(): 現在の書き込み位置に書き込む、ポインタは進めない。
+   * <li> write(): バッファに書き込む。ポインタは1つすすむ。
+   * <li> writable(): 書込み可能な要素数を返す。
+   * <li> full(): バッファがフル状態。</li></ul>
+   *
+   * 読み出し関連<ul>
+   * <li> rptr(n=0): 現在の読み出し対象のn個先のポインタを返す。
+   * <li> advanceRptr(n=1): 読み出しポインタをn進める。
+   * <li> get(): 現在の読み出し位置から読む。ポインタは進めない。
+   * <li> read(): バッファから読み出す。ポインタは1つすすむ。
+   * <li> readable(): 読み出し可能要素数を返す。
+   * <li> empty(): バッファが空状態。</li></ul>}
+   * {@.en This is the abstract interface class for various Buffer.
+   * Concrete buffer classes must implement the following pure virtual
+   * functions.
+   * The users specify data type to hold it in a buffer as \<DataType\>.
+   *
+   * This class provides public interface as follows.<ul>
+   * <li> write(): Write data into the buffer.
+   * <li> read(): Read data from the buffer.
+   * <li> length(): Get the buffer length.
+   * <li> isFull(): Check on whether the buffer is full.
+   * <li> isEmpty(): Check on whether the buffer is empty.</li></ul>
+   *
+   * This class provides protected interface as follows.<ul>
+   * <li> put(): Store data into the buffer.
+   * <li> get(): Get data from the buffer.</li></ul>}
+   *
+   *
+   * @param <DataType>
+   *   {@.ja バッファに格納するデータ型}
+   *   {@.en DataType Data type to be stored to the buffer.}
+   */
 public interface BufferBase<DataType> {
 
     /**
-     * <p> init </p>
+     * {@.ja バッファの設定}
+     * {@.en Set the buffer}
      *
      * @param prop
+     *   {@.ja プロパティ}
+     *   {@.en Properties}
      */
     public void init(final Properties prop);
     /**
-     * <p> reset </p>
-     *
-     * @return ReturnCode
-     */
+     * {@.ja バッファの状態をリセットする。}
+     * {@.en Reset the buffer status}
+     * 
+     * <p>
+     * {@.ja バッファの読み出しポインタと書き込みポインタの位置をリセットする。}
+     * {@.en Pure virtual function to reset the buffer status.}
+     * 
+     * @return 
+     *   {@.ja BUFFER_OK: 正常終了
+     *         NOT_SUPPORTED: リセット不可能
+     *         BUFFER_ERROR: 異常終了}
+     *   {@.en BUFFER_OK: Successful
+     *         NOT_SUPPORTED: The buffer status cannot be reset.
+     *         BUFFER_ERROR: Failed}
+     */ 
     public ReturnCode reset();
     /**
-     * <p> wptr </p>
-     *
+     * {@.ja バッファの現在の書込み要素のポインタ。}
+     * {@.en Get the writing pointer}
+     * 
+     * <p>
+     * {@.ja バッファの現在の書込み要素のポインタまたは、n個先のポインタを返す}
+     * {@.en Pure virtual function to get the writing pointer.}
+     * 
      * @param  n 
-     * @return DataType
-     */
+     *   {@.ja 書込みポインタ + n の位置のポインタ}
+     *   {@.en writeing pinter + n previous pointer}
+     * @return 
+     *   {@.ja 書込み位置のポインタ}
+     *   {@.en writing pointer}
+     */ 
     public DataType wptr(int n);
     /**
-     * <p> wptr </p>
-     *
-     * @return DataType
-     */
+     * {@.ja バッファの現在の書込み要素のポインタ。}
+     * {@.en Get the writing pointer}
+     * 
+     * <p>
+     * {@.ja バッファの現在の書込む}
+     * {@.en Pure virtual function to get the writing pointer.}
+     * 
+     * @return 
+     *   {@.ja 書込み位置のポインタ}
+     *   {@.en writing pointer}
+     */ 
     public DataType wptr();
     /**
-     * <p> advanceWptr </p>
+     * {@.ja 書込みポインタを進める。}
+     * {@.en Forward n writing pointers.}
+     * 
+     * <p>
+     * {@.ja 現在の書き込み位置のポインタを n 個進める。}
+     * {@.en Pure virtual function to forward n writing pointers.}
+     * 
+     * @param  n 
+     *   {@.ja 書込みポインタ + n の位置のポインタ}
+     *   {@.en writeing pinter + n previous pointer}
      *
-     * @param  n
-     * @return ReturnCode
-     */
+     * @return 
+     *   {@.ja BUFFER_OK: 正常終了
+     *         BUFFER_ERROR: 異常終了}
+     *   {@.en BUFFER_OK: Successful
+     *         BUFFER_ERROR: Failed}
+     */ 
     public ReturnCode advanceWptr(int n);
     /**
-     * <p> advanceWptr </p>
-     *
-     * @return ReturnCode
-     */
+     * {@.ja 書込みポインタを進める。}
+     * {@.en Forward n writing pointers.}
+     * 
+     * <p>
+     * {@.ja 現在の書き込み位置のポインタを 1 個進める。}
+     * {@.en Pure virtual function to forward 1 writing pointers.}
+     * 
+     * @return 
+     *   {@.ja BUFFER_OK: 正常終了
+     *         BUFFER_ERROR: 異常終了}
+     *   {@.en BUFFER_OK: Successful
+     *         BUFFER_ERROR: Failed}
+     */ 
     public ReturnCode advanceWptr();
     /**
-     * <p> writable </p>
-     *
-     * @return size_t
+     * {@.ja バッファに書込み可能な要素数。}
+     * {@.en Get a writable number.}
+     * 
+     * <p>
+     * {@.ja バッファに書込み可能な要素数を返す。}
+     * {@.en Pure virtual function to get a writable number.}
+     * 
+     * @return 
+     *   {@.ja 書き込み可能な要素数}
+     *   {@.en value writable number}
      */
     public int writable();
     /**
-     * <p> full </p>
-     * Check on whether the buffer is full
+     * {@.ja バッファfullチェック。}
+     * {@.en Check on whether the buffer is full.}
+     * 
+     * <p>
+     * {@.ja バッファfullチェック用純粋仮想関数}
+     * {@.en Pure virtual function to check on whether the buffer is full.}
      *
-     * @return boolean 
-     */
+     * @return 
+     *   {@.ja fullチェック結果(true:バッファfull，false:バッファ空きあり)}
+     *   {@.en True if the buffer is full, else false.}
+          */
     public boolean full();
     /**
-     * <p> rptr </p>
-     *
-     * @param  n
-     * @return DataType 
-     */
+     * {@.ja バッファの現在の読み出し要素のポインタ。}
+     * {@.en Get the reading pointer}
+     * 
+     * <p>
+     * {@.ja バッファの現在の読み出し要素のポインタまたは、
+     * n個先のポインタを返す}
+     * {@.en Pure virtual function to get the reading pointer.}
+     * 
+     * @param  n 
+     *   {@.ja 読み出しポインタ + n の位置のポインタ}
+     *   {@.en reading pinter + n previous pointer}
+     * @return 
+     *   {@.ja 読み出し位置のポインタ}
+     *   {@.en reading pointer}
+     */ 
     public DataType rptr(int n);
     /**
-     * <p> rptr </p>
-     *
-     * @return DataType 
-     */
+     * {@.ja バッファの現在の読み出し要素のポインタ。}
+     * {@.en Get the reading pointer}
+     * 
+     * <p>
+     * {@.ja バッファの現在の読み出返す}
+     * {@.en Pure virtual function to get the reading pointer.}
+     * 
+     * @return 
+     *   {@.ja 読み出し位置のポインタ}
+     *   {@.en reading pointer}
+     */ 
     public DataType rptr();
     /**
-     * <p> advanceRptr </p>
+     * {@.ja  読み出しポインタを進める。}
+     * {@.en Forward n reading pointers.}
+     * 
+     * <p>
+     * {@.ja 現在の読み出し位置のポインタを 1 個進める。}
+     * {@.en Pure virtual function to forward 1 reading pointers.}
+     * 
      *
-     * @return ReturnCode 
-     */
+     * @return 
+     *   {@.ja BUFFER_OK: 正常終了
+     *         BUFFER_ERROR: 異常終了}
+     *   {@.en BUFFER_OK: Successful
+     *         BUFFER_ERROR: Failed}
+     */ 
     public ReturnCode advanceRptr();
     /**
-     * <p> advanceRptr </p>
+     * {@.ja  読み出しポインタを進める。}
+     * {@.en Forward n reading pointers.}
+     * 
+     * <p>
+     * {@.ja 現在の読み出し位置のポインタを n 個進める。}
+     * {@.en Pure virtual function to forward n reading pointers.}
+     * 
+     * @param n 
+     *   {@.ja 読み出しポインタ + n の位置のポインタ}
+     *   {@.en reading pinter + n previous pointer}
      *
-     * @param  n 
-     * @return ReturnCode 
-     */
+     * @return 
+     *   {@.ja BUFFER_OK: 正常終了
+     *         BUFFER_ERROR: 異常終了}
+     *   {@.en BUFFER_OK: Successful
+     *         BUFFER_ERROR: Failed}
+     */ 
     public ReturnCode advanceRptr(int n);
     /**
-     * <p> readable </p>
-     *
-     * @return size_t 
+     * {@.ja バッファから読み出し可能な要素数。}
+     * {@.en Write data into the buffer}
+     * 
+     * <p>
+     * {@.ja バッファから読み出し可能な要素数を返す。}
+     * {@.en Pure virtual function to get a reading number.}
+     * 
+     * @return 
+     *   {@.ja 読み出し可能な要素数}
+     *   {@.en readable number}
      */
     public int readable();
     /**
-     * <p> empty </p>
-     * Check on whether the buffer is empty.
+     * {@.ja バッファemptyチェック。}
+     * {@.en Check on whether the buffer is empty.}
+     * 
+     * <p>
+     * {@.ja バッファemptyチェック用純粋仮想関数}
+     * {@.en Pure virtual function to check on whether the buffer is empty.}
      *
-     * @return boolean 
+     * @return 
+     *   {@.ja emptyチェック結果(true:バッファempty，false:バッファデータあり)}
+     *   {@.en True if the buffer is empty, else false.}
+     *
      */
     public boolean empty();
 
 
     /**
-     * <p>バッファ長を取得します。</p>
+     * {@.ja バッファの長さを取得する。}
+     * {@.en Get the buffer length}
      * 
-     * @return バッファ長
+     * <p>
+     * {@.ja バッファ長を取得するための純粋仮想関数}
+     * {@.en Pure virtual function to get the buffer length.}
+     * 
+     * @return 
+     *   {@.ja バッファ長}
+     *   {@.en Buffer length}
+     * 
      */
     public int length();
+    /**
+     * {@.ja バッファの長さをセットする。}
+     * {@.en Set the buffer length}
+     * 
+     * <p>
+     * {@.ja バッファ長を設定する。設定不可な場合はNOT_SUPPORTEDが返る。}
+     * {@.en Pure virtual function to set the buffer length.}
+     * 
+     * @return 
+     *   {@.ja BUFFER_OK: 正常終了
+     *         NOT_SUPPORTED: バッファ長変更不可
+     *         BUFFER_ERROR: 異常終了}
+     *   {@.en BUFFER_OK: Successful
+     *         NOT_SUPPORTED: The buffer length cannot be set.
+     *         BUFFER_ERROR: Failed}
+     */    
     public ReturnCode length(int n);
 
     /**
-     * <p>バッファにデータを書き込みます。</p>
+     * {@.ja バッファにデータを書き込む。}
+     * {@.en Write data into the buffer}
      * 
-     * @param value 書き込むデータ
-     * @return 書き込みに成功した場合はtrueを、さもなくばfalseを返します。
+     * <p>
+     * {@.ja バッファにデータを書き込む。書き込みポインタの位置は1つすすむ。}
+     * {@.en Pure virtual function to write data into the buffer.}
+     * 
+     * @param value 
+     *   {@.ja 書き込み対象データ}
+     *   {@.en value Target data to write.}
+     *
+     * @return 
+     *   {@.ja BUFFER_OK: 正常終了
+     *         BUFFER_ERROR: 異常終了}
+     *   {@.en BUFFER_OK: Successful
+     *         BUFFER_ERROR: Failed}
      */
     public ReturnCode write(final DataType value);
+    /**
+     * {@.ja バッファにデータを書き込む。}
+     * {@.en Write data into the buffer}
+     * 
+     * <p>
+     * {@.ja バッファにデータを書き込む。書き込みポインタの位置は1つすすむ。}
+     * {@.en Pure virtual function to write data into the buffer.}
+     * 
+     * @param value 
+     *   {@.ja 書き込み対象データ}
+     *   {@.en value Target data to write.}
+     * @param sec 
+     *   {@.ja タイムアウト時間 sec  (default -1: 無効)}
+     *   {@.en TimeOut sec order}
+     * @param nsec 
+     *   {@.ja タイムアウト時間 nsec (default 0)}
+     *   {@.en TimeOut nsec order}
+     *
+     * @return 
+     *   {@.ja BUFFER_OK: 正常終了
+     *         BUFFER_ERROR: 異常終了}
+     *   {@.en BUFFER_OK: Successful
+     *         BUFFER_ERROR: Failed}
+     */
     public ReturnCode write(final DataType value,
                             int sec, int nsec);
 
 
     /**
-     * <p>バッファからデータを読み込みます。</p>
+     * {@.ja バッファからデータを読み出す。}
+     * {@.en Read data from the buffer}
      * 
-     * @param valueRef 読み込んだデータを受け取るためのDataRefオブジェクト
-     * @return 読み込みに成功した場合はtrueを、さもなくばfalseを返します。
+     * <p>
+     * {@.ja バッファからデータを読み出すための純粋仮想関数}
+     * {@.en Pure virtual function to read data from the buffer.}
+     * 
+     * @param valueRef 
+     *   {@.ja 読み込んだデータを受け取るためのDataRefオブジェクト}
+     *   {@.en Readout data stored into the buffer.}
+     *
+     * @return 
+     *   {@.ja データ読み出し結果}
+     *   {@.en Result of having read}
+     *
      */
     public ReturnCode read(DataRef<DataType> valueRef);
+    /**
+     * {@.ja バッファからデータを読み出す。}
+     * {@.en Read data from the buffer}
+     * 
+     * <p>
+     * {@.ja バッファからデータを読み出すための純粋仮想関数}
+     * {@.en Pure virtual function to read data from the buffer.}
+     * 
+     * @param valueRef 
+     *   {@.ja 読み込んだデータを受け取るためのDataRefオブジェクト}
+     *   {@.en Readout data stored into the buffer.}
+     * @param sec 
+     *   {@.ja タイムアウト時間 sec  (default -1: 無効)}
+     *   {@.en TimeOut sec order}
+     * @param nsec 
+     *   {@.ja タイムアウト時間 nsec (default 0)}
+     *   {@.en TimeOut nsec order}
+     *
+     * @return 
+     *   {@.ja データ読み出し結果}
+     *   {@.en Result of having read}
+     *
+     */
     public ReturnCode read(DataRef<DataType> valueRef, int sec, int nsec);
     /**
-     * <p>バッファにデータを書き込みます。</p>
+     * {@.ja バッファにデータを書き込む。}
+     * {@.en Write data into the buffer}
      * 
-     * @param data 書き込むデータ
-     * @return ReturnCode
+     * <p>
+     * {@.ja バッファにデータを書き込む。書き込みポインタの位置は変更されない。}
+     * {@.en Pure virtual function to write data into the buffer.}
+     * 
+     * @param data 
+     *   {@.ja 書き込むデータ}
+     *   {@.en value Target data to write.}
+     *
+     * @return 
+     *   {@.ja BUFFER_OK: 正常終了
+     *         BUFFER_ERROR: 異常終了}
+     *   {@.en BUFFER_OK: Successful
+     *         BUFFER_ERROR: Failed}
      */
     public ReturnCode put(final DataType data);
 
     /**
-     * <p>バッファからデータを読み込みます。</p>
+     * {@.ja バッファからデータを読み出す。}
+     * {@.en Read data from the buffer}
      * 
-     * @return 読み込んだデータ
+     * <p>
+     * {@.ja バッファからデータを読みだす。読み出しポインタの位置は
+     * 変更されない。}
+     * {@.en Pure virtual function to read data form the buffer.}
+     * 
+     * @return 
+     *   {@.ja 読み込んだデータ}
+     *   {@.en value Data to read.}
      */
     public DataType get();
+    /**
+     * {@.ja バッファからデータを読み出す。}
+     * {@.en Read data from the buffer}
+     * 
+     * <p>
+     * {@.ja バッファからデータを読みだす。読み出しポインタの位置は
+     * 変更されない。}
+     * {@.en Pure virtual function to read data form the buffer.}
+     * 
+     * @param value 
+     *   {@.ja 読み出しデータ}
+     *   {@.en value Data to read.}
+     *
+     * @return 
+     *   {@.ja BUFFER_OK: 正常終了
+     *         BUFFER_ERROR: 異常終了}
+     *   {@.en BUFFER_OK: Successful
+     *         BUFFER_ERROR: Failed}
+     */
     public ReturnCode get(DataRef<DataType> value);
 
 }

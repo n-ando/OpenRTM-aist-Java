@@ -1,32 +1,29 @@
 package jp.go.aist.rtm.RTC.port;
 
-import java.util.Vector;
-
-import org.omg.CORBA.portable.Streamable;
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.ClassNotFoundException;
-import java.lang.NoSuchFieldException;
-import java.lang.NoSuchMethodException;
 import java.lang.reflect.Field;
+import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
-import jp.go.aist.rtm.RTC.util.DataRef;
-import jp.go.aist.rtm.RTC.util.TypeCast;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
-import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
+import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 
-import RTC.Time;
+import org.omg.CORBA.portable.OutputStream;
+import org.omg.CORBA.portable.Streamable;
 
 /**
- * <p>出力ポートの実装です。さらに上位の出力ポートのベース実装として利用されます。</p>
+ * {@.ja 出力ポートの実装。}
+ * {@.en Implementation of OutPort}
+ * <p>
+ * {@.ja さらに上位の出力ポートのベース実装として利用される。}
+ * {@.en This class is used as the base Implementation of a high-ranking output
+ * port.}
  *
- * @param <DataType> データ型を指定します。
+ * @param <DataType> 
+ *   {@.ja データ型を指定する。}
+ *   {@.en The data type is specified}
  */
 public class OutPort<DataType> extends OutPortBase {
 
@@ -38,17 +35,21 @@ public class OutPort<DataType> extends OutPortBase {
      * @return TypeCdoe(String)
      */
     private static <DataType> String toTypeCode(DataRef<DataType> value) { 
-        DataType data = value.v;
         String typeName = value.v.getClass().getSimpleName();
         return typeName;
 
     }
     /**
-     * <p> write_stream </p>
-     * <p> This function writes data from OutputStream.  </p>
+     * {@.ja OutputStreamに整列化する}
+     * {@.en Marshals to ostream the data.}
+     * 
      *
-     * @param data  data   
-     * @param cdr   OutputStream
+     * @param data
+     *   {@.ja データ}
+     *   {@.en data}
+     * @param cdr   
+     *   {@.ja OutputStream}
+     *   {@.en OutputStream}
      */
     public void write_stream(DataType data,OutputStream cdr) {
         try {
@@ -57,21 +58,48 @@ public class OutPort<DataType> extends OutPortBase {
 
         }
         catch(IllegalAccessException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(IllegalArgumentException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
 
     }
     /**
-     * <p> set_timestamp </p>
-     * <p> This function sets the timestamp.  </p>
-     *
-     * @param data  data   
+     * {@.ja タイムスタンプを設定する。}
+     * {@.en Sets timestamp.}
+     * <p>
+     * {@.ja データポートのデータに対してタイムスタンプをセットする。
+     * データポートのデータは構造体のメンバーとして 
+     * tm.sec, tm.nsec を持つ必要がある。}
+     * {@.en This function sets timestamp to data of data port. This data should
+     * have tm.sec, tm.nsec as members of the structure.}
+     * </p>
+     * @param data 
+     *   {@.ja タイムスタンプをセットするデータ。実行後実行時のタイムス
+     *   タンプがセットされる}
+     *   {@.en Data to be set timestamp. After executing this
+     *   function, current timestamp is set to the data.}
      */
+    public void setTimestamp(DataType data) {
+        long nanotime = System.nanoTime();
+        RTC.Time tm = new RTC.Time((int)(nanotime/1000000000),
+                                   (int)(nanotime%1000000000));
+        Class cl = data.getClass();
+        String str = cl.getName();
+        try {
+            cl.getField("tm").set(data,tm);
+        }
+        catch(NoSuchFieldException e){
+            //getField throws
+        }
+        catch(IllegalAccessException e){
+            //set throws
+        }
+         
+    }
     private void set_timestamp(DataType data) {
         long nanotime = System.nanoTime();
         RTC.Time tm = new RTC.Time((int)(nanotime/1000000000),
@@ -90,10 +118,12 @@ public class OutPort<DataType> extends OutPortBase {
          
     }
     /**
-     * <p> set_timestamp </p>
-     * <p> This function sets the timestamp.  </p>
+     * {@.ja タイムスタンプを取得する。}
+     * {@.en Gets the timestamp. }
      *
-     * @return RTC.Time
+     * @return
+     *   {@.ja 取得したTime}
+     *   {@.en RTC.Time gotten}
      */
     public static RTC.Time get_timestamp() {
         long nanotime = System.nanoTime();
@@ -102,32 +132,61 @@ public class OutPort<DataType> extends OutPortBase {
         return tm; 
     }
     /**
-     * <p>コンストラクタです。内部的にバッファが生成されて割り当てられます。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     * <p>
+     * {@.ja 内部的にバッファが生成されて割り当てられる。}
+     * {@.en Internally creates and allcoates the buffer}
      * 
-     * @param name ポート名
-     * @param valueRef 本ポートにバインドするデータ変数を内包するDataRefオブジェクト
+     * @param name 
+     *   {@.ja ポート名}
+     *   {@.en Name of Port}
+     * @param valueRef 
+     *   {@.ja 本ポートにバインドするデータ変数を内包するDataRefオブジェクト}
+     *   {@.en DataRef object}
      */
     public OutPort(final String name, DataRef<DataType> valueRef) {
         this(new RingBuffer<DataType>(8), name, valueRef);
     }
     
     /**
-     * <p>コンストラクタです。指定されたデータ長で内部的にバッファが生成されて割り当てられます。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     * <p>
+     * {@.ja 指定されたデータ長で内部的にバッファが生成されて割り当てられvyる。}
+     * {@.en Internally creates and allocates the buffer by the specified data
+     * length}
      * 
-     * @param name ポート名
-     * @param valueRef 本ポートにバインドするデータ変数を内包するDataRefオブジェクト
-     * @param length バッファ長
+     * @param name 
+     *   {@.ja ポート名}
+     *   {@.en the port name}
+     * @param valueRef 
+     *   {@.ja 本ポートにバインドするデータ変数を内包するDataRefオブジェクト}
+     *   {@.en DataRef object}
+     * @param length 
+     *   {@.ja バッファ長}
+     *   {@.en Buffer length}
      */
     public OutPort(final String name, DataRef<DataType> valueRef, int length) {
         this(new RingBuffer<DataType>(length), name, valueRef);
     }
     
     /**
-     * <p>コンストラクタです。指定されたバッファを割り当てます。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     * <p>
+     * {@.ja 指定されたバッファを割り当てる。}
+     * {@.en Allocates the specified buffer.}
      * 
-     * @param buffer 割り当てるバッファ
-     * @param name ポート名
-     * @param valueRef 本ポートにバインドするデータ変数を内包するDataRefオブジェクト
+     * @param buffer 
+     *   {@.ja 割り当てるバッファ}
+     *   {@.en buffer}
+     * @param name 
+     *   {@.ja ポート名}
+     *   {@.en Port name}
+     * @param valueRef 
+     *   {@.ja 本ポートにバインドするデータ変数を内包するDataRefオブジェクト}
+     *   {@.en DataRef object}
      */
     public OutPort(BufferBase<DataType> buffer,
             final String name, DataRef<DataType> valueRef) {
@@ -161,24 +220,24 @@ public class OutPort<DataType> extends OutPortBase {
 
         }
         catch(java.lang.InstantiationException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
          }
 
         catch(ClassNotFoundException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(NoSuchFieldException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(IllegalAccessException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         catch(IllegalArgumentException e){
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
     }
@@ -221,7 +280,7 @@ public class OutPort<DataType> extends OutPortBase {
      *
      */
     public boolean write(final DataType value) {
-        rtcout.println(rtcout.TRACE, "DataType write()");
+        rtcout.println(Logbuf.TRACE, "DataType write()");
 
         if (m_OnWrite != null) {
             m_OnWrite.run(value);
@@ -246,13 +305,13 @@ public class OutPort<DataType> extends OutPortBase {
                 ReturnCode ret;
                 // data -> (conversion) -> CDR stream
                 if (m_OnWriteConvert != null) {
-                    rtcout.println(rtcout.DEBUG, 
+                    rtcout.println(Logbuf.DEBUG, 
                                 "m_connectors.OnWriteConvert called");
                     ret = m_connectors.elementAt(i).write(
                                                 m_OnWriteConvert.run(value));
                 }
                 else{
-                    rtcout.println(rtcout.DEBUG, 
+                    rtcout.println(Logbuf.DEBUG, 
                                 "m_connectors.write called");
                     ret = m_connectors.elementAt(i).write(value);
                 }
@@ -267,7 +326,7 @@ public class OutPort<DataType> extends OutPortBase {
                 RTC.ConnectorProfile prof = findConnProfile(id);
 
                 if (ret.equals(ReturnCode.CONNECTION_LOST)) {
-                    rtcout.println(rtcout.TRACE, "connection_lost id: "+id);
+                    rtcout.println(Logbuf.TRACE, "connection_lost id: "+id);
                     if(m_onConnectionLost != null) {
                         RTC.ConnectorProfileHolder holder 
                             = new RTC.ConnectorProfileHolder(prof);
@@ -286,9 +345,15 @@ public class OutPort<DataType> extends OutPortBase {
     }
     
     /**
-     * <p>データを書き込みます。本ポートにバインドされているデータ変数の値が書き込まれます。</p>
+     * {@.ja データを書き込む。}
+     * {@.en Writes the data}
+     * <p>
+     * {@.ja 本ポートにバインドされているデータ変数の値が書き込まれる。}
+     * {@.en Writes the value in the variable to which bind is done. }
      * 
-     * @return データを書き込めた場合はtrueを、さもなくばfalseを返します。
+     * @return 
+     *   {@.ja データを書き込めた場合はtrueを、さもなくばfalseを返す。}
+     *   {@.en "True" is returned when succeeding}
      */
     public boolean write() {
         return this.write(m_value.v);
@@ -316,40 +381,61 @@ public class OutPort<DataType> extends OutPortBase {
     }
 
     /**
-     * <p>データ読み出し時における、ブロック/非ブロックモードを指定します。<br />
-     * ブロックモードを指定した場合は、読み出せるデータを受信するかタイムアウトになるまで、
-     * read()メソッドの呼び出しがブロックされます。</p>
+     * {@.ja データ読み出し時における、ブロック/非ブロックモードを指定する。}
+     * {@.en Specifies the block mode in the data reading.}
+     * <p>
+     * {@.ja ブロックモードを指定した場合は、
+     * 読み出せるデータを受信するかタイムアウトになるまで、
+     * read()メソッドの呼び出しがブロックされる。}
+     * {@.en When the block mode is specified, the read() method is blocked
+     * until data is read or until the time-out.}
      * 
-     * @param block ブロックモードを指定する場合はtrue、さもなくばfalse
+     * @param block
+     *   {@.ja ブロックモードを指定する場合はtrue、さもなくばfalse}
+     *   {@.en True when block mode is specified}
      */
     public void setReadBlock(boolean block) {
         this.m_readBlock = block;
     }
     
     /**
-     * <p>データ書き込み時における、ブロック/非ブロックモードを指定します。<br />
-     * ブロックモードを指定した場合は、バッファに書き込む余地ができるかタイムアウトになるまで、
-     * write()メソッドの呼び出しがブロックされます。</p>
+     * {@.ja データ書き込み時における、ブロック/非ブロックモードを指定する。}
+     * {@.en Specifies the block mode in the data writing.} 
+     * <p>
+     * {@.ja ブロックモードを指定した場合は、
+     * バッファに書き込む余地ができるかタイムアウトになるまで、
+     * write()メソッドの呼び出しがブロックされる。}
+     * {@.en When the block mode is specified, the write() method is blocked.}
      * 
-     * @param block ブロックモードを指定する場合はtrue、さもなくばfalse
+     * @param block
+     *   {@.ja ブロックモードを指定する場合はtrue、さもなくばfalse}
+     *   {@.en True when block mode is specified}
      */
     public void setWriteBlock(boolean block) {
         this.m_writeBlock = block;
     }
 
     /**
-     * <p>読み出しがブロックモード指定されている場合のタイムアウト時間を設定します。</p>
+     * {@.ja 読み出しがブロックモード指定されている場合のタイムアウト時間を
+     * 設定する。}
+     * {@.en Sets the timeout period of the block mode of reading.}
      * 
-     * @param timeout タイムアウト時間 [usec]
+     * @param timeout 
+     *   {@.ja タイムアウト時間 [usec]}
+     *   {@.en Timeout[usec]}
      */
     public void setReadTimeout(long timeout) {
         this.m_readTimeout = timeout;
     }
     
     /**
-     * <p>書き込みがブロックモード指定されている場合のタイムアウト時間を設定します。</p>
+     * {@.ja 書き込みがブロックモード指定されている場合のタイムアウト時間を
+     * 設定する。}
+     * {@.en Sets the timeout period of the block mode of writing.}
      * 
-     * @param timeout タイムアウト時間 [usec]
+     * @param timeout 
+     *   {@.ja タイムアウト時間 [usec]}
+     *   {@.en Timeout[usec]}
      */
     public void setWriteTimeout(long timeout) {
         this.m_writeTimeout = timeout;
@@ -416,60 +502,90 @@ public class OutPort<DataType> extends OutPortBase {
     }
 
     /**
-     * <p>データ書き込み直前に呼び出されるコールバックインタフェースを設定します。</p>
+     * {@.ja データ書き込み直前に呼び出されるコールバックインタフェースを
+     * 設定する。}
+     * {@.en Sets the callback interface called immediately before writing of
+     * data.}
      * 
-     * @param onWrite OnWriteコールバックインタフェースを持つオブジェクト
+     * @param onWrite 
+     *   {@.ja OnWriteコールバックインタフェースを持つオブジェクト}
+     *   {@.en Object with OnWrite callback interface}
      */
     public void setOnWrite(OnWrite<DataType> onWrite) {
         this.m_OnWrite = onWrite;
     }
     
     /**
-     * <p>データ書き込み時に呼び出されるコールバックインタフェースを設定します。</p>
+     * {@.ja データ書き込み時に呼び出されるコールバックインタフェースを
+     * 設定する。}
+     * {@.en sets the callback interface called when data is written.}
      * 
-     * <p>設定されたコールバックの戻り値のデータが書き込まれます。
-     * これにより、書き込みデータのフィルタリングを行うことができます。</p>
+     * <p>
+     * {@.ja 設定されたコールバックの戻り値のデータが書き込まれる。
+     * これにより、書き込みデータのフィルタリングを行うことがでる。}
      * 
-     * @param onWriteConvert OutWriteConvertコールバックインタフェースを持つオブジェクト
+     * @param onWriteConvert 
+     *   {@.ja OutWriteConvertコールバックインタフェースを持つオブジェクト}
+     *   {@.en Object with OutWriteConvert callback interface}
      */
     public void setOnWriteConvert(OnWriteConvert<DataType> onWriteConvert) {
         this.m_OnWriteConvert = onWriteConvert;
     }
     
     /**
-     * <p>バッファフルによりデータ書き込みできない場合に呼び出されるコールバックインタフェースを設定します。</p>
+     * {@.ja バッファフルにデータ書き込みできない場合に呼び出される
+     * コールバックインタフェースを設定する。}
+     * {@.en sets the callback interface called when data cannot be written in
+     * a full buffer.}
      * 
-     * @param onOverflow OutOverflowコールバックインタフェースを持つオブジェクト
+     * @param onOverflow 
+     *   {@.ja OutOverflowコールバックインタフェースを持つオブジェクト}
+     *   {@.en Object with OutOverflow callback interface}
      */
     public void setOnOverflow(OnOverflow<DataType> onOverflow) {
         this.m_OnOverflow = onOverflow;
     }
     
     /**
-     * <p>データ読み出しの直前に呼び出されるコールバックインタフェースを設定します。</p>
+     * {@.ja データ読み出しの直前に呼び出されるコールバックインタフェースを
+     * 設定する。}
+     * {@.en sets the callback interface called immediately before reading of
+     * data.}
      * 
-     * @param onRead OutReadコールバックインタフェースを持つオブジェクト
+     * @param onRead 
+     *   {@.ja OutReadコールバックインタフェースを持つオブジェクト}
+     *   {@.en Object with OutRead callback interface}
      */
     public void setOnRead(OnRead<DataType> onRead) {
         this.m_OnRead = onRead;
     }
     
     /**
-     * <p>データ読み出し時に呼び出されるコールバックインタフェースを設定します。</p>
+     * {@.ja データ読み出し時に呼び出されるコールバックインタフェースを
+     * 設定する。}
+     * {@.en sets the callback interface called when data is read.}
      * 
-     * <p>設定されたコールバックの戻りデータ値が読み出されます。
-     * これにより、読み出しデータをフィルタリングすることができます。</p>
+     * <p>
+     * {@.ja 設定されたコールバックの戻りデータ値が読み出される。
+     * これにより、読み出しデータをフィルタリングすることができる。}
      * 
-     * @param onReadConvert OutReadConvertコールバックインタフェースを持つオブジェクト
+     * @param onReadConvert 
+     *   {@.ja OutReadConvertコールバックインタフェースを持つオブジェクト}
+     *   {@.en Object with OutReadConvert callback interface}
      */
     public void setOnReadConvert(OnReadConvert<DataType> onReadConvert) {
         this.m_OnReadConvert = onReadConvert;
     }
     
     /**
-     * <p>バッファ空により読み取れるデータがない場合に呼び出されるコールバックインタフェースを設定します。</p>
+     * {@.ja バッファ空により読み取れるデータがない場合に呼び出される
+     * コールバックインタフェースを設定する。}
+     * {@.en sets the callback interface called when there is no data that can
+     * be read in an empty buffer more. }
      * 
-     * @param onUnderflow OutUnderflowコールバックインタフェースを持つオブジェクト
+     * @param onUnderflow 
+     *   {@.ja OutUnderflowコールバックインタフェースを持つオブジェクト}
+     *   {@.en Object with OutUnderflow callback interface}
      */
     public void setOnUnderflow(OnUnderflow<DataType> onUnderflow) {
         this.m_OnUnderflow = onUnderflow;
@@ -494,13 +610,13 @@ public class OutPort<DataType> extends OutPortBase {
      * 
      */
     public void onConnect(final String id, PublisherBase publisher) {
-        rtcout.println(rtcout.TRACE, "onConnect(id = "+id+")");
+        rtcout.println(Logbuf.TRACE, "onConnect(id = "+id+")");
     }
     /**
      * 
      */
     public void onDisconnect(final String id) {
-        rtcout.println(rtcout.TRACE, "onDisconnect(id = "+id+")");
+        rtcout.println(Logbuf.TRACE, "onDisconnect(id = "+id+")");
     }
 
     /**
@@ -530,7 +646,7 @@ public class OutPort<DataType> extends OutPortBase {
         }
         catch(NoSuchFieldException e){
             //getField throws
-            rtcout.println(rtcout.WARN, 
+            rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
         return false;

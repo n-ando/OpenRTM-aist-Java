@@ -5,15 +5,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
-import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.ConfigAdmin;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.StringUtil;
-import jp.go.aist.rtm.RTC.log.Logbuf;
 
 import org.omg.CORBA.Any;
 
@@ -38,9 +36,10 @@ import _SDOPackage.ServiceProfileListHolder;
 
 
 /**
- * <p>SDO Configuration 実装クラス<br />
+ * {@.ja SDO Configuration 実装クラス}
  *
- * Configuration interface は Resource Data Model で定義されたデータの
+ * <p>
+ * {@.ja Configuration interface は Resource Data Model で定義されたデータの
  * 追加、削除等の操作を行うためのインターフェースです。
  * DeviceProfile, ServiceProfile, ConfigurationProfile および Organization
  * の変更を行うためのオペレーションを備えています。SDO の仕様ではアクセス制御
@@ -83,15 +82,17 @@ import _SDOPackage.ServiceProfileListHolder;
  * <li>get_active_configuration_set()</li>
  * <li>add_configuration_set()</li>
  * <li>remove_configuration_set()</li>
- * <li>activate_configuration_set()</li>
- * </ol>
+ * <li>activate_configuration_set()</li></ol>}
  */
 public class Configuration_impl extends ConfigurationPOA {
 
     /**
-     * <p>コンストラクタです。</p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      *
-     * @param configsets　コンフィギュレーション情報
+     * @param configsets　
+     *   {@.ja コンフィギュレーション情報}
+     *   {@.en information of Configuration}
      */
     public Configuration_impl(ConfigAdmin configsets){
         this.m_configsets = configsets;
@@ -106,9 +107,12 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>オブジェクト・リファレンスを取得します。</p>
+     * {@.ja オブジェクト・リファレンスを取得する。}
+     * {@.en Gets the object reference.}
      *
-     * @return オブジェクト・リファレンス
+     * @return 
+     *   {@.ja オブジェクト・リファレンス}
+     *   {@.en object reference}
      */
     public Configuration _this() {
         
@@ -124,10 +128,15 @@ public class Configuration_impl extends ConfigurationPOA {
     }
     
     /**
-     * <p>コンフィギュレーションセットをプロパティにコピーします。</p>
+     * {@.ja コンフィギュレーションセットをプロパティにコピーする。}
+     * {@.en Copies ConfigurationSet set to Properties.}
      *
-     * @param prop　コピー先プロパティ
-     * @param conf　コピー元コンフィギュレーションセット
+     * @param prop　
+     *   {@.ja コピー先プロパティ}
+     *   {@.en Properties}
+     * @param conf　
+     *   {@.ja コピー元コンフィギュレーションセット}
+     *   {@.en ConfigurationSet}
      */
     private void toProperties(Properties prop, final ConfigurationSet conf) {
         NVListHolder nvlist = new NVListHolder();
@@ -136,10 +145,15 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>プロパティをコンフィギュレーションセットにコピーします。</p>
+     * {@.ja プロパティをコンフィギュレーションセットにコピーする。}
+     * {@.en Copies Properties set to ConfigurationSet.}
      *
-     * @param conf　コピー先コンフィギュレーションセット
-     * @param prop　コピー元プロパティ
+     * @param conf　
+     *   {@.ja コピー先コンフィギュレーションセット}
+     *   {@.en ConfigurationSet}
+     * @param prop　
+     *   {@.ja コピー元プロパティ}
+     *   {@.en Properties}
      */
     private void toConfigurationSet(ConfigurationSet conf, final Properties prop) {
         conf.description = new String(prop.getProperty("description"));
@@ -150,23 +164,34 @@ public class Configuration_impl extends ConfigurationPOA {
     }
     /**
      *
-     * <p>[CORBA interface] SDO の DeviceProfile をセットします。<br />
+     * {@.ja [CORBA interface] SDO の DeviceProfile をセットする。}
+     * {@.en [CORBA interface] Sets DeviceProfile of SDO.}
+     * <p>
+     * {@.ja このオペレーションは SDO の DeviceProfile をセットする。SDO が
+     * DeviceProfile を保持していない場合は新たな DeviceProfile を生成し、
+     * DeviceProfile をすでに保持している場合は既存のものと置き換える。}
      *
-     * このオペレーションは SDO の DeviceProfile をセットします。SDO が
-     * DeviceProfile を保持している場合は新たな DeviceProfile を生成し、
-     * DeviceProfile をすでに保持している場合は既存のものと置き換えます。</p>
+     * @param dProfile 
+     *   {@.ja SDO に関連付けられる DeviceProfile。}
+     *   {@.en DeviceProfile}
+     * @return 
+     *   {@.ja オペレーションが成功したかどうかを返す。}
+     *   {@.en True is returned when succeeding. }
      *
-     * @param dProfile SDO に関連付けられる DeviceProfile。
-     * @return オペレーションが成功したかどうかを返す。
-     *
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InvalidParameter 引数 "dProfile" が null である。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no response though SDO exists.}
+     * @exception InvalidParameter i
+     *   {@.ja 引数 "dProfile" が null である。}
+     *   {@.en Argument dProfile is null.}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal error occurred.}
      */
     public boolean set_device_profile(final DeviceProfile dProfile)
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.set_device_profile()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.set_device_profile()");
 
         try {
             if(m_deviceProfile == null) m_deviceProfile = new DeviceProfile();
@@ -181,26 +206,38 @@ public class Configuration_impl extends ConfigurationPOA {
 
     /**
      * 
-     * <p>[CORBA interface] SDO の ServiceProfile を設定します。<br />
-     *
-     * このオペレーションはこの Configuration interface を所有する対象 SDO の
-     * ServiceProfile を設定します。もし引数の ServiceProfile の id が空であれば
-     * 新しい ID が生成されその ServiceProfile を格納します。もし id が空で
-     * なければ、SDO は同じ id を持つ ServiceProfile を検索します。
+     * {@.ja [CORBA interface] SDO の ServiceProfile を設定する。}
+     * {@.en [CORBA interface] Sets ServiceProfile of SDO.}
+     * <p>
+     * {@.ja このオペレーションはこの Configuration interface を所有する対象 
+     * SDO の ServiceProfile を設定する。もし引数の ServiceProfile の id が
+     * 空であれば新しい ID が生成されその ServiceProfile を格納する。
+     * もし id が空でなければ、SDO は同じ id を持つ ServiceProfile を検索する。
      * 同じ id が存在しなければこの ServiceProfile を追加し、id が存在すれば
-     * 上書きをします。</p>
+     * 上書きをする。}
+     * {@.en Sets ServiceProfile of SDO that keeps Configuraition interface}
      *
-     * @param sProfile 追加する ServiceProfile
-     * @return オペレーションが成功したかどうかを返す。
+     * @param sProfile 
+     *   {@.ja 追加する ServiceProfile}
+     *   {@.en ServiceProfile}
+     * @return 
+     *   {@.ja オペレーションが成功したかどうかを返す。}
+     *   {@.en True is returned when succeeding. }
      *
-     * @exception InvalidParameter 引数 "sProfile" が nullである。
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception InvalidParameter 
+     *   {@.ja 引数 "sProfile" が nullである。}
+     *   {@.en Argument sProfile is null.}
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no response though SDO exists.}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal error occurred.}
      */
     public boolean add_service_profile(final ServiceProfile sProfile)
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.add_service_profile()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.add_service_profile()");
 
         try{
             if( m_serviceProfiles==null ) {
@@ -227,21 +264,34 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] Organization を追加します。<br />
+     * {@.ja [CORBA interface] Organization を追加する。}
+     * {@.en [CORBA interface] Adds Organization object.}
      *
-     * このオペレーションは Organization object のリファレンスを追加します。</p>
+     * <p>
+     * {@.ja このオペレーションは Organization object のリファレンスを
+     * 追加する。}
      *
-     * @param org 追加する Organization
-     * @return オペレーションが成功したかどうかを返す。
+     * @param org 
+     *   {@.ja 追加する Organization}
+     *   {@.en Organization}
+     * @return 
+     *   {@.ja オペレーションが成功したかどうかを返す。}
+     *   {@.en True is returned when succeeding. }
      *
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InvalidParameter 引数 "organization" が null である。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no response though SDO existis.}
+     * @exception InvalidParameter 
+     *   {@.ja 引数 "organization" が null である。}
+     *   {@.en Argument organization is null.}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal error occureed.}
      */
     public boolean add_organization(Organization org) 
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.add_organization()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.add_organization()");
 
         try {
             if( m_organizations==null ){
@@ -256,24 +306,37 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] ServiceProfile を削除します。<br />
+     * {@.ja [CORBA interface] ServiceProfile を削除する。}
+     * {@.en [CORBA interface] Deletes ServiceProfile}
      *
-     * このオペレーションはこの Configuration interface を持つ SDO の
-     * Service の ServiceProfile を削除します。
-     * 削除する ServiceProfileは引数により指定されます。</p>
+     * <p>
+     * {@.ja このオペレーションはこの Configuration interface を持つ SDO の
+     * Service の ServiceProfile を削除する。
+     * 削除する ServiceProfileは引数により指定される。}
      *
-     * @param id 削除する ServcieProfile の serviceID。
-     * @return オペレーションが成功したかどうかを返す。
+     * @param id 
+     *   {@.ja 削除する ServcieProfile の serviceID。}
+     *   {@.en serviceID of ServiceProfile}
+     * @return 
+     *   {@.ja オペレーションが成功したかどうかを返す。}
+     *   {@.en True is retuened when succeeding} 
      *
-     * @exception InvalidParameter 引数 "id" が null である。もしくは "id" に
-     *                             関連付けられた ServiceProfile が存在しない。
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception InvalidParameter 
+     *   {@.ja 引数 "id" が null である。もしくは "id" に
+     *   関連付けられた ServiceProfile が存在しない。}
+     *   {@.en Argument "id" is null.
+     *   ServiceProfile related to "id" does not exist.}
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no response though SDO exists.}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal error occurred.}
      */
     public boolean remove_service_profile(final String id) 
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.remove_service_profile("+id+")");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.remove_service_profile("+id+")");
 
         try {
             for(int index=0; index<m_serviceProfiles.value.length; index++ ) {
@@ -289,22 +352,34 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] Organization の参照を削除します。<br />
+     * {@.ja [CORBA interface] Organization の参照を削除する。}
+     * {@.en [CORBA interface] Deletes Organization object reference}
+     * <p>
+     * {@.ja このオペレーションは Organization の参照を削除する。}
      *
-     * このオペレーションは Organization の参照を削除します。</p>
+     * @param organization_id 
+     *   {@.ja 削除する Organization の一意な id。}
+     *   {@.en Unique ID of Orgnazaion}
+     * @return 
+     *   {@.ja オペレーションが成功したかどうかを返す。}
+     *   {@.en True is returned when succeeding}
      *
-     * @param organization_id 削除する Organization の一意な id。
-     * @return オペレーションが成功したかどうかを返す。
-     *
-     * @exception InvalidParameter 引数 "id" が null である。もしくは "id" に
-     *                             関連付けられた Organization が存在しない。
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception InvalidParameter 
+     *   {@.ja 引数 "id" が null である。もしくは "id" に
+     *                             関連付けられた Organization が存在しない。}
+     *   {@.en Argument "id" is null.
+     *   Organization to related to  "id"  dose not exist}
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no response thorug SDO exists}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal erro occurred}
      */
     public boolean remove_organization(String organization_id)
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.remove_organization("+organization_id+")");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.remove_organization("+organization_id+")");
 
         try {
             synchronized (m_organizations) {
@@ -322,21 +397,28 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] 設定パラメータのリストを取得します。<br />
+     * {@.ja [CORBA interface] 設定パラメータのリストを取得する。}
+     * {@.en [CORBA interface] Gets the list of configuration parameter}
+     * <p>
+     * {@.ja このオペレーションは configuration parameter のリストを返す。
+     * SDO が設定可能なパラメータを持たなければ空のリストを返す。}
      *
-     * このオペレーションは configuration parameter のリストを返します。
-     * SDO が設定可能なパラメータを持たなければ空のリストを返します。</p>
+     * @return 
+     *   {@.ja 設定を特徴付けるパラメータ定義のリスト。}
+     *   {@.en list of configuration parameter}
      *
-     * @return 設定を特徴付けるパラメータ定義のリスト。
-     *
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no response though SDO exists}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal error occurred}
      *
      */
     public Parameter[] get_configuration_parameters()
             throws NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.get_configurations()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.get_configurations()");
 
         try{
             if( m_parameters==null ) {
@@ -353,20 +435,27 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] Configuration parameter の値のリストを取得します。<br />
+     * {@.ja [CORBA interface] Configuration parameter の値のリストを取得する。}
+     * {@.en [CORBA itnerface] Gets the list of Configuration paramter value}
+     * <p>
+     * {@.ja このオペレーションは configuration パラメータおよび値を返す。}
+     * {@.en Returns configuration paramter and value}
      *
-     * このオペレーションは configuration パラメータおよび値を返します。
-     * ※未実装</p>
+     * @return 
+     *   {@.ja 全ての configuration パラメータと値のリスト。}
+     *   {@.en All configuration parameters and lists of value.}
      *
-     * @return 全ての configuration パラメータと値のリスト。
-     *
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no response though SDO exists}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal error occurred}
      */
     public synchronized NameValue[] get_configuration_parameter_values()
             throws NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.get_configuration_parameter_values()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.get_configuration_parameter_values()");
 
         NVListHolder nvlist = new NVListHolder();
         nvlist.value = new NameValue[0];
@@ -374,22 +463,33 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] Configuration parameter の値を取得します。<br />
+     * {@.ja [CORBA interface] Configuration parameter の値を取得する。}
+     * {@.en [CORBA interface] Gets the value of Configuration parameter}
+     * <p>
+     * {@.ja このオペレーションは引数 "name" で指定されたパラメータ値を返す。}
+     * {@.en This operation returns the argument value specified by "Name".}
      *
-     * このオペレーションは引数 "name" で指定されたパラメータ値を返します。
-     * ※未実装</p>
+     * @param name 
+     *   {@.ja 値を要求するパラメータの名前。}
+     *   {@.en Name of paramter that demands value.}
+     * @return 
+     *   {@.ja 指定されたパラメータの値。}
+     *   {@.en Value of specified parameter}
      *
-     * @param name 値を要求するパラメータの名前。
-     * @return 指定されたパラメータの値。
-     *
-     * @exception InvalidParameter 引数 "name" が null である。
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception InvalidParameter 
+     *   {@.ja 引数 "name" が null である。}
+     *   {@.en Argument "name" is null.}
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no response though SDO exists.}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal error occurred}
      */
     public Any get_configuration_parameter_value(String name)
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.get_configuration_parameter_value("+name+")");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.get_configuration_parameter_value("+name+")");
 
         if( name==null || name.equals("") ) throw new InvalidParameter("Name is empty.");
         
@@ -398,35 +498,46 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] Configuration パラメータを変更します。<br />
+     * {@.ja [CORBA interface] Configuration パラメータを変更する。}
+     * {@.en [CORBA interface] Changes the Configuration parameter.} 
+     * <p>
+     * {@.ja このオペレーションは "name" で指定したパラメータの値を "value" に
+     * 変更する。}
      *
-     * このオペレーションは "name" で指定したパラメータの値を "value" に変更します。
-     * ※未実装</p>
+     * @param name 
+     *   {@.ja 変更したいパラメータの名前。}
+     * @param value 
+     *   {@.ja 変更したいパラメータの値。}
+     * @return 
+     *   {@.ja オペレーションが成功したかどうかを返す。}
      *
-     * @param name 変更したいパラメータの名前。
-     * @param value 変更したいパラメータの値。
-     * @return オペレーションが成功したかどうかを返す。
-     *
-     * @exception InvalidParameter 引数 "name" が null である。
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception InvalidParameter 
+     *   {@.ja 引数 "name" が null である。}
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
      *
      */
     public boolean set_configuration_parameter(String name, Any value)
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.set_configuration_parameter("+name+")");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.set_configuration_parameter("+name+")");
 
         return true;
     }
 
     /**
-     * <p>[CORBA interface] ConfigurationSet リストを取得します。<br /> 
+     * {@.ja [CORBA interface] ConfigurationSet リストを取得する。}
+     * {@.en [CORBA interface] Gets the list of ConfigurationSet}
+     * <p>
+     * {@.ja このオペレーションは ConfigurationProfile が持つ 
+     * ConfigurationSet のリストを返す。 
+     * SDO が ConfigurationSet を持たなければ空のリストを返す。}
      *
-     * このオペレーションは ConfigurationProfile が持つ ConfigurationSet の
-     * リストを返します。 SDO が ConfigurationSet を持たなければ空のリストを返します。</p>
-     *
-     * @return 保持している ConfigurationSet のリストの現在値。
+     * @return 
+     *   {@.ja 保持している ConfigurationSet のリストの現在値。}
+     *   {@.en Present value of list of ConfigurationSet.}
      *
      * @exception NotAvailable SDOは存在するが応答がない。
      * @exception InternalError 内部的エラーが発生した。
@@ -434,7 +545,7 @@ public class Configuration_impl extends ConfigurationPOA {
     public ConfigurationSet[] get_configuration_sets() 
                 throws NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.get_configuration_sets()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.get_configuration_sets()");
 
         try {
             synchronized (m_configsets) {
@@ -475,7 +586,7 @@ public class Configuration_impl extends ConfigurationPOA {
     public synchronized ConfigurationSet get_configuration_set(String config_id)
             throws NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.get_configuration_set("+config_id+")");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.get_configuration_set("+config_id+")");
 
         if( config_id==null || config_id.equals("") ) throw new InternalError("ID is empty");
         // Originally getConfigurationSet raises InvalidParameter according to the
@@ -547,7 +658,7 @@ public class Configuration_impl extends ConfigurationPOA {
     boolean set_configuration_set_values(ConfigurationSet configuration_set) 
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                 "Configuration_impl.set_configuration_set_values()");
 
         String config_id = configuration_set.id; 
@@ -603,29 +714,46 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] アクティブな ConfigurationSet を取得します。<br />
-     *
-     * このオペレーションは当該SDOの現在アクティブな ConfigurationSet を返します。
+     * {@.ja [CORBA interface] アクティブな ConfigurationSet を取得する。}
+     * {@.en [CROBA ingerface] Gets active ConfigurationSet.}
+     * <p>
+     * {@.ja このオペレーションは当該SDOの現在アクティブな ConfigurationSet 
+     * を返す。
      * (もしSDOの現在の設定が予め定義された ConfigurationSet により設定されて
      * いるならば。)
-     * ConfigurationSet は以下の場合にはアクティブではないものとみなされます。
+     * ConfigurationSet は以下の場合にはアクティブではないものとみなされる。
      *
      * <ol>
      * <li>現在の設定が予め定義された ConfigurationSet によりセットされていない</li>
      * <li>SDO の設定がアクティブになった後に変更された</li>
      * <li>SDO を設定する ConfigurationSet が変更された</li>
      * <ol>
-     * これらの場合には、空の ConfigurationSet が返されます。</p>
+     * これらの場合には、空の ConfigurationSet が返される。}
+     * {@.en In the following cases, it is considered that ConfigurationSet is
+     * not active.
+     * <ol>
+     * <li>It is not set by ConfigurationSet in which a present setting is
+     * defined beforehand.</li>
+     * <li>After the setting of SDO had become active, it was changed. </li>
+     * <li>ConfigurationSet that set SDO was changed. </li>
+     * </ol>
+     * Empty ConfigurationSet is returned.}
      *
-     * @return 現在アクティブな ConfigurationSet。
+     * @return 
+     *   {@.ja 現在アクティブな ConfigurationSet。}
+     *   {@.en Active ConfigurationSset}
      *
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no response though SDO exists.}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal error occurred}
      */
     public ConfigurationSet get_active_configuration_set() 
         throws NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.get_active_configuration_set()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.get_active_configuration_set()");
 
         if( !m_configsets.isActive() ) throw new NotAvailable();
         
@@ -645,22 +773,35 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] ConfigurationSet を追加します。<br />
+     * {@.ja [CORBA interface] ConfigurationSet を追加する。}
+     * {@.en [CORBA interface] Adds ConfigurationSet.}
+     * <p>
+     * {@.ja ConfigurationProfileにConfigurationSetを追加するオペレーション。}
+     * {@.en Adds ConfigurationSet to ConfigurationProfile.}
+     * 
+     * @param configuration_set 
+     *   {@.ja 追加される ConfigurationSet。}
+     *   {@.en ConfgurataionSet}
+     * @return 
+     *   {@.ja オペレーションが成功したかどうか。}
+     *   {@.en True is returned when succeeding.}
      *
-     * ConfigurationProfile に ConfigurationSet を追加するオペレーション。</p>
-     *
-     * @param configuration_set 追加される ConfigurationSet。
-     * @return オペレーションが成功したかどうか。
-     *
-     * @exception InvalidParameter 引数 "configuration_set" が null である、
-     *            もしくは、引数で指定された ConfigurationSet が存在しない。
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception InvalidParameter 
+     *   {@.ja 引数 "configuration_set" が null である、
+     *            もしくは、引数で指定された ConfigurationSet が存在しない。}
+     *   {@.en Argument "configurations_set" is null.
+     *         ConfigurationSet specified by the argument dose not exist}
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no rsponse though SDO exists}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal error occurred}
      */
     public boolean add_configuration_set(ConfigurationSet configuration_set)
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl::add_configuration_set()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl::add_configuration_set()");
 
         try{
             synchronized (m_configsets) {
@@ -687,22 +828,35 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] ConfigurationSet を削除します。<br />
+     * {@.ja [CORBA interface] ConfigurationSet を削除する。}
+     * {@.en [CROBA interface] Deletes ConfigurationSet}
+     * <p>
+     * {@.ja ConfigurationProfile から ConfigurationSet を削除する。}
      *
-     * ConfigurationProfile から ConfigurationSet を削除します。</p>
+     * @param config_id 
+     *   {@.ja 削除する ConfigurationSet の id。}
+     *   {@.en "id" of ConfigurationSet}
+     * @return 
+     *   {@.ja オペレーションが成功したかどうか。}
+     *   {@.en True is returned when succeeding.}
      *
-     * @param config_id 削除する ConfigurationSet の id。
-     * @return オペレーションが成功したかどうか。
+     * @exception InvalidParameter 
+     *   {@.ja 引数 "configurationSetID" が null である、
+     *            もしくは、引数で指定された ConfigurationSet が存在しない。}
+     *   {@.en Argument "configurationSetID" is null.
+     *         ConfigurationSet specified by the argument doesn't exist.}
      *
-     * @exception InvalidParameter 引数 "configurationSetID" が null である、
-     *            もしくは、引数で指定された ConfigurationSet が存在しない。
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no response though SDO exists}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal error occurred}
      */
     public boolean remove_configuration_set(String config_id)
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.remove_configuration_set("+config_id+")");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.remove_configuration_set("+config_id+")");
 
         if( config_id==null || config_id.equals(""))
             throw new InvalidParameter("ID is empty.");
@@ -723,28 +877,42 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>[CORBA interface] ConfigurationSet をアクティブ化します。<br />
-     *
-     * ConfigurationProfile に格納された ConfigurationSet のうち一つを
-     * アクティブにします。
-     * このオペレーションは特定の ConfigurationSet をアクティブにします。
+     * {@.ja [CORBA interface] ConfigurationSet をアクティブ化する。}
+     * {@.en [CORBA interface] Activate ConfigurationSet}
+     * <p>
+     * {@.ja ConfigurationProfile に格納された ConfigurationSet のうち一つを
+     * アクティブにする。
+     * このオペレーションは特定の ConfigurationSet をアクティブにする。
      * すなわち、SDO のコンフィギュレーション・プロパティがその格納されている
-     * ConfigurationSet により設定されるプロパティの値に変更されます。
+     * ConfigurationSet により設定されるプロパティの値に変更される。
      * 指定された ConfigurationSet の値がアクティブ・コンフィギュレーション
-     * にコピーされるということを意味します。</p>
+     * にコピーされるということを意味する。}
+     * {@.en the configuration property of SDO is changed to the value of the 
+     * value of the property that is set by ConfigurationSet.}
      *
-     * @param config_id アクティブ化する ConfigurationSet の id。
-     * @return オペレーションが成功したかどうか。
+     * @param config_id 
+     *   {@.ja アクティブ化する ConfigurationSet の id。}
+     *   {@.en "id" of ConfigurationSet}
+     * @return 
+     *   {@.ja オペレーションが成功したかどうか。}
+     *   {@.en True is returned when succeeding.}
      *
-     * @exception InvalidParameter 引数 "config_id" が null である、もしくは
-     *            引数で指定された ConfigurationSet が存在しない。
-     * @exception NotAvailable SDOは存在するが応答がない。
-     * @exception InternalError 内部的エラーが発生した。
+     * @exception InvalidParameter 
+     *   {@.ja 引数 "config_id" が null である、もしくは
+     *            引数で指定された ConfigurationSet が存在しない。}
+     *   {@.en Argument "config_id" is nill.
+     *         ConfigurationSet specified by the argument doesn't exist.}
+     * @exception NotAvailable 
+     *   {@.ja SDOは存在するが応答がない。}
+     *   {@.en There is no response though SDO exists}
+     * @exception InternalError 
+     *   {@.ja 内部的エラーが発生した。}
+     *   {@.en An internal error occurred}
      */
     public boolean activate_configuration_set(String config_id)
             throws InvalidParameter, NotAvailable, InternalError {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.activate_configuration_set("+config_id+")");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.activate_configuration_set("+config_id+")");
 
         if( config_id==null || config_id.equals(""))
             throw new InvalidParameter("ID is empty.");
@@ -758,51 +926,69 @@ public class Configuration_impl extends ConfigurationPOA {
     }
 
     /**
-     * <p>オブジェクト参照を取得します。</p>
+     * {@.ja オブジェクト参照を取得する。}
+     * {@.en Gets the object reference}
      *
-     * @return オブジェクト参照
+     * @return 
+     *   {@.ja オブジェクト参照}
+     *   {@.en Ojbect reference}
      */
     public Configuration getObjRef() {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.getObjRef()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.getObjRef()");
 
         return m_objref;
     }
 
     /**
-     * <p>[CORBA interface] SDO の DeviceProfile を取得します。</p>
+     * {@.ja [CORBA interface] SDO の DeviceProfile を取得する。}
+     * {@.en [CORBA interface] Gets DeviceProfie of SDO} 
      *
-     * @return SDOのDeviceProfile。
+     * @return 
+     *   {@.ja SDOのDeviceProfile。}
+     *   {@.en DeviceProfile of SDO}
      */
     public final DeviceProfile getDeviceProfile() {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.getDeviceProfile()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.getDeviceProfile()");
 
       return m_deviceProfile;
     }
 
     /**
-     * <p>[CORBA interface] SDO の 全DeviceProfile を取得します。</p>
+     * {@.ja [CORBA interface] SDO の 全DeviceProfile を取得する。}
+     * {@.en [CORBA interface] Gets all DeviceProfiles of SDO}
      *
-     * @return SDOのDeviceProfile。
+     * @return 
+     *   {@.ja SDOのDeviceProfile。}
+     *   {@.en DeviceProfile of SDO}
      */
     public final ServiceProfileListHolder getServiceProfiles() {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.getServiceProfiles()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.getServiceProfiles()");
 
       return m_serviceProfiles;
     }
 
     /**
-     * <p>[CORBA interface] SDO の ServiceProfile を取得します。
-     *   指定したIDのServiceProfileが存在しない場合は，空のServiceProfileを返します。</p>
+     * {@.ja [CORBA interface] SDO の ServiceProfile を取得する。}
+     * {@.en [CORBA itnerface] Gets SeviceProfile of SDO}
+     * <p>
+     * {@.ja  指定したIDのServiceProfileが存在しない場合は，
+     * 空のServiceProfileを返す。}
+     * {@.en When SeiviceProfile specified by ID dose not exist,
+     * Empty ServicePorfile is returned} 
      *
-     * @param id 取得対象 ServiceProfile の id
-     * @return SDOのServiceProfile
+     * @param id 
+     *   {@.ja 取得対象 ServiceProfile の id}
+     *   {@.en "id" of ServiceProfile}
+     * @return 
+     *   {@.ja SDOのServiceProfile}
+     *   {@.en ServiceProfile of SDO}
      */
     public final ServiceProfile getServiceProfile(final String id) {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.getServiceProfile("+id+")");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.getServiceProfile("+id+")");
 
         if( m_serviceProfiles==null || m_serviceProfiles.value==null ) return null;
         for(int index=0; index<m_serviceProfiles.value.length; index++ ) {
@@ -814,43 +1000,53 @@ public class Configuration_impl extends ConfigurationPOA {
     }
     
     /**
-     * <p>[CORBA interface] 設定された全Organizationを取得します。</p>
+     * {@.ja [CORBA interface] 設定された全Organizationを取得する。}
+     * {@.en [CORBA interface] Gets all Organization set}
      *
-     * @return Organizationリスト
+     * @return 
+     *   {@.ja Organizationリスト}
+     *   {@.en List of Organization}
      */
     public final OrganizationListHolder getOrganizations() {
 
-        rtcout.println(rtcout.TRACE, "Configuration_impl.getOrganizations()");
+        rtcout.println(Logbuf.TRACE, "Configuration_impl.getOrganizations()");
 
       return m_organizations;
     }
     /**
-     * <p>オブジェクト参照</p>
+     * {@.ja オブジェクト参照}
+     * {@.en Object reference}
      */
     protected Configuration m_objref;
     /**
-     * <p>DeviceProfile</p>
+     * {@.ja DeviceProfile}
+     * {@.en DeviceProfile}
      */
     protected DeviceProfile m_deviceProfile = new DeviceProfile();
     /**
-     * <p>ServiceProfile リスト</p>
+     * {@.ja ServiceProfile リスト}
+     * {@.en List of ServiceProfile}
      */
     protected ServiceProfileListHolder m_serviceProfiles;
     /**
-     * <p>Parameter リスト</p>
+     * {@.ja Parameter リスト}
+     * {@.en List of  Parameter}
      */
     protected ParameterListHolder m_parameters;
     /**
-     * <p>コンフィギュレーションセット情報</p>
+     * {@.ja コンフィギュレーションセット情報}
+     * {@.en Information of configuration set}
      */
     protected ConfigAdmin m_configsets;
     protected Map<String, Properties> m_configsetopts = new HashMap<String, Properties>();
     /**
-     * <p>Organization リスト</p>
+     * {@.ja Organization リスト}
+     * {@.en List of Organization}
      */
     protected OrganizationListHolder m_organizations;
     /**
-     * <p>Logging用フォーマットオブジェクト</p>
+     * {@.ja Logging用フォーマットオブジェクト}
+     * {@.en Ojbect format for Logging}
      */
     protected Logbuf rtcout;
 }

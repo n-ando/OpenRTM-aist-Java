@@ -1,24 +1,58 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
-
 import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.buffer.RingBuffer;
-import jp.go.aist.rtm.RTC.port.ReturnCode;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
 
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
+
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
+
 /**
- * <p> InPortPullConnector </p>
- * <p> InPortPullConnector base class </p>
+ * {@.ja InPortPullConnector クラス}
+ * {@.en InPortPullConnector class}
+ * <p>
+ * {@.ja InPort の pull 型データフローのための Connector クラス。このオブ
+ * ジェクトは、接続時に dataflow_type に pull が指定された場合、
+ * InPort によって生成・所有され、OutPortPullConnector と対になって、
+ * データポートの pull 型のデータフローを実現する。一つの接続に対して、
+ * 一つのデータストリームを提供する唯一の Connector が対応する。
+ * Connector は 接続時に生成される UUID 形式の ID により区別される。
  *
- * <p> A connector class for pull type dataflow of InPort </p>
+ * InPortPullConnector は以下の三つのオブジェクトを所有し管理する。
+ * <ul>
+ * <li>- InPortConsumer
+ * <li>- Buffer
+ * </ul>
+ * OutPort に書き込まれたデータは OutPortPullConnector::write() に渡
+ * され Buffer に書き込まれる。InPort::read(),
+ * InPortPullConnector::read() は結果として、OutPortConsumer::get()
+ * を呼び出し、OutPortPullConnector の持つバッファからデータを読み出
+ * し、InPortPullConnector のもつバッファにデータを書き込む。}
+ * {@.en Connector class of InPort for pull type dataflow. When "pull" is
+ * specified as dataflow_type at the time of establishing
+ * connection, this object is generated and owned by the InPort.
+ * This connector and InPortPullConnector make a pair and realize
+ * pull type dataflow of data ports. One connector corresponds to
+ * one connection which provides a data stream. Connector is
+ * distinguished by ID of the UUID that is generated at establishing
+ * connection.
  *
- * @since 1.0.0
+ * InPortPullConnector owns and manages the following objects.
+ * <ul>
+ * <li>- InPortConsumer
+ * <li>- Buffer
+ * </ul>
+ * Data written into the OutPort is passed to the
+ * OutPortPullConnector::write(), and is written into the buffer.
+ * Consequently, InPort::read() and InPortPullConnector::read() call
+ * OutPortConsumer::get(), and it reads data from the buffer of
+ * OutPortPullConnector.  Finally data would be written into the
+ * InPortPullConnector's buffer.}
+ *
  *
  */
 public class InPortPullConnector extends InPortConnector {
@@ -83,13 +117,32 @@ public class InPortPullConnector extends InPortConnector {
         onConnect();
     }
     /**
-     * <p> Destructor </p>
+     * {@.ja read 関数}
+     * {@.en Reading data}
+     * <p>
+     * {@.ja OutPortConsumer からデータを取得する。正常に読み出せた場合、戻り
+     * 値は PORT_OK となり、data に読み出されたデータが格納される。それ
+     * 以外の場合には、エラー値として BUFFER_EMPTY, TIMEOUT,
+     * PRECONDITION_NOT_MET, PORT_ERROR が返される。}
+     * {@.en This function get data from OutPortConsumer.  If data is read
+     * properly, this function will return PORT_OK return code. Except
+     * normal return, BUFFER_EMPTY, TIMEOUT, PRECONDITION_NOT_MET and
+     * PORT_ERROR will be returned as error codes.}
      *
-     * <p> The read function to read data from buffer to InPort </p>
-     *
+     * @return 
+     *   {@.ja PORT_OK              正常終了
+     *         BUFFER_EMPTY         バッファは空である
+     *         TIMEOUT              タイムアウトした
+     *         PRECONDITION_NOT_MET 事前条件を満たさない
+     *         PORT_ERROR           その他のエラー}
+     *   {@.en PORT_OK              Normal return
+     *         BUFFER_EMPTY         Buffer empty
+     *         TIMEOUT              Timeout
+     *         PRECONDITION_NOT_MET Preconditin not met
+     *         PORT_ERROR           Other error}
      */
     public ReturnCode read(DataRef<InputStream> data){
-        rtcout.println(rtcout.TRACE, "InPortPullConnector.read()");
+        rtcout.println(Logbuf.TRACE, "InPortPullConnector.read()");
         if (m_consumer == null) {
             return ReturnCode.PORT_ERROR;
         }
@@ -110,11 +163,11 @@ public class InPortPullConnector extends InPortConnector {
      * </p>
      */
     public ReturnCode disconnect() {
-        rtcout.println(rtcout.TRACE, "disconnect()");
+        rtcout.println(Logbuf.TRACE, "disconnect()");
         onDisconnect();
         // delete consumer
         if (m_consumer != null) {
-            rtcout.println(rtcout.DEBUG, "delete consumer");
+            rtcout.println(Logbuf.DEBUG, "delete consumer");
             OutPortConsumerFactory<OutPortConsumer,String> cfactory 
                 = OutPortConsumerFactory.instance();
             cfactory.deleteObject(m_consumer);
@@ -124,21 +177,37 @@ public class InPortPullConnector extends InPortConnector {
     }
 
     /**
-     *
-     * <p> Connector activation </p>
-     * <p> This operation activates this connector </p>
+     * {@.ja アクティブ化}
+     * {@.en Connector activation}
+     * <p>
+     * {@.ja このコネクタをアクティブ化する}
+     * {@.en This operation activates this connector}
      *
      */
     public void activate(){}; // do nothing
 
     /**
-     * <p> Connector deactivation </p>
-     * <p> This operation deactivates this connector </p>
+     * {@.ja 非アクティブ化}
+     * {@.en Connector deactivation}
+     * <p>
+     * {@.ja このコネクタを非アクティブ化する}
+     * {@.en This operation deactivates this connector}
      */
     public void deactivate(){}; // do nothing
 
     /**
-     * <p> create buffer </p>
+     * {@.ja Bufferの生成}
+     * {@.en create buffer}
+     * <p>
+     * {@.ja 与えられた接続情報に基づきバッファを生成する。}
+     * {@.en This function creates a buffer based on given information.}
+     *
+     * @param profile 
+     *   {@.ja 接続情報}
+     *   {@.en Connector information}
+     * @return 
+     *   {@.ja バッファへのポインタ}
+     *   {@.en The poitner to the buffer}
      */
     protected BufferBase<OutputStream> createBuffer(ConnectorInfo profile) {
         String buf_type;
@@ -150,7 +219,8 @@ public class InPortPullConnector extends InPortConnector {
     }
     
     /**
-     * <p> Invoke callback when connection is established </p>
+     * {@.ja 接続確立時にコールバックを呼ぶ}
+     * {@.en Invoke callback when connection is established}
      */
     protected void onConnect() {
         m_listeners.connector_[ConnectorListenerType.ON_CONNECT].notify(m_profile);
@@ -165,6 +235,31 @@ public class InPortPullConnector extends InPortConnector {
                                                                     m_profile);
     }
 
+    /**
+     * {@.ja リスナを設定する。}
+     * {@.en Set the listener.}
+     * 
+     * <p>
+     * {@.ja InPort はデータ送信処理における各種イベントに対して特定のリスナ
+     * オブジェクトをコールするコールバック機構を提供する。詳細は
+     * ConnectorListener.h の ConnectorDataListener, ConnectorListener
+     * 等を参照のこと。InPortCorbaCdrProvider では、以下のコールバック
+     * が提供される。}
+     * {@.en InPort provides callback functionality that calls specific
+     * listener objects according to the events in the data publishing
+     * process. For details, see documentation of
+     * ConnectorDataListener class and ConnectorListener class in
+     * ConnectorListener.h. In this InPortCorbaCdrProvider provides
+     * the following callbacks.}
+     * 
+     *
+     * @param profile 
+     *   {@.ja 接続情報}
+     *   {@.en Connector information}
+     * @param listeners 
+     *   {@.ja リスナオブジェクト}
+     *   {@.en Listener objects}
+     */
     public void setListener(ConnectorInfo profile, 
                             ConnectorListeners listeners){
     }

@@ -1,31 +1,27 @@
 package jp.go.aist.rtm.RTC.port;
 
-import java.util.Observer;
-import java.util.Observable;
-
 import java.lang.reflect.Field;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.omg.CORBA.portable.Streamable;
-import org.omg.CORBA.portable.OutputStream;
-
-import jp.go.aist.rtm.RTC.port.ConnectorBase;
-import jp.go.aist.rtm.RTC.util.DataRef;
 
   /**
-   * <p> ConnectorDataListenerT class </p>
+   * {@.ja ConnectorDataListenerTクラス}
+   * {@.en ConnectorDataListenerT class}
    *
-   * <p>This class is abstract base class for listener classes that
+   * <p>
+   * {@.ja データポートの Connector において発生する各種イベントに対するコー
+   *       ルバックを実現するリスナクラスの基底クラス。}
+   * {@.en This class is abstract base class for listener classes that
    * provides callbacks for various events in the data port's
-   * connectors.<p>
-   *
-   * This class template can have practical data types that are used
-   * as typed variable for DataPort as an argument of template instead
-   * of cdrMemoryStream.
+   * connectors.}
    *
    */
 public abstract class ConnectorDataListenerT<DataType> implements Observer{
     /**
-     * <p> Constructor </p>
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
      *
      */
     public ConnectorDataListenerT(Class<DataType> cl) {
@@ -62,8 +58,20 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
         }
     }
     /**
-     * <p>   </p> 
-     * 
+     * {@.ja コールバックメソッド}
+     * {@.en  Callback method}
+     * <p>
+     * {@.ja データをデータポートで使用される変数型に変換して 
+     * ConnectorDataListenerTのコールバックメソッドを呼び出す。}
+     * {@.en This method invokes the callback method of ConnectorDataListenerT. 
+     * Data is converted into the variable type used in DataPort.}
+     *
+     * @param o 
+     *   {@.ja Observable}
+     *   {@.en Observable}
+     * @param obj
+     *   {@.ja Object}
+     *   {@.en Object}
      */
     public void update(Observable o, Object obj) {
         ConnectorDataListenerArgument arg
@@ -83,7 +91,20 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
         operator(arg.m_info,m_datatype);
     }
     /**
-     * <p>   </p> 
+     * {@.ja 抽象コールバックメソッド}
+     * {@.en Abstract Callback method}
+     * <p>
+     * {@.ja データポートの Connector において発生する各種イベントに対するコー
+     * ルバックメソッド}
+     * {@.en This method invokes the callback method of ConnectorDataListenerT. 
+     * Data is converted into the variable type used in DataPort.}
+     *
+     * @param info 
+     *   {@.ja ConnectorInfo}
+     *   {@.en ConnectorInfo}
+     * @param data 
+     *   {@.ja データ}
+     *   {@.en Data}
      *
      */
     public abstract void operator(final ConnectorBase.ConnectorInfo info, 

@@ -3,14 +3,18 @@ package jp.go.aist.rtm.RTC;
 import jp.go.aist.rtm.RTC.util.Properties;
 
 /**
- * <p>コンポーネントファクトリのベースクラスです。</p>
+ * {@.ja コンポーネントファクトリのベースクラスです。}
+ * {@.en This is a base class for RT-Component factory.}
  */
 public abstract class FactoryBase {
 
     /**
-     * <p>コンストラクタです。</p>
-     * 
-     * @param profile コンポーネントのプロファイル
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     * @param profile 
+     *   {@.ja コンポーネントのプロファイル}
+     *   {@.en Component profile}
      */
     public FactoryBase(final Properties profile) {
         m_Profile = new Properties(profile);
@@ -18,44 +22,77 @@ public abstract class FactoryBase {
     }
 
     /**
-     * <p>コンポーネントを生成します。</p>
-     * 
-     * @param mgr Managerオブジェクト
-     * @return 生成されたコンポーネントのオブジェクト
+     * {@.ja コンポーネントの生成}
+     * {@.en Create components}
+     *
+     * <p>
+     * {@.ja RT-Component のインスタンスを生成するための純粋仮想関数。}
+     * {@.en Pure virtual function to create RT-Component's instances}
+     *
+     * @param mgr 
+     *   {@.ja マネージャオブジェクト}
+     *   {@.en Manager object}
+     *
+     * @return 
+     *   {@.ja 生成したコンポーネント}
+     *   {@.en Created RT-Components}
      */
     public abstract RTObject_impl create(Manager mgr);
 
     /**
-     * <p>コンポーネントを破棄します。</p>
-     * 
-     * @param comp 破棄対象コンポーネントのインスタンス
+     * {@.ja コンポーネントの破棄}
+     * {@.en Destroy components}
+     *
+     * <p>
+     * {@.ja RT-Component のインスタンスを破棄するための純粋仮想関数。}
+     * {@.en Pure virtual function to destroy RT-Component's instances}
+     *
+     * @param comp 
+     *   {@.ja 破棄対象 RTコンポーネント}
+     *   {@.en The target RT-Component for destruction}
      */
     public abstract RTObject_impl destroy(RTObject_impl comp);
 
     /**
-     * <p>コンポーネントのプロファイルを取得します。</p>
-     * 
-     * @return コンポーネントのプロファイル
+     * {@.ja コンポーネントプロファイルの取得}
+     * {@.en Get the component profile}
+     *
+     * <p>
+     * {@.ja コンポーネントのプロファイルを取得する}
+     * {@.en Get the component profile.}
+     *
+     * @return 
+     *   {@.ja コンポーネントのプロファイル}
+     *   {@.en The component profile}
      */
     public Properties profile() {
         return m_Profile;
     }
     
     /**
-     * <p>コンポーネントの現在のインスタンス数を取得します。</p>
-     * 
-     * @return 現在のインスタンス数
+     * {@.ja 現在のインスタンス数の取得}
+     * {@.en Get the number of current instances}
+     *
+     * <p>
+     * {@.ja コンポーネントの現在のインスタンス数を取得する。}
+     * {@.en Get the number of current RT-Component's instances.}
+     *
+     * @return 
+     *   {@.ja コンポーネントのインスタンス数}
+     *   {@.en Number of RT-Component's instances}
      */
     public int number() {
         return m_Number;
     }
     
     /**
-     * <p>コンポーネントプロファイル</p>
+     * {@.ja コンポーネントのプロファイル}
+     * {@.en Component profile}
      */
     protected Properties m_Profile = new Properties();
     /**
-     * <p>コンポーネントの現在のインスタンス数</p>
+     * {@.ja コンポーネントの現在のインスタンス数}
+     * {@.en Number of current RT-Component's instances.}
      */
     protected int m_Number;
 }

@@ -1,15 +1,13 @@
 package jp.go.aist.rtm.RTC.port;
 
+import jp.go.aist.rtm.RTC.BufferFactory;
+import jp.go.aist.rtm.RTC.InPortProviderFactory;
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.DataRef;
+
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
-
-import jp.go.aist.rtm.RTC.InPortProviderFactory;
-import jp.go.aist.rtm.RTC.BufferFactory;
-import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.buffer.RingBuffer;
-import jp.go.aist.rtm.RTC.port.ReturnCode;
-import jp.go.aist.rtm.RTC.util.DataRef;
-import jp.go.aist.rtm.RTC.log.Logbuf;
 
 public class InPortPushConnector extends InPortConnector {
     /**
@@ -70,10 +68,10 @@ public class InPortPushConnector extends InPortConnector {
         }
         if (m_buffer == null || m_provider==null) {
             if(m_buffer == null){
-                rtcout.println(rtcout.PARANOID, "    m_buffer is null.");
+                rtcout.println(Logbuf.PARANOID, "    m_buffer is null.");
             }
             if(m_provider == null){
-                rtcout.println(rtcout.PARANOID, "    m_provider is null.");
+                rtcout.println(Logbuf.PARANOID, "    m_provider is null.");
             }
 
             throw new Exception("bad_alloc()");
@@ -121,7 +119,7 @@ public class InPortPushConnector extends InPortConnector {
      *
      */
     public ReturnCode read(DataRef<InputStream> data) {
-        rtcout.println(rtcout.TRACE, "read()");
+        rtcout.println(Logbuf.TRACE, "read()");
         /*
          * buffer returns
          *   BUFFER_OK
@@ -152,7 +150,7 @@ public class InPortPushConnector extends InPortConnector {
      * and the buffer.}
      */
     public ReturnCode disconnect() {
-        rtcout.println(rtcout.TRACE, "disconnect()");
+        rtcout.println(Logbuf.TRACE, "disconnect()");
         onDisconnect();
         // delete provider 
         if (m_provider != null) {
@@ -173,19 +171,36 @@ public class InPortPushConnector extends InPortConnector {
     }
 
     /**
-     * <p> Connector activation </p>
-     * <p> This operation activates this connector </p>
+     * {@.ja アクティブ化}
+     * {@.en Connector activation}
+     * <p>
+     * {@.ja このコネクタをアクティブ化する}
+     * {@.en This operation activates this connector}
      */
     public  void activate(){}; // do nothing
 
     /**
-     * <p> Connector activation </p>
-     * <p> This operation activates this connector </p>
+     * {@.ja 非アクティブ化}
+     * {@.en Connector deactivation}
+     * <p>
+     * {@.ja このコネクタを非アクティブ化する}
+     * {@.en This operation deactivates this connector}
      */
     public void deactivate(){}; // do nothing
 
     /**
-     * <p> create buffer </p>
+     * {@.ja Bufferの生成}
+     * {@.en create buffer}
+     * <p>
+     * {@.ja 与えられた接続情報に基づきバッファを生成する。}
+     * {@.en This function creates a buffer based on given information.}
+     *
+     * @param profile 
+     *   {@.ja 接続情報}
+     *   {@.en Connector information}
+     * @return 
+     *   {@.ja バッファへのポインタ}
+     *   {@.en The poitner to the buffer}
      */
     protected BufferBase<OutputStream> createBuffer(ConnectorInfo profile) {
         String buf_type;
@@ -197,7 +212,8 @@ public class InPortPushConnector extends InPortConnector {
     }
 
     /**
-     * <p> Invoke callback when connection is established </p>
+     * {@.ja 接続確立時にコールバックを呼ぶ}
+     * {@.en Invoke callback when connection is established}
      */
     protected void onConnect() {
         m_listeners.connector_[ConnectorListenerType.ON_CONNECT].notify(m_profile);
@@ -213,8 +229,15 @@ public class InPortPushConnector extends InPortConnector {
     }
 
     /**
-     * <p> convertReturn </p>
-     *
+     * {@.ja buffer.ReturnCodeをport.ReturnCodeに変換する。}
+     * {@.en Converts buffer.ReturnCode into port.ReturnCode.}
+     * 
+     * @param status
+     *   {@.ja jp.go.aist.rtm.RTC.buffer.ReturnCode}
+     *   {@.en jp.go.aist.rtm.RTC.buffer.ReturnCode}
+     * @return
+     *   {@.ja jp.go.aist.rtm.RTC.port.ReturnCode}
+     *   {@.en jp.go.aist.rtm.RTC.port.ReturnCode}
      */
     protected ReturnCode convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status) {
         switch (status) {

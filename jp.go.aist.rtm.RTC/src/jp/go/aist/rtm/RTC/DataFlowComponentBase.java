@@ -5,15 +5,24 @@ import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
 
 /**
- * <p>データフローコンポーネントのベースクラスです。
- * データフローコンポーネントを実装する際には、本クラスのサブクラスとして実装します。</p>
+ * {@.ja データフローコンポーネントのベースクラスです。}
+ * {@.en This is a base class of the data flow type RT-Component.}
+ * <p>
+ * {@.ja データフロー型RTComponentの基底クラス。
+ * データフローコンポーネントを実装する際には、
+ * 本クラスのサブクラスとして実装します。}
+ * {@.en Inherit this class when implementing various data flow 
+ * type RT-Components.}
  */
 public class DataFlowComponentBase extends RTObject_impl {
 
     /**
-     * <p>コンストラクタです。</p>
-     * 
-     * @param manager マネージャオブジェクト
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     * @param manager 
+     *   {@.ja マネージャオブジェクト}
+     *   {@.en Manager object}
      */
     public DataFlowComponentBase(Manager manager) {
         
@@ -23,9 +32,10 @@ public class DataFlowComponentBase extends RTObject_impl {
     }
     
     /**
-     * <p>当該オブジェクトのCORBAオブジェクト参照を取得します。</p>
+     * {@.ja 当該オブジェクトのCORBAオブジェクト参照を取得します。}
      *
-     * @return 当該オブジェクトのCORBAオブジェクト参照
+     * @return 
+     *   {@.ja 当該オブジェクトのCORBAオブジェクト参照}
      */
     public DataFlowComponent _this() {
         
@@ -41,7 +51,15 @@ public class DataFlowComponentBase extends RTObject_impl {
     }
     
     /**
-     * <p>初期化を行います。</p>
+     * {@.ja 初期化。}
+     * {@.en Initialization}
+     *
+     * <p>
+     * {@.ja データフロー型 RTComponent の初期化を実行する。
+     * 実際の初期化処理は、各具象クラス内に記述する。}
+     * {@.en Initialization the data flow type RT-Component.
+     * Write the actual initialization code in each concrete class.}
+     *
      */
     public void init(){
     }

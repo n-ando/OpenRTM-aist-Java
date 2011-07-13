@@ -1,25 +1,20 @@
 package jp.go.aist.rtm.RTC.port;
 
-import org.omg.CORBA.portable.Streamable;
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-
-import java.io.IOException;
 import java.lang.reflect.Field;
 
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
-
-import jp.go.aist.rtm.RTC.PublisherBaseFactory;
-import jp.go.aist.rtm.RTC.InPortConsumerFactory;
 import jp.go.aist.rtm.RTC.BufferFactory;
+import jp.go.aist.rtm.RTC.InPortConsumerFactory;
+import jp.go.aist.rtm.RTC.PublisherBaseFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
-import jp.go.aist.rtm.RTC.port.publisher.PublisherFactory;
-import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.StringUtil;
+
+import org.omg.CORBA.portable.OutputStream;
+import org.omg.CORBA.portable.Streamable;
+
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 public class OutPortPushConnector extends OutPortConnector {
     /**
@@ -74,6 +69,39 @@ public class OutPortPushConnector extends OutPortConnector {
         } 
     }
 
+    /**
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     *
+     * <p>
+     * {@.ja OutPortPushConnector のコンストラクタはオブジェクト生成時に下記
+     * を引数にとる。ConnectorInfo は接続情報を含み、この情報に従いパブ
+     * リッシャやバッファ等を生成する。InPort インターフェースに対する
+     * コンシューマオブジェクトへのポインタを取り、所有権を持つので、
+     * OutPortPushConnector は InPortConsumer の解体責任を持つ。各種イ
+     * ベントに対するコールバック機構を提供する ConnectorListeners を持
+     * ち、適切なタイミングでコールバックを呼び出す。}
+     * {@.en OutPortPushConnector's constructor is given the following
+     * arguments.  According to ConnectorInfo which includes
+     * connection information, a publisher and a buffer are created.
+     * It is also given a pointer to the consumer object for the
+     * InPort interface.  The owner-ship of the pointer is owned by
+     * this OutPortPushConnector, it has responsibility to destruct
+     * the InPortConsumer.  OutPortPushConnector also has
+     * ConnectorListeners to provide event callback mechanisms, and
+     * they would be called at the proper timing. }
+     * </p>
+     *
+     * @param profile 
+     *   {@.ja ConnectorInfo}
+     *   {@.en ConnectorInfo}
+     * @param consumer 
+     *   {@.ja InPortConsumer}
+     *   {@.en InPortConsumer}
+     * @param listeners 
+     *   {@.ja ConnectorListeners 型のリスナオブジェクトリスト}
+     *   {@.en ConnectorListeners type lsitener object list}
+     */
     public OutPortPushConnector(ConnectorInfo profile,
                          ConnectorListeners listeners,
                          InPortConsumer consumer )  throws Exception {
@@ -103,13 +131,13 @@ public class OutPortPushConnector extends OutPortConnector {
         }
         if (m_publisher == null || m_buffer == null || m_consumer == null) { 
             if (m_publisher == null) { 
-                rtcout.println(rtcout.PARANOID, "m_publisher is null");
+                rtcout.println(Logbuf.PARANOID, "m_publisher is null");
             }
             if (m_buffer == null) { 
-                rtcout.println(rtcout.PARANOID, "m_buffer is null");
+                rtcout.println(Logbuf.PARANOID, "m_buffer is null");
             }
             if (m_consumer == null) { 
-                rtcout.println(rtcout.PARANOID, "m_consumer is null");
+                rtcout.println(Logbuf.PARANOID, "m_consumer is null");
             }
             throw new Exception("bad_alloc()");
         }
@@ -131,17 +159,44 @@ public class OutPortPushConnector extends OutPortConnector {
 
     }
     /**
-     * <p> Writing data </p>
+     * {@.ja データの書き込み}
+     * {@.en Writing data}
      *
-     * <p> This operation writes data into publisher and then the data 
-     * will be transferred to correspondent InPort. </p>
+     * <p> 
+     * {@.ja Publisherに対してデータを書き込み、これにより対応するInPortへデー
+     * タが転送される。正常終了した場合 PORT_OK が返される。それ以外の
+     * 場合、エラー値として、CONNECTION_LOST, BUFFER_FULL,
+     * BUFFER_ERROR, PORT_ERROR, BUFFER_TIMEOUT, PRECONDITION_NO_MET が
+     * 返される。}
+     * {@.en This operation writes data into publisher and then the data
+     * will be transferred to correspondent InPort. If data is written
+     * properly, this function will return PORT_OK return code. Except
+     * normal return, CONNECTION_LOST, BUFFER_FULL, BUFFER_ERROR,
+     * PORT_ERROR, BUFFER_TIMEOUT and PRECONDITION_NO_MET will be
+     * returned as error codes.}
      *
      * @param data
+     *   {@.ja データ}
+     *   {@.en Data}
      * @return ReturnCode
+     *   {@.ja PORT_OK              正常終了
+     *         CONNECTION_LOST      接続がロストした
+     *         BUFFER_FULL          バッファが一杯である
+     *         BUFFER_ERROR         バッファエラー
+     *         BUFFER_TIMEOUT       バッファへの書き込みがタイムアウトした
+     *         PRECONDITION_NOT_MET 事前条件を満たさない
+     *         PORT_ERROR           その他のエラー}
+     *   {@.en PORT_OK              Normal return
+     *         CONNECTION_LOST      Connectin lost
+     *         BUFFER_FULL          Buffer full
+     *         BUFFER_ERROR         Buffer error
+     *         BUFFER_TIMEOUT       Timeout
+     *         PRECONDITION_NOT_MET Precondition not met
+     *         PORT_ERROR           Other error}
      *
      */
     public <DataType> ReturnCode write(final DataType data) {
-        rtcout.println(rtcout.TRACE, "write()");
+        rtcout.println(Logbuf.TRACE, "write()");
         OutPort out = (OutPort)m_outport;
         OutputStream cdr 
             = new EncapsOutputStream(m_spi_orb,m_isLittleEndian);
@@ -159,11 +214,11 @@ public class OutPortPushConnector extends OutPortConnector {
      * and the buffer.}
      */
     public ReturnCode disconnect() {
-        rtcout.println(rtcout.TRACE, "disconnect()");
+        rtcout.println(Logbuf.TRACE, "disconnect()");
         onDisconnect();
         // delete publisher
         if (m_publisher != null) {
-            rtcout.println(rtcout.DEBUG, "delete publisher");
+            rtcout.println(Logbuf.DEBUG, "delete publisher");
             PublisherBaseFactory<PublisherBase,String> pfactory 
                 = PublisherBaseFactory.instance();
             pfactory.deleteObject(m_publisher.getName(),m_publisher);
@@ -172,7 +227,7 @@ public class OutPortPushConnector extends OutPortConnector {
     
         // delete consumer
         if (m_consumer != null) {
-            rtcout.println(rtcout.DEBUG, "delete consumer");
+            rtcout.println(Logbuf.DEBUG, "delete consumer");
             InPortConsumerFactory<InPortConsumer,String> cfactory 
                 = InPortConsumerFactory.instance();
             cfactory.deleteObject(m_consumer);
@@ -181,36 +236,52 @@ public class OutPortPushConnector extends OutPortConnector {
 
         // delete buffer
         if (m_buffer != null) {
-            rtcout.println(rtcout.DEBUG, "delete buffer");
+            rtcout.println(Logbuf.DEBUG, "delete buffer");
             BufferFactory<BufferBase<OutputStream>,String> bfactory 
                 = BufferFactory.instance();
             bfactory.deleteObject(m_buffer);
         }
         m_buffer = null;
-        rtcout.println(rtcout.TRACE, "disconnect() done");
+        rtcout.println(Logbuf.TRACE, "disconnect() done");
         return ReturnCode.PORT_OK;
     
     }
     /**
      *
-     * <p> Connector activation </p>
+     * {@.ja アクティブ化}
+     * {@.en Connector activation}
      *
-     * <p> This operation activates this connector </p>
+     * <p> 
+     * {@.ja このコネクタをアクティブ化する}
+     * {@.en This operation activates this connector}
      *
      */
     public void activate() {
         m_publisher.activate();
     }
     /**
-     * <p> Getting Buffer </p>
+     * {@.ja Buffer を取得する}
+     * {@.en Getting Buffer}
      *
-     * <p> This operation returns this connector's buffer </p>
+     * <p>
+     * {@.ja Connector が保持している Buffer を返す}
+     * {@.en This operation returns this connector's buffer}
      *
+     * @return
+     *   {@.ja Connector が保持している Buffer}
+     *   {@.en Connector's buffer}
      */
     public BufferBase<OutputStream> getBuffer() {
         return m_buffer;
     }
     /**
+     * {@.ja OutPortBaseを格納する。}
+     * {@.en Stores OutPortBase.}
+     *
+     * @param outportbase
+     *   {@.ja OutPortBase}
+     *   {@.en OutPortBase}
+     *
      */
     public void setOutPortBase(OutPortBase outportbase) {
         m_outport = outportbase;

@@ -10,18 +10,29 @@ import _SDOPackage.NameValue;
 
 
 /**
- * <p>NameValue操作用ユーティリティクラスです。</p>
+ * {@.ja NameValue操作用ユーティリティクラス}
+ * {@.en Utility for NameValue}
+ *
  */
 public class NVUtil {
 
     /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
+     * {@.ja 指定されたデータを用いてNameValueオブジェクトを作成する}
+     * {@.en Create NameValue}
      * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定する値
-     * @param klass オブジェクトに設定する値の型
+     * @param name 
+     *   {@.ja オブジェクトに設定する名称}
+     *   {@.en Name of NameValue}
+     * @param value 
+     *   {@.ja オブジェクトに設定する値}
+     *   {@.en The value of NameValue}
+     * @param klass 
+     *   {@.ja オブジェクトに設定する値の型}
+     *   {@.en ClassType}
      * 
-     * @return 作成されたNameValueオブジェクト
+     * @return 
+     *   {@.ja 作成されたNameValueオブジェクト}
+     *   {@.en NameValue}
      */
     public static <T> NameValue newNV(final String name, T value, Class<T> klass) {
         
@@ -33,12 +44,19 @@ public class NVUtil {
         return nv;
     }
     /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
+     * {@.ja 指定されたデータを用いてNameValueオブジェクトを作成する}
+     * {@.en Create NameValue typed String}
      * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定する値(String)
+     * @param name 
+     *   {@.ja オブジェクトに設定する名称}
+     *   {@.en Name of NameValue}
+     * @param value 
+     *   {@.ja オブジェクトに設定する値(String)}
+     *   {@.en The value of NameValue}
      * 
-     * @return 作成されたNameValueオブジェクト
+     * @return 
+     *   {@.ja 作成されたNameValueオブジェクト}
+     *   {@.en NameValue}
      */
     public static NameValue newNVString(final String name, String value) {
         NameValue nv = new NameValue();
@@ -50,12 +68,19 @@ public class NVUtil {
     }
     
     /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
+     * {@.ja 指定されたデータを用いてNameValueオブジェクトを作成する}
+     * {@.en Create NameValue}
      * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するString値
+     * @param name 
+     *   {@.ja オブジェクトに設定する名称}
+     *   {@.en Name of NameValue}
+     * @param value 
+     *   {@.ja オブジェクトに設定するString値}
+     *   {@.en The value of NameValue}
      * 
-     * @return 作成されたNameValueオブジェクト
+     * @return 
+     *   {@.ja 作成されたNameValueオブジェクト}
+     *   {@.en NameValue}
      */
     public static NameValue newNV(final String name, String value) {
         
@@ -63,12 +88,20 @@ public class NVUtil {
     }
     
     /**
-     * <p>指定されたデータを用いてNameValueオブジェクトを作成します。</p>
+     * {@.ja 指定されたデータを用いてNameValueオブジェクトを作成する}
+     * {@.en Create NameValue typed CORBA::Any}
      * 
-     * @param name オブジェクトに設定する名称
-     * @param value オブジェクトに設定するAny値
+     * @param name 
+     *   {@.ja オブジェクトに設定する名称}
+     *   {@.en Name of NameValue}
+     * @param value 
+     *   {@.ja オブジェクトに設定するAny値}
+     *   {@.en The value of NameValue}
+     *
      * 
-     * @return 作成されたNameValueオブジェクト
+     * @return 
+     *   {@.ja 作成されたNameValueオブジェクト}
+     *   {@.en NameValue}
      */
     public static NameValue newNVAny(final String name, final Any value) {
         
@@ -79,12 +112,21 @@ public class NVUtil {
     }
 
     /**
-     * <p>指定されたPropertiesを用いてNameValueオブジェクトリストを作成し、
-     * それを指定されたNVListHolder内にコピーします。<br />
-     * Propertiesのキーおよび値が、各NameValueの名称および値にそれぞれ割り当てられます。</p>
+     * {@.ja 指定されたPropertiesを用いてNameValueオブジェクトリストを作成し、
+     * それを指定されたNVListHolder内にコピーする}
+     * {@.en Copy the properties to NVList}
+     * <p>
+     * {@.ja Propertiesのキーおよび値が、
+     * 各NameValueの名称および値にそれぞれ割り当てらる}
+     * {@.en This operation copies the properties to NVList.
+     * All NVList's values are copied as CORBA::string.}
      * 
-     * @param nvlist 作成されたNameValueオブジェクトリストを受け取るためNVListHolder
-     * @param prop 設定元となるPropertiesオブジェクト
+     * @param nvlist 
+     *   {@.ja 作成されたNameValueオブジェクトリストを受け取るためNVListHolder}
+     *   {@.en NVList to store properties values}
+     * @param prop 
+     *   {@.ja 設定元となるPropertiesオブジェクト}
+     *   {@.en Properties that is copies from}
      */
     public static void copyFromProperties(NVListHolder nvlist, 
                                               final Properties prop) {
@@ -104,12 +146,22 @@ public class NVUtil {
     }
     
     /**
-     * <p>指定されたNVListHolderに保持されているNameValueオブジェクトリストの内容を、
-     * 指定されたPropertiesオブジェクトにコピーします。<br />
-     * 各NameValueの名称および値が、Propertiesのキーおよび値にそれぞれ割り当てられます。</p>
+     * {@.ja 指定されたNVListHolderに保持されている
+     * NameValueオブジェクトリストの内容を、指定されたPropertiesオブジェクトに
+     * コピーする}
+     * {@.en Copy NVList to the Proeprties}
+     * <p>
+     * {@.ja 各NameValueの名称および値が、
+     * Propertiesのキーおよび値にそれぞれ割り当てられる}
+     * {@.en This operation copies NVList to properties.}
      * 
-     * @param prop コピー先のPropertiesオブジェクト
-     * @param nvlist コピー元のNameValueオブジェクトリストを内包するNVListHolderオブジェクト
+     * @param prop 
+     *   {@.ja コピー先のPropertiesオブジェクト}
+     *   {@.en Properties to store NVList values}
+     * @param nvlist 
+     *   {@.ja コピー元のNameValueオブジェクトリストを
+     *   内包するNVListHolderオブジェクト}
+     *   {@.en NVList of copy source}
      */
     public static void copyToProperties(Properties prop, final NVListHolder nvlist) {
         
@@ -154,13 +206,22 @@ public class NVUtil {
     }
     
     /**
-     * <p>指定されたNVListHolderに保持されているNameValueオブジェクトリストの内容をもとに、
-     * Propertiesオブジェクトを作成します。<br />
-     * 各NameValueの名称および値が、Propertiesのキーおよび値にそれぞれ割り当てられます。</p>
+     * {@.ja 指定されたNVListHolderに保持されているNameValueオブジェクトリスト
+     * の内容をもとに、Propertiesオブジェクトを作成する}
+     * {@.en Transform NVList to the properties}
+     * <p>
+     * {@.ja 各NameValueの名称および値が、Propertiesのキーおよび値に
+     * それぞれ割り当てられる}
+     * {@.en This operation transforms NVList to properties}
      * 
-     * @param nvlist 元となるNameValueオブジェクトリストを内包するNVListHolderオブジェクト
-     * 
-     * @return 作成されたPropertiesオブジェクト
+     * @param nvlist 
+     *   {@.ja 元となるNameValueオブジェクトリストを
+     *   内包するNVListHolderオブジェクト}
+     *   {@.en NVList of tranformation source}
+     *
+     * @return 
+     *   {@.ja 作成されたPropertiesオブジェクト}
+     *   {@.en Transformation result Property}
      */
     public static Properties toProperties(final NVListHolder nvlist) {
         to_prop prop = new to_prop();
@@ -169,15 +230,31 @@ public class NVUtil {
     }
 
     /**
-     * <p>NVListHolderが内包するNameValueオブジェクトリストの中から、指定した名称を持つ
-     * NameValueオブジェクトを検索して、そのオブジェクトが持つ値をAny型で取得します。</p>
+     * {@.ja NVListHolderが内包するNameValueオブジェクトリストの中から、
+     * 指定した名称を持つNameValueオブジェクトを検索して、
+     * そのオブジェクトが持つ値をAny型で取得する}
+     * {@.en Return the value specified by name from NVList}
      * 
-     * @param nvlist 検索対象となるNameValueオブジェクトリストを内包するNVListHolderオブジェクト
-     * @param name 検索したいNameValueオブジェクトの名称
+     * <p>
+     * {@.en This operation returns Any type of value specified by name.
+     * When an element of specified name doesn't exist, the exception will 
+     * occur.}
+     *
+     * @param nvlist 
+     *   {@.ja 検索対象となるNameValueオブジェクトリストを内包するNVListHolder
+     *   オブジェクト}
+     *   {@.en The target NVList for the find}
+     * @param name 
+     *   {@.ja 検索したいNameValueオブジェクトの名称}
+     *   {@.en Name for the find}
      * 
-     * @return 指定した名称を持つNameValueオブジェクトのAny値
+     * @return 
+     *   {@.ja 指定した名称を持つNameValueオブジェクトのAny値}
+     *   {@.en Find result}
      * 
-     * @throws Exception 指定した名称のNameValueオブジェクトが見つからない場合
+     * @throws Exception 
+     *   {@.ja 指定した名称のNameValueオブジェクトが見つからない場合}
+     *   {@.en Not found NameValue object}
      */
     public final static Any find(final NVListHolder nvlist, final String name)
             throws Exception {
@@ -191,29 +268,54 @@ public class NVUtil {
     }
 
     /**
-     * <p>NVListHolderが内包するNameValueオブジェクトリストの中から、指定した名称を持つ
-     * NameValueオブジェクトを検索して、そのオブジェクトのリスト内でのインデクスを取得します。</p>
+     * {@.ja NVListHolderが内包するNameValueオブジェクトリストの中から、
+     * 指定した名称を持つNameValueオブジェクトを検索して、
+     * そのオブジェクトのリスト内でのインデクスを取得する}
+     * {@.en Return the index of element specified by name from NVList}
+     * <p> 
+     * {@.en This operation returns the index at the position where the element
+     * specified by name is stored.}
+     *
+     * @param nvlist 
+     *   {@.ja 検索対象となるNameValueオブジェクトリストを
+     *   内包するNVListHolderオブジェクト}
+     *   {@.en The target NVList for the find}
+     * @param name 
+     *   {@.ja 検索したいNameValueオブジェクトの名称}
+     *   {@.en Name for the find}
+     *
      * 
-     * @param nvlist 検索対象となるNameValueオブジェクトリストを内包するNVListHolderオブジェクト
-     * @param name 検索したいNameValueオブジェクトの名称
-     * 
-     * @return 指定した名称を持つNameValueオブジェクトが見つかった場合は、
-     * そのオブジェクトのリスト内でのインデクスを返します。<br />
-     * また、見つからない場合は、-1を返します。
+     * @return 
+     *   {@.ja 指定した名称を持つNameValueオブジェクトが見つかった場合は、
+     *   そのオブジェクトのリスト内でのインデクスを返す。
+     *   また、見つからない場合は、-1を返す。}
+     *   {@.en Index of target object for the find}
      */
     public final static int find_index(final NVListHolder nvlist, final String name) {
         return CORBA_SeqUtil.find(nvlist, new nv_find(name));
     }
     
     /**
-     * <p>NVListHolderが内包するNameValueオブジェクトリストの中から、指定した名称を持つ
-     * NameValueオブジェクトを検索して、そのオブジェクトが持つ値が文字列型かどうかを調べます。</p>
+     * {@.ja NVListHolderが内包するNameValueオブジェクトリストの中から、
+     * 指定した名称を持つNameValueオブジェクトを検索して、
+     * そのオブジェクトが持つ値が文字列型かどうかを調べる}
+     * {@.en Validate whether value type specified by name is string type}
+     * <p>
+     * {@.en This operation returns the bool value by checking whether 
+     * the type of value specified with name is CORBA::string.}
      * 
-     * @param nvlist 検索対象となるNameValueオブジェクトリストを内包するNVListHolderオブジェクト
-     * @param name 検索したいNameValueオブジェクトの名称
+     * @param nvlist 
+     *   {@.ja 検索対象となるNameValueオブジェクトリストを
+     *   内包するNVListHolderオブジェクト}
+     *   {@.en @param nv The target NVList for the search}
+     * @param name 
+     *   {@.ja 検索したいNameValueオブジェクトの名称}
+     *   {@.en Name for the search}
      * 
-     * @return 見つかったNameValueオブジェクトの値が文字列型の場合はtrueを、
-     * そうでなければfalseを返します。
+     * @return 
+     *   {@.ja 見つかったNameValueオブジェクトの値が文字列型の場合はtrueを、
+     *   そうでなければfalseを返す}
+     *   {@.en String validation result (String:true, Else:false)}
      */
     public static boolean isString(final NVListHolder nvlist, final String name) {
         try {
@@ -231,15 +333,35 @@ public class NVUtil {
     }
     
     /**
-     * <p>NVListHolderが内包するNameValueオブジェクトリストの中から、指定した名称を持つ
-     * NameValueオブジェクトを検索して、そのオブジェクトが持つ値が文字列型かどうかを調べます。
-     * 文字列型の場合は、さらに指定された文字列値に一致するかどうかを調べます。</p>
+     * {@.ja NVListHolderが内包するNameValueオブジェクトリストの中から、
+     * 指定した名称を持つNameValueオブジェクトを検索して、
+     * そのオブジェクトが持つ値が文字列型かどうかを調べる}
+     * {@.en Check whether the value of specified name matches the specified
+     *        string}
+     *
+     * <p>
+     * {@.ja 文字列型の場合は、さらに指定された文字列値に一致するかどうかを
+     * 調べる}
+     * {@.en This operation checks whether the value specified with name is 
+     * CORBA::string and returns the bool value which matches spcified string.}
      * 
-     * @param nvlist 検索対象となるNameValueオブジェクトリストを内包するNVListHolderオブジェクト
-     * @param name 検索したいNameValueオブジェクトの名称
+     * @param nvlist 
+     *   {@.ja 検索対象となるNameValueオブジェクトリストを
+     *   内包するNVListHolderオブジェクト}
+     *   {@.en The target NVList for the search}
+     * @param name 
+     *   {@.ja 検索したいNameValueオブジェクトの名称}
+     *   {@.en Name for the search}
      * 
-     * @return 見つかったNameValueオブジェクトの値が文字列型で、かつ指定された文字列値に
-     * 一致する場合はtrueを返します。また、そうでなければfalseを返します。
+     * @param value 
+     *   {@.ja 比較する文字}
+     *   {@.en String value to compare}
+     *
+     * @return 
+     *   {@.ja 見つかったNameValueオブジェクトの値が文字列型で、
+     *   かつ指定された文字列値に一致する場合はtrueを返す。
+     *   また、そうでなければfalseを返す。}
+     *   {@.en Check result (Match:true, Unmatch:false)}
      */
     public static boolean isStringValue(final NVListHolder nvlist,
             final String name, final String value) {
@@ -253,17 +375,32 @@ public class NVUtil {
     }
 
     /**
-     * <p>NVListHolderが内包するNameValueオブジェクトリストの中から、指定した名称を持つ
-     * NameValueオブジェクトを検索して、そのオブジェクトが持つ値を文字列型で取得します。</p>
+     * {@.ja NVListHolderが内包するNameValueオブジェクトリストの中から、
+     * 指定した名称を持つNameValueオブジェクトを検索して、
+     * そのオブジェクトが持つ値を文字列型で取得する}
+     * {@.en Get NVList of specifid name as string}
+     * <p>
+     * {@.en This operation returns string value in NVList specified by name.
+     * If the value in NVList specified by name is not CORBA::string type
+     * this operation returns empty string value.}
+     *
+     * @param nvlist 
+     *   {@.ja 検索対象となるNameValueオブジェクトリストを内包するNVListHolder
+     *   オブジェクト}
+     *   {@.en The target NVList for the search}
      * 
-     * @param nvlist 検索対象となるNameValueオブジェクトリストを内包するNVListHolderオブジェクト
-     * @param name 検索したいNameValueオブジェクトの名称
+     * @param name 
+     *   {@.ja 検索したいNameValueオブジェクトの名称}
+     *   {@.en Name for the search}
+     *
      * 
-     * @return 指定した名称を持つNameValueオブジェクトの文字列値を返します。<br />
-     * ただし、指定した名称を持つNameValueオブジェクトが見つからない場合や、
-     * NameValueオブジェクトの値が文字列型でない場合は、空文字列を返します。
+     * @return 
+     *   {@.ja 指定した名称を持つNameValueオブジェクトの文字列値を返す。
+     *         ただし、指定した名称を持つNameValueオブジェクトが
+     *         見つからない場合や、NameValueオブジェクトの値が
+     *         文字列型でない場合は、空文字列を返す。}
+     *   {@.en String value corresponding to name}
      * 
-     * @throws Exception 指定した名称のNameValueオブジェクトが見つからない場合
      */
     public static String toString(final NVListHolder nvlist, final String name) {
         String str_value;
@@ -284,14 +421,39 @@ public class NVUtil {
     }
     
     /**
-     * <p>NVListHolderが内包するNameValueオブジェクトリストの中から、指定した名称を持つ
-     * NameValueオブジェクトを検索して、そのオブジェクトに指定した文字列値を追加します。<br />
-     * 指定した名称を持つNameValueオブジェクトが存在しない場合には、その名称と指定された値を持つ
-     * NameValueが新たに作成され、NVListHolder内のNameValueオブジェクトリストに追加されます。</p>
+     * {@.ja NVListHolderが内包するNameValueオブジェクトリストの中から、
+     * 指定した名称を持つNameValueオブジェクトを検索して、
+     * そのオブジェクトに指定した文字列値を追加する。}
+     * {@.en Append the specified string to element of NVList}
+     *
+     * <p>
+     * {@.ja 指定した名称を持つNameValueオブジェクトが存在しない場合には、
+     * その名称と指定された値を持つNameValueが新たに作成され、
+     * NVListHolder内のNameValueオブジェクトリストに追加される。}
+     * {@.en This operation appends the string value specified by 
+     * value to the elementspecified by name.
+     * Operate nothing when the 'value' value has already been set to the
+     * element specified by name.
+     * Add the 'value' value each separating by a comma "," when the 'value'
+     * value is not set to the element specified by name.
+     * Set the specified value.
+     * Add a new element at the end of NVList, and set the specified value,
+     * when the element specified by name does not exist.}
      * 
-     * @param nvlist 検索対象となるNameValueオブジェクトリストを内包するNVListHolderオブジェクト
-     * @param name 検索したいNameValueオブジェクトの名称
-     * @param value 見つかったNameValueオブジェクトの値に追加したい文字列値
+     * @param nvlist 
+     *   {@.ja 検索対象となるNameValueオブジェクトリストを内包するNVListHolder
+     *   オブジェクト}
+     *   {@.en The target NVList for the search}
+     * @param name 
+     *   {@.ja 検索したいNameValueオブジェクトの名称}
+     *   {@.en The target element name for the appending}
+     * @param value 
+     *   {@.ja 見つかったNameValueオブジェクトの値に追加したい文字列値}
+     *   {@.en String to append}
+     *
+     * @return 
+     *   {@.ja trueを返す。}
+     *   {@.en Append operation result}
      */
     public static boolean appendStringValue(NVListHolder nvlist,
             final String name, final String value) {
@@ -329,11 +491,19 @@ public class NVUtil {
     }
     
     /**
-     * <p>片方のNameValueListオブジェクトが内包するNameValueオブジェクトリストを、
-     * もう一方のNameValueListオブジェクト内に追加します。</p>
+     * {@.ja 片方のNameValueListオブジェクトが内包するNameValue
+     * オブジェクトリストを、もう一方のNameValueListオブジェクト内に追加する。}
+     * {@.en Append an element to NVList}
+     * <p>
+     * {@.en This operation appends elements specified by src to NVList 
+     * specified by dest.}
      * 
-     * @param destNvList 追加先となるNVListHolderオブジェクト
-     * @param srcNvList 追加元となるNVListHolderオブジェクト
+     * @param destNvList 
+     *   {@.ja 追加先となるNVListHolderオブジェクト}
+     *   {@.en NVList to be appended}
+     * @param srcNvList 
+     *   {@.ja 追加元となるNVListHolderオブジェクト}
+     *   {@.en NVList to append}
      */
     public static void append(NVListHolder destNvList, final NVListHolder srcNvList) {
         for (int intIdx = 0; intIdx < srcNvList.value.length; ++intIdx) {
@@ -342,10 +512,14 @@ public class NVUtil {
     }
     
     /**
-     * <p>指定されたNVListHolderオブジェクトが内包するNameValueオブジェクトリストの内容を、
-     * 標準出力に出力します。</p>
+     * {@.ja 指定されたNVListHolderオブジェクトが内包する
+     * NameValueオブジェクトリストの内容を、標準出力に出力する。}
+     * {@.en Print information configured in NVList as string type}
      * 
-     * @param nvlist 表示対象となるNameValueオブジェクトリストを内包するNVListHolderオブジェクト
+     * @param nvlist 
+     *   {@.ja 表示対象となるNameValueオブジェクトリストを内包する
+     *   NVListHolderオブジェクト}
+     *   {@.en The target NVList for the print}
      */
     public static void dump(NVListHolder nvlist) {
         String str_value;
@@ -364,25 +538,39 @@ public class NVUtil {
     }
 
     /**
-     * <p>指定された名称を持つNameValueオブジェクトを検索するためのヘルパクラスです。</p>
+     * {@.ja 指定された名称を持つNameValueオブジェクトを
+     * 検索するためのヘルパクラス。}
+     * {@.en Helper class to retrieve NameValue. }
      */
     static class nv_find implements equalFunctor {
 
         /**
-         * <p>コンストラクタです。検索対象となるNameValueオブジェクトの名称を指定します。</p>
+         * {@.ja コンストラクタ。}
+         * {@.en Constructor}
+         * <p>
+         * {@.ja 検索対象となるNameValueオブジェクトの名称を指定する。}
          * 
-         * @param name 検索対象となるNameValueオブジェクトの名称
+         * @param name 
+         *   {@.ja 検索対象となるNameValueオブジェクトの名称}
+         *   {@.en Name to find}
          */
         public nv_find(final String name) {
             m_name = name;
         }
 
         /**
-         * <p>検索対象となる名称を持つNameValueオブジェクトか否かを判定します。</p>
+         * {@.ja 検索対象となる名称を持つNameValueオブジェクトか否かを判定する}
+         * {@.en Judges whether to maintain the name 
+         * that NameValue object retrieves.}
          * 
-         * @param nv 判定対象のNameValueオブジェクト
+         * @param nv 
+         *   {@.ja 判定対象のNameValueオブジェクト}
+         *   {@.en NameValue of object}
          * 
-         * @throws ClassCastException 指定されたオブジェクトがNameValueオブジェクトでない場合
+         * @throws ClassCastException 
+         *   {@.ja 指定されたオブジェクトがNameValueオブジェクトでない場合}
+         *   {@.en Throws Exception, when the specified object is not 
+         *   NameValue object. }
          */
         public boolean equalof(final Object nv) {
             return m_name.equals(((NameValue) nv).name);
@@ -392,28 +580,48 @@ public class NVUtil {
     }
 
     /**
-     * <p>指定されたNameValueオブジェクトの内容を元にPropertiesオブジェクトを作成する
-     * ヘルパクラスです。</p>
+     * {@.ja 指定されたNameValueオブジェクトの内容を元に
+     * Propertiesオブジェクトを作成するヘルパクラス}
+     * {@.en Helper class that makes Properties object based on content 
+     * of specified NameValue object}
      */
     static class to_prop implements operatorFunc {
         
         /**
-         * <p>指定されたNameValueオブジェクトの内容を元にPropertiesオブジェクトを作成します。
-         * 作成されたPropertiesオブジェクトは、m_propメンバとして取得できます。</p>
+         * {@.ja 指定されたNameValueオブジェクトの内容を元に
+         * Propertiesオブジェクトを作成する}
+         * {@.en Makes Properties object based on the content 
+         * of the specified NameValue object. }
+         * <p>
+         * {@.ja 作成されたPropertiesオブジェクトは、
+         * m_propメンバとして取得でる。}
          * 
-         * @param elem 作成元となるNameValueオブジェクト
+         * @param elem 
+         *   {@.ja 作成元となるNameValueオブジェクト}
+         *   {@.en NameValue object in making origin}
          * 
-         * @throws ClassCastException 指定されたオブジェクトがNameValueオブジェクトでない場合
+         * @throws ClassCastException 
+         *   {@.ja 指定されたオブジェクトがNameValueオブジェクトでない場合}
+         *   {@.en Throws Exception, when the specified object is not 
+         *   NameValue object. }
          */
         public void operator(Object elem) {
             operator((NameValue) elem);
         }
         
         /**
-         * <p>指定されたNameValueオブジェクトの内容を元にPropertiesオブジェクトを作成します。
-         * 作成されたPropertiesオブジェクトは、m_propメンバとして取得できます。</p>
+         * {@.ja 指定されたNameValueオブジェクトの内容を元に
+         * Propertiesオブジェクトを作成する}
+         * {@.en Makes Properties object based on the content 
+         * of the specified NameValue object. }
+         * <p>
+         * {@.ja 作成されたPropertiesオブジェクトは、
+         * m_propメンバとして取得でる。}
          * 
-         * @param nv 作成元となるNameValueオブジェクト
+         * @param nv 
+         *   {@.ja 作成元となるNameValueオブジェクト}
+         *   {@.en NameValue object in making origin}
+         * 
          */
         public void operator(final NameValue nv) {
             try {
@@ -435,14 +643,23 @@ public class NVUtil {
     }
 
     /**
-     * <p>NVListHolderが内包するNameValueオブジェクトリストの中から、
-     * そのオブジェクトが持つ値を文字列型で取得します。</p>
+     * {@.ja NVListHolderが内包するNameValueオブジェクトリストの中から、
+     * そのオブジェクトが持つ値を文字列型で取得する}
+     * {@.en Acquires the value of the character string of the NameValue object
+     *  from NVListHolder. }
+     *
+     * @param nvlist
+     *   {@.ja NVListHolderオブジェクト}
+     *   {@.en NVListHolder object}
      * 
-     * @param nvlist NVListHolderオブジェクト
+     * @return 
+     *   {@.ja NameValueオブジェクトの文字列値を返す。}
+     *   {@.ja String value of NameValue objcet}
      * 
-     * @return NameValueオブジェクトの文字列値を返します。<br />
-     * 
-     * @throws Exception 指定した名称のNameValueオブジェクトが見つからない場合
+     * @throws Exception 
+     *   {@.ja 指定した名称のNameValueオブジェクトが見つからない場合}
+     *   {@.en Throws Exception, when the specified object is not 
+     *   NameValue object. }
      */
     public static String toString(final NVListHolder nvlist) {
         String crlf = System.getProperty("line.separator");

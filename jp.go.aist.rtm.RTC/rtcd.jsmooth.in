@@ -8,7 +8,7 @@
 <JVMSearchPath>jview</JVMSearchPath>
 <arguments>-f rtcd_java.conf</arguments>
 <classPath>..\jar\rtcd.jar</classPath>
-<classPath>..\jar\OpenRTM-aist-1.0.0.jar</classPath>
+<classPath>..\jar\OpenRTM-aist-@version@.jar</classPath>
 <classPath>..\jar\commons-cli-1.1.jar</classPath>
 <currentDirectory>${EXECUTABLEPATH}</currentDirectory>
 <embeddedJar>false</embeddedJar>

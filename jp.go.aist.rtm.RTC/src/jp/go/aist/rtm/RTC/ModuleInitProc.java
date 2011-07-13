@@ -1,15 +1,21 @@
 package jp.go.aist.rtm.RTC;
 
 /**
- * <p>Managerが初期化されてアクティブ化された後に呼び出される、
- * 初期化プロシジャコールバックインタフェースです。</p>
+ * {@.ja Managerが初期化されてアクティブ化された後に呼び出される、
+ * 初期化プロシジャコールバックインタフェース}
+ * {@.en This interface is an initialization procedure callback interface 
+ * called after Manager is initialized and made active.}
  */
 public interface ModuleInitProc {
     
     /**
-     * <p>Managerが初期化されてアクティブ化された後に呼び出されます。</p>
+     * {@.ja Managerが初期化されてアクティブ化された後に呼び出される}
+     * {@.en After Manager is initialized and made active, 
+     * this method is called.}
      * 
-     * @param mgr Managerオブジェクト
+     * @param mgr 
+     *   {@.ja Managerオブジェクト}
+     *   {@.en Manager object}
      */
     public void myModuleInit(Manager mgr);
 

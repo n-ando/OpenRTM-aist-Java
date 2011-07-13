@@ -1,14 +1,13 @@
 package jp.go.aist.rtm.RTC.port.publisher;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
-
-import jp.go.aist.rtm.RTC.port.ReturnCode;
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.port.ConnectorListeners;
-import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.port.InPortConsumer;
+import jp.go.aist.rtm.RTC.port.ReturnCode;
+import jp.go.aist.rtm.RTC.util.Properties;
+
+import org.omg.CORBA.portable.OutputStream;
 
 /**
  * <p>データ送出タイミングを管理して送出を駆動するPublisherのベース実装クラスです。</p>

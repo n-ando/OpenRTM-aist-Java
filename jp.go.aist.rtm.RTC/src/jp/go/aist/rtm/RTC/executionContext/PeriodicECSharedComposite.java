@@ -1,33 +1,10 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
-import org.omg.CORBA.SystemException;
-
-import java.util.Vector;
-
-import RTC.RTObject;
-import RTC.RTObjectHelper;
-import RTC.ExecutionContext;
-import RTC.ExecutionContextService;
-import RTC.ReturnCode_t;
-
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.RTObject_impl;
-import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.ValueHolder;
-import jp.go.aist.rtm.RTC.util.StringHolder;
-import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.RtcDeleteFunc;
 import jp.go.aist.rtm.RTC.RtcNewFunc;
-import jp.go.aist.rtm.RTC.executionContext.PeriodicECSharedComposite_impl;
-
-import _SDOPackage.Organization;
-import _SDOPackage.SDO;
-import _SDOPackage.SDOListHolder;
-import _SDOPackage.InvalidParameter;
-import _SDOPackage.InternalError;
-import _SDOPackage.NotAvailable;
-
-import OpenRTM.DataFlowComponent;
+import jp.go.aist.rtm.RTC.util.Properties;
 
 /**
 * <p>データフロー型RTコンポーネント基底クラスです。</p>

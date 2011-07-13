@@ -1,73 +1,84 @@
 package jp.go.aist.rtm.RTC.port;
 
-import java.util.Vector;
-import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.Vector;
 
-import org.omg.CORBA.portable.InputStream;
-import org.omg.CORBA.portable.OutputStream;
+import jp.go.aist.rtm.RTC.BufferFactory;
+import jp.go.aist.rtm.RTC.InPortProviderFactory;
+import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
+import jp.go.aist.rtm.RTC.buffer.RingBuffer;
+import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.util.StringUtil;
+
 import org.omg.CORBA.TCKind;
+import org.omg.CORBA.portable.OutputStream;
 
 import _SDOPackage.NVListHolder;
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
 import RTC.ReturnCode_t;
 
-import jp.go.aist.rtm.RTC.BufferFactory;
-import jp.go.aist.rtm.RTC.InPortProviderFactory;
-import jp.go.aist.rtm.RTC.OutPortProviderFactory;
-import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
-import jp.go.aist.rtm.RTC.buffer.BufferBase;
-import jp.go.aist.rtm.RTC.buffer.RingBuffer;
-import jp.go.aist.rtm.RTC.port.ReturnCode;
-import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.NVUtil;
-import jp.go.aist.rtm.RTC.util.StringUtil;
-import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-
  
 /**
- * <p> InPortBase </p>
- * <p> Port for InPort </p>
+ * 
+ * {@.ja InPort 用 Port}
+ * {@.en Port for InPort}
  *
- * <p> This is an implementation class for the data input port. <p>
+ * <p>
+ * {@.en データ入力ポートの実装クラス。}
+ * {@.en This is an implementation class for the data input port.}
  *
  */
 public abstract class InPortBase extends PortBase {
 
 
     /**
-     *
-     * <p> Constructor </p>
-     * @param name Port name
-     * @param data_type Specify the data type used in the InPort object.
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     * @param name 
+     *   {@.ja ポート名称}
+     *   {@.en Port name}
+     * @param data_type 
+     *   {@.ja データタイプ}
+     *   {@.en Specify the data type used in the InPort object.}
      */
     public InPortBase(final String name, final String data_type) {
         super(name);
 
-        rtcout.println(rtcout.DEBUG, "Port name: "+name);
+        rtcout.println(Logbuf.DEBUG, "Port name: "+name);
 
         m_singlebuffer = true;
         m_thebuffer = null;
         m_isLittleEndian = true;
         // Set PortProfile::properties
-        rtcout.println(rtcout.DEBUG, "setting port.port_type: DataIntPort");
+        rtcout.println(Logbuf.DEBUG, "setting port.port_type: DataIntPort");
         addProperty("port.port_type", "DataInPort",String.class);
-        rtcout.println(rtcout.DEBUG, "setting dataport.data_type: "+data_type);
+        rtcout.println(Logbuf.DEBUG, "setting dataport.data_type: "+data_type);
         addProperty("dataport.data_type", data_type,String.class);
         addProperty("dataport.subscription_type", "Any",String.class);
     }
     
     /**
      *
-     * <p> Get properties </p>
-     * <p> This method gets properties in the port.  </p>
-     * @return Properties Properties
+     * {@.ja プロパティを取得する}
+     * {@.en Get properties}
+     *
+     * <p> 
+     * {@.ja ポートのプロパティを取得する。}
+     * {@.en This method gets properties in the port.}
+     * @return 
+     *   {@.ja プロパティ}
+     *   {@.en Properties Properties}
      * 
      */
     public Properties properties() {
-        rtcout.println(rtcout.TRACE, "properties()");
+        rtcout.println(Logbuf.TRACE, "properties()");
     
         return m_properties;
     }
@@ -87,7 +98,7 @@ public abstract class InPortBase extends PortBase {
      *
      */
     public final Vector<InPortConnector> connectors() {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                             "connectors(): size = "+m_connectors.size());
         return m_connectors;
     }
@@ -107,7 +118,7 @@ public abstract class InPortBase extends PortBase {
      *
      */
     public Vector<ConnectorBase.ConnectorInfo> getConnectorProfiles(){
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                         "getConnectorProfiles(): size = "+m_connectors.size());
         Vector<ConnectorBase.ConnectorInfo> profs 
                 = new Vector<ConnectorBase.ConnectorInfo>();
@@ -119,9 +130,15 @@ public abstract class InPortBase extends PortBase {
 
     /**
      *
-     * <p> ConnectorId list </p>
-     * <p> This operation returns ConnectorId list </p>
-     * @return Vector<String> connector list
+     * {@.ja ConnectorId を取得}
+     * {@.en ConnectorId list}
+     *
+     * <p> 
+     * {@.ja 現在所有しているコネクタのIDを取得する。}
+     * {@.en This operation returns ConnectorId list}
+     * @return 
+     *   {@.ja ConnectorId のリスト}
+     *   {@.en Vector<String> connector list}
      * 
      */
     public Vector<String> getConnectorIds() {
@@ -129,15 +146,20 @@ public abstract class InPortBase extends PortBase {
         for (int i=0, len=m_connectors.size(); i < len; ++i) {
             ids.add(m_connectors.elementAt(i).id());
         }
-        rtcout.println(rtcout.TRACE, "getConnectorIds(): "+ids);
+        rtcout.println(Logbuf.TRACE, "getConnectorIds(): "+ids);
         return ids;
     }
 
     /**
      *
-     * <p> Connector name list </p>
-     * <p> This operation returns Connector name list </p>
-     * @return Vector<String> connector name list
+     * {@.ja Connectorの名前を取得}
+     * {@.en Connector name list}
+     * <p> 
+     * {@.ja 現在所有しているコネクタの名前を取得する。}
+     * {@.en This operation returns Connector name list}
+     * @return 
+     *   {@.en Connector名のリスト}
+     *   {@.en Vector<String> connector name list}
      *
      */
     public Vector<String> getConnectorNames() {
@@ -145,18 +167,26 @@ public abstract class InPortBase extends PortBase {
         for (int i=0, len=m_connectors.size(); i < len; ++i) {
             names.add(m_connectors.elementAt(i).name());
         }
-        rtcout.println(rtcout.TRACE, "getConnectorNames(): "+names);
+        rtcout.println(Logbuf.TRACE, "getConnectorNames(): "+names);
         return names;
     }
 
     /** 
-     * <p> Getting ConnectorProfile by ID </p>
-     * <p> This operation returns Connector specified by ID. </p>
-     * @param id Connector ID
-     * @return InPortConnector connector
+     * {@.ja ConnectorProfileをIDで取得}
+     * {@.en Getting ConnectorProfile by ID}
+     *
+     * <p> 
+     * {@.ja 現在所有しているコネクタをIDで取得する。}
+     * {@.en This operation returns Connector specified by ID.}
+     * @param id 
+     *   {@.ja Connector ID}
+     *   {@.en Connector ID}
+     * @return 
+     *   {@.ja コネクタへのポインタ}
+     *   {@.en InPortConnector connector}
      */
     public InPortConnector getConnectorById(final String id) {
-        rtcout.println(rtcout.TRACE, "getConnectorById(id = "+id+")");
+        rtcout.println(Logbuf.TRACE, "getConnectorById(id = "+id+")");
 
         String sid = id;
         for (int i=0, len=m_connectors.size(); i < len; ++i) {
@@ -164,20 +194,27 @@ public abstract class InPortBase extends PortBase {
                 return m_connectors.elementAt(i);
             }
         }
-        rtcout.println(rtcout.WARN, 
+        rtcout.println(Logbuf.WARN, 
                         "ConnectorProfile with the id("+id+") not found.");
         return null;
     }
 
     /**
-     * <p> Getting Connector by name </p>
-     * <p> This operation returns Connector specified by name. </p>
-     * @param name Connector ID
-     * @return InPortConnector connector
+     * {@.ja ConnectorProfileを名前で取得}
+     * {@.en Getting Connector by name}
+     * <p> 
+     * {@.ja 現在所有しているコネクタを名前で取得する。}
+     * {@.en This operation returns Connector specified by name.}
+     * @param name 
+     *   {@.ja Connector name}
+     *   {@.en Connector ID}
+     * @return 
+     *   {@.ja コネクタへのポインタ}
+     *   {@.en InPortConnector connector}
      *
      */
     public InPortConnector getConnectorByName(final String name){
-        rtcout.println(rtcout.TRACE, "getConnectorByName(name = "+name+")");
+        rtcout.println(Logbuf.TRACE, "getConnectorByName(name = "+name+")");
 
         String sname = name;
         for (int i=0, len=m_connectors.size(); i < len; ++i) {
@@ -185,22 +222,31 @@ public abstract class InPortBase extends PortBase {
                 return m_connectors.elementAt(i);
             }
         }
-        rtcout.println(rtcout.WARN, 
+        rtcout.println(Logbuf.WARN, 
                         "ConnectorProfile with the name("+name+") not found.");
         return null;
     }
 
     /**
-     * <p> Getting ConnectorProfile by name </p>
-     * <p> This operation returns ConnectorProfile specified by name </p>
-     * @param id Connector ID
-     * @param prof ConnectorProfileHolder
-     * @return boolean false specified ID does not exist
+     * {@.ja ConnectorProfileをIDで取得}
+     * {@.en Getting ConnectorProfile by name}
+     * <p> 
+     * {@.ja 現在所有しているコネクタをIDで取得する。}
+     * {@.en This operation returns ConnectorProfile specified by name}
+     * @param id 
+     *   {@.ja Connector ID}
+     *   {@.en Connector ID}
+     * @param prof 
+     *   {@.ja ConnectorProfileHolder}
+     *   {@.en ConnectorProfileHolder}
+     * @return 
+     *   {@.ja false 指定したIDがない}
+     *   {@.en false specified ID does not exist}
      *
      */
     public boolean getConnectorProfileById(final String id, 
                                     ConnectorBase.ConnectorInfoHolder prof) {
-        rtcout.println(rtcout.TRACE, "getConnectorProfileById(id = "+id+")");
+        rtcout.println(Logbuf.TRACE, "getConnectorProfileById(id = "+id+")");
 
         InPortConnector conn = getConnectorById(id);
         if (conn == null) {
@@ -212,17 +258,27 @@ public abstract class InPortBase extends PortBase {
 
     /**
      *
-     * <p> Getting ConnectorProfile by name </p>
-     * <p>This operation returns ConnectorProfile specified by name </p>
+     * {@.ja ConnectorProfileを名前で取得}
+     * {@.en Getting ConnectorProfile by name}
      *
-     * @param name Connector ID
-     * @param prof ConnectorProfile
-     * @return boolean false specified name does not exist
+     * <p>
+     * {@.ja 現在所有しているコネクタを名前で取得する。}
+     * {@.en This operation returns ConnectorProfile specified by name}
+     *
+     * @param name 
+     *   {@.ja Connector name}
+     *   {@.en Connector ID}
+     * @param prof 
+     *   {@.ja ConnectorProfile}
+     *   {@.en ConnectorProfile}
+     * @return 
+     *   {@.ja false 指定した名前がない}
+     *   {@.en false specified name does not exist}
      *
      */
     public boolean getConnectorProfileByName(final String name, 
                                       ConnectorBase.ConnectorInfoHolder prof) {
-        rtcout.println(rtcout.TRACE, 
+        rtcout.println(Logbuf.TRACE, 
                             "getConnectorProfileByName(name = "+name+")");
         InPortConnector conn = getConnectorByName(name);
         if (conn == null) {
@@ -233,26 +289,31 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * <p> Initializing properties </p>
-     * <p> This method initializes the port in the specified property.  </p>
-     * @param prop Property for setting ports
+     * {@.ja プロパティの初期化}
+     * {@.en Initializing properties}
+     * <p> 
+     * {@.ja 指定されたプロパティで初期化する。}
+     * {@.en This method initializes the port in the specified property.}
+     * @param prop 
+     *   {@.ja 設定するプロパティ}
+     *   {@.en Property for setting ports}
      */
     public void init(Properties prop) {
-        rtcout.println(rtcout.TRACE, "init()");
+        rtcout.println(Logbuf.TRACE, "init()");
 
         m_properties.merge(prop);
         if (m_singlebuffer) {
-            rtcout.println(rtcout.DEBUG, "single buffer mode.");
+            rtcout.println(Logbuf.DEBUG, "single buffer mode.");
             final BufferFactory<RingBuffer<OutputStream>,String> factory 
                     = BufferFactory.instance();
             m_thebuffer = factory.createObject("ring_buffer");
 
             if (m_thebuffer == null) {
-                rtcout.println(rtcout.ERROR, "default buffer creation failed.");
+                rtcout.println(Logbuf.ERROR, "default buffer creation failed.");
             }
         }
         else {
-            rtcout.println(rtcout.DEBUG, "multi buffer mode.");
+            rtcout.println(Logbuf.DEBUG, "multi buffer mode.");
         }
         initProviders();
         initConsumers();
@@ -263,7 +324,7 @@ public abstract class InPortBase extends PortBase {
             num = Integer.parseInt(limit);
         }
         catch(Exception ex){
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                     "invalid connection_limit value: "+limit );
         }
         setConnectionLimit(num);
@@ -285,19 +346,22 @@ public abstract class InPortBase extends PortBase {
     public abstract boolean read();
 
     /**
-     * <p> Activate all Port interfaces </p>
+     * {@.ja InPortを activates する}
+     * {@.en Activate all Port interfaces}
      *
-     * <p> This operation activate all interfaces that is registered in the </p>
-     * <p> ports. </p>
+     * <p> 
+     * {@.ja Port に登録されている全てのインターフェースを activate する。}
+     * {@.en This operation activate all interfaces that is registered in the
+     * ports.}
      *
      */
     public void activateInterfaces() {
-        rtcout.println(rtcout.TRACE, "activateInterfaces()");
+        rtcout.println(Logbuf.TRACE, "activateInterfaces()");
 
         synchronized (m_connectors){
             for (int i=0, len=m_connectors.size(); i < len; ++i) {
                 m_connectors.elementAt(i).activate();
-                rtcout.println(rtcout.DEBUG, 
+                rtcout.println(Logbuf.DEBUG, 
                                "activate connector: "
                                     + m_connectors.elementAt(i).name()
                                     +" "
@@ -308,19 +372,22 @@ public abstract class InPortBase extends PortBase {
 
     /**
      *
-     * <p> Deactivate all Port interfaces </p>
+     * {@.ja 全ての Port のインターフェースを deactivates する}
+     * {@.en Deactivate all Port interfaces}
      *
-     * <p> This operation deactivate all interfaces that is registered in the </p>
-     * <p> ports. </p>
+     * <p> 
+     * {@.ja Port に登録されている全てのインターフェースを deactivate する。}
+     * {@.en This operation deactivate all interfaces that is registered in 
+     * the ports.} 
      *
      */
     public void deactivateInterfaces() {
-        rtcout.println(rtcout.TRACE, "deactivateInterfaces()");
+        rtcout.println(Logbuf.TRACE, "deactivateInterfaces()");
 
         synchronized (m_connectors){
             for (int i=0, len=m_connectors.size(); i < len; ++i) {
                 m_connectors.elementAt(i).deactivate();
-                rtcout.println(rtcout.DEBUG, 
+                rtcout.println(Logbuf.DEBUG, 
                                "deactivate connector: "
                                     + m_connectors.elementAt(i).name()
                                     +" "
@@ -330,26 +397,31 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * <p> Connect the Port </p>
+     * {@.ja [CORBA interface] Port の接続を行う}
+     * {@.en Connect the Port}
      *
-     * <p> This operation establishes connection according to the given
+     * <p> 
+     * {@.ja 与えられた ConnectoionProfile の情報に基づき、Port間の接続を確立
+     * する。この関数は主にアプリケーションプログラムやツールから呼び出
+     * すことを前提としている。}
+     * {@.en This operation establishes connection according to the given
      * ConnectionProfile inforamtion. This function is premised on
-     * calling from mainly application program or tools.</p> 
+     * calling from mainly application program or tools.
      *
-     * <p> To establish the connection among Ports of RT-Components,
+     * To establish the connection among Ports of RT-Components,
      * application programs must call this operation giving
-     * ConnectorProfile with valid values as an argument.</p> 
+     * ConnectorProfile with valid values as an argument.
      *
-     * <p> Out of ConnectorProfile member variables, "name", "ports"
+     * Out of ConnectorProfile member variables, "name", "ports"
      * and "properties" members shall be set valid
      * data. "connector_id" shall be set as empty string value or
-     * valid string UUID value. </p> 
+     * valid string UUID value. 
      *
-     * <p> ConnectorProfile::name that is connection identifier shall
-     * be any valid CORBA::string. </p> 
+     * ConnectorProfile::name that is connection identifier shall
+     * be any valid CORBA::string. 
      * 
      *
-     * <p> ConnectorProfile::connector_id shall be set unique
+     * ConnectorProfile::connector_id shall be set unique
      * identifier (usually UUID is used) for all connections. Since
      * UUID string value is usually set in the connect() function,
      * caller should just set empty string. If the connect() is called
@@ -357,24 +429,24 @@ public abstract class InPortBase extends PortBase {
      * returns PRECONDITION_NOT_MET error. However, in order to update
      * the existing connection profile, the "connect()" operation with
      * existing connector ID might be used as valid method by future
-     * extension </p> 
+     * extension
      *
-     * <p> ConnectorProfile::ports, which is sequence of
+     * ConnectorProfile::ports, which is sequence of
      * RTC::PortService references, shall store usually two or more
      * ports' references. As exceptions, the "connect()" operation
      * might be called with only one reference in ConnectorProfile, in
      * case of just getting interfaces information from the port, or
      * connecting a special port (i.e. the peer port except
-     * RTC::PortService on CORBA). </p> 
+     * RTC::PortService on CORBA). 
      *
-     * <p> ConnectorProfile::properties might be used to give certain
+     * ConnectorProfile::properties might be used to give certain
      * properties to the service interfaces associated with the port.
      * The properties is a sequence variable with a pair of key string
      * and Any type value. Although the A variable can store any type
-     * of values, it is not recommended except string.</p> 
+     * of values, it is not recommended except string.
      *
-     * <p> The following is the summary of the ConnectorProfile
-     * member to be set when this operation is called.</p> 
+     * The following is the summary of the ConnectorProfile
+     * member to be set when this operation is called.
      *
      * <ul>
      * <li>- ConnectorProfile::name: The any name of connection</li>
@@ -383,33 +455,37 @@ public abstract class InPortBase extends PortBase {
      * <li>- ConnectorProfile::properties: Properties for the interfaces</li>
      * </ul>
      *
-     * <p> connect() operation will call the first port in the
-     * sequence of the ConnectorProfile.</p>
+     * connect() operation will call the first port in the
+     * sequence of the ConnectorProfile.
      *
-     * <p> "noify_connect()"s perform cascaded call to the ports
+     * "noify_connect()"s perform cascaded call to the ports
      * stored in the ConnectorProfile::ports by order. Even if errors
      * are raised by intermediate notify_connect() operation, as long
      * as ports' object references are valid, it is guaranteed that
      * this cascaded call is completed in all the ports.  If invalid
      * or dead ports exist in the port's sequence, the ports are
-     * skipped and notify_connect() is called for the next valid port.</p>
+     * skipped and notify_connect() is called for the next valid port.
      *
-     * <p> connect() function returns RTC_OK if all the
+     * connect() function returns RTC_OK if all the
      * notify_connect() return RTC_OK. At this time the connection is
      * completed.  If notify_connect()s return except RTC_OK,
      * connect() calls disconnect() operation with the connector_id to
      * destruct the connection, and then it returns error code from
-     * notify_connect().</p>
+     * notify_connect().
      *
-     * <p> The ConnectorProfile argument of the connect() operation
+     * The ConnectorProfile argument of the connect() operation
      * returns ConnectorProfile::connector_id and various information
      * about service interfaces that is published by
      * publishInterfaces() in the halfway ports. The connect() and
      * halfway notify_connect() functions never change
-     * ConnectorProfile::{name, ports}.</p>
+     * ConnectorProfile::(name, ports)}
      *
-     * @param connector_profile The ConnectorProfile.
-     * @return ReturnCode_t The return code of ReturnCode_t type.
+     * @param connector_profile 
+     *   {@.ja ConnectorProfile}
+     *   {@.en The ConnectorProfile.}
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type.}
      */
     public ReturnCode_t connect(ConnectorProfileHolder connector_profile) {
         //
@@ -433,14 +509,14 @@ public abstract class InPortBase extends PortBase {
 
     /**
      * {@.ja Interface情報を公開する}
-     * [@.en Publish interface information}
+     * {@.en Publish interface information}
      *
      * <p>
      * {@.ja Interface情報を公開する。
      *       引数の ConnectorProfile に格納されている dataflow_type が push 型
      *       の場合は、指定された interface_type の InPortProvider に関する情報
      *       を ConnectorProfile::properties に書込み呼び出し側に戻す。}
-     * [@.en Publish interface information.
+     * {@.en Publish interface information.
      *       Assign the Provider information that owned by this port
      *       to ConnectorProfile#properties}
      * </p>
@@ -458,7 +534,7 @@ public abstract class InPortBase extends PortBase {
      *
      */
     protected ReturnCode_t publishInterfaces(ConnectorProfileHolder cprof) {
-        rtcout.println(rtcout.TRACE, "publishInterfaces()");
+        rtcout.println(Logbuf.TRACE, "publishInterfaces()");
 
         ReturnCode_t returnvalue = _publishInterfaces();
         if(returnvalue!=ReturnCode_t.RTC_OK) {
@@ -480,11 +556,11 @@ public abstract class InPortBase extends PortBase {
              */
             prop.merge(conn_prop.getNode("dataport.inport"));
         }
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
                            "ConnectorProfile::properties are as follows.");
         String dumpString = new String();
         dumpString = prop._dump(dumpString, prop, 0);
-        rtcout.println(rtcout.DEBUG, dumpString);
+        rtcout.println(Logbuf.DEBUG, dumpString);
                            
 
         //
@@ -529,13 +605,13 @@ public abstract class InPortBase extends PortBase {
         dflow_type = StringUtil.normalize(dflow_type);
 
         if (dflow_type.equals("push")) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                            "dataflow_type = push .... create PushConnector");
 
             // create InPortProvider
             InPortProvider provider = createProvider(cprof, prop);
             if (provider == null) {
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                            "InPort provider creation failed.");
                 return ReturnCode_t.BAD_PARAMETER;
             }
@@ -543,23 +619,23 @@ public abstract class InPortBase extends PortBase {
             // create InPortPushConnector
             InPortConnector connector = createConnector(cprof, prop, provider);
             if (connector == null) {
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                            "PushConnector creation failed.");
                 return ReturnCode_t.RTC_ERROR;
             }
             provider.setConnector(connector);
 
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                            "publishInterface() successfully finished.");
             return ReturnCode_t.RTC_OK;
         }
         else if (dflow_type.equals("pull")) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                            "dataflow_type = pull .... do nothing.");
             return ReturnCode_t.RTC_OK;
         }
 
-        rtcout.println(rtcout.ERROR, "unsupported dataflow_type:"+dflow_type);
+        rtcout.println(Logbuf.ERROR, "unsupported dataflow_type:"+dflow_type);
         return ReturnCode_t.BAD_PARAMETER;
     }
     
@@ -588,7 +664,7 @@ public abstract class InPortBase extends PortBase {
      */
     protected ReturnCode_t subscribeInterfaces(
             final ConnectorProfileHolder cprof) {
-        rtcout.println(rtcout.TRACE, "subscribeInterfaces()");
+        rtcout.println(Logbuf.TRACE, "subscribeInterfaces()");
 
         // prop: [port.outport].
         Properties prop = m_properties;
@@ -606,11 +682,11 @@ public abstract class InPortBase extends PortBase {
             prop.merge(conn_prop.getNode("dataport.inport"));
         }
 
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
                            "ConnectorProfile::properties are as follows.");
         String dumpString = new String();
         dumpString = prop._dump(dumpString, prop, 0);
-        rtcout.println(rtcout.DEBUG, dumpString);
+        rtcout.println(Logbuf.DEBUG, dumpString);
 
         //
        NVListHolder holder = new NVListHolder(cprof.value.properties);
@@ -628,7 +704,7 @@ public abstract class InPortBase extends PortBase {
             String[] endian = endian_type.split(",");
             String str = endian[0].trim();
             if(str.length()==0){
-                rtcout.println(rtcout.ERROR, "unsupported endian");
+                rtcout.println(Logbuf.ERROR, "unsupported endian");
                 return ReturnCode_t.UNSUPPORTED;
             }
             if(str.equals("little")){
@@ -644,7 +720,7 @@ public abstract class InPortBase extends PortBase {
        catch(Exception e){
             m_isLittleEndian = true;
        }
-        rtcout.println(rtcout.TRACE, "Little Endian = "+m_isLittleEndian);
+        rtcout.println(Logbuf.TRACE, "Little Endian = "+m_isLittleEndian);
 
         /*
          * Because properties of ConnectorProfileHolder was merged, 
@@ -655,19 +731,19 @@ public abstract class InPortBase extends PortBase {
         dflow_type = StringUtil.normalize(dflow_type);
 
         if (dflow_type.equals("push")) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                            "dataflow_type is push.");
             //
             // setting endian type
             InPortConnector conn = getConnectorById(cprof.value.connector_id);
             if (conn == null) {
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                     "specified connector not found: "+cprof.value.connector_id);
                 return ReturnCode_t.RTC_ERROR;
             }
             conn.setEndian(m_isLittleEndian);
 
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                         "subscribeInterfaces() successfully finished.");
             return ReturnCode_t.RTC_OK;
             
@@ -688,14 +764,14 @@ public abstract class InPortBase extends PortBase {
                         return ReturnCode_t.RTC_OK;
                     }
                 }
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                                "specified connector not found: " + id);
                 return ReturnCode_t.RTC_ERROR;
             }
 */
         }
         else if (dflow_type.equals("pull")) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                            "dataflow_type is pull.");
 
             // create OutPortConsumer
@@ -712,32 +788,39 @@ public abstract class InPortBase extends PortBase {
             consumer.setConnector(connector);
 
             connector.setEndian(m_isLittleEndian);
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                            "publishInterface() successfully finished.");
             return ReturnCode_t.RTC_OK;
         }
 
-        rtcout.println(rtcout.ERROR, 
+        rtcout.println(Logbuf.ERROR, 
                        "unsupported dataflow_type:"+dflow_type);
         return ReturnCode_t.BAD_PARAMETER;
     }
     
     /**
-     * <p> Disconnect the interface connection </p>
+     * {@.ja Interfaceへの接続を解除する}
+     * {@.en Disconnect the interface connection}
      *
-     * <p> Disconnect the interface connection. </p>
-     * <p> Release all objects set in Consumer associated with </p>
-     * <p> given ConnectorProfile and unscribe the interface. </p>
+     * <p> 
+     * {@.ja Interfaceへの接続を解除する。
+     * 与えられたConnectorProfileに関連するConsumerに設定された全てのObjectを
+     * 解放し接続を解除する。}
+     * {@.en Disconnect the interface connection.
+     * Release all objects set in Consumer associated with
+     * given ConnectorProfile and unscribe the interface.}
      *
-     * @param connector_profile The connector profile
+     * @param connector_profile 
+     *   {@.ja コネクタ・プロファイル}
+     *   {@.en The connector profile}
      *
      */
     protected void
     unsubscribeInterfaces(final ConnectorProfile connector_profile) {
-        rtcout.println(rtcout.TRACE, "unsubscribeInterfaces()");
+        rtcout.println(Logbuf.TRACE, "unsubscribeInterfaces()");
 
         String id = connector_profile.connector_id;
-        rtcout.println(rtcout.PARANOID, "connector_id: " + id);
+        rtcout.println(Logbuf.PARANOID, "connector_id: " + id);
 
 
         synchronized (m_connectors){
@@ -748,11 +831,11 @@ public abstract class InPortBase extends PortBase {
                     // Connector's dtor must call disconnect()
                     connector.disconnect();
                     it.remove();
-                    rtcout.println(rtcout.TRACE, "delete connector: " + id);
+                    rtcout.println(Logbuf.TRACE, "delete connector: " + id);
                     return;
                 }
             }
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                            "specified connector not found: " + id);
             return;
         }
@@ -843,14 +926,14 @@ public abstract class InPortBase extends PortBase {
                              boolean autoclean) {
   
         if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
-            rtcout.println(rtcout.TRACE,
+            rtcout.println(Logbuf.TRACE,
                     "addConnectorDataListener("
                     +ConnectorDataListenerType.toString(type)
                     +")");
             m_listeners.connectorData_[type].addObserver(listener);
             return;
         }
-        rtcout.println(rtcout.ERROR, 
+        rtcout.println(Logbuf.ERROR, 
                     "addConnectorDataListener(): Invalid listener type.");
         return;
     }
@@ -878,14 +961,14 @@ public abstract class InPortBase extends PortBase {
 
 
         if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
-            rtcout.println(rtcout.TRACE, 
+            rtcout.println(Logbuf.TRACE, 
                              "removeConnectorDataListener("
                              +ConnectorDataListenerType.toString(type)
                              +")");
             m_listeners.connectorData_[type].deleteObserver(listener);
             return;
         }
-        rtcout.println(rtcout.ERROR, 
+        rtcout.println(Logbuf.ERROR, 
                     "removeConnectorDataListener(): Invalid listener type.");
         return;
     }
@@ -950,14 +1033,14 @@ public abstract class InPortBase extends PortBase {
                                            boolean autoclean) {
   
         if (type < ConnectorListenerType.CONNECTOR_LISTENER_NUM) {
-            rtcout.println(rtcout.TRACE,
+            rtcout.println(Logbuf.TRACE,
                            "addConnectorListener("
                             +ConnectorListenerType.toString(type)
                             +")");
             m_listeners.connector_[type].addObserver(listener);
             return;
         }
-        rtcout.println(rtcout.ERROR, 
+        rtcout.println(Logbuf.ERROR, 
                     "addConnectorListener(): Invalid listener type.");
         return;
     }
@@ -983,14 +1066,14 @@ public abstract class InPortBase extends PortBase {
                                               ConnectorListener listener) {
   
         if (type < ConnectorListenerType.CONNECTOR_LISTENER_NUM) {
-            rtcout.println(rtcout.TRACE,
+            rtcout.println(Logbuf.TRACE,
                            "removeConnectorListener("
                            +ConnectorListenerType.toString(type)
                            +")");
             m_listeners.connector_[type].deleteObserver(listener);
             return;
         }
-        rtcout.println(rtcout.ERROR, 
+        rtcout.println(Logbuf.ERROR, 
                     "removeConnectorListener(): Invalid listener type.");
         return;
     }
@@ -998,23 +1081,24 @@ public abstract class InPortBase extends PortBase {
 
 
     /**
-     * <p> InPort provider initialization </p>
+     * {@.ja InPort provider の初期化}
+     * {@.en InPort provider initialization}
      */
     protected void initProviders() {
-        rtcout.println(rtcout.TRACE, "initProviders()");
+        rtcout.println(Logbuf.TRACE, "initProviders()");
 
         // create InPort providers
         InPortProviderFactory<InPortProvider,String> factory 
             = InPortProviderFactory.instance();
         Set provider_types = factory.getIdentifiers();
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
                        "available providers: " + provider_types.toString());
 
 //#ifndef RTC_NO_DATAPORTIF_ACTIVATION_OPTION
         String string_normalize = StringUtil.normalize(m_properties.getProperty("provider_types"));
         if (m_properties.hasKey("provider_types")!=null &&
             !string_normalize.equals("all")) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                        "allowed providers: " 
                        + m_properties.getProperty("provider_types"));
 
@@ -1038,7 +1122,7 @@ public abstract class InPortBase extends PortBase {
     
         // InPortProvider supports "push" dataflow type
         if (provider_types.size() > 0) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                            "dataflow_type push is supported");
             appendProperty("dataport.dataflow_type", "push");
             appendProperty("dataport.interface_type",
@@ -1052,23 +1136,24 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * <p> OutPort consumer initialization </p>
+     * {@.ja OutPort consumer の初期化}
+     * {@.en OutPort consumer initialization}
      */
     protected void initConsumers() {
-        rtcout.println(rtcout.TRACE, "iinitConsumers()");
+        rtcout.println(Logbuf.TRACE, "iinitConsumers()");
 
         // create OuPort consumers
         OutPortConsumerFactory<OutPortProvider,String> factory 
             = OutPortConsumerFactory.instance();
         Set consumer_types = factory.getIdentifiers();
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
                        "available consumer: " + StringUtil.flatten(consumer_types));
 
 //#ifndef RTC_NO_DATAPORTIF_ACTIVATION_OPTION
         String string_normalize = StringUtil.normalize(m_properties.getProperty("consumer_types"));
         if (m_properties.hasKey("consumer_types")!=null &&
             !string_normalize.equals("all")) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                        "allowed consumers: " 
                        + m_properties.getProperty("consumer_types"));
 
@@ -1092,7 +1177,7 @@ public abstract class InPortBase extends PortBase {
 
         // OutPortConsumer supports "pull" dataflow type
         if (consumer_types.size() > 0) {
-            rtcout.println(rtcout.DEBUG, 
+            rtcout.println(Logbuf.DEBUG, 
                            "dataflow_type pull is supported");
             appendProperty("dataport.dataflow_type", "pull");
             appendProperty("dataport.interface_type",
@@ -1106,10 +1191,16 @@ public abstract class InPortBase extends PortBase {
     }
 
     /**
-     * <p> InPort provider creation </p>
-     * <p> InPortProvider is created, </p>
-     * <p> and information is published to ConnectorProfile. </p>
-     * <p> null is returned if failing in creation. </p>
+     * {@.ja InPort provider の生成}
+     * {@.en InPort provider creation}
+     *
+     * <p> 
+     * {@.ja InPortProvider を生成し、情報を ConnectorProfile に公開する。}
+     * {@.en InPortProvider is created,
+     * and information is published to ConnectorProfile.}
+     * @return
+     *   {@.ja 生成に失敗した場合 0 を返す。}
+     *   {@.en null is returned if failing in creation.}
      */
     protected InPortProvider
     createProvider(ConnectorProfileHolder cprof, Properties prop) {
@@ -1117,15 +1208,15 @@ public abstract class InPortBase extends PortBase {
             !StringUtil.includes(m_providerTypes, 
                       prop.getProperty("interface_type"),
                       true)) {
-            rtcout.println(rtcout.ERROR, "no provider found");
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, "no provider found");
+            rtcout.println(Logbuf.ERROR, 
                        "interface_type:  "+prop.getProperty("interface_type"));
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                        "interface_types:  "+m_providerTypes.toString());
             return null;
         }
     
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
                        "interface_type:  "+prop.getProperty("interface_type"));
         InPortProvider provider;
         InPortProviderFactory<InPortProvider,String> factory 
@@ -1133,12 +1224,12 @@ public abstract class InPortBase extends PortBase {
         provider = factory.createObject(prop.getProperty("interface_type"));
     
         if (provider != null) {
-            rtcout.println(rtcout.DEBUG, "provider created");
+            rtcout.println(Logbuf.DEBUG, "provider created");
             provider.init(prop.getNode("provider"));
 
             NVListHolder nvlist = new NVListHolder(cprof.value.properties);
             if (!provider.publishInterface(nvlist)) {
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                                "publishing interface information error");
                 factory.deleteObject(provider);
                 return null;
@@ -1147,14 +1238,20 @@ public abstract class InPortBase extends PortBase {
             return provider;
         }
 
-        rtcout.println(rtcout.ERROR, "provider creation failed");
+        rtcout.println(Logbuf.ERROR, "provider creation failed");
         return null;
     }
 
     /**
-     * <p> InPort provider creation </p>
-     * <p> OutPortConsumer is created. </p>
-     * <p> null is returned if failing in creation. </p>
+     * {@.ja OutPort consumer の生成}
+     * {@.en InPort provider creation}
+     *
+     * <p> 
+     * {@.ja OutPortConsumer を生成する。}
+     * {@.en OutPortConsumer is created.}
+     * @return
+     *   {@.ja 生成に失敗した場合 0 を返す。}
+     *   {@.en null is returned if failing in creation.}
      */
     protected OutPortConsumer
     createConsumer(final ConnectorProfileHolder cprof, Properties prop) {
@@ -1162,15 +1259,15 @@ public abstract class InPortBase extends PortBase {
             !StringUtil.includes(m_consumerTypes, 
                                  prop.getProperty("interface_type"),
                                  true)) {
-            rtcout.println(rtcout.ERROR, "no consumer found");
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, "no consumer found");
+            rtcout.println(Logbuf.ERROR, 
                        "interface_type:  "+prop.getProperty("interface_type"));
-            rtcout.println(rtcout.ERROR, 
+            rtcout.println(Logbuf.ERROR, 
                        "interface_types:  "+m_consumerTypes.toString());
             return null;
         }
     
-        rtcout.println(rtcout.DEBUG, 
+        rtcout.println(Logbuf.DEBUG, 
                        "interface_type:  "+prop.getProperty("interface_type"));
         OutPortConsumer consumer;
         OutPortConsumerFactory<OutPortConsumer,String> factory 
@@ -1178,12 +1275,12 @@ public abstract class InPortBase extends PortBase {
         consumer = factory.createObject(prop.getProperty("interface_type"));
     
         if (consumer != null) {
-            rtcout.println(rtcout.DEBUG, "consumer created");
+            rtcout.println(Logbuf.DEBUG, "consumer created");
             consumer.init(prop.getNode("consumer"));
     
             NVListHolder nvlist = new NVListHolder(cprof.value.properties);
             if (!consumer.subscribeInterface(nvlist)) {
-                rtcout.println(rtcout.ERROR, 
+                rtcout.println(Logbuf.ERROR, 
                                "interface subscription failed.");
                 factory.deleteObject(consumer);
                 return null;
@@ -1192,14 +1289,19 @@ public abstract class InPortBase extends PortBase {
             return consumer;
         }
 
-        rtcout.println(rtcout.ERROR, "consumer creation failed");
+        rtcout.println(Logbuf.ERROR, "consumer creation failed");
         return null;
     }
     /**
-     * <p> InPortPushConnector creation </p>
-     * <p> Connector is created, </p>
-     * <p> preserves it in m_connectors. </p>
-     * <p> null is returned if failing in creation. </p>
+     * {@.ja InPortPushConnector の生成}
+     * {@.en InPortPushConnector creation}
+     * <p> 
+     * {@.ja Connector を生成し、生成が成功すれば m_connectors に保存する。}
+     * {@.en Connector is created,
+     * preserves it in m_connectors.}
+     * @return
+     *   {@.ja 生成に失敗した場合 0 を返す。}
+     *   {@.en null is returned if failing in creation. }
      */
     protected InPortConnector
     createConnector(ConnectorProfileHolder cprof, Properties prop,
@@ -1224,29 +1326,34 @@ public abstract class InPortBase extends PortBase {
                 }
     
                 if (connector == null) {
-                    rtcout.println(rtcout.ERROR, 
+                    rtcout.println(Logbuf.ERROR, 
                                    "old compiler? new returned 0;");
                     return null;
                 }
-                rtcout.println(rtcout.TRACE, "InPortPushConnector create");
+                rtcout.println(Logbuf.TRACE, "InPortPushConnector create");
     
                 m_connectors.add(connector);
-                rtcout.println(rtcout.PARANOID, 
+                rtcout.println(Logbuf.PARANOID, 
                                "connector push backed: "+m_connectors.size());
                 return connector;
             }
             catch (Exception e) {
-                rtcout.println(rtcout.ERROR,
+                rtcout.println(Logbuf.ERROR,
                                "InPortPushConnector creation failed");
                 return null;
             }
         }
     }
     /**
-     * <p> InPortPullConnector creation </p>
-     * <p> Connector is created, </p>
-     * <p> preserves it in m_connectors. </p>
-     * <p> 0 is returned if failing in creation. </p>
+     * {@.ja InPortPullConnector の生成}
+     * {@.en InPortPullConnector creation}
+     * <p> 
+     * {@.ja Connector を生成し、生成が成功すれば m_connectors に保存する。}
+     * {@.en Connector is created,
+     * preserves it in m_connectors.}
+     * @return
+     *   {@.ja 生成に失敗した場合 0 を返す。}
+     *   {@.en 0 is returned if failing in creation.}
      */
     protected InPortConnector
     createConnector(final ConnectorProfileHolder cprof, Properties prop,
@@ -1272,25 +1379,31 @@ public abstract class InPortBase extends PortBase {
                 }
 
                 if (connector == null) {
-                    rtcout.println(rtcout.ERROR, 
+                    rtcout.println(Logbuf.ERROR, 
                                    "old compiler? new returned 0;");
                     return null;
                 }
-                rtcout.println(rtcout.TRACE, "InPortPushConnector create");
+                rtcout.println(Logbuf.TRACE, "InPortPullConnector create");
 
                 m_connectors.add(connector);
-                rtcout.println(rtcout.PARANOID, 
+                rtcout.println(Logbuf.PARANOID, 
                                "connector push backed: "+m_connectors.size());
                 return connector;
             }
             catch (Exception e) {
-                rtcout.println(rtcout.ERROR,
+                rtcout.println(Logbuf.ERROR,
                                "InPortPullConnector creation failed");
                 return null;
             }
         }
     }
     /**
+     * {@.ja endian 設定を返す}
+     * {@.en Returns endian}
+     *
+     * @return 
+     *   {@.ja m_littleEndian がlittleの場合true、bigの場合false を返す。}
+     *   {@.en Returns the endian setting.}
      * 
      */
     public boolean isLittleEndian(){
