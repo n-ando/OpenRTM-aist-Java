@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.ConfigAdmin;
+import jp.go.aist.rtm.RTC.SdoServiceAdmin;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
@@ -94,9 +95,12 @@ public class Configuration_impl extends ConfigurationPOA {
      *   {@.ja コンフィギュレーション情報}
      *   {@.en information of Configuration}
      */
-    public Configuration_impl(ConfigAdmin configsets){
+    public Configuration_impl(ConfigAdmin configsets, 
+                                SdoServiceAdmin sdoServiceAdmin){
         this.m_configsets = configsets;
+        this.m_sdoservice = sdoServiceAdmin;
         this.m_objref = this._this();
+        
 
         rtcout = new Logbuf("Configuration_impl");
         m_organizations = new OrganizationListHolder(); 
@@ -240,6 +244,8 @@ public class Configuration_impl extends ConfigurationPOA {
         rtcout.println(Logbuf.TRACE, "Configuration_impl.add_service_profile()");
 
         try{
+            return m_sdoservice.addSdoServiceConsumer(sProfile);
+/*
             if( m_serviceProfiles==null ) {
                 m_serviceProfiles = new ServiceProfileListHolder();
                 m_serviceProfiles.value = new ServiceProfile[0];
@@ -258,6 +264,7 @@ public class Configuration_impl extends ConfigurationPOA {
             }
             CORBA_SeqUtil.push_back(m_serviceProfiles, sProfile);
             return true;
+*/
         } catch (Exception ex) {
             throw new InternalError("Configuration::add_service_profile"); 
         }
@@ -339,16 +346,19 @@ public class Configuration_impl extends ConfigurationPOA {
         rtcout.println(Logbuf.TRACE, "Configuration_impl.remove_service_profile("+id+")");
 
         try {
+            return m_sdoservice.removeSdoServiceConsumer(id);
+/*
             for(int index=0; index<m_serviceProfiles.value.length; index++ ) {
                 if(id.equals(m_serviceProfiles.value[index].id)) {
                     CORBA_SeqUtil.erase(m_serviceProfiles, index);
                     return true;
                 }
             }
+*/
         } catch(Exception ex) {
             throw new InternalError("Configuration::remove_service_profile");
         }
-        return true;
+//        return true;
     }
 
     /**
@@ -1039,6 +1049,13 @@ public class Configuration_impl extends ConfigurationPOA {
      */
     protected ConfigAdmin m_configsets;
     protected Map<String, Properties> m_configsetopts = new HashMap<String, Properties>();
+    /**
+     * {@.ja Lock 付き SDO Service 管理オブジェクト}
+     * {@.en SDO Service admin object with mutex lock}
+     */
+    protected SdoServiceAdmin m_sdoservice;
+    protected String m_sdoservice_mutex;
+    
     /**
      * {@.ja Organization リスト}
      * {@.en List of Organization}
