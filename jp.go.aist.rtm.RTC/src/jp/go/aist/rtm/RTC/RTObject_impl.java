@@ -11,6 +11,11 @@ import jp.go.aist.rtm.RTC.port.OutPort;
 import jp.go.aist.rtm.RTC.port.OutPortBase;
 import jp.go.aist.rtm.RTC.port.PortAdmin;
 import jp.go.aist.rtm.RTC.port.PortBase;
+import jp.go.aist.rtm.RTC.port.PortConnectListener;
+import jp.go.aist.rtm.RTC.port.PortConnectListeners;
+import jp.go.aist.rtm.RTC.port.PortConnectListenerType;
+import jp.go.aist.rtm.RTC.port.PortConnectRetListener;
+import jp.go.aist.rtm.RTC.port.PortConnectRetListenerType;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
@@ -135,7 +140,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_writeAllCompletion = false;
         
         m_objref = this._this();
-        m_pSdoConfigImpl = new Configuration_impl(m_configsets);
+        m_pSdoConfigImpl = new Configuration_impl(m_configsets,m_sdoservice);
         m_pSdoConfig = m_pSdoConfigImpl.getObjRef();
         if( m_ecMine == null ) {
             m_ecMine = new ExecutionContextServiceListHolder();
@@ -178,7 +183,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_writeAllCompletion = false;
         
         m_objref = this._this();
-        m_pSdoConfigImpl = new Configuration_impl(m_configsets);
+        m_pSdoConfigImpl = new Configuration_impl(m_configsets,m_sdoservice);
         m_pSdoConfig = m_pSdoConfigImpl.getObjRef();
 
         if( m_ecMine == null ) {
@@ -606,7 +611,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
     /**
      * {@.ja [CORBA interface] RTCを初期化する}
-     * {@.en [CORBA interface] IInitialize the RTC that realizes 
+     * {@.en [CORBA interface] Initialize the RTC that realizes 
      * this interface.}
      *
      * <p>
@@ -685,8 +690,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
     /**
      * {@.ja [CORBA interface] RTC を終了する。}
-     * {@.en [CORBA interface] Finalize the RTC for preparing it 
-     * for destruction}
+     * {@.en [CORBA interface] Finalize the RTC for destruction}
      *
      * <p>
      * {@.ja このオペレーション呼び出しの結果として 
@@ -3236,6 +3240,364 @@ public class RTObject_impl extends DataFlowComponentPOA {
     }
 
     /**
+     * {@.ja [local interface] 実行コンテキストを取得する}
+     * {@.en [local interface] Getting current execution context}
+     * <p>
+     * {@.ja get_context() と同じ機能のローカル版。違いはない。
+     * この関数は以下の関数内で呼ばれることを前提としている。
+     *
+     * - onStartup()
+     * - onShutdown()
+     * - onActivated()
+     * - onDeactivated()
+     * - onExecute()
+     * - onAborting()
+     * - onError()
+     * - onReset()
+     * - onStateUpdate()
+     * - onRateChanged()
+     *
+     * この関数の引数はこれらの関数の引数 UniquieID exec_handle でなけ
+     * ればならない。}
+     * {@.en This function is the local version of get_context(). completely
+     * same as get_context() function. This function is assumed to be
+     * called from the following functions.
+     *
+     * - onStartup()
+     * - onShutdown()
+     * - onActivated()
+     * - onDeactivated()
+     * - onExecute()
+     * - onAborting()
+     * - onError()
+     * - onReset()
+     * - onStateUpdate()
+     * - onRateChanged()
+     *
+     * The argument of this function should be the first argument
+     * (UniqueId ec_id) of the above functions.}
+     *
+     * @param ec_id 
+     *   {@.ja 上記関数の第1引数 exec_handle を渡す必要がある。}
+     *   {@.en The above functions' first argument "exec_handle."}
+     *
+     */
+    public ExecutionContext getExecutionContext(int ec_id){
+        return get_context(ec_id);
+    }
+
+    /**
+     * {@.ja [local interface] 実行コンテキストの実行レートを取得する}
+     * {@.en [local interface] Getting current context' execution rate}
+     * <p>
+     * {@.ja 現在実行中の実行コンテキストの実行レートを取得する。実行コンテキ
+     * ストのKindがPERIODIC以外の場合の動作は未定義である。この関数は以
+     * 下の関数内で呼ばれることを前提としている。
+     *
+     * - onStartup()
+     * - onShutdown()
+     * - onActivated()
+     * - onDeactivated()
+     * - onExecute()
+     * - onAborting()
+     * - onError()
+     * - onReset()
+     * - onStateUpdate()
+     * - onRateChanged()
+     *
+     * この関数の引数はこれらの関数の引数 UniquieID exec_handle でなけ
+     * ればならない。}
+     * {@.en This function returns current execution rate in this
+     * context. If this context's kind is not PERIODC, behavior is not
+     * defined. This function is assumed to be called from the
+     * following functions.
+     *
+     * - onStartup()
+     * - onShutdown()
+     * - onActivated()
+     * - onDeactivated()
+     * - onExecute()
+     * - onAborting()
+     * - onError()
+     * - onReset()
+     * - onStateUpdate()
+     * - onRateChanged()
+     *
+     * The argument of this function should be the first argument
+     * (UniqueId ec_id) of the above functions.}
+     *
+     * @param ec_id
+     *   {@.ja 上記関数の第1引数 exec_handle を渡す必要がある。}
+     *   {@.en The above functions' first argument "exec_handle."}
+     *
+     */
+    public double getExecutionRate(int ec_id) {
+        ExecutionContext ec = getExecutionContext(ec_id);
+        if (ec == null) {
+            return 0.0;
+        }
+        return ec.get_rate();
+    }
+
+    /**
+     * {@.ja [local interface] 実行コンテキストの実行レートを設定する}
+     * {@.en [local interface] Setting current context' execution rate}
+     * <p>
+     * {@.ja 現在実行中の実行コンテキストの実行レートを設定する。実行コンテキ
+     * ストのKindがPERIODIC以外の場合の動作は未定義である。この関数は以
+     * 下の関数内で呼ばれることを前提としている。
+     *
+     * - onStartup()
+     * - onShutdown()
+     * - onActivated()
+     * - onDeactivated()
+     * - onExecute()
+     * - onAborting()
+     * - onError()
+     * - onReset()
+     * - onStateUpdate()
+     * - onRateChanged()
+     *
+     * この関数の引数はこれらの関数の引数 UniquieID exec_handle でなけ
+     * ればならない。}
+     * {@.en This function sets a execution rate in the context. If this
+     * context's kind is not PERIODC, behavior is not defined. This
+     * function is assumed to be called from the following functions.
+     *
+     * - onStartup()
+     * - onShutdown()
+     * - onActivated()
+     * - onDeactivated()
+     * - onExecute()
+     * - onAborting()
+     * - onError()
+     * - onReset()
+     * - onStateUpdate()
+     * - onRateChanged()
+     *
+     * The argument of this function should be the first argument
+     * (UniqueId ec_id) of the above functions.}
+     *
+     *
+     * @param ec_id 
+     *   {@.ja 上記関数の第1引数 exec_handle を渡す必要がある。}
+     *   {@.en The above functions' first argument "exec_handle."}
+     * @param rate 
+     *   {@.ja 実行レートを [Hz] で与える}
+     *   {@.en Execution rate in [Hz].}
+     *
+     */
+    public ReturnCode_t setExecutionRate(int ec_id, double rate){
+        ExecutionContext ec=getExecutionContext(ec_id);
+        if (ec==null) {
+            return ReturnCode_t.RTC_ERROR;
+        }
+        ec.set_rate(rate);
+        return ReturnCode_t.RTC_OK;
+    }
+
+    /**
+     * {@.ja [local interface] 実行コンテキストの所有権を調べる}
+     * {@.en [local interface] Checking if the current context is own context}
+     * <p>
+     * {@.ja 現在実行中の実行コンテキストの所有権を調べる。この関数は以下の関
+     * 数内で呼ばれることを前提としている。
+     *
+     * - onStartup()
+     * - onShutdown()
+     * - onActivated()
+     * - onDeactivated()
+     * - onExecute()
+     * - onAborting()
+     * - onError()
+     * - onReset()
+     * - onStateUpdate()
+     * - onRateChanged()
+     *
+     * この関数の引数はこれらの関数の引数 UniquieID exec_handle でなけ
+     * ればならない。}
+     * {@.en This function checks if the current context is own execution
+     * context. This function is assumed to be called from the
+     * following functions.
+     *
+     * - onStartup()
+     * - onShutdown()
+     * - onActivated()
+     * - onDeactivated()
+     * - onExecute()
+     * - onAborting()
+     * - onError()
+     * - onReset()
+     * - onStateUpdate()
+     * - onRateChanged()
+     *
+     * The argument of this function should be the first argument
+     * (UniqueId ec_id) of the above functions.}
+     *
+     *
+     * @param ec_id 
+     *   {@.ja 上記関数の第1引数 exec_handle を渡す必要がある。}
+     *   {@.en The above functions' first argument "exec_handle."}
+     * @return 
+     *   {@.ja true: 自身の実行コンテキスト、false: 他の実行コンテキスト}
+     *   {@.en true: Own context, false: other's context}
+     *
+     */
+    public boolean isOwnExecutionContext(int ec_id){
+        if (ec_id < ECOTHER_OFFSET) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * {@.ja [local interface] 状態を Inactive に遷移させる}
+     * {@.en [local interface] Make transition to Inactive state}
+     * <p>
+     * {@.ja 状態を Active から Inactive に遷移させる。この関数は以下の関
+     * 数内で呼ばれることを前提としている。
+     *
+     * - onActivated()
+     * - onExecute()
+     * - onStateUpdate()
+     *
+     * この関数の引数は上記の関数の引数 UniquieID exec_handle でなけ
+     * ればならない。}
+     * {@.en This function makes transition from Active to Inactive
+     * state. This function is assumed to be called from the following
+     * functions.
+     *
+     * - onActivated()
+     * - onExecute()
+     * - onStateUpdate()
+     *
+     * The argument of this function should be the first argument
+     * (UniqueId ec_id) of the above function.}
+     *
+     * @param ec_id 
+     *   {@.ja 上記関数の第1引数 exec_handle を渡す必要がある。}
+     *   {@.en The above functions' first argument "exec_handle."}
+     * @return 
+     *   {@.ja リターンコード}
+     *   {@.en Return code}
+     *
+     */
+    public ReturnCode_t deactivate(int ec_id) {
+        ExecutionContext ec=getExecutionContext(ec_id);
+        if (ec==null) {
+            return ReturnCode_t.RTC_ERROR;
+        }
+        return ec.deactivate_component((LightweightRTObject)getObjRef()._duplicate());
+    }
+
+    /**
+     * {@.ja [local interface] 状態を Active に遷移させる}
+     * {@.en [local interface] Make transition to Active state}
+     * <p>
+     * {@.ja 状態を Inactive から Active に遷移させる。この関数は以下の関
+     * 数内で呼ばれることを前提としている。
+     *
+     * - onStartup()
+     * - onDeactivated()
+     *
+     * この関数の引数は上記の関数の引数 UniquieID exec_handle でなけ
+     * ればならない。}
+     * {@.en This function makes transition from Inactive to Active
+     * state. This function is assumed to be called from the following
+     * functions.
+     *
+     * - onStartup()
+     * - onDeactivated()
+     *
+     * The argument of this function should be the first argument
+     * (UniqueId ec_id) of the above function.}
+     *
+     * @param ec_id 
+     *   {@.ja 上記関数の第1引数 exec_handle を渡す必要がある。}
+     *   {@.en The above functions' first argument "exec_handle."}
+     * @return 
+     *   {@.ja リターンコード}
+     *   {@.en Return code}
+     *
+     */
+    public ReturnCode_t activate(int ec_id){
+        ExecutionContext ec = getExecutionContext(ec_id);
+        if (ec == null) {
+            return ReturnCode_t.RTC_ERROR;
+        }
+        return ec.activate_component((LightweightRTObject)getObjRef()._duplicate());
+    }
+
+    /**
+     * {@.ja [local interface] 状態をリセットし Inactive に遷移させる}
+     * {@.en [local interface] Resetting and go to Inactive state}
+     * <p>
+     * {@.ja 状態を Error から Inactive に遷移させる。この関数は以下の関
+     * 数内で呼ばれることを前提としている。
+     *
+     * - onError()
+     *
+     * この関数の引数は上記の関数の引数 UniquieID exec_handle でなけ
+     * ればならない。}
+     * {@.en This function reset RTC and makes transition from Error to Inactive
+     * state. This function is assumed to be called from the following
+     * functions.
+     *
+     * - onError()
+     *
+     * The argument of this function should be the first argument
+     * (UniqueId ec_id) of the above function.}
+     *
+     * @param ec_id 
+     *   {@.ja 上記関数の第1引数 exec_handle を渡す必要がある。}
+     *   {@.en The above functions' first argument "exec_handle."}
+     * @return 
+     *   {@.ja リターンコード}
+     *   {@.en Return code}
+     *
+     */
+    public ReturnCode_t reset(int ec_id) {
+        ExecutionContext ec=getExecutionContext(ec_id);
+        if (ec==null) {
+            return ReturnCode_t.RTC_ERROR;
+        }
+        return ec.reset_component((LightweightRTObject)getObjRef()._duplicate());
+    }
+
+    /**
+     * {@.ja [local interface] SDO service provider をセットする}
+     * {@.en [local interface] Set a SDO service provider}
+     */
+    public boolean addSdoServiceProvider(final ServiceProfile prof,
+                               SdoServiceProviderBase provider){
+        return m_sdoservice.addSdoServiceProvider(prof, provider);
+    }
+
+    /**
+     * {@.ja [local interface] SDO service provider を削除する}
+     * {@.en [local interface] Remove a SDO service provider}
+     */
+    public boolean removeSdoServiceProvider(final String id) {
+        return m_sdoservice.removeSdoServiceProvider(id);
+    }
+
+    /**
+     * {@.ja [local interface] SDO service provider をセットする}
+     * {@.en [local interface] Set a SDO service provider}
+     */
+    public boolean addSdoServiceConsumer(final ServiceProfile prof) {
+        return m_sdoservice.addSdoServiceConsumer(prof);
+    }
+
+    /**
+     * {@.ja [local interface] SDO service provider を削除する}
+     * {@.en [local interface] Remove a SDO service provider}
+     */
+    public boolean removeSdoServiceConsumer(final String id) {
+        return m_sdoservice.removeSdoServiceConsumer(id);
+    }
+
+    /**
      * {@.ja 全 InPort のデータを読み込む。}
      * {@.en Readout the value from All InPorts.}
      * <p>
@@ -4054,6 +4416,367 @@ public class RTObject_impl extends DataFlowComponentPOA {
         return;
     }
 
+    /**
+     * {@.ja PortConnectListener リスナを追加する}
+     * {@.en Adding PortConnect type listener}
+     * <p>
+     * {@.ja Portの接続時や接続解除時に呼び出される各種リスナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     *
+     * - ON_NOTIFY_CONNECT: notify_connect() 関数内呼び出し直後
+     * - ON_NOTIFY_DISCONNECT: notify_disconnect() 呼び出し直後
+     * - ON_UNSUBSCRIBE_INTERFACES: notify_disconnect() 内のIF購読解除時
+     *
+     * リスナは PortConnectListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PortConnectListener::operator()(const char*, ConnectorProfile)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePortConnectListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to Port's connect 
+     * actions.
+     * The following listener types are available.
+     *
+     * - ON_NOTIFY_CONNECT: right after entering into notify_connect()
+     * - ON_NOTIFY_DISCONNECT: right after entering into notify_disconnect()
+     * - ON_UNSUBSCRIBE_INTERFACES: unsubscribing IF in notify_disconnect()
+     *
+     * Listeners should have the following function operator().
+     *
+     * PortConnectListener::operator()(const char*, ConnectorProfile)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePortConnectListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     *
+     */
+    public void addPortConnectListener(int listener_type,
+                                           PortConnectListener listener) {
+        if(listener_type < PortConnectListenerType.PORT_CONNECT_LISTENER_NUM){
+            m_portconnListeners.
+                portconnect_[listener_type].addObserver(listener);
+        }
+    } 
+
+    /**
+     * {@.ja PortConnectListener リスナを追加する}
+     * {@.en Adding PortConnect type listener}
+     * <p>
+     * {@.ja Portの接続時や接続解除時に呼び出される各種リスナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     *
+     * - ON_NOTIFY_CONNECT: notify_connect() 関数内呼び出し直後
+     * - ON_NOTIFY_DISCONNECT: notify_disconnect() 呼び出し直後
+     * - ON_UNSUBSCRIBE_INTERFACES: notify_disconnect() 内のIF購読解除時
+     *
+     * リスナは PortConnectListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PortConnectListener::operator()(const char*, ConnectorProfile)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePortConnectListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to Port's connect 
+     * actions.
+     * The following listener types are available.
+     *
+     * - ON_NOTIFY_CONNECT: right after entering into notify_connect()
+     * - ON_NOTIFY_DISCONNECT: right after entering into notify_disconnect()
+     * - ON_UNSUBSCRIBE_INTERFACES: unsubscribing IF in notify_disconnect()
+     *
+     * Listeners should have the following function operator().
+     *
+     * PortConnectListener::operator()(const char*, ConnectorProfile)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePortConnectListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
+     *   {@.en A flag for automatic listener destruction}
+     *
+     */
+    public void addPortConnectListener(int listener_type,
+                                           PortConnectListener listener,
+                                           boolean autoclean) {
+        if(listener_type < PortConnectListenerType.PORT_CONNECT_LISTENER_NUM){
+            m_portconnListeners.
+                portconnect_[listener_type].addObserver(listener);
+        }
+    }
+/*
+    template <class Listener>
+    PortConnectListener*
+    addPortConnectListener(PortConnectListenerType listener_type,
+                           Listener& obj,
+                           void (Listener::*memfunc)(const char*,
+                                                     ConnectorProfile&))
+    {
+      class Noname
+        : public PortConnectListener
+      {
+      public:
+        Noname(Listener& obj,
+               void (Listener::*memfunc)(const char*, ConnectorProfile&))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        void operator()(const char* portname, ConnectorProfile& cprofile)
+        {
+          (m_obj.*m_memfunc)(portname, cprofile);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(const char*, ConnectorProfile&);
+        Memfunc m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addPortConnectListener(listener_type, listener, true);
+      return listener;
+    }
+*/    
+
+    /**
+     * {@.ja PortConnectListener リスナを削除する}
+     * {@.en Removing PortConnect type listener}
+     * <p>
+     * {@.ja 設定した各種リスナを削除する。}
+     * {@.en This operation removes a specified listener.}
+     * 
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     *
+     */
+    public void 
+    removePortConnectListener(int listener_type,
+                              PortConnectListener listener) {
+        if(listener_type < PortConnectListenerType.PORT_CONNECT_LISTENER_NUM){
+            m_portconnListeners.
+                portconnect_[listener_type].deleteObserver(listener);
+        }
+    }
+
+    /**
+     * {@.ja PortConnectRetListener リスナを追加する}
+     * {@.en Adding PortConnectRet type listener}
+     * <p>
+     * {@.ja Portの接続時や接続解除時に呼び出される各種リスナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     *
+     * - ON_CONNECT_NEXTPORT: notify_connect() 中のカスケード呼び出し直後
+     * - ON_SUBSCRIBE_INTERFACES: notify_connect() 中のインターフェース購読直後
+     * - ON_CONNECTED: nofity_connect() 接続処理完了時に呼び出される
+     * - ON_DISCONNECT_NEXT: notify_disconnect() 中にカスケード呼び出し直後
+     * - ON_DISCONNECTED: notify_disconnect() リターン時
+     *
+     * リスナは PortConnectRetListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PortConnectRetListener::operator()(const char*, ConnectorProfile)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePortConnectRetListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to Port's connect 
+     * actions.
+     * The following listener types are available.
+     *
+     * - ON_CONNECT_NEXTPORT: after cascade-call in notify_connect()
+     * - ON_SUBSCRIBE_INTERFACES: after IF subscribing in notify_connect()
+     * - ON_CONNECTED: completed nofity_connect() connection process
+     * - ON_DISCONNECT_NEXT: after cascade-call in notify_disconnect()
+     * - ON_DISCONNECTED: completed notify_disconnect() disconnection process
+     *
+     * Listeners should have the following function operator().
+     *
+     * PortConnectRetListener::operator()(const char*, ConnectorProfile)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePortConnectRetListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     *
+     */
+    public void addPortConnectRetListener(int listener_type,
+                                           PortConnectRetListener listener) {
+        if(listener_type < PortConnectRetListenerType.PORT_CONNECT_RET_LISTENER_NUM){
+            m_portconnListeners.
+                portconnret_[listener_type].addObserver(listener);
+        }
+    }
+    /**
+     * {@.ja PortConnectRetListener リスナを追加する}
+     * {@.en Adding PortConnectRet type listener}
+     * <p>
+     * {@.ja Portの接続時や接続解除時に呼び出される各種リスナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     *
+     * - ON_CONNECT_NEXTPORT: notify_connect() 中のカスケード呼び出し直後
+     * - ON_SUBSCRIBE_INTERFACES: notify_connect() 中のインターフェース購読直後
+     * - ON_CONNECTED: nofity_connect() 接続処理完了時に呼び出される
+     * - ON_DISCONNECT_NEXT: notify_disconnect() 中にカスケード呼び出し直後
+     * - ON_DISCONNECTED: notify_disconnect() リターン時
+     *
+     * リスナは PortConnectRetListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PortConnectRetListener::operator()(const char*, ConnectorProfile)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePortConnectRetListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to Port's connect 
+     * actions.
+     * The following listener types are available.
+     *
+     * - ON_CONNECT_NEXTPORT: after cascade-call in notify_connect()
+     * - ON_SUBSCRIBE_INTERFACES: after IF subscribing in notify_connect()
+     * - ON_CONNECTED: completed nofity_connect() connection process
+     * - ON_DISCONNECT_NEXT: after cascade-call in notify_disconnect()
+     * - ON_DISCONNECTED: completed notify_disconnect() disconnection process
+     *
+     * Listeners should have the following function operator().
+     *
+     * PortConnectRetListener::operator()(const char*, ConnectorProfile)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePortConnectRetListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
+     *   {@.en A flag for automatic listener destruction}
+     *
+     */
+    public void addPortConnectRetListener(int listener_type,
+                                           PortConnectRetListener listener,
+                                           boolean autoclean) {
+        if(listener_type < PortConnectRetListenerType.PORT_CONNECT_RET_LISTENER_NUM){
+            m_portconnListeners.
+                portconnret_[listener_type].addObserver(listener);
+        }
+    }
+/*
+    template <class Listener>
+    PortConnectRetListener*
+    addPortConnectRetListener(PortConnectRetListenerType listener_type,
+                              Listener& obj,
+                              void (Listener::*memfunc)(const char*,
+                                                        ConnectorProfile&,
+                                                        ReturnCode_t))
+    {
+      class Noname
+        : public PortConnectRetListener
+      {
+      public:
+        Noname(Listener& obj,
+               void (Listener::*memfunc)(const char*,
+                                         ConnectorProfile&,
+                                         ReturnCode_t))
+          : m_obj(obj), m_memfunc(memfunc)
+        {
+        }
+        void operator()(const char* portname,
+                        ConnectorProfile& cprofile,
+                        ReturnCode_t ret)
+        {
+          (m_obj.*m_memfunc)(portname, cprofile, ret);
+        }
+      private:
+        Listener& m_obj;
+        typedef void (Listener::*Memfunc)(const char* portname,
+                                          ConnectorProfile& cprofile,
+                                          ReturnCode_t ret);
+        Memfunc m_memfunc;
+      };
+      Noname* listener(new Noname(obj, memfunc));
+      addPortConnectRetListener(listener_type, listener, true);
+      return listener;
+    }
+*/    
+
+    /**
+     * {@.ja PortConnectRetListener リスナを削除する}
+     * {@.en Removing PortConnectRet type listener}
+     * <p>
+     * {@.ja 設定した各種リスナを削除する。}
+     * {@.en This operation removes a specified listener.}
+     * 
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     *
+     */
+    public void 
+    removePortConnectRetListener(int listener_type,
+                                 PortConnectRetListener listener) {
+        if(listener_type < PortConnectRetListenerType.PORT_CONNECT_RET_LISTENER_NUM){
+            m_portconnListeners.
+                portconnret_[listener_type].deleteObserver(listener);
+        }
+    }
+
+
 
     /**
      * {@.ja ConfigurationParamListener を追加する}
@@ -4490,12 +5213,12 @@ public class RTObject_impl extends DataFlowComponentPOA {
     
     protected void onAttachExecutionContext(int ec_id)
     {
-      m_actionListeners.ecaction_[ExecutionContextActionListenerType.ATTACH_EC].notify(ec_id);
+      m_actionListeners.ecaction_[ExecutionContextActionListenerType.EC_ATTACHED].notify(ec_id);
     }
     
     protected void onDetachExecutionContext(int ec_id)
     {
-      m_actionListeners.ecaction_[ExecutionContextActionListenerType.DETACH_EC].notify(ec_id);
+      m_actionListeners.ecaction_[ExecutionContextActionListenerType.EC_DETACHED].notify(ec_id);
     }
     
 
@@ -4522,12 +5245,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * {@.en SDO owned organization list}
      */
     protected OrganizationListHolder m_sdoOwnedOrganizations = new OrganizationListHolder();
-
-    /**
-     * {@.ja SDOService のプロファイルリスト}
-     * {@.en SDOService Profile List}
-     */
-    protected ServiceProfileListHolder  m_sdoSvcProfiles = new ServiceProfileListHolder();
 
     /**
      * {@.ja  SDO Configuration オブジェクト}
@@ -4596,6 +5313,11 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     protected boolean m_created;
     /**
+     * {@.ja RTCの終了状態フラグ}
+     * {@.en RTC Finalize Status Flag}
+     */
+    protected boolean m_exiting;
+    /**
      * {@.ja RTC のプロパティ}
      * {@.en RTC's Property}
      */
@@ -4605,6 +5327,36 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * {@.en Configuration Administrator Object}
      */
     protected ConfigAdmin m_configsets;
+    /**
+     * {@.ja SDO Service 管理オブジェクト}
+     * {@.en SDO Service Administrator Object}
+     */
+    protected SdoServiceAdmin m_sdoservice;
+
+    /**
+     * {@.ja readAll()呼出用のフラグ}
+     * {@.en flag for readAll()}
+     */
+    protected boolean m_readAll;
+
+    /**
+     * {@.ja writeAll()呼出用のフラグ}
+     * {@.en flag for writeAll()}
+     */
+    protected boolean m_writeAll;
+
+
+
+    /**
+     * {@.ja PortConnectListenerホルダ}
+     * {@.en PortConnectListener holder}
+     * <p>
+     * {@.ja PortConnectListenrを保持するホルダ}
+     * {@.en Holders of PortConnectListeners}
+     *
+     */
+    protected PortConnectListeners m_portconnListeners;
+
     /**
      * {@.ja RTコンポーネント検索用ヘルパークラス}
      * {@.en Functor to find NVList}
@@ -4784,6 +5536,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             if(ecs != null && !ecs._non_existent())  {
                 ecs.deactivate_component(
                                 (LightweightRTObject)m_comp._duplicate());
+                ecs.stop();
             }
         }
         LightweightRTObject m_comp;
@@ -4807,18 +5560,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     protected Vector<OutPortBase> m_outports = new Vector<OutPortBase>();
     
-    /**
-     * {@.ja readAll()呼出用のフラグ}
-     * {@.en flag for readAll()}
-     */
-    protected boolean m_readAll;
-
-    /**
-     * {@.ja writeAll()呼出用のフラグ}
-     * {@.en flag for writeAll()}
-     */
-    protected boolean m_writeAll;
-
     /**
      * {@.ja readAll()用のフラグ}
      * {@.en flag for readAll()}

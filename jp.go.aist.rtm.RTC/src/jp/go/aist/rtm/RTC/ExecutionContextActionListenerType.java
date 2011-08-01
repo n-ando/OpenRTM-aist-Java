@@ -18,13 +18,13 @@ package jp.go.aist.rtm.RTC;
    * 
    */
 public class ExecutionContextActionListenerType {
-    public static final int ATTACH_EC = 0;
-    public static final int DETACH_EC = 1;
+    public static final int EC_ATTACHED = 0;
+    public static final int EC_DETACHED = 1;
     public static final int EC_ACTION_LISTENER_NUM = 2; 
 
     private static final String[] TypeString = {
-          "ATTACH_EC",
-          "DETACH_ECT",
+          "EC_ATTACHED",
+          "EC_DETACHED",
           "EC_ACTION_LISTENER_NUM"
     };
 
