@@ -18,7 +18,7 @@ import RTC.ReturnCode_t;
    * - ON_CONNECTED:            nofity_connect() 接続処理完了時に呼び出される
    * - ON_DISCONNECT_NEXT:      notify_disconnect() 中にカスケード呼び出し直後
    * - ON_DISCONNECTED:         notify_disconnect() リターン時}
-   * {@en This class is abstract base class for listener classes that
+   * {@.en This class is abstract base class for listener classes that
    * provides callbacks for various events in rtobject.
    *
    * - ON_CONNECT_NEXTPORT:     after cascade-call in notify_connect()

@@ -4463,9 +4463,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @param listener 
      *   {@.ja リスナオブジェクトへのポインタ}
      *   {@.en A pointer to a listener object}
-     * @param autoclean 
-     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
-     *   {@.en A flag for automatic listener destruction
      *
      */
     public void addPortConnectListener(int listener_type,
@@ -4476,6 +4473,58 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
     } 
 
+    /**
+     * {@.ja PortConnectListener リスナを追加する}
+     * {@.en Adding PortConnect type listener}
+     * <p>
+     * {@.ja Portの接続時や接続解除時に呼び出される各種リスナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     *
+     * - ON_NOTIFY_CONNECT: notify_connect() 関数内呼び出し直後
+     * - ON_NOTIFY_DISCONNECT: notify_disconnect() 呼び出し直後
+     * - ON_UNSUBSCRIBE_INTERFACES: notify_disconnect() 内のIF購読解除時
+     *
+     * リスナは PortConnectListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PortConnectListener::operator()(const char*, ConnectorProfile)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePortConnectListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to Port's connect 
+     * actions.
+     * The following listener types are available.
+     *
+     * - ON_NOTIFY_CONNECT: right after entering into notify_connect()
+     * - ON_NOTIFY_DISCONNECT: right after entering into notify_disconnect()
+     * - ON_UNSUBSCRIBE_INTERFACES: unsubscribing IF in notify_disconnect()
+     *
+     * Listeners should have the following function operator().
+     *
+     * PortConnectListener::operator()(const char*, ConnectorProfile)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePortConnectListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
+     *   {@.en A flag for automatic listener destruction}
+     *
+     */
     public void addPortConnectListener(int listener_type,
                                            PortConnectListener listener,
                                            boolean autoclean) {
@@ -4591,9 +4640,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * @param listener 
      *   {@.ja リスナオブジェクトへのポインタ}
      *   {@.en A pointer to a listener object}
-     * @param autoclean 
-     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
-     *   {@.en A flag for automatic listener destruction}
      *
      */
     public void addPortConnectRetListener(int listener_type,
@@ -4603,6 +4649,62 @@ public class RTObject_impl extends DataFlowComponentPOA {
                 portconnret_[listener_type].addObserver(listener);
         }
     }
+    /**
+     * {@.ja PortConnectRetListener リスナを追加する}
+     * {@.en Adding PortConnectRet type listener}
+     * <p>
+     * {@.ja Portの接続時や接続解除時に呼び出される各種リスナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     *
+     * - ON_CONNECT_NEXTPORT: notify_connect() 中のカスケード呼び出し直後
+     * - ON_SUBSCRIBE_INTERFACES: notify_connect() 中のインターフェース購読直後
+     * - ON_CONNECTED: nofity_connect() 接続処理完了時に呼び出される
+     * - ON_DISCONNECT_NEXT: notify_disconnect() 中にカスケード呼び出し直後
+     * - ON_DISCONNECTED: notify_disconnect() リターン時
+     *
+     * リスナは PortConnectRetListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PortConnectRetListener::operator()(const char*, ConnectorProfile)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePortConnectRetListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to Port's connect 
+     * actions.
+     * The following listener types are available.
+     *
+     * - ON_CONNECT_NEXTPORT: after cascade-call in notify_connect()
+     * - ON_SUBSCRIBE_INTERFACES: after IF subscribing in notify_connect()
+     * - ON_CONNECTED: completed nofity_connect() connection process
+     * - ON_DISCONNECT_NEXT: after cascade-call in notify_disconnect()
+     * - ON_DISCONNECTED: completed notify_disconnect() disconnection process
+     *
+     * Listeners should have the following function operator().
+     *
+     * PortConnectRetListener::operator()(const char*, ConnectorProfile)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePortConnectRetListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     * @param autoclean 
+     *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
+     *   {@.en A flag for automatic listener destruction}
+     *
+     */
     public void addPortConnectRetListener(int listener_type,
                                            PortConnectRetListener listener,
                                            boolean autoclean) {
