@@ -28,7 +28,7 @@ interface DefaultConfiguration {
         "os.hostname",            "",
         "logger.enable",          "YES",
         "logger.file_name",       "./rtc%p.log",
-        "logger.date_format",     "%b %d %H:%M:%S",
+        "logger.date_format",     "%b %d %H:%M:%S.%Q",
         "logger.log_level",       "INFO",
         "logger.stream_lock",     "NO",
         "logger.master_logger",   "",

@@ -394,13 +394,15 @@ public class Logbuf {
      */
     public void setDateFormat(final String format) {
         m_dateFormat = format.replace("%","%t");
+        m_dateFormat = m_dateFormat.replace("tQ","tL");
+        m_dateFormat = m_dateFormat.replace("tq","tN");
         try {
             StringBuilder sb = new StringBuilder();
             Date date = new Date();
             java.util.Formatter formatter = new java.util.Formatter(sb, java.util.Locale.US);
-            formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date);
+            formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date,date,date);
         } catch(IllegalFormatException ex){
-            m_dateFormat = "%tb %td %tH:%tM:%tS";
+            m_dateFormat = "%tb %td %tH:%tM:%tS.%tL";
             this.println(Logbuf.ERROR, "The specified format is illegal.");
         }
     }
@@ -440,7 +442,7 @@ public class Logbuf {
    /**
     * <p>ログに付加する日付形式の書式</p>
     */
-   private String m_dateFormat = "%tb %td %tH:%tM:%tS";
+   private String m_dateFormat = "%tb %td %tH:%tM:%tS.%tL";
 
    /**
     * <p>日付の後に付加するヘッダ</p>
