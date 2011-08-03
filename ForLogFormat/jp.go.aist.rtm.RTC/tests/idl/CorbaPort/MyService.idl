@@ -1,0 +1,40 @@
+// -*- C++ -*-
+/*!
+ * @file  MyService.idl
+ * @brief sample serivce interface
+ * @date  $Date: 2007/09/25 06:48:57 $
+ * @author Noriaki Ando <n-ando@aist.go.jp>
+ *
+ * Copyright (C) 2006
+ *     Noriaki Ando
+ *     Task-intelligence Research Group,
+ *     Intelligent Systems Research Institute,
+ *     National Institute of
+ *         Advanced Industrial Science and Technology (AIST), Japan
+ *     All rights reserved.
+ *
+ * $Id: MyService.idl,v 1.1 2007/09/25 06:48:57 arafune Exp $
+ *
+ */
+
+/*
+ * $Log: MyService.idl,v $
+ * Revision 1.1  2007/09/25 06:48:57  arafune
+ * *** empty log message ***
+ *
+ * Revision 1.1  2007/01/04 00:50:51  n-ando
+ * *** empty log message ***
+ *
+ *
+ */
+
+module CorbaPort {
+
+interface MyService
+{
+  string name();
+  void hello_world();
+  void print_msg(in string msg);
+};
+
+};
