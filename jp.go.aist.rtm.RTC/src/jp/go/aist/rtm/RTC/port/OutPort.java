@@ -1,6 +1,8 @@
 package jp.go.aist.rtm.RTC.port;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
@@ -38,6 +40,31 @@ public class OutPort<DataType> extends OutPortBase {
         String typeName = value.v.getClass().getSimpleName();
         return typeName;
 
+    }
+    /**
+     * <p> toRepositoryId </p>
+     * <p> This function gets IFR ID of data. </p>
+     *
+     * @param value data
+     * @return TypeCdoe(String)
+     */
+    private static <DataType> String toRepositoryId(DataRef<DataType> value){
+        String id =  new String();
+        Class cl = value.v.getClass();
+        String str = cl.getName();
+        try {
+            Class helper = Class.forName(str+"Helper");
+
+            Method method = helper.getMethod("id");
+            id =  (String)method.invoke(
+                null // invoke static method.
+                );
+        }
+        catch(java.lang.Exception e){
+//            rtcout.println(Logbuf.WARN, 
+//                   "Exception caught."+e.toString());
+        }
+        return id;
     }
     /**
      * {@.ja OutputStreamに整列化する}
@@ -191,7 +218,7 @@ public class OutPort<DataType> extends OutPortBase {
     public OutPort(BufferBase<DataType> buffer,
             final String name, DataRef<DataType> valueRef) {
         
-        super(name,toTypeCode(valueRef));
+        super(name,toRepositoryId(valueRef));
         
         this.m_value = valueRef;
         this.m_timeoutTick = 1000; // [usec]

@@ -1,6 +1,7 @@
 package jp.go.aist.rtm.RTC.port;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
@@ -36,10 +37,34 @@ public class InPort<DataType> extends InPortBase {
      * @return TypeCdoe(String)
      */
     private static <DataType> String toTypeCode(DataRef<DataType> value) { 
-//        DataType data = value.v;
         String typeName = value.v.getClass().getSimpleName();
         return typeName;
 
+    }
+    /**
+     * <p> toRepositoryId </p>
+     * <p> This function gets IFR ID of data. </p>
+     *
+     * @param value data
+     * @return TypeCdoe(String)
+     */
+    private static <DataType> String toRepositoryId(DataRef<DataType> value){
+        String id =  new String();
+        Class cl = value.v.getClass();
+        String str = cl.getName();
+        try {
+            Class helper = Class.forName(str+"Helper");
+
+            Method method = helper.getMethod("id");
+            id =  (String)method.invoke(
+                null // invoke static method.
+                );
+        }
+        catch(java.lang.Exception e){
+//            rtcout.println(Logbuf.WARN, 
+//                   "Exception caught."+e.toString());
+        }
+        return id;
     }
     /**
      * <p> read_stream </p>
@@ -83,7 +108,8 @@ public class InPort<DataType> extends InPortBase {
             boolean read_block, boolean write_block,
             long read_timeout, long write_timeout) {
         
-        super(name, toTypeCode(value));
+        super(name,toRepositoryId(value));
+        //super(name, toTypeCode(value));
 
         this.m_name = name;
         this.m_value = value;
