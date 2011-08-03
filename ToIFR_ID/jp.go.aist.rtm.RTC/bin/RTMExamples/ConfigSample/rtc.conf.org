@@ -1,0 +1,4 @@
+corba.nameservers: localhost:2809
+naming.formats: %n.rtc
+logger.log_level: PARANOID
+example.ConfigSample.config_file: C:\\Tech-Arts\\EclipseRTM\\jp.go.aist.rtm.RTC\\src\\RTMExamples\\ConfigSample\\configsample.conf
