@@ -1,6 +1,7 @@
 package jp.go.aist.rtm.RTC;
 
 import java.util.Vector;
+import java.lang.reflect.Method;
 
 import jp.go.aist.rtm.RTC.SDOPackage.Configuration_impl;
 import jp.go.aist.rtm.RTC.executionContext.ExecutionContextBase;
@@ -3891,10 +3892,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
      *   {@.en A flag for automatic listener destruction}
      */
-    /*
-    typedef PreComponentActionListener PreCompActionListener;
-    typedef PreComponentActionListenerType PreCompActionListenerType;
-    */
     public void 
     addPreComponentActionListener(int listener_type,
                                   PreComponentActionListener listener,
@@ -3912,42 +3909,187 @@ public class RTObject_impl extends DataFlowComponentPOA {
                     "addPreComponentActionListener(): Invalid listener type.");
         return;
     }
+    /**
+     * {@.ja PreComponentActionListener リスナを追加する}
+     * {@.en Adding PreComponentAction type listener}
+     * <p>
+     * {@.ja ComponentAction 実装関数の呼び出し直前のイベントに関連する各種リ
+     * スナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> PRE_ON_INITIALIZE:    onInitialize 直前
+     * <li> PRE_ON_FINALIZE:      onFinalize 直前
+     * <li> PRE_ON_STARTUP:       onStartup 直前
+     * <li> PRE_ON_SHUTDOWN:      onShutdown 直前
+     * <li> PRE_ON_ACTIVATED:     onActivated 直前
+     * <li> PRE_ON_DEACTIVATED:   onDeactivated 直前
+     * <li> PRE_ON_ABORTED:       onAborted 直前
+     * <li> PRE_ON_ERROR:         onError 直前
+     * <li> PRE_ON_RESET:         onReset 直前
+     * <li> PRE_ON_EXECUTE:       onExecute 直前
+     * <li> PRE_ON_STATE_UPDATE:  onStateUpdate 直前
+     * </ul>
+     *
+     * リスナは PreComponentActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PreComponentActionListener::operator()(int ec_id)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePreComponentActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to ComponentActions
+     * pre events.
+     * The following listener types are available.
+     * <ul>
+     * <li> PRE_ON_INITIALIZE:    before onInitialize
+     * <li> PRE_ON_FINALIZE:      before onFinalize
+     * <li> PRE_ON_STARTUP:       before onStartup
+     * <li> PRE_ON_SHUTDOWN:      before onShutdown
+     * <li> PRE_ON_ACTIVATED:     before onActivated
+     * <li> PRE_ON_DEACTIVATED:   before onDeactivated
+     * <li> PRE_ON_ABORTED:       before onAborted
+     * <li> PRE_ON_ERROR:         before onError
+     * <li> PRE_ON_RESET:         before onReset
+     * <li> PRE_ON_EXECUTE:       before onExecute
+     * <li> PRE_ON_STATE_UPDATE:  before onStateUpdate
+     * </ul>
+     *
+     * Listeners should have the following function operator().
+     *
+     * PreComponentActionListener::operator()(int ec_id)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePreComponentActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     * 
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     */
     public void 
     addPreComponentActionListener(int listener_type,
                                   PreComponentActionListener listener) {
         this.addPreComponentActionListener(listener_type,listener,true);
     }
 
+    /**
+     * {@.ja PreComponentActionListener リスナを追加する}
+     * {@.en Adding PreComponentAction type listener}
+     * <p>
+     * {@.ja ComponentAction 実装関数の呼び出し直前のイベントに関連する各種リ
+     * スナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> PRE_ON_INITIALIZE:    onInitialize 直前
+     * <li> PRE_ON_FINALIZE:      onFinalize 直前
+     * <li> PRE_ON_STARTUP:       onStartup 直前
+     * <li> PRE_ON_SHUTDOWN:      onShutdown 直前
+     * <li> PRE_ON_ACTIVATED:     onActivated 直前
+     * <li> PRE_ON_DEACTIVATED:   onDeactivated 直前
+     * <li> PRE_ON_ABORTED:       onAborted 直前
+     * <li> PRE_ON_ERROR:         onError 直前
+     * <li> PRE_ON_RESET:         onReset 直前
+     * <li> PRE_ON_EXECUTE:       onExecute 直前
+     * <li> PRE_ON_STATE_UPDATE:  onStateUpdate 直前
+     * </ul>
+     *
+     * リスナは PreComponentActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PreComponentActionListener::operator()(int ec_id)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePreComponentActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to ComponentActions
+     * pre events.
+     * The following listener types are available.
+     * <ul>
+     * <li> PRE_ON_INITIALIZE:    before onInitialize
+     * <li> PRE_ON_FINALIZE:      before onFinalize
+     * <li> PRE_ON_STARTUP:       before onStartup
+     * <li> PRE_ON_SHUTDOWN:      before onShutdown
+     * <li> PRE_ON_ACTIVATED:     before onActivated
+     * <li> PRE_ON_DEACTIVATED:   before onDeactivated
+     * <li> PRE_ON_ABORTED:       before onAborted
+     * <li> PRE_ON_ERROR:         before onError
+     * <li> PRE_ON_RESET:         before onReset
+     * <li> PRE_ON_EXECUTE:       before onExecute
+     * <li> PRE_ON_STATE_UPDATE:  before onStateUpdate
+     * </ul>
+     *
+     * Listeners should have the following function operator().
+     *
+     * PreComponentActionListener::operator()(int ec_id)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePreComponentActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     * 
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param obj 
+     *   {@.ja リスナオブジェクト}
+     *   {@.en listener object}
+     * @param memfunc 
+     *   {@.ja リスナのmethod名}
+     *   {@.en Method name of listener}
+     */
+    public <DataType> 
+    PreComponentActionListener
+    addPreComponentActionListener(int listener_type,
+                                   DataType obj,
+                                   String memfunc) {
+        class Noname extends PreComponentActionListener {
+            public Noname(DataType obj, String memfunc) {
+                m_obj = obj;
+                try {
+                    Class clazz = m_obj.getClass();
 
-    /*
-    template <class Listener>
-    PreComponentActionListener*
-    addPortComponentActionListener(int listener_type,
-                                   Listener& obj,
-                                   void (Listener::*memfunc)(int ec_id))
-    {
-      class Noname
-        : public PreComponentActionListener
-      {
-      public:
-        Noname(Listener& obj, void (Listener::*memfunc)(int))
-          : m_obj(obj), m_memfunc(memfunc)
-        {
-        }
-        void operator()(int ec_id)
-        {
-          (m_obj.*m_memfunc)(ec_id);
-        }
-      private:
-        Listener& m_obj;
-        typedef void (Listener::*Memfunc)(int ec_id);
-        Memfunc& m_memfunc;
-      };
-      Noname* listener(new Noname(obj, memfunc));
-      addPreComponentActionListener(listener_type, listener, true);
-      return listener;
+                    m_method = clazz.getMethod(memfunc,int.class);
+
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            public void operator(final int exec_handle) {
+                try {
+                    m_method.invoke(
+                          m_obj,
+                          exec_handle);
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            private DataType m_obj;
+            private Method m_method;
+        };
+        Noname listener = new Noname(obj, memfunc);
+        addPreComponentActionListener(listener_type, listener, true);
+        return listener;
     }
-    */
+
 
     /**
      * {@.ja PreComponentActionListener リスナを削除する}
@@ -4050,10 +4192,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *   {@.ja リスナオブジェクトの自動的解体を行うかどうかのフラグ}
      *   {@.en A flag for automatic listener destruction}
      */
-    /*
-    typedef PostComponentActionListener PostCompActionListener;
-    typedef PostComponentActionListenerType PostCompActionListenerTypec;
-    */
     public void 
     addPostComponentActionListener( int listener_type,
                                     PostComponentActionListener listener,
@@ -4070,41 +4208,187 @@ public class RTObject_impl extends DataFlowComponentPOA {
                     "addPostComponentActionListener(): Invalid listener type.");
         return;
     }
+    /**
+     * {@.ja PostComponentActionListener リスナを追加する}
+     * {@.en Adding PostComponentAction type listener}
+     * <p>
+     * {@.ja ComponentAction 実装関数の呼び出し直後のイベントに関連する各種リ
+     * スナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> POST_ON_INITIALIZE:    onInitialize 直後
+     * <li> POST_ON_FINALIZE:      onFinalize 直後
+     * <li> POST_ON_STARTUP:       onStartup 直後
+     * <li> POST_ON_SHUTDOWN:      onShutdown 直後
+     * <li> POST_ON_ACTIVATED:     onActivated 直後
+     * <li> POST_ON_DEACTIVATED:   onDeactivated 直後
+     * <li> POST_ON_ABORTED:       onAborted 直後
+     * <li> POST_ON_ERROR:         onError 直後
+     * <li> POST_ON_RESET:         onReset 直後
+     * <li> POST_ON_EXECUTE:       onExecute 直後
+     * <li> POST_ON_STATE_UPDATE:  onStateUpdate 直後
+     * </ul>
+     *
+     * リスナは PostComponentActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PostComponentActionListener::operator()(int ec_id, ReturnCode_t ret)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePostComponentActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {This operation adds certain listeners related to ComponentActions
+     * post events.
+     * The following listener types are available.
+     * <ul>
+     * <li> POST_ON_INITIALIZE:    after onInitialize
+     * <li> POST_ON_FINALIZE:      after onFinalize
+     * <li> POST_ON_STARTUP:       after onStartup
+     * <li> POST_ON_SHUTDOWN:      after onShutdown
+     * <li> POST_ON_ACTIVATED:     after onActivated
+     * <li> POST_ON_DEACTIVATED:   after onDeactivated
+     * <li> POST_ON_ABORTED:       after onAborted
+     * <li> POST_ON_ERROR:         after onError
+     * <li> POST_ON_RESET:         after onReset
+     * <li> POST_ON_EXECUTE:       after onExecute
+     * <li> POST_ON_STATE_UPDATE:  after onStateUpdate
+     * </ul>
+     *
+     * Listeners should have the following function operator().
+     *
+     * PostComponentActionListener::operator()(int ec_id, ReturnCode_t ret)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePostComponentActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     */
     public void 
     addPostComponentActionListener( int listener_type,
                                     PostComponentActionListener listener){
         this.addPostComponentActionListener(listener_type,listener,true);
     }
-    /*
-    template <class Listener>
-    PostComponentActionListener*
+
+    /**
+     * {@.ja PostComponentActionListener リスナを追加する}
+     * {@.en Adding PostComponentAction type listener}
+     * <p>
+     * {@.ja ComponentAction 実装関数の呼び出し直後のイベントに関連する各種リ
+     * スナを設定する。
+     *
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> POST_ON_INITIALIZE:    onInitialize 直後
+     * <li> POST_ON_FINALIZE:      onFinalize 直後
+     * <li> POST_ON_STARTUP:       onStartup 直後
+     * <li> POST_ON_SHUTDOWN:      onShutdown 直後
+     * <li> POST_ON_ACTIVATED:     onActivated 直後
+     * <li> POST_ON_DEACTIVATED:   onDeactivated 直後
+     * <li> POST_ON_ABORTED:       onAborted 直後
+     * <li> POST_ON_ERROR:         onError 直後
+     * <li> POST_ON_RESET:         onReset 直後
+     * <li> POST_ON_EXECUTE:       onExecute 直後
+     * <li> POST_ON_STATE_UPDATE:  onStateUpdate 直後
+     * </ul>
+     *
+     * リスナは PostComponentActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PostComponentActionListener::operator()(int ec_id, ReturnCode_t ret)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePostComponentActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {This operation adds certain listeners related to ComponentActions
+     * post events.
+     * The following listener types are available.
+     * <ul>
+     * <li> POST_ON_INITIALIZE:    after onInitialize
+     * <li> POST_ON_FINALIZE:      after onFinalize
+     * <li> POST_ON_STARTUP:       after onStartup
+     * <li> POST_ON_SHUTDOWN:      after onShutdown
+     * <li> POST_ON_ACTIVATED:     after onActivated
+     * <li> POST_ON_DEACTIVATED:   after onDeactivated
+     * <li> POST_ON_ABORTED:       after onAborted
+     * <li> POST_ON_ERROR:         after onError
+     * <li> POST_ON_RESET:         after onReset
+     * <li> POST_ON_EXECUTE:       after onExecute
+     * <li> POST_ON_STATE_UPDATE:  after onStateUpdate
+     * </ul>
+     *
+     * Listeners should have the following function operator().
+     *
+     * PostComponentActionListener::operator()(int ec_id, ReturnCode_t ret)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePostComponentActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param obj 
+     *   {@.ja リスナオブジェクト}
+     *   {@.en listener object}
+     * @param memfunc 
+     *   {@.ja リスナのmethod名}
+     *   {@.en Method name of listener}
+     */
+    public <DataType> 
+    PostComponentActionListener
     addPostComponentActionListener(int listener_type,
-                                   Listener& obj,
-                                   void (Listener::*memfunc)(int ec_id,
-                                                             ReturnCode_t ret))
-    {
-      class Noname
-        : public PostComponentActionListener
-      {
-      public:
-        Noname(Listener& obj, void (Listener::*memfunc)(int, ReturnCode_t))
-          : m_obj(obj), m_memfunc(memfunc)
-        {
-        }
-        void operator()(int ec_id, ReturnCode_t ret)
-        {
-          (m_obj.*m_memfunc)(ec_id, ret);
-        }
-      private:
-        Listener& m_obj;
-        typedef void (Listener::*Memfunc)(int ec_id, ReturnCode_t ret);
-        Memfunc& m_memfunc;
-      };
-      Noname* listener(new Noname(obj, memfunc));
-      addPostComponentActionListener(listener_type, listener, true);
-      return listener;
+                                   DataType obj,
+                                   String memfunc) {
+        class Noname extends PostComponentActionListener {
+            public Noname(DataType obj, String memfunc) {
+                m_obj = obj;
+                try {
+                    Class clazz = m_obj.getClass();
+
+                    m_method = clazz.getMethod(memfunc,int.class, RTC.ReturnCode_t.class);
+
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            public void operator(final int exec_handle, RTC.ReturnCode_t ret) {
+                try {
+                    m_method.invoke(
+                          m_obj,
+                          exec_handle, ret);
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            private DataType m_obj;
+            private Method m_method;
+        };
+        Noname listener = new Noname(obj, memfunc);
+        addPostComponentActionListener(listener_type, listener, true);
+        return listener;
     }
-    */
+
 
     /**
      * {@.ja PostComponentActionListener リスナを削除する}
@@ -4204,42 +4488,148 @@ public class RTObject_impl extends DataFlowComponentPOA {
                     "addPortActionListener(): Invalid listener type.");
         return;
     }
+    /**
+     * {@.ja PortActionListener リスナを追加する}
+     * {@.en Adding PortAction type listener}
+     * <p>
+     * {@.ja Portの追加、削除時にコールバックされる各種リスナを設定する。
+     * 
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> ADD_PORT:    Port追加時
+     * <li> REMOVE_PORT: Port削除時
+     *
+     * リスナは PortActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PortActionListener::operator()(PortProfile& pprof)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePortActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to ComponentActions
+     * post events.
+     * The following listener types are available.
+     * <ul>
+     * <li> ADD_PORT:    At adding Port
+     * <li> REMOVE_PORT: At removing Port
+     * </ul>
+     * Listeners should have the following function operator().
+     *
+     * PortActionListener::operator()(RTC::PortProfile pprof)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePortActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     *
+     */
     public void 
     addPortActionListener(int listener_type,
                           PortActionListener listener){
         this.addPortActionListener(listener_type,listener,true);
     }
     
-    /*
-    template <class Listener>
-    PortActionListener*
+    /**
+     * {@.ja PortActionListener リスナを追加する}
+     * {@.en Adding PortAction type listener}
+     * <p>
+     * {@.ja Portの追加、削除時にコールバックされる各種リスナを設定する。
+     * 
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> ADD_PORT:    Port追加時
+     * <li> REMOVE_PORT: Port削除時
+     *
+     * リスナは PortActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * PortActionListener::operator()(PortProfile& pprof)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removePortActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to ComponentActions
+     * post events.
+     * The following listener types are available.
+     * <ul>
+     * <li> ADD_PORT:    At adding Port
+     * <li> REMOVE_PORT: At removing Port
+     * </ul>
+     * Listeners should have the following function operator().
+     *
+     * PortActionListener::operator()(RTC::PortProfile pprof)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removePortActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param obj 
+     *   {@.ja リスナオブジェクト}
+     *   {@.en listener object}
+     * @param memfunc 
+     *   {@.ja リスナのmethod名}
+     *   {@.en Method name of listener}
+     *
+     */
+    public <DataType> 
+    PortActionListener
     addPortActionListener(int listener_type,
-                          Listener& obj,
-                          void (Listener::*memfunc)(const RTC::PortProfile&))
-    {
-      class Noname
-        : public PortActionListener
-      {
-      public:
-        Noname(Listener& obj, void (Listener::*memfunc)(int))
-          : m_obj(obj), m_memfunc(memfunc)
-        {
-        }
-        void operator()(const RTC::PortProfile& pprofile)
-        {
-          (m_obj.*m_memfunc)(pprofile);
-        }
-      private:
-        Listener& m_obj;
-        typedef void (Listener::*Memfunc)(const RTC::PortProfile&);
-        Memfunc& m_memfunc;
-      };
-      Noname* listener(new Noname(obj, memfunc));
-      addPortActionListener(listener_type, listener, true);
-      return listener;
+                                   DataType obj,
+                                   String memfunc) {
+        class Noname extends PortActionListener {
+            public Noname(DataType obj, String memfunc) {
+                m_obj = obj;
+                try {
+                    Class clazz = m_obj.getClass();
+
+                    m_method = clazz.getMethod(memfunc,RTC.PortProfile.class);
+
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            public void operator(final RTC.PortProfile prof) {
+                try {
+                    m_method.invoke(
+                          m_obj,
+                          prof);
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            private DataType m_obj;
+            private Method m_method;
+        };
+        Noname listener = new Noname(obj, memfunc);
+        addPortActionListener(listener_type, listener, true);
+        return listener;
     }
-    }
-    */
+
+
   
 
     /**
@@ -4326,10 +4716,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *
      *
      */
-    /*
-    typedef ExecutionContextActionListenerType ECActionListenerType;
-    typedef ExecutionContextActionListener ECActionListener;
-    */
     public void 
     addExecutionContextActionListener( int listener_type,
                                        ExecutionContextActionListener listener,
@@ -4347,41 +4733,148 @@ public class RTObject_impl extends DataFlowComponentPOA {
                     "addExecutionContextActionListener(): Invalid listener type.");
         return;
     }
+    /**
+     * {@.ja ExecutionContextActionListener リスナを追加する}
+     * {@.en Adding ExecutionContextAction type listener}
+     * <p>
+     * {@.ja ExecutionContextの追加、削除時にコールバックされる各種リスナを設定する。
+     * 
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> ATTACH_EC:    ExecutionContext アタッチ時
+     * <li> DETACH_EC:    ExecutionContext デタッチ時
+     * </ul>
+     * リスナは ExecutionContextActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * ExecutionContextActionListener::operator()(int　ec_id)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removeExecutionContextActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to ComponentActions
+     * post events.
+     * The following listener types are available.
+     * <ul>
+     * <li> ADD_PORT:    At adding ExecutionContext
+     * <li> REMOVE_PORT: At removing ExecutionContext
+     * </ul>
+     * Listeners should have the following function operator().
+     *
+     * ExecutionContextActionListener::operator()(int ec_id)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removeExecutionContextActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param listener 
+     *   {@.ja リスナオブジェクトへのポインタ}
+     *   {@.en A pointer to a listener object}
+     *
+     *
+     */
     public void 
     addExecutionContextActionListener( int listener_type,
                                        ExecutionContextActionListener listener)
     {
         this.addExecutionContextActionListener(listener_type,listener, true);
     }
-    /*
-    template <class Listener>
-    ExecutionContextActionListener*
-    addExecutionContextActionListener( int listener_type,
-                                       Listener& obj,
-                                       void (Listener::*memfunc)(int))
-    {
-      class Noname
-        : public ExecutionContextActionListener
-      {
-      public:
-        Noname(Listener& obj, void (Listener::*memfunc)(int))
-          : m_obj(obj), m_memfunc(memfunc)
-        {
-        }
-        void operator()(int ec_id)
-        {
-          (m_obj.*m_memfunc)(ec_id);
-        }
-      private:
-        Listener& m_obj;
-        typedef void (Listener::*Memfunc)(int);
-        Memfunc& m_memfunc;
-      };
-      Noname* listener(new Noname(obj, memfunc));
-      addExecutionContextActionListener(listener_type, listener, true);
-      return listener;
+    /**
+     * {@.ja ExecutionContextActionListener リスナを追加する}
+     * {@.en Adding ExecutionContextAction type listener}
+     * <p>
+     * {@.ja ExecutionContextの追加、削除時にコールバックされる各種リスナを設定する。
+     * 
+     * 設定できるリスナのタイプとコールバックイベントは以下の通り
+     * <ul>
+     * <li> ATTACH_EC:    ExecutionContext アタッチ時
+     * <li> DETACH_EC:    ExecutionContext デタッチ時
+     * </ul>
+     * リスナは ExecutionContextActionListener を継承し、以下のシグニチャを持つ
+     * operator() を実装している必要がある。
+     *
+     * ExecutionContextActionListener::operator()(int　ec_id)
+     *
+     * デフォルトでは、この関数に与えたリスナオブジェクトの所有権は
+     * RTObjectに移り、RTObject解体時もしくは、
+     * removeExecutionContextActionListener() により削除時に自動的に解体される。
+     * リスナオブジェクトの所有権を呼び出し側で維持したい場合は、第3引
+     * 数に false を指定し、自動的な解体を抑制することができる。}
+     * {@.en This operation adds certain listeners related to ComponentActions
+     * post events.
+     * The following listener types are available.
+     * <ul>
+     * <li> ADD_PORT:    At adding ExecutionContext
+     * <li> REMOVE_PORT: At removing ExecutionContext
+     * </ul>
+     * Listeners should have the following function operator().
+     *
+     * ExecutionContextActionListener::operator()(int ec_id)
+     *
+     * The ownership of the given listener object is transferred to
+     * this RTObject object in default.  The given listener object will
+     * be destroied automatically in the RTObject's dtor or if the
+     * listener is deleted by removeExecutionContextActionListener() function.
+     * If you want to keep ownership of the listener object, give
+     * "false" value to 3rd argument to inhibit automatic destruction.}
+     *
+     * @param listener_type 
+     *   {@.ja リスナタイプ}
+     *   {@.en A listener type}
+     * @param obj 
+     *   {@.ja リスナオブジェクト}
+     *   {@.en listener object}
+     * @param memfunc 
+     *   {@.ja リスナのmethod名}
+     *   {@.en Method name of listener}
+     *
+     *
+     */
+    public <DataType> 
+    ExecutionContextActionListener
+    addExecutionContextActionListener(int listener_type,
+                                   DataType obj,
+                                   String memfunc) {
+        class Noname extends ExecutionContextActionListener {
+            public Noname(DataType obj, String memfunc) {
+                m_obj = obj;
+                try {
+                    Class clazz = m_obj.getClass();
+
+                    m_method = clazz.getMethod(memfunc,int.class);
+
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            public void operator(final int ec_id) {
+                try {
+                    m_method.invoke(
+                          m_obj,
+                          ec_id);
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            private DataType m_obj;
+            private Method m_method;
+        };
+        Noname listener = new Noname(obj, memfunc);
+        addExecutionContextActionListener(listener_type, listener, true);
+        return listener;
     }
-    */
     
 
     /**
