@@ -1,6 +1,8 @@
 package jp.go.aist.rtm.RTC.port;
 
 import java.util.Observable;
+
+import RTC.ConnectorProfile;
   /**
    * {@.ja PortConnectListener ホルダクラス}
    * {@.en PortConnectListener holder class}
@@ -11,10 +13,10 @@ import java.util.Observable;
    *
    */
 public class PortConnectListenerHolder extends Observable{
-    public void notify(final String config_set_name,final String config_param_name) {
+    public void notify(final String portname,final ConnectorProfile prof) {
         super.setChanged();
         PortConnectListenerArgument arg 
-            = new PortConnectListenerArgument(config_set_name,config_param_name);
+            = new PortConnectListenerArgument(portname,prof);
         super.notifyObservers(arg);
         super.clearChanged();
     }

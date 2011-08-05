@@ -1,5 +1,6 @@
 package jp.go.aist.rtm.RTC.port;
 
+import java.util.Observable;
 import java.util.Observer;
 
 import RTC.ConnectorProfile;
@@ -23,7 +24,10 @@ import RTC.ConnectorProfile;
    *
    */
 public abstract class PortConnectListener  implements Observer{
-
+    public void update(Observable o, Object obj) {
+           PortConnectListenerArgument arg = (PortConnectListenerArgument)obj;
+           operator(arg.m_portname,arg.m_connector_profile);
+    }
     /**
      * {@.ja デストラクタ}
      * {@.en Destructor}

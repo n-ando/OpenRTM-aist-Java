@@ -1,6 +1,6 @@
 package jp.go.aist.rtm.RTC.port;
 
-import RTC.ReturnCode_t;
+import RTC.ConnectorProfile;
   /**
    * {@.ja PortConnectListenerArgument クラス}
    * {@.en PortConnectListenerArgument class}
@@ -13,13 +13,13 @@ public class PortConnectListenerArgument {
      * {@.en Constructor}
      *
      */
-    public PortConnectListenerArgument(final String config_set_name,
-                                              final String config_param_name){
-        m_config_set_name = config_set_name; 
-        m_config_param_name = config_param_name;
+    public PortConnectListenerArgument(final String portname,
+                                       final ConnectorProfile prof) {
+        m_portname = portname; 
+        m_connector_profile = prof;
     }
-    public String m_config_set_name; 
-    public String m_config_param_name;
+    public String m_portname; 
+    public ConnectorProfile m_connector_profile; 
 }
 
 
