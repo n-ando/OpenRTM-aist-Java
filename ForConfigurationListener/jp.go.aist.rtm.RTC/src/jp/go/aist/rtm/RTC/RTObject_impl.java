@@ -5361,7 +5361,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     addConfigurationParamListener(int listener_type,
                                    DataType obj,
                                    String memfunc) {
-        class Noname extends PreComponentActionListener {
+        class Noname extends ConfigurationParamListener {
             public Noname(DataType obj, String memfunc) {
                 m_obj = obj;
                 try {
@@ -5678,7 +5678,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
                 try {
                     m_method.invoke(
                           m_obj,
-                          config_set);
+                          config_set_name);
                 }
                 catch(java.lang.Exception e){
                     rtcout.println(Logbuf.WARN, 
