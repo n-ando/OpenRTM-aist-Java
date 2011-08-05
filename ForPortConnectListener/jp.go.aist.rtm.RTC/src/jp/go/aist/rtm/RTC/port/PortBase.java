@@ -725,6 +725,9 @@ public abstract class PortBase extends PortServicePOA {
         synchronized (m_connectorsMutex){
             ReturnCode_t[] retval = {ReturnCode_t.RTC_OK, ReturnCode_t.RTC_OK, 
                                  ReturnCode_t.RTC_OK}; 
+
+            onNotifyConnect(getName(), connector_profile.value);
+
             //
             // publish owned interface information to the ConnectorProfile
             retval[0] = publishInterfaces(connector_profile);
@@ -2040,6 +2043,84 @@ public abstract class PortBase extends PortServicePOA {
         }
         return true;
     }
+
+    protected void onNotifyConnect(final String portname,
+                                ConnectorProfile profile) {
+      if (m_portconnListeners != null) {
+          m_portconnListeners.
+            portconnect_[PortConnectListenerType.ON_NOTIFY_CONNECT].notify(portname, profile);
+        }
+    }
+
+    protected void onNotifyDisconnect(final String portname,
+                                   RTC.ConnectorProfile profile) {
+      if (m_portconnListeners != null) {
+          m_portconnListeners.
+            portconnect_[PortConnectListenerType.ON_NOTIFY_DISCONNECT].notify(portname, profile);
+        }
+    }
+    protected void onUnsubscribeInterfaces(final String portname,
+                                        RTC.ConnectorProfile profile) {
+      if (m_portconnListeners != null) {
+          m_portconnListeners.
+            portconnect_[PortConnectListenerType.ON_UNSUBSCRIBE_INTERFACES].notify(portname, profile);
+        }
+    }
+
+    protected void onPublishInterfaces(final String portname,
+                                    RTC.ConnectorProfile profile,
+                                    ReturnCode_t ret) {
+      if (m_portconnListeners != null) {
+          m_portconnListeners.
+            portconnret_[PortConnectRetListenerType.ON_PUBLISH_INTERFACES].notify(portname, profile, ret);
+        }
+    }
+
+    protected void onConnectNextport(final String portname,
+                                  RTC.ConnectorProfile profile,
+                                  ReturnCode_t ret) {
+      if (m_portconnListeners != null) {
+          m_portconnListeners.
+            portconnret_[PortConnectRetListenerType.ON_CONNECT_NEXTPORT].notify(portname, profile, ret);
+        }
+    }
+
+    protected void onSubscribeInterfaces(final String portname,
+                                      RTC.ConnectorProfile profile,
+                                      ReturnCode_t ret) {
+      if (m_portconnListeners != null) {
+          m_portconnListeners.
+            portconnret_[PortConnectRetListenerType.ON_SUBSCRIBE_INTERFACES].notify(portname, profile, ret);
+        }
+    }
+
+    protected void onConnected(final String portname,
+                            RTC.ConnectorProfile profile,
+                            ReturnCode_t ret) {
+      if (m_portconnListeners != null) {
+          m_portconnListeners.
+            portconnret_[PortConnectRetListenerType.ON_CONNECTED].notify(portname, profile, ret);
+        }
+    }
+
+    protected void onDisconnectNextport(final String portname,
+                                 RTC.ConnectorProfile profile,
+                                 ReturnCode_t ret) {
+      if (m_portconnListeners != null) {
+          m_portconnListeners.
+            portconnret_[PortConnectRetListenerType.ON_DISCONNECT_NEXT].notify(portname, profile, ret);
+        }
+    }
+
+    protected void onDisconnected(final String portname,
+                               RTC.ConnectorProfile profile,
+                               ReturnCode_t ret) {
+      if (m_portconnListeners != null) {
+          m_portconnListeners.
+            portconnret_[PortConnectRetListenerType.ON_DISCONNECTED].notify(portname, profile, ret);
+        }
+    }
+
   
     /**
      * <p> Publish interface information </p>
@@ -2083,6 +2164,15 @@ public abstract class PortBase extends PortServicePOA {
     protected ConnectionCallback m_onUnsubscribeInterfaces;
     protected ConnectionCallback m_onDisconnected;
     protected ConnectionCallback m_onConnectionLost;
+    /**
+     * {@.ja PortConnectListenerホルダ}
+     * {@.en PortConnectListener holder}
+     * <p>
+     * {@.ja  PortConnectListenrを保持するホルダ}
+     * {@.en Holders of PortConnectListeners}
+     *
+     */
+    protected PortConnectListeners m_portconnListeners = new PortConnectListeners();
     /**
      * <p> The maximum number of connections </p>
      */
