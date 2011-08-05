@@ -3,10 +3,9 @@ package jp.go.aist.rtm.RTC.executionContext;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.ConfigurationSetListener;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
-import jp.go.aist.rtm.RTC.util.OnAddConfigurationAddCallbackFunc;
-import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringHolder;
@@ -33,7 +32,7 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
     /**
      * <p>Callbackクラスの設定</p>
      */
-    class setCallback implements OnSetConfigurationSetCallbackFunc {
+    class setCallback extends ConfigurationSetListener {
         public setCallback(PeriodicECOrganization org) {
             m_org = org;
         }
@@ -46,7 +45,7 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
     /**
      * <p>Callbackクラスの追加</p>
      */
-    class addCallback implements OnAddConfigurationAddCallbackFunc {
+    class addCallback extends ConfigurationSetListener {
         public addCallback(PeriodicECOrganization org) {
             m_org = org;
         }

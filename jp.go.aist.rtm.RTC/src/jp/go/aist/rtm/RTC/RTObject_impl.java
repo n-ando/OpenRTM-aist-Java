@@ -5302,43 +5302,97 @@ public class RTObject_impl extends DataFlowComponentPOA {
     {
         m_configsets.addConfigurationParamListener(type,listener,autoclean);
     }
+
+    /**
+     * {@.ja ConfigurationParamListener を追加する}
+     * {@.en Adding ConfigurationParamListener}
+     * <p>
+     * {@.ja update(const char* config_set, const char* config_param) が呼ばれた際に
+     * コールされるリスナ ConfigurationParamListener を追加する。
+     * type には現在のところ ON_UPDATE_CONFIG_PARAM のみが入る。}
+     * {@.en This function adds a listener object which is called when
+     * update(const char* config_set, const char* config_param) is
+     * called. In the type argument, currently only
+     * ON_UPDATE_CONFIG_PARAM is allowed.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationParamListenerType型の値。
+     *         ON_UPDATE_CONFIG_PARAM がある。}
+     *   {@.en ConfigurationParamListenerType value
+     *         ON_UPDATE_CONFIG_PARAM is only allowed.}
+     * @param listener 
+     *   {@.ja ConfigurationParamListener 型のリスナオブジェクト。}
+     *   {@.en ConfigurationParamListener listener object.}
+     *
+     */
     public void addConfigurationParamListener(int type,
                                        ConfigurationParamListener listener)
     {
         addConfigurationParamListener(type,listener,true);
     }
-    /*
-    template <class Listener>
-    ConfigurationParamListener*
+
+    /**
+     * {@.ja ConfigurationParamListener を追加する}
+     * {@.en Adding ConfigurationParamListener}
+     * <p>
+     * {@.ja update(const char* config_set, const char* config_param) が呼ばれた際に
+     * コールされるリスナ ConfigurationParamListener を追加する。
+     * type には現在のところ ON_UPDATE_CONFIG_PARAM のみが入る。}
+     * {@.en This function adds a listener object which is called when
+     * update(const char* config_set, const char* config_param) is
+     * called. In the type argument, currently only
+     * ON_UPDATE_CONFIG_PARAM is allowed.}
+     *
+     * @param listener_type  
+     *   {@.ja ConfigurationParamListenerType型の値。
+     *         ON_UPDATE_CONFIG_PARAM がある。}
+     *   {@.en ConfigurationParamListenerType value
+     *         ON_UPDATE_CONFIG_PARAM is only allowed.}
+     * @param obj 
+     *   {@.ja リスナオブジェクト}
+     *   {@.en listener object}
+     * @param memfunc 
+     *   {@.ja リスナのmethod名}
+     *   {@.en Method name of listener}
+     *
+     */
+    public <DataType> 
+    ConfigurationParamListener
     addConfigurationParamListener(int listener_type,
-                                  Listener& obj,
-                                  void (Listener::*memfunc)(const char*,
-                                                            const char*))
-    {
-      class Noname
-        : public ConfigurationParamListener
-      {
-      public:
-        Noname(Listener& obj,
-               void (Listener::*memfunc)(const char*, const char*))
-          : m_obj(obj), m_memfunc(memfunc)
-        {
-        }
-        void operator()(const char* config_set_name,
-                        const char* config_param_name)
-        {
-          (m_obj.*m_memfunc)(config_set_name, config_param_name);
-        }
-      private:
-        Listener& m_obj;
-        typedef void (Listener::*Memfunc)(const char*, const char*);
-        Memfunc& m_memfunc;
-      };
-      Noname* listener(new Noname(obj, memfunc));
-      addConfigurationParamListener(listener_type, listener, true);
-      return listener;
+                                   DataType obj,
+                                   String memfunc) {
+        class Noname extends ConfigurationParamListener {
+            public Noname(DataType obj, String memfunc) {
+                m_obj = obj;
+                try {
+                    Class clazz = m_obj.getClass();
+
+                    m_method = clazz.getMethod(memfunc,String.class,String.class);
+
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            public void operator(final String config_set_name,final String config_param_name) {
+                try {
+                    m_method.invoke(
+                          m_obj,
+                          config_set_name,config_param_name);
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            private DataType m_obj;
+            private Method m_method;
+        };
+        Noname listener = new Noname(obj, memfunc);
+        addConfigurationParamListener(listener_type, listener, true);
+        return listener;
     }
-    */
 
     /**
      * {@.ja ConfigurationParamListener を削除する}
@@ -5393,42 +5447,95 @@ public class RTObject_impl extends DataFlowComponentPOA {
     {
         m_configsets.addConfigurationSetListener(type,listener,autoclean);
     }
+    /**
+     * {@.ja ConfigurationSetListener を追加する}
+     * {@.en Adding ConfigurationSetListener }
+     * <p>
+     * {@.ja ConfigurationSet が更新されたときなどに呼ばれるリスナ
+     * ConfigurationSetListener を追加する。設定可能なイベントは以下の
+     * 2種類がある。
+     * <ul>
+     * <li> ON_SET_CONFIG_SET: setConfigurationSetValues() で
+     *                      ConfigurationSet に値が設定された場合。</li>
+     * <li> ON_ADD_CONFIG_SET: addConfigurationSet() で新しい
+     *                      ConfigurationSet が追加された場合。</li></ul>}
+     * {@.en This function add a listener object which is called when
+     * ConfigurationSet is updated. Available events are the followings.}
+     *
+     * @param type 
+     *   {@.ja ConfigurationSetListenerType型の値。}
+     *   {@.en ConfigurationSetListenerType value}
+     * @param listener 
+     *   {@.ja ConfigurationSetListener 型のリスナオブジェクト。}
+     *   {@.en ConfigurationSetListener listener object.}
+     */
     public void addConfigurationSetListener(int type,
                                      ConfigurationSetListener listener)
     {
         addConfigurationSetListener(type,listener,true);
     }
-    /*
-    template <class Listener>
-    ConfigurationSetListener*
+    /**
+     * {@.ja ConfigurationSetListener を追加する}
+     * {@.en Adding ConfigurationSetListener }
+     * <p>
+     * {@.ja ConfigurationSet が更新されたときなどに呼ばれるリスナ
+     * ConfigurationSetListener を追加する。設定可能なイベントは以下の
+     * 2種類がある。
+     * <ul>
+     * <li> ON_SET_CONFIG_SET: setConfigurationSetValues() で
+     *                      ConfigurationSet に値が設定された場合。</li>
+     * <li> ON_ADD_CONFIG_SET: addConfigurationSet() で新しい
+     *                      ConfigurationSet が追加された場合。</li></ul>}
+     * {@.en This function add a listener object which is called when
+     * ConfigurationSet is updated. Available events are the followings.}
+     *
+     * @param listener_type 
+     *   {@.ja ConfigurationSetListenerType型の値。}
+     *   {@.en ConfigurationSetListenerType value}
+     * @param obj 
+     *   {@.ja リスナオブジェクト}
+     *   {@.en listener object}
+     * @param memfunc 
+     *   {@.ja リスナのmethod名}
+     *   {@.en Method name of listener}
+     */
+    public <DataType> 
+    ConfigurationSetListener
     addConfigurationSetListener(int listener_type,
-                                Listener& obj,
-                                void (Listener::*memfunc)
-                                (const coil::Properties& config_set))
-    {
-      class Noname
-        : public ConfigurationSetListener
-      {
-      public:
-        Noname(Listener& obj,
-               void (Listener::*memfunc)(const coil::Properties& config_set))
-          : m_obj(obj), m_memfunc(memfunc)
-        {
-        }
-        virtual void operator()(const coil::Properties& config_set)
-        {
-          (m_obj.*m_memfunc)(config_set);
-        }
-      private:
-        Listener& m_obj;
-        typedef void (Listener::*Memfunc)(const coil::Properties& config_set);
-        Memfunc& m_memfunc;
-      };
-      Noname* listener(new Noname(obj, memfunc));
-      addConfigurationSetListener(listener_type, listener, true);
-      return listener;
+                                   DataType obj,
+                                   String memfunc) {
+        class Noname extends ConfigurationSetListener {
+            public Noname(DataType obj, String memfunc) {
+                m_obj = obj;
+                try {
+                    Class clazz = m_obj.getClass();
+
+                    m_method = clazz.getMethod(memfunc,Properties.class);
+
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            public void operator(final Properties config_set) {
+                try {
+                    m_method.invoke(
+                          m_obj,
+                          config_set);
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            private DataType m_obj;
+            private Method m_method;
+        };
+        Noname listener = new Noname(obj, memfunc);
+        addConfigurationSetListener(listener_type, listener, true);
+        return listener;
     }
-    */
 
     /**
      * {@.ja ConfigurationSetListener を削除する}
@@ -5487,41 +5594,104 @@ public class RTObject_impl extends DataFlowComponentPOA {
     {
         m_configsets.addConfigurationSetNameListener(type,listener,autoclean);
     }
+    /**
+     * {@.ja ConfigurationSetNameListener を追加する}
+     * {@.en Adding ConfigurationSetNameListener}
+     * <p>
+     * {@.ja ConfigurationSetName が更新されたときなどに呼ばれるリスナ
+     * ConfigurationSetNameListener を追加する。設定可能なイベントは以下の
+     * 3種類がある。
+     * <ul>
+     * <li> ON_UPDATE_CONFIG_SET: ある ConfigurationSet がアップデートされた
+     * <li> ON_REMOVE_CONFIG_SET: ある ConfigurationSet が削除された
+     * <li> ON_ACTIVATE_CONFIG_SET: ある ConfigurationSet がアクティブ化された
+     * </ul>}
+     * {@.en This function add a listener object which is called when
+     * ConfigurationSetName is updated. Available events are the followings.
+     * <ul>
+     * <li> ON_UPDATE_CONFIG_SET: A ConfigurationSet has been updated.
+     * <li> ON_REMOVE_CONFIG_SET: A ConfigurationSet has been deleted.
+     * <li> ON_ACTIVATE_CONFIG_SET: A ConfigurationSet has been activated.
+     * </ul>}
+     * @param type 
+     *   {@.ja ConfigurationSetNameListenerType型の値。}
+     *   {@.en ConfigurationSetNameListenerType value}
+     * @param listener 
+     *   {@.ja ConfigurationSetNameListener 型のリスナオブジェクト。}
+     *   {@.en ConfigurationSetNameListener listener object.}
+     */
     public void 
     addConfigurationSetNameListener(int type,
                                     ConfigurationSetNameListener listener)
     {
         addConfigurationSetNameListener(type,listener, true);
     }
-    /*
-    template <class Listener>
-    ConfigurationSetNameListener*
-    addConfigurationSetNameListener(ConfigurationSetNameListenerType type,
-                                    Listener& obj,
-                                    void (Listener::*memfunc)(const char*))
-    {
-      class Noname
-        : public ConfigurationSetNameListener
-      {
-      public:
-        Noname(Listener& obj, void (Listener::*memfunc)(const char*))
-          : m_obj(obj), m_memfunc(memfunc)
-        {
-        }
-        virtual void operator()(const char* config_set_name)
-        {
-          (m_obj.*m_memfunc)(config_set_name);
-        }
-      private:
-        Listener& m_obj;
-        typedef void (Listener::*Memfunc)(const char*);
-        Memfunc& m_memfunc;
-      };
-      Noname* listener(new Noname(obj, memfunc));
-      addConfigurationSetNameListener(type, listener, true);
-      return listener;
+    /**
+     * {@.ja ConfigurationSetNameListener を追加する}
+     * {@.en Adding ConfigurationSetNameListener}
+     * <p>
+     * {@.ja ConfigurationSetName が更新されたときなどに呼ばれるリスナ
+     * ConfigurationSetNameListener を追加する。設定可能なイベントは以下の
+     * 3種類がある。
+     * <ul>
+     * <li> ON_UPDATE_CONFIG_SET: ある ConfigurationSet がアップデートされた
+     * <li> ON_REMOVE_CONFIG_SET: ある ConfigurationSet が削除された
+     * <li> ON_ACTIVATE_CONFIG_SET: ある ConfigurationSet がアクティブ化された
+     * </ul>}
+     * {@.en This function add a listener object which is called when
+     * ConfigurationSetName is updated. Available events are the followings.
+     * <ul>
+     * <li> ON_UPDATE_CONFIG_SET: A ConfigurationSet has been updated.
+     * <li> ON_REMOVE_CONFIG_SET: A ConfigurationSet has been deleted.
+     * <li> ON_ACTIVATE_CONFIG_SET: A ConfigurationSet has been activated.
+     * </ul>}
+     * @param listener_type 
+     *   {@.ja ConfigurationSetNameListenerType型の値。}
+     *   {@.en ConfigurationSetNameListenerType value}
+     * @param obj 
+     *   {@.ja リスナオブジェクト}
+     *   {@.en listener object}
+     * @param memfunc 
+     *   {@.ja リスナのmethod名}
+     *   {@.en Method name of listener}
+     */
+    public <DataType> 
+    ConfigurationSetNameListener
+    addConfigurationSetNameListener(int listener_type,
+                                   DataType obj,
+                                   String memfunc) {
+        class Noname extends ConfigurationSetNameListener {
+            public Noname(DataType obj, String memfunc) {
+                m_obj = obj;
+                try {
+                    Class clazz = m_obj.getClass();
+
+                    m_method = clazz.getMethod(memfunc,String.class);
+
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            public void operator(final String config_set_name) {
+                try {
+                    m_method.invoke(
+                          m_obj,
+                          config_set_name);
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            private DataType m_obj;
+            private Method m_method;
+        };
+        Noname listener = new Noname(obj, memfunc);
+        addConfigurationSetNameListener(listener_type, listener, true);
+        return listener;
     }
-    */
     /**
      * {@.ja  ConfigurationSetNameListener を削除する}
      * {@.en  Removing ConfigurationSetNameListener}

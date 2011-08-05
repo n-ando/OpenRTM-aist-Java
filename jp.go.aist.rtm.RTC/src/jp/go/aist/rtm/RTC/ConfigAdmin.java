@@ -835,14 +835,11 @@ public class ConfigAdmin {
      *   {@.ja OnUpdateCallback型のオブジェクト}
      *   {@.en OnUpdateCallback type object}
      */
-/*
-    public void setOnUpdate(OnUpdateCallbackFunc cb) {
-//        if (m_updateCb != 0) {
-//            m_updateCb = null;
-//        }
-        m_updateCb = cb;
+    public void setOnUpdate(ConfigurationSetNameListener cb) {
+        System.err.println("setOnUpdate function is obsolete.");
+        System.err.println("Use addConfigurationSetNameListener instead.");
+        m_listeners.configparam_[ConfigurationSetNameListenerType.ON_UPDATE_CONFIG_SET].addObserver(cb);
     }
-*/
 
     /**
      * {@.ja OnUpdateParam のコールバックの設定}
@@ -856,14 +853,11 @@ public class ConfigAdmin {
      *   {@.en OnUpdateParamCallback type object}
      *
      */
-/*
-    public void setOnUpdateParam(OnUpdateParamCallbackFunc cb) {
-//        if (m_updateParamCb != 0) {
-//            m_updateParamCb = null;
-//        }
-        m_updateParamCb = cb;
+    public void setOnUpdateParam(ConfigurationParamListener cb) {
+        System.err.println("setOnUpdateParam function is obsolete.");
+        System.err.println("Use addConfigurationParamListener instead.");
+        m_listeners.configparam_[ConfigurationParamListenerType.ON_UPDATE_CONFIG_PARAM].addObserver(cb);
     }
-*/
 
     /**
      * {@.ja OnSetConfigurationSet のコールバックの設定}
@@ -878,11 +872,10 @@ public class ConfigAdmin {
      *   {@.en OnSetConfigurationSetCallback type object}
      */
 
-    public void setOnSetConfigurationSet(OnSetConfigurationSetCallbackFunc cb) {
-//        if (m_setConfigSetCb != 0) {
-//            m_setConfigSetCb = null;
-//      }
-//        m_setConfigSetCb = cb;
+    public void setOnSetConfigurationSet(ConfigurationSetListener cb) {
+        System.err.println("setOnSetConfigurationSet function is obsolete.");
+        System.err.println("Use addConfigurationSetListener instead.");
+        m_listeners.configset_[ConfigurationSetListenerType.ON_SET_CONFIG_SET].addObserver(cb);
     }
 
 
@@ -899,12 +892,10 @@ public class ConfigAdmin {
      *   {@.en OnSetConfigurationSetCallback type object}
      *
      */
-
-    public void setOnAddConfigurationSet(OnAddConfigurationAddCallbackFunc cb) {
-//        if (m_addConfigSetCb != 0) {
-//            m_addConfigSetCb = null;
-//        }
-//        m_addConfigSetCb = cb;
+    public void setOnAddConfigurationSet(ConfigurationSetListener cb) {
+        System.err.println("setOnAddConfigurationSet function is obsolete.");
+        System.err.println("Use addConfigurationSetListener instead.");
+        m_listeners.configset_[ConfigurationSetListenerType.ON_ADD_CONFIG_SET].addObserver(cb);
     }
 
 
@@ -921,14 +912,11 @@ public class ConfigAdmin {
      *   {@.en OnRemoveConfigurationSetCallback type object}
      *
      */
-/*
-    public void setOnRemoveConfigurationSet(OnRemoveConfigurationSetCallbackFunc cb) {
-//        if (m_removeConfigSetCb != 0) {
-//            m_removeConfigSetCb = null;
-//        }
-        m_removeConfigSetCb = cb;
+    public void setOnRemoveConfigurationSet(ConfigurationSetNameListener cb) {
+        System.err.println("setOnRemoveConfigurationSet function is obsolete.");
+        System.err.println("Use addConfigurationSetNameListener instead.");
+        m_listeners.configsetname_[ConfigurationSetNameListenerType.ON_REMOVE_CONFIG_SET].addObserver(cb);
     }
-*/
 
     /**
      * {@.ja OnActivateSet のコールバックの設定}
@@ -942,14 +930,11 @@ public class ConfigAdmin {
      *   {@.en OnActivateSetCallback type object}
      *
      */
-/*
-    public void setOnActivateSet(OnActivateSetCallbackFunc cb) {
-//        if (m_activateSetCb != 0) {
-//            m_activateSetCb = null;
-//        }
-        m_activateSetCb = cb;
+    public void setOnActivateSet(ConfigurationSetNameListener cb) {
+        System.err.println("setOnActivateSet function is obsolete.");
+        System.err.println("Use addConfigurationSetNameListener instead.");
+        m_listeners.configsetname_[ConfigurationSetNameListenerType.ON_ACTIVATE_CONFIG_SET].addObserver(cb);
     }
-*/
 
 
     /**
@@ -985,8 +970,7 @@ public class ConfigAdmin {
      *
      */
     public void onUpdateParam(String config_set, String config_param) {
-        m_listeners.configparam_[ConfigurationParamListenerType.ON_UPDATE_CONFIG_PARAM].notify(config_set,
-                                                            config_param);
+        m_listeners.configparam_[ConfigurationParamListenerType.ON_UPDATE_CONFIG_PARAM].notify(config_set, config_param);
     }
 
     /**
