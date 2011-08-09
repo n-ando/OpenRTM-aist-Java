@@ -2675,6 +2675,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         rtcout.println(Logbuf.TRACE, "addPort(PortBase)");
 
         port.setOwner(this.getObjRef());
+        port.setPortConnectListenerHolder(m_portconnListeners);
         onAddPort(port.getPortProfile());
 
         return m_portAdmin.addPort(port);
@@ -4961,10 +4962,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void addPortConnectListener(int listener_type,
                                            PortConnectListener listener) {
-        if(listener_type < PortConnectListenerType.PORT_CONNECT_LISTENER_NUM){
-            m_portconnListeners.
-                portconnect_[listener_type].addObserver(listener);
-        }
+       addPortConnectListener(listener_type, listener, true);
     } 
 
     /**
@@ -5094,6 +5092,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
                 }
                 catch(java.lang.Exception e){
+                    System.out.println("Exception caught."+e.toString());
                     rtcout.println(Logbuf.WARN, 
                         "Exception caught."+e.toString());
                 }
@@ -5196,10 +5195,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      */
     public void addPortConnectRetListener(int listener_type,
                                            PortConnectRetListener listener) {
-        if(listener_type < PortConnectRetListenerType.PORT_CONNECT_RET_LISTENER_NUM){
-            m_portconnListeners.
-                portconnret_[listener_type].addObserver(listener);
-        }
+        addPortConnectRetListener(listener_type, listener, true);
     }
     /**
      * {@.ja PortConnectRetListener リスナを追加する}
@@ -6134,7 +6130,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * {@.en Holders of PortConnectListeners}
      *
      */
-    protected PortConnectListeners m_portconnListeners;
+    protected PortConnectListeners m_portconnListeners = new PortConnectListeners();
 
     /**
      * {@.ja RTコンポーネント検索用ヘルパークラス}

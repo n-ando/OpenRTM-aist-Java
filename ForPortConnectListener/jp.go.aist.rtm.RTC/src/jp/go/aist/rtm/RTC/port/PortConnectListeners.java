@@ -23,5 +23,14 @@ public class PortConnectListeners {
      */
     public PortConnectRetListenerHolder[] portconnret_
     = new PortConnectRetListenerHolder[PortConnectRetListenerType.PORT_CONNECT_RET_LISTENER_NUM];
+
+    public PortConnectListeners() {
+       for(int ic=0;ic<PortConnectListenerType.PORT_CONNECT_LISTENER_NUM;++ic){
+          portconnect_[ic] = new PortConnectListenerHolder();
+       }
+       for(int ic=0;ic<PortConnectRetListenerType.PORT_CONNECT_RET_LISTENER_NUM;++ic){
+          portconnret_[ic] = new PortConnectRetListenerHolder();
+       }
+    }
   };
 

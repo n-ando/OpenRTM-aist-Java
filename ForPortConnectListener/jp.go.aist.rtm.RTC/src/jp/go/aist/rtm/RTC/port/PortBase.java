@@ -1365,6 +1365,24 @@ public abstract class PortBase extends PortServicePOA {
         m_onConnectionLost = on_connection_lost;
     }
 
+    /**
+     * {@.ja PortConnectListeners のホルダをセットする}
+     * {@.en Setting PortConnectListener holder}
+     * <p>
+     * {@.ja ポートの接続に関するリスナ群を保持するホルダクラスへのポインタを
+     * セットする。この関数は通常親のRTObjectから呼ばれ、RTObjectが持つ
+     * ホルダクラスへのポインタがセットされる。}
+     * {@.en This operation sets a functor that is called when connection
+     * of this port does lost. }
+     *
+     * @param portconnListeners 
+     *   {@.ja PortConnectListeners オブジェクトのポインタ}
+     *   {@.en a pointer to ConnectionCallback's subclasses}
+     *
+     */
+    public void setPortConnectListenerHolder(PortConnectListeners portconnListeners){
+        m_portconnListeners = portconnListeners;
+    }
 
     /**
      * <p>Interface情報を公開します。
@@ -2054,17 +2072,15 @@ public abstract class PortBase extends PortServicePOA {
 
     protected void onNotifyConnect(final String portname,
                                 ConnectorProfile profile) {
-      if (m_portconnListeners != null) {
-          m_portconnListeners.
-            portconnect_[PortConnectListenerType.ON_NOTIFY_CONNECT].notify(portname, profile);
+        if (m_portconnListeners != null) {
+            m_portconnListeners.portconnect_[PortConnectListenerType.ON_NOTIFY_CONNECT].notify(portname, profile);
         }
     }
 
     protected void onNotifyDisconnect(final String portname,
                                    RTC.ConnectorProfile profile) {
-      if (m_portconnListeners != null) {
-          m_portconnListeners.
-            portconnect_[PortConnectListenerType.ON_NOTIFY_DISCONNECT].notify(portname, profile);
+        if (m_portconnListeners != null) {
+            m_portconnListeners.portconnect_[PortConnectListenerType.ON_NOTIFY_DISCONNECT].notify(portname, profile);
         }
     }
     protected void onUnsubscribeInterfaces(final String portname,
@@ -2180,7 +2196,8 @@ public abstract class PortBase extends PortServicePOA {
      * {@.en Holders of PortConnectListeners}
      *
      */
-    protected PortConnectListeners m_portconnListeners = new PortConnectListeners();
+    //protected PortConnectListeners m_portconnListeners = new PortConnectListeners();
+    protected PortConnectListeners m_portconnListeners = null;
     /**
      * <p> The maximum number of connections </p>
      */
