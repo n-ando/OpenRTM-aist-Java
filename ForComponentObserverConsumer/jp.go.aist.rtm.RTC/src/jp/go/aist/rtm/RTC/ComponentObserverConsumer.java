@@ -7,6 +7,7 @@ import OpenRTM.StatusKind;
 import OpenRTM.StatusKindHelper;
 import OpenRTM.StatusKindHolder;
 import OpenRTM.ComponentObserver;
+import OpenRTM.ComponentObserverHelper;
 
 import RTC.ReturnCode_t;
 
@@ -31,7 +32,7 @@ import _SDOPackage.ServiceProfile;
    * 
    * 
    */
-public class ComponentObserverConsumer implements SdoServiceConsumerBase,CallbackFunction{
+public class ComponentObserverConsumer implements SdoServiceConsumerBase, CallbackFunction, ObjectCreator<SdoServiceConsumerBase>, ObjectDestructor{
     /**
      * {@.ja ctor of ComponentObserverConsumer}
      * {@.en ctor of ComponentObserverConsumer}
@@ -718,6 +719,38 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase,Callbac
     };
 
 
+    /**
+     * <p> creator_ </p>
+     * 
+     * @return Object Created instances
+     *
+     */
+    public SdoServiceConsumerBase creator_() {
+        return new ComponentObserverConsumer();
+    }
+    /**
+     * <p> destructor_ </p>
+     * 
+     * @param obj    The target instances for destruction
+     *
+     */
+    public void destructor_(Object obj) {
+        obj = null;
+    }
+    /**
+     * <p> ComponentObserverConsumerInit </p>
+     *
+     */
+    public static void ComponentObserverConsumerInit() {
+        final SdoServiceConsumerFactory<SdoServiceConsumerBase,String> factory 
+            = SdoServiceConsumerFactory.instance();
+        
+
+        factory.addFactory(ComponentObserverHelper.id(),
+                    new ComponentObserverConsumer(),
+                    new ComponentObserverConsumer());
+    
+    }
 
     private RTObject_impl m_rtobj;
     private _SDOPackage.ServiceProfile m_profile;
