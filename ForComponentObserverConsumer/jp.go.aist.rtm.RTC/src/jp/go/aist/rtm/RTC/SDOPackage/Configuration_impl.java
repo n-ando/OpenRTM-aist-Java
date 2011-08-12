@@ -1054,7 +1054,7 @@ public class Configuration_impl extends ConfigurationPOA {
      * {@.en SDO Service admin object with mutex lock}
      */
     protected SdoServiceAdmin m_sdoservice;
-    protected String m_sdoservice_mutex;
+    protected String m_sdoservice_mutex = new String();
     
     /**
      * {@.ja Organization リスト}

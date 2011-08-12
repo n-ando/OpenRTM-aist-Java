@@ -41,7 +41,7 @@ public class SdoServiceProviderFactory<ABSTRACTCLASS,IDENTIFIER> extends Factory
         }
         return factory_global;
 */
-        return (SdoServiceProviderFactory)instance("SdoServiceProviderFactory");
+        return (SdoServiceProviderFactory)instance("jp.go.aist.rtm.RTC.SdoServiceProviderFactory");
     }
     /**
      *  <p> mutex </p>
