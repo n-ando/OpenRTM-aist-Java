@@ -60,7 +60,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
     public boolean init(RTObject_impl rtobj,
                       final _SDOPackage.ServiceProfile profile){
 
-        if (!m_observer.setObject(profile.service)) {
+        if (!m_observer.setObject(ComponentObserverHelper.narrow(profile.service))) {
           // narrowing failed
           return false;
         }
@@ -754,7 +754,8 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
 
     private RTObject_impl m_rtobj;
     private _SDOPackage.ServiceProfile m_profile;
-    private CorbaConsumer<OpenRTM.ComponentObserver> m_observer;
+    private CorbaConsumer<OpenRTM.ComponentObserver> m_observer =
+            new CorbaConsumer<OpenRTM.ComponentObserver>(OpenRTM.ComponentObserver.class);
 
     private boolean[] m_observed = new boolean[StatusKind._STATUS_KIND_NUM];
 
