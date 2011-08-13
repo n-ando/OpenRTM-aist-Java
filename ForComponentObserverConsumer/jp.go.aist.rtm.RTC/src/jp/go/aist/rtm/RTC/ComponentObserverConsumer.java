@@ -18,6 +18,7 @@ import jp.go.aist.rtm.RTC.port.PortConnectRetListener;
 import jp.go.aist.rtm.RTC.port.PortConnectRetListenerType;
 
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
+import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.ListenerBase;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
@@ -183,32 +184,47 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
                 break;
             }
         }
-  
+ 
+        DataRef<Boolean> bflag = new DataRef<Boolean>(new Boolean(true));
+        bflag.v = new Boolean(m_observed[StatusKind._COMPONENT_PROFILE]);
         switchListeners(flags[StatusKind._COMPONENT_PROFILE],
-                    m_observed[StatusKind._COMPONENT_PROFILE],
+                    bflag,
                     this,
                     "setComponentProfileListeners",
                     "unsetComponentProfileListeners");
+        m_observed[StatusKind._COMPONENT_PROFILE] = bflag.v.booleanValue();
+
+        bflag.v = new Boolean(m_observed[StatusKind._RTC_STATUS]);
         switchListeners(flags[StatusKind._RTC_STATUS],
-                    m_observed[StatusKind._RTC_STATUS],
+                    bflag,
                     this,
                     "setComponentStatusListeners",
                     "unsetComponentStatusListeners");
+        m_observed[StatusKind._RTC_STATUS] = bflag.v.booleanValue();
+
+        bflag.v = new Boolean(m_observed[StatusKind._EC_STATUS]);
         switchListeners(flags[StatusKind._EC_STATUS],
-                    m_observed[StatusKind._EC_STATUS],
+                    bflag,
                     this,
                     "setExecutionContextListeners",
                     "unsetExecutionContextListeners");
+        m_observed[StatusKind._EC_STATUS] = bflag.v.booleanValue();
+
+        bflag.v = new Boolean(m_observed[StatusKind._PORT_PROFILE]);
         switchListeners(flags[StatusKind._PORT_PROFILE],
-                    m_observed[StatusKind._PORT_PROFILE],
+                    bflag,
                     this,
                     "setPortProfileListeners",
                     "unsetPortProfileListeners");
+        m_observed[StatusKind._PORT_PROFILE] = bflag.v.booleanValue();
+
+        bflag.v = new Boolean(m_observed[StatusKind._CONFIGURATION]);
         switchListeners(flags[StatusKind._CONFIGURATION],
-                    m_observed[StatusKind._CONFIGURATION],
+                    bflag,
                     this,
                     "setConfigurationListeners",
                     "unsetConfigurationListeners");
+        m_observed[StatusKind._CONFIGURATION] = bflag.v.booleanValue();
 
     }
     
@@ -218,11 +234,11 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.en Switching listeners connecting/disconnecting}
      */
     protected <DataType> 
-    void switchListeners(boolean next, boolean pre,
+    void switchListeners(boolean next, DataRef<Boolean> pre,
                          DataType obj,
                          String setfunc, 
                          String unsetfunc) {
-        if (!pre && next) {
+        if (!pre.v.booleanValue()  && next) {
             try {
                 Class clazz = obj.getClass();
                 Method method = clazz.getMethod(setfunc,null);
@@ -232,9 +248,9 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
 //                rtcout.println(Logbuf.WARN, 
 //                        "Exception caught."+e.toString());
             }
-            pre = true;
+            pre.v = new Boolean(true);
         }
-        else if (pre && !next) {
+        else if (pre.v.booleanValue() && !next) {
             try {
                 Class clazz = obj.getClass();
                 Method method = clazz.getMethod(unsetfunc,null);
@@ -244,7 +260,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
 //                rtcout.println(Logbuf.WARN, 
 //                        "Exception caught."+e.toString());
             }
-            pre = false;
+            pre.v = new Boolean(false);
         }
     }
 
