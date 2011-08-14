@@ -88,7 +88,7 @@ public class  SdoServiceAdmin {
      */
     public SdoServiceAdmin(RTObject_impl rtobj) {
         m_rtobj = rtobj;
-        m_allConsumerAllowed = true;
+        m_allConsumerEnabled = true;
         rtcout = new Logbuf("SdoServiceAdmin");
         rtcout.println(Logbuf.TRACE, "SdoServiceAdmin.SdoServiceAdmin(" + rtobj.getProperties().getProperty("instance_name") + ")");
 
@@ -417,7 +417,8 @@ public class  SdoServiceAdmin {
         if (m_allConsumerEnabled) { return true; }
 
         for (Iterator ic=m_consumerTypes.iterator(); ic.hasNext();) {
-            if (ic.next().equals(sProfile.interface_type)) {
+            String str = (String)ic.next();
+            if (str.equals(sProfile.interface_type)) {
                 rtcout.println(Logbuf.DEBUG,sProfile.interface_type+" is supported SDO service.");
                 return true;
             }
@@ -464,7 +465,6 @@ public class  SdoServiceAdmin {
 
     private List<String> m_consumerTypes = new ArrayList<String>();
     private boolean m_allConsumerEnabled;
-    private boolean m_allConsumerAllowed;
     
     /**
      * {@.ja Lock 付き SDO ServiceProfileList}

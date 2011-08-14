@@ -48,6 +48,7 @@
 	<property name="idl.BasicDataType" value="${idl.path}/BasicDataType.idl" />
 	<property name="idl.ExtendedDataTypes" value="${idl.path}/ExtendedDataTypes.idl" />
 	<property name="idl.InterfaceDataTypes" value="${idl.path}/InterfaceDataTypes.idl" />
+	<property name="idl.ComponentObserver" value="${idl.path}/ComponentObserver.idl" />
 	<property name="idl.test.CorbaConsumer" value="${idl.path.tests}/CorbaConsumer/Hello.idl" />
 	<property name="idl.test.CorbaPort" value="${idl.path.tests}/CorbaPort/MyService.idl" />
 	<property name="idl.test.TypeCast" value="${idl.path.tests}/TypeCast/Mock.idl" />
@@ -227,6 +228,9 @@
 		</exec>
 		<exec executable="${java.home}\..\bin\idlj">
 			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.InterfaceDataTypes}"/>
+		</exec>
+		<exec executable="${java.home}\..\bin\idlj">
+			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.ComponentObserver}"/>
 		</exec>
 	</target>
 

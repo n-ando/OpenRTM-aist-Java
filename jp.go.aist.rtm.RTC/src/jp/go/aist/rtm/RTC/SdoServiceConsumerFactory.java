@@ -27,6 +27,7 @@ public class SdoServiceConsumerFactory<ABSTRACTCLASS,IDENTIFIER> extends Factory
      *
      */
     public static SdoServiceConsumerFactory instance() {
+/*
         if (factory_global == null) {
             synchronized (factory_global_mutex) {
                 if (factory_global == null) {
@@ -40,6 +41,8 @@ public class SdoServiceConsumerFactory<ABSTRACTCLASS,IDENTIFIER> extends Factory
         }
 
         return factory_global;
+*/
+        return (SdoServiceConsumerFactory)instance("jp.go.aist.rtm.RTC.SdoServiceConsumerFactory");
     }
     /**
      *  <p> mutex </p>

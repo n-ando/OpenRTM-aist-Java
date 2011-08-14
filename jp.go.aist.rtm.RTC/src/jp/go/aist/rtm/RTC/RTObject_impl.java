@@ -140,7 +140,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_writeAll = false;
         m_readAllCompletion = false;
         m_writeAllCompletion = false;
-        
+        rtcout = new Logbuf("RTObject_impl");
+        m_sdoservice = new SdoServiceAdmin(this);
+
         m_objref = this._this();
         m_pSdoConfigImpl = new Configuration_impl(m_configsets,m_sdoservice);
         m_pSdoConfig = m_pSdoConfigImpl.getObjRef();
@@ -157,7 +159,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
 
         m_profile.properties    = new NameValue[0];
-        rtcout = new Logbuf("RTObject_impl");
          
     }
 
@@ -183,6 +184,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_writeAll = false;
         m_readAllCompletion = false;
         m_writeAllCompletion = false;
+        rtcout = new Logbuf("RTObject_impl");
+        m_sdoservice = new SdoServiceAdmin(this);
         
         m_objref = this._this();
         m_pSdoConfigImpl = new Configuration_impl(m_configsets,m_sdoservice);
@@ -199,7 +202,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         Manager manager = Manager.instance();
         m_profile.properties    = new NameValue[0];
-        rtcout = new Logbuf("RTObject_impl");
     }
 
     /**
@@ -5092,7 +5094,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
                 }
                 catch(java.lang.Exception e){
-                    System.out.println("Exception caught."+e.toString());
                     rtcout.println(Logbuf.WARN, 
                         "Exception caught."+e.toString());
                 }

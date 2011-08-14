@@ -1,5 +1,7 @@
 package jp.go.aist.rtm.RTC;
 
+import java.lang.reflect.Constructor;
+
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -99,7 +101,11 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         } 
         else {
             try{
-                Object obj2 = (Object)(Class.forName(clazz).newInstance());
+                Class cl  = Class.forName(clazz);
+                Constructor cunstructor = cl.getDeclaredConstructor(null);
+                cunstructor.setAccessible(true);
+                Object obj2 = (Object)cunstructor.newInstance();
+                //Object obj2 = (Object)(Class.forName(clazz).newInstance());
                 factory_table.put(clazz,obj2);
                 return obj2;
             }
