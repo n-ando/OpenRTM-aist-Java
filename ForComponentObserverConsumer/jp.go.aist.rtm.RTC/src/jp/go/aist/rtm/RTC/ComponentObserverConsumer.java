@@ -1,5 +1,6 @@
 package jp.go.aist.rtm.RTC;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.Exception;
 
@@ -241,7 +242,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         if (!pre.v.booleanValue()  && next) {
             try {
                 Class clazz = obj.getClass();
-                Method method = clazz.getMethod(setfunc,null);
+                Method method = clazz.getDeclaredMethod(setfunc,null);
                 method.invoke(obj, null);
             }
             catch(Exception e){
@@ -253,7 +254,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         else if (pre.v.booleanValue() && !next) {
             try {
                 Class clazz = obj.getClass();
-                Method method = clazz.getMethod(unsetfunc,null);
+                Method method = clazz.getDeclaredMethod(unsetfunc,null);
                 method.invoke(obj, null);
             }
             catch(Exception e){
