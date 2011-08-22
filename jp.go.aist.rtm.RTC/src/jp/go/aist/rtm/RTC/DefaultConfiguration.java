@@ -15,7 +15,8 @@ interface DefaultConfiguration {
     public static final String[] default_config = {
         
         "config.version",         Version.openrtm_version,
-        "openrtm.version",        Version.openrtm_name,
+        "openrtm.name",           Version.openrtm_name,
+        "openrtm.version",        Version.openrtm_version,
         "manager.instance_name",  "manager",
         "manager.name",           "manager",
         "manager.naming_formats", "%h.host_cxt/%n.mgr",

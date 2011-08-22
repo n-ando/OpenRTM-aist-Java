@@ -353,21 +353,21 @@ class ManagerConfig {
      * {@.ja システム情報を取得しプロパティにセットする。
      * 設定されるキーは以下の通り。
      * <ul>
-     * <li> manager.os.name    : OS名
-     * <li> manager.os.release : OSリリース名
-     * <li> maanger.os.version : OSバージョン名
-     * <li> manager.os.arch    : OSアーキテクチャ
-     * <li> manager.os.hostname: ホスト名
+     * <li> os.name    : OS名
+     * <li> os.release : OSリリース名
+     * <li> os.version : OSバージョン名
+     * <li> os.arch    : OSアーキテクチャ
+     * <li> os.hostname: ホスト名
      * <li> manager.pid        : プロセスID
      * </ul>}
      * {@.en Get the following system info. and set them to Manager's 
      * properties.
      * <ul>
-     * <li> manager.os.name    : OS name
-     * <li> manager.os.release : OS release name
-     * <li> manager.os.version : OS version
-     * <li> manager.os.arch    : OS architecture
-     * <li> manager.os.hostname: Hostname
+     * <li> os.name    : OS name
+     * <li> os.release : OS release name
+     * <li> os.version : OS version
+     * <li> os.arch    : OS architecture
+     * <li> os.hostname: Hostname
      * <li> manager.pid        : process ID
      * </ul>}
      *
@@ -412,11 +412,11 @@ class ManagerConfig {
             ignored.printStackTrace();
         }
         
-        properties.setProperty("manager.os.name", osName);
-        properties.setProperty("manager.os.release", osRelease);
-        properties.setProperty("manager.os.version", osVersion);
-        properties.setProperty("manager.os.arch", osArch);
-        properties.setProperty("manager.os.hostname", hostName);
+        properties.setProperty("os.name", osName);
+        properties.setProperty("os.release", osRelease);
+        properties.setProperty("os.version", osVersion);
+        properties.setProperty("os.arch", osArch);
+        properties.setProperty("os.hostname", hostName);
         properties.setProperty("manager.pid", pid);
 
     }

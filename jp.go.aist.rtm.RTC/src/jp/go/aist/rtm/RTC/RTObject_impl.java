@@ -1098,6 +1098,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
             profile.parent = m_profile.parent;
             profile.properties = m_profile.properties;
             profile.port_profiles = m_portAdmin.getPortProfileList().value;
+            NVListHolder nvholder = 
+                new NVListHolder(profile.properties);
+            NVUtil.copyFromProperties(nvholder, m_properties);
+            profile.properties = nvholder.value;
             return profile;
         } catch (Exception ex) {
             ; // This operation throws no exception.
