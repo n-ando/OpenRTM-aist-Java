@@ -4,7 +4,7 @@
 @rem   usually only %TARGET% might be changed
 @rem ------------------------------------------------------------
 @set PATH=%WIX%\bin;%PATH%
-@set VERSION=1.0.0
+@set VERSION=1.1.0
 @set TARGET=OpenRTM-aist-Java
 @set TARGET_WXS=%TARGET%.wxs
 @set TARGET_WIXOBJ=%TARGET%.wixobj
@@ -22,7 +22,7 @@
 @rem default distribution package folder
 @rem ------------------------------------------------------------
 @set DISTRIBUTION=C:\distribution
-@set OPENRTM_JAVA=%DISTRIBUTION%\OpenRTM-aist-Java-1.0.0
+@set OPENRTM_JAVA=%DISTRIBUTION%\OpenRTM-aist-Java-1.1.0
 @set RTSE_ROOT=%DISTRIBUTION%\OpenRTP\RTSystemEditor
 
 @rem ------------------------------------------------------------
@@ -30,7 +30,7 @@
 @rem   supported languages have to be specified
 @rem ------------------------------------------------------------
 set LANGUAGES=(ja-jp de-de es-es fr-fr hu-hu it-it ko-kr zh-tw)
-
+copy OpenRTM-aist-Java.wxs.yaml.in OpenRTM-aist-Java.wxs.yaml
 echo off
 @rem ------------------------------------------------------------
 @rem Checking WiX
@@ -61,7 +61,7 @@ set INCLUDE_OPENRTP=YES
 if not exist OpenRTP_inc.wxs (
    cd OpenRTP
 rem set TMP_PYTHONPATH=%PYTHONPATH%
-rem set PYTHONPATH=../../bin;%PYTHONPATH%
+rem set PYTHONPATH=../;../../bin;%PYTHONPATH%
 rem echo Generating OpenRTP_inc.wxs......
 rem openrtpwxs.py
 rem set PYTHONPATH=%TMP_PYTHONPATH%

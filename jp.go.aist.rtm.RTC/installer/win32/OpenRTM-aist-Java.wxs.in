@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">   
-  <?define ProductName = "OpenRTM-aist-1.0.0 for Java"?>
-  <Product Name="OpenRTM-aist-1.0.0 for Java" 
-           Id="A992DA91-D74B-11DC-8F83-000C2907C850"
+  <?define ProductName = "{% Product.Name %}-{% Product.Version %} for Java"?>
+  <Product Name="{% Product.Name %}-{% Product.Version %} for Java"
+           Id="{% Product.Id %}"
            Language='$(var.language)'
            Codepage='$(var.codepage)'
-           Version="1.0.0" 
-           Manufacturer="AIST"
-           UpgradeCode="A8C8006F-E9D8-4528-AF4F-B8AE2D25AB47">
+           Version="{% Product.Version %}"
+           Manufacturer="{% Product.Manufacturer %}"
+	   UpgradeCode="{% Product.UpgradeCode %}">
     <Package Id="*" 
              Keywords="Installer"
-             Description="OpenRTM-aist-Java Installer"
+             Description="{% Package.Description %}"
              InstallerVersion="300"
              Languages='$(var.language)'
              Compressed="yes"
@@ -43,31 +43,28 @@
         </DirectorySearch>
       </DirectorySearch>
     </Property>
-
 <!--     <SetProperty Id="FILEEXISTSDIR" After="AppSearch" Value="[FILEEXISTS]">
     </SetProperty>-->
 
     <!-- Upgrade -->
-    <Upgrade Id="A8C8006F-E9D8-4528-AF4F-B8AE2D25AB47">
+    <Upgrade Id="{% Product.UpgradeCode %}">
       <UpgradeVersion OnlyDetect="yes"
-                      Minimum="1.0.0"
-                      Maximum="1.1.0"
+                      Minimum="1.1.0.1"
+                      Maximum="1.2.0"
                       Property="NEWERVERSIONDETECTED"
                       IncludeMinimum="no" /> 
       <UpgradeVersion OnlyDetect="no"
-                      Minimum="1.0.0"
-                      Maximum="1.0.0.1"
+                      Minimum="1.1.0"
+                      Maximum="1.1.0.1"
                       Property="OLDERVERSIONBEINGUPGRADED"
                       IncludeMaximum="no" /> 
       <UpgradeVersion OnlyDetect='no' Property='PREVIOUSFOUND'
-                      Minimum='1.0.0' IncludeMinimum='yes'
-                      Maximum='1.1.0' IncludeMaximum='no' />
+                      Minimum='1.1.0' IncludeMinimum='yes'
+                      Maximum='1.2.0' IncludeMaximum='no' />
     </Upgrade>
-
     <InstallExecuteSequence>
       <RemoveExistingProducts Before="InstallInitialize"/>
     </InstallExecuteSequence>
-
     <!-- Media -->
     <Media Id="1" Cabinet="OpenRTMjava.cab" EmbedCab="yes"/>
     
@@ -80,11 +77,12 @@
     </Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
-
       <!-- Program Files Folder -->
       <Directory Id="ProgramFilesFolder" SourceName="PFILE">
-        <Directory Id="INSTALLLOCATION" Name="OpenRTM-aist">
-          <Directory Id="Version" Name="1.0">
+        <Directory Id="INSTALLLOCATION"
+               Name="{% Product.Name %}">
+          <Directory Id="Version"
+                 Name="{% Product.ShortVersion %}">
 
             <!-- RTM_JAVA_ROOT setting -->
             <Component Id="ENV1" Guid="C41EB819-D5E6-11DC-A98E-0090CC744077">
@@ -573,317 +571,6 @@
                     </Directory>
                   </Directory>
 
-                  <!-- RTMExamples -->
-                  <Directory Id="doc_jp_RTMExamples" Name="RTMExamples">
-
-                    <!-- Composite -->
-                    <Directory Id="doc_jp_RTMExamples_Composite" Name="Composite">
-                      <Component Id="RtmSourceJavadocRtmexamplesComposite" 
-                                 Guid="{% RtmSourceJavadocRtmexamplesComposite.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocRtmexamplesComposite_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocRtmexamplesComposite.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- Composite/class-use -->
-                      <Directory Id="doc_jp_RTMExamples_Composite_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocRtmexamplesCompositeClassuse" 
-                                   Guid="{% RtmSourceJavadocRtmexamplesCompositeClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocRtmexamplesCompositeClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocRtmexamplesCompositeClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-                    </Directory>
-
-                    <!-- ConfigSample -->
-                    <Directory Id="doc_jp_RTMExamples_ConfigSample" Name="ConfigSample">
-                      <Component Id="RtmSourceJavadocRtmexamplesConfigsample" 
-                                 Guid="{% RtmSourceJavadocRtmexamplesConfigsample.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocRtmexamplesConfigsample_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocRtmexamplesConfigsample.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- ConfigSample/class-use -->
-                      <Directory Id="doc_jp_RTMExamples_ConfigSample_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocRtmexamplesConfigsampleClassuse" 
-                                   Guid="{% RtmSourceJavadocRtmexamplesConfigsampleClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocRtmexamplesConfigsampleClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocRtmexamplesConfigsampleClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-                    </Directory>
-
-                    <!-- GUIIn -->
-                    <Directory Id="doc_jp_RTMExamples_GUIIn" Name="GUIIn">
-                      <Component Id="RtmSourceJavadocRtmexamplesGuiin" 
-                                 Guid="{% RtmSourceJavadocRtmexamplesGuiin.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocRtmexamplesGuiin_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocRtmexamplesGuiin.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- GUIIn/class-use -->
-                      <Directory Id="doc_jp_RTMExamples_GUIIn_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocRtmexamplesGuiinClassuse" 
-                                   Guid="{% RtmSourceJavadocRtmexamplesGuiinClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocRtmexamplesGuiinClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocRtmexamplesGuiinClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-
-                      <!-- GUIIn/control -->
-                      <Directory Id="doc_jp_RTMExamples_GUIIn_control" Name="control">
-                        <Component Id="RtmSourceJavadocRtmexamplesGuiinControl" 
-                                   Guid="{% RtmSourceJavadocRtmexamplesGuiinControl.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocRtmexamplesGuiinControl_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocRtmexamplesGuiinControl.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-
-                        <!-- GUIIn/control/class-use -->
-                        <Directory Id="doc_jp_RTMExamples_GUIIn_control_classuse" Name="class-use">
-                          <Component Id="RtmSourceJavadocRtmexamplesGuiinControlClassuse" 
-                                     Guid="{% RtmSourceJavadocRtmexamplesGuiinControlClassuse.GUID %}">
-                            <RemoveFolder Id='RtmSourceJavadocRtmexamplesGuiinControlClassuse_f' On='uninstall' />
-                            {% for file in RtmSourceJavadocRtmexamplesGuiinControlClassuse.Files %}
-                            <File Id="{% file.Id %}"
-                                  Name="{% file.Name %}" DiskId="1"
-                                  Source="{% file.Source %}">
-                            </File>
-                            {% endfor %}
-                          </Component>
-                        </Directory>
-                      </Directory>
-
-                      <!-- GUIIn/model -->
-                      <Directory Id="doc_jp_RTMExamples_GUIIn_model" Name="model">
-                        <Component Id="RtmSourceJavadocRtmexamplesGuiinModel" 
-                                   Guid="{% RtmSourceJavadocRtmexamplesGuiinModel.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocRtmexamplesGuiinModel_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocRtmexamplesGuiinModel.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-
-                        <!-- GUIIn/model/class-use -->
-                        <Directory Id="doc_jp_RTMExamples_GUIIn_model_classuse" Name="class-use">
-                          <Component Id="RtmSourceJavadocRtmexamplesGuiinModelClassuse" 
-                                     Guid="{% RtmSourceJavadocRtmexamplesGuiinModelClassuse.GUID %}">
-                            <RemoveFolder Id='RtmSourceJavadocRtmexamplesGuiinModelClassuse_f' On='uninstall' />
-                            {% for file in RtmSourceJavadocRtmexamplesGuiinModelClassuse.Files %}
-                            <File Id="{% file.Id %}"
-                                  Name="{% file.Name %}" DiskId="1"
-                                  Source="{% file.Source %}">
-                            </File>
-                            {% endfor %}
-                          </Component>
-                        </Directory>
-                      </Directory>
-
-                      <!-- GUIIn/view -->
-                      <Directory Id="doc_jp_RTMExamples_GUIIn_view" Name="view">
-                        <Component Id="RtmSourceJavadocRtmexamplesGuiinView" 
-                                   Guid="{% RtmSourceJavadocRtmexamplesGuiinView.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocRtmexamplesGuiinView_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocRtmexamplesGuiinView.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-
-                        <!-- GUIIn/view/class-use -->
-                        <Directory Id="doc_jp_RTMExamples_GUIIn_view_classuse" Name="class-use">
-                          <Component Id="RtmSourceJavadocRtmexamplesGuiinViewClassuse" 
-                                     Guid="{% RtmSourceJavadocRtmexamplesGuiinViewClassuse.GUID %}">
-                            <RemoveFolder Id='RtmSourceJavadocRtmexamplesGuiinViewClassuse_f' On='uninstall' />
-                            {% for file in RtmSourceJavadocRtmexamplesGuiinViewClassuse.Files %}
-                            <File Id="{% file.Id %}"
-                                  Name="{% file.Name %}" DiskId="1"
-                                  Source="{% file.Source %}">
-                            </File>
-                            {% endfor %}
-                          </Component>
-                        </Directory>
-                      </Directory>
-                    </Directory>
-
-                    <!-- SeqIO -->
-                    <Directory Id="doc_jp_RTMExamples_SeqIO" Name="SeqIO">
-                      <Component Id="RtmSourceJavadocRtmexamplesSeqio" 
-                                 Guid="{% RtmSourceJavadocRtmexamplesSeqio.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocRtmexamplesSeqio_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocRtmexamplesSeqio.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- SeqIO/class-use -->
-                      <Directory Id="doc_jp_RTMExamples_SeqIO_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocRtmexamplesSeqioClassuse" 
-                                   Guid="{% RtmSourceJavadocRtmexamplesSeqioClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocRtmexamplesSeqioClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocRtmexamplesSeqioClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-
-                      <!-- SeqIO/view -->
-                      <Directory Id="doc_jp_RTMExamples_SeqIO_view" Name="view">
-                        <Component Id="RtmSourceJavadocRtmexamplesSeqioView" 
-                                   Guid="{% RtmSourceJavadocRtmexamplesSeqioView.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocRtmexamplesSeqioView_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocRtmexamplesSeqioView.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-
-                        <!-- SeqIO/view/class-use -->
-                        <Directory Id="doc_jp_RTMExamples_SeqIO_view_classuse" Name="class-use">
-                          <Component Id="RtmSourceJavadocRtmexamplesSeqioViewClassuse" 
-                                     Guid="{% RtmSourceJavadocRtmexamplesSeqioViewClassuse.GUID %}">
-                            <RemoveFolder Id='RtmSourceJavadocRtmexamplesSeqioViewClassuse_f' On='uninstall' />
-                            {% for file in RtmSourceJavadocRtmexamplesSeqioViewClassuse.Files %}
-                            <File Id="{% file.Id %}"
-                                  Name="{% file.Name %}" DiskId="1"
-                                  Source="{% file.Source %}">
-                            </File>
-                            {% endfor %}
-                          </Component>
-                        </Directory>
-                      </Directory>
-                    </Directory>
-
-                    <!-- SimpleIO -->
-                    <Directory Id="doc_jp_RTMExamples_SimpleIO" Name="SimpleIO">
-                      <Component Id="RtmSourceJavadocRtmexamplesSimpleio" 
-                                 Guid="{% RtmSourceJavadocRtmexamplesSimpleio.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocRtmexamplesSimpleio_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocRtmexamplesSimpleio.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- SimpleIO/class-use -->
-                      <Directory Id="doc_jp_RTMExamples_SimpleIO_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocRtmexamplesSimpleioClassuse" 
-                                   Guid="{% RtmSourceJavadocRtmexamplesSimpleioClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocRtmexamplesSimpleioClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocRtmexamplesSimpleioClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-                    </Directory>
-
-                    <!-- SimpleService -->
-                    <Directory Id="doc_jp_RTMExamples_SimpleService" Name="SimpleService">
-                      <Component Id="RtmSourceJavadocRtmexamplesSimpleservice" 
-                                 Guid="{% RtmSourceJavadocRtmexamplesSimpleservice.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocRtmexamplesSimpleservice_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocRtmexamplesSimpleservice.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- SimpleService/class-use -->
-                      <Directory Id="doc_jp_RTMExamples_SimpleService_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocRtmexamplesSimpleserviceClassuse" 
-                                   Guid="{% RtmSourceJavadocRtmexamplesSimpleserviceClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocRtmexamplesSimpleserviceClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocRtmexamplesSimpleserviceClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-                    </Directory>
-
-                    <!-- SinCosOut -->
-                    <Directory Id="doc_jp_RTMExamples_SinCosOut" Name="SinCosOut">
-                      <Component Id="RtmSourceJavadocRtmexamplesSincosout" 
-                                 Guid="{% RtmSourceJavadocRtmexamplesSincosout.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocRtmexamplesSincosout_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocRtmexamplesSincosout.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- SinCosOut/class-use -->
-                      <Directory Id="doc_jp_RTMExamples_SinCosOut_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocRtmexamplesSincosoutClassuse" 
-                                   Guid="{% RtmSourceJavadocRtmexamplesSincosoutClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocRtmexamplesSincosoutClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocRtmexamplesSincosoutClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-                    </Directory>
-                  </Directory>
                 </Directory>
 
                 <!-- classref_en -->
@@ -1304,318 +991,6 @@
                       </Component>
                     </Directory>
                   </Directory>
-
-                  <!-- RTMExamples -->
-                  <Directory Id="doc_en_RTMExamples" Name="RTMExamples">
-
-                    <!-- Composite -->
-                    <Directory Id="doc_en_RTMExamples_Composite" Name="Composite">
-                      <Component Id="RtmSourceJavadocenRtmexamplesComposite" 
-                                 Guid="{% RtmSourceJavadocenRtmexamplesComposite.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocenRtmexamplesComposite_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocenRtmexamplesComposite.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- Composite/class-use -->
-                      <Directory Id="doc_en_RTMExamples_Composite_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocenRtmexamplesCompositeClassuse" 
-                                   Guid="{% RtmSourceJavadocenRtmexamplesCompositeClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocenRtmexamplesCompositeClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocenRtmexamplesCompositeClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-                    </Directory>
-
-                    <!-- ConfigSample -->
-                    <Directory Id="doc_en_RTMExamples_ConfigSample" Name="ConfigSample">
-                      <Component Id="RtmSourceJavadocenRtmexamplesConfigsample" 
-                                 Guid="{% RtmSourceJavadocenRtmexamplesConfigsample.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocenRtmexamplesConfigsample_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocenRtmexamplesConfigsample.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- ConfigSample/class-use -->
-                      <Directory Id="doc_en_RTMExamples_ConfigSample_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocenRtmexamplesConfigsampleClassuse" 
-                                   Guid="{% RtmSourceJavadocenRtmexamplesConfigsampleClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocenRtmexamplesConfigsampleClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocenRtmexamplesConfigsampleClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-                    </Directory>
-
-                    <!-- GUIIn -->
-                    <Directory Id="doc_en_RTMExamples_GUIIn" Name="GUIIn">
-                      <Component Id="RtmSourceJavadocenRtmexamplesGuiin" 
-                                 Guid="{% RtmSourceJavadocenRtmexamplesGuiin.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocenRtmexamplesGuiin_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocenRtmexamplesGuiin.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- GUIIn/class-use -->
-                      <Directory Id="doc_en_RTMExamples_GUIIn_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocenRtmexamplesGuiinClassuse" 
-                                   Guid="{% RtmSourceJavadocenRtmexamplesGuiinClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocenRtmexamplesGuiinClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocenRtmexamplesGuiinClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-
-                      <!-- GUIIn/control -->
-                      <Directory Id="doc_en_RTMExamples_GUIIn_control" Name="control">
-                        <Component Id="RtmSourceJavadocenRtmexamplesGuiinControl" 
-                                   Guid="{% RtmSourceJavadocenRtmexamplesGuiinControl.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocenRtmexamplesGuiinControl_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocenRtmexamplesGuiinControl.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-
-                        <!-- GUIIn/control/class-use -->
-                        <Directory Id="doc_en_RTMExamples_GUIIn_control_classuse" Name="class-use">
-                          <Component Id="RtmSourceJavadocenRtmexamplesGuiinControlClassuse" 
-                                     Guid="{% RtmSourceJavadocenRtmexamplesGuiinControlClassuse.GUID %}">
-                            <RemoveFolder Id='RtmSourceJavadocenRtmexamplesGuiinControlClassuse_f' On='uninstall' />
-                            {% for file in RtmSourceJavadocenRtmexamplesGuiinControlClassuse.Files %}
-                            <File Id="{% file.Id %}"
-                                  Name="{% file.Name %}" DiskId="1"
-                                  Source="{% file.Source %}">
-                            </File>
-                            {% endfor %}
-                          </Component>
-                        </Directory>
-                      </Directory>
-
-                      <!-- GUIIn/model -->
-                      <Directory Id="doc_en_RTMExamples_GUIIn_model" Name="model">
-                        <Component Id="RtmSourceJavadocenRtmexamplesGuiinModel" 
-                                   Guid="{% RtmSourceJavadocenRtmexamplesGuiinModel.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocenRtmexamplesGuiinModel_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocenRtmexamplesGuiinModel.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-
-                        <!-- GUIIn/model/class-use -->
-                        <Directory Id="doc_en_RTMExamples_GUIIn_model_classuse" Name="class-use">
-                          <Component Id="RtmSourceJavadocenRtmexamplesGuiinModelClassuse" 
-                                     Guid="{% RtmSourceJavadocenRtmexamplesGuiinModelClassuse.GUID %}">
-                            <RemoveFolder Id='RtmSourceJavadocenRtmexamplesGuiinModelClassuse_f' On='uninstall' />
-                            {% for file in RtmSourceJavadocenRtmexamplesGuiinModelClassuse.Files %}
-                            <File Id="{% file.Id %}"
-                                  Name="{% file.Name %}" DiskId="1"
-                                  Source="{% file.Source %}">
-                            </File>
-                            {% endfor %}
-                          </Component>
-                        </Directory>
-                      </Directory>
-
-                      <!-- GUIIn/view -->
-                      <Directory Id="doc_en_RTMExamples_GUIIn_view" Name="view">
-                        <Component Id="RtmSourceJavadocenRtmexamplesGuiinView" 
-                                   Guid="{% RtmSourceJavadocenRtmexamplesGuiinView.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocenRtmexamplesGuiinView_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocenRtmexamplesGuiinView.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-
-                        <!-- GUIIn/view/class-use -->
-                        <Directory Id="doc_en_RTMExamples_GUIIn_view_classuse" Name="class-use">
-                          <Component Id="RtmSourceJavadocenRtmexamplesGuiinViewClassuse" 
-                                     Guid="{% RtmSourceJavadocenRtmexamplesGuiinViewClassuse.GUID %}">
-                            <RemoveFolder Id='RtmSourceJavadocenRtmexamplesGuiinViewClassuse_f' On='uninstall' />
-                            {% for file in RtmSourceJavadocenRtmexamplesGuiinViewClassuse.Files %}
-                            <File Id="{% file.Id %}"
-                                  Name="{% file.Name %}" DiskId="1"
-                                  Source="{% file.Source %}">
-                            </File>
-                            {% endfor %}
-                          </Component>
-                        </Directory>
-                      </Directory>
-                    </Directory>
-
-                    <!-- SeqIO -->
-                    <Directory Id="doc_en_RTMExamples_SeqIO" Name="SeqIO">
-                      <Component Id="RtmSourceJavadocenRtmexamplesSeqio" 
-                                 Guid="{% RtmSourceJavadocenRtmexamplesSeqio.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocenRtmexamplesSeqio_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocenRtmexamplesSeqio.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- SeqIO/class-use -->
-                      <Directory Id="doc_en_RTMExamples_SeqIO_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocenRtmexamplesSeqioClassuse" 
-                                   Guid="{% RtmSourceJavadocenRtmexamplesSeqioClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocenRtmexamplesSeqioClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocenRtmexamplesSeqioClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-
-                      <!-- SeqIO/view -->
-                      <Directory Id="doc_en_RTMExamples_SeqIO_view" Name="view">
-                        <Component Id="RtmSourceJavadocenRtmexamplesSeqioView" 
-                                   Guid="{% RtmSourceJavadocenRtmexamplesSeqioView.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocenRtmexamplesSeqioView_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocenRtmexamplesSeqioView.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-
-                        <!-- SeqIO/view/class-use -->
-                        <Directory Id="doc_en_RTMExamples_SeqIO_view_classuse" Name="class-use">
-                          <Component Id="RtmSourceJavadocenRtmexamplesSeqioViewClassuse" 
-                                     Guid="{% RtmSourceJavadocenRtmexamplesSeqioViewClassuse.GUID %}">
-                            <RemoveFolder Id='RtmSourceJavadocenRtmexamplesSeqioViewClassuse_f' On='uninstall' />
-                            {% for file in RtmSourceJavadocenRtmexamplesSeqioViewClassuse.Files %}
-                            <File Id="{% file.Id %}"
-                                  Name="{% file.Name %}" DiskId="1"
-                                  Source="{% file.Source %}">
-                            </File>
-                            {% endfor %}
-                          </Component>
-                        </Directory>
-                      </Directory>
-                    </Directory>
-
-                    <!-- SimpleIO -->
-                    <Directory Id="doc_en_RTMExamples_SimpleIO" Name="SimpleIO">
-                      <Component Id="RtmSourceJavadocenRtmexamplesSimpleio" 
-                                 Guid="{% RtmSourceJavadocenRtmexamplesSimpleio.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocenRtmexamplesSimpleio_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocenRtmexamplesSimpleio.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- SimpleIO/class-use -->
-                      <Directory Id="doc_en_RTMExamples_SimpleIO_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocenRtmexamplesSimpleioClassuse" 
-                                   Guid="{% RtmSourceJavadocenRtmexamplesSimpleioClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocenRtmexamplesSimpleioClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocenRtmexamplesSimpleioClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-                    </Directory>
-
-                    <!-- SimpleService -->
-                    <Directory Id="doc_en_RTMExamples_SimpleService" Name="SimpleService">
-                      <Component Id="RtmSourceJavadocenRtmexamplesSimpleservice" 
-                                 Guid="{% RtmSourceJavadocenRtmexamplesSimpleservice.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocenRtmexamplesSimpleservice_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocenRtmexamplesSimpleservice.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- SimpleService/class-use -->
-                      <Directory Id="doc_en_RTMExamples_SimpleService_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocenRtmexamplesSimpleserviceClassuse" 
-                                   Guid="{% RtmSourceJavadocenRtmexamplesSimpleserviceClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocenRtmexamplesSimpleserviceClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocenRtmexamplesSimpleserviceClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-                    </Directory>
-
-                    <!-- SinCosOut -->
-                    <Directory Id="doc_en_RTMExamples_SinCosOut" Name="SinCosOut">
-                      <Component Id="RtmSourceJavadocenRtmexamplesSincosout" 
-                                 Guid="{% RtmSourceJavadocenRtmexamplesSincosout.GUID %}">
-                        <RemoveFolder Id='RtmSourceJavadocenRtmexamplesSincosout_f' On='uninstall' />
-                        {% for file in RtmSourceJavadocenRtmexamplesSincosout.Files %}
-                        <File Id="{% file.Id %}"
-                              Name="{% file.Name %}" DiskId="1"
-                              Source="{% file.Source %}">
-                        </File>
-                        {% endfor %}
-                      </Component>
-
-                      <!-- SinCosOut/class-use -->
-                      <Directory Id="doc_en_RTMExamples_SinCosOut_classuse" Name="class-use">
-                        <Component Id="RtmSourceJavadocenRtmexamplesSincosoutClassuse" 
-                                   Guid="{% RtmSourceJavadocenRtmexamplesSincosoutClassuse.GUID %}">
-                          <RemoveFolder Id='RtmSourceJavadocenRtmexamplesSincosoutClassuse_f' On='uninstall' />
-                          {% for file in RtmSourceJavadocenRtmexamplesSincosoutClassuse.Files %}
-                          <File Id="{% file.Id %}"
-                                Name="{% file.Name %}" DiskId="1"
-                                Source="{% file.Source %}">
-                          </File>
-                          {% endfor %}
-                        </Component>
-                      </Directory>
-                    </Directory>
-                  </Directory>
                 </Directory>
               </Directory>
             </Directory>
@@ -1824,7 +1199,7 @@
 
       <!-- Program Folder -->
       <Directory Id="ProgramMenuFolder">
-        <Directory Id="AppMenuFolder" Name="OpenRTM-aist">
+        <Directory Id="AppMenuFolder" Name="{% Product.Name %} {% Product.ShortVersion %}">
           <Directory Id="JavaMenuFolder" Name="Java">
             <Directory Id="ToolsMenuFolder" Name="tools">
             </Directory>
@@ -1884,28 +1259,6 @@
         <ComponentRef Id="RtmSourceJavadocRtcClassuse"/>
         <ComponentRef Id="RtmSourceJavadocRtm"/>
         <ComponentRef Id="RtmSourceJavadocRtmClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesComposite"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesCompositeClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesConfigsample"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesConfigsampleClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesGuiin"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesGuiinClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesGuiinControl"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesGuiinControlClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesGuiinModel"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesGuiinModelClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesGuiinView"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesGuiinViewClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesSeqio"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesSeqioClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesSeqioView"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesSeqioViewClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesSimpleio"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesSimpleioClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesSimpleservice"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesSimpleserviceClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesSincosout"/>
-        <ComponentRef Id="RtmSourceJavadocRtmexamplesSincosoutClassuse"/>
         <ComponentRef Id="RtmSourceJavadocen"/>
         <ComponentRef Id="RtmSourceJavadocen_sdopackage"/>
         <ComponentRef Id="RtmSourceJavadocen_sdopackageClassuse"/>
@@ -1935,28 +1288,6 @@
         <ComponentRef Id="RtmSourceJavadocenRtcClassuse"/>
         <ComponentRef Id="RtmSourceJavadocenRtm"/>
         <ComponentRef Id="RtmSourceJavadocenRtmClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesComposite"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesCompositeClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesConfigsample"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesConfigsampleClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesGuiin"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesGuiinClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesGuiinControl"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesGuiinControlClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesGuiinModel"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesGuiinModelClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesGuiinView"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesGuiinViewClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesSeqio"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesSeqioClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesSeqioView"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesSeqioViewClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesSimpleio"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesSimpleioClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesSimpleservice"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesSimpleserviceClassuse"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesSincosout"/>
-        <ComponentRef Id="RtmSourceJavadocenRtmexamplesSincosoutClassuse"/>
       </Feature>
 
       <!-- examples -->
@@ -1982,20 +1313,15 @@
     <Feature Id="OpenRTP" Level="1" Title="OpenRT Platform Tool Chain">
       <Condition Level ="1"><![CDATA[ (FILEEXISTS =  "") ]]></Condition>
       <Condition Level ="0"><![CDATA[ (FILEEXISTS <> "") ]]></Condition>
-
       <!-- rtse rcp -->
       <Feature Id="RTSystemEditor" Level="1" Title="RTSystemEditor">
-        <ComponentRef Id="RTSystemEditor" />   
-        <ComponentRef Id="configuration" />
-        <ComponentRef Id="plugins" />
-        <ComponentRef Id="org.eclipse.core.runtime.compatibility.registry_3.2.1.R32x_v20060907" />
-        <ComponentRef Id="META_INF" />
-        <ComponentRef Id="org.eclipse.jdt.junit.runtime.nl1_3.2.1.v200609270227" />
-        <ComponentRef Id="META_INF_1" />
-        <ComponentRef Id="org.eclipse.jdt.junit.runtime_3.2.1.r321_v20060721" />
-        <ComponentRef Id="META_INF_2" />
-        <ComponentRef Id="org.junit_3.8.1" />
-        <ComponentRef Id="META_INF_3" />
+	<ComponentRef Id="Openrtp" />
+	<ComponentRef Id="OpenrtpConfiguration" />
+	<ComponentRef Id="OpenrtpPlugins" />
+	<ComponentRef Id="org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610" />
+	<ComponentRef Id="META_INF" />
+	<ComponentRef Id="org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731" />
+	<ComponentRef Id="META_INF_2" />
       </Feature>
     </Feature>
     <?endif ?>
