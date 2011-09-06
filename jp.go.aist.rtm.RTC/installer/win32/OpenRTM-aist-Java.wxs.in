@@ -146,6 +146,32 @@
               </Component>
             </Directory>
 
+            <!-- idl -->
+            <Directory Id="RTM_JAVA" Name="rtm_java">
+              <Directory Id="RTMidl" Name="idl">
+                <Component Id="RtmSourceRtm_javaIdl" Guid="{% RtmSourceRtm_javaIdl.GUID %}">
+                  <RemoveFolder Id='RtmIdl_f' On='uninstall' />
+                  {% for file in RtmSourceRtm_javaIdl.Files %}
+                  <File Id="{% file.Id %}"
+                      Name="{% file.Name %}" DiskId="1"
+                      Source="{% file.Source %}">
+                  </File>
+                  {% endfor %}
+                </Component>
+                <Directory Id="RTMidl_device_interfaces" Name="device_interfaces">
+                  <Component Id="RtmSourceRtm_javaIdlDevice_interfaces" Guid="{% RtmSourceRtm_javaIdlDevice_interfaces.GUID %}">
+                    <RemoveFolder Id='RtmIdlDevice_interfaces_f' On='uninstall' />
+                    {% for file in RtmSourceRtm_javaIdlDevice_interfaces.Files %}
+                    <File Id="{% file.Id %}"
+                      Name="{% file.Name %}" DiskId="1"
+                      Source="{% file.Source %}">
+                    </File>
+                    {% endfor %}
+                  </Component>
+                </Directory>
+              </Directory>
+            </Directory>
+
             <!-- doc -->
             <Directory Id="docs" Name="doc">
 
@@ -1228,6 +1254,11 @@
         <ComponentRef Id="RtmSourceJar"/>
       </Feature>
 
+      <!-- idl -->
+      <Feature Id="Rtm_Idl" Level="1" Title="Idl">
+        <ComponentRef Id="RtmSourceRtm_javaIdl"/>
+        <ComponentRef Id="RtmSourceRtm_javaIdlDevice_interfaces"/>
+      </Feature>
       <!-- documents -->
       <Feature Id="Rtm_Docs" Level="1" Title="Documents">
         <ComponentRef Id="RtmSourceJavadoc"/>

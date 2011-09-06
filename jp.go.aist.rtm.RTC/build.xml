@@ -186,6 +186,15 @@
 	</target>
 
 	<target name="javaInstaller"  description="インストーラを作成します">
+		<!-- copy idl files -->
+		<mkdir dir="installer/resources/Source/rtm_java/idl" />
+		<mkdir dir="installer/resources/Source/rtm_java/idl/device_interfaces" />
+		<copy todir="installer/resources/Source/rtm_java/idl">
+			<fileset dir="idl" />
+		</copy>
+		<copy todir="installer/resources/Source/rtm_java/idl/device_interfaces">
+			<fileset dir="idl/device_interfaces" />
+		</copy>
 		<!-- コマンド実行 -->		
 		<exec dir="installer/win32" executable="cmd">
 			<arg value="/c cleanup.cmd"/>

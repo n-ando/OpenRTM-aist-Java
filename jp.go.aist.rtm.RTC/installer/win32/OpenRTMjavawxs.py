@@ -20,6 +20,8 @@ import glob
 import makewxs
 
 data = [
+    ("Source/rtm_java/idl",                       "*.idl"),
+    ("Source/rtm_java/idl/device_interfaces",                       "*.idl"),
     ("Source/jar",                                                      "*.jar"),
     ("Source/examples/bat",                                             "*.bat"),
     ("Source/examples/bin",                                             "*.exe *.vbs *.bat *.conf"),
