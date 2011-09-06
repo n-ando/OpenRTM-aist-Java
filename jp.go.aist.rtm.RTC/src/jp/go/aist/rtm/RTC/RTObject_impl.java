@@ -141,6 +141,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_readAllCompletion = false;
         m_writeAllCompletion = false;
         rtcout = new Logbuf("RTObject_impl");
+        m_properties.setProperty("sdo.service.provider.enabled_services",
+            manager.getConfig().getProperty("sdo.service.provider.enabled_services"));
+        m_properties.setProperty("sdo.service.consumer.enabled_services",
+            manager.getConfig().getProperty("sdo.service.consumer.enabled_services"));
         m_sdoservice = new SdoServiceAdmin(this);
 
         m_objref = this._this();
