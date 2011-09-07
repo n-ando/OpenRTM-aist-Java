@@ -79,6 +79,7 @@ class NamingOnCorba implements NamingBase {
      *
      */
     public void bindObject(final String name, final RTObject_impl rtobj) {
+        rtcout.println(Logbuf.TRACE, "bindObject(" + name + ",rtobj)");
         try{
             m_cosnaming.rebindByString(name, rtobj.getObjRef(), true);
         } catch ( Exception ex ) {
@@ -97,6 +98,7 @@ class NamingOnCorba implements NamingBase {
      *   {@.en The target ManagerServants for the binding}
      */
     public void bindObject(final String name, final ManagerServant mgr) {
+        rtcout.println(Logbuf.TRACE, "bindObject(" + name + ",mgr)");
         try{
             m_cosnaming.rebindByString(name, mgr.getObjRef(), true);
         } catch ( Exception ex ) {
@@ -119,7 +121,7 @@ class NamingOnCorba implements NamingBase {
      *
      */
     public void unbindObject(final String name) {
-        rtcout.println(Logbuf.INFO, "unbindObject(name  = " +name+")");
+        rtcout.println(Logbuf.TRACE, "unbindObject(name  = " +name+")");
         try {
             m_cosnaming.unbind(name);
         } catch (Exception ex) {

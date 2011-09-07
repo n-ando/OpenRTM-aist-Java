@@ -166,11 +166,6 @@ public class  SdoServiceAdmin {
         }
     }
 
-    /**
-     * {@.ja 仮想デストラクタ}
-     * {@.en Virtual destractor}
-     */
-    //public ~SdoServiceAdmin();
     
     /**
      *

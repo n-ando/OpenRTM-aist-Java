@@ -130,7 +130,7 @@ public class ModuleManager {
      * ロードするモジュールをURLで指定することができる。
      *
      * file_name は絶対パスで指定することができる。
-     * manager.modules.allowAbsolutePath が no の場合、
+     * manager.modules.abs_path_allowed が no の場合、
      * 既定のモジュールロードパスから、file_name のモジュールを探しロードする。}
      * {@.en Load file_name as DLL or a shared liblary.
      * The file_name is specified by the relative path to default load
@@ -142,7 +142,7 @@ public class ModuleManager {
      * the load module can be specified with URL.
      *
      * The file_name can be specified by the absolute path.
-     * If manager.modules.allowAbsolutePath is no, module of file_name
+     * If manager.modules.abs_path_allowed is no, module of file_name
      * will be searched from the default module load path and loaded.}
      * 
      * @param moduleName 
