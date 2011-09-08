@@ -116,7 +116,7 @@ class ManagerConfig {
      * <ul>
      * <li>-f filePath : コンフィグレーションファイルのパスを指定します。</li>
      * <li>-l module : ロードするモジュールを指定します。（未実装）</li>
-     * <li>-o options : その他のオプションを指定します。（未実装）</li>
+     * <li>-o options : その他のオプションを指定します。</li>
      * <li>-d : デフォルトコンフィグレーションを使用します。（未実装）</li>
      * </ul>}
      *
@@ -125,7 +125,7 @@ class ManagerConfig {
      * <ul>
      * <li>-f file   : Specify the configuration file.
      * <li>-l module : Specify modules to be loaded. (Not implemented)
-     * <li>-o options: Specify other options. (Not implemented)
+     * <li>-o options: Specify other options. 
      * <li>-d        : Use default static configuration. (Not implemented)
      * </ul>}
      *
@@ -191,7 +191,7 @@ class ManagerConfig {
      * <li> -a         : Create manager's corba service or not.
      * <li> -f file    : コンフィギュレーションファイルを指定する。
      * <li> -l module  : ロードするモジュールを指定する。(未実装)
-     * <li> -o options : その他オプションを指定する。(未実装)
+     * <li> -o options : その他オプションを指定する。
      * <li> -p endpoint: Multiple endpoint option.
      * <li> -d         : デフォルトのコンフィギュレーションを使う。(未実装)
      * </ul>}
@@ -199,7 +199,7 @@ class ManagerConfig {
      * <li> -a         : Create manager's corba service or not.
      * <li> -f file    : Specify the configuration file.
      * <li> -l module  : Specify modules to be loaded. (Not implemented)
-     * <li> -o options : Other options. (Not implemented)
+     * <li> -o options : Other options. 
      * <li> -p endpoint: Multiple endpoint option.
      * <li> -d         : Use default static configuration. (Not implemented)
      * </ul>}

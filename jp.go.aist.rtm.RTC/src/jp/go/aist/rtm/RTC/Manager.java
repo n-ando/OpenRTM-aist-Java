@@ -2558,6 +2558,10 @@ public class Manager {
             }
         }
 
+        if (m_config.findNode(category + "." + inst_name) != null) {
+            name_prop.merge(m_config.getNode(category + "." + inst_name));
+        }
+    
         if (!(m_config.getProperty(type_conf) == null
                 || m_config.getProperty(type_conf).length() == 0)) {
             
@@ -2581,6 +2585,10 @@ public class Manager {
                 e.printStackTrace();
             }
         }
+        if (m_config.findNode(category + "." + type_name) != null) {
+            type_prop.merge(m_config.getNode(category + "." + type_name));
+        }
+
 
         // Merge Properties. type_prop is merged properties
         comp.setProperties(prop);
