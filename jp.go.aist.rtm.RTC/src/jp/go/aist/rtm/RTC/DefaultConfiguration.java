@@ -57,6 +57,7 @@ interface DefaultConfiguration {
         "manager.corba_servant",            "YES",
         "manager.shutdown_on_nortcs",          "YES",
         "manager.shutdown_auto",            "YES",
+        "manager.auto_shutdown_duration",        "10.0",
         "manager.name",                     "manager",
         "manager.command",                  "rtcd",
         "sdo.service.provider.enabled_services",  "ALL",

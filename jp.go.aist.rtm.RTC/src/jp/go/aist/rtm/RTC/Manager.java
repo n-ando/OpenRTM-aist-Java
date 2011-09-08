@@ -1796,6 +1796,16 @@ public class Manager {
             !StringUtil.toBool(m_config.getProperty("manager.is_master"), 
                               "YES", "NO", false) ) {
             TimeValue tm = new TimeValue(10, 0);
+            if (m_config.findNode("manager.auto_shutdown_duration") != null) {
+                double duration;
+                String s = m_config.getProperty("manager.auto_shutdown_duration");
+                try{
+                    duration = Double.parseDouble(s);
+                    tm.convert(duration);
+                }
+                catch (NumberFormatException ex){
+                }
+            }
             if (m_timer != null) {
                 m_timer.registerListenerObj(m_shutdownOnNoRtcs, tm);
             }
