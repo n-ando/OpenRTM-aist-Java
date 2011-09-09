@@ -1064,7 +1064,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
         CORBA_SeqUtil.push_back(m_ecMine, 
                                 (ExecutionContextService)ecs._duplicate());
         int ec_id = (m_ecMine.value.length - 1);
-        onDetachExecutionContext(ec_id);
         return ec_id;
     }
 
@@ -1252,7 +1251,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             return ReturnCode_t.BAD_PARAMETER;
         }
         m_ecOther.value[index] = null;
-
+        onDetachExecutionContext(ec_id);
         return ReturnCode_t.RTC_OK;
     }
 
@@ -1283,20 +1282,20 @@ public class RTObject_impl extends DataFlowComponentPOA {
         try {
             preOnInitialize(0);
             ret = onInitialize();
-            postOnInitialize(0, ret);
-            String active_set;
-            active_set 
-                = m_properties.getProperty("configuration.active_config",
-                                            "default");
-            if (m_configsets.haveConfig(active_set)) {
-                m_configsets.update(active_set);
-            }
-            else {
-                m_configsets.update("default");
-            }
         } catch(Exception ex) {
-            return ReturnCode_t.RTC_ERROR;
+            ret =  ReturnCode_t.RTC_ERROR;
         }
+        String active_set;
+        active_set 
+            = m_properties.getProperty("configuration.active_config",
+                                            "default");
+        if (m_configsets.haveConfig(active_set)) {
+            m_configsets.update(active_set);
+        }
+        else {
+            m_configsets.update("default");
+        }
+        postOnInitialize(0, ret);
         return ret;
     }
 
@@ -1326,10 +1325,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
         try {
             preOnFinalize(0);
             ret = onFinalize();
-            postOnFinalize(0, ret);
         } catch(Exception ex) {
-            return ReturnCode_t.RTC_ERROR;
+            ret =  ReturnCode_t.RTC_ERROR;
         }
+        postOnFinalize(0, ret);
         return ret;
     }
 
@@ -1439,10 +1438,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
             m_configsets.update();
             ret = onActivated(ec_id);
             m_portAdmin.activatePorts();
-            postOnActivated(ec_id, ret);
         } catch(Exception ex) {
-            return ReturnCode_t.RTC_ERROR;
+            ret = ReturnCode_t.RTC_ERROR;
         }
+        postOnActivated(ec_id, ret);
         return ret;
     }
     
@@ -1477,10 +1476,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
             preOnDeactivated(ec_id);
             m_portAdmin.deactivatePorts();
             ret = onDeactivated(ec_id);
-            postOnDeactivated(ec_id, ret);
         } catch(Exception ex) {
-            return ReturnCode_t.RTC_ERROR;
+            ret =  ReturnCode_t.RTC_ERROR;
         }
+        postOnDeactivated(ec_id, ret);
         return ret;
     }
 
@@ -1519,10 +1518,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
         try {
             preOnAborting(ec_id);
             ret = onAborting(ec_id);
-            postOnAborting(ec_id, ret);
         } catch(Exception ex) {
-            return ReturnCode_t.RTC_ERROR;
+            ret =  ReturnCode_t.RTC_ERROR;
         }
+        postOnAborting(ec_id, ret);
         return ret;
     }
     
@@ -1574,11 +1573,11 @@ public class RTObject_impl extends DataFlowComponentPOA {
         try {
             preOnError(ec_id);
             ret = onError(ec_id);
-            m_configsets.update();
-            postOnError(ec_id, ret);
         } catch(Exception ex) {
-            return ReturnCode_t.RTC_ERROR;
+            ret =  ReturnCode_t.RTC_ERROR;
         }
+        m_configsets.update();
+        postOnError(ec_id, ret);
         return ret;
     }
 
@@ -1619,10 +1618,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
         try {
             preOnReset(ec_id);
             ret = onReset(ec_id);
-            postOnReset(ec_id, ret);
         } catch(Exception ex) {
-            return ReturnCode_t.RTC_ERROR;
+            ret =  ReturnCode_t.RTC_ERROR;
         }
+        postOnReset(ec_id, ret);
         return ret;
     }
 
@@ -1655,10 +1654,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
             if(m_writeAll){
                 writeAll();
             }
-            postOnExecute(ec_id, ret);
         } catch(Exception ex) {
-            return ReturnCode_t.RTC_ERROR;
+            ret =  ReturnCode_t.RTC_ERROR;
         }
+        postOnExecute(ec_id, ret);
         return ret;
     }
 
@@ -1713,10 +1712,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
             preOnStateUpdate(ec_id);
             ret = onStateUpdate(ec_id);
             m_configsets.update();
-            postOnStateUpdate(ec_id, ret);
         } catch(Exception ex) {
-            return ReturnCode_t.RTC_ERROR;
+            ret = ReturnCode_t.RTC_ERROR;
         }
+        postOnStateUpdate(ec_id, ret);
         return ret;
     }
 
@@ -1765,10 +1764,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
         try {
             preOnRateChanged(ec_id);
             ret = onRateChanged(ec_id);
-            postOnRateChanged(ec_id, ret);
         } catch(Exception ex) {
-            return ReturnCode_t.RTC_ERROR;
+            ret = ReturnCode_t.RTC_ERROR;
         }
+        postOnRateChanged(ec_id, ret);
         return ret;
     }
 
@@ -1976,11 +1975,17 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         rtcout.println(Logbuf.TRACE, "RTObject_impl.get_service_profiles()");
 
+        ServiceProfile[] sprofiles = new ServiceProfile[1];
+
         try {
-            return m_pSdoConfigImpl.getServiceProfiles().value;
+	    sprofiles = m_sdoservice.getServiceProviderProfiles();
+            rtcout.println(Logbuf.TRACE, "SDO ServiceProfiles["+sprofiles.length+"]");
+            //return m_pSdoConfigImpl.getServiceProfiles().value;
         } catch(Exception ex) {
+            rtcout.println(Logbuf.ERROR, "Unknown exception cought in get_service_profiles().");
             throw new InternalError("get_service_profiles()");
         }
+       return sprofiles;
     }
     
     /**
@@ -2025,19 +2030,21 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         rtcout.println(Logbuf.TRACE, "RTObject_impl.get_service_profile(" + id + ")");
 
+        if( id == null || id.equals("") ) {
+            throw new InvalidParameter("get_service_profile(): Empty name.");
+        }
         try {
-            if( id == null || id.equals("") ) {
-                throw new InvalidParameter("get_service_profile(): Empty name.");
-            }
-            ServiceProfile svcProf = m_pSdoConfigImpl.getServiceProfile(id);
+            ServiceProfile svcProf = m_sdoservice.getServiceProviderProfile(id);
             if(svcProf == null || !id.equals(svcProf.id)) {
                 throw new InvalidParameter("get_service_profile(): Inexist id.");
             }
             ServiceProfileHolder sprofile = new ServiceProfileHolder(svcProf);
             return sprofile.value; 
         } catch(InvalidParameter ex) {
+            rtcout.println(Logbuf.ERROR, "InvalidParameter exception: name ("+id+") is not found");
             throw ex;
         } catch(Exception ex) {
+            rtcout.println(Logbuf.ERROR, "Unknown exception cought in get_service_profile("+id+") is not found");
             throw new InternalError("get_service_profile()");
         }
     }
@@ -2090,15 +2097,15 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         rtcout.println(Logbuf.TRACE, "RTObject_impl.get_sdo_service(" + id + ")");
 
+        if( id == null || id.equals("") ) {
+            throw new InvalidParameter("get_sdo_service(): Empty name.");
+        }
         try {
-            if( id == null || id.equals("") ) {
-                throw new InvalidParameter("get_sdo_service(): Empty name.");
-            }
-            ServiceProfile svcProf = m_pSdoConfigImpl.getServiceProfile(id);
-            if( svcProf == null || !id.equals(svcProf.id)) {
+            SDOService svcProf = m_sdoservice.getServiceProvider(id);
+            if( svcProf == null ) {
                 throw new InvalidParameter("get_sdo_service(): Inexist id.");
             }
-            SDOServiceHolder svcVar = new SDOServiceHolder(svcProf.service);
+            SDOServiceHolder svcVar = new SDOServiceHolder(svcProf);
             return svcVar.value;
         } catch(InvalidParameter ex ) {
             throw ex;
@@ -2966,7 +2973,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
     
         String propkey = "port.outport.";
         propkey += name;
-        m_properties.getNode(propkey).merge(m_properties.getNode("port.inport.dataport"));
+        m_properties.getNode(propkey).merge(m_properties.getNode("port.outport.dataport"));
     
         boolean ret = addPort(outport);
     
