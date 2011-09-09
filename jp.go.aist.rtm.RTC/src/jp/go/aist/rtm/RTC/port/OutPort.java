@@ -311,6 +311,7 @@ public class OutPort<DataType> extends OutPortBase {
 
         if (m_OnWrite != null) {
             m_OnWrite.run(value);
+            rtcout.println(Logbuf.TRACE, "OnWrite called");
         }
 
         boolean result = true;
