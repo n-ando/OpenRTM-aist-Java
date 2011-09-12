@@ -347,18 +347,9 @@ public class Configuration_impl extends ConfigurationPOA {
 
         try {
             return m_sdoservice.removeSdoServiceConsumer(id);
-/*
-            for(int index=0; index<m_serviceProfiles.value.length; index++ ) {
-                if(id.equals(m_serviceProfiles.value[index].id)) {
-                    CORBA_SeqUtil.erase(m_serviceProfiles, index);
-                    return true;
-                }
-            }
-*/
         } catch(Exception ex) {
             throw new InternalError("Configuration::remove_service_profile");
         }
-//        return true;
     }
 
     /**
@@ -567,12 +558,6 @@ public class Configuration_impl extends ConfigurationPOA {
                 for(int intIdx=0; intIdx<cf.size(); ++intIdx) {
                     if( config_sets.value[intIdx]==null ) config_sets.value[intIdx] = new ConfigurationSet();
                     toConfigurationSet(config_sets.value[intIdx], cf.elementAt(intIdx));
-                    //String id = config_sets.value[intIdx].id;
-                    //if( m_configsetopts.get(id) != null ) {
-                    //    config_sets.value[intIdx].description = m_configsetopts.get(id).getProperty("description");
-                    //} else {
-                    //    config_sets.value[intIdx].description = "";
-                    //}
                 }
                 return config_sets.value;
             }
@@ -973,12 +958,14 @@ public class Configuration_impl extends ConfigurationPOA {
      *   {@.ja SDOのDeviceProfile。}
      *   {@.en DeviceProfile of SDO}
      */
+/*
     public final ServiceProfileListHolder getServiceProfiles() {
 
         rtcout.println(Logbuf.TRACE, "Configuration_impl.getServiceProfiles()");
 
       return m_serviceProfiles;
     }
+*/
 
     /**
      * {@.ja [CORBA interface] SDO の ServiceProfile を取得する。}
@@ -996,6 +983,7 @@ public class Configuration_impl extends ConfigurationPOA {
      *   {@.ja SDOのServiceProfile}
      *   {@.en ServiceProfile of SDO}
      */
+/*
     public final ServiceProfile getServiceProfile(final String id) {
 
         rtcout.println(Logbuf.TRACE, "Configuration_impl.getServiceProfile("+id+")");
@@ -1008,6 +996,7 @@ public class Configuration_impl extends ConfigurationPOA {
         }
         return new ServiceProfile();
     }
+*/
     
     /**
      * {@.ja [CORBA interface] 設定された全Organizationを取得する。}
