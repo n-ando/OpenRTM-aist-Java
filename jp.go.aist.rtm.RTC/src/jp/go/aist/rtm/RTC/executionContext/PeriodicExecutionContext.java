@@ -342,7 +342,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
 
         rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_rate()");
 
-        return m_profile.rate;
+        synchronized (m_profile) {
+            return m_profile.rate;
+        }
     }
 
     /**
@@ -356,7 +358,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
 
         if( rate<=0.0 ) return ReturnCode_t.BAD_PARAMETER;
 
-        m_profile.rate = rate;
+        synchronized (m_profile) {
+            m_profile.rate = rate;
+        }
         this.m_usec = (long)(1000000/rate);
         if( m_usec == 0 ) m_nowait = true;
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
@@ -610,27 +614,30 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
                                         m_comps.elementAt(intIdx)._sm.ec_id);
                 m_comps.elementAt(intIdx)._ref = null;
                 m_comps.remove(m_comps.elementAt(intIdx));
+                rtcout.println(Logbuf.TRACE, "remove_component(): an RTC removed from this context.");
                 RTC.RTObject rtcomp = RTC.RTObjectHelper.narrow(comp);
                 if(rtcomp == null){
                     rtcout.println(Logbuf.ERROR,"Invalid object reference."); 
                     return ReturnCode_t.RTC_ERROR;
                 }
-                long index;
-                RTC.RTCListHolder holder
+                synchronized (m_profile) {
+                    long index;
+                    RTC.RTCListHolder holder
                         = new RTC.RTCListHolder(m_profile.participants);
-                index = CORBA_SeqUtil.find(holder, new is_equiv(rtcomp));
+                    index = CORBA_SeqUtil.find(holder, new is_equiv(rtcomp));
     
-                if (index < 0) { // not found in my list
-                    rtcout.println(Logbuf.ERROR, "Not found.");
-                    return ReturnCode_t.BAD_PARAMETER;
+                    if (index < 0) { // not found in my list
+                        rtcout.println(Logbuf.ERROR, "Not found.");
+                        return ReturnCode_t.BAD_PARAMETER;
+                    }
+    
+                    CORBA_SeqUtil.erase(holder, (int)index);
+                    m_profile.participants = holder.value;
                 }
-    
-                CORBA_SeqUtil.erase(holder, (int)index);
-                m_profile.participants = holder.value;
-
                 return ReturnCode_t.RTC_OK;
             }
         }
+        rtcout.println(Logbuf.TRACE, "remove_component(): no RTC found in this context.");
         return ReturnCode_t.BAD_PARAMETER;
     }
 
@@ -646,7 +653,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
 
         rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_profile()");
 
-        ExecutionContextProfileHolder p = new ExecutionContextProfileHolder(m_profile);
+        ExecutionContextProfileHolder p;
+        synchronized (m_profile) {
+            p = new ExecutionContextProfileHolder(m_profile);
+        }
         return p.value;
     }
 
