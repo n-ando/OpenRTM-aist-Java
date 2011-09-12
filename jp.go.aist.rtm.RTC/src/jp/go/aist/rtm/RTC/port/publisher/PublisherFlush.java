@@ -84,7 +84,8 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      * @return ReturnCode
      */
     public ReturnCode setBuffer(BufferBase<OutputStream> buffer) {
-        return ReturnCode.PORT_ERROR;
+        rtcout.println(Logbuf.TRACE, "setBuffer()" );
+        return ReturnCode.PORT_OK;
     }
     /**
      * <p> Setting buffer pointer </p>
@@ -191,6 +192,9 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
                  onReceiverFull(data);
                  return ret;
             case SEND_TIMEOUT:
+                 onReceiverTimeout(data);
+                 return ret;
+            case CONNECTION_LOST:
                  onReceiverTimeout(data);
                  return ret;
             case UNKNOWN_ERROR:
