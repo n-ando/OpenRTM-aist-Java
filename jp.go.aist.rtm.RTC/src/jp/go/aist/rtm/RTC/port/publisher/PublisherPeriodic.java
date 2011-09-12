@@ -140,7 +140,8 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         }
 
         ReturnCode ret = ReturnCode.PORT_OK;
-        int preskip = m_buffer.readable() + m_leftskip;
+        int readable = m_buffer.readable();
+        int preskip = readable + m_leftskip;
         int loopcnt = preskip/(m_skipn +1);
         int postskip = m_skipn - m_leftskip;
         for (int i = 0; i < loopcnt; ++i) {
@@ -159,7 +160,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             postskip = m_skipn +1;
         }
 
-        m_buffer.advanceRptr(m_buffer.readable());
+        m_buffer.advanceRptr(readable);
         m_leftskip = preskip % (m_skipn +1);
         return ret;
     }
