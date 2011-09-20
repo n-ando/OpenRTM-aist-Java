@@ -82,9 +82,7 @@
 		<antcall target="compile" />
 		<antcall target="jar" />
 		<antcall target="javaExamples" />
-<!--
 		<antcall target="javaDoc" />
--->
 	</target>
 	
         <target name="buildTests">
