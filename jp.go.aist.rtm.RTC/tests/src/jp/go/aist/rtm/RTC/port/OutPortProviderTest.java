@@ -15,7 +15,8 @@ import _SDOPackage.NameValue;
  */
 public class OutPortProviderTest extends TestCase {
 
-    class OutPortProviderMock extends OutPortProviderImpl {
+    //class OutPortProviderMock extends OutPortProviderImpl {
+    class OutPortProviderMock extends OutPortCorbaCdrProvider {
         public int g_argc;
         public String g_argv;
         

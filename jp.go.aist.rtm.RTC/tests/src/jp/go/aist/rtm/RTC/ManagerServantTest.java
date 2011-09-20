@@ -749,6 +749,7 @@ public class ManagerServantTest extends TestCase {
      * </ul>
      * </p>
      */
+/*
     public void test_get_owner() {
         ManagerServant pman = new ManagerServant();
         RTM.Manager obj;
@@ -756,7 +757,7 @@ public class ManagerServantTest extends TestCase {
         assertNull(obj);
 
     }
-
+*/
     /**
      * <p>shutdown()メソッドのテスト
      * <ul>
@@ -830,6 +831,7 @@ public class ManagerServantTest extends TestCase {
      * </ul>
      * </p>
      */
+/*
     public void test_set_owner() {
         ManagerServant pman = new ManagerServant();
 
@@ -837,13 +839,14 @@ public class ManagerServantTest extends TestCase {
         assertNull(pman.set_owner(m_objref));
 
     }
-
+*/
     /**
      * <p>set_child()メソッドのテスト
      * <ul>
      * </ul>
      * </p>
      */
+/*
     public void test_set_child() {
         ManagerServant pman = new ManagerServant();
 
@@ -851,20 +854,21 @@ public class ManagerServantTest extends TestCase {
         assertNull(pman.set_child(m_objref));
 
     }
-
+*/
     /**
      * <p>get_child()メソッドのテスト
      * <ul>
      * </ul>
      * </p>
      */
+/*
     public void test_get_child() {
         ManagerServant pman = new ManagerServant();
 
         assertNull(pman.get_child());
 
     }
-
+*/
     /**
      * <p>fork()メソッドのテスト
      * <ul>

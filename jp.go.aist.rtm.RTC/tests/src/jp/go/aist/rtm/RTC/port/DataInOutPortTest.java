@@ -13,8 +13,8 @@ import RTC.ConnectorProfileHolder;
 import RTC.TimedFloat;
 
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
-import jp.go.aist.rtm.RTC.port.DataInPort;
-import jp.go.aist.rtm.RTC.port.DataOutPort;
+//import jp.go.aist.rtm.RTC.port.DataInPort;
+//import jp.go.aist.rtm.RTC.port.DataOutPort;
 import jp.go.aist.rtm.RTC.port.InPort;
 import jp.go.aist.rtm.RTC.port.OutPort;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
@@ -72,22 +72,22 @@ public class DataInOutPortTest extends TestCase {
 
     private OutPort<TimedFloat> m_outPortNonBlock;
     private DataRef<TimedFloat> m_outFloatNonBlock;
-    private DataOutPort<TimedFloat> m_dataOutPortNonBlock;
+//    private DataOutPort<TimedFloat> m_dataOutPortNonBlock;
 //    private Port m_outPortRefNonBlock;
 
     private OutPort<TimedFloat> m_outPortBlock;
     private DataRef<TimedFloat> m_outFloatBlock;
-    private DataOutPort<TimedFloat> m_dataOutPortBlock;
+//    private DataOutPort<TimedFloat> m_dataOutPortBlock;
 //    private Port m_outPortRefBlock;
     
     private InPort<TimedFloat> m_inPortNonBlock;
     private DataRef<TimedFloat> m_inFloatNonBlock;
-    private DataInPort<TimedFloat> m_dataInPortNonBlock;
+//    private DataInPort<TimedFloat> m_dataInPortNonBlock;
 //    private Port m_inPortRefNonBlock;
 
     private InPort<TimedFloat> m_inPortBlock;
     private DataRef<TimedFloat> m_inFloatBlock;
-    private DataInPort<TimedFloat> m_dataInPortBlock;
+//    private DataInPort<TimedFloat> m_dataInPortBlock;
 //    private Port m_inPortRefBlock;
 
     private OrbRunner m_orbRunner;

@@ -14,7 +14,8 @@ import org.omg.PortableServer.POA;
 
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
-import RTC.InPortAnyPOA;
+import OpenRTM.InPortCdrPOA;
+//import RTC.InPortAnyPOA;
 import RTC.PortInterfacePolarity;
 import RTC.PortProfile;
 import RTC.ReturnCode_t;
@@ -25,7 +26,7 @@ import _SDOPackage.NVListHolder;
  * <p>DataOutPortクラスのためのテストケースです。</p>
  */
 public class DataOutPortTest extends TestCase {
-
+/*
     public class DataOutPortMock extends DataOutPort<TimedFloat> {
 
         public DataOutPortMock(String name, OutPort<TimedFloat> outport, Properties prop) throws Exception {
@@ -55,13 +56,15 @@ public class DataOutPortTest extends TestCase {
         public String type_name = "DataOutPortMock_type_name";
         public PortInterfacePolarity pol = PortInterfacePolarity.REQUIRED;
     }
+*/
 
     private OutPort<TimedFloat> m_outport;
     private DataRef<TimedFloat> m_tfloat = new DataRef<TimedFloat>(new TimedFloat());
     private ORB m_pORB;
     private POA m_pPOA;
 
-    public class InPortAnyMock extends InPortAnyPOA {
+    //public class InPortAnyMock extends InPortAnyPOA {
+    public class InPortAnyMock extends InPortCdrPOA {
         public InPortAnyMock() {
             m_calledCount = 0;
         }
@@ -69,6 +72,12 @@ public class DataOutPortTest extends TestCase {
         public final int getCalledCount() { return m_calledCount; }
 
         private int m_calledCount;
+        public OpenRTM.PortStatus put(byte[] data)
+        {
+
+
+            return OpenRTM.PortStatus.from_int(OpenRTM.PortStatus._PORT_OK);
+        }
     }
 
     protected void setUp() throws Exception {
@@ -128,10 +137,11 @@ public class DataOutPortTest extends TestCase {
         OutPort<TimedFloat> pOutPort = new OutPort<TimedFloat>("name of OutPort", valholder); // will be deleted automatically
         
         Properties dataOutPortProps = new Properties();
-        DataOutPort pDataOutPort = new DataOutPort(TimedFloat.class, "name of DataOutPort", pOutPort, dataOutPortProps); // will be deleted automatically
+//        DataOutPort pDataOutPort = new DataOutPort(TimedFloat.class, "name of DataOutPort", pOutPort, dataOutPortProps); // will be deleted automatically
 
         // PortProfileを取得する
-        PortProfile prof = pDataOutPort.get_port_profile();
+//        PortProfile prof = pDataOutPort.get_port_profile();
+        PortProfile prof = pOutPort.get_port_profile();
         
         // - PortProfileの名称が正しく取得されるか？
         assertEquals("name of DataOutPort", prof.name);
@@ -161,13 +171,13 @@ public class DataOutPortTest extends TestCase {
         DataRef<TimedFloat> outPortBindValue = new DataRef<TimedFloat>(TimedFloatFactory.create());
         OutPort<TimedFloat> pOutPort = new OutPort<TimedFloat>("name of InPort", outPortBindValue); // will be deleted automatically
 
-        DataOutPortMock pDataOutPort = null;
-        try {
-            pDataOutPort = new DataOutPortMock("name of DataInPort", pOutPort, new Properties());
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        } // will be deleted automatically
+//        DataOutPortMock pDataOutPort = null;
+//        try {
+//            pDataOutPort = new DataOutPortMock("name of DataInPort", pOutPort, new Properties());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail();
+//        } // will be deleted automatically
         
         // CORBA_Any, Push, Newの組合せを指定してpublisherInterfaces()を呼出す
         ConnectorProfile connProf = new ConnectorProfile();
@@ -178,9 +188,10 @@ public class DataOutPortTest extends TestCase {
         CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.dataflow_type", "Push"));
         CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.subscription_type", "New"));
         connProf.properties = properties.value;
-        assertEquals(ReturnCode_t.RTC_OK, pDataOutPort.publishInterfaces_public(connProf));
-        
+//        assertEquals(ReturnCode_t.RTC_OK, pDataOutPort.publishInterfaces_public(connProf));
         ConnectorProfileHolder holder = new ConnectorProfileHolder(connProf);
+        assertEquals(ReturnCode_t.RTC_OK, pOutPort.publishInterfaces(holder));
+        
         // "dataport.corba_any.outport_ref"プロパティを取得できるか？
         Any outPortAnyRef = null;
         try {
@@ -205,13 +216,13 @@ public class DataOutPortTest extends TestCase {
         DataRef<TimedFloat> outPortBindValue = new DataRef<TimedFloat>(TimedFloatFactory.create());
         OutPort<TimedFloat> pOutPort = new OutPort<TimedFloat>("name of InPort", outPortBindValue); // will be deleted automatically
 
-        DataOutPortMock pDataOutPort = null;
-        try {
-            pDataOutPort = new DataOutPortMock("name of DataInPort", pOutPort, new Properties());
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        } // will be deleted automatically
+//        DataOutPortMock pDataOutPort = null;
+//        try {
+//            pDataOutPort = new DataOutPortMock("name of DataInPort", pOutPort, new Properties());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail();
+//        } // will be deleted automatically
         
         // TCP_Any, Pull, Periodicの組合せを指定してpublisherInterfaces()を呼出す
         ConnectorProfile connProf = new ConnectorProfile();
@@ -222,8 +233,10 @@ public class DataOutPortTest extends TestCase {
         CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.dataflow_type", "Pull"));
         CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.subscription_type", "Periodic"));
         connProf.properties = properties.value;
-        assertEquals(ReturnCode_t.RTC_OK, pDataOutPort.publishInterfaces_public(connProf));
+        //assertEquals(ReturnCode_t.RTC_OK, pDataOutPort.publishInterfaces_public(connProf));
         
+        ConnectorProfileHolder holder = new ConnectorProfileHolder(connProf);
+        assertEquals(ReturnCode_t.RTC_OK, pOutPort.publishInterfaces(holder));
     }
 
     /**
@@ -240,13 +253,13 @@ public class DataOutPortTest extends TestCase {
         OutPort<TimedFloat> pOutPort = new OutPort<TimedFloat>("name of OutPort", outPortBindValue); // will be deleted automatically
         //
         Properties dataOutPortProps = new Properties();
-        DataOutPortMock pDataOutPort = null;
-        try {
-            pDataOutPort = new DataOutPortMock("name of DataInPort", pOutPort, dataOutPortProps);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        } // will be deleted automatically
+//        DataOutPortMock pDataOutPort = null;
+//        try {
+//            pDataOutPort = new DataOutPortMock("name of DataInPort", pOutPort, dataOutPortProps);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail();
+//        } // will be deleted automatically
         
         // ConnectorProfileに、接続に必要となるプロパティをセットする
         ConnectorProfile connProf = new ConnectorProfile();
@@ -265,8 +278,11 @@ public class DataOutPortTest extends TestCase {
         
         // subscribeInterfaces()メソッドを呼び出す
         // （これによりDataOutPortがInPortAnyへの参照を取得して、接続が完了する）
+//        assertEquals(ReturnCode_t.RTC_OK,
+//            pDataOutPort.subscribeInterfaces_public(connProf));
+        ConnectorProfileHolder holder = new ConnectorProfileHolder(connProf); 
         assertEquals(ReturnCode_t.RTC_OK,
-            pDataOutPort.subscribeInterfaces_public(connProf));
+            pOutPort.subscribeInterfaces(holder));
         
         // データ送信を行い、InPortAnyMock::put()側に到達したことをチェックすることで、接続の成功を確認する
         TimedFloat sending = new TimedFloat();
@@ -293,13 +309,13 @@ public class DataOutPortTest extends TestCase {
         DataRef<TimedFloat> outPortBindValue = new DataRef<TimedFloat>(base);
         OutPort<TimedFloat> pOutPort = new OutPort<TimedFloat>("name of InPort", outPortBindValue); // will be deleted automatically
         //
-        DataOutPortMock pDataOutPort = null;
-        try {
-            pDataOutPort = new DataOutPortMock("name of DataInPort", pOutPort, new Properties());
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        } // will be deleted automatically
+//        DataOutPortMock pDataOutPort = null;
+//        try {
+//            pDataOutPort = new DataOutPortMock("name of DataInPort", pOutPort, new Properties());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail();
+//        } // will be deleted automatically
         
         // ConnectorProfileに、接続に必要となるプロパティをセットする
         ConnectorProfile connProf = new ConnectorProfile();
@@ -318,8 +334,11 @@ public class DataOutPortTest extends TestCase {
         
         // subscribeInterfaces()メソッドを呼び出す
         // （これによりDataOutPortがInPortAnyへの参照を取得して、接続が完了する）
+//        assertEquals(ReturnCode_t.RTC_OK,
+//            pDataOutPort.subscribeInterfaces_public(connProf));
+        ConnectorProfileHolder holder = new ConnectorProfileHolder(connProf); 
         assertEquals(ReturnCode_t.RTC_OK,
-            pDataOutPort.subscribeInterfaces_public(connProf));
+            pOutPort.subscribeInterfaces(holder));
         
         // データ送信を行い、InPortAnyMock::put()側に到達したことをチェックすることで、接続の成功を確認する
         TimedFloat sending = new TimedFloat();
@@ -332,7 +351,8 @@ public class DataOutPortTest extends TestCase {
         assertEquals(1, pInPortAny.getCalledCount());
         
         // （接続が成功した後で、）unsubscribeInterfacesを呼出す
-        pDataOutPort.unsubscribeInterfaces_public(connProf);
+//        pDataOutPort.unsubscribeInterfaces_public(connProf);
+        pOutPort.unsubscribeInterfaces(connProf);
 
         // 再度データ送信を行うが、InPortAnyMock::put()側に到達しないことをチェックすることで、切断の成功を確認する
         sending.data = 2.0F;

@@ -1,7 +1,7 @@
 package jp.go.aist.rtm.RTC.port;
 
 import _SDOPackage.NVListHolder;
-import jp.go.aist.rtm.RTC.port.InPortProviderImpl;
+//import jp.go.aist.rtm.RTC.port.InPortProviderImpl;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import junit.framework.TestCase;
@@ -11,7 +11,8 @@ import junit.framework.TestCase;
  */
 public class InPortProviderImplTest extends TestCase {
 
-    private class InPortProviderImplMock extends InPortProviderImpl {
+    //private class InPortProviderImplMock extends InPortProviderImpl {
+    private class InPortProviderImplMock extends InPortCorbaCdrProvider {
         
         public InPortProviderImplMock(
                 String dataType, String interfaceType,
@@ -49,7 +50,7 @@ public class InPortProviderImplTest extends TestCase {
      */
     public void test_publishInterfaceProfile() throws Exception {
 
-        InPortProviderImpl provider = new InPortProviderImplMock(
+        InPortProvider provider = new InPortProviderImplMock(
                 "DATA_TYPE", "INTERFACE_TYPE",
                 "DATA_FLOW_TYPE", "SUBSCRIPTION_TYPE");
         
@@ -79,7 +80,7 @@ public class InPortProviderImplTest extends TestCase {
      */
     public void testPublishInterface() {
 
-        InPortProviderImpl provider = new InPortProviderImplMock(
+        InPortProvider provider = new InPortProviderImplMock(
                 "DATA_TYPE", "INTERFACE_TYPE",
                 "DATA_FLOW_TYPE", "SUBSCRIPTION_TYPE");
         

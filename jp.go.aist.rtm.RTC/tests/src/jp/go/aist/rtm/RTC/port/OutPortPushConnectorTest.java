@@ -240,6 +240,11 @@ public class OutPortPushConnectorTest extends TestCase {
         public String getName(){
             return "flush";
         }
+        public ReturnCode setListener(ConnectorBase.ConnectorInfo info,
+                              ConnectorListeners listeners) {
+
+            return ReturnCode.PORT_OK;
+        }
     }
     /**
      * 
@@ -367,6 +372,11 @@ public class OutPortPushConnectorTest extends TestCase {
         public String getName(){
             return "new";
         }
+        public ReturnCode setListener(ConnectorBase.ConnectorInfo info,
+                              ConnectorListeners listeners) {
+
+            return ReturnCode.PORT_OK;
+        }
     };
     public static Logger m_mock_logger = null;
   
@@ -473,19 +483,23 @@ public class OutPortPushConnectorTest extends TestCase {
           InPortCorbaCdrConsumerMock consumer = new InPortCorbaCdrConsumerMock();
           Logger logger = new Logger();
           consumer.setLogger(logger);
-          ConnectorBase.Profile profile_new = new ConnectorBase.Profile(
+          //ConnectorBase.Profile profile_new = new ConnectorBase.Profile(
+          ConnectorBase.ConnectorInfo profile_new = new ConnectorBase.ConnectorInfo(
+
                                      prof.name,
                                      prof.connector_id,
                                      CORBA_SeqUtil.refToVstring(prof.ports),
                                      prop); 
           OutPortConnector connector = null;
+          ConnectorListeners listeners = null;
           int init_counter = logger.countLog("InPortCorbaCdrConsumerMock.init");
           int setBuffer_counter = m_mock_logger.countLog("PublisherNewMock.setBuffer");
           int buffOk_counter = m_mock_logger.countLog("buffer OK");
           int buffNg_counter = m_mock_logger.countLog("buffer NG");
           int setConsumer_counter = m_mock_logger.countLog("PublisherNewMock.setConsumer");
           try {
-              connector = new OutPortPushConnector(profile_new, consumer);
+              //connector = new OutPortPushConnector(profile_new, consumer);
+              connector = new OutPortPushConnector(profile_new, listeners, consumer);
               assertEquals("1:",init_counter+1, 
                   logger.countLog("InPortCorbaCdrConsumerMock.init"));
               assertEquals("2:",setBuffer_counter+1, 
@@ -515,7 +529,8 @@ public class OutPortPushConnectorTest extends TestCase {
               NVUtil.copyToProperties(conn_prop, holder);
               prop.merge(conn_prop.getNode("dataport"));
           }
-          ConnectorBase.Profile profile_flush = new ConnectorBase.Profile(
+          //ConnectorBase.Profile profile_flush = new ConnectorBase.Profile(
+          ConnectorBase.ConnectorInfo profile_flush = new ConnectorBase.ConnectorInfo(
                                      prof.name,
                                      prof.connector_id,
                                      CORBA_SeqUtil.refToVstring(prof.ports),
@@ -526,7 +541,8 @@ public class OutPortPushConnectorTest extends TestCase {
           buffNg_counter = m_mock_logger.countLog("buffer NG");
           setConsumer_counter = m_mock_logger.countLog("PublisherFlushMock.setConsumer");
           try{
-              connector = new OutPortPushConnector(profile_flush, consumer);
+              //connector = new OutPortPushConnector(profile_flush, consumer);
+              connector = new OutPortPushConnector(profile_flush, listeners, consumer);
               assertEquals("6:",init_counter+1, 
               logger.countLog("InPortCorbaCdrConsumerMock.init"));
               assertEquals("7:",setBuffer_counter+1, 
@@ -559,12 +575,14 @@ public class OutPortPushConnectorTest extends TestCase {
                   NVUtil.copyToProperties(conn_prop, holder);
                   prop.merge(conn_prop.getNode("dataport"));
               }
-              ConnectorBase.Profile profile_err = new ConnectorBase.Profile(
+              //ConnectorBase.Profile profile_err = new ConnectorBase.Profile(
+              ConnectorBase.ConnectorInfo profile_err = new ConnectorBase.ConnectorInfo(
                                       prof_err.name,
                                       prof_err.connector_id,
                                       CORBA_SeqUtil.refToVstring(prof_err.ports),
                                       prop); 
-              connector_err = new OutPortPushConnector(profile_err, null);
+              //connector_err = new OutPortPushConnector(profile_err, null);
+              connector_err = new OutPortPushConnector(profile_err, listeners, null);
               fail("The exception was not thrown. ");
           }
           catch(Exception e) {
@@ -606,14 +624,17 @@ public class OutPortPushConnectorTest extends TestCase {
           InPortCorbaCdrConsumerMock consumer = new InPortCorbaCdrConsumerMock();
           Logger logger = new Logger();
           consumer.setLogger(logger);
-          ConnectorBase.Profile profile_new = new ConnectorBase.Profile (
+          //ConnectorBase.Profile profile_new = new ConnectorBase.Profile (
+          ConnectorBase.ConnectorInfo profile_new = new ConnectorBase.ConnectorInfo(
                                      prof.name,
                                      prof.connector_id,
                                      CORBA_SeqUtil.refToVstring(prof.ports),
                                      prop); 
           OutPortConnector connector = null;
+          ConnectorListeners listeners = null;
           try {
-              connector = new OutPortPushConnector(profile_new, consumer);
+              //connector = new OutPortPushConnector(profile_new, consumer);
+              connector = new OutPortPushConnector(profile_new, listeners, consumer);
               int write_counter = m_mock_logger.countLog("PublisherNewMock.write");
               int num_counter =  m_mock_logger.countLog("12345");
               OutputStream cdr = toStream(12345,0,0);
@@ -667,14 +688,17 @@ public class OutPortPushConnectorTest extends TestCase {
           InPortCorbaCdrConsumerMock consumer = new InPortCorbaCdrConsumerMock();
           Logger logger = new Logger();
           consumer.setLogger(logger);
-          ConnectorBase.Profile profile_new = new ConnectorBase.Profile(
+          //ConnectorBase.Profile profile_new = new ConnectorBase.Profile(
+          ConnectorBase.ConnectorInfo profile_new = new ConnectorBase.ConnectorInfo(
                                      prof.name,
                                      prof.connector_id,
                                      CORBA_SeqUtil.refToVstring(prof.ports),
                                      prop); 
           OutPortConnector connector=null;
+          ConnectorListeners listeners = null;
           try {
-              connector = new OutPortPushConnector(profile_new, consumer);
+              //connector = new OutPortPushConnector(profile_new, consumer);
+              connector = new OutPortPushConnector(profile_new, listeners, consumer);
               BufferBase<OutputStream> buffer = connector.getBuffer();
               assertTrue("1",buffer!=null);
               connector.disconnect();
@@ -717,14 +741,17 @@ public class OutPortPushConnectorTest extends TestCase {
           InPortCorbaCdrConsumerMock consumer = new InPortCorbaCdrConsumerMock();
           Logger logger = new Logger();
           consumer.setLogger(logger);
-          ConnectorBase.Profile profile_new = new ConnectorBase.Profile(
+          //ConnectorBase.Profile profile_new = new ConnectorBase.Profile(
+          ConnectorBase.ConnectorInfo profile_new = new ConnectorBase.ConnectorInfo(
                                      prof.name,
                                      prof.connector_id,
                                      CORBA_SeqUtil.refToVstring(prof.ports),
                                      prop); 
           OutPortConnector connector = null;
+          ConnectorListeners listeners = null;
           try {
-              connector = new OutPortPushConnector(profile_new, consumer);
+              //connector = new OutPortPushConnector(profile_new, consumer);
+              connector = new OutPortPushConnector(profile_new, listeners, consumer);
               assertEquals(0, 
                      m_mock_logger.countLog("PublisherNewMock.activate"));
               connector.activate();
@@ -736,7 +763,8 @@ public class OutPortPushConnectorTest extends TestCase {
               fail("The exception not intended was thrown .");
           }
           try{
-              connector = new OutPortPushConnector(profile_new, consumer);
+              //connector = new OutPortPushConnector(profile_new, consumer);
+              connector = new OutPortPushConnector(profile_new, listeners, consumer);
               assertEquals(0, 
                    m_mock_logger.countLog("PublisherNewMock.deactivate"));
               connector.deactivate();

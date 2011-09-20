@@ -24,6 +24,13 @@ public class ModuleManagerTest extends TestCase {
         }
         return false;
     }
+    private boolean isFound2(final Vector<Properties> list, final String target) {
+        for( int index=0;index<list.size();index++ ) {
+            Vector<String> vstr = list.get(index).propertyNames();
+            isFound(vstr, target);
+        }
+        return false;
+    }
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -107,7 +114,7 @@ public class ModuleManagerTest extends TestCase {
         
         // モジュールのロードに成功するはず
         String modName = m_pModMgr.load("loadSample");
-        assertTrue(isFound(new Vector<String>(m_pModMgr.getLoadedModules().keySet()), modName));
+        assertTrue(isFound2(m_pModMgr.getLoadedModules(), modName));
     }
    /**
     * <p>unload()メソッドのテスト
@@ -123,18 +130,18 @@ public class ModuleManagerTest extends TestCase {
    public void test_unload() throws Exception {
         // モジュールをロードしておく
         String modName1 = m_pModMgr.load("jp.go.aist.rtm.RTC.sample.loadSample");
-        assertTrue(isFound(new Vector<String>(m_pModMgr.getLoadedModules().keySet()), modName1));
+        assertTrue(isFound2(m_pModMgr.getLoadedModules(), modName1));
         
         String modName2 = m_pModMgr.load("jp.go.aist.rtm.RTC.sample.loadSample2");
-        assertTrue(isFound(new Vector<String>(m_pModMgr.getLoadedModules().keySet()), modName2));
+        assertTrue(isFound2(m_pModMgr.getLoadedModules(), modName2));
         
         // Success case
         // ロードしておいたモジュールを正しくアンロードできるか？
         m_pModMgr.unload(modName1);
-        assertFalse(isFound(new Vector<String>(m_pModMgr.getLoadedModules().keySet()), modName1));
+        assertFalse(isFound2(m_pModMgr.getLoadedModules(), modName1));
         
         // アンロードしていないモジュールは、なおアンロードされずに残っているか？
-        assertTrue(isFound(new Vector<String>(m_pModMgr.getLoadedModules().keySet()), modName2));
+        assertTrue(isFound2(m_pModMgr.getLoadedModules(), modName2));
         
         // Failure case
         // 絶対パスを指定せず、ファイル名だけ指定した場合に、意図どおりにアンロード失敗するか？
@@ -166,15 +173,15 @@ public class ModuleManagerTest extends TestCase {
    public void test_unloadAll() throws Exception {
         // モジュールをロードしておく
         String modName1 = m_pModMgr.load("jp.go.aist.rtm.RTC.sample.loadSample");
-        assertTrue(isFound(new Vector<String>(m_pModMgr.getLoadedModules().keySet()), modName1));
+        assertTrue(isFound2(m_pModMgr.getLoadedModules(), modName1));
         
         String modName2 = m_pModMgr.load("jp.go.aist.rtm.RTC.sample.loadSample2");
-        assertTrue(isFound(new Vector<String>(m_pModMgr.getLoadedModules().keySet()), modName2));
+        assertTrue(isFound2(m_pModMgr.getLoadedModules(), modName2));
 
         // unloadAll()によって、ロード済みのモジュールがすべてアンロードされるか？
         m_pModMgr.unloadAll();
-        assertFalse(isFound(new Vector<String>(m_pModMgr.getLoadedModules().keySet()), modName1));
-        assertFalse(isFound(new Vector<String>(m_pModMgr.getLoadedModules().keySet()), modName2));
+        assertFalse(isFound2(m_pModMgr.getLoadedModules(), modName1));
+        assertFalse(isFound2(m_pModMgr.getLoadedModules(), modName2));
    }
    /**
     * <p>symbol()メソッドのテスト
@@ -187,9 +194,23 @@ public class ModuleManagerTest extends TestCase {
    public void test_symbol() throws Exception {
        // モジュールをロードしておく
        String modName1 = m_pModMgr.load("jp.go.aist.rtm.RTC.sample.loadSample");
-       assertTrue(isFound(new Vector<String>(m_pModMgr.getLoadedModules().keySet()), modName1));
+       assertTrue(isFound2(m_pModMgr.getLoadedModules(), modName1));
        //
-       Class target = m_pModMgr.getLoadedModules().get("jp.go.aist.rtm.RTC.sample.loadSample");
+       Vector<Properties>vprop = m_pModMgr.getLoadedModules();
+       String str = "jp.go.aist.rtm.RTC.sample.loadSample";
+       String str_target = "Comp";
+       for( int ic=0;ic<vprop.size();++ic ) {
+           Vector<String> vstr = vprop.get(ic).propertyNames();
+           for( int index=0;index<vstr.size();index++ ) {
+               String fstr = vstr.get(index);
+               if(fstr.equals(str)){
+                   str_target = vprop.get(ic).getProperty(fstr);
+               } 
+                   
+           }
+       }
+       //Class target = m_pModMgr.getLoadedModules().get("jp.go.aist.rtm.RTC.sample.loadSample");
+       Class target = Class.forName(str_target); 
        Method method = null;
        try {
            method = m_pModMgr.symbol("jp.go.aist.rtm.RTC.sample.loadSample", "SampleMethod2");
@@ -279,7 +300,7 @@ public class ModuleManagerTest extends TestCase {
         // 絶対パス指定を許可した状態で、絶対パス指定でモジュールロードできるか？
         m_pModMgr.allowAbsolutePath();
         String modName = m_pModMgr.load("jp.go.aist.rtm.RTC.sample.loadSample");
-        assertTrue(isFound(new Vector<String>(m_pModMgr.getLoadedModules().keySet()), modName));
+        assertTrue(isFound2(m_pModMgr.getLoadedModules(), modName));
         
         // 絶対パス指定を禁止した状態で、絶対パス指定でモジュールロードを試みて、意図どおり失敗するか？
         m_pModMgr.unloadAll(); // いったんアンロードしておく

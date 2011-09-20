@@ -46,7 +46,8 @@ import _SDOPackage.NVListHolder;
 public class OutPortBaseTest extends TestCase {
 
   class OutPortPushConnector extends OutPortConnector {
-    public OutPortPushConnector(Profile profile,
+    //public OutPortPushConnector(Profile profile,
+    public OutPortPushConnector(ConnectorBase.ConnectorInfo profile,
                          InPortConsumer consumer,
                          BufferBase<OutputStream> buffer) throws Exception {
         super(profile);
@@ -58,7 +59,8 @@ public class OutPortBaseTest extends TestCase {
         } 
     }
 
-    public OutPortPushConnector(Profile profile,
+    //public OutPortPushConnector(Profile profile,
+    public OutPortPushConnector(ConnectorBase.ConnectorInfo profile,
                          InPortConsumer consumer )  throws Exception {
         super(profile);
         BufferBase<OutputStream> buffer = null;
@@ -70,7 +72,8 @@ public class OutPortBaseTest extends TestCase {
         } 
     }
 
-    private void _Constructor(Profile profile,
+    //private void _Constructor(Profile profile,
+    private void _Constructor(ConnectorBase.ConnectorInfo profile,
                          InPortConsumer consumer,
                          BufferBase<OutputStream> buffer) throws Exception {
 
@@ -93,10 +96,12 @@ public class OutPortBaseTest extends TestCase {
     public ReturnCode write(final OutputStream data_little,final OutputStream data_big){
         return ReturnCode.PORT_OK;
     }
-    protected PublisherBase createPublisher(Profile profile) {
+    //protected PublisherBase createPublisher(Profile profile) {
+    protected PublisherBase createPublisher(ConnectorBase.ConnectorInfo profile) {
         return new PublisherFlush(); 
     }
-    protected BufferBase<OutputStream> createBuffer(Profile profile) {
+    //protected BufferBase<OutputStream> createBuffer(Profile profile) {
+    protected BufferBase<OutputStream> createBuffer(ConnectorBase.ConnectorInfo profile) {
       return new RingBufferMock();
     }
     public <DataType> ReturnCode write(final DataType data) {
@@ -108,7 +113,8 @@ public class OutPortBaseTest extends TestCase {
   }
   class OutPortPullConnector extends OutPortConnector {
 
-    public OutPortPullConnector(Profile profile,
+    //public OutPortPullConnector(Profile profile,
+    public OutPortPullConnector(ConnectorBase.ConnectorInfo profile,
                          OutPortProvider provider,
                          BufferBase<OutputStream> buffer) throws Exception {
         super(profile);
@@ -116,7 +122,8 @@ public class OutPortBaseTest extends TestCase {
             throw new Exception("bad_alloc()");
         }
     }
-    public OutPortPullConnector(Profile profile,
+    //public OutPortPullConnector(Profile profile,
+    public OutPortPullConnector(ConnectorBase.ConnectorInfo profile,
                          OutPortProvider provider )  throws Exception {
         super(profile);
         if(profile.properties.getProperty("OutPortBaseTests").equals("bad_alloc")) {
@@ -193,6 +200,9 @@ public class OutPortBaseTest extends TestCase {
             final ConnectorProfileHolder cprof) {
         return subscribeInterfaces(cprof);
      } 
+     public boolean read() {
+         return true;
+     }
   };
     /**
      * * 
@@ -493,6 +503,9 @@ public class OutPortBaseTest extends TestCase {
             return m_connectors;
         }
      
+        public boolean write() {
+            return true;
+        }
     }
 
     /**
@@ -701,6 +714,10 @@ public class OutPortBaseTest extends TestCase {
         public String getName(){
             return "A";
         }
+        public ReturnCode setListener(ConnectorBase.ConnectorInfo info,
+                           ConnectorListeners listeners) {
+            return ReturnCode.PORT_OK;
+        }
     }
 
     class PublisherB extends PublisherBase {
@@ -739,6 +756,10 @@ public class OutPortBaseTest extends TestCase {
         }
         public String getName(){
             return "B";
+        }
+        public ReturnCode setListener(ConnectorBase.ConnectorInfo info,
+                           ConnectorListeners listeners) {
+            return ReturnCode.PORT_OK;
         }
     }
 
@@ -779,6 +800,10 @@ public class OutPortBaseTest extends TestCase {
         public String getName(){
             return "C";
         }
+        public ReturnCode setListener(ConnectorBase.ConnectorInfo info,
+                           ConnectorListeners listeners) {
+            return ReturnCode.PORT_OK;
+        }
     }
 
     class PublisherD extends PublisherBase {
@@ -817,6 +842,10 @@ public class OutPortBaseTest extends TestCase {
         }
         public String getName(){
             return "D";
+        }
+        public ReturnCode setListener(ConnectorBase.ConnectorInfo info,
+                           ConnectorListeners listeners) {
+            return ReturnCode.PORT_OK;
         }
     }
     /**
@@ -864,6 +893,9 @@ public class OutPortBaseTest extends TestCase {
         public OutPortMock(final String name) {
 //            super(name);
             super(name,"dummy");
+        }
+        public boolean write() {
+            return true;
         }
     }
     private PublisherA m_pubA;
@@ -965,7 +997,9 @@ public class OutPortBaseTest extends TestCase {
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(outPort); 
 
-        assertTrue(outPort.name().equals("Hello, World!") );
+        //assertTrue(outPort.name().equals("Hello, World!") );
+        assertTrue(outPort.m_profile.equals("Hello, World!") );
+
         portAdmin.deletePort(outPort);
     }
 
@@ -1530,7 +1564,9 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         inprof.properties = holder.value;
         inprof.connector_id = "id0";
         inprof.name = "bar";
-        inPort.init();
+        //inPort.init();
+        Properties pro = new Properties();
+        inPort.init(pro);
         ConnectorProfileHolder profh =  new ConnectorProfileHolder(inprof);
         inPort.publishInterfaces_public(profh);
 
@@ -1598,7 +1634,8 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         //
         //getConnectorProfiles()
         //
-        Vector<ConnectorBase.Profile> list = outPort.getConnectorProfiles();
+        //Vector<ConnectorBase.Profile> list = outPort.getConnectorProfiles();
+        Vector<ConnectorBase.ConnectorInfo> list = outPort.getConnectorProfiles();
         assertEquals(10, list.size());
         for(int ic=0;ic<10;++ic)
         {
@@ -1644,10 +1681,15 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
             Vector<String> vstr = new Vector<String>();
             Properties prop = new Properties();
             
-            ConnectorBase.Profile prof = new ConnectorBase.Profile("test","id",
+            //ConnectorBase.Profile prof = new ConnectorBase.Profile("test","id",
+            ConnectorBase.ConnectorInfo prof = new ConnectorBase.ConnectorInfo("test","id",
                                                 vstr,prop);
-            ConnectorBase.ProfileHolder cbprofh 
-                = new ConnectorBase.ProfileHolder(prof);
+
+            //ConnectorBase.ProfileHolder cbprofh 
+            //    = new ConnectorBase.ProfileHolder(prof);
+            ConnectorBase.ConnectorInfoHolder cbprofh 
+                = new ConnectorBase.ConnectorInfoHolder(prof);
+
             boolean ret = outPort.getConnectorProfileById(vstrid[ic],cbprofh);
             prof = cbprofh.value;
             assertTrue("12:",ret);
@@ -1662,10 +1704,13 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
             Vector<String> vstr = new Vector<String>();
             Properties prop = new Properties();
             
-            ConnectorBase.Profile prof = new ConnectorBase.Profile ("test","id",
+            //ConnectorBase.Profile prof = new ConnectorBase.Profile ("test","id",
+            ConnectorBase.ConnectorInfo prof = new ConnectorBase.ConnectorInfo ("test","id",
                                              vstr,prop);
-            ConnectorBase.ProfileHolder cbprofh 
-                = new ConnectorBase.ProfileHolder(prof);
+            //ConnectorBase.ProfileHolder cbprofh 
+            //    = new ConnectorBase.ProfileHolder(prof);
+            ConnectorBase.ConnectorInfoHolder cbprofh 
+                = new ConnectorBase.ConnectorInfoHolder(prof);
             boolean ret = outPort.getConnectorProfileById("foo",cbprofh);
             assertTrue("16:",!ret);
             ret = outPort.getConnectorProfileById("bar",cbprofh);
@@ -1680,10 +1725,13 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
             Vector<String> vstr = new Vector<String>();
             Properties prop = new Properties();
             
-            ConnectorBase.Profile prof = new ConnectorBase.Profile("test","id",
+            //ConnectorBase.Profile prof = new ConnectorBase.Profile("test","id",
+            ConnectorBase.ConnectorInfo prof = new ConnectorBase.ConnectorInfo("test","id",
                                                                      vstr,prop);
-            ConnectorBase.ProfileHolder cbprofh 
-                = new ConnectorBase.ProfileHolder(prof);
+            //ConnectorBase.ProfileHolder cbprofh 
+            //    = new ConnectorBase.ProfileHolder(prof);
+            ConnectorBase.ConnectorInfoHolder cbprofh 
+                = new ConnectorBase.ConnectorInfoHolder(prof);
             boolean ret = outPort.getConnectorProfileByName(vstrname[ic],
                                                          cbprofh);
             prof = cbprofh.value;
@@ -1699,10 +1747,13 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
             Vector<String> vstr = new Vector<String>();
             Properties prop = new Properties();
             
-            ConnectorBase.Profile prof = new ConnectorBase.Profile("test","id",
+            //ConnectorBase.Profile prof = new ConnectorBase.Profile("test","id",
+            ConnectorBase.ConnectorInfo prof = new ConnectorBase.ConnectorInfo("test","id",
                                                                     vstr,prop);
-            ConnectorBase.ProfileHolder cbprofh 
-                = new ConnectorBase.ProfileHolder(prof);
+            //ConnectorBase.ProfileHolder cbprofh 
+            //    = new ConnectorBase.ProfileHolder(prof);
+            ConnectorBase.ConnectorInfoHolder cbprofh 
+                = new ConnectorBase.ConnectorInfoHolder(prof);
             boolean ret = outPort.getConnectorProfileByName("foo",cbprofh);
             prof = cbprofh.value;
             assertTrue("22:",!ret);

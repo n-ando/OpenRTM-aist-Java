@@ -5,14 +5,19 @@ import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.TypeCast;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 import junit.framework.TestCase;
 
 import org.omg.CORBA.Any;
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.portable.OutputStream;
 
 import RTC.Time;
 import RTC.TimedFloat;
+import RTC.TimedFloatHolder;
 import _SDOPackage.NVListHolder;
 
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 /**
  * <p>InPortProviderクラスのためのテストケースです。</p>
  */
@@ -38,7 +43,8 @@ public class InPortCorbaProviderTest extends TestCase {
      */
     public void test_publishInterfaceProfile() throws Exception {
         RingBuffer<TimedFloat> buffer = new RingBuffer<TimedFloat>(100);
-        InPortCorbaProvider<TimedFloat> provider = new InPortCorbaProvider<TimedFloat>(TimedFloat.class, buffer); // will be deleted automatically
+//        InPortCorbaProvider<TimedFloat> provider = new InPortCorbaProvider<TimedFloat>(TimedFloat.class, buffer); // will be deleted automatically
+        InPortCorbaCdrProvider provider = new InPortCorbaCdrProvider(); // will be deleted automatically
         
         NVListHolder profile = NVListHolderFactory.create();
         provider.publishInterfaceProfile(profile);
@@ -64,7 +70,8 @@ public class InPortCorbaProviderTest extends TestCase {
      */
     public void test_publishInterface_matched_interfaceType() throws Exception {
         RingBuffer<TimedFloat> buffer = new RingBuffer<TimedFloat>(100);
-        InPortCorbaProvider<TimedFloat> provider = new InPortCorbaProvider<TimedFloat>(TimedFloat.class, buffer); // will be deleted automatically
+        //InPortCorbaProvider<TimedFloat> provider = new InPortCorbaProvider<TimedFloat>(TimedFloat.class, buffer); // will be deleted automatically
+        InPortCorbaCdrProvider provider = new InPortCorbaCdrProvider(); // will be deleted automatically
         
         // インタフェース・タイプが適合するように設定したうえで、インタフェース情報を取得する
         NVListHolder properties = NVListHolderFactory.create();
@@ -84,7 +91,8 @@ public class InPortCorbaProviderTest extends TestCase {
      */
     public void test_publishInterface_unmatched_interfaceType() throws Exception {
         RingBuffer<TimedFloat> buffer = new RingBuffer<TimedFloat>(100);
-        InPortCorbaProvider<TimedFloat> provider = new InPortCorbaProvider<TimedFloat>(TimedFloat.class, buffer); // will be deleted automatically
+        //InPortCorbaProvider<TimedFloat> provider = new InPortCorbaProvider<TimedFloat>(TimedFloat.class, buffer); // will be deleted automatically
+        InPortCorbaCdrProvider provider = new InPortCorbaCdrProvider(); // will be deleted automatically
         
         // インタフェース・タイプが適合するように設定したうえで、インタフェース情報を取得する
         NVListHolder properties = NVListHolderFactory.create();
@@ -108,14 +116,23 @@ public class InPortCorbaProviderTest extends TestCase {
      */
     public void test_put() throws Exception {
         RingBuffer<TimedFloat> buffer = new RingBuffer<TimedFloat>(100);
-        InPortCorbaProvider<TimedFloat> provider = new InPortCorbaProvider<TimedFloat>(TimedFloat.class, buffer); // will be deleted automatically
+        //InPortCorbaProvider<TimedFloat> provider = new InPortCorbaProvider<TimedFloat>(TimedFloat.class, buffer); // will be deleted automatically
+        InPortCorbaCdrProvider provider = new InPortCorbaCdrProvider(); // will be deleted automatically
         
         // 値をInPortCorbaProviderを通して書き込む
         TimedFloat putValue = new TimedFloat();
         putValue.data = 3.14159f;
         putValue.tm = new Time();
-        Any putValueAny = new TypeCast<TimedFloat>(TimedFloat.class).castAny(putValue);
-        provider.put(putValueAny);
+        TimedFloatHolder holder = new TimedFloatHolder(putValue);
+        ORB m_orb = ORBUtil.getOrb();
+        org.omg.CORBA.Any any = m_orb.create_any(); 
+        OutputStream out = any.create_output_stream();
+        holder._write(out);
+        //Any putValueAny = new TypeCast<TimedFloat>(TimedFloat.class).castAny(putValue);
+        //provider.put(putValueAny);
+        EncapsOutputStream cdr;
+        cdr = (EncapsOutputStream)out;
+        provider.put(cdr.toByteArray());
         
         // バッファから値を取り出して、正しく書き込まれたことを確認する
         TimedFloat readValue = new TimedFloat();

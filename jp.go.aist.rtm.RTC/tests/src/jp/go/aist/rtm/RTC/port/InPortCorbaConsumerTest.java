@@ -13,7 +13,8 @@ import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
 import org.omg.PortableServer.POA;
 
-import RTC.InPortAnyPOA;
+//import RTC.InPortAnyPOA;
+import OpenRTM.InPortCdrPOA;
 import _SDOPackage.NVListHolder;
 
 /**
@@ -21,7 +22,8 @@ import _SDOPackage.NVListHolder;
  */
 public class InPortCorbaConsumerTest extends TestCase {
 
-    class InPortAnyMock extends InPortAnyPOA {
+    //class InPortAnyMock extends InPortAnyPOA {
+    class InPortAnyMock extends InPortCdrPOA {
         private Any m_data;
 
         public void put(Any data) {
@@ -29,6 +31,10 @@ public class InPortCorbaConsumerTest extends TestCase {
         }
         public Any getData() {
             return m_data;
+        }
+        public OpenRTM.PortStatus put(byte[] data)
+        {
+            return OpenRTM.PortStatus.PORT_OK;
         }
     }
 

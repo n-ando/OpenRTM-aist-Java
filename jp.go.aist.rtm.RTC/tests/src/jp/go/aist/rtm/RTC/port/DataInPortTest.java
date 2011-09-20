@@ -16,9 +16,13 @@ import org.omg.PortableServer.POA;
 
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
-import RTC.InPortAny;
-import RTC.InPortAnyHelper;
-import RTC.OutPortAnyPOA;
+//import RTC.InPort;
+//import RTC.InPortCdrHelper;
+import OpenRTM.InPortCdrHelper;
+import OpenRTM.OutPortCdrPOA;
+//import RTC.InPortAny;
+//import RTC.InPortAnyHelper;
+//import RTC.OutPortAnyPOA;
 //import RTC.Port;
 import RTC.PortProfile;
 import RTC.ReturnCode_t;
@@ -30,9 +34,12 @@ import _SDOPackage.NVListHolder;
  */
 public class DataInPortTest extends TestCase {
 
-    class DataInPortMock extends DataInPort {
+
+/*
+    //class DataInPortMock extends DataInPort {
+    class DataInPortMock extends InPort {
         public DataInPortMock(String name, InPort<TimedFloat> inport, Properties prop) throws Exception {
-                super(TimedFloat.class, name, inport, prop);
+               super(TimedFloat.class, name, inport, prop);
         }
         
         // public override for test
@@ -40,7 +47,6 @@ public class DataInPortTest extends TestCase {
             ConnectorProfileHolder holder = new ConnectorProfileHolder(connector_profile); 
             return super.publishInterfaces(holder);
         }
-        
         // public override for test
         public ReturnCode_t subscribeInterfaces_public(ConnectorProfile connector_profile) {
             ConnectorProfileHolder holder = new ConnectorProfileHolder(connector_profile); 
@@ -53,8 +59,10 @@ public class DataInPortTest extends TestCase {
         }
         
     };
+*/
     
-    public class OutPortAnyMock extends OutPortAnyPOA {
+    //public class OutPortAnyMock extends OutPortAnyPOA {
+    public class OutPortAnyMock extends OutPortCdrPOA {
         public OutPortAnyMock(Any data) {
             m_data = data;
             m_calledCount = 0;
@@ -70,6 +78,10 @@ public class DataInPortTest extends TestCase {
         
         private int m_calledCount;
         private Any m_data;
+        public OpenRTM.PortStatus get(OpenRTM.CdrDataHolder data) {
+
+            return OpenRTM.PortStatus.from_int(0);
+        }
     }
 
     private ORB m_pORB;
@@ -117,16 +129,17 @@ public class DataInPortTest extends TestCase {
         InPort<TimedFloat> pInPort = new InPort<TimedFloat>("name of InPort", inPortBindValue); // will be deleted automatically
 
         Properties dataInPortProps = new Properties();
-        DataInPort pDataInPort = null;
-        try {
-            pDataInPort = new DataInPort(TimedFloat.class, "name of DataInPort", pInPort, dataInPortProps);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        } // will be deleted automatically
+//        DataInPort pDataInPort = null;
+//        try {
+//            pDataInPort = new DataInPort(TimedFloat.class, "name of DataInPort", pInPort, dataInPortProps);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail();
+//        } // will be deleted automatically
         
         // PortProfileを取得する
-        PortProfile pPortProfile = pDataInPort.get_port_profile();
+        //PortProfile pPortProfile = pDataInPort.get_port_profile();
+        PortProfile pPortProfile = pInPort.get_port_profile();
         
         // - PortProfileの名称が正しく取得されるか？
         assertEquals("name of DataInPort", pPortProfile.name);
@@ -159,13 +172,13 @@ public class DataInPortTest extends TestCase {
         InPort<TimedFloat> pInPort = new InPort<TimedFloat>("name of InPort", inPortBindValue); // will be deleted automatically
 
         Properties dataInPortProps = new Properties();
-        DataInPortMock pDataInPort = null;
-        try {
-            pDataInPort = new DataInPortMock("name of DataInPort", pInPort, dataInPortProps);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        } // will be deleted automatically
+//        DataInPortMock pDataInPort = null;
+//        try {
+//            pDataInPort = new DataInPortMock("name of DataInPort", pInPort, dataInPortProps);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail();
+//        } // will be deleted automatically
         
         // CORBA_Any, Push, Newの組合せを指定してpublishInterfaces()を呼出す
         ConnectorProfile connProf = new ConnectorProfile();
@@ -179,8 +192,12 @@ public class DataInPortTest extends TestCase {
         CORBA_SeqUtil.push_back(properties,
             NVUtil.newNV("dataport.subscription_type", "Any"));
         connProf.properties = properties.value;
+//        assertEquals(ReturnCode_t.RTC_OK,
+//            pDataInPort.publishInterfaces_public(connProf));
+        ConnectorProfileHolder holder = new ConnectorProfileHolder(connProf); 
         assertEquals(ReturnCode_t.RTC_OK,
-            pDataInPort.publishInterfaces_public(connProf));
+            pInPort.publishInterfaces(holder));
+
         
         // "dataport.corba_any.inport_ref"プロパティを取得できるか？
         Any inPortAnyRef = null;
@@ -207,13 +224,14 @@ public class DataInPortTest extends TestCase {
         InPort<TimedFloat> pInPort = new InPort<TimedFloat>("name of InPort", inPortBindValue); // will be deleted automatically
 
         Properties dataInPortProps = new Properties();
-        DataInPortMock pDataInPort = null;
-        try {
-            pDataInPort = new DataInPortMock("name of DataInPort", pInPort, dataInPortProps);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        } // will be deleted automatically
+
+//        DataInPortMock pDataInPort = null;
+//        try {
+//            pDataInPort = new DataInPortMock("name of DataInPort", pInPort, dataInPortProps);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail();
+//        } // will be deleted automatically
         
         // TCP_Any, Pull, Periodicの組合せを指定してpublishInterfaces()を呼出す
         ConnectorProfile connProf = new ConnectorProfile();
@@ -224,8 +242,11 @@ public class DataInPortTest extends TestCase {
         CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.dataflow_type", "Push"));
         CORBA_SeqUtil.push_back(properties, NVUtil.newNV("dataport.subscription_type", "Any"));
         connProf.properties = properties.value;
+//        assertEquals(ReturnCode_t.RTC_OK,
+//            pDataInPort.publishInterfaces_public(connProf));
+        ConnectorProfileHolder holder = new ConnectorProfileHolder(connProf); 
         assertEquals(ReturnCode_t.RTC_OK,
-            pDataInPort.publishInterfaces_public(connProf));
+            pInPort.publishInterfaces(holder));
         
         // "dataport.tcp_any.inport_addr"プロパティを取得できるか？
         int index = NVUtil.find_index(new NVListHolder(connProf.properties), "dataport.tcp_any.inport_addr");
@@ -241,13 +262,14 @@ public class DataInPortTest extends TestCase {
         InPort<TimedFloat> pInPort = new InPort<TimedFloat>("name of InPort", inPortBindValue); // will be deleted automatically
 
         Properties dataInPortProps = new Properties();
-        DataInPortMock pDataInPort = null;
-        try {
-            pDataInPort = new DataInPortMock("name of DataInPort", pInPort, dataInPortProps);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        } // will be deleted automatically
+
+//        DataInPortMock pDataInPort = null;
+//        try {
+//            pDataInPort = new DataInPortMock("name of DataInPort", pInPort, dataInPortProps);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail();
+//        } // will be deleted automatically
         
         // ConnectorProfileに、接続に必要となるプロパティをセットする
         ConnectorProfile connProf = new ConnectorProfile();
@@ -277,8 +299,11 @@ public class DataInPortTest extends TestCase {
         
         // subscribeInterfaces()メソッドを呼び出す
         // （これによりDataInPortがOutPortAnyへの参照を取得して、接続が完了する）
+        //assertEquals(ReturnCode_t.RTC_OK,
+        //    pDataInPort.subscribeInterfaces_public(connProf));
+        ConnectorProfileHolder holder = new ConnectorProfileHolder(connProf); 
         assertEquals(ReturnCode_t.RTC_OK,
-            pDataInPort.subscribeInterfaces_public(connProf));
+            pInPort.subscribeInterfaces(holder));
     }
 
     /**

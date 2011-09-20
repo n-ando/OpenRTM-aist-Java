@@ -235,7 +235,10 @@ public class InPortBaseTest extends TestCase {
       public void setLogger(Logger logger) {
           m_logger = logger;
       }
-    private Logger m_logger;
+      private Logger m_logger;
+      public void setListener(ConnectorBase.ConnectorInfo info, 
+                            ConnectorListeners listeners) {
+      }
   };
   /**
    * 
@@ -347,11 +350,14 @@ public class InPortBaseTest extends TestCase {
        * 
        */
 /*
-      coil.Properties get_m_properties()
-      {
+       coil.Properties get_m_properties()
+       {
           return m_properties;
-     }
+      }
 */
+      public boolean read() {
+          return true;
+      }
   };
     public static Logger m_mock_logger = null;
     private ORB m_orb;
@@ -507,7 +513,8 @@ public class InPortBaseTest extends TestCase {
 //             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
              m_mock_logger.countLog("RingBufferMock.Constructor"));
 
-        inport.init();
+        //inport.init();
+        inport.init(prop);
 
         //
         assertTrue("7:",null!=inport.getThebuffer());
@@ -597,7 +604,8 @@ public class InPortBaseTest extends TestCase {
              m_mock_logger.countLog("RingBufferMock.Constructor"));
 
         inport.setMultibuffer();
-        inport.init();
+        //inport.init();
+        inport.init(prop);
 
         assertTrue(null==inport.getThebuffer());
         assertEquals("8:",0,
@@ -685,7 +693,8 @@ public class InPortBaseTest extends TestCase {
 //             RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor"));
              m_mock_logger.countLog("RingBufferMock.Constructor"));
 
-        inport.init();
+        //inport.init();
+        inport.init(prop);
 
         //
         assertTrue("7:",null==inport.getThebuffer());
@@ -1018,7 +1027,9 @@ public class InPortBaseTest extends TestCase {
         CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
-        inport.init();
+        //inport.init();
+        Properties prop = new Properties();
+        inport.init(prop);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(inport); 
@@ -1092,7 +1103,9 @@ public class InPortBaseTest extends TestCase {
         CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
-        inport.init();
+        //inport.init();
+        Properties prop = new Properties();
+        inport.init(prop);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(inport); 
@@ -1173,7 +1186,9 @@ public class InPortBaseTest extends TestCase {
         CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
-        inport.init();
+        //inport.init();
+        Properties prop = new Properties();
+        inport.init(prop);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(inport); 
@@ -1251,7 +1266,9 @@ public class InPortBaseTest extends TestCase {
         CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
-        inport.init();
+        //inport.init();
+        Properties prop = new Properties();
+        inport.init(prop);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(inport); 
@@ -1324,7 +1341,9 @@ public class InPortBaseTest extends TestCase {
         CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
-        inport.init();
+        //inport.init();
+        Properties prop = new Properties();
+        inport.init(prop);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(inport); 
@@ -1391,7 +1410,9 @@ public class InPortBaseTest extends TestCase {
 
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
-        inport.init();
+        //inport.init();
+        Properties prop = new Properties();
+        inport.init(prop);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(inport); 
@@ -1458,7 +1479,9 @@ public class InPortBaseTest extends TestCase {
         CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
-        inport.init();
+        //inport.init();
+        Properties prop = new Properties();
+        inport.init(prop);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(inport); 
@@ -1535,7 +1558,9 @@ public class InPortBaseTest extends TestCase {
         CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
-        inport.init();
+        //inport.init();
+        Properties prop = new Properties();
+        inport.init(prop);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(inport); 
@@ -1606,7 +1631,9 @@ public class InPortBaseTest extends TestCase {
         CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
-        inport.init();
+        //inport.init();
+        Properties prop = new Properties();
+        inport.init(prop);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(inport); 
@@ -1673,7 +1700,9 @@ public class InPortBaseTest extends TestCase {
         CdrRingBufferMockInit();
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
-        inport.init();
+        //inport.init();
+        Properties prop = new Properties();
+        inport.init(prop);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(inport); 
@@ -1739,7 +1768,9 @@ public class InPortBaseTest extends TestCase {
         }
 
         InPortBaseMock inport = new InPortBaseMock("InPortBaseTest", "TimedFloat");
-        inport.init();
+        //inport.init();
+        Properties prop = new Properties();
+        inport.init(prop);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         RTC.ConnectorProfile prof = new RTC.ConnectorProfile();

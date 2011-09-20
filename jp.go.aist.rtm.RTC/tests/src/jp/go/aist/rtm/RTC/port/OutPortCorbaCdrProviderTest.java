@@ -133,8 +133,10 @@ public class OutPortCorbaCdrProviderTest extends TestCase {
         //provider.init();
 
          
-        RingBuffer<InputStream> buffer;
-        final BufferFactory<RingBuffer<InputStream>,String> factory 
+        //RingBuffer<InputStream> buffer;
+        RingBuffer<OutputStream> buffer;
+        //final BufferFactory<RingBuffer<InputStream>,String> factory 
+        final BufferFactory<RingBuffer<OutputStream>,String> factory 
             = BufferFactory.instance();
         factory.addFactory("ring_buffer",
                     new CdrRingBuffer(),
@@ -158,7 +160,8 @@ public class OutPortCorbaCdrProviderTest extends TestCase {
 
         byte testdata[] = { 4, 8, 15, 16, 23, 42, 49, 50};
         OutputStream cdr = toStream(testdata, 0, 0);
-        buffer.write(cdr.create_input_stream());
+        //buffer.write(cdr.create_input_stream());
+        buffer.write(cdr);
 
         retcode = provider.get(cdr_data_ref);
         assertEquals("5",OpenRTM.PortStatus.PORT_OK, retcode);

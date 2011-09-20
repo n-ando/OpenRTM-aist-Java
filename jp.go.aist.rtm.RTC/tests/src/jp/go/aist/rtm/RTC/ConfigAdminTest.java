@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import jp.go.aist.rtm.RTC.ConfigurationSetNameListener;
+import jp.go.aist.rtm.RTC.ConfigurationParamListener;
+import jp.go.aist.rtm.RTC.ConfigurationSetListener;
 import jp.go.aist.rtm.RTC.util.ByteHolder;
 import jp.go.aist.rtm.RTC.util.DoubleHolder;
 import jp.go.aist.rtm.RTC.util.FloatHolder;
@@ -30,7 +33,8 @@ public class ConfigAdminTest extends TestCase {
     private ConfigAdmin admin;
 
     // OnUpdateCallback Mock
-    public class OnUpdateCallbackMock implements OnUpdateCallbackFunc {
+    //public class OnUpdateCallbackMock implements OnUpdateCallbackFunc {
+    public class OnUpdateCallbackMock extends ConfigurationSetNameListener {
         public void operator(String config_set) {
             m_config_set = config_set;
         }
@@ -38,7 +42,8 @@ public class ConfigAdminTest extends TestCase {
     }
 
     // OnUpdateParamCallback Mock
-    public class OnUpdateParamCallbackMock implements OnUpdateParamCallbackFunc {
+    //public class OnUpdateParamCallbackMock implements OnUpdateParamCallbackFunc {
+    public class OnUpdateParamCallbackMock extends ConfigurationParamListener {
         public void operator(String config_set, String config_param) {
             m_config_set = config_set;
             m_config_param = config_param;
@@ -48,7 +53,8 @@ public class ConfigAdminTest extends TestCase {
     }
 
     // OnSetConfigurationSetCallback Mock
-    public class OnSetConfigurationSetCallbackMock implements OnSetConfigurationSetCallbackFunc {
+    //public class OnSetConfigurationSetCallbackMock implements OnSetConfigurationSetCallbackFunc {
+    public class OnSetConfigurationSetCallbackMock extends ConfigurationSetListener {
         public void operator(Properties config_set) {
             m_config_set = new Properties(config_set);
         }
@@ -56,7 +62,8 @@ public class ConfigAdminTest extends TestCase {
     }
 
     // OnAddConfigurationAddCallback Mock
-    public class OnAddConfigurationAddCallbackMock implements OnAddConfigurationAddCallbackFunc {
+    //public class OnAddConfigurationAddCallbackMock implements OnAddConfigurationAddCallbackFunc {
+    public class OnAddConfigurationAddCallbackMock extends ConfigurationSetListener {
         public void operator(Properties config_set) {
             m_config_set = new Properties(config_set);
         }
@@ -64,7 +71,8 @@ public class ConfigAdminTest extends TestCase {
     }
 
     // OnRemoveConfigurationSetCallback Mock
-    public class OnRemoveConfigurationSetCallbackMock implements OnRemoveConfigurationSetCallbackFunc {
+    //public class OnRemoveConfigurationSetCallbackMock implements OnRemoveConfigurationSetCallbackFunc {
+    public class OnRemoveConfigurationSetCallbackMock extends ConfigurationSetNameListener{
         public void operator(String config_set) {
             m_config_set = config_set;
         }
@@ -72,7 +80,8 @@ public class ConfigAdminTest extends TestCase {
     }
 
     // OnActivateSetCallback Mock
-    public class OnActivateSetCallbackMock implements OnActivateSetCallbackFunc {
+    //public class OnActivateSetCallbackMock implements OnActivateSetCallbackFunc {
+    public class OnActivateSetCallbackMock extends ConfigurationSetNameListener {
         public void operator(String config_set) {
             m_config_set = config_set;
         }
@@ -84,7 +93,7 @@ public class ConfigAdminTest extends TestCase {
         super.setUp();
 
         jp.go.aist.rtm.RTC.util.Properties props = new jp.go.aist.rtm.RTC.util.Properties("rtc"); 
-        props.setProperty("rtc.openrtm.version", "1.0.0");
+        props.setProperty("rtc.openrtm.version", "1.1.0");
         props.setProperty("rtc.openrtm.release", "aist");
         props.setProperty("rtc.openrtm.vendor", "AIST");
         props.setProperty("rtc.openrtm.author", "Noriaki Ando");
@@ -1033,7 +1042,7 @@ public class ConfigAdminTest extends TestCase {
         ConfigAdmin configAdmin = new ConfigAdmin(configSet);
 
         OnUpdateCallbackMock mock = new OnUpdateCallbackMock();
-        configAdmin.setOnUpdate(mock);
+        configAdmin.setOnUpdate((ConfigurationSetNameListener)mock);
         String str = new String("setNewString");
 
         configAdmin.onUpdate(str);

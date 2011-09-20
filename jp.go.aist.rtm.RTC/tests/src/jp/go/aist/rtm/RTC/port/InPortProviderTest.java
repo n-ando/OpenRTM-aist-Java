@@ -14,7 +14,8 @@ import _SDOPackage.NVListHolder;
  */
 public class InPortProviderTest extends TestCase {
 
-    class InPortProviderMock extends InPortProviderImpl {
+    //class InPortProviderMock extends InPortProviderImpl {
+    class InPortProviderMock extends InPortCorbaCdrProvider {
         public int g_argc;
         public String g_argv;
         

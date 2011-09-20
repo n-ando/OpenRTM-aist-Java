@@ -73,7 +73,8 @@ public class InPortTest extends TestCase {
 //            assertEquals(ReturnCode.PORT_OK,this.m_pInport.write(writeValue));
             
             // write()で書き込んだ値が、read()で正しく読み出されるか？
-            double readValue = this.m_pInport.read();
+            //double readValue = this.m_pInport.read();
+            double readValue = this.m_pInport.extract();
             assertEquals(writeValue, readValue);
         }
     }

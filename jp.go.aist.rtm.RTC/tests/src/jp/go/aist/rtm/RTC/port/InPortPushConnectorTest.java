@@ -250,7 +250,8 @@ public class InPortPushConnectorTest extends TestCase {
         InPortCorbaCdrProviderMock provider = new InPortCorbaCdrProviderMock();
         Logger logger = new Logger();
         provider.setLogger(logger);
-          ConnectorBase.Profile profile_new = new ConnectorBase.Profile(
+        //ConnectorBase.Profile profile_new = new ConnectorBase.Profile(
+        ConnectorBase.ConnectorInfo profile_new = new ConnectorBase.ConnectorInfo(
                                      prof.name,
                                      prof.connector_id,
                                      CORBA_SeqUtil.refToVstring(prof.ports),
@@ -261,7 +262,8 @@ public class InPortPushConnectorTest extends TestCase {
         int constructor_counter = RingBufferMock.m_mock_logger.countLog("RingBufferMock.Constructor");
           try {
               BufferBase<OutputStream> buffer = null;
-              connector = new InPortPushConnector(profile_new, provider,buffer);
+              ConnectorListeners listeners = new ConnectorListeners();
+              connector = new InPortPushConnector(profile_new,provider,listeners,buffer);
               assertEquals("1:",init_counter+1, 
                   logger.countLog("InPortCorbaCdrProviderMock.init"));
               assertEquals("2:",setBuffer_counter+1, 
@@ -291,13 +293,15 @@ public class InPortPushConnectorTest extends TestCase {
                   NVUtil.copyToProperties(conn_prop, holder);
                   prop.merge(conn_prop.getNode("dataport"));
             }
-            ConnectorBase.Profile profile_err = new ConnectorBase.Profile(
+            //ConnectorBase.Profile profile_err = new ConnectorBase.Profile(
+            ConnectorBase.ConnectorInfo profile_err = new ConnectorBase.ConnectorInfo(
                                     prof_err.name,
                                     prof_err.connector_id,
                                     CORBA_SeqUtil.refToVstring(prof_err.ports),
                                     prop); 
             BufferBase<OutputStream> buffer = null;
-            connector_err = new InPortPushConnector(profile_err, null, buffer);
+            ConnectorListeners ls = new ConnectorListeners();
+            connector_err = new InPortPushConnector(profile_err, null, ls, buffer);
             fail("The exception was not thrown. ");
         }
         catch(Exception e) {
@@ -331,13 +335,16 @@ public class InPortPushConnectorTest extends TestCase {
         InPortCorbaCdrProviderMock provider = new InPortCorbaCdrProviderMock();
         Logger logger = new Logger();
         provider.setLogger(logger);
-        ConnectorBase.Profile profile_new = new ConnectorBase.Profile (
+        //ConnectorBase.Profile profile_new = new ConnectorBase.Profile (
+        ConnectorBase.ConnectorInfo profile_new = new ConnectorBase.ConnectorInfo (
                                    prof.name,
                                    prof.connector_id,
                                    CORBA_SeqUtil.refToVstring(prof.ports),
                                    prop); 
         InPortConnector connector= null;
-        connector = new InPortPushConnector(profile_new, provider, pbuffer);
+        ConnectorListeners listeners = new ConnectorListeners();
+        //connector = new InPortPushConnector(profile_new, provider, pbuffer);
+        connector = new InPortPushConnector(profile_new, provider, listeners, pbuffer);
 
         InputStream cdr = null;
         DataRef<InputStream> cdrref = new DataRef<InputStream>(cdr);
@@ -391,14 +398,16 @@ public class InPortPushConnectorTest extends TestCase {
         InPortCorbaCdrProviderMock provider = new InPortCorbaCdrProviderMock();
         Logger logger = new Logger();
         provider.setLogger(logger);
-        ConnectorBase.Profile profile_new = new ConnectorBase.Profile (
+        //ConnectorBase.Profile profile_new = new ConnectorBase.Profile (
+        ConnectorBase.ConnectorInfo profile_new = new ConnectorBase.ConnectorInfo (
                                    prof.name,
                                    prof.connector_id,
                                    CORBA_SeqUtil.refToVstring(prof.ports),
                                    prop); 
         InPortConnector connector=null;
         BufferBase<OutputStream> buffer = null;
-        connector = new InPortPushConnector(profile_new, provider,buffer);
+        ConnectorListeners listeners = new ConnectorListeners();
+        connector = new InPortPushConnector(profile_new, provider, listeners, buffer);
 
         connector.disconnect();
         InputStream cdr = null;

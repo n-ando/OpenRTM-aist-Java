@@ -7,22 +7,31 @@ import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.FloatHolder;
 import junit.framework.TestCase;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
 import org.omg.PortableServer.POA;
 
-import RTC.OutPortAnyPOA;
+//import RTC.OutPortAnyPOA;
+import OpenRTM.OutPortCdrPOA;
+
 import _SDOPackage.NVListHolder;
+
+import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
+
 
 /**
  * <p>OutPortCorbaConsumerクラスのためのテストケースです。</p>
  */
 public class OutPortCorbaConsumerTest extends TestCase {
 
-    class OutPortAnyMock extends OutPortAnyPOA {
+    //class OutPortAnyMock extends OutPortAnyPOA {
+    class OutPortAnyMock extends OutPortCdrPOA {
         private Any m_data;
 
         public void setData(Any data) {
@@ -30,6 +39,9 @@ public class OutPortCorbaConsumerTest extends TestCase {
         }
         public Any get() {
             return m_data;
+        }
+        public OpenRTM.PortStatus get(OpenRTM.CdrDataHolder data) {
+            return OpenRTM.PortStatus.from_int(0);
         }
     }
 
@@ -66,7 +78,8 @@ public class OutPortCorbaConsumerTest extends TestCase {
         byte[] oid = this.m_poa.activate_object(outPortAny);
 
         RingBuffer<Float> buffer = new RingBuffer<Float>(100);
-        OutPortCorbaConsumer<Float> consumer = new OutPortCorbaConsumer<Float>(Float.class, buffer);
+        //OutPortCorbaConsumer<Float> consumer = new OutPortCorbaConsumer<Float>(Float.class, buffer);
+        OutPortCorbaCdrConsumer consumer = new OutPortCorbaCdrConsumer();
         consumer.setObject(m_poa.id_to_reference(oid));
         
         // InPortConsumerのput()メソッドを呼び出す
@@ -76,8 +89,18 @@ public class OutPortCorbaConsumerTest extends TestCase {
         outPortAny.setData(writeValueAny);
         
         // OutPortCorbaConsumer::get()を用いて、データを読み取る
+        com.sun.corba.se.spi.orb.ORB orb 
+                = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        EncapsOutputStream cdr = new EncapsOutputStream(orb, true);
+        consumer.get(cdr);
+        DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+        InputStream data = dataref.v.create_input_stream();
+        FloatHolder holder = new FloatHolder();
+        holder._read(data);
         DataRef<Float> readValue = new DataRef<Float>(0f);
-        assertTrue(consumer.get(readValue));
+        readValue.v = holder.value;
+        //DataRef<Float> readValue = new DataRef<Float>(0f);
+        //assertTrue(consumer.get(readValue));
         
         // テスト用に設定しておいたデータを読み取ったデータを比較し、正しく取得できたことを確認する
         assertTrue( Math.abs(writeValue.doubleValue()-readValue.v) < 0.00001);
@@ -89,13 +112,15 @@ public class OutPortCorbaConsumerTest extends TestCase {
      * </ul>
      * </p>
      */
+/*
     public void test_pull() throws Exception {
         // 接続先となるProvider側のオブジェクトを生成し、設定する
         OutPortAnyMock outPortAny = new OutPortAnyMock();
         byte[] oid = this.m_poa.activate_object(outPortAny);
 
         RingBuffer<Float> buffer = new RingBuffer<Float>(100);
-        OutPortCorbaConsumer<Float> consumer = new OutPortCorbaConsumer<Float>(Float.class, buffer);
+        //OutPortCorbaConsumer<Float> consumer = new OutPortCorbaConsumer<Float>(Float.class, buffer);
+        OutPortCorbaCdrConsumer consumer = new OutPortCorbaCdrConsumer();
         consumer.setObject(m_poa.id_to_reference(oid));
         
         // Provider側にテスト用のデータを設定しておく
@@ -105,7 +130,11 @@ public class OutPortCorbaConsumerTest extends TestCase {
         outPortAny.setData(writeValueAny);
         
         // pull()メソッドを呼出して、OutPortAny側のデータをバッファへ読み込む
-        consumer.pull();
+        //consumer.pull();
+        com.sun.corba.se.spi.orb.ORB orb 
+                = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        EncapsOutputStream cdr = new EncapsOutputStream(orb, true);
+        consumer.get(cdr);
         
         // バッファからデータを読み出して、テスト用に設定しておいたデータを読み取ったデータを比較し、正しく取得できたことを確認する
         DataRef<Float> readValue = new DataRef<Float>(0f);
@@ -113,6 +142,7 @@ public class OutPortCorbaConsumerTest extends TestCase {
 //        assertTrue(buffer.read(readValue));
         assertTrue( Math.abs(writeValue.doubleValue()-readValue.v) < 0.00001);
     }
+*/
     /**
      * <p>subscribeInterface()メソッドのテスト
      * <ul>
@@ -125,7 +155,8 @@ public class OutPortCorbaConsumerTest extends TestCase {
         byte[] oid = this.m_poa.activate_object(outPortAny);
 
         RingBuffer<Float> buffer = new RingBuffer<Float>(100);
-        OutPortCorbaConsumer<Float> consumer = new OutPortCorbaConsumer<Float>(Float.class, buffer);
+        //OutPortCorbaConsumer<Float> consumer = new OutPortCorbaConsumer<Float>(Float.class, buffer);
+        OutPortCorbaCdrConsumer consumer = new OutPortCorbaCdrConsumer();
         org.omg.CORBA.Object outPortAnyRef = m_poa.id_to_reference(oid);
 //        Any outPortAnyRefAny = ORBUtil.getOrb().create_any();
 //        outPortAnyRefAny.insert_Object(outPortAnyRef);
