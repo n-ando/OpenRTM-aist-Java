@@ -82,7 +82,9 @@
 		<antcall target="compile" />
 		<antcall target="jar" />
 		<antcall target="javaExamples" />
+<!--
 		<antcall target="javaDoc" />
+-->
 	</target>
 	
         <target name="buildTests">
@@ -291,7 +293,7 @@
 		<junit haltonfailure="No" >
 			<formatter type="xml" usefile="true" />
 			<classpath>
-				<pathelement path="bin:${env.JUNIT_HOME}/junit:${env.JUNIT_HOME}/junit/samples:${env.JUNIT_HOME}:${env.ANT_HOME}:${build.dir.test}"/>
+				<pathelement path="bin:${env.JUNIT_HOME}/junit:${env.JUNIT_HOME}/junit/samples:${env.JUNIT_HOME}:${env.ANT_HOME}:${build.dir.test}:lib/commons-cli-1.1.jar"/>
 				<pathelement location="${env.JUNIT_HOME}/junit.jar"/>
 				<pathelement location="${env.ANT_HOME}/lib/ant-junit.jar"/>
 			</classpath>
