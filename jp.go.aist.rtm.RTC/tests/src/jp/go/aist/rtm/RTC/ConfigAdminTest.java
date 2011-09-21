@@ -689,6 +689,10 @@ public class ConfigAdminTest extends TestCase {
         assertEquals(true, configAdmin.activateConfigurationSet("id"));
         configAdmin.update();
         assertEquals(false, configAdmin.isChanged());
+        Properties configSet2 = new Properties("id2");
+        configSet2.setProperty("key2", "value");
+        assertEquals(true, configAdmin.addConfigurationSet(configSet2));
+        assertEquals(true, configAdmin.activateConfigurationSet("id2"));
         
         // removeConfigurationSet()の呼出後は、isChanged()は真値となるか？
         assertEquals(true, configAdmin.removeConfigurationSet("id"));
@@ -817,6 +821,9 @@ public class ConfigAdminTest extends TestCase {
         assertEquals(true, configAdmin.activateConfigurationSet("id"));
         assertEquals(true, configAdmin.isActive());
         
+        Properties configSet2 = new Properties("id2");
+        assertEquals(true, configAdmin.addConfigurationSet(configSet2));
+        assertEquals(true, configAdmin.activateConfigurationSet("id2"));
         // 登録されているコンフィグレーションセットをremoveConfigurationSet()で解除した場合、
         // isActive()は正しく偽値を得るか？
         assertEquals(true, configAdmin.removeConfigurationSet("id"));
