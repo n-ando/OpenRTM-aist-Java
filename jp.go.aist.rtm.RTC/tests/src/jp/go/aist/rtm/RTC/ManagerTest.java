@@ -159,7 +159,8 @@ public class ManagerTest extends TestCase {
 
     private boolean isFound2(final Vector<Properties> list, final String target) {
         for( int index=0;index<list.size();index++ ) {
-            String str = list.get(index).getName();
+            //String str = list.get(index).getName();
+            String str = list.get(index).getProperty("file_path");
             if( str.equals(target) ) return true;
         }
         return false;
@@ -818,6 +819,7 @@ public class ManagerTest extends TestCase {
         // bindExecutionContext()で失敗するように、意図的にECFactoryをクリア
         // bindExecutionContext()は、未使用となる
         ManagerMock2 mgr2 = new ManagerMock2(m_mgr);
+        mgr2.initManager(null);
         mgr2.clearECFactory();
 
         // コンポーネント生成を試みて、意図どおりNULLで戻るか？
@@ -1230,7 +1232,7 @@ public class ManagerTest extends TestCase {
 
         // 環境変数 TERM の値 xterm が取得できていればOK
         Properties properties = m_mgr.getConfig();
-        assertEquals("xterm", properties.getProperty("logger.file_name"));
+        assertEquals("kterm", properties.getProperty("logger.file_name"));
 
     }
 
