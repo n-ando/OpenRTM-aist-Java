@@ -838,7 +838,7 @@ public class ConfigAdmin {
     public void setOnUpdate(ConfigurationSetNameListener cb) {
         System.err.println("setOnUpdate function is obsolete.");
         System.err.println("Use addConfigurationSetNameListener instead.");
-        m_listeners.configparam_[ConfigurationSetNameListenerType.ON_UPDATE_CONFIG_SET].addObserver(cb);
+        m_listeners.configsetname_[ConfigurationSetNameListenerType.ON_UPDATE_CONFIG_SET].addObserver(cb);
     }
 
     /**
