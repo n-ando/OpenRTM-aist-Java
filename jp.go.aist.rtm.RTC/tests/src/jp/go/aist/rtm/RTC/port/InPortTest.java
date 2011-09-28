@@ -1,8 +1,17 @@
 package jp.go.aist.rtm.RTC.port;
 
+import java.util.Vector;
+
+import org.omg.CORBA.portable.OutputStream;
+import org.omg.CORBA.portable.InputStream;
+
+import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.NullBuffer;
 import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.DoubleHolder;
 import junit.framework.TestCase;
+import RTC.TimedDouble;
+import RTC.TimedDoubleHolder;
 
 /**
  * <p>InPortクラスのためのテストケースです。</p>
@@ -12,10 +21,9 @@ public class InPortTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        this.m_value = new DataRef<Double>(0.0);
-//        this.m_pInport = new InPort<Double>(
-//                new NullBuffer<Double>(8), "double", this.m_value);
-        this.m_pInport = new InPort<Double>(
+        this.m_Double_val = new TimedDouble();
+        this.m_value = new DataRef<TimedDouble>(m_Double_val);
+        this.m_pInport = new InPort<TimedDouble>(
                  "double", this.m_value);
         this.m_pInport.setOnWrite(new OnWriteMock());
     }
@@ -26,8 +34,9 @@ public class InPortTest extends TestCase {
         this.m_pInport = null;
     }
 
-    private InPort<Double> m_pInport;
-    private DataRef<Double> m_value;
+    private InPort<TimedDouble> m_pInport;
+    private DataRef<TimedDouble> m_value;
+    private TimedDouble m_Double_val;
 
     class FullBuffer<DataType> extends NullBuffer<DataType> {
         public boolean isFull() {
@@ -59,6 +68,37 @@ public class InPortTest extends TestCase {
         double m_amplitude;
     }
     
+    class MockInPortConnector extends InPortConnector {
+        public MockInPortConnector(ConnectorInfo profile, 
+                    BufferBase<OutputStream> buffer) {
+            super(profile, buffer);
+        }
+        public void setListener(ConnectorInfo profile, 
+                        ConnectorListeners listeners){
+        }
+        public ReturnCode disconnect() {
+            return ReturnCode.PORT_OK;
+        }
+        public void deactivate(){}; // do nothing
+        public  void activate(){}; // do nothing
+        public ReturnCode read(DataRef<InputStream> data) {
+    
+            org.omg.CORBA.Any any = m_orb.create_any(); 
+            OutputStream cdr = any.create_output_stream();
+            TimedDouble ddata = new TimedDouble(); 
+            ddata.tm = new RTC.Time(0,0);
+            ddata.data = _data; 
+            TimedDoubleHolder holder = new TimedDoubleHolder();
+            holder.value = ddata;
+            holder._write(cdr); 
+            data.v = cdr.create_input_stream();
+            return ReturnCode.PORT_OK;
+        }
+        public void write_test_data(double data) {
+            _data = data;
+        }
+        protected double _data = 0.0;
+    }
     /**
      * <p>write()メソッドとread()メソッドのテスト
      * <ul>
@@ -67,15 +107,18 @@ public class InPortTest extends TestCase {
      * </p>
      */
     public void test_write_and_read() {
+        Vector<InPortConnector> cons = m_pInport.connectors();
+        MockInPortConnector inport_conn = new MockInPortConnector(null,null);
+        cons.add(inport_conn);
         for (int i = 0; i < 100; i++) {
             double writeValue = i * 3.14159265;
             // 正常にデータ書き込みを行えることを確認する
-//            assertEquals(ReturnCode.PORT_OK,this.m_pInport.write(writeValue));
-            
+            //assertEquals(ReturnCode.PORT_OK,this.m_pInport.write(writeValue));
+            inport_conn.write_test_data(writeValue);
             // write()で書き込んだ値が、read()で正しく読み出されるか？
             //double readValue = this.m_pInport.read();
-            double readValue = this.m_pInport.extract();
-            assertEquals(writeValue, readValue);
+            TimedDouble readValue = this.m_pInport.extract();
+            assertEquals(writeValue, readValue.data);
         }
     }
 
@@ -97,19 +140,23 @@ public class InPortTest extends TestCase {
      * </ul>
      * </p>
      */
-    public void test_write() {
 /*
+    public void test_write() {
+        Vector<InPortConnector> cons = m_pInport.connectors();
+        MockInPortConnector inport_conn = new MockInPortConnector(null,null);
+        cons.add(inport_conn);
         
         for (int i = 0; i < 100; i++) {
             // 正常にデータ書き込みを行えることを確認する
-            assertEquals(ReturnCode.PORT_OK,this.m_pInport.write(i*1.0));
+            //assertEquals(ReturnCode.PORT_OK,this.m_pInport.write(i*1.0));
+            inport_conn.write_test_data(writeValue);
             
             // データ読み込みを行い、OnWriteConvertコールバックによりフィルタされた結果が取得できることを確認する
+
             assertEquals(new Double(i), this.m_pInport.read());
         }
-*/
     }
-
+*/
     /**
      * <p>write()メソッドのOnWriteコールバック呼出テスト
      * <ul>
@@ -117,8 +164,8 @@ public class InPortTest extends TestCase {
      * </ul>
      * </p>
      */
-    public void test_write_OnWrite() {
 /*
+    public void test_write_OnWrite() {
       OnWriteMock<Double> onWrite = new OnWriteMock<Double>();
       onWrite.m_value = 0.0;
       this.m_pInport.setOnWrite(onWrite);
@@ -129,8 +176,8 @@ public class InPortTest extends TestCase {
       
       // あらかじめ設定されたOnWriteコールバックが正しく呼び出されたか？
       assertEquals(writeValue, onWrite.m_value);
-*/
     }
+*/
 
     /**
      * <p>バッファフル時のwrite()メソッドのOnWriteコールバック呼出テスト
@@ -139,8 +186,8 @@ public class InPortTest extends TestCase {
      * </ul>
      * </p>
      */
-    public void test_write_OnWrite_full() {
 /*
+    public void test_write_OnWrite_full() {
 //        this.m_pInport = new InPort<Double>(
 //                new FullBuffer<Double>(), "double", this.m_value);
         this.m_pInport = new InPort<Double>(
@@ -155,8 +202,8 @@ public class InPortTest extends TestCase {
       
         // あらかじめ設定されたOnWriteコールバックが正しく呼び出されたか？
         assertEquals(writeValue, onWrite.m_value);
-*/
     }
+*/
 
     /**
      * <p>バッファフル時のwrite()メソッドのOnWriteコールバック呼出テスト
@@ -165,8 +212,8 @@ public class InPortTest extends TestCase {
      * </ul>
      * </p>
      */
-    public void test_write_OnOverflow() {
 /*
+    public void test_write_OnOverflow() {
         this.m_pInport = new InPort<Double>(
                 new FullBuffer<Double>(), "double", this.m_value);
         
@@ -180,8 +227,8 @@ public class InPortTest extends TestCase {
         
         // OutPortに割り当てされたバッファがフルの場合に、あらかじめ設定されたOnOverflowコールバックが正しく呼び出されたか？
         assertEquals(writeValue, onOverflow.m_value);
-*/
     }
+*/
 
     /**
      * <p>バッファフルでない時の、write()メソッドのOnOverflowコールバック呼出テスト
@@ -190,8 +237,8 @@ public class InPortTest extends TestCase {
      * </ul>
      * </p>
      */
-    public void test_write_OnOverflow_not_full() {
 /*
+    public void test_write_OnOverflow_not_full() {
         OnOverflowMock<Double> onOverflow = new OnOverflowMock<Double>();
         onOverflow.m_value = 0.0;
         this.m_pInport.setOnOverflow(onOverflow);
@@ -203,8 +250,8 @@ public class InPortTest extends TestCase {
         // バッファフルでない場合、OnOverflowコールバックが意図どおり未呼出のままか？
         assertEquals((double) 0.0, onOverflow.m_value);
         
-*/
     }
+*/
 
     /**
      * <p>write()メソッドのOnWriteConvertコールバック呼出テスト
@@ -213,8 +260,8 @@ public class InPortTest extends TestCase {
      * </ul>
      * </p>
      */
-    public void test_write_OnWriteConvert() {
 /*
+    public void test_write_OnWriteConvert() {
         double amplitude = 1.41421356;
         OnWriteConvertMock onWriteConvert = new OnWriteConvertMock(amplitude);
         this.m_pInport.setOnWriteConvert(onWriteConvert);
@@ -229,8 +276,8 @@ public class InPortTest extends TestCase {
             double expectedValue = amplitude * writeValue;
             assertEquals(expectedValue, readValue);
         }
-*/
     }
+*/
 
     /**
      * <p>write()メソッドのタイムアウト処理テスト
@@ -240,8 +287,8 @@ public class InPortTest extends TestCase {
      * </ul>
      * </p>
      */
-    public void test_write_timeout() {
 /*
+    public void test_write_timeout() {
         // 常にフル状態であるバッファを用いてInPortオブジェクトを生成する
         boolean readBlock = false;
         boolean writeBlock = true; // ブロッキングモードON
@@ -265,20 +312,20 @@ public class InPortTest extends TestCase {
             tm_pre = tm_cur;
             assertEquals(1.0, interval);
         }
-*/
     }
+*/
 
     /**
      * <p>update()メソッドにより、書き込んだデータがバインド変数に正しく反映されることをテストします。</p>
      */
-    public void test_binding() {
 /*
+    public void test_binding() {
 
         for (int i = 0; i < 100; i++) {
             this.m_pInport.write(i*1.0);
             this.m_pInport.update();
             assertEquals(i, this.m_value.v.intValue());
         }
-*/
     }
+*/
 }
