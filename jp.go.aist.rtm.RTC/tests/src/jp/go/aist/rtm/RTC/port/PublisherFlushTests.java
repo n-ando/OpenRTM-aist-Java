@@ -307,6 +307,12 @@ public class PublisherFlushTests extends TestCase {
         }
 
         assertEquals(ReturnCode.PORT_OK,publisher.setConsumer(consumer));
+        ConnectorListeners listeners = new ConnectorListeners();
+        Vector<String> ports  = new Vector<String>();
+        Properties prop = new Properties("id","test");
+        ConnectorBase.ConnectorInfo info 
+            = new ConnectorBase.ConnectorInfo("test","test",ports,prop);
+        assertEquals(ReturnCode.PORT_OK,publisher.setListener(info, listeners));
 
         //write() is called before activate() is called. 
         {
