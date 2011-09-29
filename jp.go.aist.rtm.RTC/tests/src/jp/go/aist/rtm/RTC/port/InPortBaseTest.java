@@ -359,6 +359,28 @@ public class InPortBaseTest extends TestCase {
           return true;
       }
   };
+
+    class MockInPortConnector extends InPortConnector {
+        public MockInPortConnector(ConnectorInfo profile, 
+                    BufferBase<OutputStream> buffer) {
+            super(profile, buffer);
+        }
+        public void setListener(ConnectorInfo profile, 
+                        ConnectorListeners listeners){
+        }
+        public ReturnCode disconnect() {
+            return ReturnCode.PORT_OK;
+        }
+        public void deactivate(){}; // do nothing
+        public  void activate(){}; // do nothing
+        public ReturnCode read(DataRef<InputStream> data) {
+            return ReturnCode.PORT_OK;
+        }
+        public void write_test_data(double data) {
+            _data = data;
+        }
+        protected double _data = 0.0;
+    }
     public static Logger m_mock_logger = null;
     private ORB m_orb;
     private POA m_poa;
@@ -1580,11 +1602,25 @@ public class InPortBaseTest extends TestCase {
                                  NVUtil.newNV("dataport.subscription_type",
                                  "new"));
         prof.properties = holder.value;
+
+        Vector<InPortConnector> cons = inport.connectors();
+        Vector<String> ports  = new Vector<String>();
+        ConnectorBase.ConnectorInfo profile 
+            = new ConnectorBase.ConnectorInfo("test","id0",ports,prop);
+        InPortConnector inport_conn = null; 
+        try{
+            inport_conn = new MockInPortConnector(profile,null);
+        }
+        catch(Exception ex) {
+        }
+        cons.add(inport_conn);
+
+
         RTC.ReturnCode_t retcode;
-        assertEquals(0,inport.get_m_connectors().size());
+        assertEquals(1,inport.get_m_connectors().size());
         ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
         retcode = inport.subscribeInterfaces_public(profh);
-        assertEquals(0,inport.get_m_connectors().size());
+        assertEquals(1,inport.get_m_connectors().size());
         assertEquals(ReturnCode_t.RTC_OK,retcode);
 
 
