@@ -998,7 +998,7 @@ public class OutPortBaseTest extends TestCase {
         portAdmin.registerPort(outPort); 
 
         //assertTrue(outPort.name().equals("Hello, World!") );
-        assertTrue(outPort.m_profile.equals("Hello, World!") );
+        assertTrue(outPort.m_profile.name.equals("unknown.Hello, World!") );
 
         portAdmin.deletePort(outPort);
     }
@@ -1416,7 +1416,7 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
 
         //The following are added to properties of getPortProfile.
         str = prop.getProperty("dataport.dataflow_type");
-        assertTrue(str.equals("push"));
+        assertTrue(str.equals("pull"));
         str = prop.getProperty("dataport.interface_type");
         assertTrue(str.equals("corba_cdr"));
  
@@ -1538,11 +1538,15 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         RTC.TimedDouble inbindValue = new RTC.TimedDouble();
         DataRef<RTC.TimedDouble> ref 
             = new DataRef<RTC.TimedDouble>(inbindValue);
+        Properties prope = new Properties();
+
         InPortMock<RTC.TimedDouble> inPort 
             = new InPortMock<RTC.TimedDouble>("in:OutPortBaseTest",ref);
+        inPort.init(prope);
 
         OutPortBaseMock outPort 
             = new OutPortBaseMock("OutPortBaseTest", "TimedDouble");
+        outPort.init(prope);
 
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(outPort); 
@@ -1564,7 +1568,6 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         inprof.properties = holder.value;
         inprof.connector_id = "id0";
         inprof.name = "bar";
-        //inPort.init();
         Properties pro = new Properties();
         inPort.init(pro);
         ConnectorProfileHolder profh =  new ConnectorProfileHolder(inprof);
@@ -1914,7 +1917,8 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
 
         OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
                                 "RTC.TimedFloat");
-
+        Properties prop = new Properties();
+        outport.init(prop);
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(outport); 
         RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
@@ -1983,6 +1987,8 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         OutPortBaseMock outport = new OutPortBaseMock ("OutPortBaseTest", 
                                 "RTC.TimedFloat");
 
+        Properties prop = new Properties();
+        outport.init(prop);
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(outport); 
         RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
@@ -2046,6 +2052,8 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
                                 "RTC.TimedFloat");
 
+        Properties prop = new Properties();
+        outport.init(prop);
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(outport); 
         RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
@@ -2104,6 +2112,8 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         OutPortBaseMock outport= new OutPortBaseMock("OutPortBaseTest", 
                                 "RTC.TimedFloat");
 
+        Properties prop = new Properties();
+        outport.init(prop);
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(outport); 
         RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
@@ -2227,6 +2237,8 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
                                 "RTC.TimedFloat");
 
+        Properties prop = new Properties();
+        outport.init(prop);
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(outport); 
 
@@ -2294,6 +2306,8 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
                                 "RTC.TimedFloat");
 
+        Properties prop = new Properties();
+        outport.init(prop);
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(outport); 
 
@@ -2318,7 +2332,8 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         ConnectorProfileHolder profh =  new ConnectorProfileHolder(prof);
         retcode = outport.subscribeInterfaces_public(profh);
         assertEquals(0,outport.get_m_connectors().size());
-        assertEquals(ReturnCode_t.RTC_OK,retcode);
+        //assertEquals(ReturnCode_t.RTC_OK,retcode);
+        assertEquals(ReturnCode_t.RTC_ERROR,retcode);
 
         portAdmin.deletePort(outport);
     }
@@ -2353,6 +2368,8 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
                                 "RTC.TimedFloat");
 
+        Properties prop = new Properties();
+        outport.init(prop);
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(outport); 
 
@@ -2407,6 +2424,8 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
                                 "RTC.TimedFloat");
 
+        Properties prop = new Properties();
+        outport.init(prop);
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(outport); 
 
@@ -2466,6 +2485,8 @@ rtcout.println(rtcout.DEBUG, "    ---060---");
         OutPortBaseMock outport = new OutPortBaseMock("OutPortBaseTest", 
                                 "RTC.TimedFloat");
 
+        Properties prop = new Properties();
+        outport.init(prop);
         PortAdmin portAdmin = new PortAdmin(m_orb,m_poa);
         portAdmin.registerPort(outport); 
 
