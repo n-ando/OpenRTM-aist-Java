@@ -571,8 +571,8 @@ public abstract class OutPortBase extends PortBase {
         dumpString = prop._dump(dumpString, prop, 0);
         rtcout.println(Logbuf.DEBUG, dumpString);
         //
-       NVListHolder holder = new NVListHolder(cprof.value.properties);
-       try{ 
+        NVListHolder holder = new NVListHolder(cprof.value.properties);
+        try{ 
             org.omg.CORBA.Any anyVal = NVUtil.find(holder,
                                            "dataport.serializer.cdr.endian");
             String endian_type;
@@ -598,11 +598,11 @@ public abstract class OutPortBase extends PortBase {
             int index = NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
             holder.value[index].value.insert_string(endian_type);
             cprof.value.properties = holder.value;
-       }
-       catch(Exception e){
+        }
+        catch(Exception e){
             ;
-       }
-
+        }
+        
         /*
          * Because properties of ConnectorProfileHolder was merged, 
          * the accesses such as prop["dataflow_type"] and 
