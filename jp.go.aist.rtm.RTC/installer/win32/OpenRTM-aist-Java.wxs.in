@@ -34,6 +34,7 @@
     </Property>
     
     <!-- RTSE Property-->
+<!--
     <Property Id="FILEEXISTS">
       <DirectorySearch Id="CheckFileDir" Path="C:\Program Files">
         <DirectorySearch Id="CheckFileDir2" Path ="OpenRTP">
@@ -43,6 +44,7 @@
         </DirectorySearch>
       </DirectorySearch>
     </Property>
+-->
 <!--     <SetProperty Id="FILEEXISTSDIR" After="AppSearch" Value="[FILEEXISTS]">
     </SetProperty>-->
 
@@ -1209,15 +1211,22 @@
 
             <!-- end of examples -->
             </Directory>
+            <!-- rtmtools components -->
+            <?if $(env.INCLUDE_OPENRTP) = YES ?>
+            <?include OpenRTP_inc.wxs ?>
+            <?endif ?>
+            <!-- end of rtmtools -->
 
           </Directory>
 	        
       </Directory>
         
-        <!-- rtmtools components -->
+      <!-- rtmtools components -->
+<!--
         <?if $(env.INCLUDE_OPENRTP) = YES ?>
         <?include OpenRTP_inc.wxs ?>
-        <?endif ?>
+	<?endif ?>
+-->
         <!-- end of rtmtools -->
       <!-- end of Program Files Folder -->
         
@@ -1342,8 +1351,10 @@
     <!-- OpenRTP tools -->
     <?if $(env.INCLUDE_OPENRTP) = YES ?>
     <Feature Id="OpenRTP" Level="1" Title="OpenRT Platform Tool Chain">
+      <!--
       <Condition Level ="1"><![CDATA[ (FILEEXISTS =  "") ]]></Condition>
       <Condition Level ="0"><![CDATA[ (FILEEXISTS <> "") ]]></Condition>
+      -->
       <!-- rtse rcp -->
       <Feature Id="RTSystemEditor" Level="1" Title="RTSystemEditor">
 	<ComponentRef Id="Openrtp" />
