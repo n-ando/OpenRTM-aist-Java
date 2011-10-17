@@ -18,6 +18,10 @@ data = [
     ("",                                  "*.jar *.exe .eclipseproduct"),
     ("configuration",                     "*.ini *.jar"),
     ("plugins",                           "*.jar"),
+    ("plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610",                           "*.*"),
+    ("plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610/META-INF",                           "*.*"),
+    ("plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731",                           "*.*"),
+    ("plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731/META-INF",                           "*.*"),
 ]
 
 import os
@@ -44,7 +48,8 @@ def path_to_comp_id(path, prefix):
     output = prefix.capitalize()
     for c in path.split("/"):
         output += c.capitalize()
-    return output.replace(".", "_")
+    output = output.replace(".", "_")
+    return output.replace("-", "_")
 
 import makewxs
 
@@ -77,4 +82,5 @@ cmd = ["wxs",
        "-o", "OpenRTP_inc.wxs",
        "-i", "OpenRTP_inc.wxs.in"]
 cmd += glob.glob("*.yaml")
+print "cmd:",cmd
 makewxs.main(cmd)

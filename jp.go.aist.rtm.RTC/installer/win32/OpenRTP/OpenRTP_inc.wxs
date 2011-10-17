@@ -3,24 +3,23 @@
   <!-- root directory -->		
   <Directory Id="OpenRTP" Name="OpenRTP">
     <Directory Id="OpenRTPVersion" Name="1.1">
-      <Component Id="Openrtp" Guid="6C2EF40F-8300-11E0-B1B3-00059A3C7800">
+      <Component Id="Openrtp" Guid="D004598F-F86B-11E0-9CF4-001BDC004C2E">
 	<Environment Id="OPENRTP_ROOT" Name="OPENRTP_ROOT" Action="set"
 		     System="yes" Value="[openrtpVersion]" />
 		<File Id="Openrtp0000" Name="RTSystemEditorRCP.exe"
-	      DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\RTSystemEditorRCP.exe">
+	      DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\\\RTSystemEditorRCP.exe">
 	  	  <Shortcut Id="Openrtp0000" Directory="ToolsMenuFolder"
 		    Name="RTSystemEditor"
-		    Arguments="-data &quot;%USERPROFILE%\workspace&quot;"
-		    Show="normal" WorkingDirectory="OpenRTPVersion"/>
+		    Show="normal" WorkingDirectory="tools"/>
 	  	</File>
 		<File Id="Openrtp0001" Name=".eclipseproduct"
-	      DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\.eclipseproduct">
+	      DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\\\.eclipseproduct">
 	  	</File>
 	      </Component>
       
       <!-- configuration -->
       <Directory Id="openrtp_configuration" Name="configuration">
-        <Component Id="OpenrtpConfiguration" Guid="6C3F95E1-8300-11E0-8815-00059A3C7800">
+        <Component Id="OpenrtpConfiguration" Guid="D0176C61-F86B-11E0-8601-001BDC004C2E">
 	  	  <File Id="OpenrtpConfiguration0000" Name="config.ini"
 		DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\configuration\\config.ini">
 	  </File>
@@ -29,7 +28,7 @@
 
       <!-- plugins -->
       <Directory Id="openrtp_plugins" Name="plugins">
-        <Component Id="OpenrtpPlugins" Guid="6C3F95E1-8300-11E0-87AE-00059A3C7800">
+        <Component Id="OpenrtpPlugins" Guid="D0424CEE-F86B-11E0-B4B9-001BDC004C2E">
 	  	  <File Id="OpenrtpPlugins0000" Name="com.ibm.icu.nl_ja_3.8.1.v20080530.jar"
 		DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\com.ibm.icu.nl_ja_3.8.1.v20080530.jar">
 	  </File>
@@ -125,6 +124,9 @@
 	  </File>
 	  	  <File Id="OpenrtpPlugins0031" Name="org.eclipse.core.resources_3.4.2.R34x_v20090126.jar"
 		DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.core.resources_3.4.2.R34x_v20090126.jar">
+	  </File>
+	  	  <File Id="OpenrtpPlugins0032" Name="org.eclipse.core.runtime.nl_ja_3.4.0.v20080512.jar"
+		DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.core.runtime.nl_ja_3.4.0.v20080512.jar">
 	  </File>
 	  	  <File Id="OpenrtpPlugins0033" Name="org.eclipse.core.runtime_3.4.0.v20080512.jar"
 		DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.core.runtime_3.4.0.v20080512.jar">
@@ -259,33 +261,75 @@
 		DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.ui_3.4.2.M20090204-0800.jar">
 	  </File>
 	          </Component>
-        <Directory Id="org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610" Name="org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610">
-          <Component Id="org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610" DiskId="1" Guid="9B406546-ADAC-458F-8868-4D8E286A179F">
-            <File Id="about.html" Name="about.html" Source="C:\distribution\OpenRTP\RTSystemEditor\plugins\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\about.html" />
-            <File Id="fragment.properties" Name="fragment.properties" Source="C:\distribution\OpenRTP\RTSystemEditor\plugins\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\fragment.properties" />
-            <File Id="runtime_registry_compatibility.jar" Name="runtime_registry_compatibility.jar" Source="C:\distribution\OpenRTP\RTSystemEditor\plugins\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\runtime_registry_compatibility.jar" />
-          </Component>
-          <Directory Id="META_INF" Name="META-INF">
-            <Component Id="META_INF" DiskId="1" Guid="2FC7BBAC-7BE2-43A6-B281-45E5321BA6CD">
-              <File Id="eclipse.inf" Name="eclipse.inf" Source="C:\distribution\OpenRTP\RTSystemEditor\plugins\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\META-INF\eclipse.inf" />
-              <File Id="MANIFEST.MF" Name="MANIFEST.MF" Source="C:\distribution\OpenRTP\RTSystemEditor\plugins\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\META-INF\MANIFEST.MF" />
-            </Component>
+        <!-- org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610 -->
+        <Directory Id="openrtp_plugins_org_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610" Name="org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610">
+          <Component Id="OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610" Guid="D04978E1-F86B-11E0-91E8-001BDC004C2E">
+	    	    <File Id="OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v200806100000" Name="about.html"
+		DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\\about.html">
+	    </File>
+	    	    <File Id="OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v200806100001" Name="fragment.properties"
+		DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\\fragment.properties">
+	    </File>
+	    	    <File Id="OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v200806100002" Name="runtime_registry_compatibility.jar"
+		DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\\runtime_registry_compatibility.jar">
+	    </File>
+	              </Component>
+	  <!-- META_INF -->
+          <Directory Id="_META_INF" Name="META_INF">
+            <Component Id="Meta_inf" Guid="D04978E1-F86B-11E0-9624-001BDC004C2E">
+	      	      <File Id="OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610Meta_inf0000" Name="eclipse.inf"
+	            DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\\META-INF\\eclipse.inf">
+	      </File>
+	      	      <File Id="OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610Meta_inf0001" Name="ECLIPSE.RSA"
+	            DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\\META-INF\\ECLIPSE.RSA">
+	      </File>
+	      	      <File Id="OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610Meta_inf0002" Name="ECLIPSE.SF"
+	            DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\\META-INF\\ECLIPSE.SF">
+	      </File>
+	      	      <File Id="OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610Meta_inf0003" Name="MANIFEST.MF"
+	            DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610\\META-INF\\MANIFEST.MF">
+	      </File>
+	                  </Component>
           </Directory>
         </Directory>
-        <Directory Id="org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731" Name="org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731">
-          <Component Id="org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731" DiskId="1" Guid="9B406546-ADAC-458F-8868-4D8E286A179F">
-            <File Id="about.html_1" Name="about.html" Source="C:\distribution\OpenRTP\RTSystemEditor\plugins\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\about.html" />
-            <File Id="launcher.win32.win32.x86.properties" Name="launcher.win32.win32.x86.properties" Source="C:\distribution\OpenRTP\RTSystemEditor\plugins\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\launcher.win32.win32.x86.properties" />
-            <File Id="eclipse_1115.dll" Name="eclipse_1115.dll" Source="C:\distribution\OpenRTP\RTSystemEditor\plugins\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\eclipse_1115.dll" />
-          </Component>
-          <Directory Id="META_INF_2" Name="META-INF_2">
-            <Component Id="META_INF_2" DiskId="1" Guid="2FC7BBAC-7BE2-43A6-B281-45E5321BA6CD">
-              <File Id="eclipse.inf_1" Name="eclipse.inf" Source="C:\distribution\OpenRTP\RTSystemEditor\plugins\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\META-INF\eclipse.inf" />
-              <File Id="MANIFEST.MF_1" Name="MANIFEST.MF" Source="C:\distribution\OpenRTP\RTSystemEditor\plugins\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\META-INF\MANIFEST.MF" />
-            </Component>
+        <!-- org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731 -->
+        <Directory Id="openrtp_plugins_org_eclipse_equinox_launcher_win32_win32_x86_1_0_101_R34x_v20080731" Name="org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731">
+          <Component Id="OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731" Guid="D04E33CF-F86B-11E0-8687-001BDC004C2E">
+            	    <File Id="OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v200807310000" Name="about.html"
+                DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\\about.html">
+	    </File>
+            	    <File Id="OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v200807310001" Name="eclipse_1115.dll"
+                DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\\eclipse_1115.dll">
+	    </File>
+            	    <File Id="OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v200807310002" Name="launcher.win32.win32.x86.properties"
+                DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\\launcher.win32.win32.x86.properties">
+	    </File>
+                      </Component>
+          <!-- META_INF -->
+	  <Directory Id="openrtp_plugins_org_eclipse_equinox_launcher_win32_win32_x86_1_0_101_R34x_v20080731_META_INF" Name="META-INF">
+            <Component Id="Meta_inf_2" Guid="D04E33CF-F86B-11E0-91DD-001BDC004C2E">
+	      	      <File Id="OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731Meta_inf0000" Name="eclipse.inf"
+		    DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\\META-INF\\eclipse.inf">
+	      </File>
+	      	      <File Id="OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731Meta_inf0001" Name="ECLIPSE.RSA"
+		    DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\\META-INF\\ECLIPSE.RSA">
+	      </File>
+	      	      <File Id="OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731Meta_inf0002" Name="ECLIPSE.SF"
+		    DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\\META-INF\\ECLIPSE.SF">
+	      </File>
+	      	      <File Id="OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731Meta_inf0003" Name="MANIFEST.MF"
+		    DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\plugins\\org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731\\META-INF\\MANIFEST.MF">
+	      </File>
+	                  </Component>
           </Directory>
+
         </Directory>
+
+
+
       </Directory>
+
+      
     </Directory>
   </Directory>
 </Include>

@@ -38,7 +38,52 @@
 	  </File>
 	  {% endfor %}
         </Component>
+        <!-- org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610 -->
+        <Directory Id="openrtp_plugins_org_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610" Name="org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610">
+          <Component Id="OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610" Guid="{% OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610.GUID %}">
+	    {% for file in OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610.Files %}
+	    <File Id="{% file.Id %}" Name="{% file.Name %}"
+		DiskId="1" Source="{% file.Source %}">
+	    </File>
+	    {% endfor %}
+          </Component>
+	  <!-- META_INF -->
+          <Directory Id="_META_INF" Name="META_INF">
+            <Component Id="Meta_inf" Guid="{% OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610Meta_inf.GUID %}">
+	      {% for file in OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610Meta_inf.Files %}
+	      <File Id="{% file.Id %}" Name="{% file.Name %}"
+	            DiskId="1" Source="{% file.Source %}">
+	      </File>
+	      {% endfor %}
+            </Component>
+          </Directory>
+        </Directory>
+        <!-- org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731 -->
+        <Directory Id="openrtp_plugins_org_eclipse_equinox_launcher_win32_win32_x86_1_0_101_R34x_v20080731" Name="org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731">
+          <Component Id="OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731" Guid="{% OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731.GUID %}">
+            {% for file in OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731.Files %}
+	    <File Id="{% file.Id %}" Name="{% file.Name %}"
+                DiskId="1" Source="{% file.Source %}">
+	    </File>
+            {% endfor %}
+          </Component>
+          <!-- META_INF -->
+	  <Directory Id="openrtp_plugins_org_eclipse_equinox_launcher_win32_win32_x86_1_0_101_R34x_v20080731_META_INF" Name="META-INF">
+            <Component Id="Meta_inf_2" Guid="{% OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731Meta_inf.GUID %}">
+	      {% for file in OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731Meta_inf.Files %}
+	      <File Id="{% file.Id %}" Name="{% file.Name %}"
+		    DiskId="1" Source="{% file.Source %}">
+	      </File>
+	      {% endfor %}
+            </Component>
+          </Directory>
+
+        </Directory>
+
+
+
       </Directory>
+
       
     </Directory>
   </Directory>
