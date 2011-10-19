@@ -32,20 +32,15 @@ public class GUIInImpl  extends DataFlowComponentBase {
         // Set InPort buffers
         
         // Set OutPort buffer
-        try {
 /*
+        try {
             registerOutPort(TimedLong.class, "out1", m_out1Out);
             registerOutPort(TimedString.class, "out2", m_out2Out);
             registerOutPort(TimedDouble.class, "out3", m_out3Out);
-*/  //v042
-
-            registerOutPort("out1", m_out1Out);
-            registerOutPort("out2", m_out2Out);
-            registerOutPort("out3", m_out3Out);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+*/  //v042
         
         // Set service provider to Ports
         
@@ -60,6 +55,15 @@ public class GUIInImpl  extends DataFlowComponentBase {
     // formaer rtc_init_entry() 
     @Override
     protected ReturnCode_t onInitialize() {
+        // Set OutPort buffer
+        try {
+            addOutPort("out1", m_out1Out);
+            addOutPort("out2", m_out2Out);
+            addOutPort("out3", m_out3Out);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         guiIn.init();
         return super.onInitialize();
     }
