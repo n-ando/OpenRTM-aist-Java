@@ -62,6 +62,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_profile.rate = 0.0;
         m_profile.owner = (RTC.RTObject)null;
         m_profile.participants = new RTC.RTObject[0];
+        m_profile.properties = new _SDOPackage.NameValue[0];
     }
 
     /**
@@ -118,6 +119,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_profile.rate = rate;
         m_profile.owner = owner;
         m_profile.participants = new RTC.RTObject[0];
+        m_profile.properties = new _SDOPackage.NameValue[0];
     }
 
     /**
