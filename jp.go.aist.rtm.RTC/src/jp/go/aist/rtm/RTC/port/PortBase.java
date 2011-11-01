@@ -14,6 +14,7 @@ import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.util.operatorFunc;
 
 import org.omg.CORBA.SystemException;
+import org.omg.CORBA.TCKind;
 
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
@@ -69,7 +70,7 @@ import _SDOPackage.NameValue;
  *
  * notify_connect(), notify_disconnect() については、サブクラスが提供・要求
  * するインターフェースの種類に応じて、振る舞いを変更する必要が生ずる
- * かもしれないが、これらを直接オーバーライドすることは推奨されず、
+ * 可能性があるが、これらを直接オーバーライドすることは推奨されず、
  * 後述の notify_connect(), notify_disconnect() の項においても述べられる通り
  * これらの関数に関連した protected 関数をオーバーライドすることにより
  * 振る舞いを変更することが推奨される。}
