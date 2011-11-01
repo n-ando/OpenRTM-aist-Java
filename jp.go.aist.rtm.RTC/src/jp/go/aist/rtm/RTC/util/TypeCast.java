@@ -284,7 +284,7 @@ public class TypeCast<T> {
             return any;
             
         } else if (klass.equals(String.class)) {
-            any.insert_wstring(String.class.cast(data));
+            any.insert_string(String.class.cast(data));
             return any;
             
         } else if (klass.equals(Character.class)) {

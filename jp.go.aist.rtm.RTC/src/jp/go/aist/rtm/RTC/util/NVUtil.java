@@ -140,7 +140,7 @@ public class NVUtil {
             }
             nvlist.value[intIdx].name = (String) keys.elementAt(intIdx);
             Any anyValue = ORBUtil.getOrb().create_any();
-            anyValue.insert_wstring(prop.getProperty((String) keys.elementAt(intIdx)));
+            anyValue.insert_string(prop.getProperty((String) keys.elementAt(intIdx)));
             nvlist.value[intIdx].value = anyValue;
         }
     }
@@ -480,7 +480,7 @@ public class NVUtil {
                 }
                 if (!find) {
                     tmp_str = tmp_str + "," + value;
-                    nvlist.value[index].value.insert_wstring(tmp_str);
+                    nvlist.value[index].value.insert_string(tmp_str);
                 }
             }
         } else {
