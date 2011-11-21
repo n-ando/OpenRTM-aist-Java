@@ -141,6 +141,15 @@ public class NVUtil {
             nvlist.value[intIdx].name = (String) keys.elementAt(intIdx);
             Any anyValue = ORBUtil.getOrb().create_any();
             anyValue.insert_string(prop.getProperty((String) keys.elementAt(intIdx)));
+//
+//            String half_full = prop.getProperty((String) keys.elementAt(intIdx));
+//            if(half_full.getBytes().length == half_full.length()){
+//                anyValue.insert_string(half_full);
+//            }
+//            else{
+//                anyValue.insert_wstring(half_full);
+//            } 
+//
             nvlist.value[intIdx].value = anyValue;
         }
     }
@@ -170,7 +179,8 @@ public class NVUtil {
                 Any anyVal = nvlist.value[intIdx].value;
                 String value = null;
                 if( anyVal.type().kind() == TCKind.tk_wstring ) {
-                    value = anyVal.extract_wstring();
+                    //value = anyVal.extract_wstring();
+                    continue; 
                 } else if( anyVal.type().kind() == TCKind.tk_string ) {
                     value = anyVal.extract_string();
                 } else if( anyVal.type().kind() == TCKind.tk_objref ) {
