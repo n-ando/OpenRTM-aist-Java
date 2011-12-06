@@ -33,7 +33,6 @@ public abstract class InPortConnector extends ConnectorBase {
         m_profile = profile;
         m_buffer = buffer;
         m_isLittleEndian = true;
-        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
         m_orb = ORBUtil.getOrb();
     }
 
@@ -169,7 +168,6 @@ public abstract class InPortConnector extends ConnectorBase {
     protected ConnectorInfo m_profile;
     protected BufferBase<OutputStream> m_buffer;
     protected boolean m_isLittleEndian;
-    protected com.sun.corba.se.spi.orb.ORB m_spi_orb;
     protected org.omg.CORBA.ORB m_orb;
 }
 

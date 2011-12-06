@@ -14,7 +14,7 @@ import jp.go.aist.rtm.RTC.util.StringUtil;
 import org.omg.CORBA.portable.OutputStream;
 import org.omg.CORBA.portable.Streamable;
 
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
+import org.omg.CORBA.ORB;
 
 public class OutPortPushConnector extends OutPortConnector {
     /**
@@ -153,7 +153,7 @@ public class OutPortPushConnector extends OutPortConnector {
         m_publisher.setBuffer(m_buffer);
         m_publisher.setListener(m_profile, m_listeners);
 
-        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        m_orb = ORBUtil.getOrb();
         
         onConnect();
 
@@ -199,7 +199,7 @@ public class OutPortPushConnector extends OutPortConnector {
         rtcout.println(Logbuf.TRACE, "write()");
         OutPort out = (OutPort)m_outport;
         OutputStream cdr 
-            = new EncapsOutputStream(m_spi_orb,m_isLittleEndian);
+            = new EncapsOutputStreamExt(m_orb,m_isLittleEndian);
         out.write_stream(data,cdr); 
         return m_publisher.write(cdr,0,0);
     }
@@ -353,7 +353,7 @@ public class OutPortPushConnector extends OutPortConnector {
     private BufferBase<OutputStream> m_buffer;
     private Streamable m_streamable = null;
     private Field m_field = null;
-    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
+    private ORB m_orb;
     private OutPortBase m_outport;
     /**
      * <p> A reference to a ConnectorListener </p>
