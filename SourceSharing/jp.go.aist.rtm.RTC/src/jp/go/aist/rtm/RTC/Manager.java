@@ -2182,12 +2182,12 @@ public class Manager {
         if(endpoint != null && (endpoint.indexOf(":")>=0))  {
             String[] endPointInfo = endpoint.split(":");
             if( !endPointInfo[0].equals("") ) {
-                result.put("com.sun.CORBA.ORBServerHost", endPointInfo[0]);
+                result.put(SERVER_HOST, endPointInfo[0]);
             }
             if( endPointInfo.length>1 ) {
                 try {
                     short port = (short)Integer.parseInt(endPointInfo[1]);
-                    result.put("com.sun.CORBA.ORBServerPort", endPointInfo[1]);
+                    result.put(SERVER_PORT, endPointInfo[1]);
                 }
                 catch(Exception ex){
                     rtcout.println(Logbuf.WARN, ""+endPointInfo[1]);
@@ -2216,7 +2216,7 @@ public class Manager {
                                             "localhost:2810");
 
             String portNumber[] = mm.split(":");
-            result.put("com.sun.CORBA.POA.ORBPersistentServerPort",
+            result.put(LISTENER_PORT,
                                                             portNumber[1]);
         }
 
@@ -2271,7 +2271,7 @@ public class Manager {
                 String[] endPoints = endpoints.split(",");
                 int loopstart = 0;
                 for(int ic=loopstart;ic<endPoints.length;++ic) {
-                    if(result.getProperty("com.sun.CORBA.ORBServerHost")==null){
+                    if(result.getProperty(SERVER_HOST)==null){
                         parsesCorbaEndpoint(endPoints[ic], result);
                     }
                     else{
@@ -2283,7 +2283,7 @@ public class Manager {
             
             }
             else{
-                if(result.getProperty("com.sun.CORBA.ORBServerHost")==null){
+                if(result.getProperty(SERVER_HOST)==null){
                     parsesCorbaEndpoint(endpoints, result);
                 }
                 else {
@@ -3471,4 +3471,11 @@ public class Manager {
      * 
      */
     Finalized m_finalized = new Finalized();
+
+    private static final String SERVER_HOST = "com.sun.CORBA.ORBServerHost";
+    private static final String SERVER_PORT = "com.sun.CORBA.ORBServerPort";
+    private static final String LISTENER_PORT = "com.sun.CORBA.POA.ORBPersistentServerPort";
+    //private static final String SERVER_HOST = "OAIAddr";
+    //private static final String SERVER_PORT = "OAPort";
+    //private static final String LISTENER_PORT = "OAPort";
 }
