@@ -108,7 +108,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
         
         EncapsOutputStreamExt cdr;
         cdr = (EncapsOutputStreamExt)data;
-        byte[] ch = cdr.toByteArray();
+        byte[] ch = cdr.getByteArray();
         EncapsOutputStreamExt output_stream 
             = new EncapsOutputStreamExt(m_orb, m_connector.isLittleEndian());
         output_stream.write_octet_array(ch,0,ch.length);
