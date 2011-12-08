@@ -59,11 +59,7 @@ public class ManagerServant extends ManagerPOA {
 
             try{
                 //Registers the reference
-                m_mgr.getPOA().activate_object( this );
-                com.sun.corba.se.impl.orb.ORBImpl orb 
-                        = (com.sun.corba.se.impl.orb.ORBImpl)m_mgr.getORB();
-                orb.register_initial_reference( 
-                        "manager", m_mgr.getPOA().servant_to_reference(this) );
+                createManagerCORBAServant();
             }
             catch(Exception ex){
                  rtcout.println(Logbuf.WARN, 
@@ -105,11 +101,7 @@ System.err.println("Manager's IOR information: "+ior);
 
                 try{
                     //Registers the reference
-                    m_mgr.getPOA().activate_object( this );
-                    com.sun.corba.se.impl.orb.ORBImpl orb 
-                        = (com.sun.corba.se.impl.orb.ORBImpl)m_mgr.getORB();
-                    orb.register_initial_reference( 
-                        "manager", m_mgr.getPOA().servant_to_reference(this) );
+                    createManagerCORBAServant();
                 }
                 catch(Exception ex){
                      rtcout.println(Logbuf.WARN, 
@@ -179,14 +171,6 @@ System.err.println("Manager's IOR information: "+ior);
 
         rtcout.println(Logbuf.DEBUG, "createINSManager()");
         try{
-/*
-            //Registers the reference
-            m_mgr.getPOA().activate_object( this );
-            com.sun.corba.se.impl.orb.ORBImpl orb 
-                        = (com.sun.corba.se.impl.orb.ORBImpl)m_mgr.getORB();
-            orb.register_initial_reference( 
-                        "manager", m_mgr.getPOA().servant_to_reference(this) );
-*/
 
             //
             rtcout.println(Logbuf.DEBUG, "gets object.");
@@ -1226,6 +1210,18 @@ System.err.println("Manager's IOR information: "+ior);
     }
 */
 
+    /**
+     * 
+     */
+    private void createManagerCORBAServant() throws Exception {
+        m_mgr.getPOA().activate_object( this );
+        com.sun.corba.se.impl.orb.ORBImpl orb 
+                = (com.sun.corba.se.impl.orb.ORBImpl)m_mgr.getORB();
+//        org.jacorb.orb.ORB orb
+//                = (org.jacorb.orb.ORB)m_mgr.getORB();
+        orb.register_initial_reference( 
+                "manager", m_mgr.getPOA().servant_to_reference(this) );
+    }
     /**
      * <p></p>
      */
