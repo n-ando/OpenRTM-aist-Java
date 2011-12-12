@@ -4,10 +4,15 @@
 
 	<property name="source" value="src"/>
 	<property name="source.sdo" value="src/_SDOPackage"/>
+	<property name="source.sdotemp" value="src/_SDOPackageTemp"/>
 	<property name="source.rtc" value="src/RTC"/>
+	<property name="source.rtctemp" value="src/RTCTemp"/>
 	<property name="source.rtm" value="src/RTM"/>
+	<property name="source.rtmtemp" value="src/RTMTemp"/>
 	<property name="source.openrtm" value="src/OpenRTM"/>
+	<property name="source.openrtmtemp" value="src/OpenRTMTemp"/>
 	<property name="source.examples" value="src/RTMExamples"/>
+	<property name="source.examplestemp" value="src/RTMExamplesTemp"/>
 	<property name="source.main" value="src/jp"/>
 	<property name="source.samples.class" value="bin/RTMExamples"/>
 	<property name="source.samples.java" value="src/RTMExamples"/>
@@ -276,8 +281,58 @@
 	</target>
 
 	<target name="compile" description="ソースをコンパイルします">
-		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="Shift-JIS" />
-		<javac srcdir="${source.main}:${source.examples}:${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
+		<native2ascii encoding="UTF-8" src="${source.sdo}" dest="${source.sdotemp}" >
+	            <include name="**/*.java" />
+	        </native2ascii>
+		<copy todir="${source.sdo}">
+		    <fileset dir="${source.sdotemp}" >
+		        <include name="**/*.java" />
+		    </fileset>
+		</copy>
+		<delete dir="${source.sdotemp}" />
+		<native2ascii encoding="UTF-8" src="${source.rtc}" dest="${source.rtctemp}" >
+	            <include name="**/*.java" />
+	        </native2ascii>
+		<copy todir="${source.rtc}">
+		    <fileset dir="${source.rtctemp}" >
+		        <include name="**/*.java" />
+		    </fileset>
+		</copy>
+		<delete dir="${source.rtctemp}" />
+		<native2ascii encoding="UTF-8" src="${source.rtm}" dest="${source.rtmtemp}" >
+	            <include name="**/*.java" />
+	        </native2ascii>
+		<copy todir="${source.rtm}">
+		    <fileset dir="${source.rtmtemp}" >
+		        <include name="**/*.java" />
+		    </fileset>
+		</copy>
+		<delete dir="${source.rtmtemp}" />
+		<native2ascii encoding="UTF-8" src="${source.openrtm}" dest="${source.openrtmtemp}" >
+	            <include name="**/*.java" />
+	        </native2ascii>
+		<copy todir="${source.openrtm}">
+		    <fileset dir="${source.openrtmtemp}" >
+		        <include name="**/*.java" />
+		    </fileset>
+		</copy>
+		<delete dir="${source.openrtmtemp}" />
+		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="UTF-8" />
+		<javac srcdir="${source.main}:${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
+		<delete dir="${source.examplestemp}" />
+		<native2ascii encoding="UTF-8" src="${source.examples}" dest="${source.examplestemp}" >
+	            <include name="**/*.java" />
+	        </native2ascii>
+	        <fixcrlf srcdir="${source.examplestemp}" eol="crlf" >
+	            <include name="**/*.java" />
+	        </fixcrlf>
+		<copy todir="${source.examples}">
+		    <fileset dir="${source.examplestemp}" >
+		        <include name="**/*.java" />
+		    </fileset>
+		</copy>
+		<delete dir="${source.examplestemp}" />
+		<javac srcdir="${source.examples}:" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
 	</target>
 
 	<target name="compile_tests" description="ソースをコンパイルします">
