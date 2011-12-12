@@ -19,7 +19,6 @@ import org.omg.CORBA.portable.OutputStream;
 import OpenRTM.OutPortCdrPOA;
 import _SDOPackage.NVListHolder;
 
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 /**
  * {@.ja OutPortCorbaCdrProvider クラス}
@@ -168,9 +167,9 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
 
         if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
 
-            EncapsOutputStream outcdr;
-            outcdr = (EncapsOutputStream)cdr_ref.v;
-            data.value =  outcdr.toByteArray();
+            EncapsOutputStreamExt outcdr;
+            outcdr = (EncapsOutputStreamExt)cdr_ref.v;
+            data.value =  outcdr.getByteArray();
 
         }
         return convertReturn(ret);

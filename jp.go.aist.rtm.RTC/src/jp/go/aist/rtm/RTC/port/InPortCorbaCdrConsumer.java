@@ -15,7 +15,6 @@ import org.omg.CORBA.portable.OutputStream;
 
 import _SDOPackage.NVListHolder;
 
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 /**
  * {@.ja InPortCorbaCdrConsumer クラス}
@@ -41,10 +40,8 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      */
     public InPortCorbaCdrConsumer() {
         super(OpenRTM.InPortCdr.class);
-        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
         rtcout = new Logbuf("InPortCorbaCdrConsumer");
 //        rtcout.setLevel("PARANOID");
-        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
         m_orb = ORBUtil.getOrb();
     }
     /**
@@ -109,16 +106,15 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
     public ReturnCode put(final OutputStream data) {
         rtcout.println(Logbuf.PARANOID, "put");
         
-        EncapsOutputStream cdr;
-        cdr = (EncapsOutputStream)data;
-        byte[] ch = cdr.toByteArray();
-        EncapsOutputStream output_stream 
-            = new EncapsOutputStream(m_spi_orb, m_connector.isLittleEndian());
+        EncapsOutputStreamExt cdr;
+        cdr = (EncapsOutputStreamExt)data;
+        byte[] ch = cdr.getByteArray();
+        EncapsOutputStreamExt output_stream 
+            = new EncapsOutputStreamExt(m_orb, m_connector.isLittleEndian());
         output_stream.write_octet_array(ch,0,ch.length);
 
         try {
-//            OpenRTM.PortStatus ret = _ptr().put(cdr.toByteArray());
-            OpenRTM.PortStatus ret = _ptr().put(output_stream.toByteArray());
+            OpenRTM.PortStatus ret = _ptr().put(output_stream.getByteArray());
             return convertReturn(ret);
         }
         catch (Exception e) {
@@ -471,7 +467,6 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
 
     private Logbuf rtcout;
     private Properties m_properties;
-    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
     private OutPortConnector m_connector;
     private ORB m_orb;
 

@@ -19,7 +19,6 @@ import org.omg.CORBA.portable.OutputStream;
 import OpenRTM.InPortCdrPOA;
 import _SDOPackage.NVListHolder;
 
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 /**
  * {@.ja InPortCorbaCdrProvider クラス}
@@ -57,7 +56,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
                 NVUtil.newNV("dataport.corba_cdr.inport_ref",
                               m_objref, OpenRTM.InPortCdr.class ));
 
-        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        m_orb = ORBUtil.getOrb();
 
     }
     /**
@@ -148,8 +147,8 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         rtcout.println(Logbuf.PARANOID, "InPortCorbaCdrProvider.put()");
 
         if (m_buffer == null) {
-            EncapsOutputStream cdr 
-            = new EncapsOutputStream(m_spi_orb,m_connector.isLittleEndian());
+            EncapsOutputStreamExt cdr 
+            = new EncapsOutputStreamExt(m_orb,m_connector.isLittleEndian());
             cdr.write_octet_array(data, 0, data.length);
             onReceiverError(cdr);
             return OpenRTM.PortStatus.PORT_ERROR;
@@ -159,11 +158,11 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         rtcout.println(Logbuf.PARANOID, "received data size: "+data.length);
 
 
-        EncapsOutputStream cdr 
-            = new EncapsOutputStream(m_spi_orb,m_connector.isLittleEndian());
+        EncapsOutputStreamExt cdr 
+            = new EncapsOutputStreamExt(m_orb,m_connector.isLittleEndian());
         cdr.write_octet_array(data, 0, data.length);
 
-        int len = cdr.toByteArray().length;
+        int len = cdr.getByteArray().length;
         rtcout.println(Logbuf.PARANOID, "converted CDR data size: "+len);
         onReceived(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
@@ -203,7 +202,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      */
     protected OpenRTM.PortStatus 
     convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status,
-                  final EncapsOutputStream data) {
+                  final EncapsOutputStreamExt data) {
         switch (status) {
             case BUFFER_OK:
                 onBufferWrite(data);
@@ -611,7 +610,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
     private BufferBase<OutputStream> m_buffer;
     private OpenRTM.InPortCdr m_objref;
 
-    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
+    private ORB m_orb;
     private InPortConnector m_connector;
     private ConnectorListeners m_listeners;
     private ConnectorBase.ConnectorInfo m_profile; 

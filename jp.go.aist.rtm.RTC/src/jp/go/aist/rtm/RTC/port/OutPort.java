@@ -234,7 +234,6 @@ public class OutPort<DataType> extends OutPortBase {
         this.m_OnOverflow = null;
         this.m_OnUnderflow = null;
 
-        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
 
         Class cl = valueRef.v.getClass();
         String str = cl.getName();
@@ -701,6 +700,5 @@ public class OutPort<DataType> extends OutPortBase {
 
     private Streamable m_streamable = null;
     private Field m_field = null;
-    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
     private Vector<ReturnCode> m_status = new Vector<ReturnCode>();
 }

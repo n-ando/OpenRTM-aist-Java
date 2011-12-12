@@ -9,7 +9,6 @@ import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
 
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 /**
  * {@.ja InPortPullConnector クラス}
@@ -146,7 +145,7 @@ public class InPortPullConnector extends InPortConnector {
         if (m_consumer == null) {
             return ReturnCode.PORT_ERROR;
         }
-        EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+        EncapsOutputStreamExt cdr = new EncapsOutputStreamExt(m_orb, 
                                                     m_isLittleEndian);
         ReturnCode ret = m_consumer.get(cdr);
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);

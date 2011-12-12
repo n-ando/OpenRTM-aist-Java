@@ -13,7 +13,6 @@ import org.omg.CORBA.ORB;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.Streamable;
 
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
 
 /**
  * <p>入力ポートのためのベース実装クラスです。
@@ -125,7 +124,6 @@ public class InPort<DataType> extends InPortBase {
         this.m_OnOverflow = null;
         this.m_OnUnderflow = null;
 
-        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
         m_orb = ORBUtil.getOrb();
 
         Class cl = value.v.getClass();
@@ -315,7 +313,7 @@ public class InPort<DataType> extends InPortBase {
             }
 
             ReturnCode ret;
-            EncapsOutputStream cdr = new EncapsOutputStream(m_spi_orb, 
+            EncapsOutputStreamExt cdr = new EncapsOutputStreamExt(m_orb, 
                                                         isLittleEndian());
             DataRef<InputStream> dataref 
                     = new DataRef<InputStream>(cdr.create_input_stream());
@@ -538,6 +536,5 @@ public class InPort<DataType> extends InPortBase {
     private Streamable m_streamable = null;
     private Field m_field = null;
     
-    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
     private ORB m_orb;
 }

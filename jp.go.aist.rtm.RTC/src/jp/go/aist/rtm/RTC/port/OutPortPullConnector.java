@@ -8,7 +8,7 @@ import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 import org.omg.CORBA.portable.OutputStream;
 
-import com.sun.corba.se.impl.encoding.EncapsOutputStream; 
+import org.omg.CORBA.ORB;
 
   /**
    * {@.ja OutPortPullConnector クラス}
@@ -146,7 +146,7 @@ public class OutPortPullConnector extends OutPortConnector {
         m_provider = provider;
         m_buffer = buffer;
         m_listeners = listeners;
-        m_spi_orb = (com.sun.corba.se.spi.orb.ORB)ORBUtil.getOrb();
+        m_orb = ORBUtil.getOrb();
         // create buffer
         if (m_buffer == null) {
             m_buffer = createBuffer(profile);
@@ -179,7 +179,7 @@ public class OutPortPullConnector extends OutPortConnector {
         rtcout.println(Logbuf.TRACE, "write()");
         OutPort out = (OutPort)m_outport;
         OutputStream cdr 
-            = new EncapsOutputStream(m_spi_orb,m_isLittleEndian);
+            = new EncapsOutputStreamExt(m_orb,m_isLittleEndian);
         out.write_stream(data,cdr); 
         m_buffer.write(cdr);
         return ReturnCode.PORT_OK;
@@ -305,7 +305,7 @@ public class OutPortPullConnector extends OutPortConnector {
      * <p> the pointer to the buffer </p>
      */
     protected BufferBase<OutputStream> m_buffer;
-    private com.sun.corba.se.spi.orb.ORB m_spi_orb;
+    private ORB m_orb;
     private OutPortBase m_outport;
     /**
      * <p> A reference to a ConnectorListener </p>
