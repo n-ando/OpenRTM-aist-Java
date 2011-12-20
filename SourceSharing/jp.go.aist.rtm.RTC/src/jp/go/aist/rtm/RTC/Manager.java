@@ -10,6 +10,7 @@ import java.util.Vector;
 import java.util.logging.FileHandler;
 import java.util.logging.ConsoleHandler;
 
+import jp.go.aist.rtm.Constants;
 import jp.go.aist.rtm.RTC.executionContext.ECFactoryBase;
 import jp.go.aist.rtm.RTC.executionContext.ECFactoryJava;
 import jp.go.aist.rtm.RTC.executionContext.ExecutionContextBase;
@@ -2182,12 +2183,12 @@ public class Manager {
         if(endpoint != null && (endpoint.indexOf(":")>=0))  {
             String[] endPointInfo = endpoint.split(":");
             if( !endPointInfo[0].equals("") ) {
-                result.put(SERVER_HOST, endPointInfo[0]);
+                result.put(Constants.SERVER_HOST, endPointInfo[0]);
             }
             if( endPointInfo.length>1 ) {
                 try {
                     short port = (short)Integer.parseInt(endPointInfo[1]);
-                    result.put(SERVER_PORT, endPointInfo[1]);
+                    result.put(Constants.SERVER_PORT, endPointInfo[1]);
                 }
                 catch(Exception ex){
                     rtcout.println(Logbuf.WARN, ""+endPointInfo[1]);
@@ -2216,7 +2217,7 @@ public class Manager {
                                             "localhost:2810");
 
             String portNumber[] = mm.split(":");
-            result.put(LISTENER_PORT,
+            result.put(Constants.LISTENER_PORT,
                                                             portNumber[1]);
         }
 
@@ -2271,7 +2272,7 @@ public class Manager {
                 String[] endPoints = endpoints.split(",");
                 int loopstart = 0;
                 for(int ic=loopstart;ic<endPoints.length;++ic) {
-                    if(result.getProperty(SERVER_HOST)==null){
+                    if(result.getProperty(Constants.SERVER_HOST)==null){
                         parsesCorbaEndpoint(endPoints[ic], result);
                     }
                     else{
@@ -2283,7 +2284,7 @@ public class Manager {
             
             }
             else{
-                if(result.getProperty(SERVER_HOST)==null){
+                if(result.getProperty(Constants.SERVER_HOST)==null){
                     parsesCorbaEndpoint(endpoints, result);
                 }
                 else {
@@ -3472,9 +3473,9 @@ public class Manager {
      */
     Finalized m_finalized = new Finalized();
 
-    private static final String SERVER_HOST = "com.sun.CORBA.ORBServerHost";
-    private static final String SERVER_PORT = "com.sun.CORBA.ORBServerPort";
-    private static final String LISTENER_PORT = "com.sun.CORBA.POA.ORBPersistentServerPort";
+    //private static final String SERVER_HOST = "com.sun.CORBA.ORBServerHost";
+    //private static final String SERVER_PORT = "com.sun.CORBA.ORBServerPort";
+    //private static final String LISTENER_PORT = "com.sun.CORBA.POA.ORBPersistentServerPort";
     //private static final String SERVER_HOST = "OAIAddr";
     //private static final String SERVER_PORT = "OAPort";
     //private static final String LISTENER_PORT = "OAPort";

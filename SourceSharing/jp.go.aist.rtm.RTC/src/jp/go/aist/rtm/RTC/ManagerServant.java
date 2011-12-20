@@ -12,6 +12,7 @@ import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
+import jp.go.aist.rtm.RTC.util.ManagerServantUtil;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
@@ -1214,6 +1215,8 @@ System.err.println("Manager's IOR information: "+ior);
      * 
      */
     private void createManagerCORBAServant() throws Exception {
+        ManagerServantUtil.createManagerCORBAServant(m_mgr,this);
+/*
         m_mgr.getPOA().activate_object( this );
         com.sun.corba.se.impl.orb.ORBImpl orb 
                 = (com.sun.corba.se.impl.orb.ORBImpl)m_mgr.getORB();
@@ -1221,6 +1224,7 @@ System.err.println("Manager's IOR information: "+ior);
 //                = (org.jacorb.orb.ORB)m_mgr.getORB();
         orb.register_initial_reference( 
                 "manager", m_mgr.getPOA().servant_to_reference(this) );
+*/
     }
     /**
      * <p></p>

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import jp.go.aist.rtm.Constants;
 import jp.go.aist.rtm.RTC.InPortConsumerFactory;
 import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 import jp.go.aist.rtm.RTC.PublisherBaseFactory;
@@ -492,9 +493,24 @@ public abstract class OutPortBase extends PortBase {
             int index = 
                 NVUtil.find_index(nvholder,"dataport.serializer.cdr.endian");
             if(index<0){
+                String endian_str = new String();
+                if(Constants.SUPPORTED_CDR_ENDIAN.length==0){
+                     endian_str = "";
+                }
+                else {
+                    int ic;
+                    for(ic=0;ic<Constants.SUPPORTED_CDR_ENDIAN.length-1;++ic){
+                        endian_str = endian_str + Constants.SUPPORTED_CDR_ENDIAN[ic] + ", ";
+                     }
+                     endian_str = endian_str + Constants.SUPPORTED_CDR_ENDIAN[ic];
+                } 
+
+//                CORBA_SeqUtil.push_back(nvholder, 
+//                    NVUtil.newNVString("dataport.serializer.cdr.endian", 
+//                                    "little,big"));
                 CORBA_SeqUtil.push_back(nvholder, 
                     NVUtil.newNVString("dataport.serializer.cdr.endian", 
-                                    "little,big"));
+                                    endian_str));
                 connector_profile.value.properties = nvholder.value;
             }
         }
@@ -586,6 +602,17 @@ public abstract class OutPortBase extends PortBase {
             endian_type = "";
             for(int ic=0;ic<endian.length;++ic){
                 String str = endian[ic].trim();
+                for(int icc=0;icc<Constants.SUPPORTED_CDR_ENDIAN.length;++icc){
+                    if(str.equals(Constants.SUPPORTED_CDR_ENDIAN[icc])){
+                        if(endian_type.length()!=0){
+                            endian_type = endian_type + ","+ str;
+                        }
+                        else{
+                            endian_type = endian_type + str;
+                        }
+                    }
+                }
+/*
                 if(str.equals("big") || str.equals("little")){
                     if(endian_type.length()!=0){
                         endian_type = endian_type + ","+ str;
@@ -594,6 +621,7 @@ public abstract class OutPortBase extends PortBase {
                         endian_type = endian_type + str;
                     }
                 }
+*/
             }
             int index = NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
             holder.value[index].value.insert_string(endian_type);
