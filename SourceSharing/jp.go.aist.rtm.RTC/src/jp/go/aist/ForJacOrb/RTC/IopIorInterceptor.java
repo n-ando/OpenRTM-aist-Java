@@ -99,6 +99,20 @@ public class IopIorInterceptor extends LocalObject
         if(m_endpoints==null){
             return;
         }
+        if(m_endpoints.size()==0){
+            return;
+        }
+        else {
+            int ic;
+            for(ic=0;ic<m_endpoints.size();++ic){
+                if(m_endpoints.get(ic).Port==0){
+                    break;
+                }
+            }
+            if(ic==m_endpoints.size()){
+                return ;
+            }
+        }
 
         //<+ JacORB
         ProtocolAddressBase address = null;
