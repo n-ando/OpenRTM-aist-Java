@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Random;
 
+import jp.go.aist.rtm.Constants;
 import jp.go.aist.rtm.RTC.util.Properties;
 
 import org.apache.commons.cli.BasicParser;
@@ -63,6 +64,7 @@ class ManagerConfig {
      * {@.ja Managerのデフォルト・コンフィグレーションのファイル・パス}
      * {@.en The default configuration file path for manager}
      */
+/*
     public static final String[] CONFIG_FILE_PATH = {
         "./rtc.conf",
         "/etc/rtc.conf",
@@ -71,7 +73,7 @@ class ManagerConfig {
         "/usr/local/etc/rtc/rtc.conf",
         null
     };
-    
+*/    
     /**
      * {@.ja デフォルト・コンフィグレーションのファイル・パスを識別する
      * 環境変数です。}
@@ -335,9 +337,9 @@ class ManagerConfig {
         }
 
         // Search rtc configuration file from default search path
-        for (int i = 0; CONFIG_FILE_PATH[i] != null; i++) {
-            if (fileExist(CONFIG_FILE_PATH[i])) {
-                m_configFile = CONFIG_FILE_PATH[i];
+        for (int i = 0; Constants.CONFIG_FILE_PATH[i] != null; i++) {
+            if (fileExist(Constants.CONFIG_FILE_PATH[i])) {
+                m_configFile = Constants.CONFIG_FILE_PATH[i];
                 return true;
             }
         }

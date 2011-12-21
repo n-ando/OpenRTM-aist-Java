@@ -14,6 +14,13 @@ import org.omg.IOP.TAG_INTERNET_IOP;
 import org.omg.IOP.TaggedComponent;
 import org.omg.PortableInterceptor.IORInterceptor;
 
+//<+JacORB
+import org.jacorb.orb.etf.ProtocolAddressBase;
+import org.jacorb.orb.iiop.IIOPAddress;
+import org.jacorb.orb.iiop.IIOPProfile;
+import java.util.List;
+import java.util.Iterator;
+//+>
 
 /**
  * {@.ja ポータブルインターセプタを利用してIORを書き換える.}
@@ -92,20 +99,40 @@ public class IopIorInterceptor extends LocalObject
         if(m_endpoints==null){
             return;
         }
+        if(m_endpoints.size()==0){
+            return;
+        }
+        else {
+            int ic;
+            for(ic=0;ic<m_endpoints.size();++ic){
+                if(m_endpoints.get(ic).Port==0){
+                    break;
+                }
+            }
+            if(ic==m_endpoints.size()){
+                return ;
+            }
+        }
 
-        //<+ sun 
-        com.sun.corba.se.spi.orb.ORB sunorb 
-                    = (com.sun.corba.se.spi.orb.ORB)orb;
-
-        com.sun.corba.se.spi.ior.IOR inior = sunorb.getFVDCodeBaseIOR();
-        com.sun.corba.se.spi.ior.iiop.IIOPProfile iop
-            = inior.getProfile();
-        com.sun.corba.se.spi.ior.iiop.IIOPProfileTemplate ptemp 
-            = (com.sun.corba.se.spi.ior.iiop.IIOPProfileTemplate)iop.getTaggedProfileTemplate();
-        String host = ptemp.getPrimaryAddress().getHost();
-        short port = (short)ptemp.getPrimaryAddress().getPort();
+        //<+ JacORB
+        ProtocolAddressBase address = null;
+        org.jacorb.orb.ORB jacorb = (org.jacorb.orb.ORB)orb;
+        if (jacorb.getBasicAdapter() == null) {
+            return;
+        }
+        List eplist = jacorb.getBasicAdapter().getEndpointProfiles();
+        for (Iterator i = eplist.iterator(); i.hasNext(); ) {
+            org.omg.ETF.Profile p = (org.omg.ETF.Profile)i.next();
+            if (p instanceof IIOPProfile) {
+                address = ((IIOPProfile)p).getAddress();
+                break;
+            }
+        }
+        if (address == null) {
+            return;
+        }
+        short port = (short)((IIOPAddress)address).getPort();
         //+>
-
 
         for(int ic=0;ic<m_endpoints.size();ic++){
             if(m_endpoints.get(ic).Port==0){
