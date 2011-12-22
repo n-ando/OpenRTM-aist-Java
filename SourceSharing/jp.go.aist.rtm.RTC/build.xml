@@ -331,6 +331,58 @@
 		</copy>
 		<delete dir="${source.openrtmtemp}" />
 		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="UTF-8" />
+		<javac srcdir="${source.main}:${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8"  includes="go/aist/**" excludes="go/aist/ForSunOrb/**,go/aist/ForJacOrb/**"  />
+		<delete dir="${source.examplestemp}" />
+		<native2ascii encoding="UTF-8" src="${source.examples}" dest="${source.examplestemp}" >
+	            <include name="**/*.java" />
+	        </native2ascii>
+	        <fixcrlf srcdir="${source.examplestemp}" eol="crlf" >
+	            <include name="**/*.java" />
+	        </fixcrlf>
+		<copy todir="${source.examples}">
+		    <fileset dir="${source.examplestemp}" >
+		        <include name="**/*.java" />
+		    </fileset>
+		</copy>
+		<delete dir="${source.examplestemp}" />
+		<javac srcdir="${source.examples}:" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
+		<native2ascii encoding="UTF-8" src="${source.sdo}" dest="${source.sdotemp}" >
+	            <include name="**/*.java" />
+	        </native2ascii>
+		<copy todir="${source.sdo}">
+		    <fileset dir="${source.sdotemp}" >
+		        <include name="**/*.java" />
+		    </fileset>
+		</copy>
+		<delete dir="${source.sdotemp}" />
+		<native2ascii encoding="UTF-8" src="${source.rtc}" dest="${source.rtctemp}" >
+	            <include name="**/*.java" />
+	        </native2ascii>
+		<copy todir="${source.rtc}">
+		    <fileset dir="${source.rtctemp}" >
+		        <include name="**/*.java" />
+		    </fileset>
+		</copy>
+		<delete dir="${source.rtctemp}" />
+		<native2ascii encoding="UTF-8" src="${source.rtm}" dest="${source.rtmtemp}" >
+	            <include name="**/*.java" />
+	        </native2ascii>
+		<copy todir="${source.rtm}">
+		    <fileset dir="${source.rtmtemp}" >
+		        <include name="**/*.java" />
+		    </fileset>
+		</copy>
+		<delete dir="${source.rtmtemp}" />
+		<native2ascii encoding="UTF-8" src="${source.openrtm}" dest="${source.openrtmtemp}" >
+	            <include name="**/*.java" />
+	        </native2ascii>
+		<copy todir="${source.openrtm}">
+		    <fileset dir="${source.openrtmtemp}" >
+		        <include name="**/*.java" />
+		    </fileset>
+		</copy>
+		<delete dir="${source.openrtmtemp}" />
+		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="UTF-8" />
 		<copy todir="${source.common}" overwrite="true">
 		    <fileset dir="${source.sunorb}" >
 		        <include name="**/*.java" />
