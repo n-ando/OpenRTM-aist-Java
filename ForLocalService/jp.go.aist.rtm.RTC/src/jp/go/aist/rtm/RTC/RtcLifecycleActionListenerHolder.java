@@ -19,6 +19,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      * {@.en preCreate callback function}
      */
     public void preCreate(String args){
+        super.setChanged();
+        super.notifyObservers((Object)args);
+        super.clearChanged();
     }
     
     /**
@@ -26,6 +29,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      * {@.en postCreate callback function}
      */
     public void postCreate(RTObject_impl rtobj){
+        super.setChanged();
+        super.notifyObservers((Object)rtobj);
+        super.clearChanged();
     }
     
     /**
@@ -33,6 +39,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      * {@.en preConfigure callback function}
      */
     public void preConfigure(Properties prop){
+        super.setChanged();
+        super.notifyObservers((Object)prop);
+        super.clearChanged();
     }
     
     /**
@@ -40,6 +49,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      * {@.en postConfigure callback function}
      */
     public void postConfigure(Properties prop){
+        super.setChanged();
+        super.notifyObservers((Object)prop);
+        super.clearChanged();
     }
     
     /**
@@ -47,6 +59,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      * {@.en preInitialize callback function}
      */
     public void preInitialize(){
+        super.setChanged();
+        super.notifyObservers();
+        super.clearChanged();
     }
     
     /**
@@ -54,6 +69,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      * {@.en postInitialize callback function}
      */
     public void postInitialize(){
+        super.setChanged();
+        super.notifyObservers();
+        super.clearChanged();
     }
   };
 

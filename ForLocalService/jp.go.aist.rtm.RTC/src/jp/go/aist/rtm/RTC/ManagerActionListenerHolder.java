@@ -15,6 +15,9 @@ public class ManagerActionListenerHolder extends Observable {
      * {@.en preShutdown callback function}
      */
     public void preShutdown(){
+        super.setChanged();
+        super.notifyObservers();
+        super.clearChanged();
     }
 
     /**
@@ -22,6 +25,9 @@ public class ManagerActionListenerHolder extends Observable {
      * {@.en postShutdown callback function}
      */
     public void postShutdown() {
+        super.setChanged();
+        super.notifyObservers();
+        super.clearChanged();
     }
 
     /**
@@ -29,6 +35,9 @@ public class ManagerActionListenerHolder extends Observable {
      * {@.en preReinit callback function}
      */
     public void preReinit(){
+        super.setChanged();
+        super.notifyObservers();
+        super.clearChanged();
     }
 
     /**
@@ -36,6 +45,9 @@ public class ManagerActionListenerHolder extends Observable {
      * {@.en postReinit callback function}
      */
     public void postReinit(){
+        super.setChanged();
+        super.notifyObservers();
+        super.clearChanged();
     }
   };
 

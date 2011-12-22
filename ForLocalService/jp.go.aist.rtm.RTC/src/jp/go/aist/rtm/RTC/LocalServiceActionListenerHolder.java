@@ -25,6 +25,9 @@ public class LocalServiceActionListenerHolder extends Observable {
      * {@.en preServiceRegister callback function}
      */
     public void preServiceRegister(String service_name){
+        super.setChanged();
+        super.notifyObservers((Object)service_name);
+        super.clearChanged();
     }
     
     /**
@@ -33,6 +36,11 @@ public class LocalServiceActionListenerHolder extends Observable {
      */
     public void postServiceRegister(String service_name,
                                      LocalServiceBase service){
+        super.setChanged();
+        LocalServiceActionListenerArgument arg 
+            = new LocalServiceActionListenerArgument(service_name,service);
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
     }
     
     /**
@@ -41,6 +49,11 @@ public class LocalServiceActionListenerHolder extends Observable {
      */
     public void preServiceInit(Properties prop,
                                 LocalServiceBase service){
+        super.setChanged();
+        LocalServiceActionListenerArgument arg 
+            = new LocalServiceActionListenerArgument(prop,service);
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
     }
     /**
      * {@.ja postServiceInit コールバック関数}
@@ -48,6 +61,11 @@ public class LocalServiceActionListenerHolder extends Observable {
      */
     public void postServiceInit(Properties prop,
                                  LocalServiceBase service){
+        super.setChanged();
+        LocalServiceActionListenerArgument arg 
+            = new LocalServiceActionListenerArgument(prop,service);
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
     }
     
     /**
@@ -56,6 +74,11 @@ public class LocalServiceActionListenerHolder extends Observable {
      */
     public void preServiceReinit(Properties prop,
                                   LocalServiceBase service){
+        super.setChanged();
+        LocalServiceActionListenerArgument arg 
+            = new LocalServiceActionListenerArgument(prop,service);
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
     }
     /**
      * {@.ja postServiceReinit コールバック関数}
@@ -63,6 +86,11 @@ public class LocalServiceActionListenerHolder extends Observable {
      */
     public void postServiceReinit(Properties prop,
                                    LocalServiceBase service){
+        super.setChanged();
+        LocalServiceActionListenerArgument arg 
+            = new LocalServiceActionListenerArgument(prop,service);
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
     }
 
     /**
@@ -71,6 +99,11 @@ public class LocalServiceActionListenerHolder extends Observable {
      */
     public void postServiceFinalize(String service_name,
                                      LocalServiceBase service){
+        super.setChanged();
+        LocalServiceActionListenerArgument arg 
+            = new LocalServiceActionListenerArgument(service_name,service);
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
     }
     /**
      * {@.ja preServiceFinalize コールバック関数}
@@ -78,6 +111,11 @@ public class LocalServiceActionListenerHolder extends Observable {
      */
     public void preServiceFinalize(String service_name,
                                     LocalServiceBase service){
+        super.setChanged();
+        LocalServiceActionListenerArgument arg 
+            = new LocalServiceActionListenerArgument(service_name,service);
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
     }
   };
 

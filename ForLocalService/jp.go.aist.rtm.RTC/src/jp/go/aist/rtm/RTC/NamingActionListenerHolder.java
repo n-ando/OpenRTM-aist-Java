@@ -21,6 +21,11 @@ public class NamingActionListenerHolder extends Observable {
      */
     public void preBind(RTObject_impl rtobj,
                          Vector<String> name){
+        super.setChanged();
+        NamingActionListenerArgument arg 
+            = new NamingActionListenerArgument(rtobj,name);
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
     }
     /**
      * {@.ja postBind コールバック関数}
@@ -28,6 +33,11 @@ public class NamingActionListenerHolder extends Observable {
      */
     public void postBind(RTObject_impl rtobj,
                           Vector<String> name){
+        super.setChanged();
+        NamingActionListenerArgument arg 
+            = new NamingActionListenerArgument(rtobj,name);
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
     }
     
     /**
@@ -36,6 +46,11 @@ public class NamingActionListenerHolder extends Observable {
      */
     public void preUnbind(RTObject_impl rtobj,
                            Vector<String> name){
+        super.setChanged();
+        NamingActionListenerArgument arg 
+            = new NamingActionListenerArgument(rtobj,name);
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
     }
     
     /**
@@ -44,6 +59,11 @@ public class NamingActionListenerHolder extends Observable {
      */
     public void postUnbind(RTObject_impl rtobj,
                             Vector<String> name){
+        super.setChanged();
+        NamingActionListenerArgument arg 
+            = new NamingActionListenerArgument(rtobj,name);
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
     }
   };
 
