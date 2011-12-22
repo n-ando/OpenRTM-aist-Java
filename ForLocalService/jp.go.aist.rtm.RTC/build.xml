@@ -331,7 +331,7 @@
 		</copy>
 		<delete dir="${source.openrtmtemp}" />
 		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="UTF-8" />
-		<javac srcdir="${source.main}:${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
+		<javac srcdir="${source.main}:${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8"  includes="go/aist/**" excludes="go/aist/ForSunOrb/**,go/aist/ForJacOrb/**"  />
 		<delete dir="${source.examplestemp}" />
 		<native2ascii encoding="UTF-8" src="${source.examples}" dest="${source.examplestemp}" >
 	            <include name="**/*.java" />
@@ -346,6 +346,9 @@
 		</copy>
 		<delete dir="${source.examplestemp}" />
 		<javac srcdir="${source.examples}:" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
+		<native2ascii encoding="UTF-8" src="${source.sdo}" dest="${source.sdotemp}" >
+	            <include name="**/*.java" />
+	        </native2ascii>
 		<copy todir="${source.sdo}">
 		    <fileset dir="${source.sdotemp}" >
 		        <include name="**/*.java" />
