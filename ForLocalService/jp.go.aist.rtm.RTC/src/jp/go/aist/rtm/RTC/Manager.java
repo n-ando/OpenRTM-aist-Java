@@ -373,6 +373,8 @@ public class Manager {
 
         bindManagerServant();
 
+        initLocalService();
+
         preloadComponent();
 
         if (m_initProc != null) {
@@ -3456,6 +3458,30 @@ public class Manager {
             }
             return true;
         }
+    }
+    /**
+     * {@.ja LocalService の初期化}
+     * {@.en LocalService initialization}
+     * @return Timer 
+     *   {@.ja 初期化処理実行結果(初期化成功:true、初期化失敗:false)}
+     *   {@.en Initialization result (Successful:true, Failed:false)}
+     */
+    protected boolean initLocalService(){
+        rtcout.println(Logbuf.TRACE,"Manager::initLocalService()");
+
+        LocalServiceAdmin admin = LocalServiceAdmin.instance();
+        Properties prop = m_config.getNode("manager.local_service");
+        admin.init(prop);
+        rtcout.println(Logbuf.DEBUG,"LocalServiceAdmin's properties:");
+        String str = new String();
+        prop._dump(str,prop,0);
+        rtcout.println(Logbuf.TRACE, str);
+
+        LocalServiceProfile[] svclist = admin.getServiceProfiles();
+        for (int ic=0; ic < svclist.length; ++ic) {
+            rtcout.println(Logbuf.INFO,"Available local service: "+svclist[ic].name+" "+svclist[ic].uuid);
+          }
+        return true;
     }
     /**
      * {@.ja コンポーネント削除用クラス}
