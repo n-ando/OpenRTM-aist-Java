@@ -227,7 +227,7 @@ public class Manager {
     public void shutdown() {
         
         rtcout.println(Logbuf.TRACE, "Manager.shutdown()");
-        
+        m_listeners.manager_.preShutdown();        
         shutdownComponents();
         shutdownNaming();
         shutdownORB();
@@ -246,7 +246,8 @@ public class Manager {
         } else {
             join();
         }
-        
+       
+        m_listeners.manager_.postShutdown(); 
         shutdownLogger();
     }
     
@@ -535,12 +536,14 @@ public class Manager {
         
         String file_name = moduleFileName;
         String init_func = initFunc;
+        m_listeners.module_.preLoad(file_name, init_func);
         try {
             if (init_func==null||init_func.equals("")) {
                 init_func = "registerModule";
             }
             String path = m_module.load(file_name, init_func);
             rtcout.println(Logbuf.DEBUG, "module path: "+path);
+            m_listeners.module_.postLoad(path, init_func);
             return path;
             
         } catch (Exception e) {
@@ -566,8 +569,10 @@ public class Manager {
     public void unload(final String moduleFileName) throws Exception {
         
         rtcout.println(Logbuf.TRACE, "Manager.unload("+moduleFileName+")");
-        
+       
+        m_listeners.module_.preUnload(moduleFileName); 
         m_module.unload(moduleFileName);
+        m_listeners.module_.postUnload(moduleFileName); 
     }
     
     /**
@@ -845,6 +850,7 @@ public class Manager {
         if( comp_args == null || comp_args.equals("") ) {
             return null;
         }
+        m_listeners.rtclifecycle_.preCreate(comp_args);
 
         //------------------------------------------------------------
         // extract "comp_type" and "comp_prop" from comp_arg
@@ -973,6 +979,7 @@ public class Manager {
         rtcout.println(Logbuf.TRACE, 
             "RTC Created: " + comp_id.getProperty("implementaion_id"));
 
+        m_listeners.rtclifecycle_.postCreate(comp);
         prop.merge(comp_prop);
     
 /* zxc
@@ -1037,12 +1044,15 @@ public class Manager {
         // rtc.conf:
         // [category].[type_name].config_file = file_name
         // [category].[instance_name].config_file = file_name
+        m_listeners.rtclifecycle_.preConfigure(prop);
         configureComponent(comp, prop);
 
+        m_listeners.rtclifecycle_.postConfigure(prop);
         // comp.setProperties(prop);
 
         //------------------------------------------------------------
         // Component initialization
+        m_listeners.rtclifecycle_.preInitialize();
         if( comp.initialize() != ReturnCode_t.RTC_OK ) {
             rtcout.println(Logbuf.TRACE, 
                 "RTC initialization failed: " 
@@ -1054,6 +1064,7 @@ public class Manager {
             "RTC initialization succeeded: " 
             + comp_id.getProperty("implementaion_id"));
 
+        m_listeners.rtclifecycle_.postInitialize();
         //------------------------------------------------------------
         // Bind component to naming service
         registerComponent(comp);
@@ -1326,11 +1337,13 @@ public class Manager {
         m_compManager.registerObject(comp, new InstanceName(comp));
         
         String[] names = comp.getNamingNames();
-        for (int i = 0; i < names.length; ++i) {
-            rtcout.println(Logbuf.TRACE, "Bind name: " + names[i]);
+        m_listeners.naming_.preBind(comp,names);
+        for (int ic = 0; ic < names.length; ++ic) {
+            rtcout.println(Logbuf.TRACE, "Bind name: " + names[ic]);
             
-            m_namingManager.bindObject(names[i], comp);
+            m_namingManager.bindObject(names[ic], comp);
         }
+        m_listeners.naming_.postBind(comp,names);
 
         return true;
     }
@@ -1678,6 +1691,122 @@ public class Manager {
         return m_compManager.getObjects();
     }
     
+    /**
+     *
+     */
+    public void
+    addManagerActionListener(ManagerActionListener listener,
+                             boolean autoclean) {
+        m_listeners.manager_.addObserver(listener);
+    }
+    /**
+     *
+     */
+    public void
+    addManagerActionListener(ManagerActionListener listener){
+        addManagerActionListener(listener,true);
+    }
+    /**
+     *
+     */
+    public void
+    removeManagerActionListener(ManagerActionListener listener){
+        m_listeners.manager_.deleteObserver(listener);
+    }
+
+    /**
+     *
+     */
+    public void
+    addModuleActionListener(ModuleActionListener listener,
+                             boolean autoclean) {
+        m_listeners.module_.addObserver(listener);
+    }
+    /**
+     *
+     */
+    public void
+    addModuleActionListener(ModuleActionListener listener){
+        addModuleActionListener(listener,true);
+    }
+    /**
+     *
+     */
+    public void
+    removeModuleActionListener(ModuleActionListener listener){
+        m_listeners.module_.deleteObserver(listener);
+    }
+
+    /**
+     *
+     */
+    public void
+    addRtcLifecycleActionListener(RtcLifecycleActionListener listener,
+                                  boolean autoclean){
+    m_listeners.rtclifecycle_.addObserver(listener);
+    }
+    /**
+     *
+     */
+    public void
+    addRtcLifecycleActionListener(RtcLifecycleActionListener listener){
+        addRtcLifecycleActionListener(listener,true);
+    }
+    /**
+     *
+     */
+    public void
+    removeRtcLifecycleActionListener(RtcLifecycleActionListener listener){
+        m_listeners.rtclifecycle_.deleteObserver(listener);
+    }
+    
+    /**
+     *
+     */
+    public void
+    addNamingActionListener(NamingActionListener listener,
+                            boolean autoclean){
+        m_listeners.naming_.addObserver(listener);
+    }
+    /**
+     *
+     */
+    public void
+    addNamingActionListener(NamingActionListener listener){
+        addNamingActionListener(listener,true);
+    }
+    /**
+     *
+     */
+    public void
+    removeNamingActionListener(NamingActionListener listener){
+        m_listeners.naming_.deleteObserver(listener);
+    }
+    
+    /**
+     *
+     */
+    public void
+    addLocalServiceActionListener(LocalServiceActionListener listener,
+                                       boolean autoclean){
+        m_listeners.localservice_.addObserver(listener);
+    }
+    /**
+     *
+     */
+    public void
+    addLocalServiceActionListener(LocalServiceActionListener listener){
+        addLocalServiceActionListener(listener,true);
+    }
+    /**
+     *
+     */
+    public void
+    removeLocalServiceActionListener(LocalServiceActionListener listener){
+        m_listeners.localservice_.deleteObserver(listener);
+    }
+
+ 
     /**
      * {@.ja ORB のポインタを取得する。}
      * {@.en Get the pointer to ORB}
@@ -2471,7 +2600,17 @@ public class Manager {
     protected void shutdownNaming() {
         
         rtcout.println(Logbuf.TRACE, "Manager.shutdownNaming()");
-        
+        Vector<RTObject_impl> comps = getComponents();
+
+        for (int ic=0; ic < comps.size(); ++ic) {
+            String[] names = comps.get(ic).getNamingNames();
+            m_listeners.naming_.preUnbind(comps.get(ic), names);
+            for (int jc=0; jc < names.length; ++jc) {
+                m_namingManager.unbindObject(names[jc]);
+            }
+            m_listeners.naming_.postUnbind(comps.get(ic), names);
+        }
+
         m_namingManager.unbindAll();
     }
     
@@ -3498,6 +3637,8 @@ public class Manager {
      * 
      */
     Finalized m_finalized = new Finalized();
+
+    ManagerActionListeners m_listeners = new ManagerActionListeners();
 
     //private static final String SERVER_HOST = "com.sun.CORBA.ORBServerHost";
     //private static final String SERVER_PORT = "com.sun.CORBA.ORBServerPort";

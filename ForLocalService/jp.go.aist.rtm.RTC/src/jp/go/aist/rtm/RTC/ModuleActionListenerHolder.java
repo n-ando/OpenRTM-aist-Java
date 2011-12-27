@@ -18,7 +18,7 @@ public class ModuleActionListenerHolder extends Observable {
                          String funcname){
         super.setChanged();
         ModuleActionListenerArgument arg 
-            = new ModuleActionListenerArgument(modname,funcname);
+            = new ModuleActionListenerArgument("preLoad",modname);
         super.notifyObservers((Object)arg);
         super.clearChanged();
     }
@@ -31,7 +31,7 @@ public class ModuleActionListenerHolder extends Observable {
                           String funcname){
         super.setChanged();
         ModuleActionListenerArgument arg 
-            = new ModuleActionListenerArgument(modname,funcname);
+            = new ModuleActionListenerArgument("postLoad",modname);
         super.notifyObservers((Object)arg);
         super.clearChanged();
     }
@@ -41,7 +41,9 @@ public class ModuleActionListenerHolder extends Observable {
      */
     public void preUnload(String modname){
         super.setChanged();
-        super.notifyObservers((Object)modname);
+        ModuleActionListenerArgument arg 
+            = new ModuleActionListenerArgument("preUnload",modname);
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
     
@@ -51,7 +53,9 @@ public class ModuleActionListenerHolder extends Observable {
      */
     public void postUnload(String modname){
         super.setChanged();
-        super.notifyObservers((Object)modname);
+        ModuleActionListenerArgument arg 
+            = new ModuleActionListenerArgument("postUnload",modname);
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
   };

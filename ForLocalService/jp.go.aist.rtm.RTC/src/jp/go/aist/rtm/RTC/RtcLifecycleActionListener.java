@@ -1,5 +1,9 @@
 package jp.go.aist.rtm.RTC;
 
+import java.util.Observable;
+import java.util.Observer;
+
+
 import jp.go.aist.rtm.RTC.util.Properties;
 
   /**
@@ -24,47 +28,19 @@ import jp.go.aist.rtm.RTC.util.Properties;
    *
    *
    */
-public class RtcLifecycleActionListener {
-    /**
-     * {@.ja preCreate コールバック関数}
-     * {@.en preCreate callback function}
-     */
-    public void preCreate(String args){
+public abstract class RtcLifecycleActionListener  implements Observer{
+    public void update(Observable o, Object obj) {
+           String arg = (String)obj;
+           operator();
     }
-    
     /**
-     * {@.ja postCreate コールバック関数}
-     * {@.en postCreate callback function}
+     * {@.ja 仮想コールバック関数}
+     * {@.en Virtual Callback function}
+     * <p>
+     * {@.ja RtcLifecycleActionListener のコールバック関数}
+     * {@.en This is a the Callback function for RtcLifecycleActionListener.}
+     *
      */
-    public void postCreate(RTObject_impl rtobj){
-    }
-    
-    /**
-     * {@.ja preConfigure コールバック関数}
-     * {@.en preConfigure callback function}
-     */
-    public void preConfigure(Properties prop){
-    }
-    
-    /**
-     * {@.ja postConfigure コールバック関数}
-     * {@.en postConfigure callback function}
-     */
-    public void postConfigure(Properties prop){
-    }
-    
-    /**
-     * {@.ja preInitialize コールバック関数}
-     * {@.en preInitialize callback function}
-     */
-    public void preInitialize(){
-    }
-    
-    /**
-     * {@.ja postInitialize コールバック関数}
-     * {@.en postInitialize callback function}
-     */
-    public void postInitialize(){
-    }
+    public abstract void operator();
   };
 

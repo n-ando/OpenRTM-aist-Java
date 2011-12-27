@@ -9,6 +9,13 @@ import java.util.Observer;
    * {@.en ManagerActionListenerHolder class}
    */
 public class ManagerActionListenerHolder extends Observable {
+    public void notify(final int ec_id,  RTC.ReturnCode_t ret) {
+        super.setChanged();
+        ManagerActionListenerArgument arg 
+            = new ManagerActionListenerArgument("","","");
+        super.notifyObservers((Object)arg);
+        super.clearChanged();
+    }
 
     /**
      * {@.ja preShutdown コールバック関数}

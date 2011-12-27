@@ -1,5 +1,9 @@
 package jp.go.aist.rtm.RTC;
 
+
+import java.util.Observable;
+import java.util.Observer;
+
 import java.util.Vector;
 
   /**
@@ -23,38 +27,59 @@ import java.util.Vector;
    * provides callbacks for various events in rtobject.}
    *
    */
-public class NamingActionListener {
-    
+public abstract class NamingActionListener implements Observer{
+    public void update(Observable o, Object obj) {
+           NamingActionListenerArgument arg = (NamingActionListenerArgument)obj;
+           if(arg.m_method_name.equals("preBind")){
+               preBind(arg.m_rtobj,arg.m_name);
+           }
+           else if(arg.m_method_name.equals("postBind")){
+               postBind(arg.m_rtobj,arg.m_name);
+           }
+           else if(arg.m_method_name.equals("preUnbind")){
+               preUnbind(arg.m_rtobj,arg.m_name);
+           }
+           else if(arg.m_method_name.equals("postUnbind")){
+               postUnbind(arg.m_rtobj,arg.m_name);
+           }
+           else{
+               operator();
+           }
+    }
+    /**
+     * {@.ja 仮想コールバック関数}
+     * {@.en Virtual Callback function}
+     * <p>
+     * {@.ja NamingActionListener のコールバック関数}
+     * {@.en This is a the Callback function for NamingActionListener.}
+     *
+     */
+    public abstract void operator();
     /**
      * {@.ja preBind コールバック関数}
      * {@.en preBind callback function}
      */
-    public void preBind(RTObject_impl rtobj,
-                         Vector<String> name){
-    }
+    public abstract void preBind(RTObject_impl rtobj,
+                         String[] name);
     /**
      * {@.ja postBind コールバック関数}
      * {@.en postBind callback function}
      */
-    public void postBind(RTObject_impl rtobj,
-                          Vector<String> name){
-    }
+    public abstract void postBind(RTObject_impl rtobj,
+                          String[] name);
     
     /**
      * {@.ja preUnbind コールバック関数}
      * {@.en preUnbind callback function}
      */
-    public void preUnbind(RTObject_impl rtobj,
-                           Vector<String> name){
-    }
-
+    public abstract void preUnbind(RTObject_impl rtobj,
+                           String[] name);
     
     /**
      * {@.ja postUnbind コールバック関数}
      * {@.en postUnbind callback function}
      */
-    public void postUnbind(RTObject_impl rtobj,
-                            Vector<String> name){
-    }
+    public abstract void postUnbind(RTObject_impl rtobj,
+                            String[] name);
   };
 

@@ -20,10 +20,10 @@ public class NamingActionListenerHolder extends Observable {
      * {@.en preBind callback function}
      */
     public void preBind(RTObject_impl rtobj,
-                         Vector<String> name){
+                         String[] name){
         super.setChanged();
         NamingActionListenerArgument arg 
-            = new NamingActionListenerArgument(rtobj,name);
+            = new NamingActionListenerArgument("",rtobj,name);
         super.notifyObservers((Object)arg);
         super.clearChanged();
     }
@@ -32,10 +32,10 @@ public class NamingActionListenerHolder extends Observable {
      * {@.en postBind callback function}
      */
     public void postBind(RTObject_impl rtobj,
-                          Vector<String> name){
+                          String[] name){
         super.setChanged();
         NamingActionListenerArgument arg 
-            = new NamingActionListenerArgument(rtobj,name);
+            = new NamingActionListenerArgument("postBind",rtobj,name);
         super.notifyObservers((Object)arg);
         super.clearChanged();
     }
@@ -45,10 +45,10 @@ public class NamingActionListenerHolder extends Observable {
      * {@.en preUnbind callback function}
      */
     public void preUnbind(RTObject_impl rtobj,
-                           Vector<String> name){
+                           String[] name){
         super.setChanged();
         NamingActionListenerArgument arg 
-            = new NamingActionListenerArgument(rtobj,name);
+            = new NamingActionListenerArgument("preUnbind",rtobj,name);
         super.notifyObservers((Object)arg);
         super.clearChanged();
     }
@@ -58,10 +58,10 @@ public class NamingActionListenerHolder extends Observable {
      * {@.en postUnbind callback function}
      */
     public void postUnbind(RTObject_impl rtobj,
-                            Vector<String> name){
+                            String[] name){
         super.setChanged();
         NamingActionListenerArgument arg 
-            = new NamingActionListenerArgument(rtobj,name);
+            = new NamingActionListenerArgument("postUnbind",rtobj,name);
         super.notifyObservers((Object)arg);
         super.clearChanged();
     }
