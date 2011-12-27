@@ -32,7 +32,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      */
     public void postCreate(RTObject_impl rtobj){
         super.setChanged();
-        super.notifyObservers((Object)rtobj);
+        RtcLifecycleActionListenerArgument arg 
+            = new RtcLifecycleActionListenerArgument("postCreate",rtobj);
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
     
@@ -42,7 +44,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      */
     public void preConfigure(Properties prop){
         super.setChanged();
-        super.notifyObservers((Object)prop);
+        RtcLifecycleActionListenerArgument arg 
+            = new RtcLifecycleActionListenerArgument("preConfigure",prop);
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
     
@@ -52,7 +56,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      */
     public void postConfigure(Properties prop){
         super.setChanged();
-        super.notifyObservers((Object)prop);
+        RtcLifecycleActionListenerArgument arg 
+            = new RtcLifecycleActionListenerArgument("postConfigure",prop);
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
     
@@ -62,7 +68,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      */
     public void preInitialize(){
         super.setChanged();
-        super.notifyObservers();
+        RtcLifecycleActionListenerArgument arg 
+            = new RtcLifecycleActionListenerArgument("preInitialize");
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
     
@@ -72,7 +80,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      */
     public void postInitialize(){
         super.setChanged();
-        super.notifyObservers();
+        RtcLifecycleActionListenerArgument arg 
+            = new RtcLifecycleActionListenerArgument("postInitialize");
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
   };
