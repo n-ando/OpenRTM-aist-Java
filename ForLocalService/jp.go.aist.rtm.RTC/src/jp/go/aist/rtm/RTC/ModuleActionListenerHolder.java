@@ -18,7 +18,7 @@ public class ModuleActionListenerHolder extends Observable {
                          String funcname){
         super.setChanged();
         ModuleActionListenerArgument arg 
-            = new ModuleActionListenerArgument("preLoad",modname);
+            = new ModuleActionListenerArgument("preLoad",modname,funcname);
         super.notifyObservers((Object)arg);
         super.clearChanged();
     }
@@ -31,7 +31,7 @@ public class ModuleActionListenerHolder extends Observable {
                           String funcname){
         super.setChanged();
         ModuleActionListenerArgument arg 
-            = new ModuleActionListenerArgument("postLoad",modname);
+            = new ModuleActionListenerArgument("postLoad",modname,funcname);
         super.notifyObservers((Object)arg);
         super.clearChanged();
     }
