@@ -5,10 +5,15 @@ package jp.go.aist.rtm.RTC;
    */
   class ManagerActionListeners
   {
-    public ManagerActionListenerHolder manager_;
-    public ModuleActionListenerHolder module_;
-    public RtcLifecycleActionListenerHolder rtclifecycle_;
-    public NamingActionListenerHolder naming_;
-    public LocalServiceActionListenerHolder localservice_;
+    public ManagerActionListenerHolder manager_ 
+        = new ManagerActionListenerHolder();
+    public ModuleActionListenerHolder module_
+        = new ModuleActionListenerHolder();
+    public RtcLifecycleActionListenerHolder rtclifecycle_
+        = new RtcLifecycleActionListenerHolder();
+    public NamingActionListenerHolder naming_
+        = new NamingActionListenerHolder();
+    public LocalServiceActionListenerHolder localservice_
+        = new LocalServiceActionListenerHolder();
   };
 

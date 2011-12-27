@@ -20,7 +20,9 @@ public class RtcLifecycleActionListenerHolder extends Observable {
      */
     public void preCreate(String args){
         super.setChanged();
-        super.notifyObservers((Object)args);
+        RtcLifecycleActionListenerArgument arg 
+            = new RtcLifecycleActionListenerArgument("preCreate",args);
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
     

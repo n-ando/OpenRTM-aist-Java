@@ -846,6 +846,7 @@ public class Manager {
         
         rtcout.println(Logbuf.TRACE, 
                             "Manager.createComponent(" + comp_args + ")");
+System.out.println("Manager.createComponent(" + comp_args + ")");
         
         if( comp_args == null || comp_args.equals("") ) {
             return null;
@@ -982,62 +983,6 @@ public class Manager {
         m_listeners.rtclifecycle_.postCreate(comp);
         prop.merge(comp_prop);
     
-/* zxc
-        for (i=0, len=m_factory.m_objects.size(); i < len; ++i) {
-            FactoryBase factory = m_factory.m_objects.elementAt(i);
-            if (factory == null) {
-                return null;
-            }
-
-            if (factory.m_Profile.getProperty("implementation_id").equals(comp_id.getProperty("implementation_id"))) {
-                prop = factory.profile();
-
-                Vector<String> keyval = comp_prop.propertyNames();
-                for (int ic=0, lenc=comp_prop.size(); ic < lenc; ++ic) {
-                    prop.setProperty(keyval.get(ic) , 
-                                        comp_prop.getProperty(keyval.get(ic)));
-                }
-
-                final String[] inherit_prop = {
-                    "exec_cxt.periodic.type",
-                    "exec_cxt.periodic.rate",
-                    "exec_cxt.evdriven.type",
-                    "naming.formats",
-                    "logger.enable",
-                    "logger.log_level",
-                    "naming.enable",
-                    "naming.type",
-                    "naming.formats",
-                    ""
-                };
-
-                for (int ic=0; inherit_prop[ic].length() != 0; ++ic) {
-                    //        if (prop.hasKey() == NULL) continue;
-                    prop.setProperty(inherit_prop[ic], 
-                                        m_config.getProperty(inherit_prop[ic]));
-                }
-
-                comp = m_factory.m_objects.elementAt(i).create(this);
-                if (comp == null) {
-                    rtcout.println(Logbuf.ERROR, 
-                        "RTC creation failed: " 
-                        + comp_id.getProperty("implementaion_id"));
-                    return null;
-                }
-                rtcout.println(Logbuf.TRACE, 
-                    "RTC Created: " + comp_id.getProperty("implementaion_id"));
-                break;
-            }
-        }
-        if(i == m_factory.m_objects.size()) {
-            rtcout.println(Logbuf.ERROR, 
-            "Factory not found: " + comp_id.getProperty("implementaion_id"));
-            return null;
-        } 
-        if( comp == null ) {
-            return null;
-        }
-*/
         //------------------------------------------------------------
         // Load configuration file specified in "rtc.conf"
         //

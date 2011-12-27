@@ -30,8 +30,28 @@ import jp.go.aist.rtm.RTC.util.Properties;
    */
 public abstract class RtcLifecycleActionListener  implements Observer{
     public void update(Observable o, Object obj) {
-           String arg = (String)obj;
-           operator();
+           RtcLifecycleActionListenerArgument arg = (RtcLifecycleActionListenerArgument)obj;
+           if(arg.m_method.equals("preCreate")){
+               preCreate(arg.m_args);
+           }
+           else if(arg.m_method.equals("postCreate")){
+               postCreate(arg.m_rtobj);
+           }
+           else if(arg.m_method.equals("preConfigure")){
+               preConfigure(arg.m_prop);
+           }
+           else if(arg.m_method.equals("postConfigure")){
+               postConfigure(arg.m_prop);
+           }
+           else if(arg.m_method.equals("preInitialize")){
+               preInitialize();
+           }
+           else if(arg.m_method.equals("postInitialize")){
+               postInitialize();
+           }
+           else{
+               operator();
+           }
     }
     /**
      * {@.ja 仮想コールバック関数}
@@ -42,5 +62,40 @@ public abstract class RtcLifecycleActionListener  implements Observer{
      *
      */
     public abstract void operator();
+    /**
+     * {@.ja preCreate コールバック関数}
+     * {@.en preCreate callback function}
+     */
+    public abstract void preCreate(String args);
+    
+    /**
+     * {@.ja postCreate コールバック関数}
+     * {@.en postCreate callback function}
+     */
+    public abstract void postCreate(RTObject_impl rtobj);
+    
+    /**
+     * {@.ja preConfigure コールバック関数}
+     * {@.en preConfigure callback function}
+     */
+    public abstract void preConfigure(Properties prop);
+    
+    /**
+     * {@.ja postConfigure コールバック関数}
+     * {@.en postConfigure callback function}
+     */
+    public abstract void postConfigure(Properties prop);
+    
+    /**
+     * {@.ja preInitialize コールバック関数}
+     * {@.en preInitialize callback function}
+     */
+    public abstract void preInitialize();
+    
+    /**
+     * {@.ja postInitialize コールバック関数}
+     * {@.en postInitialize callback function}
+     */
+    public abstract void postInitialize();
   };
 

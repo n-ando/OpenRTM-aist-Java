@@ -1,4 +1,6 @@
 package jp.go.aist.rtm.RTC;
+
+import jp.go.aist.rtm.RTC.util.Properties;
   /**
    * {@.ja RtcLifecycleActionListenerArgument クラス}
    * {@.en RtcLifecycleActionListenerArgument class}
@@ -12,13 +14,14 @@ public class RtcLifecycleActionListenerArgument {
      *
      */
     public RtcLifecycleActionListenerArgument(String method,
-                         String modname,
-                         String funcname){
+                         String args){
         m_method = method;
-        m_modname = modname; 
-        m_funcname = funcname;
+        m_args = args; 
     }
     public String m_method; 
+    public String m_args; 
+    public Properties m_prop; 
+    public RTObject_impl m_rtobj; 
     public String m_modname; 
     public String m_funcname;
 }
