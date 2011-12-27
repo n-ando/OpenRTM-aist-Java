@@ -12,7 +12,7 @@ public class ManagerActionListenerHolder extends Observable {
     public void notify(final int ec_id,  RTC.ReturnCode_t ret) {
         super.setChanged();
         ManagerActionListenerArgument arg 
-            = new ManagerActionListenerArgument("","","");
+            = new ManagerActionListenerArgument("");
         super.notifyObservers((Object)arg);
         super.clearChanged();
     }
@@ -23,7 +23,9 @@ public class ManagerActionListenerHolder extends Observable {
      */
     public void preShutdown(){
         super.setChanged();
-        super.notifyObservers();
+        ManagerActionListenerArgument arg 
+            = new ManagerActionListenerArgument("preShutdown");
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
 
@@ -33,7 +35,9 @@ public class ManagerActionListenerHolder extends Observable {
      */
     public void postShutdown() {
         super.setChanged();
-        super.notifyObservers();
+        ManagerActionListenerArgument arg 
+            = new ManagerActionListenerArgument("postShutdown");
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
 
@@ -43,7 +47,9 @@ public class ManagerActionListenerHolder extends Observable {
      */
     public void preReinit(){
         super.setChanged();
-        super.notifyObservers();
+        ManagerActionListenerArgument arg 
+            = new ManagerActionListenerArgument("preReinit");
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
 
@@ -53,7 +59,9 @@ public class ManagerActionListenerHolder extends Observable {
      */
     public void postReinit(){
         super.setChanged();
-        super.notifyObservers();
+        ManagerActionListenerArgument arg 
+            = new ManagerActionListenerArgument("postReinit");
+        super.notifyObservers((Object)arg);
         super.clearChanged();
     }
   };

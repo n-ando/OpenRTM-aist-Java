@@ -11,15 +11,9 @@ public class ManagerActionListenerArgument {
      * {@.en Constructor}
      *
      */
-    public ManagerActionListenerArgument(String method,
-                         String modname,
-                         String funcname){
+    public ManagerActionListenerArgument(String method){
         m_method = method;
-        m_modname = modname; 
-        m_funcname = funcname;
     }
     public String m_method; 
-    public String m_modname; 
-    public String m_funcname;
 }
 
