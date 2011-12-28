@@ -69,6 +69,18 @@ public class ConsoleInComp implements ModuleInitProc {
         // Initialize manager
         final Manager manager = Manager.init(args);
 
+        UserRtcLifeCycle rtclife 
+            = new UserRtcLifeCycle();
+        manager.addRtcLifecycleActionListener(rtclife);
+        UserManagerAction manageraction 
+            = new UserManagerAction();
+        manager.addManagerActionListener(manageraction);
+        UserModuleAction moduleaction 
+            = new UserModuleAction();
+        manager.addModuleActionListener(moduleaction);
+        UserNamingAction namingaction 
+            = new UserNamingAction();
+        manager.addNamingActionListener(namingaction);
         // Set module initialization proceduer
         // This procedure will be invoked in activateManager() function.
         ConsoleInComp init = new ConsoleInComp();
