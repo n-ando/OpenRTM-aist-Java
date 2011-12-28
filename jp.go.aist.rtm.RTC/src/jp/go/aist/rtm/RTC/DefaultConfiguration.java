@@ -62,6 +62,7 @@ interface DefaultConfiguration {
         "manager.command",                  "rtcd",
         "sdo.service.provider.enabled_services",  "ALL",
         "sdo.service.consumer.enabled_services",  "ALL",
+        "manager.local_service.enabled_services","ALL",
         ""
     };
 }
