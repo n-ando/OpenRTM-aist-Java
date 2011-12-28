@@ -5869,7 +5869,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
 
         if( m_pManager != null) {
-            m_pManager.cleanupComponent(this);
+            m_pManager.notifyFinalized(this);
         }
     }
     protected void preOnInitialize(int ec_id)

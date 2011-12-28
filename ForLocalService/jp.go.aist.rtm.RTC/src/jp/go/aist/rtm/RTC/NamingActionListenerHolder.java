@@ -23,7 +23,7 @@ public class NamingActionListenerHolder extends Observable {
                          String[] name){
         super.setChanged();
         NamingActionListenerArgument arg 
-            = new NamingActionListenerArgument("",rtobj,name);
+            = new NamingActionListenerArgument("preBind",rtobj,name);
         super.notifyObservers((Object)arg);
         super.clearChanged();
     }
