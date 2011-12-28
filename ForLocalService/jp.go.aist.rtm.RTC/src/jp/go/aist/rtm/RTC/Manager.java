@@ -846,7 +846,6 @@ public class Manager {
         
         rtcout.println(Logbuf.TRACE, 
                             "Manager.createComponent(" + comp_args + ")");
-System.out.println("Manager.createComponent(" + comp_args + ")");
         
         if( comp_args == null || comp_args.equals("") ) {
             return null;
@@ -1280,6 +1279,7 @@ System.out.println("Manager.createComponent(" + comp_args + ")");
         
         // NamingManagerのみで代用可能
         m_compManager.registerObject(comp, new InstanceName(comp));
+
         
         String[] names = comp.getNamingNames();
         m_listeners.naming_.preBind(comp,names);
@@ -1318,11 +1318,13 @@ System.out.println("Manager.createComponent(" + comp_args + ")");
         m_compManager.unregisterObject(new InstanceName(comp));
         
         String[] names = comp.getNamingNames();
+        m_listeners.naming_.preUnbind(comp, names);
         for (int i = 0; i < names.length; ++i) {
             rtcout.println(Logbuf.TRACE, "Unbind name: " + names[i]);
             
             m_namingManager.unbindObject(names[i]);
         }
+        m_listeners.naming_.postUnbind(comp, names);
         
         return true;
     }
@@ -1688,7 +1690,7 @@ System.out.println("Manager.createComponent(" + comp_args + ")");
     public void
     addRtcLifecycleActionListener(RtcLifecycleActionListener listener,
                                   boolean autoclean){
-    m_listeners.rtclifecycle_.addObserver(listener);
+        m_listeners.rtclifecycle_.addObserver(listener);
     }
     /**
      *
@@ -2545,17 +2547,6 @@ System.out.println("Manager.createComponent(" + comp_args + ")");
     protected void shutdownNaming() {
         
         rtcout.println(Logbuf.TRACE, "Manager.shutdownNaming()");
-        Vector<RTObject_impl> comps = getComponents();
-
-        for (int ic=0; ic < comps.size(); ++ic) {
-            String[] names = comps.get(ic).getNamingNames();
-            m_listeners.naming_.preUnbind(comps.get(ic), names);
-            for (int jc=0; jc < names.length; ++jc) {
-                m_namingManager.unbindObject(names[jc]);
-            }
-            m_listeners.naming_.postUnbind(comps.get(ic), names);
-        }
-
         m_namingManager.unbindAll();
     }
     
