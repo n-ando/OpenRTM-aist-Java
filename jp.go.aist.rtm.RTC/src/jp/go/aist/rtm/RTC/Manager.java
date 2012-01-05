@@ -46,6 +46,19 @@ import RTC.ReturnCode_t;
  */
 public class Manager {
 
+    private class SignalAction extends Thread {
+        public SignalAction() {
+            super();
+        }
+        public void run(){
+            terminate();
+            try {
+                Thread.sleep(100);
+            }catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * {@.ja コンストラクタ。}
      * {@.en Constructor}
@@ -61,6 +74,7 @@ public class Manager {
         rtcout = new Logbuf("Manager");
         m_runner = null;
         m_terminator = null;
+        Runtime.getRuntime().addShutdownHook(new SignalAction());
     }
 
     /**
@@ -81,6 +95,7 @@ public class Manager {
         rtcout = new Logbuf("Manager");
         m_runner = null;
         m_terminator = null;
+        Runtime.getRuntime().addShutdownHook(new SignalAction());
     }
     
     /**
@@ -1132,7 +1147,26 @@ public class Manager {
         synchronized (m_finalized.mutex){
             m_finalized.comps.add(comp);
         }
+        if (m_timer == null) {
+            cleanupComponents_();
+        }
     }
+
+    private void cleanupComponents_() {
+        m_finalizer.exec();
+    }
+    protected class Finalizer implements Runnable {
+        public Finalizer(){
+        }
+        public void exec(){
+            Thread t = new Thread(this);
+            t.start();
+        }
+        public void run(){
+            m_cleanupComponents.doOperate();
+        }
+    }
+    private Finalizer m_finalizer = new Finalizer(); 
     /**
      * <p> procComponentArgs </p>
      *
@@ -1912,7 +1946,9 @@ public class Manager {
     protected void shutdownManager() {
         
         rtcout.println(Logbuf.TRACE, "Manager.shutdownManager()");
-        m_timer.stop();
+        if (m_timer != null) {
+            m_timer.stop();
+        }
     }
     /**
      * {@.ja Manager の終了のためのリスナークラス}
@@ -2445,7 +2481,7 @@ public class Manager {
                 rtcout.println(Logbuf.DEBUG, "ORB was shutdown.");
                 rtcout.println(Logbuf.DEBUG, "ORB was destroied.");
                 
-                m_pORB.destroy();
+                //m_pORB.destroy();
                 m_pORB = null;
                 ORBUtil.clearOrb();
                 
