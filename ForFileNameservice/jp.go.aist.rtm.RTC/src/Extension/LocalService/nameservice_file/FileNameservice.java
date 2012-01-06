@@ -312,8 +312,8 @@ public class FileNameservice implements LocalServiceBase, CallbackFunction, Obje
     }
       
     
-    private LocalServiceProfile m_profile;
-    private ArrayList<String> m_files;
+    private LocalServiceProfile m_profile = new LocalServiceProfile();
+    private ArrayList<String> m_files = new ArrayList<String>();
     private Logbuf rtcout;
 
     /**
