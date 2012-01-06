@@ -8,16 +8,21 @@ import java.lang.SecurityException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import jp.go.aist.rtm.RTC.LocalServiceBase;
+import jp.go.aist.rtm.RTC.LocalServiceFactory;
 import jp.go.aist.rtm.RTC.LocalServiceProfile;
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.ObjectCreator;
+import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
+
     /**
      * {@.ja FileNameservice クラス}
      * {@.en FileNameservice class}
      */
-public class FileNameservice implements LocalServiceBase {
+public class FileNameservice implements LocalServiceBase, CallbackFunction, ObjectCreator<LocalServiceBase>, ObjectDestructor{
 
     private static String service_name 
             = "org.openrtm.local_service.nameservice.file_nameservice";
@@ -208,6 +213,9 @@ public class FileNameservice implements LocalServiceBase {
         return;
     }
 
+    public void doOperate(){
+    }
+
     /**
      * {@.ja ディレクトリ作成}
      * {@.en Creating directories}
@@ -306,5 +314,39 @@ public class FileNameservice implements LocalServiceBase {
     
     private LocalServiceProfile m_profile;
     private ArrayList<String> m_files;
-    private  Logbuf rtcout;
+    private Logbuf rtcout;
+
+    /**
+     * <p> creator_ </p>
+     * 
+     * @return Object Created instances
+     *
+     */
+    public LocalServiceBase creator_() {
+        return new FileNameservice();
+    }
+    /**
+     * <p> destructor_ </p>
+     * 
+     * @param obj    The target instances for destruction
+     *
+     */
+    public void destructor_(Object obj) {
+        obj = null;
+    }
+    /**
+     * {@.ja モジュール初期化関数}
+     * {@.en Module initialization}
+     * <p>
+     * {@.ja FileNameserviceをファクトリに登録する初期化関数。}
+     * {@.en This initialization function registers FileNameservice to the factory.}
+     *
+     */
+    public static void FileNameserviceInit() {
+        final LocalServiceFactory<LocalServiceBase,String> factory
+          = LocalServiceFactory.instance();
+        factory.addFactory(service_name,
+                       new FileNameservice(),
+                       new FileNameservice());
+    }
 }
