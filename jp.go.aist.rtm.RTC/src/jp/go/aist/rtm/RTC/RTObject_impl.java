@@ -677,10 +677,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         ReturnCode_t ret;
         ret = on_initialize();
+        m_created = false;
         if( ret!=ReturnCode_t.RTC_OK ) {
             return ret;
         }
-        m_created = false;
 
         // -- entering alive state --
         // at least one EC must be attached
@@ -1281,8 +1281,19 @@ public class RTObject_impl extends DataFlowComponentPOA {
         ReturnCode_t ret = ReturnCode_t.RTC_ERROR;
         try {
             preOnInitialize(0);
+            rtcout.println(Logbuf.DEBUG, "Calling onInitialize().");
             ret = onInitialize();
+            if (ret == ReturnCode_t.RTC_OK) {
+                rtcout.println(Logbuf.ERROR,
+                        "onInitialize() returns an ERROR ("
+                        +ret
+                        +")");
+            }
+            else {
+                rtcout.println(Logbuf.DEBUG,"onInitialize() succeeded.");
+            }
         } catch(Exception ex) {
+            rtcout.println(Logbuf.ERROR,"onInitialize() raised an exception.");
             ret =  ReturnCode_t.RTC_ERROR;
         }
         String active_set;
@@ -1290,10 +1301,22 @@ public class RTObject_impl extends DataFlowComponentPOA {
             = m_properties.getProperty("configuration.active_config",
                                             "default");
         if (m_configsets.haveConfig(active_set)) {
+            rtcout.println(Logbuf.DEBUG, "Active configuration set: " 
+                                            + active_set 
+                                            + "exists." );
+            m_configsets.activateConfigurationSet(active_set);
             m_configsets.update(active_set);
+            rtcout.println(Logbuf.INFO, "Initial active configuration set is " 
+                                            + active_set +" .");
         }
         else {
+            rtcout.println(Logbuf.DEBUG, "Active configuration set: " 
+                                            + active_set 
+                                            + "does not exists." );
+            m_configsets.activateConfigurationSet("default");
             m_configsets.update("default");
+            rtcout.println(Logbuf.INFO, 
+                        "Initial active configuration set is default-set.");
         }
         postOnInitialize(0, ret);
         return ret;
