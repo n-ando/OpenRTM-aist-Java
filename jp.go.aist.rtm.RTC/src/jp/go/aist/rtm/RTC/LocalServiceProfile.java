@@ -5,7 +5,7 @@ import jp.go.aist.rtm.RTC.util.Properties;
    * {@.ja LocalServiceのプロファイルデータ}
    * {@.en Profile data structure of LocalService}
    */
-public interface LocalServiceProfile {
+public class LocalServiceProfile {
     /**
      * {@.ja LocalServiceのサービス名}
      * {@.en The name of LocalService}
