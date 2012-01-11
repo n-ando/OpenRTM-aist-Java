@@ -1,14 +1,15 @@
 package jp.go.aist.rtm.RTC;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
-import jp.go.aist.rtm.RTC.util.OnActivateSetCallbackFunc;
-import jp.go.aist.rtm.RTC.util.OnAddConfigurationAddCallbackFunc;
-import jp.go.aist.rtm.RTC.util.OnRemoveConfigurationSetCallbackFunc;
-import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
-import jp.go.aist.rtm.RTC.util.OnUpdateCallbackFunc;
-import jp.go.aist.rtm.RTC.util.OnUpdateParamCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnActivateSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnAddConfigurationAddCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnRemoveConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnSetConfigurationSetCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnUpdateCallbackFunc;
+import jp.go.aist.rtm.RTC.util.OnUpdateParamCallbackFunc;
 
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.ValueHolder;
@@ -314,7 +315,9 @@ public class ConfigAdmin {
      */
     public void destruct() {
         for(int intIdx=0; intIdx<m_params.size(); ++intIdx) {
-            if( m_params.elementAt(intIdx) != null ) m_params.setElementAt(null, intIdx);
+            if( m_params.get(intIdx) != null ) {
+                m_params.set(intIdx,null);
+            }
         }
         m_params.clear();
     }
@@ -364,8 +367,45 @@ public class ConfigAdmin {
         } catch(Exception ex) {
             return false;
         }
-        m_params.add(new Config(param_name, var, def_val));
+        Config config = new Config(param_name, var, def_val);
+        m_params.add(config);
+        config.setCallback(this, "onUpdateParam");
         return true;
+    }
+    /**
+     * {@.ja コンフィギュレーションパラメータの解除}
+     * {@.en Unbinding configuration parameters}
+     * <p>
+     * {@.ja コンフィギュレーションパラメータと変数のバインドを解除する。
+     * 指定した名称のコンフィギュレーションパラメータが存在しない場合は
+     * falseを返す。}
+     * {@.en Unbind configuration parameter from its variable. It returns
+     * false, if configuration parameter of specified name has already
+     * existed.}
+     *
+     * @param param_name 
+     *   {@.ja コンフィギュレーションパラメータ名}
+     *   {@.en Configuration parameter name}
+     * @return 
+     *   {@.ja 設定結果(設定成功:true，設定失敗:false)}
+     *   {@.en Setup result (Successful:true, Failed:false)}
+     */
+    public boolean unbindParameter(final String param_name){
+        Iterator<ConfigBase> iterator = m_params.iterator();
+        while (iterator.hasNext()) {
+            ConfigBase cb = iterator.next();
+            if( new find_conf(param_name).equalof(cb) ) {
+                m_params.remove(cb);
+                // configsets
+                final Vector<Properties> leaf = m_configsets.getLeaf();
+
+                for (int ic=0; ic < leaf.size(); ++ic) {
+                    Properties p = leaf.get(ic).removeNode(param_name);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -402,8 +442,8 @@ public class ConfigAdmin {
         Properties prop = new Properties(m_configsets.getNode(config_set));
 
         for(int intIdx=0; intIdx<m_params.size(); ++intIdx) {
-            if( prop.hasKey(m_params.elementAt(intIdx).name) != null ) {
-                m_params.elementAt(intIdx).update(prop.getProperty(m_params.elementAt(intIdx).name));
+            if( prop.hasKey(m_params.get(intIdx).name) != null ) {
+                m_params.get(intIdx).update(prop.getProperty(m_params.get(intIdx).name));
                 onUpdate(config_set);
             }
         }
@@ -1376,7 +1416,8 @@ public class ConfigAdmin {
      * バインド対象パラメータ・リスト
      */
 
-    private Vector<ConfigBase> m_params = new Vector<ConfigBase>();
+    //private Vector<ConfigBase> m_params = new Vector<ConfigBase>();
+    private ArrayList<ConfigBase> m_params = new ArrayList<ConfigBase>();
     /**
      * アクティブ・コンフィギュレーションセットID
      */
