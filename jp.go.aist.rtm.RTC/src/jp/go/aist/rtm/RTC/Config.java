@@ -45,8 +45,14 @@ public class Config extends ConfigBase{
      * 
      */
     public boolean update(final String val){
+        if (string_value.equals(val)) {
+             return true; 
+        }
+        string_value = val;
+        // value changed
         try {
             m_var.stringFrom(val);
+            notifyUpdate(name,val);
             return true;
         } catch (Exception ex) {
             try {
@@ -54,6 +60,7 @@ public class Config extends ConfigBase{
             } catch (Exception e) {
             }
         }
+        notifyUpdate(name,val);
         return false;
     }
 
