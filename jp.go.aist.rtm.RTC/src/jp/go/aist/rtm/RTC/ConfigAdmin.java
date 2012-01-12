@@ -342,10 +342,14 @@ public class ConfigAdmin {
      * <p>
      * {@.ja コンフィギュレーションパラメータと変数をバインドする。
      * 指定した名称のコンフィギュレーションパラメータが既に存在する場合は
-     * falseを返す。}
+     * falseを返す。
+     * なお、このメンバ関数が呼ばれた後、現在アクティブなコンフィギュレー
+     * ションセットの値が変数にセットされる。}
      * {@.en Bind configuration parameter to its variable.
      * Return false, if configuration parameter of specified name has already 
-     * existed.}
+     * existed.
+     * After calling this function, configuration variable would be
+     * updated by the active configuration parameter.}
      *
      * @param param_name
      *   {@.ja 設定対象パラメータ名}
@@ -370,6 +374,7 @@ public class ConfigAdmin {
         Config config = new Config(param_name, var, def_val);
         m_params.add(config);
         config.setCallback(this, "onUpdateParam");
+        update(getActiveId(), param_name);
         return true;
     }
     /**
