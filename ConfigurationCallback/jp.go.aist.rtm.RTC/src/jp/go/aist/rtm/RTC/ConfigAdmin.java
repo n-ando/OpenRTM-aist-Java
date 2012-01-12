@@ -474,6 +474,7 @@ public class ConfigAdmin {
      *
      */
     public void update() {
+        m_changedParam.clear();
         if( m_changed && m_active ) {
             update(m_activeId);
             m_changed = false;
@@ -514,6 +515,7 @@ public class ConfigAdmin {
      * 
      */
     public void update(final String config_set, final String config_param) {
+        m_changedParam.clear();
         String key = config_set + "." + config_param;
         
         Iterator<ConfigBase> iterator = m_params.iterator();
