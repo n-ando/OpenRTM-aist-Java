@@ -438,15 +438,19 @@ public class ConfigAdmin {
      * 
      */
     public void update(final String config_set) {
-        if( m_configsets.hasKey(config_set) == null) return;
+        if( m_configsets.hasKey(config_set) == null) {
+            return;
+        }
+        // clear changed parameter list
+        m_changedParam.clear();
         Properties prop = new Properties(m_configsets.getNode(config_set));
 
         for(int intIdx=0; intIdx<m_params.size(); ++intIdx) {
             if( prop.hasKey(m_params.get(intIdx).name) != null ) {
                 m_params.get(intIdx).update(prop.getProperty(m_params.get(intIdx).name));
-                onUpdate(config_set);
             }
         }
+        onUpdate(config_set);
     }
 
     /**
@@ -517,7 +521,6 @@ public class ConfigAdmin {
             ConfigBase configbase = iterator.next();
             if( new find_conf(config_param).equalof(configbase) ) {
                 configbase.update(m_configsets.getProperty(key));
-                onUpdateParam(config_set, config_param);
                 return;
             }
         }
@@ -568,6 +571,21 @@ public class ConfigAdmin {
      */
     public boolean isChanged() {
         return m_changed;
+    }
+    /**
+     * {@.ja 変更されたパラメータのリスト}
+     * {@.en Changed parameters list}
+     * <p>
+     * {@.ja コンフィギュレーションパラメータのうち変更されたもののリストを返す。}
+     *
+     * {@.en This operation returns parameter list which are changed.}
+     * @return 
+     *   {@.ja 変更されたパラメータ名リスト}
+     *   {@.en Changed parameters list}
+     *
+     */
+    public Vector<String> changedParameters() { 
+        return new Vector<String>(m_changedParam); 
     }
     
     /**
@@ -1010,6 +1028,7 @@ public class ConfigAdmin {
      *
      */
     public void onUpdateParam(String config_set, String config_param) {
+        m_changedParam.add(config_param);
         m_listeners.configparam_[ConfigurationParamListenerType.ON_UPDATE_CONFIG_PARAM].notify(config_set, config_param);
     }
 
@@ -1437,6 +1456,7 @@ public class ConfigAdmin {
      * 新規追加分コンフィギュレーションセット
      */
     private Vector<String> m_newConfig = new Vector<String>();
+    private ArrayList<String> m_changedParam = new ArrayList<String>();
 
     private ConfigurationListeners m_listeners = new ConfigurationListeners();
 /*
