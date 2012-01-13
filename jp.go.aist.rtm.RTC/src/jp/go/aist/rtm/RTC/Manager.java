@@ -389,9 +389,14 @@ public class Manager {
 
         bindManagerServant();
 
-        initLocalService();
+        String[] lsvc 
+            = m_config.getProperty("manager.local_service.modules").split(",");
+        loadComponent(lsvc);
 
-        preloadComponent();
+        initLocalService();
+         
+        lsvc = m_config.getProperty("manager.modules.preload").split(",");
+        loadComponent(lsvc);
 
         if (m_initProc != null) {
             m_initProc.myModuleInit(this);
@@ -405,15 +410,18 @@ public class Manager {
     /**
      * {@.ja コンポーネントをロードする。}
      * {@.en Loads components.}
-     *
+     * 
      * <p>
-     * {@.ja このメソッドは、"manager.modules.preload"に設定されている
-     * コンポーネントをロードする。}
-     * {@.en This method loads components set to "Manager.modules.preload".}
+     * {@.ja コンポーネントをロードする。}
+     * {@.en This method loads components .}
+     *
+     * @param mods
+     *   {@.ja ロードするモジュール名}
+     *   {@.en Loaded module names}
+     * 
      */
-    private void preloadComponent() {
-        String[] mods 
-                = m_config.getProperty("manager.modules.preload").split(",");
+    private void loadComponent(String[] mods) {
+
         for (int i=0; i < mods.length; ++i) {
             if ( mods[i].length() == 0) {
                 continue;
@@ -432,7 +440,6 @@ public class Manager {
             }
         }
     }
-
     /**
      * {@.ja コンポーネントを生成する。}
      * {@.en Creates components}

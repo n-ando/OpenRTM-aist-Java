@@ -13,6 +13,7 @@ import jp.go.aist.rtm.RTC.LocalServiceProfile;
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
+import jp.go.aist.rtm.RTC.RegisterModuleFunc;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.Properties;
@@ -22,7 +23,7 @@ import jp.go.aist.rtm.RTC.util.StringUtil;
      * {@.ja FileNameservice クラス}
      * {@.en FileNameservice class}
      */
-public class FileNameservice implements LocalServiceBase, CallbackFunction, ObjectCreator<LocalServiceBase>, ObjectDestructor{
+public class FileNameservice implements LocalServiceBase, CallbackFunction, ObjectCreator<LocalServiceBase>, ObjectDestructor, RegisterModuleFunc{
 
     private static String service_name 
             = "org.openrtm.local_service.nameservice.file_nameservice";
@@ -342,7 +343,7 @@ public class FileNameservice implements LocalServiceBase, CallbackFunction, Obje
      * {@.en This initialization function registers FileNameservice to the factory.}
      *
      */
-    public static void FileNameserviceInit() {
+    public void registerModule() {
         final LocalServiceFactory<LocalServiceBase,String> factory
           = LocalServiceFactory.instance();
         factory.addFactory(service_name,
