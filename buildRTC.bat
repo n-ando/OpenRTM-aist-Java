@@ -1,7 +1,7 @@
 set DUMMY=%ANT_HOME%
 @rem set ANT_HOME=%ECLIPSE_HOME%\plugins\org.apache.ant_1.6.5\
 @rem set ANT_HOME=%ECLIPSE_HOME%\plugins\org.apache.ant_1.7.0.v200706080842\
-set ANT_HOME=%ECLIPSE_HOME%\plugins\iorg.apache.ant_1.7.0.v200803061910\
+set ANT_HOME=%ECLIPSE_HOME%\plugins\org.apache.ant_1.7.0.v200803061910\
 
 
 cd jp.go.aist.rtm.RTC
