@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.FileHandler;
 import java.util.logging.ConsoleHandler;
@@ -1023,7 +1025,11 @@ public class Manager {
             rtcout.println(Logbuf.TRACE, 
                 "RTC initialization failed: " 
                 + comp_id.getProperty("implementaion_id"));
-            comp.exit();
+            if (comp.exit() != ReturnCode_t.RTC_OK) {
+                rtcout.println(Logbuf.DEBUG, 
+                    comp_id.getProperty("implementation_id")
+                    + " finalization was failed.");
+            }
             return null;
         }
         rtcout.println(Logbuf.TRACE, 
@@ -2663,6 +2669,7 @@ public class Manager {
         String type_conf = category + "." + type_name + ".config_file";
         String name_conf = category + "." + inst_name + ".config_file";
         
+        ArrayList<String> config_fname = new ArrayList<String>();
         Properties type_prop = new Properties();
         Properties name_prop = new Properties();
         
@@ -2674,7 +2681,14 @@ public class Manager {
                 BufferedReader conff = new BufferedReader(
                         new FileReader(m_config.getProperty(name_conf)));
                 name_prop.load(conff);
-                
+                rtcout.println(Logbuf.INFO, 
+                        "Component instance conf file: "
+                        + m_config.getProperty(name_conf)
+                        + " loaded.");
+                String str = new String();
+                str = name_prop._dump(str,name_prop,0);
+                rtcout.println(Logbuf.DEBUG, str);
+                config_fname.add(m_config.getProperty(name_conf));
             } catch (FileNotFoundException e) {
                 rtcout.println(Logbuf.DEBUG, 
                     "Exception: Caught FileNotFoundException"
@@ -2690,7 +2704,20 @@ public class Manager {
         }
 
         if (m_config.findNode(category + "." + inst_name) != null) {
-            name_prop.merge(m_config.getNode(category + "." + inst_name));
+            Properties temp = m_config.getNode(category + "." + inst_name);
+            Vector<String> keys = temp.propertyNames();
+            int length = keys.size();
+            if (!( length == 1 && keys.get(length-1).equals("config_file"))) {
+                name_prop.merge(m_config.getNode(category + "." + inst_name));
+                rtcout.println(Logbuf.INFO,
+                        "Component type conf exists in rtc.conf. Merged.");
+                String str = new String();
+                str = name_prop._dump(str,name_prop,0);
+                rtcout.println(Logbuf.DEBUG,str);
+                if (m_config.findNode("config_file") != null) {
+                    config_fname.add(m_config.getProperty("config_file"));
+                }
+            }
         }
     
         if (!(m_config.getProperty(type_conf) == null
@@ -2700,6 +2727,14 @@ public class Manager {
                 BufferedReader conff = new BufferedReader(
                         new FileReader(m_config.getProperty(type_conf)));
                 type_prop.load(conff);
+                rtcout.println(Logbuf.INFO,
+                        "Component type conf file: "
+                        + m_config.getProperty(type_conf)
+                        + " loaded.");
+                String str = new String();
+                str = type_prop._dump(str,type_prop,0);
+                rtcout.println(Logbuf.DEBUG,str);
+                config_fname.add(m_config.getProperty(type_conf));
                 
             } catch (FileNotFoundException e) {
                 rtcout.println(Logbuf.DEBUG, 
@@ -2717,13 +2752,28 @@ public class Manager {
             }
         }
         if (m_config.findNode(category + "." + type_name) != null) {
-            type_prop.merge(m_config.getNode(category + "." + type_name));
+            Properties temp = m_config.getNode(category + "." + type_name);
+            Vector<String> keys = temp.propertyNames();
+            int length = keys.size();
+            if (!(length == 1 && keys.get(length).equals("config_file"))) {
+                type_prop.merge(m_config.getNode(category + "." + type_name));
+                rtcout.println(Logbuf.INFO,
+                        "Component type conf exists in rtc.conf. Merged.");
+                String str = new String();
+                str = type_prop._dump(str,type_prop,0);
+                rtcout.println(Logbuf.DEBUG,str);
+                if (m_config.findNode("config_file") != null) {
+                    config_fname.add(m_config.getProperty("config_file"));
+                }
+            }
         }
 
 
         // Merge Properties. type_prop is merged properties
         comp.setProperties(prop);
         type_prop.merge(name_prop);
+        String fname  = StringUtil.flatten(StringUtil.unique_sv(config_fname));
+        type_prop.setProperty("config_file",fname);
         comp.setProperties(type_prop);
 
         // ------------------------------------------------------------

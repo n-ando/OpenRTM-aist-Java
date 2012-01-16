@@ -182,6 +182,7 @@ class ManagerConfig {
 
         // Properties from arguments are marged finally
         properties.merge(m_argprop);
+        properties.setProperty("config_file", m_configFile);
     }
     
     /**

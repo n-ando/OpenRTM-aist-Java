@@ -230,6 +230,29 @@ public class StringUtil {
         }
       return str;
     }
+    /**
+     * {@.ja 与えられた文字列リストから重複を削除する}
+     * {@.en Deletes repetition from the given character string list.}
+     * <p>
+     * {@.ja 引数で与えられた文字列リストから重複を削除したリストを作成する。}
+     *
+     * @param  sv
+     *   {@.ja 確認元文字列リスト}
+     *   {@.en Character string list}
+     * @return 
+     *   {@.ja 重複削除処理結果リスト}
+     *   {@.en List of character string of result}
+     */
+    public static ArrayList<String> unique_sv(ArrayList<String> sv) {
+        ArrayList<String> str = new ArrayList<String>();
+        for( int intIdx=0; intIdx < sv.size(); ++intIdx ) {
+            if( !sv.get(intIdx).trim().equals("") 
+                                && !str.contains(sv.get(intIdx).trim()) ) {
+                str.add(sv.get(intIdx).trim());
+            }
+        }
+      return str;
+    }
 
     /**
      * {@.ja 与えられた文字列リストからCSVを生成する}
@@ -282,6 +305,33 @@ public class StringUtil {
             str.append(svlist.get(intIdx) + ", ");
         }
         str.append(svlist.get(intIdx));
+
+        return str.toString();
+    }
+    /**
+     * {@.ja 与えられた文字列リストからCSVを生成する}
+     * {@.en generates CSV from the given character string list.}
+     * <p>
+     * {@.ja 引数で与えられた文字列リストの各要素を並べたCSVを生成する。
+     * 文字列リストが空の場合には空白文字を返す。}
+     *
+     * @param  sv 
+     *   {@.ja CSV変換対象文字列リスト}
+     *   {@.en Character string list to be converted}
+     * @return 
+     *   {@.ja CSV変換結果文字列}
+     *   {@.en Character string of conversion result}
+     */
+    public static String flatten(ArrayList sv) {
+        if( sv.size() == 0) return "";
+
+        StringBuffer str = new StringBuffer();
+
+	int intIdx;
+        for(intIdx=0; intIdx < sv.size()-1; ++intIdx) {
+            str.append(sv.get(intIdx) + ", ");
+        }
+        str.append(sv.get(intIdx));
 
         return str.toString();
     }
