@@ -690,7 +690,20 @@ System.err.println("Manager's IOR information: "+ior);
     public RTC.ReturnCode_t delete_component(final String instance_name) {
         rtcout.println(Logbuf.TRACE, "delete_component("+instance_name+")");
 
-        m_mgr.deleteComponent(instance_name);
+        RTObject_impl comp = m_mgr.getComponent(instance_name);
+        if (comp == null) {
+            rtcout.println(Logbuf.WARN,"No such component exists: "
+                                            + instance_name);
+            return ReturnCode_t.BAD_PARAMETER;
+        }
+        try {
+            comp.exit();
+        }
+        catch (org.omg.CORBA.SystemException ex) { // never come here
+            rtcout.println(Logbuf.ERROR,
+                    "Unknown exception was raised, when RTC was finalized.");
+            return ReturnCode_t.RTC_ERROR;
+        }
         return ReturnCode_t.RTC_OK;
     }
 
