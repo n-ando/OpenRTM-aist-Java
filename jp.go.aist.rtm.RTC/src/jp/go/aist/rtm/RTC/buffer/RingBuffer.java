@@ -271,9 +271,9 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
           
             put(value);
           
-            advanceWptr(1);
-            if (empty_) {
-                synchronized (m_empty.mutex) {
+            synchronized (m_empty.mutex) {
+                advanceWptr(1);
+                if (empty_) {
                     try {
                         m_empty.mutex.notify();
                     }
@@ -443,24 +443,24 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                     return ReturnCode.PRECONDITION_NOT_MET;
                 }
             }
+        }
 
-            boolean  full_ = full();
+        boolean  full_ = full();
       
-            get(valueRef);
-            advanceRptr();
+        get(valueRef);
 
+        synchronized(m_full.mutex){
+            advanceRptr(1);
             if (full_) {
-                synchronized(m_full.mutex){
-                    try {
-                        m_full.mutex.notify();
-                    }
-                    catch(IllegalMonitorStateException e) {
-                    }
+                try {
+                    m_full.mutex.notify();
+                }
+                catch(IllegalMonitorStateException e) {
                 }
             }
+        }
       
             return ReturnCode.BUFFER_OK;
-        }
     }
 
     /**
@@ -707,19 +707,19 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
      * 
      */ 
     public ReturnCode advanceWptr(int n) {
-      // n > 0 :
-      //     n satisfies n <= writable elements
-      //                 n <= m_length - m_fillcout
-      // n < 0 : -n = n'
-      //     n satisfies n'<= readable elements
-      //                 n'<= m_fillcount
-      //                 n >= - m_fillcount
-        if (n > 0 && n > (m_length - m_fillcount) ||
-          n < 0 && n < (-m_fillcount)) {
-            return ReturnCode.PRECONDITION_NOT_MET;
-        }
-
         synchronized (m_posmutex) {
+            // n > 0 :
+            //     n satisfies n <= writable elements
+            //                 n <= m_length - m_fillcout
+            // n < 0 : -n = n'
+            //     n satisfies n'<= readable elements
+            //                 n'<= m_fillcount
+            //                 n >= - m_fillcount
+            if (n > 0 && n > (m_length - m_fillcount) ||
+              n < 0 && n < (-m_fillcount)) {
+                return ReturnCode.PRECONDITION_NOT_MET;
+            }
+
             m_wpos = (m_wpos + n + m_length) % m_length;
             m_fillcount += n;
             m_wcount += n;
@@ -844,19 +844,18 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
      * 
      */ 
     public ReturnCode advanceRptr(int n) {
-        // n > 0 :
-        //     n satisfies n <= readable elements
-        //                 n <= m_fillcout
-        // n < 0 : -n = n'
-        //     n satisfies n'<= m_length - m_fillcount
-        //                 n >= m_fillcount - m_length
-        if ((n > 0 && n > m_fillcount) ||
-            (n < 0 && n < (m_fillcount - m_length)))
-        {
-            return ReturnCode.PRECONDITION_NOT_MET;
-        }
-
         synchronized(m_posmutex) {
+            // n > 0 :
+            //     n satisfies n <= readable elements
+            //                 n <= m_fillcout
+            // n < 0 : -n = n'
+            //     n satisfies n'<= m_length - m_fillcount
+            //                 n >= m_fillcount - m_length
+            if ((n > 0 && n > m_fillcount) ||
+                (n < 0 && n < (m_fillcount - m_length))) {
+                return ReturnCode.PRECONDITION_NOT_MET;
+            }
+
             m_rpos = (m_rpos + n + m_length) % m_length;
             m_fillcount -= n;
             return ReturnCode.BUFFER_OK;
@@ -997,22 +996,70 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
 
 
     
+    /**
+     * {@.ja 上書きフラグ}
+     * {@.en Overwrite flag}
+     */
     private boolean m_overwrite;
+    /**
+     * {@.ja 読み戻しフラグ}
+     * {@.en Readback flag}
+     */
     private boolean m_readback;
+    /**
+     * {@.ja タイムアウト付き書き込みフラグ}
+     * {@.en Timedwrite flag}
+     */
     private boolean m_timedwrite;
+    /**
+     * {@.ja タイムアウト付き読み出しフラグ}
+     * {@.en Timedread flag}
+     */
     private boolean m_timedread;
+    /**
+     * {@.ja 書き込み時タイムアウト}
+     * {@.en Timeout time for writing}
+     */
     private TimeValue m_wtimeout;
+    /**
+     * {@.ja 読み出し時タイムアウト}
+     * {@.en Timeout time of reading}
+     */
     private TimeValue m_rtimeout;
 
 
+    /**
+     * {@.ja バッファ長}
+     * {@.en Buffer length}
+     */
     private int m_length;
     private int m_oldPtr;
     private int m_newPtr;
+    /**
+     * {@.ja バッファ配列}
+     * {@.en baffer array}
+     */
     private Vector<DataType> m_buffer;
 
+    /**
+     * {@.ja 書き込みポインタ}
+     * {@.en pointer to write}
+     */
     private int m_wpos;
+    /**
+     * {@.ja 読み出しポインタ}
+     * {@.en poitner to read}
+     */
     private int m_rpos;
+    /**
+     * {@.ja Fillカウント}
+     * {@.en Fill count}
+     */
     private int m_fillcount;
+    /**
+     * {@.ja 位置変数ミューテックス}
+     * {@.en mutex for position variable}
+     */
     private static String m_posmutex = new String();
 
     /**
@@ -1032,7 +1079,15 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
          */
         public String mutex = new String();
     };
+    /**
+     * {@.ja 空条件変数}
+     * {@.en empty condition variable}
+     */
     private condition m_empty = new condition();
+    /**
+     * {@.ja 満杯条件変数}
+     * {@.en full condition variable}
+     */
     private condition m_full = new condition();
     /**
      * {@.ja 書き込みカウント}
