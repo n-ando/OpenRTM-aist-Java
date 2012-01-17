@@ -15,11 +15,6 @@ import RTC.ReturnCode_t;
 public abstract class ExecutionContextBase extends
         ExtTrigExecutionContextServicePOA implements ECNewDeleteFunc {
 
-    /**
-     * <p>ExecutionContextの処理を１周期分進めます。</p>
-     */
-    public void tick() throws SystemException {
-    }
     
     /**
      * <p>本オブジェクトのExecutionContextServiceとしてのCORBAオブジェクト参照を設定します。</p>
