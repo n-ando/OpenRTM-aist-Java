@@ -11,7 +11,7 @@ cd ..
 set ANT_HOME=%DUMMY%
 exit /b 0
 
-error_end:
+:error_end
 cd ..
 set ANT_HOME=%DUMMY%
 exit /b 1
