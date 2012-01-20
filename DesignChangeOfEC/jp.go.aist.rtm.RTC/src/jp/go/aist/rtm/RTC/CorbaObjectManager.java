@@ -56,7 +56,7 @@ class CorbaObjectManager {
      * @exception ObjectNotActive 指定された oid を持つオブジェクトが Active Object Map にない場合 
      */
     public void activate(ExecutionContextBase comp) throws ServantAlreadyActive, WrongPolicy, ObjectNotActive {
-        byte[] id = m_pPOA.activate_object(comp);
+        byte[] id = m_pPOA.activate_object(comp.getObjRef());
         comp.setObjRef(ExecutionContextServiceHelper.narrow(m_pPOA.id_to_reference(id)));
     }
     /**

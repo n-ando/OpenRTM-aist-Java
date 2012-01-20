@@ -2133,7 +2133,7 @@ public class Manager {
             
             // Get the POAManager
             m_pPOAManager = m_pPOA.the_POAManager();
-            m_objManager = new CorbaObjectManager(m_pORB, m_pPOA);
+            //m_objManager = new CorbaObjectManager(m_pORB, m_pPOA);
             
         } catch (Exception ex) {
             rtcout.println(Logbuf.DEBUG, 
@@ -2630,7 +2630,7 @@ public class Manager {
         
         for (int i=0, len=m_ecs.size(); i < len; ++i) {
             try {
-                m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_ecs.elementAt(i)));
+                m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_ecs.elementAt(i).getObjRef()));
                 
             } catch (Exception e) {
                 rtcout.println(Logbuf.DEBUG, "Exception: Caught unknown Exception in Manager.shutdownComponents().");

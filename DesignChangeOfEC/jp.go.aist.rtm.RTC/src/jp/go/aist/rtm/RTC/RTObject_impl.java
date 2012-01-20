@@ -666,7 +666,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         if (ec == null) {
             return ReturnCode_t.RTC_ERROR;
         }
-        ec.set_rate(Double.valueOf(m_properties.getProperty("exec_cxt.periodic.rate")).doubleValue());
+        ec.getObjRef().set_rate(Double.valueOf(m_properties.getProperty("exec_cxt.periodic.rate")).doubleValue());
         m_eclist.add(ec);
         ExecutionContextService ecv;
         ecv = ec.getObjRef();
@@ -3916,9 +3916,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         for(int i=0, len=m_eclist.size(); i < len; ++i) {
             try {
-                m_eclist.elementAt(i).stop();
+                m_eclist.elementAt(i).getObjRef().stop();
 		m_eclist.elementAt(i).finalizeExecutionContext();
-                m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_eclist.elementAt(i)));
+                m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_eclist.elementAt(i).getObjRef()));
             }
             catch(Exception ex) {
             }

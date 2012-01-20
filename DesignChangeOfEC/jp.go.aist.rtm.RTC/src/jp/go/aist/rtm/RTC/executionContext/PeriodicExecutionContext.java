@@ -28,7 +28,7 @@ import _SDOPackage.NVListHolder;
  * <p>Periodic Sampled Data Processing(周期実行用)ExecutionContextクラスです。</p>
  */
 
-public class PeriodicExecutionContext extends ExecutionContextBase implements Runnable {
+public class PeriodicExecutionContext extends ExecutionContextBase implements Runnable ,  {
 
     /**
      * {@.ja デフォルトコンストラクタ}
