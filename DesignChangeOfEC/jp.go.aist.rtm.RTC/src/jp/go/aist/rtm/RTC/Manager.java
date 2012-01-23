@@ -2630,7 +2630,8 @@ public class Manager {
         
         for (int i=0, len=m_ecs.size(); i < len; ++i) {
             try {
-                m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_ecs.elementAt(i).getObjRef()));
+                //m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_ecs.elementAt(i).getObjRef()));
+                m_pPOA.deactivate_object(m_pPOA.servant_to_id((RTC.ExecutionContextServicePOA)m_ecs.get(i)));
                 
             } catch (Exception e) {
                 rtcout.println(Logbuf.DEBUG, "Exception: Caught unknown Exception in Manager.shutdownComponents().");
@@ -3189,7 +3190,7 @@ public class Manager {
      * {@.ja CORBA Object Manager}
      * {@.en CORBA Object Manager}
      */
-    protected CorbaObjectManager m_objManager;
+    //protected CorbaObjectManager m_objManager;
     /**
      * {@.ja Timer Object}
      * {@.en Timer Object}

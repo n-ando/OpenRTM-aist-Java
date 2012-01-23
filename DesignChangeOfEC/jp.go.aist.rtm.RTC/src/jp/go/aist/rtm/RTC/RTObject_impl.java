@@ -3918,7 +3918,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
             try {
                 m_eclist.elementAt(i).getObjRef().stop();
 		m_eclist.elementAt(i).finalizeExecutionContext();
-                m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_eclist.elementAt(i).getObjRef()));
+//                m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_eclist.elementAt(i).getObjRef()));
+                m_pPOA.deactivate_object(m_pPOA.servant_to_id((RTC.ExecutionContextServicePOA)m_eclist.get(i)));
             }
             catch(Exception ex) {
             }

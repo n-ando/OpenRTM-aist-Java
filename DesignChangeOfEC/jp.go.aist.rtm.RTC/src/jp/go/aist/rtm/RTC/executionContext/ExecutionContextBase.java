@@ -5,7 +5,6 @@ import org.omg.CORBA.SystemException;
 import RTC.ExecutionContextService;
 import OpenRTM.ExtTrigExecutionContextServicePOA;
 
-import jp.go.aist.rtm.RTC.ExecutionContextProfile;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.util.Properties;
 import RTC.ExecutionKind;
@@ -15,16 +14,19 @@ import RTC.ReturnCode_t;
  * <p>Periodic Sampled Data Processing(周期実行用)ExecutionContextのベースとなる
  * 抽象クラスです。</p>
  */
-public abstract class ExecutionContextBase 
- implements ECNewDeleteFunc {
+//public abstract class ExecutionContextBase 
+// implements ECNewDeleteFunc {
+public interface ExecutionContextBase extends ECNewDeleteFunc {
 
     /**
      * {@.ja ExecutionContextクラスの初期化関数}
      * {@.en Initialization function of ExecutionContext class}
      */
+    public void init(Properties props);
+/* 
     public void init(Properties props) {
     }
-
+*/
     /**
      * {@.ja CORBA オブジェクト参照の取得}
      * {@.en Get the reference to the CORBA object}
@@ -39,9 +41,12 @@ public abstract class ExecutionContextBase
      *   {@.en The reference to CORBA object}
      *
      */
+    public void setObjRef(final ExecutionContextService ref);
+/* 
     public void setObjRef(final ExecutionContextService ref) {
         m_profile.setObjRef(ref);
     }
+*/
     
     /**
      * <p> bindComponent </p>
@@ -50,7 +55,8 @@ public abstract class ExecutionContextBase
      * @return ReturnCode_t
      * 
      */
-    public abstract ReturnCode_t bindComponent(RTObject_impl rtc);
+    public ReturnCode_t bindComponent(RTObject_impl rtc);
+//    public abstract ReturnCode_t bindComponent(RTObject_impl rtc);
 
     /**
      * {@.ja CORBA オブジェクト参照の取得}
@@ -66,10 +72,12 @@ public abstract class ExecutionContextBase
      *   {@.en The reference to CORBA object}
      *
      */
+    public ExecutionContextService getObjRef();
+/* 
     public ExecutionContextService getObjRef() {
       return m_profile.getObjRef();
     }
-
+*/
     /**
      * {@.ja ExecutionContext の実行周期(Hz)を設定する}
      * {@.en Set execution rate(Hz) of ExecutionContext}
@@ -97,10 +105,12 @@ public abstract class ExecutionContextBase
      *         BAD_PARAMETER: Invalid value. The value might be negative.}
      *
      */
+    public ReturnCode_t setRate(double rate);
+/*
     public ReturnCode_t setRate(double rate) {
       return m_profile.setRate(rate);
     }
-
+*/
     /**
      * {@.ja ExecutionContext の実行周期(Hz)を取得する}
      * {@.en Get execution rate(Hz) of ExecutionContext}
@@ -115,10 +125,12 @@ public abstract class ExecutionContextBase
      *   {@.en Execution cycle(Unit:Hz)}
      *
      */
+    public double getRate();
+/*  
     public double getRate()  {
       return m_profile.getRate();
     }
-
+*/
     /**
      * {@.ja ExecutionKind を文字列化する}
      * {@.en Converting ExecutionKind enum to string}
@@ -136,11 +148,19 @@ public abstract class ExecutionContextBase
      *   {@en String of ExecutionKind}
      *
      */
+    public String getKindString(ExecutionKind kind);
+/*
     public final String getKindString(ExecutionKind kind) {
       return m_profile.getKindString(kind);
     }
-
-    public abstract boolean finalizeExecutionContext();
-    protected ExecutionContextProfile m_profile;
+*/
+    public boolean finalizeExecutionContext();
+//    public abstract boolean finalizeExecutionContext();
+    public ExecutionContextProfile m_profile 
+                                    = new ExecutionContextProfile();
+/*
+    protected ExecutionContextProfile m_profile 
+                                    = new ExecutionContextProfile();
+*/
 
 }
