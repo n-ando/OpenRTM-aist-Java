@@ -181,7 +181,8 @@
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 
 			package="yes" source="1.5" splitindex="true" 
-                        use="true" version="true" charset="UTF-8"
+                        use="true" version="true" charset="UTF-8" 
+                        classpath="lib/commons-cli-1.1.jar" 
                         >
                         <taglet name="JaOnTaglet" path="./util"/>
                         <taglet name="EnOffTaglet"  path="./util"/>
@@ -198,6 +199,7 @@
                         noindex="false" nonavbar="false" notree="false" 
 			package="yes" source="1.5" splitindex="true" 
                         use="true" version="true" charset="UTF-8"
+                        classpath="lib/commons-cli-1.1.jar" 
                         >
                         <taglet name="EnOnTaglet"  path="./util"/>
                         <taglet name="JaOffTaglet"  path="./util"/>
