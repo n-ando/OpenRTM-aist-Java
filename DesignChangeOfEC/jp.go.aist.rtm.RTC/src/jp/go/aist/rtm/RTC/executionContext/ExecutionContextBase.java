@@ -28,17 +28,17 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
     }
 */
     /**
-     * {@.ja CORBA オブジェクト参照の取得}
-     * {@.en Get the reference to the CORBA object}
+     * {@.ja CORBA オブジェクトの設定}
+     * {@.en Sets the reference to the CORBA object}
      * <p>
      * {@.ja 本オブジェクトの ExecutioncontextService としての CORBA オブジェ
-     * クト参照を取得する。}
-     * {@.en Get the reference to the CORBA object as
+     * クトを設定する。}
+     * {@.en Sets the reference to the CORBA object as
      * ExecutioncontextService of this object.}
      *
-     * @return 
-     *   {@.ja CORBA オブジェクト参照}
-     *   {@.en The reference to CORBA object}
+     * @param ref 
+     *   {@.ja オブジェクトリファレンス}
+     *   {@.en The object reference}
      *
      */
     public void setObjRef(final ExecutionContextService ref);
@@ -145,7 +145,7 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      *   {@.en ExecutionKind}
      * @return 
      *   {@.ja 文字列化されたExecutionKind}
-     *   {@en String of ExecutionKind}
+     *   {@.en String of ExecutionKind}
      *
      */
     public String getKindString(ExecutionKind kind);

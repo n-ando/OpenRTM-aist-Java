@@ -60,13 +60,13 @@ public class PeriodicExecutionContext extends  ExecutionContextServicePOA implem
 
         m_usec = (long)(1000000/rate);
 
-        m_ref = (ExecutionContextService)this.__this();
+        //m_ref = (ExecutionContextService)this.__this();
+        m_profile.setObjRef((ExecutionContextService)this.__this());
 
 
         m_profile.setPeriod(new TimeValue(1.0 / rate));
         m_profile.setKind(ExecutionKind.PERIODIC);
-        //m_profile.setRate(1.0 / ExecutionContextProfile.DEEFAULT_PERIOD);
-        m_profile.setRate(1.0 / m_profile.DEEFAULT_PERIOD);
+        m_profile.setRate(1.0 / jp.go.aist.rtm.RTC.executionContext.ExecutionContextProfile.DEEFAULT_PERIOD);
 
 /*
         m_profile.kind = ExecutionKind.PERIODIC;
@@ -127,13 +127,13 @@ public class PeriodicExecutionContext extends  ExecutionContextServicePOA implem
             m_nowait = true;
         }
 
-        m_ref = (ExecutionContextService)this.__this();
+        //m_ref = (ExecutionContextService)this.__this();
+        m_profile.setObjRef((ExecutionContextService)this.__this());
 
 
         m_profile.setPeriod(new TimeValue(1.0 / rate));
         m_profile.setKind(ExecutionKind.PERIODIC);
-        //m_profile.setRate(1.0 / ExecutionContextProfile.DEEFAULT_PERIOD);
-        m_profile.setRate(1.0 / m_profile.DEEFAULT_PERIOD);
+        m_profile.setRate(1.0 / jp.go.aist.rtm.RTC.executionContext.ExecutionContextProfile.DEEFAULT_PERIOD);
         m_profile.setOwner((LightweightRTObject)owner._duplicate());
 /*
         m_profile.kind = ExecutionKind.PERIODIC;
@@ -252,7 +252,9 @@ public class PeriodicExecutionContext extends  ExecutionContextServicePOA implem
 		}
 		if (m_worker.running_) {
 		    for (int intIdx=0; intIdx < m_comps.size(); ++intIdx) {
-			m_comps.elementAt(intIdx).invoke();
+			m_comps.get(intIdx).invoke_work_pre();
+			m_comps.get(intIdx).invoke_work_do();
+			m_comps.get(intIdx).invoke_work_post();
 		    }
 		}
 	    }
@@ -400,6 +402,11 @@ public class PeriodicExecutionContext extends  ExecutionContextServicePOA implem
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             m_comps.elementAt(intIdx).invoke_on_rate_changed();
         }
+        rtcout.println(Logbuf.DEBUG, "Actual period: "
+                                        + m_profile.getPeriod().sec()
+                                        + " [sec], "
+                                        + m_profile.getPeriod().usec()
+                                        + " [usec]");
         return ReturnCode_t.RTC_OK;
     }
 
@@ -506,7 +513,8 @@ public class PeriodicExecutionContext extends  ExecutionContextServicePOA implem
      */
     public ExecutionKind get_kind() {
 
-        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_kind()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_kind() ="
+                                            + m_profile.getKindString());
 
         return m_profile.getKind();
         //return m_profile.kind;
@@ -838,6 +846,15 @@ public class PeriodicExecutionContext extends  ExecutionContextServicePOA implem
         public void worker() {
             m_sm.worker();
         }
+        public void worker_pre() {
+            m_sm.worker_pre();
+        }
+        public void worker_do() {
+            m_sm.worker_do();
+        }
+        public void worker_post() {
+            m_sm.worker_post();
+        }
 
         /**
          * <p>現在の状態を取得します。</p>
@@ -996,6 +1013,24 @@ public class PeriodicExecutionContext extends  ExecutionContextServicePOA implem
          */
         public void invoke(){
             this._sm.worker();
+        }
+        /**
+         * <p>ExecutionContextから呼び出されるメソッドです。</p>
+         */
+        public void invoke_work_pre(){
+            this._sm.worker_pre();
+        }
+        /**
+         * <p>ExecutionContextから呼び出されるメソッドです。</p>
+         */
+        public void invoke_work_do(){
+            this._sm.worker_do();
+        }
+        /**
+         * <p>ExecutionContextから呼び出されるメソッドです。</p>
+         */
+        public void invoke_work_post(){
+            this._sm.worker_post();
         }
         /**
          * <p>StartUp時に呼び出されるメソッドです。</p>
@@ -1225,7 +1260,7 @@ public class PeriodicExecutionContext extends  ExecutionContextServicePOA implem
      *   {@.en ExecutionKind}
      * @return 
      *   {@.ja 文字列化されたExecutionKind}
-     *   {@en String of ExecutionKind}
+     *   {@.en String of ExecutionKind}
      *
      */
     public final String getKindString(ExecutionKind kind) {

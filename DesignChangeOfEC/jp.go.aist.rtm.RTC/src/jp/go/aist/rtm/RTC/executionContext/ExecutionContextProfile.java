@@ -25,7 +25,7 @@ import _SDOPackage.NVListHolder;
    * ExecutionContext class}
    */
 public class ExecutionContextProfile {
-    public final double DEEFAULT_PERIOD = 0.000001;
+    public static final double DEEFAULT_PERIOD = 0.000001;
 
     /**
      * {@.ja デフォルトコンストラクタ}
@@ -61,17 +61,17 @@ public class ExecutionContextProfile {
         this(ExecutionKind.PERIODIC);
     }
     /**
-     * {@.ja CORBA オブジェクト参照の取得}
-     * {@.en Get the reference to the CORBA object}
+     * {@.ja CORBA オブジェクトの設定}
+     * {@.en Sets the reference to the CORBA object}
      * <p>
      * {@.ja 本オブジェクトの ExecutioncontextService としての CORBA オブジェ
-     * クト参照を取得する。}
-     * {@.en Get the reference to the CORBA object as
+     * クトを設定する。}
+     * {@.en Sets the reference to the CORBA object as
      * ExecutioncontextService of this object.}
      *
-     * @return 
-     *   {@.ja CORBA オブジェクト参照}
-     *   {@.en The reference to CORBA object}
+     * @param ec_ptr 
+     *   {@.ja オブジェクトリファレンス}
+     *   {@.en The object reference}
      */
     public void setObjRef(ExecutionContextService ec_ptr){
         rtcout.println(Logbuf.TRACE, "setObjRef()");

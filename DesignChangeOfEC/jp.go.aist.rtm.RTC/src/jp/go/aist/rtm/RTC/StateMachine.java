@@ -527,6 +527,65 @@ public class StateMachine<STATE, LISTENER> {
             }
         }
     }
+    //============================================================
+    // divided worker functions
+    // The following divided worker functions have to be used together.
+    // - worker_pre()
+    // - worker_do()
+    // - worker_post()
+    //
+    public void worker_pre() {
+        StateHolder state;
+        
+        synchronized (m_states) {
+            state = new StateHolder(m_states);
+        }
+        if (state.curr == state.next) {
+            if( m_predo.get(state.curr) != null ) {
+                m_predo.get(state.curr).doAction(state);
+            }
+            return;
+        }
+
+        // State changed
+        if( m_exit.get(state.curr) != null ) {
+            m_exit.get(state.curr).doAction(state);
+        }
+
+        synchronized (m_states) {
+            state = new StateHolder(m_states);
+        }
+        if( state.curr != state.next ) {
+            state.curr = state.next;
+            if( m_entry.get(state.curr)!=null ) {
+                m_entry.get(state.curr).doAction(state);
+            }
+            update_curr((STATE)state.curr);
+        }
+    }
+
+    public void worker_do() {
+        StateHolder state;
+        
+        synchronized (m_states) {
+            state = new StateHolder(m_states);
+        }
+        if( m_do.get(state.curr) != null ) {
+            m_do.get(state.curr).doAction(state);
+        }
+
+    }
+
+    public void worker_post() {
+        StateHolder state;
+        
+        synchronized (m_states) {
+            state = new StateHolder(m_states);
+        }
+        if( m_postdo.get(state.curr) != null ) {
+            m_postdo.get(state.curr).doAction(state);
+        }
+    }
 
     private boolean need_trans() {
         synchronized (m_states) {
