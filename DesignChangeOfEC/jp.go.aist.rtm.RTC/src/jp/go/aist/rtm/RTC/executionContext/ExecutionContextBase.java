@@ -156,8 +156,10 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
 */
     public boolean finalizeExecutionContext();
 //    public abstract boolean finalizeExecutionContext();
+/*
     public ExecutionContextProfile m_profile 
                                     = new ExecutionContextProfile();
+*/
 /*
     protected ExecutionContextProfile m_profile 
                                     = new ExecutionContextProfile();

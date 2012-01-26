@@ -3,6 +3,8 @@ package jp.go.aist.rtm.RTC.executionContext;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.ObjectCreator;
+import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.StateAction;
 import jp.go.aist.rtm.RTC.StateHolder;
@@ -14,9 +16,9 @@ import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
+//import RTC.ExecutionContextProfile;
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
-import RTC.ExecutionContextProfile;
 import RTC.ExecutionContextProfileHolder;
 import RTC.ExecutionContextService;
 import RTC.ExecutionContextServiceHelper;
@@ -32,7 +34,9 @@ import _SDOPackage.NVListHolder;
  */
 
 //public class PeriodicExecutionContext extends  ExtTrigExecutionContextServicePOA implements Runnable, ExecutionContextBase {
-public class PeriodicExecutionContext extends  ExecutionContextServicePOA implements Runnable, ExecutionContextBase {
+public class PeriodicExecutionContext 
+extends  ExecutionContextServicePOA 
+implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, ExecutionContextBase {
 
 
     /**
@@ -1102,7 +1106,7 @@ public class PeriodicExecutionContext extends  ExecutionContextServicePOA implem
     /**
      * <p>ExecutionContextProfileです。</p>
      */
-    //protected ExecutionContextProfile m_profile = new ExecutionContextProfile();
+    protected ExecutionContextProfile m_profile = new ExecutionContextProfile();
     /**
      * <p>ExecutionContextの動作周期です。</p>
      */
@@ -1121,9 +1125,39 @@ public class PeriodicExecutionContext extends  ExecutionContextServicePOA implem
      * @param manager Managerオブジェクト
      */
     public static void PeriodicExecutionContextInit(Manager manager) {
-        manager.registerECFactory("jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext");
+        //manager.registerECFactory("jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext");
+        ExecutionContextFactory<ExecutionContextBase,String> factory 
+                                        = ExecutionContextFactory.instance();
+        factory.addFactory("jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext",
+                    new PeriodicExecutionContext(),
+                    new PeriodicExecutionContext());
     }
 
+    /**
+     * {@.ja PeriodicExecutionContext を生成する}
+     * {@.en Creats PeriodicExecutionContext}
+     * 
+     * @return 
+     *   {@.ja 生成されたinstance}
+     *   {@.en Object Created instances}
+     *
+     *
+     */
+    public ExecutionContextBase creator_() {
+        return new PeriodicExecutionContext();
+    }
+    /**
+     * {@.ja Object を破棄する}
+     * {@.en Destructs Object}
+     * 
+     * @param obj
+     *   {@.ja 破棄するインタスタンス}
+     *   {@.en The target instances for destruction}
+     *
+     */
+    public void destructor_(Object obj) {
+        obj = null;
+    }
     /**
      * <p>ExecutionContextのインスタンスを取得します。</p>
      * 

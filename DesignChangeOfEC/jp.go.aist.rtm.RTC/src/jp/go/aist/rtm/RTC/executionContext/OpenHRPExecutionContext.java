@@ -108,7 +108,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
 //        manager.registerECFactory("jp.go.aist.rtm.RTC.executionContext.OpenHRPExecutionContext");
         ExecutionContextFactory<ExecutionContextBase,String> factory 
                                         = ExecutionContextFactory.instance();
-        factory.addFactory("SynchExtTriggerEC",
+        factory.addFactory("jp.go.aist.rtm.RTC.executionContext.OpenHRPExecutionContext",
                     new OpenHRPExecutionContext(),
                     new OpenHRPExecutionContext());
     }

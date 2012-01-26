@@ -2756,7 +2756,7 @@ public class Manager {
             Properties temp = m_config.getNode(category + "." + type_name);
             Vector<String> keys = temp.propertyNames();
             int length = keys.size();
-            if (!(length == 1 && keys.get(length).equals("config_file"))) {
+            if (!(length == 1 && keys.get(length-1).equals("config_file"))) {
                 type_prop.merge(m_config.getNode(category + "." + type_name));
                 rtcout.println(Logbuf.INFO,
                         "Component type conf exists in rtc.conf. Merged.");

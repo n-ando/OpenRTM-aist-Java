@@ -286,8 +286,8 @@ public class ExecutionContextProfile {
         if (rtobj==null) {
             rtcout.println(Logbuf.ERROR,"Narrowing failed.");
             return ReturnCode_t.RTC_ERROR;
-          }
-        m_profile.owner = (RTObject)m_profile.owner._duplicate();
+        }
+        m_profile.owner = (RTObject)rtobj._duplicate();
         return ReturnCode_t.RTC_OK;
     }
 
@@ -538,7 +538,8 @@ public class ExecutionContextProfile {
      * {@.ja ECProfile}
      * {@.en ECProfile}
      */
-    private RTC.ExecutionContextProfile m_profile;
+    private RTC.ExecutionContextProfile m_profile 
+                                        = new RTC.ExecutionContextProfile();
 
     /**
      * {@.ja mutex of ExecutionContextProfile}
