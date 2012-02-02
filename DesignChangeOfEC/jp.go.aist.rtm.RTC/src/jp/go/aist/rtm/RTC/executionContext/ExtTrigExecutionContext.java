@@ -91,7 +91,13 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
 
     /**
-     * <p>ExecutionContextの処理を１周期分進めます。</p>
+     * {@.ja ExecutionContextの処理を進める}
+     * {@.en Proceed with tick of ExecutionContext}
+     *
+     * <p>
+     * {@.ja ExecutionContextの処理を１周期分進めます。}
+     * {@.en Proceed with tick of ExecutionContext for one period.}
+     *
      */
     public void tick() throws SystemException {
 
@@ -157,9 +163,22 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     // ExecutionContext
     //============================================================
     /**
-     * <p>ExecutionContextが実行中かどうかを取得します。</p>
-     * 
-     * @return 実行判定結果
+     * {@.ja ExecutionContext 実行状態確認関数}
+     * {@.en heck for ExecutionContext running state}
+     * <p>
+     * {@.ja この操作は ExecutionContext が Runnning 状態の場合に true を返す。
+     * Executioncontext が Running の間、当該 Executioncontext に参加し
+     * ている全てのアクティブRTコンポーネントが、ExecutionContext の実
+     * 行種類に応じて実行される。}
+     * {@.en This operation shall return true if the context is in the
+     * Running state.  While the context is Running, all Active RTCs
+     * participating in the context shall be executed according to the
+     * context’s execution kind.}
+     *
+     * @return 
+     *   {@.ja 状態確認関数(動作中:true、停止中:false)}
+     *   {@.en Check state function (Running:true、Stopping:false)}
+     *
      */
     public boolean is_running() {
 
@@ -169,9 +188,25 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
 
     /**
-     * <p>ExecutionContext をスタートします。</p>
-     * 
-     * @return 実行結果
+     * {@.ja ExecutionContext の実行を開始}
+     * {@.en Start the ExecutionContext}
+     * <p>
+     * {@.ja ExecutionContext の実行状態を Runnning とするためのリクエストを
+     * 発行する。ExecutionContext の状態が遷移すると
+     * ComponentAction::on_startup が呼び出される。参加しているRTコンポー
+     * ネントが、初期化されるまで ExecutionContext を開始することはでき
+     * ない。ExecutionContext は複数回開始/停止を繰り返すことができる。}
+     * {@.en Request that the context enter the Running state.  Once the
+     * state transition occurs, the ComponentAction::on_startup
+     * operation will be invoked.  An execution context may not be
+     * started until the RT-Components that participate in it have
+     * been initialized.  An execution context may be started and
+     * stopped multiple times.}
+     *
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type}
+     *
      */
     public ReturnCode_t start() {
 
@@ -196,9 +231,24 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
 
     /**
-     * <p>ExecutionContext をストップします。</p>
-     * 
-     * @return 実行結果
+     * {@.ja ExecutionContext の実行を停止}
+     * {@.en Stop the ExecutionContext}
+     * <p>
+     * {@.ja ExecutionContext の状態を Stopped とするためのリクエストを発行す
+     * る。遷移が発生した場合は、ComponentAction::on_shutdown が呼び出
+     * される。参加しているRTコンポーネントが終了する前に
+     * ExecutionContext を停止する必要がある。ExecutionContext は複数回
+     * 開始/停止を繰り返すことができる。}
+     * {@.en Request that the context enter the Stopped state.  Once the
+     * transition occurs, the ComponentAction::on_shutdown operation
+     * will be invoked.  An execution context must be stopped before
+     * the RT components that participate in it are finalized.  An
+     * execution context may be started and stopped multiple times.}
+     *
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type}
+     *
      */
     public ReturnCode_t stop(){
 
@@ -221,9 +271,18 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
 
     /**
-     * <p>ExecutionContextの実行周期(Hz)を取得します。</p>
-     * 
-     * @return 実行周期(Hz)
+     * {@.ja ExecutionContext の実行周期(Hz)を取得する}
+     * {@.en Get execution rate(Hz) of ExecutionContext}
+     * <p>
+     * {@.ja Active 状態にてRTコンポーネントが実行される周期(単位:Hz)を取得す
+     * る。}
+     * {@.en This operation shall return the rate (in hertz) at which its
+     * Active participating RTCs are being invoked.}
+     *
+     * @return 
+     *   {@.ja 処理周期(単位:Hz)}
+     *   {@.en Execution cycle(Unit:Hz)}
+     *
      */
     public double get_rate() {
 
