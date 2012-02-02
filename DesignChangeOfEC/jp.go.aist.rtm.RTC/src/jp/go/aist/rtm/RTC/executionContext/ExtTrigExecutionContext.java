@@ -47,9 +47,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public ExtTrigExecutionContext() {
         super();
 
-System.out.println("ent ExtTrigExecutionContext");
         rtcout = new Logbuf("Manager.ExtTrigExecutionContext");
-System.out.println("ret ExtTrigExecutionContext");
         m_profile.setObjRef((ExecutionContextService)this.__this());
 
     }
@@ -96,7 +94,6 @@ System.out.println("ret ExtTrigExecutionContext");
      * <p>ExecutionContextの処理を１周期分進めます。</p>
      */
     public void tick() throws SystemException {
-System.out.println("ent ExtTrigExecutionContext.tick()");
 
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.tick()");
 
@@ -104,7 +101,6 @@ System.out.println("ent ExtTrigExecutionContext.tick()");
             m_worker._called = true;
             m_worker.notifyAll();
         }
-System.out.println("ret ExtTrigExecutionContext.tick()");
     }
 
     /**
@@ -112,7 +108,6 @@ System.out.println("ret ExtTrigExecutionContext.tick()");
      * 全Componentの処理を呼び出した後、次のイベントが発生するまで休止します。</p>
      */
     public int svc() {
-System.out.println("ent ExtTrigExecutionContext.svc()");
 
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.svc()");
 
@@ -122,9 +117,7 @@ System.out.println("ent ExtTrigExecutionContext.svc()");
             synchronized (m_worker) {
                 while (!m_worker._called && m_running) {
                     try {
-System.out.println("010:m_worker.wait()");
                         m_worker.wait();
-System.out.println("020:m_worker.wait()");
                     } catch (InterruptedException e) {
                         break;
                     }
@@ -150,7 +143,6 @@ System.out.println("020:m_worker.wait()");
             }
         } while (m_running);
         
-System.out.println("ret ExtTrigExecutionContext.svc()");
         return 0;
     }
 
