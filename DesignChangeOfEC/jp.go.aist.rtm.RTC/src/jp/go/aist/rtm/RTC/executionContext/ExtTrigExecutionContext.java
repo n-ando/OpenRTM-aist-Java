@@ -17,6 +17,7 @@ import jp.go.aist.rtm.RTC.util.TimeValue;
 import org.omg.CORBA.SystemException;
 
 import OpenRTM.ExtTrigExecutionContextServicePOA;
+import OpenRTM.ExtTrigExecutionContextServiceHelper;
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
 import RTC.ExecutionContextService;
@@ -62,7 +63,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
 
         if (this.m_ref == null) {
             try {
-                this.m_ref = ExecutionContextServiceHelper.narrow(POAUtil.getRef(this));
+                this.m_ref = ExtTrigExecutionContextServiceHelper.narrow(POAUtil.getRef(this));
                 
             } catch (Exception e) {
                 throw new IllegalStateException(e);
@@ -110,13 +111,25 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
 
     /**
+     * <p>ExecutionContext用のスレッドを生成します。</p>
+     */
+    public int open() {
+
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.open()");
+
+        if(m_thread==null) {
+            m_thread = new Thread(this, "ExtTrigExecutionContext");
+            m_thread.start();
+        }
+        return 0;
+    }
+    /**
      * <p>ExecutionContextにattachされている各Componentの処理を呼び出します。
      * 全Componentの処理を呼び出した後、次のイベントが発生するまで休止します。</p>
      */
     public int svc() {
 
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.svc()");
-
         do {
             TimeValue tv = new TimeValue(0, m_usec); // (s, us)
 
@@ -133,6 +146,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                     for (int intIdx = 0; intIdx < m_comps.size(); ++intIdx) {
                         m_comps.get(intIdx).invoke();
                     }
+/*
                     while (!m_running) {
                         try {
                             Thread.sleep(0, (int) tv.getUsec());
@@ -145,6 +159,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+*/
                 }
             }
         } while (m_running);
@@ -225,7 +240,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             m_worker.notifyAll();
         }
 
-        //this.open();
+        this.open();
 
         return ReturnCode_t.RTC_OK;
     }
@@ -1010,6 +1025,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * @param manager Managerオブジェクト
      */
     public static void ExtTrigExecutionContextInit(Manager manager) {
+
         ExecutionContextFactory<ExecutionContextBase,String> factory 
                                         = ExecutionContextFactory.instance();
         factory.addFactory("jp.go.aist.rtm.RTC.executionContext.ExtTrigExecutionContext",
