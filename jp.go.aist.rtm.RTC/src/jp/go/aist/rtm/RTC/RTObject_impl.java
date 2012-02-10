@@ -1,10 +1,12 @@
 package jp.go.aist.rtm.RTC;
 
 import java.util.Vector;
+import java.util.Set;
 import java.lang.reflect.Method;
 
 import jp.go.aist.rtm.RTC.SDOPackage.Configuration_impl;
 import jp.go.aist.rtm.RTC.executionContext.ExecutionContextBase;
+import jp.go.aist.rtm.RTC.executionContext.ExecutionContextFactory;
 import jp.go.aist.rtm.RTC.port.CorbaPort;
 import jp.go.aist.rtm.RTC.port.InPort;
 import jp.go.aist.rtm.RTC.port.InPortBase;
@@ -657,22 +659,53 @@ public class RTObject_impl extends DataFlowComponentPOA {
       
         String ec_args = new String();
 
+        String ec_type = m_properties.getProperty("exec_cxt.periodic.type");
         ec_args += m_properties.getProperty("exec_cxt.periodic.type");
         ec_args += "?";
         ec_args += "rate=" + m_properties.getProperty("exec_cxt.periodic.rate");
 
+        ExecutionContextFactory<ExecutionContextBase,String> factory 
+                                        = ExecutionContextFactory.instance();
         ExecutionContextBase ec;
+        ec = factory.createObject(ec_type);
+        if (ec == null) {
+            rtcout.println(Logbuf.ERROR,"EC ("
+                                            + ec_type
+                                            + ") creation failed.");
+            Set ecs = ExecutionContextFactory.instance().getIdentifiers();
+            rtcout.println(Logbuf.DEBUG,"Available EC list: "
+                                            + ecs.toString() );
+            return ReturnCode_t.RTC_ERROR;
+/*
+            coil::vstring ecs;
+            ecs = RTC::ExecutionContextFactory::instance().getIdentifiers();
+            RTC_DEBUG(("Available EC list: %s",
+                       coil::flatten(ecs).c_str()));
+            return RTC::RTC_ERROR;
+*/
+        }
+        rtcout.println(Logbuf.DEBUG,"EC (" + ec_type + ") created.");
+//        RTC_DEBUG(("EC (%s) created.", ec_type.c_str()));
+/*
         ec = Manager.instance().createContext(ec_args);
         if (ec == null) {
             return ReturnCode_t.RTC_ERROR;
         }
-        ec.set_rate(Double.valueOf(m_properties.getProperty("exec_cxt.periodic.rate")).doubleValue());
+*/
+        //ec.getObjRef().set_rate(Double.valueOf(m_properties.getProperty("exec_cxt.periodic.rate")).doubleValue());
         m_eclist.add(ec);
         ExecutionContextService ecv;
         ecv = ec.getObjRef();
         if (ecv == null) {
+            rtcout.println(Logbuf.ERROR,
+                                    "Getting object reference of ec failed.");
             return ReturnCode_t.RTC_ERROR;
         }
+        double ec_rate = Double.valueOf(m_properties.getProperty("exec_cxt.periodic.rate")).doubleValue();
+        ecv.set_rate(ec_rate);
+        rtcout.println(Logbuf.DEBUG,"Execution context rate is set to " 
+                                            + ec_rate + ".");
+
         ec.bindComponent(this);
 
         ReturnCode_t ret;
@@ -685,6 +718,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         // -- entering alive state --
         // at least one EC must be attached
         if (m_ecMine.value.length == 0) {
+            rtcout.println(Logbuf.ERROR, "No EC of this RTC.");
             return ReturnCode_t.PRECONDITION_NOT_MET;
         }
         for(int intIdx=0; intIdx < m_ecMine.value.length; ++intIdx) {
@@ -3915,10 +3949,16 @@ public class RTObject_impl extends DataFlowComponentPOA {
         rtcout.println(Logbuf.TRACE, "RTObject_impl.finalizeContexts()");
 
         for(int i=0, len=m_eclist.size(); i < len; ++i) {
+            m_eclist.get(i).getObjRef().stop();
             try {
-                m_eclist.elementAt(i).stop();
-		m_eclist.elementAt(i).finalizeExecutionContext();
-                m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_eclist.elementAt(i)));
+                RTC.ExecutionContextServicePOA servant;
+                servant = (RTC.ExecutionContextServicePOA)m_eclist.get(i);
+//                m_eclist.elementAt(i).getObjRef().stop();
+//                m_eclist.elementAt(i).finalizeExecutionContext();
+//                m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_eclist.elementAt(i).getObjRef()));
+                rtcout.println(Logbuf.DEBUG, "Deactivating Execution Context.");
+                m_pPOA.deactivate_object(m_pPOA.servant_to_id(servant));
+                rtcout.println(Logbuf.DEBUG, "Deactivating EC done.");
             }
             catch(Exception ex) {
             }

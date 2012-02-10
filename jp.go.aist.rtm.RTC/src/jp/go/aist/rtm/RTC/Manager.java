@@ -2133,7 +2133,7 @@ public class Manager {
             
             // Get the POAManager
             m_pPOAManager = m_pPOA.the_POAManager();
-            m_objManager = new CorbaObjectManager(m_pORB, m_pPOA);
+            //m_objManager = new CorbaObjectManager(m_pORB, m_pPOA);
             
         } catch (Exception ex) {
             rtcout.println(Logbuf.DEBUG, 
@@ -2630,7 +2630,8 @@ public class Manager {
         
         for (int i=0, len=m_ecs.size(); i < len; ++i) {
             try {
-                m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_ecs.elementAt(i)));
+                //m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_ecs.elementAt(i).getObjRef()));
+                m_pPOA.deactivate_object(m_pPOA.servant_to_id((RTC.ExecutionContextServicePOA)m_ecs.get(i)));
                 
             } catch (Exception e) {
                 rtcout.println(Logbuf.DEBUG, "Exception: Caught unknown Exception in Manager.shutdownComponents().");
@@ -2755,7 +2756,7 @@ public class Manager {
             Properties temp = m_config.getNode(category + "." + type_name);
             Vector<String> keys = temp.propertyNames();
             int length = keys.size();
-            if (!(length == 1 && keys.get(length).equals("config_file"))) {
+            if (!(length == 1 && keys.get(length-1).equals("config_file"))) {
                 type_prop.merge(m_config.getNode(category + "." + type_name));
                 rtcout.println(Logbuf.INFO,
                         "Component type conf exists in rtc.conf. Merged.");
@@ -3189,7 +3190,7 @@ public class Manager {
      * {@.ja CORBA Object Manager}
      * {@.en CORBA Object Manager}
      */
-    protected CorbaObjectManager m_objManager;
+    //protected CorbaObjectManager m_objManager;
     /**
      * {@.ja Timer Object}
      * {@.en Timer Object}

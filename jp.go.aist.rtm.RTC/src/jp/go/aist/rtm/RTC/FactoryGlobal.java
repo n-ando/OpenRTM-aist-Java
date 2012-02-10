@@ -2,6 +2,7 @@ package jp.go.aist.rtm.RTC;
 
 import java.lang.reflect.Constructor;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -187,6 +188,7 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
      *  {@.en Map of FactoryEntry}
      */
     protected HashMap<IDENTIFIER, FactoryEntry> m_creators = new HashMap<IDENTIFIER, FactoryEntry>();
+    private HashMap<ABSTRACTCLASS, FactoryEntry> m_objects = new HashMap<ABSTRACTCLASS, FactoryEntry>();
 
     /**
      * {@.ja Identifierがマップに存在するかチェックする。}
@@ -233,7 +235,7 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         if (m_creators.containsKey(id)){
             return ReturnCode.ALREADY_EXISTS;
         }
-        FactoryEntry f = new FactoryEntry(creator, destructor);
+        FactoryEntry f = new FactoryEntry(id, creator, destructor);
         m_creators.put(id,f);
         return ReturnCode.FACTORY_OK;
     }
@@ -278,7 +280,9 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
         if (!m_creators.containsKey(id)){
             return null;
         }
-        return m_creators.get(id).creator_.creator_();
+        ABSTRACTCLASS obj = m_creators.get(id).creator_.creator_();
+        m_objects.put(obj, m_creators.get(id));
+        return obj;
     }
     /**
      * {@.ja オブジェクト削除。}
@@ -296,11 +300,13 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
      *   {@.en Deleteed object.}
      * 
      */
-    public void deleteObject(final IDENTIFIER id, ABSTRACTCLASS obj) {
+    public ReturnCode deleteObject(final IDENTIFIER id, ABSTRACTCLASS obj) {
         if (!m_creators.containsKey(id)){
-            return ;
+            return deleteObject(obj);
         }
         m_creators.get(id).destructor_.destructor_(obj);
+        m_objects.remove(obj);
+        return ReturnCode.FACTORY_OK;
     }
     /**
      * {@.ja オブジェクト削除。}
@@ -314,12 +320,124 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
      *   {@.ja 削除するオブジェクト}
      *   {@.en Deleteed object.}
      */
-    public void deleteObject(ABSTRACTCLASS obj) {
-        Iterator it = m_creators.keySet().iterator();
-
-        while (it.hasNext()) {
-            m_creators.get(it.next()).destructor_.destructor_(obj);
+    public ReturnCode deleteObject(ABSTRACTCLASS obj) {
+        if(!m_objects.containsKey(obj)) {
+            return ReturnCode.NOT_FOUND; 
         }
+        m_objects.get(obj).destructor_.destructor_(obj);
+        m_objects.remove(obj);
+
+        return ReturnCode.FACTORY_OK;
+    }
+
+    /**
+     * {@.ja 生成済みオブジェクトリストの取得}
+     * {@.en Getting created objects}
+     * <p>
+     * {@.ja このファクトリで生成されたオブジェクトのリストを取得する。}
+     * {@.en This operation returns a list of created objects by the factory.}
+     *
+     * @return 
+     *   {@.ja 生成済みオブジェクトリスト}
+     *   {@.en created object list}
+     *
+     */
+    public ArrayList<ABSTRACTCLASS> createdObjects() {
+        ArrayList<ABSTRACTCLASS> objects = new ArrayList<ABSTRACTCLASS>();
+        Iterator it = m_objects.keySet().iterator();
+        while (it.hasNext()) {
+            objects.add((ABSTRACTCLASS)it.next());
+        }
+        return objects;
+    }
+
+    /**
+     * {@.ja オブジェクトがこのファクトリの生成物かどうか調べる}
+     * {@.en Whether a object is a product of this factory}
+     * <p>
+     * @param obj 
+     *   {@.ja 対象オブジェクト}
+     *   {@.en A target object}
+     * @return 
+     *   {@.ja true: このファクトリの生成物
+     *         false: このファクトリの生成物ではない}
+     *   {@.en true: The object is a product of the factory
+     *         false: The object is not a product of the factory}
+     *
+     */
+    public boolean isProducerOf(ABSTRACTCLASS obj) {
+        return m_objects.containsKey(obj);
+    }
+
+    /**
+     * {@.ja オブジェクトからクラス識別子(ID)を取得する}
+     * {@.en Getting class identifier (ID) from a object}
+     * <p>
+     * {@.ja 当該オブジェクトのクラス識別子(ID)を取得する。}
+     * {@.en This operation returns a class identifier (ID) from a object.}
+     *
+     * @param obj [in] 
+     *   {@.ja クラス識別子(ID)を取得したいオブジェクト}
+     *   {@.en An object to investigate its class ID.}
+     * @param id [out] 
+     *   {@.ja クラス識別子(ID)}
+     *   {@.en Class identifier (ID)}
+     * @return 
+     *   {@.ja リターンコード NOT_FOUND: 識別子が存在しない
+     *                        FACTORY_OK: 正常終了}
+     *   {@.en Return code NOT_FOUND: ID not found
+     *                        FACTORY_OK: normal return}
+     */
+    public ReturnCode objectToIdentifier(ABSTRACTCLASS obj, IDENTIFIER id) {
+        if (!m_objects.containsKey(obj)) { 
+            return ReturnCode.NOT_FOUND; 
+        }
+        id = m_objects.get(obj).id_;
+        return ReturnCode.FACTORY_OK;
+    }
+
+    /**
+     * {@.ja オブジェクトのコンストラクタを取得する}
+     * {@.en Getting destructor of the object}
+     * <p>
+     * {@.ja このファクトリで生成されたオブジェクトのコンストラクタを取得する。
+     * obj はこのファクトリで生成されたものでなければならない。予め
+     * isProducerOf() 関数で当該オブジェクトがこのファクトリの生成物で
+     * あるかどうかをチェックしなければならない。}
+     * {@.en This operation returns a constructor of the object created by
+     * the factory.  obj must be a product of the factory.  User must
+     * check if the object is a product of the factory by using
+     * isProducerOf()-function, before using this function.}
+     *
+     * @return 
+     *   {@.ja オブジェクトのデストラクタ}
+     *   {@.en destructor of the object}
+     *
+     */
+    public ObjectCreator objectToCreator(ABSTRACTCLASS obj) {
+        return m_objects.get(obj).creator_;
+    }
+
+    /**
+     * {@.ja オブジェクトのデストラクタを取得する}
+     * {@.en Getting destructor of the object}
+     * <p>
+     * {@.ja このファクトリで生成されたオブジェクトのデストラクタを取得する。
+     * obj はこのファクトリで生成されたものでなければならない。予め
+     * isProducerOf() 関数で当該オブジェクトがこのファクトリの生成物で
+     * あるかどうかをチェックしなければならない。}
+     * {@.en This operation returns a destructor of the object created by
+     * the factory.  obj must be a product of the factory.  User must
+     * check if the object is a product of the factory by using
+     * isProducerOf()-function, before using this function.}
+     *
+     * @return 
+     *   {@.ja オブジェクトのデストラクタ}
+     *   {@.en destructor of the object}
+     *
+     */
+    public ObjectDestructor objectToDestructor(ABSTRACTCLASS obj) {
+        return m_objects.get(obj).destructor_;
     }
 
     /**
@@ -343,8 +461,10 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
          *   {@.ja 削除インターフェース}    
          *   {@.en Destruction interface}    
          */
-        public FactoryEntry(ObjectCreator creator, 
-                                                ObjectDestructor destructor) {
+        public FactoryEntry(IDENTIFIER id,
+                            ObjectCreator creator, 
+                            ObjectDestructor destructor) {
+          id_ = id;
           creator_ = creator;
           destructor_ = destructor;
         }
@@ -358,6 +478,11 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
          * {@.en Destruction interface variable}
          */
         public ObjectDestructor destructor_;
+        /**
+         * {@.ja }
+         * {@.en }
+         */
+        public IDENTIFIER id_;
     };
     /**
      * {@.ja リターンコード}

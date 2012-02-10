@@ -1,6 +1,8 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.ObjectCreator;
+import jp.go.aist.rtm.RTC.ObjectDestructor;
 
 import org.omg.CORBA.SystemException;
 
@@ -9,8 +11,9 @@ import org.omg.CORBA.SystemException;
  *
  */
 public class OpenHRPExecutionContext
-        extends PeriodicExecutionContext implements Runnable{
-
+//        extends PeriodicExecutionContext implements Runnable{
+extends PeriodicExecutionContext 
+implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, ExecutionContextBase{
     /**
      * <p> Constructor </p>
      */
@@ -72,12 +75,42 @@ public class OpenHRPExecutionContext
     private Worker m_worker = new Worker();
 
     /**
+     * {@.ja OpenHRPExecutionContext を生成する}
+     * {@.en Creats OpenHRPExecutionContext}
+     * 
+     * @return 
+     *   {@.ja 生成されたOpenHRPExecutionContext}
+     *   {@.en Object Created instances}
+     *
+     *
+     */
+    public OpenHRPExecutionContext creator_() {
+        return new OpenHRPExecutionContext();
+    }
+    /**
+     * {@.ja Object を破棄する}
+     * {@.en Destructs Object}
+     * 
+     * @param obj
+     *   {@.ja 破棄するインタスタンス}
+     *   {@.en The target instances for destruction}
+     *
+     */
+    public void destructor_(Object obj) {
+        obj = null;
+    }
+    /**
      * <p> OpenHRPExecutionContextInit </p>
      *
      * @param manager Manager
      */
     public static void OpenHRPExecutionContextInit(Manager manager) {
-        manager.registerECFactory("jp.go.aist.rtm.RTC.executionContext.OpenHRPExecutionContext");
+//        manager.registerECFactory("jp.go.aist.rtm.RTC.executionContext.OpenHRPExecutionContext");
+        ExecutionContextFactory<ExecutionContextBase,String> factory 
+                                        = ExecutionContextFactory.instance();
+        factory.addFactory("jp.go.aist.rtm.RTC.executionContext.OpenHRPExecutionContext",
+                    new OpenHRPExecutionContext(),
+                    new OpenHRPExecutionContext());
     }
     
     /**

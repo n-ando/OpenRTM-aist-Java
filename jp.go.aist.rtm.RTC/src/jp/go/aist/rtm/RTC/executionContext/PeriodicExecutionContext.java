@@ -3,6 +3,8 @@ package jp.go.aist.rtm.RTC.executionContext;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.ObjectCreator;
+import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.StateAction;
 import jp.go.aist.rtm.RTC.StateHolder;
@@ -11,13 +13,16 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
+//import RTC.ExecutionContextProfile;
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
-import RTC.ExecutionContextProfile;
 import RTC.ExecutionContextProfileHolder;
 import RTC.ExecutionContextService;
 import RTC.ExecutionContextServiceHelper;
+import RTC.ExecutionContextServicePOA;
 import RTC.ExecutionKind;
 import RTC.LifeCycleState;
 import RTC.LightweightRTObject;
@@ -28,7 +33,11 @@ import _SDOPackage.NVListHolder;
  * <p>Periodic Sampled Data Processing(周期実行用)ExecutionContextクラスです。</p>
  */
 
-public class PeriodicExecutionContext extends ExecutionContextBase implements Runnable {
+//public class PeriodicExecutionContext extends  ExtTrigExecutionContextServicePOA implements Runnable, ExecutionContextBase {
+public class PeriodicExecutionContext 
+extends  ExecutionContextServicePOA 
+implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, ExecutionContextBase {
+
 
     /**
      * {@.ja デフォルトコンストラクタ}
@@ -55,14 +64,21 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
 
         m_usec = (long)(1000000/rate);
 
-        m_ref = (ExecutionContextService)this.__this();
+        //m_ref = (ExecutionContextService)this.__this();
+        m_profile.setObjRef((ExecutionContextService)this.__this());
 
 
+        m_profile.setPeriod(new TimeValue(1.0 / rate));
+        m_profile.setKind(ExecutionKind.PERIODIC);
+        m_profile.setRate(1.0 / jp.go.aist.rtm.RTC.executionContext.ExecutionContextProfile.DEEFAULT_PERIOD);
+
+/*
         m_profile.kind = ExecutionKind.PERIODIC;
         m_profile.rate = 0.0;
         m_profile.owner = (RTC.RTObject)null;
         m_profile.participants = new RTC.RTObject[0];
         m_profile.properties = new _SDOPackage.NameValue[0];
+*/
     }
 
     /**
@@ -107,19 +123,29 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_svc = true;
         m_nowait = true;
 
-        if( rate==0 ) rate = (1.0/0.000001);//1000000Hz
-
+        if( rate==0 ) {
+            rate = (1.0/0.000001);//1000000Hz
+        }
         m_usec = (long)(1000000/rate);
-        if( m_usec==0 ) m_nowait = true;
+        if( m_usec==0 ) {
+            m_nowait = true;
+        }
 
-        m_ref = (ExecutionContextService)this.__this();
+        //m_ref = (ExecutionContextService)this.__this();
+        m_profile.setObjRef((ExecutionContextService)this.__this());
 
 
+        m_profile.setPeriod(new TimeValue(1.0 / rate));
+        m_profile.setKind(ExecutionKind.PERIODIC);
+        m_profile.setRate(1.0 / jp.go.aist.rtm.RTC.executionContext.ExecutionContextProfile.DEEFAULT_PERIOD);
+        m_profile.setOwner((LightweightRTObject)owner._duplicate());
+/*
         m_profile.kind = ExecutionKind.PERIODIC;
         m_profile.rate = rate;
         m_profile.owner = owner;
         m_profile.participants = new RTC.RTObject[0];
         m_profile.properties = new _SDOPackage.NameValue[0];
+*/
     }
 
     /**
@@ -177,12 +203,14 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * 
      * @return ExecutionContextService
      */
+/*
     public ExecutionContextService getObjRef() {
 
         rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.getObjRef()");
 
         return m_ref;
     }
+*/
     /**
      * <p>本オブジェクトのExecutionContextServiceとしてのCORBAオブジェクト参照を設定します。</p>
      * 
@@ -228,7 +256,9 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
 		}
 		if (m_worker.running_) {
 		    for (int intIdx=0; intIdx < m_comps.size(); ++intIdx) {
-			m_comps.elementAt(intIdx).invoke();
+			m_comps.get(intIdx).invoke_work_pre();
+			m_comps.get(intIdx).invoke_work_do();
+			m_comps.get(intIdx).invoke_work_post();
 		    }
 		}
 	    }
@@ -344,9 +374,12 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
 
         rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_rate()");
 
+        return m_profile.getRate();
+/*
         synchronized (m_profile) {
             return m_profile.rate;
         }
+*/
     }
 
     /**
@@ -360,14 +393,24 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
 
         if( rate<=0.0 ) return ReturnCode_t.BAD_PARAMETER;
 
+        m_profile.setRate(rate);
+/*
         synchronized (m_profile) {
             m_profile.rate = rate;
         }
+*/
         this.m_usec = (long)(1000000/rate);
-        if( m_usec == 0 ) m_nowait = true;
+        if( m_usec == 0 ) {
+            m_nowait = true;
+        }
         for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
             m_comps.elementAt(intIdx).invoke_on_rate_changed();
         }
+        rtcout.println(Logbuf.DEBUG, "Actual period: "
+                                        + m_profile.getPeriod().sec()
+                                        + " [sec], "
+                                        + m_profile.getPeriod().usec()
+                                        + " [usec]");
         return ReturnCode_t.RTC_OK;
     }
 
@@ -474,9 +517,11 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      */
     public ExecutionKind get_kind() {
 
-        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_kind()");
+        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_kind() ="
+                                            + m_profile.getKindString());
 
-        return m_profile.kind;
+        return m_profile.getKind();
+        //return m_profile.kind;
     }
 
     /**
@@ -525,11 +570,14 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             //
             m_comps.add(new Comp((LightweightRTObject)comp._duplicate(), 
                                 (DataFlowComponent)dfp._duplicate(), id));
+            m_profile.addComponent((LightweightRTObject)comp._duplicate());
+/*
             RTC.RTCListHolder holder
                         = new RTC.RTCListHolder(m_profile.participants);
             CORBA_SeqUtil.push_back(holder, 
                         RTC.RTObjectHelper.narrow(comp));
             m_profile.participants = holder.value;
+*/
             return ReturnCode_t.RTC_OK;
         } catch(Exception ex) {
             return ReturnCode_t.BAD_PARAMETER;
@@ -572,7 +620,8 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         m_comps.add(new Comp((LightweightRTObject)comp._duplicate(),
                              (DataFlowComponent)dfp._duplicate(),
                              id));
-        m_profile.owner = (DataFlowComponent)dfp._duplicate();
+        m_profile.setOwner((LightweightRTObject)dfp._duplicate());
+        //m_profile.owner = (DataFlowComponent)dfp._duplicate();
 
 
         return ReturnCode_t.RTC_OK;
@@ -616,7 +665,10 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
                                         m_comps.elementAt(intIdx)._sm.ec_id);
                 m_comps.elementAt(intIdx)._ref = null;
                 m_comps.remove(m_comps.elementAt(intIdx));
-                rtcout.println(Logbuf.TRACE, "remove_component(): an RTC removed from this context.");
+                rtcout.println(Logbuf.TRACE, 
+                    "remove_component(): an RTC removed from this context.");
+                m_profile.removeComponent(comp);
+/*
                 RTC.RTObject rtcomp = RTC.RTObjectHelper.narrow(comp);
                 if(rtcomp == null){
                     rtcout.println(Logbuf.ERROR,"Invalid object reference."); 
@@ -636,6 +688,7 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
                     CORBA_SeqUtil.erase(holder, (int)index);
                     m_profile.participants = holder.value;
                 }
+*/
                 return ReturnCode_t.RTC_OK;
             }
         }
@@ -651,15 +704,17 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * 
      * @return ExecutionContextProfile
      */
-    public ExecutionContextProfile get_profile() {
+    public RTC.ExecutionContextProfile get_profile() {
 
         rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_profile()");
-
+        return m_profile.getProfile();
+/*
         ExecutionContextProfileHolder p;
         synchronized (m_profile) {
             p = new ExecutionContextProfileHolder(m_profile);
         }
         return p.value;
+*/
     }
 
     /**
@@ -794,6 +849,15 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
          */
         public void worker() {
             m_sm.worker();
+        }
+        public void worker_pre() {
+            m_sm.worker_pre();
+        }
+        public void worker_do() {
+            m_sm.worker_do();
+        }
+        public void worker_post() {
+            m_sm.worker_post();
         }
 
         /**
@@ -955,6 +1019,24 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
             this._sm.worker();
         }
         /**
+         * <p>ExecutionContextから呼び出されるメソッドです。</p>
+         */
+        public void invoke_work_pre(){
+            this._sm.worker_pre();
+        }
+        /**
+         * <p>ExecutionContextから呼び出されるメソッドです。</p>
+         */
+        public void invoke_work_do(){
+            this._sm.worker_do();
+        }
+        /**
+         * <p>ExecutionContextから呼び出されるメソッドです。</p>
+         */
+        public void invoke_work_post(){
+            this._sm.worker_post();
+        }
+        /**
          * <p>StartUp時に呼び出されるメソッドです。</p>
          */
         public void invoke_on_startup(){
@@ -1043,9 +1125,39 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
      * @param manager Managerオブジェクト
      */
     public static void PeriodicExecutionContextInit(Manager manager) {
-        manager.registerECFactory("jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext");
+        //manager.registerECFactory("jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext");
+        ExecutionContextFactory<ExecutionContextBase,String> factory 
+                                        = ExecutionContextFactory.instance();
+        factory.addFactory("jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext",
+                    new PeriodicExecutionContext(),
+                    new PeriodicExecutionContext());
     }
 
+    /**
+     * {@.ja PeriodicExecutionContext を生成する}
+     * {@.en Creats PeriodicExecutionContext}
+     * 
+     * @return 
+     *   {@.ja 生成されたinstance}
+     *   {@.en Object Created instances}
+     *
+     *
+     */
+    public ExecutionContextBase creator_() {
+        return new PeriodicExecutionContext();
+    }
+    /**
+     * {@.ja Object を破棄する}
+     * {@.en Destructs Object}
+     * 
+     * @param obj
+     *   {@.ja 破棄するインタスタンス}
+     *   {@.en The target instances for destruction}
+     *
+     */
+    public void destructor_(Object obj) {
+        obj = null;
+    }
     /**
      * <p>ExecutionContextのインスタンスを取得します。</p>
      * 
@@ -1076,5 +1188,116 @@ public class PeriodicExecutionContext extends ExecutionContextBase implements Ru
         public boolean equalof(final java.lang.Object object) {
             return m_obj._is_equivalent((RTC.RTObject)object);
         }
+    }
+
+    /**
+     * {@.ja ExecutionContextクラスの初期化関数}
+     * {@.en Initialization function of ExecutionContext class}
+     */
+    public void init(Properties props) {
+    }
+
+    /**
+     * {@.ja CORBA オブジェクト参照の取得}
+     * {@.en Get the reference to the CORBA object}
+     * <p>
+     * {@.ja 本オブジェクトの ExecutioncontextService としての CORBA オブジェ
+     * クト参照を取得する。}
+     * {@.en Get the reference to the CORBA object as
+     * ExecutioncontextService of this object.}
+     *
+     * @return 
+     *   {@.ja CORBA オブジェクト参照}
+     *   {@.en The reference to CORBA object}
+     *
+     */
+/*
+    public void setObjRef(final ExecutionContextService ref) {
+        m_profile.setObjRef(ref);
+    }
+*/
+    /**
+     * {@.ja CORBA オブジェクト参照の取得}
+     * {@.en Get the reference to the CORBA object}
+     * <p>
+     * {@.ja 本オブジェクトの ExecutioncontextService としての CORBA オブジェ
+     * クト参照を取得する。}
+     * {@.en Get the reference to the CORBA object as
+     * ExecutioncontextService of this object.}
+     *
+     * @return 
+     *   {@.ja CORBA オブジェクト参照}
+     *   {@.en The reference to CORBA object}
+     *
+     */
+    public ExecutionContextService getObjRef() {
+      return m_profile.getObjRef();
+    }
+    /**
+     * {@.ja ExecutionContext の実行周期(Hz)を設定する}
+     * {@.en Set execution rate(Hz) of ExecutionContext}
+     * <p>
+     * {@.ja Active 状態にてRTコンポーネントが実行される周期(単位:Hz)を設定す
+     * る。実行周期の変更は、DataFlowComponentAction の
+     * on_rate_changed によって各RTコンポーネントに伝達される。}
+     * {@.en This operation shall set the rate (in hertz) at which this
+     * context’s Active participating RTCs are being called.  If the
+     * execution kind of the context is PERIODIC, a rate change shall
+     * result in the invocation of on_rate_changed on any RTCs
+     * realizing DataFlowComponentAction that are registered with any
+     * RTCs participating in the context.}
+     *
+     * @param rate
+     *   {@.ja 処理周期(単位:Hz)}
+     *   {@.en Execution cycle(Unit:Hz)}
+     *
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード
+     *         RTC_OK: 正常終了
+     *         BAD_PARAMETER: 設定値が負の値}
+     *   {@.en The return code of ReturnCode_t type
+     *         RTC_OK: Succeed
+     *         BAD_PARAMETER: Invalid value. The value might be negative.}
+     *
+     */
+    public ReturnCode_t setRate(double rate) {
+      return m_profile.setRate(rate);
+    }
+    /**
+     * {@.ja ExecutionContext の実行周期(Hz)を取得する}
+     * {@.en Get execution rate(Hz) of ExecutionContext}
+     * <p>
+     * {@.ja Active 状態にてRTコンポーネントが実行される周期(単位:Hz)を取得す
+     * る。}
+     * {@.en This operation shall return the rate (in hertz) at which its
+     * Active participating RTCs are being invoked.}
+     *
+     * @return 
+     *   {@.ja 処理周期(単位:Hz)}
+     *   {@.en Execution cycle(Unit:Hz)}
+     *
+     */
+    public double getRate()  {
+      return m_profile.getRate();
+    }
+    /**
+     * {@.ja ExecutionKind を文字列化する}
+     * {@.en Converting ExecutionKind enum to string}
+     * <p>
+     * {@.ja RTC::ExecutionKind で定義されている PERIODIC, EVENT_DRIVEN,
+     * OTHER を文字列化する。}
+     * {@.en This function converts enumeration (PERIODIC, EVENT_DRIVEN,
+     * OTHER) defined in RTC::ExecutionKind to string.}
+     *
+     * @param kind 
+     *   {@.ja ExecutionKind}
+     *   {@.en ExecutionKind}
+     * @return 
+     *   {@.ja 文字列化されたExecutionKind}
+     *   {@.en String of ExecutionKind}
+     *
+     */
+    public final String getKindString(ExecutionKind kind) {
+      return m_profile.getKindString(kind);
     }
 }
