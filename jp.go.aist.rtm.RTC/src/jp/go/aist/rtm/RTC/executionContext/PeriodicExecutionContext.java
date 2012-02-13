@@ -375,11 +375,6 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_rate()");
 
         return m_profile.getRate();
-/*
-        synchronized (m_profile) {
-            return m_profile.rate;
-        }
-*/
     }
 
     /**
@@ -394,11 +389,6 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         if( rate<=0.0 ) return ReturnCode_t.BAD_PARAMETER;
 
         m_profile.setRate(rate);
-/*
-        synchronized (m_profile) {
-            m_profile.rate = rate;
-        }
-*/
         this.m_usec = (long)(1000000/rate);
         if( m_usec == 0 ) {
             m_nowait = true;
@@ -521,7 +511,6 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                                             + m_profile.getKindString());
 
         return m_profile.getKind();
-        //return m_profile.kind;
     }
 
     /**
@@ -566,7 +555,9 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                 return ReturnCode_t.BAD_PARAMETER;
             }
             //
-            int id = dfp.attach_context(m_ref);
+            //int id = dfp.attach_context(m_ref);
+            ExecutionContextService ec = m_profile.getObjRef();
+            int id = dfp.attach_context(ec);
             //
             m_comps.add(new Comp((LightweightRTObject)comp._duplicate(), 
                                 (DataFlowComponent)dfp._duplicate(), id));
@@ -611,7 +602,9 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         DataFlowComponent dfp;
         dfp = DataFlowComponentHelper.narrow(comp);
 
-        int id = rtc.bindContext(m_ref);
+        ExecutionContextService ec = m_profile.getObjRef();
+        int id = rtc.bindContext(ec);
+        //int id = rtc.bindContext(m_ref);
 	if (id < 0 || id > RTObject_impl.ECOTHER_OFFSET) {
 	    rtcout.println(Logbuf.ERROR, "bindContext returns invalid id: "+id);
 	    return ReturnCode_t.RTC_ERROR;
@@ -621,7 +614,6 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                              (DataFlowComponent)dfp._duplicate(),
                              id));
         m_profile.setOwner((LightweightRTObject)dfp._duplicate());
-        //m_profile.owner = (DataFlowComponent)dfp._duplicate();
 
 
         return ReturnCode_t.RTC_OK;
@@ -668,27 +660,6 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                 rtcout.println(Logbuf.TRACE, 
                     "remove_component(): an RTC removed from this context.");
                 m_profile.removeComponent(comp);
-/*
-                RTC.RTObject rtcomp = RTC.RTObjectHelper.narrow(comp);
-                if(rtcomp == null){
-                    rtcout.println(Logbuf.ERROR,"Invalid object reference."); 
-                    return ReturnCode_t.RTC_ERROR;
-                }
-                synchronized (m_profile) {
-                    long index;
-                    RTC.RTCListHolder holder
-                        = new RTC.RTCListHolder(m_profile.participants);
-                    index = CORBA_SeqUtil.find(holder, new is_equiv(rtcomp));
-    
-                    if (index < 0) { // not found in my list
-                        rtcout.println(Logbuf.ERROR, "Not found.");
-                        return ReturnCode_t.BAD_PARAMETER;
-                    }
-    
-                    CORBA_SeqUtil.erase(holder, (int)index);
-                    m_profile.participants = holder.value;
-                }
-*/
                 return ReturnCode_t.RTC_OK;
             }
         }
@@ -708,13 +679,6 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
 
         rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.get_profile()");
         return m_profile.getProfile();
-/*
-        ExecutionContextProfileHolder p;
-        synchronized (m_profile) {
-            p = new ExecutionContextProfileHolder(m_profile);
-        }
-        return p.value;
-*/
     }
 
     /**
