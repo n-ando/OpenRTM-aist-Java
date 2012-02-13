@@ -978,6 +978,14 @@ public class Manager {
             "exec_cxt.periodic.type",
             "exec_cxt.periodic.rate",
             "exec_cxt.evdriven.type",
+            "exec_cxt.sync_transition",
+            "exec_cxt.sync_activation",
+            "exec_cxt.sync_deactivation",
+            "exec_cxt.sync_reset",
+            "exec_cxt.transition_timeout",
+            "exec_cxt.activation_timeout",
+            "exec_cxt.deactivation_timeout",
+            "exec_cxt.reset_timeout",
             "logger.enable",
             "logger.log_level",
             "naming.enable",
@@ -987,8 +995,11 @@ public class Manager {
         };
 
         for (int ic=0; inherit_prop[ic].length() != 0; ++ic) {
-            prop.setProperty(inherit_prop[ic], 
-                                m_config.getProperty(inherit_prop[ic]));
+            
+            String key = inherit_prop[ic];
+            if (m_config.findNode(key) != null) {
+                prop.setProperty(key,m_config.getProperty(key));
+            }
         }
 
         comp = factory.create(this);
