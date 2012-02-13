@@ -64,14 +64,18 @@ public class ExecutionContextProfile {
      * {@.ja CORBA オブジェクトの設定}
      * {@.en Sets the reference to the CORBA object}
      * <p>
-     * {@.ja 本オブジェクトの ExecutioncontextService としての CORBA オブジェ
-     * クトを設定する。}
-     * {@.en Sets the reference to the CORBA object as
-     * ExecutioncontextService of this object.}
+     * {@ja .ExecutioncontextService の CORBA オブジェクト参照をセットする。
+     * セットされると、それまでセットされていたオブジェクト参照は
+     * releaseされる。セットするオブジェクト参照は有効な参照でなければ
+     * ならない。}
+     * {@.en This operation sets a object reference to
+     * ExecutionContextService.  After setting a new object reference,
+     * old reference is released.  The object reference have to be
+     * valid reference.}
      *
      * @param ec_ptr 
-     *   {@.ja オブジェクトリファレンス}
-     *   {@.en The object reference}
+     *   {@.ja ExecutionContextServiceのCORBAオブジェクト}
+     *   {@.en A CORBA object reference of ExecutionContextService}
      */
     public void setObjRef(ExecutionContextService ec_ptr){
         rtcout.println(Logbuf.TRACE, "setObjRef()");
@@ -129,7 +133,7 @@ public class ExecutionContextProfile {
      *
      */
     public ReturnCode_t setRate(double rate) {
-        rtcout.println(Logbuf.TRACE, "set_rate("+rate+")");
+        rtcout.println(Logbuf.TRACE, "setRate("+rate+")");
         if (rate < 0.0) { 
             return ReturnCode_t.BAD_PARAMETER; 
         }
@@ -180,13 +184,11 @@ public class ExecutionContextProfile {
      *
      */
     public double getRate() {
-        rtcout.println(Logbuf.TRACE, "get_rate()");
         synchronized (m_profile){
             return m_profile.rate;
         }
     }
     public TimeValue getPeriod(){
-        rtcout.println(Logbuf.TRACE, "getPeriod()");
         synchronized (m_profile){
             return m_period;
         }
@@ -255,9 +257,11 @@ public class ExecutionContextProfile {
      *   {@.en ExecutionKind}
      */
     public ExecutionKind getKind() {
-        rtcout.println(Logbuf.TRACE, getKindString(m_profile.kind)
+        synchronized (m_profile) {
+            rtcout.println(Logbuf.TRACE, getKindString(m_profile.kind)
                                         + " = getKind()");
-        return m_profile.kind;
+            return m_profile.kind;
+        }
     }
 
     /**
@@ -285,10 +289,12 @@ public class ExecutionContextProfile {
         rtobj = RTObjectHelper.narrow(comp);
         if (rtobj==null) {
             rtcout.println(Logbuf.ERROR,"Narrowing failed.");
-            return ReturnCode_t.RTC_ERROR;
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        m_profile.owner = (RTObject)rtobj._duplicate();
-        return ReturnCode_t.RTC_OK;
+        synchronized (m_profile) {
+            m_profile.owner = (RTObject)rtobj._duplicate();
+            return ReturnCode_t.RTC_OK;
+        }
     }
 
     /**
@@ -305,7 +311,9 @@ public class ExecutionContextProfile {
      */
     public final RTObject getOwner() {
         rtcout.println(Logbuf.TRACE, "getOwner()");
-        return (RTObject)m_profile.owner._duplicate();
+        synchronized (m_profile) {
+            return (RTObject)m_profile.owner._duplicate();
+        }
     }
 
     /**
@@ -343,10 +351,12 @@ public class ExecutionContextProfile {
             rtcout.println(Logbuf.ERROR,"Narrowing was failed.");
             return ReturnCode_t.RTC_ERROR;
         }
-        RTCListHolder holder = new RTCListHolder(m_profile.participants);
-        CORBA_SeqUtil.push_back(holder, rtobj);
-        m_profile.participants = holder.value;
-        return ReturnCode_t.RTC_OK;
+        synchronized (m_profile) {
+            RTCListHolder holder = new RTCListHolder(m_profile.participants);
+            CORBA_SeqUtil.push_back(holder, rtobj);
+            m_profile.participants = holder.value;
+            return ReturnCode_t.RTC_OK;
+        }
     }
 
     /**
@@ -404,9 +414,17 @@ public class ExecutionContextProfile {
      * {@.ja RTコンポーネントの参加者リストを取得する}
      * {@.en Getting participant RTC list}
      * <p>
-     * {@.ja 現在登録されている参加者RTCのリストを取得する。}
-     * {@.en This function returns a list of participant RTC of the 
-     * execution context.}
+     * {@.ja 現在登録されている参加者RTCのリストを取得する。この関数はコンポー
+     * ネントリストのメンバ変数への参照を返すので、リスト使用前に
+     * ExecutionContextProfile::lock() でロックし、リスト使用後は
+     * ExecutionContextProfile::unlock() でロックを開放しなければならな
+     * い。}
+     * {@.en This function returns a list of participant RTC of the
+     * execution context.  Since the function returns a reference to
+     * the member variable of component list, user have to lock by
+     * ExecutionContextProfile::lock() before using the list, and user
+     * also have to release the unlock by
+     * ExecutionContextProfile::unlock().}
      *
      * @return 
      *   {@.ja 参加者RTCのリスト}
