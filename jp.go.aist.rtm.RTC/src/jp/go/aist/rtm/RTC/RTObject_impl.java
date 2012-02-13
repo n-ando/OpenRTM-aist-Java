@@ -136,6 +136,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_pPOA = manager.getPOA();
         m_portAdmin = new PortAdmin(manager.getORB(), manager.getPOA());
         m_created = true;
+        m_exiting = false;
         m_properties = new Properties(default_conf);
         m_configsets = new ConfigAdmin(m_properties.getNode("conf"));
         m_readAll = false;
@@ -184,6 +185,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         m_pPOA = poa;
         m_portAdmin = new PortAdmin(orb, poa);
         m_created = true;
+        m_exiting = false;
         m_properties = new Properties(default_conf);
         m_configsets = new ConfigAdmin(m_properties.getNode("conf"));
         m_readAll = false;
@@ -778,6 +780,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
         if( m_created ) {
             return ReturnCode_t.PRECONDITION_NOT_MET;
         }
+        if (!m_exiting) { 
+            return ReturnCode_t.PRECONDITION_NOT_MET; 
+        }
         // Return RTC::PRECONDITION_NOT_MET,
         // When the component is registered in ExecutionContext.
         //if(m_ecMine.value.length != 0 || m_ecOther.value.length != 0)
@@ -840,6 +845,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
         if (m_created) {
             return ReturnCode_t.PRECONDITION_NOT_MET;
         }
+        if (m_exiting) { 
+            return ReturnCode_t.RTC_OK; 
+        }
         // deactivate myself on owned EC
         CORBA_SeqUtil.for_each(m_ecMine,
                                new deactivate_comps((LightweightRTObject)m_objref._duplicate()));
@@ -861,6 +869,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
                 m_ecOther.value[ic].remove_component(this._this());
             }
         }
+        m_exiting = true;
         ReturnCode_t ret = this._finalize();
         return ret;
     }
@@ -5995,6 +6004,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
 
         if( m_pManager != null) {
+            rtcout.println(Logbuf.DEBUG, "Cleanup on Manager");
             m_pManager.notifyFinalized(this);
         }
     }
