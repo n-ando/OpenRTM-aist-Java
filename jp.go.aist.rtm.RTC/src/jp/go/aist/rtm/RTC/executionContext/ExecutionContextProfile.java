@@ -64,7 +64,7 @@ public class ExecutionContextProfile {
      * {@.ja CORBA オブジェクトの設定}
      * {@.en Sets the reference to the CORBA object}
      * <p>
-     * {@ja .ExecutioncontextService の CORBA オブジェクト参照をセットする。
+     * {@.ja ExecutioncontextService の CORBA オブジェクト参照をセットする。
      * セットされると、それまでセットされていたオブジェクト参照は
      * releaseされる。セットするオブジェクト参照は有効な参照でなければ
      * ならない。}

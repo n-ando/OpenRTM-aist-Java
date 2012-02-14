@@ -1071,7 +1071,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * {@.en Get the reference to the CORBA object as
      * ExecutioncontextService of this object.}
      *
-     * @return 
+     * @param ref
      *   {@.ja CORBA オブジェクト参照}
      *   {@.en The reference to CORBA object}
      *
