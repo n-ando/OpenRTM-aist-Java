@@ -412,6 +412,25 @@ public class StateMachine<STATE, LISTENER> {
     }
 
     /**
+     * {@.ja 状態を取得する}
+     * {@.en Gets states}
+     * <p>
+     * {@.ja 状態情報を取得する。
+     * 現在の状態、１つ前の状態、遷移予定の状態を取得することができる。}
+     * {@.en Get state information.
+     * Get the current state, the previous state and the next state to
+     * be expected to transfer.}
+     *
+     * @return 
+     *   {@.ja 状態情報}
+     *   {@.en State information}
+     *
+     */
+    public StateHolder<STATE> getStates() {
+        return m_states;
+    }
+    
+    /**
      * {@.ja 現在の状態を取得する}
      * {@.en Get current state}
      *
