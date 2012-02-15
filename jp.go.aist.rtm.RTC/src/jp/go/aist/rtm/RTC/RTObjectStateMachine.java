@@ -21,7 +21,7 @@ public class RTObjectStateMachine {
      * {@.en Constructor}
      *
      */
-    protected RTObjectStateMachine(int id, LightweightRTObject comp){
+    public RTObjectStateMachine(int id, LightweightRTObject comp){
         m_id = id;
         m_rtobj = (LightweightRTObject)comp._duplicate();
         m_sm = new StateMachine<LifeCycleState,
@@ -63,9 +63,8 @@ public class RTObjectStateMachine {
         m_sm.setStartState(st);
         m_sm.goTo(LifeCycleState.INACTIVE_STATE);
     }
-//    RTObjectStateMachine(final RTObjectStateMachine& rtobjsm);
-//    RTObjectStateMachine& operator=(final RTObjectStateMachine& rtobjsm);
-//    void swap(RTObjectStateMachine& rtobjsm) throw();
+    private RTObjectStateMachine(final RTObjectStateMachine rtobjsm){
+    }
     /**
      * {@.ja onActivatedアクション定義用抽象クラス}
      */
