@@ -8,7 +8,9 @@ import OpenRTM.ExtTrigExecutionContextServicePOA;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.util.Properties;
 import RTC.ExecutionKind;
+import RTC.LightweightRTObject;
 import RTC.ReturnCode_t;
+import RTC.RTObject;
 
 /**
  * <p>Periodic Sampled Data Processing(周期実行用)ExecutionContextのベースとなる
@@ -154,6 +156,108 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
       return m_profile.getKindString(kind);
     }
 */
+    /**
+     * {@.ja ExecutionKind を設定する
+     * {@.en Set the ExecutionKind}
+     * <p>
+     * {@.ja この ExecutionContext の ExecutionKind を設定する}
+     * {@.en This operation sets the kind of the execution context.}
+     *
+     * @param kind 
+     *   {@.ja ExecutionKind}
+     *   {@.en ExecutionKind}
+     */
+    public ReturnCode_t setKind(ExecutionKind kind);
+
+    /**
+     * {@.ja Ownerコンポーネントをセットする。}
+     * {@.en Setting owner component of the execution context}
+     * <p>
+     * {@.ja このECのOwnerとなるRTCをセットする。}
+     * {@.en This function sets an RT-Component to be owner of 
+     * the execution context.}
+     *
+     * @param comp 
+     *   {@.ja OwnerとなるRTコンポーネント}
+     *   {@.en an owner RT-Component of this execution context}
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type}
+     */
+    public ReturnCode_t setOwner(LightweightRTObject comp);
+
+    /**
+     * {@.ja Ownerコンポーネントの参照を取得する}
+     * {@.en Getting a reference of the owner component}
+     * <p>
+     * {@.ja このECのOwnerであるRTCの参照を取得する。}
+     * {@.en This function returns a reference of the owner RT-Component of
+     * this execution context}
+     *
+     * @return 
+     *   {@.ja OwnerRTコンポーネントの参照}
+     *   {@.en a reference of the owner RT-Component}
+     */
+    public RTObject getOwner();
+
+    /**
+     * {@.ja RTコンポーネントの参加者リストを取得する}
+     * {@.en Getting participant RTC list}
+     * <p>
+     * {@.ja 現在登録されている参加者RTCのリストを取得する。}
+     * {@.en This function returns a list of participant RTC of 
+     * the execution context.}
+     *
+     * @return 
+     *   {@.ja 参加者RTCのリスト}
+     *   {@.en Participants RTC list}
+     *
+     */
+    public RTObject[] getComponentList();
+
+    /**
+     * {@.ja Propertiesをセットする}
+     * {@.en Setting Properties}
+     * <p>
+     * {@.ja ExecutionContextProfile::properties をセットする。}
+     * {@.en This function sets ExecutionContextProfile::properties by
+     * coil::Properties.}
+     *
+     * @param props 
+     *   {@.ja ExecutionContextProfile::properties にセットするプロパティー}
+     *   {@.en Properties to be set to ExecutionContextProfile::properties.}
+     *
+     */
+    public void setProperties(Properties props);
+
+    /**
+     * {@.ja Propertiesを取得する}
+     * {@.en Setting Properties}
+     * <p>
+     * {@.ja ExecutionContextProfile::properties を取得する。}
+     * {@.en This function sets ExecutionContextProfile::properties by
+     * coil::Properties.}
+     *
+     * @return 
+     *   {@.ja Propertiesに変換された ExecutionContextProfile::properties}
+     *   {@.en Properties to be set to ExecutionContextProfile::properties.}
+     *
+     */
+    public Properties getProperties();
+
+    /**
+     * {@.ja Profileを取得する}
+     * {@.en Getting Profile}
+     * <p>
+     * {@.ja ExecutionContextProfile を取得する。}
+     * {@.en This function gets RTC::ExecutionContextProfile.}
+     *
+     * @return 
+     *   {@.ja RTC.ExecutionContextProfile}
+     *   {@.en RTC.ExecutionContextProfile}
+     *
+     */
+    public RTC.ExecutionContextProfile getProfile() ;
     public boolean finalizeExecutionContext();
 //    public abstract boolean finalizeExecutionContext();
 /*

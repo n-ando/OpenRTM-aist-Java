@@ -1264,4 +1264,122 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public final String getKindString(ExecutionKind kind) {
       return m_profile.getKindString(kind);
     }
+    /**
+     * {@.ja ExecutionKind を設定する}
+     * {@.en Set the ExecutionKind}
+     * <p>
+     * {@.ja この ExecutionContext の ExecutionKind を設定する}
+     * {@.en This operation sets the kind of the execution context.}
+     *
+     * @param kind 
+     *   {@.ja ExecutionKind}
+     *   {@.en kind ExecutionKind}
+     *
+     */
+    public ReturnCode_t setKind(ExecutionKind kind) {
+        return m_profile.setKind(kind);
+    }
+
+    /**
+     * {@.ja Ownerコンポーネントをセットする。}
+     * {@.en Setting owner component of the execution context}
+     * <p>
+     * {@.ja このECのOwnerとなるRTCをセットする。}
+     * {@.en This function sets an RT-Component to be owner of 
+     * the execution context.}
+     *
+     * @param comp 
+     *   {@.ja OwnerとなるRTコンポーネント}
+     *   {@.en an owner RT-Component of this execution context}
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type}
+     */
+    public ReturnCode_t setOwner(LightweightRTObject comp){
+        return m_profile.setOwner(comp);
+    }
+
+    /**
+     * {@.ja Ownerコンポーネントの参照を取得する}
+     * {@.en Getting a reference of the owner component}
+     * <p>
+     * {@.ja このECのOwnerであるRTCの参照を取得する。}
+     * {@.en This function returns a reference of the owner RT-Component of
+     * this execution context}
+     *
+     * @return 
+     *   {@.ja OwnerRTコンポーネントの参照}
+     *   {@.en a reference of the owner RT-Component}
+     */
+    public RTC.RTObject getOwner() {
+        return m_profile.getOwner();
+    }
+
+    /**
+     * {@.ja RTコンポーネントの参加者リストを取得する}
+     * {@.en @brief Getting participant RTC list}
+     * <p>
+     * {@.ja 現在登録されている参加者RTCのリストを取得する。}
+     * {@.en This function returns a list of participant RTC of 
+     *  the execution context.}
+     *
+     * @return 
+     *   {@.ja 参加者RTCのリスト}
+     *   {@.en Participants RTC list}
+     *
+     */
+    public RTC.RTObject[] getComponentList(){
+        return m_profile.getComponentList();
+    }
+
+
+    /**
+     * {@.ja Propertiesをセットする}
+     * {@.en Setting Properties}
+     * <p>
+     * {@.ja ExecutionContextProfile::properties をセットする。}
+     * {@.en This function sets ExecutionContextProfile::properties by
+     * Properties.}
+     *
+     * @param props 
+     *   {@.ja ExecutionContextProfile::properties にセットするプロパティー}
+     *   {@.en Properties to be set to ExecutionContextProfile::properties.}
+     *
+     */
+    public void setProperties(Properties props){
+        m_profile.setProperties(props);
+    }
+
+    /**
+     * {@.ja Propertiesを取得する}
+     * {@.en Setting Properties}
+     * <p>
+     * {@.ja ExecutionContextProfile::properties を取得する。}
+     * {@.en This function sets ExecutionContextProfile::properties by
+     * Properties.}
+     *
+     * @return 
+     *   {@.ja Propertiesに変換された ExecutionContextProfile::properties}
+     *   {@.en Properties to be set to ExecutionContextProfile::properties.}
+     *
+     */
+    public Properties getProperties() {
+        return m_profile.getProperties();
+    }
+
+    /**
+     * {@.ja rofileを取得する}
+     * {@.en Getting Profile}
+     * <p>
+     * {@.ja ExecutionContextProfile を取得する。}
+     * {@.en This function gets ExecutionContextProfile.}
+     *
+     * @return 
+     *   {@.ja ExecutionContextProfile}
+     *   {@.en ExecutionContextProfile}
+     *
+     */
+    public RTC.ExecutionContextProfile getProfile(){
+        return m_profile.getProfile();
+    }
 }
