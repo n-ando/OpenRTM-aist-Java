@@ -38,6 +38,8 @@ public class ExecutionContextWorker {
     public ExecutionContextWorker() {
         rtcout = new Logbuf("ec_worker");
         m_running = false;
+        ticked_ = false ;
+        running_ = false ;
         rtcout.println(Logbuf.TRACE, "ExecutionContextWorker()");
     }
     //============================================================
@@ -685,16 +687,21 @@ public class ExecutionContextWorker {
      * true: running, false: stopped
      */
     protected boolean m_running;
+    protected boolean ticked_;
+    protected boolean running_;
 
     /**
      * {@.ja コンポーネントの参加者リスト}
      * {@.en List of the participating component}
      */
     protected ArrayList<RTObjectStateMachine> m_comps;
-    protected String m_mutex;
+//    protected String m_mutex;
+    protected String m_mutex = new String();
     protected ArrayList<RTObjectStateMachine> m_addedComps;
-    protected String m_addedMutex;
+//    protected String m_addedMutex;
+    protected String m_addedMutex = new String();
     ArrayList<RTObjectStateMachine> m_removedComps;
-    protected String m_removedMutex;
+//    protected String m_removedMutex;
+    protected String m_removedMutex = new String();
 
 }; 

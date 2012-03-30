@@ -5,9 +5,13 @@ import org.omg.CORBA.SystemException;
 import RTC.ExecutionContextService;
 import OpenRTM.ExtTrigExecutionContextServicePOA;
 
+import jp.go.aist.rtm.RTC.RTObjectStateMachine;
 import jp.go.aist.rtm.RTC.RTObject_impl;
+import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.Properties;
+import jp.go.aist.rtm.RTC.util.TimeValue;
 import RTC.ExecutionKind;
+import RTC.LifeCycleState;
 import RTC.LightweightRTObject;
 import RTC.ReturnCode_t;
 import RTC.RTObject;
@@ -25,10 +29,7 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      * {@.en Initialization function of ExecutionContext class}
      */
     public void init(Properties props);
-/* 
-    public void init(Properties props) {
-    }
-*/
+
     /**
      * {@.ja CORBA オブジェクトの設定}
      * {@.en Sets the reference to the CORBA object}
@@ -44,11 +45,6 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      *
      */
     public void setObjRef(final ExecutionContextService ref);
-/* 
-    public void setObjRef(final ExecutionContextService ref) {
-        m_profile.setObjRef(ref);
-    }
-*/
     
     /**
      * <p> bindComponent </p>
@@ -58,7 +54,6 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      * 
      */
     public ReturnCode_t bindComponent(RTObject_impl rtc);
-//    public abstract ReturnCode_t bindComponent(RTObject_impl rtc);
 
     /**
      * {@.ja CORBA オブジェクト参照の取得}
@@ -75,11 +70,7 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      *
      */
     public ExecutionContextService getObjRef();
-/* 
-    public ExecutionContextService getObjRef() {
-      return m_profile.getObjRef();
-    }
-*/
+
     /**
      * {@.ja ExecutionContext の実行周期(Hz)を設定する}
      * {@.en Set execution rate(Hz) of ExecutionContext}
@@ -108,11 +99,7 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      *
      */
     public ReturnCode_t setRate(double rate);
-/*
-    public ReturnCode_t setRate(double rate) {
-      return m_profile.setRate(rate);
-    }
-*/
+
     /**
      * {@.ja ExecutionContext の実行周期(Hz)を取得する}
      * {@.en Get execution rate(Hz) of ExecutionContext}
@@ -128,11 +115,7 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      *
      */
     public double getRate();
-/*  
-    public double getRate()  {
-      return m_profile.getRate();
-    }
-*/
+
     /**
      * {@.ja ExecutionKind を文字列化する}
      * {@.en Converting ExecutionKind enum to string}
@@ -151,11 +134,7 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      *
      */
     public String getKindString(ExecutionKind kind);
-/*
-    public final String getKindString(ExecutionKind kind) {
-      return m_profile.getKindString(kind);
-    }
-*/
+
     /**
      * {@.ja ExecutionKind を設定する
      * {@.en Set the ExecutionKind}
@@ -259,14 +238,70 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      */
     public RTC.ExecutionContextProfile getProfile() ;
     public boolean finalizeExecutionContext();
-//    public abstract boolean finalizeExecutionContext();
-/*
-    public ExecutionContextProfile m_profile 
-                                    = new ExecutionContextProfile();
-*/
-/*
-    protected ExecutionContextProfile m_profile 
-                                    = new ExecutionContextProfile();
-*/
+    /**
+     * {@.ja Propertiesから実行コンテキストをセットする}
+     * {@.en Setting execution rate from given properties.
+     * @param props 
+     *   {@.ja ExecutionContextProfile::properties にセットするプロパティー}
+     *   {@.en Properties to be set to ExecutionContextProfile::properties.}
+     */
+    public boolean setExecutionRate(Properties props);
+    /**
+     * {@.ja Propertiesから状態遷移モードをセットする}
+     * {@.en Setting state transition mode from given properties.}
+     * @param props 
+     *   {@.ja ExecutionContextProfile::properties にセットするプロパティー}
+     *   {@.en Properties to be set to ExecutionContextProfile::properties.}
+     * @param key 
+     * @param flag 
+     */
+    public boolean setTransitionMode(Properties props, String key, boolean flag);
+    /**
+     * {@.ja Propertiesから状態遷移Timeoutをセットする}
+     * {@.en Setting state transition timeout from given properties.}
+     * @param props 
+     *   {@.ja ExecutionContextProfile::properties にセットするプロパティー}
+     *   {@.en Properties to be set to ExecutionContextProfile::properties.}
+     * @param key 
+     * @param timevalue 
+     */
+    public boolean setTimeout(Properties props, String key,TimeValue timevalue);
+    public ReturnCode_t onStarted();
+    public ReturnCode_t onStopping();
+    public ReturnCode_t onStopped();
+    public double onGetRate(double rate);
+    public double onSettingRate(double rate);
+    public ReturnCode_t onSetRate(double rate);
+    public ReturnCode_t onAddingComponent(LightweightRTObject rtobj);
+    public ReturnCode_t onAddedComponent(LightweightRTObject rtobj);
+    public ReturnCode_t onRemovingComponent(LightweightRTObject rtobj);
+    public ReturnCode_t onRemovedComponent(LightweightRTObject rtobj);
+
+    // template virtual functions related to activation/deactivation/reset
+    public ReturnCode_t onActivating(LightweightRTObject comp);
+    public ReturnCode_t onActivated(RTObjectStateMachine comp, long count);
+    public ReturnCode_t onDeactivating(LightweightRTObject comp);
+    public ReturnCode_t onDeactivated(RTObjectStateMachine comp, long count);
+    public ReturnCode_t onResetting(LightweightRTObject comp);
+    public ReturnCode_t onReset(RTObjectStateMachine comp, long count);
+
+    public LifeCycleState onGetComponentState(LifeCycleState state);
+    public ExecutionKind onGetKind(ExecutionKind kind);
+    public ExecutionContextProfile onGetProfile(ExecutionContextProfile profile);
+
+    /**
+     * @brief onWaitingActivated() template function
+     */
+    public ReturnCode_t onWaitingActivated(RTObjectStateMachine comp, long count);
+
+    /*!
+     * @brief onWaitingDeactivated() template function
+     */
+    public ReturnCode_t onWaitingDeactivated(RTObjectStateMachine comp, long count);
+
+    /*!
+     * @brief onWaitingReset() template function
+     */
+    public ReturnCode_t onWaitingReset(RTObjectStateMachine comp, long count);
 
 }

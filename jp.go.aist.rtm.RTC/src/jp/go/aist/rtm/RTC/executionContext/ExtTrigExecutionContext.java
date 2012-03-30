@@ -6,6 +6,7 @@ import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.RTObject_impl;
+import jp.go.aist.rtm.RTC.RTObjectStateMachine;
 import jp.go.aist.rtm.RTC.StateAction;
 import jp.go.aist.rtm.RTC.StateHolder;
 import jp.go.aist.rtm.RTC.StateMachine;
@@ -41,6 +42,12 @@ public class ExtTrigExecutionContext
 extends ExtTrigExecutionContextServicePOA 
 implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, ExecutionContextBase{
 
+    TimeValue m_activationTimeout = new TimeValue(0.5);
+    TimeValue m_deactivationTimeout = new TimeValue(0.5);
+    TimeValue m_resetTimeout = new TimeValue(0.5);
+    boolean m_syncActivation = true;
+    boolean m_syncDeactivation = true;
+    boolean m_syncReset = true;
     /**
      * {@.ja コンストラクタ}
      * {@.en Constructor}
@@ -48,9 +55,14 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public ExtTrigExecutionContext() {
         super();
 
-        rtcout = new Logbuf("Manager.ExtTrigExecutionContext");
+        rtcout = new Logbuf("ExtTrigExecutionContext");
+        m_svc = false;
         m_profile.setObjRef((ExecutionContextService)this.__this());
 
+        m_profile.setKind(ExecutionKind.PERIODIC);
+        m_profile.setRate(1000);
+        rtcout.println(Logbuf.DEBUG, "Actual period: " + m_profile.getPeriod().sec() + " [sec], "
+                + m_profile.getPeriod().usec() + " [usec]");
     }
     
     /**
@@ -78,17 +90,18 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public boolean finalizeExecutionContext() {
         synchronized (m_worker) {
             //m_worker.running_ = true;
+            m_worker.ticked_ = true ;
             m_worker.notifyAll();
         }
-	m_svc = false;
-	try {
-	    m_thread.join();
-	}
-	catch   (InterruptedException e) {
-	    System.out.println(e);
-	}
+        m_svc = false;
+        try {
+            m_thread.join();
+        }
+        catch   (InterruptedException e) {
+            System.out.println(e);
+        }
 	
-	return true;
+        return true;
     }
 
     /**
@@ -105,7 +118,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.tick()");
 
         synchronized (m_worker) {
-            m_worker._called = true;
+            m_worker.ticked_ = true;
             m_worker.notifyAll();
         }
     }
@@ -128,40 +141,63 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 全Componentの処理を呼び出した後、次のイベントが発生するまで休止します。</p>
      */
     public int svc() {
-
+        int count = 0 ;
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.svc()");
         do {
-            TimeValue tv = new TimeValue(0, m_usec); // (s, us)
 
             synchronized (m_worker) {
-                while (!m_worker._called && m_running) {
+                rtcout.println(Logbuf.DEBUG, "Start of worker invocation. ticked = "+ (m_worker.ticked_ ? "true" : "false"));
+                while (!m_worker.ticked_) {
                     try {
                         m_worker.wait();
+                        rtcout.println(Logbuf.DEBUG, "Thread was woken up.");
                     } catch (InterruptedException e) {
                         break;
                     }
                 }
-                if (m_worker._called) {
-                    m_worker._called = false;
-                    for (int intIdx = 0; intIdx < m_comps.size(); ++intIdx) {
-                        m_comps.get(intIdx).invoke();
-                    }
-/*
-                    while (!m_running) {
-                        try {
-                            Thread.sleep(0, (int) tv.getUsec());
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    try {
-                        Thread.sleep(0, (int) tv.getUsec());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-*/
+                if(!m_worker.ticked_){continue;}
+            }
+            TimeValue t0 = new TimeValue();
+            t0.convert(System.nanoTime()/1000);
+            m_worker.invokeWorkerPreDo();
+            m_worker.invokeWorkerDo();
+            m_worker.invokeWorkerPostDo();
+            TimeValue t1 = new TimeValue();
+            t1.convert(System.nanoTime()/1000);
+            synchronized (m_worker) {
+                m_worker.ticked_ = false ;
+            }
+            TimeValue period = getPeriod();
+            TimeValue t2 = new TimeValue();
+            t2.convert(System.nanoTime()/1000);
+            if(true){
+                TimeValue t1_w = t1;
+                TimeValue period_w = period ;
+                rtcout.println(Logbuf.PARANOID, "Period:    " + period + " [s]");
+                rtcout.println(Logbuf.PARANOID, "Execution: " + t1_w.minus(t0) + " [s]");
+                rtcout.println(Logbuf.PARANOID, "Sleep:     " + period_w.minus(t1_w) + " [s]");
+            }
+            if( period.getUsec() > 0)
+            {
+                if(true)
+                {
+                    rtcout.println(Logbuf.PARANOID, "sleeping...");
+                }
+                try {
+                    Thread.sleep(period.getUsec());
+                } catch (InterruptedException e){
+                    e.printStackTrace();
                 }
             }
+            TimeValue t3 = new TimeValue();
+            t3.convert(System.nanoTime()/1000);
+            if(true)
+            {
+                rtcout.println(Logbuf.PARANOID, "Slept:     " + t3.minus(t2) + " [s]");
+                count = 0;
+            }
+            ++count;
+            
         } while (m_running);
         
         return 0;
@@ -196,10 +232,148 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *
      */
     public boolean is_running() {
-
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.is_running()");
+        return m_worker.isRunning();
+    }
 
-        return m_running;
+    public ReturnCode_t onStarting() { return ReturnCode_t.RTC_OK; }
+
+    //============================================================
+    // protected functions
+    //============================================================
+    /*!
+     * @brief onStarted() template function
+     */
+    public ReturnCode_t onStarted()
+    {
+      // change EC thread state
+        synchronized (m_worker) {
+            if (!m_svc)
+            { // If start() is called first time, start the worker thread.
+                m_svc = true;
+                this.open();
+            }
+            return ReturnCode_t.RTC_OK;
+        }
+    }
+    public ReturnCode_t onStopping()
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+    public ReturnCode_t onStopped()
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+    public double onGetRate(double rate)
+    {
+        return rate;
+    }
+    public double onSettingRate(double rate)
+    {
+        return rate;
+    }
+    public ReturnCode_t onSetRate(double rate)
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+    public ReturnCode_t onAddingComponent(LightweightRTObject rtobj)
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+    public ReturnCode_t onAddedComponent(LightweightRTObject rtobj)
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+    public ReturnCode_t onRemovingComponent(LightweightRTObject rtobj)
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+    public ReturnCode_t onRemovedComponent(LightweightRTObject rtobj)
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+
+    // template virtual functions related to activation/deactivation/reset
+    public ReturnCode_t onActivating(LightweightRTObject comp)
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+    public ReturnCode_t onActivated(RTObjectStateMachine comp, long count)
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+    public ReturnCode_t onDeactivating(LightweightRTObject comp)
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+    public ReturnCode_t onDeactivated(RTObjectStateMachine comp, long count)
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+    public ReturnCode_t onResetting(LightweightRTObject comp)
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+    public ReturnCode_t onReset(RTObjectStateMachine comp, long count)
+    {
+        return ReturnCode_t.RTC_OK;
+    }
+
+    public LifeCycleState onGetComponentState(LifeCycleState state)
+    {
+        return state;
+    }
+    public ExecutionKind onGetKind(ExecutionKind kind)
+    {
+        return kind;
+    }
+    public ExecutionContextProfile onGetProfile(ExecutionContextProfile profile)
+    {
+        return profile;
+    }
+
+    /**
+     * @brief onWaitingActivated() template function
+     */
+    public ReturnCode_t onWaitingActivated(RTObjectStateMachine comp, long count)
+    {
+        rtcout.println(Logbuf.TRACE, 
+        "ExtTrigExecutionContext.onWaitingActivated(count = " + count +")");
+//        rtcout.println(Logbuf.PARANOID, 
+//                 "curr: " + comp.getStatus() +", next: " + comp.getStatus());
+      // Now comp's next state must be ACTIVE state
+      // If worker thread is stopped, restart worker thread.
+        synchronized (m_worker) {
+            m_worker.notifyAll();
+            return ReturnCode_t.RTC_OK;
+        }
+    }
+
+
+    /*!
+     * @brief onWaitingDeactivated() template function
+     */
+    public ReturnCode_t onWaitingDeactivated(RTObjectStateMachine comp, long count)
+    {
+        rtcout.println(Logbuf.TRACE, 
+                "ExtTrigExecutionContext.onWaitingDeactivated(count = " + count +")");
+        synchronized (m_worker) {
+            m_worker.notifyAll();
+            return ReturnCode_t.RTC_OK;
+        }
+    }
+
+    /*!
+     * @brief onWaitingReset() template function
+     */
+    public ReturnCode_t onWaitingReset(RTObjectStateMachine comp, long count)
+    {
+        rtcout.println(Logbuf.TRACE, 
+              "ExtTrigExecutionContext.onWaitingReset(count = " + count +")");
+        synchronized (m_worker) {
+            m_worker.notifyAll();
+            return ReturnCode_t.RTC_OK;
+        }
     }
 
     /**
@@ -226,23 +400,27 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public ReturnCode_t start() {
 
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.start()");
-
-        if( m_running ) return ReturnCode_t.PRECONDITION_NOT_MET;
-
-        // invoke ComponentAction::on_startup for each comps.
-        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-            m_comps.get(intIdx).invoke_on_startup();
+        ReturnCode_t ret = onStarting();
+        if( ret != ReturnCode_t.RTC_OK )
+        {
+            rtcout.println(Logbuf.ERROR, "onStarting() failed. Starting EC aborted.");
+            return ret;
         }
-        // change EC thread state
-        m_running = true;
-        synchronized (m_worker) {
-            //m_worker.running_ = true;
-            m_worker.notifyAll();
+        ret = m_worker.start();
+        if(ret!=ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR, "Invoking on_startup() for each RTC failed.");
+            return ret;
         }
-
-        this.open();
-
-        return ReturnCode_t.RTC_OK;
+        ret = onStarted();
+        if(ret!=ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR, "Invoking on_startup() for each RTC failed.");
+            m_worker.stop();
+            rtcout.println(Logbuf.ERROR, "on_shutdown() was invoked, because of on_startup");
+            return ret;
+        }
+        return ret;
     }
 
     /**
@@ -269,20 +447,25 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
 
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.stop()");
 
-        if( !m_running ) return ReturnCode_t.PRECONDITION_NOT_MET;
-
-        // change EC thread state
-        m_running = false;
-	synchronized (m_worker) {
-	    //m_worker.running_ = false;
-	}
-
-        // invoke on_shutdown for each comps.
-        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-            m_comps.get(intIdx).invoke_on_shutdown();
+        ReturnCode_t ret = onStopping(); // Template
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR, "onStopping() failed. Stopping EC aborted.");
+            return ret;
         }
-
-        return ReturnCode_t.RTC_OK;
+        ret = m_worker.stop(); // Actual stop()
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR, "Invoking on_shutdown() for each RTC failed.");
+            return ret;
+        }
+        ret = onStopped(); // Template
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR, "Invoking on_shutdown() for each RTC failed.");
+            return ret;
+        }
+        return ret;
     }
 
     /**
@@ -299,12 +482,20 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *   {@.en Execution cycle(Unit:Hz)}
      *
      */
+
     public double get_rate() {
 
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.get_rate()");
 
         return m_profile.getRate();
     }
+
+    public TimeValue getPeriod()
+    {
+        TimeValue period = m_profile.getPeriod();
+        return period;
+    }
+    
     /**
      * <p>ExecutionContextの実行周期(Hz)を設定します。</p>
      * 
@@ -316,20 +507,20 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
 
         if( rate<=0.0 ) return ReturnCode_t.BAD_PARAMETER;
 
-        m_profile.setRate(rate);
-        this.m_usec = (long)(1000000/rate);
-        if( m_usec == 0 ) {
-            m_nowait = true;
+        ReturnCode_t ret = m_profile.setRate(onSettingRate(rate));
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR, "Setting execution rate failed. " + rate);
+            return ret;
         }
-        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-            m_comps.get(intIdx).invoke_on_rate_changed();
+        ret = onSetRate(rate);
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR, "onSetRate("+ rate +") failed.");
+            return ret;
         }
-        rtcout.println(Logbuf.DEBUG, "Actual period: "
-                                        + m_profile.getPeriod().sec()
-                                        + " [sec], "
-                                        + m_profile.getPeriod().usec()
-                                        + " [usec]");
-        return ReturnCode_t.RTC_OK;
+        rtcout.println(Logbuf.INFO, "onSetRate("+ rate +") done.");
+        return ret;
     }
 
     /**
@@ -342,21 +533,92 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public ReturnCode_t activate_component(LightweightRTObject comp) {
 
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.activate_component()");
+        return activateComponent(comp);
+    }
 
-        // コンポーネントが参加者リストに無ければ BAD_PARAMETER を返す
-        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-            find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
-            if (find.eqaulof(m_comps.get(intIdx)) ) {
-                // the given component must be in Alive state.
-                if(!(m_comps.get(intIdx)._sm.m_sm.isIn(LifeCycleState.INACTIVE_STATE))) {
-                    return ReturnCode_t.PRECONDITION_NOT_MET;
-                }
-                m_comps.get(intIdx)._sm.m_sm.goTo(LifeCycleState.ACTIVE_STATE);
-                return ReturnCode_t.RTC_OK;
+    public ReturnCode_t activateComponent(LightweightRTObject comp) {
+
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.activateComponent()");
+
+        ReturnCode_t ret = onActivating(comp); // Template
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"onActivating() failed.");
+            return ret;
+        }
+        RTObjectStateMachine rtobj = null;
+        ret = m_worker.activateComponent(comp, rtobj); // Actual activateComponent()
+        if (ret != ReturnCode_t.RTC_OK) { return ret; }
+        if (!m_syncActivation) // Asynchronous activation mode
+        {
+            ret = onActivated(rtobj, -1);
+            if (ret != ReturnCode_t.RTC_OK)
+            {
+                rtcout.println(Logbuf.ERROR,"onActivated() failed.");
+            }
+            return ret;
+        }
+        //------------------------------------------------------------
+        // Synchronized activation mode
+        rtcout.println(Logbuf.DEBUG,"Synchronous activation mode. "
+                   +"Waiting for the RTC to be ACTIVE state. ");
+        return waitForActivated(rtobj);
+    }
+
+    public ReturnCode_t waitForActivated(RTObjectStateMachine rtobj)
+    {
+        long count =0 ;
+        ReturnCode_t ret = onWaitingActivated(rtobj, count);
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"onWaitingActivated failed.");
+            return ret;
+        }
+        long cycle =
+            (long )(m_activationTimeout.toDouble() / getPeriod().toDouble());
+        rtcout.println(Logbuf.DEBUG,"Timeout is "+ m_activationTimeout.toDouble() + "[s] ("+ getRate() + "[s] in "+ cycle + " times");
+        // Wating INACTIVE -> ACTIVE
+        TimeValue starttime = new TimeValue();
+        starttime.convert(System.nanoTime()/1000);
+        while (rtobj.isCurrentState(LifeCycleState.INACTIVE_STATE))
+        {
+            ret = onWaitingActivated(rtobj, count); // Template method
+            if (ret != ReturnCode_t.RTC_OK)
+            {
+                rtcout.println(Logbuf.ERROR,"onWaitingActivated failed.");
+                return ret;
+            }
+            try
+            {
+                Thread.sleep(getPeriod().getUsec());
+            }catch(InterruptedException e){}
+            TimeValue delta= new TimeValue();
+            delta.convert(System.nanoTime()/1000);
+            delta.minus(starttime);
+            rtcout.println(Logbuf.DEBUG,"Waiting to be ACTIVE state. " + delta + " [s] slept (" + count +"/" + cycle);
+            ++count;
+            if (delta.getUsec() > m_activationTimeout.getUsec() || count > cycle)
+            {
+                rtcout.println(Logbuf.WARN,"The component is not responding.");
+                break;
             }
         }
-        return ReturnCode_t.BAD_PARAMETER;
+        // Now State must be ACTIVE or ERROR
+        if (rtobj.isCurrentState(LifeCycleState.INACTIVE_STATE))
+        {
+            rtcout.println(Logbuf.ERROR,"Unknown error: Invalid state transition.");
+            return ReturnCode_t.RTC_ERROR;
+        }
+        rtcout.println(Logbuf.DEBUG,"Current state is " + rtobj.getState());
+        ret = onActivated(rtobj, count); // Template method
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"onActivated() failed.");
+        }
+        rtcout.println(Logbuf.DEBUG,"onActivated() done.");
+        return ret;
     }
+    
 
     /**
      * <p>コンポーネントを非アクティブ化します。</p>
@@ -368,20 +630,91 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public ReturnCode_t deactivate_component(LightweightRTObject comp) {
 
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.deactivate_component()");
+        return deactivateComponent(comp);
+    }
 
-        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-            find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
-            if (find.eqaulof(m_comps.get(intIdx)) ) {
-                // the given component must be in Alive state.
-                if(!(m_comps.get(intIdx)._sm.m_sm.isIn(LifeCycleState.ACTIVE_STATE))) {
-                    return ReturnCode_t.PRECONDITION_NOT_MET;
-                }
-                m_comps.get(intIdx)._sm.m_sm.goTo(LifeCycleState.INACTIVE_STATE);
-                return ReturnCode_t.RTC_OK;
+    public ReturnCode_t deactivateComponent(LightweightRTObject comp)
+    {
+        rtcout.println(Logbuf.TRACE,"ExtTrigExecutionContext.deactivateComponent()");
+        ReturnCode_t ret = onDeactivating(comp); // Template
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"onDeactivatingComponent() failed.");
+            return ret;
+        }
+        // Deactivate all the RTCs
+        RTObjectStateMachine rtobj = null;
+        ret = m_worker.deactivateComponent(comp, rtobj);
+        if (ret != ReturnCode_t.RTC_OK) { return ret; }
+        if (!m_syncDeactivation)
+        {
+            ret = onDeactivated(rtobj, -1);
+            if (ret != ReturnCode_t.RTC_OK)
+            {
+                rtcout.println(Logbuf.ERROR,"onDeactivated() failed.");
+            }
+            return ret;
+        }
+        //------------------------------------------------------------
+        // Waiting for synchronized deactivation
+        rtcout.println(Logbuf.DEBUG,"Synchronous deactivation mode. "
+                 +"Waiting for the RTC to be INACTIVE state. ");
+        return waitForDeactivated(rtobj);
+    }
+    public ReturnCode_t waitForDeactivated(RTObjectStateMachine rtobj)
+    {
+        long count = 0;
+        ReturnCode_t ret = onWaitingDeactivated(rtobj, count);
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"onWaitingDeactivated failed.");
+            return ret;
+        }
+        long cycle =
+            (long )(m_deactivationTimeout.toDouble() / getPeriod().toDouble());
+        rtcout.println(Logbuf.DEBUG,"Timeout is "+ m_deactivationTimeout.toDouble() + "[s] ("+ getRate() + "[s] in "+ cycle + " times");
+        // Wating ACTIVE -> INACTIVE
+        TimeValue starttime = new TimeValue();
+        starttime.convert(System.nanoTime()/1000);
+        while (rtobj.isCurrentState(LifeCycleState.ACTIVE_STATE))
+        {
+            ret = onWaitingDeactivated(rtobj, count); // Template method
+            if (ret != ReturnCode_t.RTC_OK)
+            {
+                rtcout.println(Logbuf.ERROR,"onWaitingDeactivated failed.");
+                return ret;
+            }
+            try
+            {
+                Thread.sleep(getPeriod().getUsec());
+            }catch(InterruptedException e){}
+            TimeValue delta = new TimeValue();
+            delta.convert(System.nanoTime()/1000);
+            delta.minus(starttime);
+            rtcout.println(Logbuf.DEBUG,"Waiting to be INACTIVE state. Sleeping " + delta + " [s] (" + count +"/" + cycle);
+            ++count;
+            if (delta.getUsec() > m_activationTimeout.getUsec() || count > cycle)
+            {
+                rtcout.println(Logbuf.WARN,"The component is not responding.");
+                break;
             }
         }
-        return ReturnCode_t.BAD_PARAMETER;
+        // Now State must be INACTIVE or ERROR
+        if (rtobj.isCurrentState(LifeCycleState.ACTIVE_STATE))
+        {
+            rtcout.println(Logbuf.ERROR,"Unknown error: Invalid state transition.");
+            return ReturnCode_t.RTC_ERROR;
+        }
+        rtcout.println(Logbuf.DEBUG,"Current state is "+ rtobj.getState());
+        ret = onDeactivated(rtobj, count);
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"onDeactivated() failed.");
+        }
+        rtcout.println(Logbuf.DEBUG,"onDeactivated() done.");
+        return ret;
     }
+    
 
     /**
      * <p>コンポーネントをリセットします。</p>
@@ -393,19 +726,88 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public ReturnCode_t reset_component(LightweightRTObject comp){
 
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.reset_component()");
+        return removeComponent(comp);
+    }
+    public ReturnCode_t resetCcomponent(LightweightRTObject comp){
 
-        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-            find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
-            if (find.eqaulof(m_comps.get(intIdx)) ) {
-                // the given component must be in Alive state.
-                if(!(m_comps.get(intIdx)._sm.m_sm.isIn(LifeCycleState.ERROR_STATE))) {
-                    return ReturnCode_t.PRECONDITION_NOT_MET;
-                }
-                m_comps.get(intIdx)._sm.m_sm.goTo(LifeCycleState.INACTIVE_STATE);
-                return ReturnCode_t.RTC_OK;
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.resetComponent()");
+
+        ReturnCode_t ret = onResetting(comp); // Template
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"onResetting() failed.");
+            return ret;
+        }
+        RTObjectStateMachine rtobj = null;
+        ret = m_worker.resetComponent(comp, rtobj); // Actual resetComponent()
+        if (ret != ReturnCode_t.RTC_OK) { return ret; }
+        if (!m_syncReset)
+        {
+            ret = onReset(rtobj, -1);
+            if (ret != ReturnCode_t.RTC_OK)
+            {
+                rtcout.println(Logbuf.ERROR,"onReset() failed.");
+            }
+            return ret;
+        }
+        //------------------------------------------------------------
+        // Waiting for synchronized reset
+        rtcout.println(Logbuf.DEBUG,"Synchronous reset mode. "
+                   +"Waiting for the RTC to be INACTIVE state. ");
+        return waitForReset(rtobj);
+    }
+    public ReturnCode_t waitForReset(RTObjectStateMachine rtobj)
+    {
+        long count = 0;
+        ReturnCode_t ret = onWaitingReset(rtobj, count);
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"onWaitingReset() failed.");
+            return ret;
+        }
+        long cycle =
+            (long )(m_resetTimeout.toDouble() / getPeriod().toDouble());
+        rtcout.println(Logbuf.DEBUG,"Timeout is "+ m_resetTimeout.toDouble() + "[s] ("+ getRate() + "[s] in "+ cycle + " times");
+        // Wating ERROR -> INACTIVE
+        TimeValue starttime = new TimeValue();
+        starttime.convert(System.nanoTime()/1000);
+        while (rtobj.isCurrentState(LifeCycleState.ERROR_STATE))
+        {
+            ret = onWaitingReset(rtobj, count); // Template method
+            if (ret != ReturnCode_t.RTC_OK)
+            {
+                rtcout.println(Logbuf.ERROR,"onWaitingReset failed.");
+                return ret;
+            }
+            try
+            {
+                Thread.sleep(getPeriod().getUsec());
+            }catch(InterruptedException e){}
+            TimeValue delta = new TimeValue();
+            delta.convert(System.nanoTime()/1000);
+            delta.minus(starttime);
+            rtcout.println(Logbuf.DEBUG,"Waiting to be INACTIVE state. Sleeping " + delta + " [s] (" + count +"/" + cycle);
+            ++count;
+            if (delta.getUsec() > m_resetTimeout.getUsec() || count > cycle)
+            {
+                rtcout.println(Logbuf.WARN,"The component is not responding.");
+                break;
             }
         }
-        return ReturnCode_t.BAD_PARAMETER;
+        // Now State must be INACTIVE
+        if (rtobj.isCurrentState(LifeCycleState.INACTIVE_STATE))
+        {
+            rtcout.println(Logbuf.ERROR,"Unknown error: Invalid state transition.");
+            return ReturnCode_t.RTC_ERROR;
+        }
+        rtcout.println(Logbuf.DEBUG,"Current state is "+ rtobj.getState());
+        ret = onReset(rtobj, count);
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"onReset() failed.");
+        }
+        rtcout.println(Logbuf.DEBUG,"onReset() done.");
+        return ret;
     }
 
     /**
@@ -418,14 +820,18 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public LifeCycleState get_component_state(LightweightRTObject comp) {
 
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.get_component_state()");
+        return getComponentState(comp);
+    }
+    public LifeCycleState getComponentState(LightweightRTObject comp) {
 
-        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-            find_comp find = new find_comp((LightweightRTObject)comp._duplicate());
-            if (find.eqaulof(m_comps.get(intIdx)) ) {
-                return m_comps.get(intIdx)._sm.m_sm.getState();
-            }
+        LifeCycleState state = m_worker.getComponentState(comp);
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.getComponentState() = " + state);
+        if (state == LifeCycleState.CREATED_STATE)
+        {
+            rtcout.println(Logbuf.ERROR,"CREATED state: not initialized "
+                       +"RTC or unknwon RTC specified.");
         }
-        return LifeCycleState.CREATED_STATE;
+        return onGetComponentState(state);
     }
 
     /**
@@ -435,10 +841,17 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      */
     public ExecutionKind get_kind() {
 
-        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.get_kind() ="
-                                            + m_profile.getKindString());
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.get_kind()");
 
-        return m_profile.getKind();
+        return getKind();
+    }
+    public ExecutionKind getKind()
+    {
+        ExecutionKind kind = m_profile.getKind();
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.getKind() = " + getKindString(kind));
+        kind = onGetKind(kind);
+        rtcout.println(Logbuf.DEBUG,"onGetKind() returns " + getKindString(kind));
+        return kind;
     }
 
     /**
@@ -472,26 +885,42 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
 
         rtcout.println(Logbuf.TRACE, 
                             "ExtTrigExecutionContext.add_component()");
+        return addComponent(comp);
+    }
+    public ReturnCode_t addComponent(LightweightRTObject comp) {
 
-        if( comp==null ) return ReturnCode_t.BAD_PARAMETER;
-        //
-        try {
-            DataFlowComponent dfp = DataFlowComponentHelper.narrow(comp);
-            if( dfp==null ) {
-                // Because the ExecutionKind of this context is PERIODIC,
-                // the RTC must be a data flow component.
-                return ReturnCode_t.BAD_PARAMETER;
-            }
-            //
-            int id = dfp.attach_context(m_ref);
-            //
-            m_comps.add(new Comp((LightweightRTObject)comp._duplicate(), 
-                                (DataFlowComponent)dfp._duplicate(), id));
-            m_profile.addComponent((LightweightRTObject)comp._duplicate());
-            return ReturnCode_t.RTC_OK;
-        } catch(Exception ex) {
-            return ReturnCode_t.BAD_PARAMETER;
+        rtcout.println(Logbuf.TRACE, 
+                            "ExtTrigExecutionContext.addcomponent()");
+
+        ReturnCode_t ret = onAddingComponent(comp); // Template
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"Error: onAddingComponent(). RTC is not attached.");
+            return ret;
         }
+        ret = m_worker.addComponent(comp); // Actual addComponent()
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"Error: ECWorker addComponent() faild.");
+            return ret;
+        }
+        ret = m_profile.addComponent(comp); // Actual addComponent()
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"Error: ECProfile addComponent() faild.");
+            return ret;
+        }
+        ret = onAddedComponent(comp); // Template
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"Error: onAddedComponent() faild.");
+            rtcout.println(Logbuf.INFO,"Removing attached RTC.");
+            m_worker.removeComponent(comp);
+            m_profile.removeComponent(comp);
+            return ret;
+        }
+        rtcout.println(Logbuf.INFO,"Component has been added to this EC.");
+        return ret;
     }
 
     /**
@@ -511,31 +940,8 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *
      */
     public ReturnCode_t bindComponent(RTObject_impl rtc) {
-
-        rtcout.println(Logbuf.TRACE, 
-                    "ExtTrigExecutionContext.bindComponent()");
-
-        if (rtc == null) return ReturnCode_t.BAD_PARAMETER;
-
-        LightweightRTObject comp = rtc.getObjRef();
-        DataFlowComponent dfp;
-        dfp = DataFlowComponentHelper.narrow(comp);
-
-        int id = rtc.bindContext(m_ref);
-	if (id < 0 || id > RTObject_impl.ECOTHER_OFFSET) {
-	    rtcout.println(Logbuf.ERROR, "bindContext returns invalid id: "+id);
-	    return ReturnCode_t.RTC_ERROR;
-	}
-	rtcout.println(Logbuf.DEBUG, "bindComponent() returns id = "+id);
-        m_comps.add(new Comp((LightweightRTObject)comp._duplicate(),
-                             (DataFlowComponent)dfp._duplicate(),
-                             id));
-        m_profile.setOwner((LightweightRTObject)dfp._duplicate());
-
-
-        return ReturnCode_t.RTC_OK;
+        return m_worker.bindComponent(rtc);
     }
-
     /**
      * {@.ja RTコンポーネントを参加者リストから削除する}
      * {@.en Remove the RT-Component from participant list}
@@ -561,29 +967,49 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *   {@.en The return code of ReturnCode_t type}
      *
      */
+
     public ReturnCode_t remove_component(LightweightRTObject comp) {
 
         rtcout.println(Logbuf.TRACE, 
                         "ExtTrigExecutionContext.remove_component()");
-
-        for(int intIdx=0;intIdx<m_comps.size();intIdx++ ) {
-            find_comp find 
-                = new find_comp((LightweightRTObject)comp._duplicate());
-            if (find.eqaulof(m_comps.get(intIdx)) ) {
-                m_comps.get(intIdx)._ref.detach_context(
-                                        m_comps.get(intIdx)._sm.ec_id);
-                m_comps.get(intIdx)._ref = null;
-                m_comps.remove(m_comps.get(intIdx));
-                rtcout.println(Logbuf.TRACE, 
-                    "remove_component(): an RTC removed from this context.");
-                m_profile.removeComponent(comp);
-                return ReturnCode_t.RTC_OK;
-            }
-        }
-        rtcout.println(Logbuf.TRACE, "remove_component(): no RTC found in this context.");
-        return ReturnCode_t.BAD_PARAMETER;
+        return removeComponent(comp);
     }
 
+    public ReturnCode_t removeComponent(LightweightRTObject comp) {
+
+        rtcout.println(Logbuf.TRACE, 
+                        "ExtTrigExecutionContext.removeComponent()");
+        ReturnCode_t ret = onRemovingComponent(comp); // Template
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"Error: onRemovingComponent(). "
+                    +"RTC will not not attached.");
+            return ret;
+        }
+        ret = m_worker.removeComponent(comp); // Actual removeComponent()
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"Error: ECWorker removeComponent() faild.");
+            return ret;
+          }
+        ret = m_profile.removeComponent(comp); // Actual removeComponent()
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"Error: ECProfile removeComponent() faild.");
+            return ret;
+        }
+        ret = onRemovedComponent(comp); // Template
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR,"Error: onRemovedComponent() faild.");
+            rtcout.println(Logbuf.INFO,"Removing attached RTC.");
+            m_worker.removeComponent(comp);
+            m_profile.removeComponent(comp);
+            return ret;
+        }
+        rtcout.println(Logbuf.INFO,"Component has been removeed to this EC.");
+        return ret;
+    }
     /**
      * <p>ExecutionContextProfile を取得します。</p>
      * 
@@ -592,7 +1018,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public RTC.ExecutionContextProfile get_profile() {
 
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.get_profile()");
-        return m_profile.getProfile();
+        return getProfile();
     }
 
     /**
@@ -976,7 +1402,9 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         public boolean _called;
     }
     
-    private Worker m_worker = new Worker();
+//    private Worker m_worker = new Worker();
+    private ExecutionContextWorker m_worker = new ExecutionContextWorker();
+
     /**
      * <p>ExecutionContextProfileです。</p>
      */
@@ -1060,6 +1488,42 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * {@.en Initialization function of ExecutionContext class}
      */
     public void init(Properties props) {
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.init()");
+        rtcout.println(Logbuf.DEBUG, props.toString());
+        // getting rate
+        setExecutionRate(props);
+        // getting sync/async mode flag
+        boolean transitionMode=true;
+        if(setTransitionMode(props, "sync_transition", transitionMode))
+        {
+            m_syncActivation = transitionMode;
+            m_syncDeactivation = transitionMode;
+            m_syncReset = transitionMode;
+            
+        }
+        setTransitionMode(props, "sync_activation", m_syncActivation);
+        setTransitionMode(props, "sync_deactivation", m_syncDeactivation);
+        setTransitionMode(props, "sync_reset", m_syncReset);
+        // getting transition timeout
+        TimeValue timeout = new TimeValue(0.0);
+        if (setTimeout(props, "transition_timeout", timeout))
+        {
+            m_activationTimeout   = timeout;
+            m_deactivationTimeout = timeout;
+            m_resetTimeout        = timeout;
+        }
+        setTimeout(props, "activation_timeout",   m_activationTimeout);
+        setTimeout(props, "deactivation_timeout", m_deactivationTimeout);
+        setTimeout(props, "reset_timeout",        m_resetTimeout);
+          
+        rtcout.println(Logbuf.DEBUG,"ExecutionContext's configurations:");
+        rtcout.println(Logbuf.DEBUG,"Exec rate   : " + getRate() + " [Hz]");
+        rtcout.println(Logbuf.DEBUG,"Activation  : Sync = " + ( m_syncActivation ? "YES" : "NO" ) + " Timeout = " + m_activationTimeout.toString());
+        rtcout.println(Logbuf.DEBUG,"Deactivation: Sync = " + ( m_syncDeactivation ? "YES" : "NO" )+ " Timeout = "+ m_deactivationTimeout.toString());
+        rtcout.println(Logbuf.DEBUG,"Reset       : Sync = " + ( m_syncReset ? "YES" : "NO" )+ " Timeout = "+ m_resetTimeout.toString());
+        // Setting given Properties to EC's profile::properties
+                   
+        setProperties(props);
     }
 
     /**
@@ -1280,6 +1744,62 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      */
     public RTC.ExecutionContextProfile getProfile(){
         return m_profile.getProfile();
+    }
+    /*!
+     * @if jp
+     * @brief Propertiesから状態遷移Timeoutをセットする
+     * @else
+     * @brief Setting state transition timeout from given properties.
+     * @endif
+     */
+    public boolean setTimeout(Properties props, String key,TimeValue timevalue)
+    {
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.setTimeout(" + key +")");
+        if (props.findNode(key) != null)
+        {
+           timevalue.convert(Double.valueOf(props.getNode(key).getValue())) ;
+           rtcout.println(Logbuf.DEBUG, "Timeout (" + key +"): " + props.getNode(key).getValue() + " [s]");
+           return true;
+        }
+        rtcout.println(Logbuf.DEBUG, "Configuration " + key +" not found.");
+        return false;
+    }
+    /*!
+     * @if jp
+     * @brief Propertiesから実行コンテキストをセットする
+     * @else
+     * @brief Setting execution rate from given properties.
+     * @endif
+     */
+    public boolean setExecutionRate(Properties props)
+    {
+        if (props.findNode("rate") != null)
+        {
+          double rate;
+          rate = Double.valueOf(props.getNode("rate").getValue());
+          setRate(rate);
+          return true;
+        }
+        return false;
+    }
+    /*!
+     * @if jp
+     * @brief Propertiesから状態遷移Timeoutをセットする
+     * @else
+     * @brief Setting state transition timeout from given properties.
+     * @endif
+     */
+    public boolean setTransitionMode(Properties props, String key, boolean flag)
+    {
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.setTransitionMode(" + key +")");
+        if (props.findNode(key) != null)
+        {
+            flag = props.getNode(key).getValue() == "YES";
+            rtcout.println(Logbuf.DEBUG, "Transition Mode: " + key +" = " + ( flag ? "YES" : "NO"));
+            return true;
+       }
+        rtcout.println(Logbuf.DEBUG, "Configuration " + key +" not found.");
+        return false;
     }
 
 }
