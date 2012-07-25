@@ -667,7 +667,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
         ArrayList<Properties> ec_args = new ArrayList<Properties>() ;
         if (getContextOptions(ec_args)!=ReturnCode_t.RTC_OK )
         {
-            rtcout.println(Logbuf.ERROR,"Vaild EC options are nao available. Aborting");
+            rtcout.println(Logbuf.ERROR,"Valid EC options are not available. Aborting");
             return ReturnCode_t.BAD_PARAMETER;
             
         }
@@ -6306,7 +6306,6 @@ public class RTObject_impl extends DataFlowComponentPOA {
          ReturnCode_t ret = ReturnCode_t.RTC_OK;
          Set<String> avail_ec
            = ExecutionContextFactory.instance().getIdentifiers();
-
          for (int ic=0; ic < ec_args.size(); ++ic) {
              String ec_type = ec_args.get(ic).getProperty("type");
              String ec_name = ec_args.get(ic).getProperty("name");

@@ -402,7 +402,8 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
 
     /**
-     * @brief onWaitingActivated() template function
+     * {@.ja onWaitingActivated() template function}
+     * {@.en onWaitingActivated() template function}
      */
     public ReturnCode_t onWaitingActivated(RTObjectStateMachine comp, long count)
     {

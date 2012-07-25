@@ -136,7 +136,7 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
     public String getKindString(ExecutionKind kind);
 
     /**
-     * {@.ja ExecutionKind を設定する
+     * {@.ja ExecutionKind を設定する}
      * {@.en Set the ExecutionKind}
      * <p>
      * {@.ja この ExecutionContext の ExecutionKind を設定する}
@@ -240,7 +240,7 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
     public boolean finalizeExecutionContext();
     /**
      * {@.ja Propertiesから実行コンテキストをセットする}
-     * {@.en Setting execution rate from given properties.
+     * {@.en Setting execution rate from given properties.}
      * @param props 
      *   {@.ja ExecutionContextProfile::properties にセットするプロパティー}
      *   {@.en Properties to be set to ExecutionContextProfile::properties.}
@@ -290,17 +290,20 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
     public ExecutionContextProfile onGetProfile(ExecutionContextProfile profile);
 
     /**
-     * @brief onWaitingActivated() template function
+     * {@.ja onWaitingActivated() template function}
+     * {@.en onWaitingActivated() template function}
      */
     public ReturnCode_t onWaitingActivated(RTObjectStateMachine comp, long count);
 
-    /*!
-     * @brief onWaitingDeactivated() template function
+    /**
+     * {@.ja onWaitingDeactivated() template function}
+     * {@.en onWaitingDeactivated() template function}
      */
     public ReturnCode_t onWaitingDeactivated(RTObjectStateMachine comp, long count);
 
-    /*!
-     * @brief onWaitingReset() template function
+    /**
+     * {@.ja onWaitingReset() template function}
+     * {@.en onWaitingReset() template function}
      */
     public ReturnCode_t onWaitingReset(RTObjectStateMachine comp, long count);
 
