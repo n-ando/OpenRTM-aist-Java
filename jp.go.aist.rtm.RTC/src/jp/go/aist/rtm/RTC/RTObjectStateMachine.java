@@ -34,6 +34,9 @@ public class RTObjectStateMachine {
         m_dfcVar  = null;
         m_fsmVar  = null;
         m_modeVar = null;
+		m_rtobjPtr = null;
+		m_measure = false;
+		m_count = 0;
         // Setting Action callback objects
         setComponentAction(comp);
         setDataFlowComponentAction(comp);
@@ -70,6 +73,14 @@ public class RTObjectStateMachine {
      */
     private class onActivated implements StateAction {
         public void doAction(StateHolder state) {
+			// call Servant
+			if (m_rtobjPtr != null) {
+				if (m_rtobjPtr.on_activated(m_id) != ReturnCode_t.RTC_OK) {
+					m_sm.goTo(LifeCycleState.ERROR_STATE);
+				}
+				return;
+			}
+			// call Object reference
             if (!m_ca) { 
                 return; 
             }
@@ -85,10 +96,47 @@ public class RTObjectStateMachine {
      */
     private class onExecute implements StateAction {
         public void doAction(StateHolder state) {
+            TimeMeasure.Statistics stat;
+            // call Servant
+            if (m_rtobjPtr != null) {
+                if (m_measure) { m_svtMeasure.tick(); }
+                if (m_rtobjPtr.on_execute(m_id) != ReturnCode_t.RTC_OK) {
+                    m_sm.goTo(LifeCycleState.ERROR_STATE);
+                }
+                if (m_measure) {
+                    m_svtMeasure.tack();
+                    if (m_count > 1000) {
+                        m_count = 0;
+                        stat = m_svtMeasure.getStatistics();
+                        System.out.println("[servant]");
+                        System.out.println(" max:  " + stat.max_interval);
+                        System.out.println(" min:  " + stat.min_interval);
+                        System.out.println(" mean:  " + stat.mean_interval);
+                        System.out.println(" stddev:  " + stat.std_deviation);
+                    }
+                    ++m_count;
+                }
+                return;
+            }
             if (!m_dfc) { 
                 return; 
             }
-            if (m_dfcVar.on_execute(m_id) != ReturnCode_t.RTC_OK) {
+            if (m_measure) { m_refMeasure.tick(); }
+            ReturnCode_t ret = m_dfcVar.on_execute(m_id);
+            if (m_measure) {
+                m_refMeasure.tack();
+                if (m_count > 1000) {
+                    m_count = 0;
+                    stat = m_refMeasure.getStatistics();
+                    System.out.println("[object]");
+                    System.out.println(" max:  " + stat.max_interval);
+                    System.out.println(" min:  " + stat.min_interval);
+                    System.out.println(" mean:  " + stat.mean_interval);
+                    System.out.println(" stddev:  " + stat.std_deviation);
+                }
+                ++m_count;
+            }
+            if (ret != ReturnCode_t.RTC_OK) {
                 m_sm.goTo(LifeCycleState.ERROR_STATE);
                 return;
             }
@@ -100,6 +148,14 @@ public class RTObjectStateMachine {
      */
     private class onStateUpdate implements StateAction {
         public void doAction(StateHolder state) {
+			// call Servant
+			if (m_rtobjPtr != null) {
+				if (m_rtobjPtr.on_state_update(m_id) != ReturnCode_t.RTC_OK) {
+					m_sm.goTo(LifeCycleState.ERROR_STATE);
+				}
+				return;
+			}
+			// call Object reference
             if (!m_dfc) { 
                 return; 
             }
@@ -115,6 +171,12 @@ public class RTObjectStateMachine {
      */
     private class onDeactivated implements StateAction {
         public void doAction(StateHolder state) {
+			// call Servant
+			if (m_rtobjPtr != null) {
+				m_rtobjPtr.on_deactivated(m_id);
+				return;
+			}
+			// call Object reference
             if (!m_ca) { 
                 return; 
             }
@@ -126,6 +188,12 @@ public class RTObjectStateMachine {
      */
     private class onAborting implements StateAction {
         public void doAction(StateHolder state) {
+			// call Servant
+			if (m_rtobjPtr != null) {
+				m_rtobjPtr.on_aborting(m_id);
+				return;
+			}
+			// call Object reference
             if (!m_ca) { 
                 return; 
             }
@@ -137,6 +205,12 @@ public class RTObjectStateMachine {
      */
     private class onError implements StateAction {
         public void doAction(StateHolder state) {
+			// call Servant
+			if (m_rtobjPtr != null) {
+				m_rtobjPtr.on_error(m_id);
+				return;
+			}
+			// call Object reference
             if (!m_ca) { 
                 return; 
             }
@@ -148,6 +222,14 @@ public class RTObjectStateMachine {
      */
     private class onReset implements StateAction {
         public void doAction(StateHolder state) {
+			// call Servant
+			if (m_rtobjPtr != null) {
+				if (m_rtobjPtr.on_reset(m_id) != ReturnCode_t.RTC_OK) {
+					m_sm.goTo(LifeCycleState.ERROR_STATE);
+				}
+				return;
+			}
+			// call Object reference
             if (!m_ca) { 
                 return; 
             }
@@ -185,6 +267,12 @@ public class RTObjectStateMachine {
      *
      */
     public void onStartup(){
+        // call Servant
+        if (m_rtobjPtr != null) {
+            m_rtobjPtr.on_startup(m_id);
+            return;
+        }
+        // call Object reference
         if (!m_ca) { 
             return; 
         }
@@ -194,6 +282,12 @@ public class RTObjectStateMachine {
      *
      */
     public void onShutdown(){
+        // call Servant
+        if (m_rtobjPtr != null) {
+            m_rtobjPtr.on_shutdown(m_id);
+            return;
+        }
+        // call Object reference
         if (!m_ca) { 
             return; 
         }
@@ -203,6 +297,14 @@ public class RTObjectStateMachine {
      *
      */
     public void onActivated(final StateHolder<LifeCycleState> st) {
+        // call Servant
+        if (m_rtobjPtr != null) {
+            if (m_rtobjPtr.on_activated(m_id) != ReturnCode_t.RTC_OK) {
+                m_sm.goTo(LifeCycleState.ERROR_STATE);
+            }
+            return;
+        }
+        // call Object reference
         if (!m_ca) { 
             return; 
         }
@@ -216,6 +318,12 @@ public class RTObjectStateMachine {
      *
      */
     public void onDeactivated(final StateHolder<LifeCycleState> st) {
+        // call Servant
+        if (m_rtobjPtr != null) {
+            m_rtobjPtr.on_deactivated(m_id);
+            return;
+        }
+        // call Object reference
         if (!m_ca) { 
             return; 
         }
@@ -225,6 +333,12 @@ public class RTObjectStateMachine {
      *
      */
     public void onAborting(final StateHolder<LifeCycleState> st) {
+        // call Servant
+        if (m_rtobjPtr != null) {
+            m_rtobjPtr.on_aborting(m_id);
+            return;
+        }
+        // call Object reference
         if (!m_ca) { 
             return; 
         }
@@ -234,6 +348,12 @@ public class RTObjectStateMachine {
      *
      */
     public void onError(final StateHolder<LifeCycleState> st){
+        // call Servant
+        if (m_rtobjPtr != null) {
+            m_rtobjPtr.on_error(m_id);
+            return;
+        }
+        // call Object reference
         if (!m_ca) { 
             return; 
         }
@@ -243,6 +363,14 @@ public class RTObjectStateMachine {
      *
      */
     public void onReset(final StateHolder<LifeCycleState> st){
+        // call Servant
+        if (m_rtobjPtr != null) {
+            if (m_rtobjPtr.on_reset(m_id) != ReturnCode_t.RTC_OK) {
+                m_sm.goTo(LifeCycleState.ERROR_STATE);
+            }
+            return;
+        }
+        // call Object reference
         if (!m_ca) { 
             return; 
         }
@@ -272,6 +400,14 @@ public class RTObjectStateMachine {
      *
      */
     public void onStateUpdate(final StateHolder<LifeCycleState> st){
+        // call Servant
+        if (m_rtobjPtr != null) {
+            if (m_rtobjPtr.on_state_update(m_id) != ReturnCode_t.RTC_OK) {
+                m_sm.goTo(LifeCycleState.ERROR_STATE);
+            }
+            return;
+        }
+        // call Object reference
         if (!m_dfc) { 
             return; 
         }
@@ -285,6 +421,14 @@ public class RTObjectStateMachine {
      *
      */
     public void onRateChanged(){
+        // call Servant
+        if (m_rtobjPtr != null) {
+            if (m_rtobjPtr.on_rate_changed(m_id) != ReturnCode_t.RTC_OK) {
+                m_sm.goTo(LifeCycleState.ERROR_STATE);
+            }
+            return;
+        }
+        // call Object reference
         if (!m_dfc) { 
             return; 
         }
@@ -385,25 +529,33 @@ public class RTObjectStateMachine {
 
     protected void setComponentAction(final LightweightRTObject comp) {
         m_caVar = ComponentActionHelper.narrow(comp);
-        if (m_caVar!=null) { 
-            m_ca = true; 
+        if (m_caVar==null) {
+            return; 
         }
+		m_ca = true;
+		Manager manager = Manager.instance();
+		try {
+		    m_rtobjPtr = (RTObject_impl)manager.getPOA().reference_to_servant(comp);
+		} catch (Exception ex) {
+
+		}
     }
     protected void setDataFlowComponentAction(final LightweightRTObject comp){
-        m_dfcVar = DataFlowComponentActionHelper.narrow(comp);
-        if (m_dfcVar!=null) { 
+        if(comp._is_a(DataFlowComponentActionHelper.id())) {
+            m_dfcVar = DataFlowComponentActionHelper.narrow(comp);
             m_dfc = true; 
         }
     }
     protected void setFsmParticipantAction(final LightweightRTObject comp){
-        m_fsmVar = FsmParticipantActionHelper.narrow(comp);
-        if (m_fsmVar!=null) { 
+        if(comp._is_a(FsmParticipantActionHelper.id())) {
+            m_fsmVar = FsmParticipantActionHelper.narrow(comp);
             m_fsm = true; 
         }
     }
+
     protected void setMultiModeComponentAction(final LightweightRTObject comp){
-        m_modeVar = MultiModeComponentActionHelper.narrow(comp);
-        if (m_modeVar!=null) { 
+        if(comp._is_a(MultiModeComponentActionHelper.id())) {
+            m_modeVar = MultiModeComponentActionHelper.narrow(comp);            
             m_mode = true; 
         }
     }
@@ -428,7 +580,11 @@ public class RTObjectStateMachine {
     private DataFlowComponentAction  m_dfcVar;
     private FsmParticipantAction     m_fsmVar;
     private MultiModeComponentAction m_modeVar;
-
+	private RTObject_impl m_rtobjPtr;
+	private boolean m_measure;
+	private TimeMeasure m_svtMeasure = new TimeMeasure();
+	private TimeMeasure m_refMeasure = new TimeMeasure();
+	private int m_count;
     //    char dara[1000];
     // Component action invoker
     

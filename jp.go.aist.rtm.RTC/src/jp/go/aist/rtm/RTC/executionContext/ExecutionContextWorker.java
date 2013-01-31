@@ -5,6 +5,8 @@ import java.util.Iterator;
 
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.RTObjectStateMachine;
+import jp.go.aist.rtm.RTC.RTObjectStateMachineHolder;
+import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
@@ -178,8 +180,8 @@ public class ExecutionContextWorker {
      * error if the callback does.}
      *
      * @param comp 
-     *   {@.ja アクティブ化対象RTコンポーネント}
-     *   {@.en The target RT-Component for activation}
+     *   {@.ja アクティブ化対象RTコンポーネントホルダークラス}
+     *   {@.en The target RT-Component holder for activation}
      *
      * @return 
      *   {@.ja ReturnCode_t 型のリターンコード}
@@ -187,25 +189,24 @@ public class ExecutionContextWorker {
      *
      */
     public ReturnCode_t activateComponent(LightweightRTObject comp,
-                                        RTObjectStateMachine rtobj) {
+            RTObjectStateMachineHolder rtobjhldr) {
         rtcout.println(Logbuf.TRACE, "activateComponent()");
         synchronized (m_mutex){
-            RTObjectStateMachine obj = findComponent(comp);
-            if (obj == null) {
+            rtobjhldr.rtobjsm = findComponent(comp);
+            if (rtobjhldr.rtobjsm == null) {
                 rtcout.println(Logbuf.ERROR, 
                                 "Given RTC is not participant of this EC.");
                 return ReturnCode_t.BAD_PARAMETER;
             }
             rtcout.println(Logbuf.DEBUG, "Component found in the EC.");
-            if (!(obj.isCurrentState(LifeCycleState.INACTIVE_STATE))) {
+            if (!(rtobjhldr.rtobjsm.isCurrentState(LifeCycleState.INACTIVE_STATE))) {
                 rtcout.println(Logbuf.ERROR, 
                                 "State of the RTC is not INACTIVE_STATE.");
                 return ReturnCode_t.PRECONDITION_NOT_MET;
             }
             rtcout.println(Logbuf.DEBUG,
                     "Component is in INACTIVE state. Going to ACTIVE state.");
-            obj.goTo(LifeCycleState.ACTIVE_STATE);
-            rtobj = obj;
+            rtobjhldr.rtobjsm.goTo(LifeCycleState.ACTIVE_STATE);
             rtcout.println(Logbuf.DEBUG,"activateComponent() done.");
             return ReturnCode_t.RTC_OK;
         }
@@ -244,8 +245,8 @@ public class ExecutionContextWorker {
      * error if the callback does.}
      *
      * @param comp 
-     *   {@.ja 非アクティブ化対象RTコンポーネント}
-     *   {@.en The target RT-Component for deactivate}
+     *   {@.ja 非アクティブ化対象RTコンポーネントホルダー}
+     *   {@.en The target RT-Component holder for deactivate}
      *
      * @return 
      *   {@.ja ReturnCode_t 型のリターンコード}
@@ -253,21 +254,21 @@ public class ExecutionContextWorker {
      *
      */
     public ReturnCode_t deactivateComponent(LightweightRTObject comp,
-                                          RTObjectStateMachine rtobj){
+                                            RTObjectStateMachineHolder rtobjhldr){
         rtcout.println(Logbuf.TRACE, "deactivateComponent()");
         synchronized (m_mutex){
-            rtobj = findComponent(comp);
-            if (rtobj == null) {
+            rtobjhldr.rtobjsm = findComponent(comp);
+            if (rtobjhldr.rtobjsm == null) {
                 rtcout.println(Logbuf.ERROR, 
                                 "Given RTC is not participant of this EC.");
                 return ReturnCode_t.BAD_PARAMETER;
             }
-            if (!(rtobj.isCurrentState(LifeCycleState.ACTIVE_STATE))) {
+            if (!(rtobjhldr.rtobjsm.isCurrentState(LifeCycleState.ACTIVE_STATE))) {
                 rtcout.println(Logbuf.ERROR, 
                                 "State of the RTC is not ACTIVE_STATE.");
                 return ReturnCode_t.PRECONDITION_NOT_MET;
               }
-            rtobj.goTo(LifeCycleState.INACTIVE_STATE);
+            rtobjhldr.rtobjsm.goTo(LifeCycleState.INACTIVE_STATE);
             return ReturnCode_t.RTC_OK;
         }
     }
@@ -305,8 +306,8 @@ public class ExecutionContextWorker {
      * may be returned to a valid state.}
      *
      * @param comp 
-     *   {@.ja リセット対象RTコンポーネント}
-     *   {@.en The target RT-Component for reset}
+     *   {@.ja リセット対象RTコンポーネントホルダー}
+     *   {@.en The target RT-Component holder for reset}
      *
      * @return 
      *   {@.ja ReturnCode_t 型のリターンコード}
@@ -314,22 +315,22 @@ public class ExecutionContextWorker {
      *
      */
     public ReturnCode_t resetComponent(LightweightRTObject comp,
-                                     RTObjectStateMachine rtobj) {
+                                        RTObjectStateMachineHolder rtobjhldr) {
         rtcout.println(Logbuf.TRACE, "resetComponent()");
         synchronized (m_mutex){
 
-            rtobj = findComponent(comp);
-            if (rtobj == null) {
+            rtobjhldr.rtobjsm = findComponent(comp);
+            if (rtobjhldr.rtobjsm == null) {
                 rtcout.println(Logbuf.ERROR, 
                                 "Given RTC is not participant of this EC.");
                 return ReturnCode_t.BAD_PARAMETER;
               }
-            if (!(rtobj.isCurrentState(LifeCycleState.ERROR_STATE))) {
+            if (!(rtobjhldr.rtobjsm.isCurrentState(LifeCycleState.ERROR_STATE))) {
                 rtcout.println(Logbuf.ERROR, 
                                 "State of the RTC is not ERROR_STATE.");
                 return ReturnCode_t.PRECONDITION_NOT_MET;
               }
-            rtobj.goTo(LifeCycleState.INACTIVE_STATE);
+            rtobjhldr.rtobjsm.goTo(LifeCycleState.INACTIVE_STATE);
             return ReturnCode_t.RTC_OK;
         }
     }
@@ -475,9 +476,8 @@ public class ExecutionContextWorker {
                                 "bindContext returns id = "+id);
     
             // rtc is owner of this EC
-            LightweightRTObject comp
-              = (LightweightRTObject)rtc.getObjRef()._duplicate();
-            //    RTObjectStateMachine o(id, comp);
+            RTC.LightweightRTObject comp
+              = (RTC.LightweightRTObject)rtc.getObjRef()._duplicate();
             m_comps.add(new RTObjectStateMachine(id, comp));
             rtcout.println(Logbuf.DEBUG,"bindComponent() succeeded.");
             return ReturnCode_t.RTC_OK;
@@ -694,13 +694,13 @@ public class ExecutionContextWorker {
      * {@.ja コンポーネントの参加者リスト}
      * {@.en List of the participating component}
      */
-    protected ArrayList<RTObjectStateMachine> m_comps;
+    protected ArrayList<RTObjectStateMachine> m_comps = new ArrayList<RTObjectStateMachine>();
 //    protected String m_mutex;
     protected String m_mutex = new String();
-    protected ArrayList<RTObjectStateMachine> m_addedComps;
+    protected ArrayList<RTObjectStateMachine> m_addedComps = new ArrayList<RTObjectStateMachine>();
 //    protected String m_addedMutex;
     protected String m_addedMutex = new String();
-    ArrayList<RTObjectStateMachine> m_removedComps;
+    protected ArrayList<RTObjectStateMachine> m_removedComps = new ArrayList<RTObjectStateMachine>();
 //    protected String m_removedMutex;
     protected String m_removedMutex = new String();
 

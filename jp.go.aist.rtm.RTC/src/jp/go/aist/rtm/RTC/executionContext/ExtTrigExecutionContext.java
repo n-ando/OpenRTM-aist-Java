@@ -7,9 +7,11 @@ import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.RTObject_impl;
 import jp.go.aist.rtm.RTC.RTObjectStateMachine;
+import jp.go.aist.rtm.RTC.RTObjectStateMachineHolder;
 import jp.go.aist.rtm.RTC.StateAction;
 import jp.go.aist.rtm.RTC.StateHolder;
 import jp.go.aist.rtm.RTC.StateMachine;
+import jp.go.aist.rtm.RTC.executionContext.ExecutionContextBase.transitionModeHolder;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
@@ -57,10 +59,9 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
 
         rtcout = new Logbuf("ExtTrigExecutionContext");
         m_svc = false;
-        m_profile.setObjRef((ExecutionContextService)this.__this());
-
-        m_profile.setKind(ExecutionKind.PERIODIC);
-        m_profile.setRate(1000);
+        setObjRef((ExecutionContextService)this.__this());
+        setKind(ExecutionKind.PERIODIC);
+        setRate(1000);
         rtcout.println(Logbuf.DEBUG, "Actual period: " + m_profile.getPeriod().sec() + " [sec], "
                 + m_profile.getPeriod().usec() + " [usec]");
     }
@@ -84,25 +85,6 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
 
         return this.m_ref;
     }
-    /**
-     * <p>終了処理用関数</p>
-     */
-    public boolean finalizeExecutionContext() {
-        synchronized (m_worker) {
-            //m_worker.running_ = true;
-            m_worker.ticked_ = true ;
-            m_worker.notifyAll();
-        }
-        m_svc = false;
-        try {
-            m_thread.join();
-        }
-        catch   (InterruptedException e) {
-            System.out.println(e);
-        }
-	
-        return true;
-    }
 
     /**
      * {@.ja ExecutionContextの処理を進める}
@@ -114,12 +96,14 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *
      */
     public void tick() throws SystemException {
-
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.tick()");
-
-        synchronized (m_worker) {
-            m_worker.ticked_ = true;
-            m_worker.notifyAll();
+        if (!isRunning()) {
+            rtcout.println(Logbuf.DEBUG, "EC is not running. do nothing.");
+            return;
+        }
+        synchronized (m_workerthread.mutex_) {
+            m_workerthread.ticked_ = true;
+            m_workerthread.mutex_.notifyAll();
         }
     }
 
@@ -141,35 +125,32 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 全Componentの処理を呼び出した後、次のイベントが発生するまで休止します。</p>
      */
     public int svc() {
-        int count = 0 ;
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.svc()");
         do {
 
-            synchronized (m_worker) {
-                rtcout.println(Logbuf.DEBUG, "Start of worker invocation. ticked = "+ (m_worker.ticked_ ? "true" : "false"));
-                while (!m_worker.ticked_) {
+            synchronized (m_workerthread.mutex_) {
+                rtcout.println(Logbuf.DEBUG, "Start of worker invocation. ticked = "+ (m_workerthread.ticked_ ? "true" : "false"));
+                while (!m_workerthread.ticked_) {
                     try {
-                        m_worker.wait();
+                        m_workerthread.mutex_.wait();
                         rtcout.println(Logbuf.DEBUG, "Thread was woken up.");
                     } catch (InterruptedException e) {
                         break;
                     }
                 }
-                if(!m_worker.ticked_){continue;}
+                if(!m_workerthread.ticked_){continue;}
             }
             TimeValue t0 = new TimeValue();
-            t0.convert(System.nanoTime()/1000);
+            t0.convert(System.nanoTime()/1000000000.0);
             m_worker.invokeWorkerPreDo();
             m_worker.invokeWorkerDo();
             m_worker.invokeWorkerPostDo();
             TimeValue t1 = new TimeValue();
-            t1.convert(System.nanoTime()/1000);
-            synchronized (m_worker) {
-                m_worker.ticked_ = false ;
+            t1.convert(System.nanoTime()/1000000000.0);
+            synchronized (m_workerthread.mutex_) {
+                m_workerthread.ticked_ = false ;
             }
             TimeValue period = getPeriod();
-            TimeValue t2 = new TimeValue();
-            t2.convert(System.nanoTime()/1000);
             if(true){
                 TimeValue t1_w = t1;
                 TimeValue period_w = period ;
@@ -177,28 +158,23 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                 rtcout.println(Logbuf.PARANOID, "Execution: " + t1_w.minus(t0) + " [s]");
                 rtcout.println(Logbuf.PARANOID, "Sleep:     " + period_w.minus(t1_w) + " [s]");
             }
-            if( period.getUsec() > 0)
+            TimeValue t1_d = t1;
+            t1_d = t1_d.minus(t0);
+            if( period.toDouble() > t1_d.toDouble())
             {
                 if(true)
                 {
                     rtcout.println(Logbuf.PARANOID, "sleeping...");
                 }
                 try {
-                    Thread.sleep(period.getUsec());
+                    period = period.minus(t1_d);
+                    Thread.sleep((int)(period.toDouble() * 1000),(int)(period.toDouble() * 1000000000));
                 } catch (InterruptedException e){
                     e.printStackTrace();
                 }
             }
-            TimeValue t3 = new TimeValue();
-            t3.convert(System.nanoTime()/1000);
-            if(true)
-            {
-                rtcout.println(Logbuf.PARANOID, "Slept:     " + t3.minus(t2) + " [s]");
-                count = 0;
-            }
-            ++count;
             
-        } while (m_running);
+        } while (threadRunning());
         
         return 0;
     }
@@ -232,7 +208,10 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *
      */
     public boolean is_running() {
-        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.is_running()");
+        return isRunning();
+    }
+    public boolean isRunning() {
+        rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.isRunning()");
         return m_worker.isRunning();
     }
 
@@ -247,7 +226,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public ReturnCode_t onStarted()
     {
       // change EC thread state
-        synchronized (m_worker) {
+        synchronized (m_svcmutex) {
             if (!m_svc)
             { // If start() is called first time, start the worker thread.
                 m_svc = true;
@@ -314,6 +293,12 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     {
         return ReturnCode_t.RTC_OK;
     }
+    public boolean threadRunning()
+    {
+        synchronized(m_svcmutex) {
+            return m_svc;
+        }
+    }
     public ReturnCode_t onReset(RTObjectStateMachine comp, long count)
     {
         return ReturnCode_t.RTC_OK;
@@ -327,7 +312,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     {
         return kind;
     }
-    public ExecutionContextProfile onGetProfile(ExecutionContextProfile profile)
+    public RTC.ExecutionContextProfile onGetProfile(RTC.ExecutionContextProfile profile)
     {
         return profile;
     }
@@ -344,8 +329,9 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
 //                 "curr: " + comp.getStatus() +", next: " + comp.getStatus());
       // Now comp's next state must be ACTIVE state
       // If worker thread is stopped, restart worker thread.
-        synchronized (m_worker) {
-            m_worker.notifyAll();
+        synchronized (m_workerthread.mutex_) {
+            m_workerthread.ticked_ = true;
+            m_workerthread.mutex_.notifyAll();
             return ReturnCode_t.RTC_OK;
         }
     }
@@ -358,8 +344,8 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     {
         rtcout.println(Logbuf.TRACE, 
                 "ExtTrigExecutionContext.onWaitingDeactivated(count = " + count +")");
-        synchronized (m_worker) {
-            m_worker.notifyAll();
+        synchronized (m_workerthread.mutex_) {
+            m_workerthread.mutex_.notifyAll();
             return ReturnCode_t.RTC_OK;
         }
     }
@@ -371,8 +357,8 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     {
         rtcout.println(Logbuf.TRACE, 
               "ExtTrigExecutionContext.onWaitingReset(count = " + count +")");
-        synchronized (m_worker) {
-            m_worker.notifyAll();
+        synchronized (m_workerthread.mutex_) {
+            m_workerthread.mutex_.notifyAll();
             return ReturnCode_t.RTC_OK;
         }
     }
@@ -547,12 +533,14 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             rtcout.println(Logbuf.ERROR,"onActivating() failed.");
             return ret;
         }
-        RTObjectStateMachine rtobj = null;
-        ret = m_worker.activateComponent(comp, rtobj); // Actual activateComponent()
+
+        RTObjectStateMachineHolder rtobjhldr = new RTObjectStateMachineHolder();
+        ret = m_worker.activateComponent(comp, rtobjhldr); // Actual activateComponent()
+
         if (ret != ReturnCode_t.RTC_OK) { return ret; }
         if (!m_syncActivation) // Asynchronous activation mode
         {
-            ret = onActivated(rtobj, -1);
+            ret = onActivated(rtobjhldr.rtobjsm, -1);
             if (ret != ReturnCode_t.RTC_OK)
             {
                 rtcout.println(Logbuf.ERROR,"onActivated() failed.");
@@ -563,7 +551,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         // Synchronized activation mode
         rtcout.println(Logbuf.DEBUG,"Synchronous activation mode. "
                    +"Waiting for the RTC to be ACTIVE state. ");
-        return waitForActivated(rtobj);
+        return waitForActivated(rtobjhldr.rtobjsm);
     }
 
     public ReturnCode_t waitForActivated(RTObjectStateMachine rtobj)
@@ -578,9 +566,9 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         long cycle =
             (long )(m_activationTimeout.toDouble() / getPeriod().toDouble());
         rtcout.println(Logbuf.DEBUG,"Timeout is "+ m_activationTimeout.toDouble() + "[s] ("+ getRate() + "[s] in "+ cycle + " times");
-        // Wating INACTIVE -> ACTIVE
+                // Wating INACTIVE -> ACTIVE
         TimeValue starttime = new TimeValue();
-        starttime.convert(System.nanoTime()/1000);
+        starttime.convert(System.nanoTime()/1000000000.0);
         while (rtobj.isCurrentState(LifeCycleState.INACTIVE_STATE))
         {
             ret = onWaitingActivated(rtobj, count); // Template method
@@ -591,14 +579,14 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             }
             try
             {
-                Thread.sleep(getPeriod().getUsec());
+                Thread.sleep((int)(getPeriod().toDouble()*1000),(int)(getPeriod().toDouble()*1000000000));
             }catch(InterruptedException e){}
             TimeValue delta= new TimeValue();
-            delta.convert(System.nanoTime()/1000);
-            delta.minus(starttime);
+            delta.convert(System.nanoTime()/1000000000.0);
+            delta = delta.minus(starttime);
             rtcout.println(Logbuf.DEBUG,"Waiting to be ACTIVE state. " + delta + " [s] slept (" + count +"/" + cycle);
             ++count;
-            if (delta.getUsec() > m_activationTimeout.getUsec() || count > cycle)
+            if (delta.toDouble() > m_activationTimeout.toDouble() || count > cycle)
             {
                 rtcout.println(Logbuf.WARN,"The component is not responding.");
                 break;
@@ -644,12 +632,12 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             return ret;
         }
         // Deactivate all the RTCs
-        RTObjectStateMachine rtobj = null;
-        ret = m_worker.deactivateComponent(comp, rtobj);
+        RTObjectStateMachineHolder rtobjhldr = new RTObjectStateMachineHolder();
+        ret = m_worker.deactivateComponent(comp, rtobjhldr);
         if (ret != ReturnCode_t.RTC_OK) { return ret; }
         if (!m_syncDeactivation)
         {
-            ret = onDeactivated(rtobj, -1);
+            ret = onDeactivated(rtobjhldr.rtobjsm, -1);
             if (ret != ReturnCode_t.RTC_OK)
             {
                 rtcout.println(Logbuf.ERROR,"onDeactivated() failed.");
@@ -660,7 +648,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         // Waiting for synchronized deactivation
         rtcout.println(Logbuf.DEBUG,"Synchronous deactivation mode. "
                  +"Waiting for the RTC to be INACTIVE state. ");
-        return waitForDeactivated(rtobj);
+        return waitForDeactivated(rtobjhldr.rtobjsm);
     }
     public ReturnCode_t waitForDeactivated(RTObjectStateMachine rtobj)
     {
@@ -676,7 +664,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         rtcout.println(Logbuf.DEBUG,"Timeout is "+ m_deactivationTimeout.toDouble() + "[s] ("+ getRate() + "[s] in "+ cycle + " times");
         // Wating ACTIVE -> INACTIVE
         TimeValue starttime = new TimeValue();
-        starttime.convert(System.nanoTime()/1000);
+        starttime.convert(System.nanoTime()/1000000000.0);
         while (rtobj.isCurrentState(LifeCycleState.ACTIVE_STATE))
         {
             ret = onWaitingDeactivated(rtobj, count); // Template method
@@ -687,14 +675,14 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             }
             try
             {
-                Thread.sleep(getPeriod().getUsec());
+                Thread.sleep((int)(getPeriod().toDouble()*1000),(int)(getPeriod().toDouble()*1000000000));
             }catch(InterruptedException e){}
             TimeValue delta = new TimeValue();
-            delta.convert(System.nanoTime()/1000);
-            delta.minus(starttime);
+            delta.convert(System.nanoTime()/1000000000.0);
+            delta = delta.minus(starttime);
             rtcout.println(Logbuf.DEBUG,"Waiting to be INACTIVE state. Sleeping " + delta + " [s] (" + count +"/" + cycle);
             ++count;
-            if (delta.getUsec() > m_activationTimeout.getUsec() || count > cycle)
+            if (delta.toDouble() > m_activationTimeout.toDouble() || count > cycle)
             {
                 rtcout.println(Logbuf.WARN,"The component is not responding.");
                 break;
@@ -739,12 +727,12 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             rtcout.println(Logbuf.ERROR,"onResetting() failed.");
             return ret;
         }
-        RTObjectStateMachine rtobj = null;
-        ret = m_worker.resetComponent(comp, rtobj); // Actual resetComponent()
+        RTObjectStateMachineHolder rtobjhldr = new RTObjectStateMachineHolder();
+        ret = m_worker.resetComponent(comp, rtobjhldr); // Actual resetComponent()
         if (ret != ReturnCode_t.RTC_OK) { return ret; }
         if (!m_syncReset)
         {
-            ret = onReset(rtobj, -1);
+            ret = onReset(rtobjhldr.rtobjsm, -1);
             if (ret != ReturnCode_t.RTC_OK)
             {
                 rtcout.println(Logbuf.ERROR,"onReset() failed.");
@@ -755,7 +743,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         // Waiting for synchronized reset
         rtcout.println(Logbuf.DEBUG,"Synchronous reset mode. "
                    +"Waiting for the RTC to be INACTIVE state. ");
-        return waitForReset(rtobj);
+        return waitForReset(rtobjhldr.rtobjsm);
     }
     public ReturnCode_t waitForReset(RTObjectStateMachine rtobj)
     {
@@ -771,7 +759,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         rtcout.println(Logbuf.DEBUG,"Timeout is "+ m_resetTimeout.toDouble() + "[s] ("+ getRate() + "[s] in "+ cycle + " times");
         // Wating ERROR -> INACTIVE
         TimeValue starttime = new TimeValue();
-        starttime.convert(System.nanoTime()/1000);
+        starttime.convert(System.nanoTime()/1000000000.0);
         while (rtobj.isCurrentState(LifeCycleState.ERROR_STATE))
         {
             ret = onWaitingReset(rtobj, count); // Template method
@@ -782,14 +770,14 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             }
             try
             {
-                Thread.sleep(getPeriod().getUsec());
+                Thread.sleep((int)(getPeriod().toDouble()*1000),(int)(getPeriod().toDouble()*1000000000));
             }catch(InterruptedException e){}
             TimeValue delta = new TimeValue();
-            delta.convert(System.nanoTime()/1000);
-            delta.minus(starttime);
+            delta.convert(System.nanoTime()/1000000000.0);
+            delta = delta.minus(starttime);
             rtcout.println(Logbuf.DEBUG,"Waiting to be INACTIVE state. Sleeping " + delta + " [s] (" + count +"/" + cycle);
             ++count;
-            if (delta.getUsec() > m_resetTimeout.getUsec() || count > cycle)
+            if (delta.toDouble() > m_resetTimeout.toDouble() || count > cycle)
             {
                 rtcout.println(Logbuf.WARN,"The component is not responding.");
                 break;
@@ -1393,18 +1381,22 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * <p>ExecutionContext のスレッド実行フラグです。</p>
      */
     private boolean m_svc;
+    private String m_svcmutex = new String();
 
-    private class Worker {
-        
-        public Worker() {
-            this._called = false;
+    /**
+     * <p>Worke用状態変数クラスです。</p>
+     */
+    private class WorkerThreadCtrl {
+        private String mutex_ = new String();
+        private boolean ticked_; 
+        public WorkerThreadCtrl() {
+            ticked_ = false;
         }
-
-        public boolean _called;
     }
     
-//    private Worker m_worker = new Worker();
-    private ExecutionContextWorker m_worker = new ExecutionContextWorker();
+    // A condition variable for external triggered worker
+    private WorkerThreadCtrl m_workerthread = new WorkerThreadCtrl();
+    protected ExecutionContextWorker m_worker = new ExecutionContextWorker();
 
     /**
      * <p>ExecutionContextProfileです。</p>
@@ -1494,17 +1486,20 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         // getting rate
         setExecutionRate(props);
         // getting sync/async mode flag
-        boolean transitionMode=true;
+        transitionModeHolder transitionMode = new transitionModeHolder();
         if(setTransitionMode(props, "sync_transition", transitionMode))
         {
-            m_syncActivation = transitionMode;
-            m_syncDeactivation = transitionMode;
-            m_syncReset = transitionMode;
+            m_syncActivation = transitionMode.flag;
+            m_syncDeactivation = transitionMode.flag;
+            m_syncReset = transitionMode.flag;
             
         }
-        setTransitionMode(props, "sync_activation", m_syncActivation);
-        setTransitionMode(props, "sync_deactivation", m_syncDeactivation);
-        setTransitionMode(props, "sync_reset", m_syncReset);
+        setTransitionMode(props, "sync_activation", transitionMode);
+        m_syncActivation = transitionMode.flag;
+        setTransitionMode(props, "sync_deactivation", transitionMode);
+        m_syncDeactivation = transitionMode.flag;
+        setTransitionMode(props, "sync_reset", transitionMode);
+        m_syncReset = transitionMode.flag;
         // getting transition timeout
         TimeValue timeout = new TimeValue(0.0);
         if (setTimeout(props, "transition_timeout", timeout))
@@ -1542,7 +1537,9 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *
      */
     public void setObjRef(final ExecutionContextService ref) {
+        m_worker.setECRef(ref);
         m_profile.setObjRef(ref);
+        m_ref = ref;
     }
     /**
      * {@.ja CORBA オブジェクト参照の取得}
@@ -1790,17 +1787,44 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * @brief Setting state transition timeout from given properties.
      * @endif
      */
-    public boolean setTransitionMode(Properties props, String key, boolean flag)
+    public boolean setTransitionMode(Properties props, String key, transitionModeHolder tmhldr)
     {
         rtcout.println(Logbuf.TRACE, "ExtTrigExecutionContext.setTransitionMode(" + key +")");
         if (props.findNode(key) != null)
         {
-            flag = props.getNode(key).getValue() == "YES";
-            rtcout.println(Logbuf.DEBUG, "Transition Mode: " + key +" = " + ( flag ? "YES" : "NO"));
+            tmhldr.flag = props.getNode(key).getValue() == "YES";
+            rtcout.println(Logbuf.DEBUG, "Transition Mode: " + key +" = " + ( tmhldr.flag ? "YES" : "NO"));
             return true;
        }
         rtcout.println(Logbuf.DEBUG, "Configuration " + key +" not found.");
         return false;
     }
 
+    /*! ============================================================
+     * Delegated functions to ExecutionContextWorker
+     *  ============================================================ */
+    public boolean isAllCurrentState(RTC.LifeCycleState state)
+    {
+      return m_worker.isAllCurrentState(state);
+    }
+    
+    public boolean isAllNextState(RTC.LifeCycleState state)
+    {
+      return m_worker.isAllNextState(state);
+    }
+    
+    public boolean isOneOfCurrentState(RTC.LifeCycleState state)
+    {
+      return m_worker.isOneOfCurrentState(state);
+    }
+    
+    public boolean isOneOfNextState(RTC.LifeCycleState state)
+    {
+      return m_worker.isOneOfNextState(state);
+    }
+    
+    public void invokeWorker() { m_worker.invokeWorker(); }
+    public void invokeWorkerPreDo()   { m_worker.invokeWorkerPreDo(); }
+    public void invokeWorkerDo()      { m_worker.invokeWorkerDo(); }
+    public void invokeWorkerPostDo()  { m_worker.invokeWorkerPostDo(); }
 }

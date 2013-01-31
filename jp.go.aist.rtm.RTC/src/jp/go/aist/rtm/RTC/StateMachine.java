@@ -1,6 +1,8 @@
 package jp.go.aist.rtm.RTC;
 
 import java.util.HashMap;
+import RTC.LifeCycleState;
+
 
 
 
@@ -427,7 +429,9 @@ public class StateMachine<STATE, LISTENER> {
      *
      */
     public StateHolder<STATE> getStates() {
-        return m_states;
+        synchronized (m_states) {
+            return m_states;
+        }
     }
     
     /**
@@ -440,8 +444,10 @@ public class StateMachine<STATE, LISTENER> {
      *   {@.en Current state}
      *
      */
-    public synchronized STATE getState() {
-        return m_states.curr;
+    public STATE getState() {
+        synchronized (m_states) {
+            return m_states.curr;
+        }
     }
 
     /**
@@ -461,9 +467,11 @@ public class StateMachine<STATE, LISTENER> {
      *   {@.ja 状態確認結果}
      *   {@.en Check state result}
      */
-    public synchronized boolean isIn(STATE state) {
-        if( m_states.curr == state ) return true;
-        return false;
+    public boolean isIn(STATE state) {
+        synchronized (m_states) {
+            if( m_states.curr == state ) return true;
+            return false;
+        }
     }
 
     /**
@@ -487,8 +495,10 @@ public class StateMachine<STATE, LISTENER> {
      *   {@.ja 遷移先状態}
      *   {@.en State of the transition destination}
      */
-    public synchronized void goTo(STATE state) {
-        m_states.next = state;
+    public void goTo(STATE state) {
+        synchronized (m_states) {
+            m_states.next = state;
+        }
     }
 
     /**
@@ -597,7 +607,6 @@ public class StateMachine<STATE, LISTENER> {
 
     public void worker_post() {
         StateHolder state;
-        
         synchronized (m_states) {
             state = new StateHolder(m_states);
         }

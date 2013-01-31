@@ -232,12 +232,11 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      * {@.en This function gets RTC::ExecutionContextProfile.}
      *
      * @return 
-     *   {@.ja RTC.ExecutionContextProfile}
-     *   {@.en RTC.ExecutionContextProfile}
+     *   {@.ja ExecutionContextProfile}
+     *   {@.en ExecutionContextProfile}
      *
      */
     public RTC.ExecutionContextProfile getProfile() ;
-    public boolean finalizeExecutionContext();
     /**
      * {@.ja Propertiesから実行コンテキストをセットする}
      * {@.en Setting execution rate from given properties.}
@@ -247,6 +246,15 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      */
     public boolean setExecutionRate(Properties props);
     /**
+     * <p>transitionMode保持用クラスです。</p>
+     */
+    public class transitionModeHolder {
+        public boolean flag;
+        public transitionModeHolder() {
+            flag = false;
+        }
+    }
+    /**
      * {@.ja Propertiesから状態遷移モードをセットする}
      * {@.en Setting state transition mode from given properties.}
      * @param props 
@@ -255,7 +263,7 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      * @param key 
      * @param flag 
      */
-    public boolean setTransitionMode(Properties props, String key, boolean flag);
+    public boolean setTransitionMode(Properties props, String key, transitionModeHolder flag);
     /**
      * {@.ja Propertiesから状態遷移Timeoutをセットする}
      * {@.en Setting state transition timeout from given properties.}
@@ -287,7 +295,7 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
 
     public LifeCycleState onGetComponentState(LifeCycleState state);
     public ExecutionKind onGetKind(ExecutionKind kind);
-    public ExecutionContextProfile onGetProfile(ExecutionContextProfile profile);
+    public RTC.ExecutionContextProfile onGetProfile(RTC.ExecutionContextProfile profile);
 
     /**
      * {@.ja onWaitingActivated() template function}
@@ -306,5 +314,18 @@ public interface ExecutionContextBase extends ECNewDeleteFunc {
      * {@.en onWaitingReset() template function}
      */
     public ReturnCode_t onWaitingReset(RTObjectStateMachine comp, long count);
+    
+    /*! ============================================================
+     * Delegated functions to ExecutionContextWorker
+     *  ============================================================ */
+    public boolean isAllCurrentState(RTC.LifeCycleState state);
+    public boolean isAllNextState(RTC.LifeCycleState state);
+    public boolean isOneOfCurrentState(RTC.LifeCycleState state);
+    public boolean isOneOfNextState(RTC.LifeCycleState state);
+    
+    public void invokeWorker();
+    public void invokeWorkerPreDo();
+    public void invokeWorkerDo();
+    public void invokeWorkerPostDo();
 
 }

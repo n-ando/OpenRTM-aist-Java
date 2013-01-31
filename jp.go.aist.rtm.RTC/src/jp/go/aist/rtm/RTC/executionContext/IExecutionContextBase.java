@@ -33,7 +33,6 @@ public interface IExecutionContextBase extends ECNewDeleteFunc {
      */
     public ReturnCode_t bindComponent(RTObject_impl rtc);
 
-    public boolean finalizeExecutionContext();
 /*
     public ExecutionContextProfile m_profile 
                                     = new jp.go.aist.rtm.RTC.executionContext.ExecutionContextProfile();

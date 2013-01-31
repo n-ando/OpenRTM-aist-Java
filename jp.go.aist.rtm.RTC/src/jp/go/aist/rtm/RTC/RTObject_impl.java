@@ -1295,7 +1295,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             preOnInitialize(0);
             rtcout.println(Logbuf.DEBUG, "Calling onInitialize().");
             ret = onInitialize();
-            if (ret == ReturnCode_t.RTC_OK) {
+            if (ret != ReturnCode_t.RTC_OK) {
                 rtcout.println(Logbuf.ERROR,
                         "onInitialize() returns an ERROR ("
                         +ret
