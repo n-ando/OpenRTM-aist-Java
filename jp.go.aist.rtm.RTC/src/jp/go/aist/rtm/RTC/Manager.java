@@ -2170,12 +2170,12 @@ public class Manager {
      *   {@.en ORB launch options}
      */
     protected String createORBOptions() {
-        
+
         String opt = m_config.getProperty("corba.args");
         rtcout.println(Logbuf.DEBUG, "corba.args: "+opt);
         String dumpString = new String();
-        dumpString = m_config._dump(dumpString, m_config, 0);
-        rtcout.println(Logbuf.DEBUG, dumpString);
+        //dumpString = m_config._dump(dumpString, m_config, 0);
+        //rtcout.println(Logbuf.DEBUG, dumpString);
 
         Vector<String> endpoints = new Vector<String>();
         
