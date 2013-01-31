@@ -51,7 +51,6 @@ public class ExtTrigExecutionContextTests extends TestCase {
      * </p>
      */
     public void test_tick() {
-/*
         // RTObjectを生成する
         Manager manager = Manager.instance();
         DataFlowComponentMock rto = new DataFlowComponentMock(manager); // will be deleted automatically
@@ -61,27 +60,36 @@ public class ExtTrigExecutionContextTests extends TestCase {
         // ExecutionContextを生成する
         ExtTrigExecutionContext ec = new ExtTrigExecutionContext(); // will be deleted automatically
         assertEquals(ReturnCode_t.RTC_OK, ec.start());
-        assertEquals(ReturnCode_t.RTC_OK, ec.add(rto.getObjRef()));
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertEquals(ReturnCode_t.RTC_OK, ec.add_component(rto._this()));
+        ec.m_worker.updateComponentList();
         assertEquals(ReturnCode_t.RTC_OK, ec.activate_component(rto.getObjRef()));
         ec.tick();
-        
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // tick()呼出を行い、その回数とon_execute()の呼出回数が一致していることを確認する
-        for (int tickCalledCount = 0; tickCalledCount < 10; tickCalledCount++) {
+        for (int tickCalledCount = 2; tickCalledCount < 5; tickCalledCount++) {
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             assertEquals(tickCalledCount, mock.countLog("on_execute"));
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             ec.tick();
         }
-*/
-    }
+}
     
     /**
      * <p>name()メソッドのテスト
@@ -91,14 +99,12 @@ public class ExtTrigExecutionContextTests extends TestCase {
      * </p>
      */
     public void test_name() {
-/*
         String name = "jp.go.aist.rtm.RTC.executionContext.ExtTrigExecutionContext";
         
         ECFactoryBase factory = new ECFactoryJava(name);
         
         // コンストラクタで指定した名称を、name()メソッドで正しく取得できるか？
         assertEquals(name, factory.name());
-*/
     }
     
     /**
@@ -110,16 +116,14 @@ public class ExtTrigExecutionContextTests extends TestCase {
      * </p>
      */
     public void test_create_destroy() {
-/*
         ECFactoryJava factory = new ECFactoryJava("jp.go.aist.rtm.RTC.executionContext.ExtTrigExecutionContext");
         assertEquals("jp.go.aist.rtm.RTC.executionContext.ExtTrigExecutionContext", factory.m_name);
         ExecutionContextBase base = factory.create();
         assertNotNull(base);
-        assertEquals(ExecutionKind.PERIODIC, base.get_kind());
-        assertEquals(Double.valueOf(0.0), Double.valueOf(base.get_rate()));
+        //assertEquals(ExecutionKind.PERIODIC, base.get_kind());
+        assertEquals(Double.valueOf(1000.0), Double.valueOf(base.getRate()));
         base = factory.destroy(base);
         assertNull(base);
-*/
     }
 
     private class LightweightRTObjectMock extends DataFlowComponentBase {
