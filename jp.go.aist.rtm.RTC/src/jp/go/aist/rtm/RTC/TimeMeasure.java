@@ -108,8 +108,8 @@ public class TimeMeasure {
      *
      */
     public void tick() {
-        double dtm = (double)System.currentTimeMillis();
-        m_begin.convert(dtm/1000);          // [TimeValue]
+        double dtm = (double)System.nanoTime();
+        m_begin.convert(dtm/1000000000.0);          // [TimeValue]
 
     }
 
@@ -124,8 +124,8 @@ public class TimeMeasure {
         if (m_begin.sec() == 0) {
             return;
         }
-        double dtm = (double)System.currentTimeMillis();
-        m_interval.convert((dtm/1000) - m_begin.toDouble());
+        double dtm = (double)System.nanoTime();
+        m_interval.convert((dtm/1000000000.0) - m_begin.toDouble());
         m_record.set(m_count,m_interval);
         ++m_count;
         if (m_count == m_countMax)
