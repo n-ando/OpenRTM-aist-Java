@@ -225,7 +225,6 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
      */
     public ReturnCode write(final DataType value, int sec, int nsec) {
         synchronized (m_full.mutex) {
-      
             if (full()) {
                 
                 boolean timedwrite = m_timedwrite;
@@ -245,15 +244,17 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                 else if (!overwrite && timedwrite) { // "block" mode
                     if (sec < 0) {
                         sec = 
-                            (int)(m_rtimeout.sec()*1000+m_rtimeout.usec()/1000);
-                        nsec = (int)(m_rtimeout.usec() % 1000)*1000;
+                            (int)(m_wtimeout.sec()*1000+m_wtimeout.usec()/1000);
+                        nsec = (int)(m_wtimeout.usec() % 1000)*1000;
                     }
                     try {
                         if(sec==0 && nsec==0){
                             return ReturnCode.TIMEOUT;
                         }
                         m_full.mutex.wait(sec, (int)nsec);
-                        return ReturnCode.TIMEOUT;
+                        if (full()) {
+                            return ReturnCode.TIMEOUT;
+                        }
                     }
                     catch(InterruptedException e ){
                         throw new RuntimeException(e.toString()); 
@@ -266,19 +267,20 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                     return ReturnCode.PRECONDITION_NOT_MET;
                 }
             }
-          
-            boolean empty_ = empty();
-          
+
             put(value);
           
             synchronized (m_empty.mutex) {
-                advanceWptr(1);
-                if (empty_) {
+                if (empty()) {
+                    advanceWptr(1);
                     try {
                         m_empty.mutex.notify();
                     }
                     catch(IllegalMonitorStateException e) {
                     }
+                }
+                else {
+                    advanceWptr(1);
                 }
             }
             return ReturnCode.BUFFER_OK;
@@ -422,8 +424,15 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                     return ReturnCode.BUFFER_EMPTY;
                 }
                 else if (!readback && timedread) { // "block" mode
-                    //  true: signaled, false: timeout
+                    if (sec < 0) {
+                        local_msec = 
+                            (int)(m_rtimeout.sec()*1000+m_rtimeout.usec()/1000);
+                        local_nsec = (int)(m_rtimeout.usec() % 1000)*1000;
+                    }
                     try {
+                        if(local_msec==0 && local_nsec==0){
+                            return ReturnCode.TIMEOUT;
+                        }
                         m_empty.mutex.wait(local_msec, local_nsec);
                         if (empty()) {
                             return ReturnCode.TIMEOUT;
@@ -445,18 +454,19 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
             }
         }
 
-        boolean  full_ = full();
-      
         get(valueRef);
 
         synchronized(m_full.mutex){
-            advanceRptr(1);
-            if (full_) {
+            if (full()) {
+                advanceRptr(1);
                 try {
                     m_full.mutex.notify();
                 }
                 catch(IllegalMonitorStateException e) {
                 }
+            }
+            else {
+                advanceRptr(1);
             }
         }
       

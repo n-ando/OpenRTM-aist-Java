@@ -5,6 +5,8 @@ import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.Properties;
 import junit.framework.TestCase;
 
+import java.util.*;
+
 /**
  * <p>RingBufferのためのテストケースです。</p>
  */
@@ -531,6 +533,8 @@ public class RingBufferTest extends TestCase {
         }
         return;
     }
+
+    
     public void test_write_read2() {
         //(2)Can the buffer correctly read one written data 
         //in the state of full?
@@ -540,7 +544,7 @@ public class RingBufferTest extends TestCase {
         for (int i = 0; i < length2; i++) {
             buff2.write(i + 123);
         }
-			
+            
         // １データ書込・読出を行う
         for (int writeValue = 0; writeValue < 100; writeValue++) {
             // 書込み
@@ -561,7 +565,7 @@ public class RingBufferTest extends TestCase {
                              readValue.v.intValue());
             }
         }
-			
+            
         // (3) バッファに幾分データが書き込まれている状態で１データ書込・読出を行い、書き込んだデータを正しく読み出せるか？
         int length3 = 10;
         RingBuffer<Integer> buff3 = new RingBuffer<Integer>(length3);
@@ -590,6 +594,71 @@ public class RingBufferTest extends TestCase {
             }
         }
     }
+
+
+    class writing_thread extends Thread {
+        RingBuffer<Integer> m_buff;
+        int m_loopcnt;
+        public writing_thread(RingBuffer<Integer> buff, int loop) {
+            m_buff = buff;
+            m_loopcnt = loop;
+        }
+        
+        public void start() {
+            super.start();
+        }
+        
+        public void run() {
+            //DataRef<Integer> readValue = new DataRef<Integer>(0);
+            for (int i = 0; i < m_loopcnt; ++i) {
+                //m_buff.read(readValue);
+                m_buff.write(i);
+            }
+        }
+        
+        ArrayList m_data = new ArrayList();
+        public ArrayList getData() {
+            return m_data;
+        }
+    }
+
+    public void test_write_read3() {
+        int loopcnt = 1000000;
+        Properties prop = new Properties();
+        prop.setProperty("write.full_policy","block");
+        prop.setProperty("write.timeout","5.0");
+        prop.setProperty("read.empty_policy","block");
+        prop.setProperty("read.timeout","5.0");
+        RingBuffer<Integer> buff = new RingBuffer<Integer>(8);
+        DataRef<Integer> readValue = new DataRef<Integer>(0);
+        buff.init(prop);
+        writing_thread wt = new writing_thread(buff, loopcnt);
+        wt.start();
+        try {
+            Thread.sleep(10);
+        }
+        catch(InterruptedException e) {
+        }
+        ArrayList rdata = new ArrayList();
+        for (int i = 0; i < loopcnt; i++) {
+            buff.read(readValue);
+            rdata.add(i);
+            //buff.write(i);
+        }
+        try {
+            wt.join();
+        } catch (InterruptedException e) {
+            System.out.println(e);
+        }
+        ArrayList wdata = wt.getData();
+        Iterator w_ite = wdata.iterator();
+        Iterator r_ite = rdata.iterator();
+        while(w_ite.hasNext()) { 
+            assertEquals("rdata==wdata",w_ite.next(),r_ite.next());
+        }
+    }
+    
+    
     /**
      * <p>write()メソッドおよびread()メソッドのテスト（バッファ長２の場合）
      * <ul>
@@ -648,7 +717,7 @@ public class RingBufferTest extends TestCase {
         //and the increment does the pointer on the reading side.
 	buff2.write(0);
 				
-        assertEquals("(2)-2",true, buff2.full());
+    assertEquals("(2)-2",true, buff2.full());
         //Readinfg
         // Because it reads out data from the reading side and 
         // the number of pointers is increased, 
