@@ -9,6 +9,12 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.util.TimeValue;
+import jp.go.aist.rtm.RTC.util.clock.ClockManager;
+import jp.go.aist.rtm.RTC.util.clock.IClock;
+import jp.go.aist.rtm.RTC.util.clock.LogicalClock;
+
 /**
  * <p>ログ収集ON時のロギングクラスです。</p>
  *  ログ出力の可否は、デフォルトで無効とし、
@@ -47,16 +53,28 @@ public class Logbuf {
     public Logbuf(String name) {
         m_LogLock = false;
         m_Suffix = name;
+        m_clock = ClockManager.getInstance().getClock("system");
+        if(Manager.isActive() ) {
+            if( Manager.instance().getConfig().getNode("logger.date_format")!=null ) {
+            	setDateFormat(Manager.instance().getConfig().getProperty("logger.date_format"));
+            }
+            if( Manager.instance().getConfig().getNode("logger.clock_type")!=null ) {
+                setClockType(Manager.instance().getConfig().getProperty("logger.clock_type"));
+            }
+        }
+        
         int parent = name.indexOf("Manager.");
         String str;
         if(name.equals("Manager")) {
             str = "OpenRTM-aist.logging." + name;
             m_Logger = Logger.getLogger(str);
             this.addStream(new NullHandler());
+            
         } else if(parent >= 0) {
             m_Suffix = this.getLastName(name);
             str = "OpenRTM-aist.logging.Manager." + m_Suffix;
             m_Logger = Logger.getLogger(str);
+            
         } else {
             str = "OpenRTM-aist.logging.Manager." + name;
             m_Logger = Logger.getLogger(str);
@@ -80,6 +98,16 @@ public class Logbuf {
     public Logbuf(String name, String parent) {
         m_LogLock = false;
         m_Suffix = name;
+        m_clock = ClockManager.getInstance().getClock("system");
+        if(Manager.isActive() ) {
+            if( Manager.instance().getConfig().getNode("logger.date_format")!=null ) {
+                setDateFormat(Manager.instance().getConfig().getProperty("logger.date_format"));
+            }
+            if( Manager.instance().getConfig().getNode("logger.clock_type")!=null ) {
+                setClockType(Manager.instance().getConfig().getProperty("logger.clock_type"));
+            }
+        }
+        
         String str;
         if((parent.length() == 0) || (parent == null)) {
             str = "OpenRTM-aist.logging." + name;
@@ -119,19 +147,29 @@ public class Logbuf {
 //            System.err.println("Logbuf.println() destination handler was not registered.");
             return;
         }
-        StringBuilder sb = new StringBuilder();
-
-        // Send all output to the Appendable object sb
-        java.util.Formatter formatter = new java.util.Formatter(sb, java.util.Locale.US);
-
-        // Explicit argument indices may be used to re-order output.
-        Date date = new Date();
+//        StringBuilder sb = new StringBuilder();
+//
+//        // Send all output to the Appendable object sb
+//        java.util.Formatter formatter = new java.util.Formatter(sb, java.util.Locale.US);
+//
+//        // Explicit argument indices may be used to re-order output.
+//        Date date = new Date();
 
         String str = logLevelToStr(level);
         Level clevel = Level.parse(str);
-        m_Logger.log(clevel, 
-                    formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date) 
-                    + " " + m_Suffix + " " + logLevelToStr(level) + " " + contents);
+//        m_Logger.log(clevel, 
+//                    formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date) 
+//                    + " " + m_Suffix + " " + logLevelToStr(level) + " " + contents);
+        m_Logger.log(clevel, getDate() + " " + m_Suffix + " " + logLevelToStr(level) + " " + contents);
+    }
+    
+    protected String getDate() {
+        //桁落ちを防ぐために微少値を加算
+    	long sec = (long)(m_clock.getTime().toDouble()*1000+0.0000005);
+        Date date = new Date(sec);
+        StringBuilder sb = new StringBuilder();
+        java.util.Formatter formatter = new java.util.Formatter(sb, java.util.Locale.US);
+        return formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date).toString();
     }
 
     /**
@@ -408,6 +446,45 @@ public class Logbuf {
     }
 
     /**
+     * {@.ja ログ記録時に使用するクロックを指定する}
+     * {@.en Specifying clock type to be used for logging}
+     *
+     * <p>
+     * {@.ja ログ記録時に時刻を取得するためのクロックの種類を指定することができる。
+     * <li> system: システムクロック。デフォルト
+     * <li> logical: 論理時間クロック。
+     * <li> adjusted: 調整済みクロック。
+     * <li> initTimer: Timer 初期化</li>
+     * 論理時間クロックについては
+     * <pre>
+     * ClockManager::instance().getClock("logical").settime()
+     * </pre>
+     * で時刻を設定する必要がある。
+     * 
+     * {@.en This function sets a clock type getting time when it is used
+     * for logging. Available clock types are,
+     * <li> system: System clock. Default option.
+     * <li> logical: Logical time clock.
+     * <li> adjusted: Adjusted clock.
+     * To use logical time clock, call and set time by the following
+     * function in somewhere.
+     * <pre>
+     * coil::ClockManager::instance().getClock("logical").settime()
+     * </pre>}
+     *
+     * @param clocktype 
+     *   {@.ja 上述のクロックタイプ}
+     *   {@.en A clock type above mentioned.}
+     */
+    public void setClockType(String clocktype) {
+    	m_clock = ClockManager.getInstance().getClock(clocktype);
+    	//論理時間の場合は出力書式のデフォルト設定を変更
+    	if(m_clock instanceof LogicalClock) {
+    	    setDateFormat("%S %L");
+    	}
+    }
+    
+    /**
      * <p>ログ・レベルを設定します。</p>
      *
      * @param level ログ・レベル
@@ -453,6 +530,8 @@ public class Logbuf {
     * <p>出力先ハンドラの数</p>
     */
     private int m_HandlerCount = 0;
+    
+    private IClock m_clock;
 
    /**
     * <p>ログ出力の設定</p>

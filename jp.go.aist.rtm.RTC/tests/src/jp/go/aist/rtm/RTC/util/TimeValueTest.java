@@ -1,5 +1,8 @@
 package jp.go.aist.rtm.RTC.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import junit.framework.TestCase;
 
@@ -275,5 +278,26 @@ public class TimeValueTest extends TestCase {
         double res;
         res = tm1.toDouble();
         assertEquals(Double.valueOf(1.000001), Double.valueOf(res));
+    }
+    /**
+     * <p>現在時刻の変換　チェック
+     * <ul>
+     * <li>現在時刻の変換が正常に行えるか？</li>
+     * </ul>
+     */
+    public void test_date() {
+        Date date = new Date();
+        long msec = System.currentTimeMillis();
+        long sec = msec/1000;
+        long usec = (msec - sec*1000)*1000;
+        TimeValue base = new TimeValue(sec, usec);
+        double curr = base.toDouble();
+        assertEquals(sec, (long)curr);
+        
+        Date convdate = new Date((long)(curr*1000));
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSSSS");
+        String strCurrent = sdf1.format(date);
+        String strConv = sdf1.format(convdate);
+        assertTrue(strCurrent.equals(strConv));
     }
 }

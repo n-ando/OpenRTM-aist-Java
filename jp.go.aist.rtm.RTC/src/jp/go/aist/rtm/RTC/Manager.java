@@ -232,6 +232,24 @@ public class Manager {
     }
     
     /**
+     * {@.ja マネージャインスタンスが生成済みかチェック。}
+     * {@.en Check Manager Instance}
+     *
+     * <p>
+     * {@.ja マネージャインスタンスが生成済みかどうか確認する。}
+     * {@.en Check manager instance}
+     *
+     * @return 
+     *   {@.ja Manager の唯一のインスタンスの有無}
+     *   {@.en Existence of the only instance reference of the manager}
+     */
+    public static boolean isActive() {
+        if(manager==null)
+            return false;
+        return true;
+    }
+    
+    /**
      * {@.ja マネージャ・シャットダウン}
      * {@.en Shutdown Manager}
      *
@@ -2075,6 +2093,8 @@ public class Manager {
             // Set date format for log entry header
             rtcout.setDateFormat(m_config.getProperty("logger.date_format"));
 
+            rtcout.setClockType(m_config.getProperty("logger.clock_type"));
+            
             // Loglevel was set from configuration file.
             rtcout.setLevel(m_config.getProperty("logger.log_level"));
 
