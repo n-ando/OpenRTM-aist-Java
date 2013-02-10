@@ -168,10 +168,22 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                 }
                 try {
                     period = period.minus(t1_d);
-                    Thread.sleep((int)(period.toDouble() * 1000),(int)(period.toDouble() * 1000000000));
+                    int millisec = 0;
+                    int nanosec = (int)(period.toDouble()*1000000000); 
+                    if ( nanosec > 999999) {
+                        millisec = nanosec / 1000000;
+                        nanosec = nanosec % 1000000;
+                    }
+                    
+                    if ( millisec > 0 || nanosec > 0) {
+                        Thread.sleep(millisec,nanosec);
+                    }
                 } catch (InterruptedException e){
                     e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                
             }
             
         } while (threadRunning());
@@ -579,8 +591,21 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             }
             try
             {
-                Thread.sleep((int)(getPeriod().toDouble()*1000),(int)(getPeriod().toDouble()*1000000000));
-            }catch(InterruptedException e){}
+                int millisec = 0;
+                int nanosec = (int)(getPeriod().toDouble()*1000000000); 
+                if ( nanosec > 999999) {
+                    millisec = nanosec / 1000000;
+                    nanosec = nanosec % 1000000;
+                }
+                
+                if ( millisec > 0 || nanosec > 0) {
+                    Thread.sleep(millisec,nanosec);
+                }
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             TimeValue delta= new TimeValue();
             delta.convert(System.nanoTime()/1000000000.0);
             delta = delta.minus(starttime);
@@ -675,8 +700,21 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             }
             try
             {
-                Thread.sleep((int)(getPeriod().toDouble()*1000),(int)(getPeriod().toDouble()*1000000000));
-            }catch(InterruptedException e){}
+                int millisec = 0;
+                int nanosec = (int)(getPeriod().toDouble()*1000000000); 
+                if ( nanosec > 999999) {
+                    millisec = nanosec / 1000000;
+                    nanosec = nanosec % 1000000;
+                }
+                
+                if ( millisec > 0 || nanosec > 0) {
+                    Thread.sleep(millisec,nanosec);
+                }
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             TimeValue delta = new TimeValue();
             delta.convert(System.nanoTime()/1000000000.0);
             delta = delta.minus(starttime);
@@ -770,8 +808,21 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             }
             try
             {
-                Thread.sleep((int)(getPeriod().toDouble()*1000),(int)(getPeriod().toDouble()*1000000000));
-            }catch(InterruptedException e){}
+                int millisec = 0;
+                int nanosec = (int)(getPeriod().toDouble()*1000000000); 
+                if ( nanosec > 999999) {
+                    millisec = nanosec / 1000000;
+                    nanosec = nanosec % 1000000;
+                }
+                
+                if ( millisec > 0 || nanosec > 0) {
+                    Thread.sleep(millisec,nanosec);
+                }
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             TimeValue delta = new TimeValue();
             delta.convert(System.nanoTime()/1000000000.0);
             delta = delta.minus(starttime);

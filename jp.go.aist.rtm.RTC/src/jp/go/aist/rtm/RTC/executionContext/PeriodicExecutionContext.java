@@ -176,10 +176,22 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                 }
                 try {
                     delta = period.minus(delta);
-                    Thread.sleep((int)(delta.toDouble()*1000),(int)(delta.toDouble()*1000000000)); // sec -> millisec, sec -> nanosec
+                    int millisec = 0;
+                    int nanosec = (int)(delta.toDouble()*1000000000); 
+                    if ( nanosec > 999999) {
+                        millisec = nanosec / 1000000;
+                        nanosec = nanosec % 1000000;
+                    }
+                    
+                    if ( millisec > 0 || nanosec > 0) {
+                        Thread.sleep(millisec,nanosec);
+                    }
                 } catch (InterruptedException e){
                     e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
             }
             ++count;
             
@@ -639,8 +651,22 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             }
             try
             {
-                Thread.sleep((int)(getPeriod().toDouble()*1000),(int)(getPeriod().toDouble()*1000000000)); // sec -> millisec, sec -> nanosec
-            }catch(InterruptedException e){}
+                int millisec = 0;
+                int nanosec = (int)(getPeriod().toDouble()*1000000000);
+                if ( nanosec > 999999) {
+                    millisec = nanosec / 1000000;
+                    nanosec = nanosec % 1000000;
+                }
+                
+                if ( millisec > 0 || nanosec > 0) {
+                    Thread.sleep(millisec,nanosec);
+                }
+            } catch(InterruptedException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             TimeValue delta= new TimeValue();
             delta.convert(System.nanoTime()/1000000000);
             delta = delta.minus(starttime);
@@ -734,8 +760,21 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             }
             try
             {
-                Thread.sleep((int)(getPeriod().toDouble()*1000),(int)(getPeriod().toDouble()*1000000000)); // sec -> millisec, sec -> nanosec
-            }catch(InterruptedException e){}
+                int millisec = 0;
+                int nanosec = (int)(getPeriod().toDouble()*1000000000);
+                if ( nanosec > 999999) {
+                    millisec = nanosec / 1000000;
+                    nanosec = nanosec % 1000000;
+                }
+                
+                if ( millisec > 0 || nanosec > 0) {
+                    Thread.sleep(millisec, nanosec);
+                }
+            } catch(InterruptedException e){
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             TimeValue delta = new TimeValue();
             delta.convert(System.nanoTime()/1000);
             delta = delta.minus(starttime);
@@ -829,8 +868,21 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             }
             try
             {
-                Thread.sleep((int)(getPeriod().toDouble()*1000),(int)(getPeriod().toDouble()*1000000000));  // sec -> millisec, sec -> nanosec
-            }catch(InterruptedException e){}
+                int millisec = 0;
+                int nanosec = (int)(getPeriod().toDouble()*1000000000);
+                if ( nanosec > 999999) {
+                    millisec = nanosec / 1000000;
+                    nanosec = nanosec % 1000000;
+                }
+                
+                if ( millisec > 0 || nanosec > 0) {
+                    Thread.sleep(millisec, nanosec);
+                }
+            } catch(InterruptedException e){
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             TimeValue delta = new TimeValue();
             delta.convert(System.nanoTime()/1000);
             delta = delta.minus(starttime);
