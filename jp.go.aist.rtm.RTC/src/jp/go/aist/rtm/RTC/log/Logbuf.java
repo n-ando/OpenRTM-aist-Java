@@ -1,7 +1,9 @@
 package jp.go.aist.rtm.RTC.log;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.IllegalFormatException;
+import java.util.Locale;
 import java.util.Vector;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -43,6 +45,9 @@ public class Logbuf {
     public static final String VERBOSE_H    = "VERBOSE  :";
     public static final String PARANOID_H   = "PARANOID :";
 
+    private int TIME_CONV_UNIT = 1000;
+    private double DELTA_TIME = 0.000000000005;
+    
     /**
      * <p>デフォルトコンストラクタです。</p>
      * Manager.* としてロガーを作成する。
@@ -56,7 +61,7 @@ public class Logbuf {
         m_clock = ClockManager.getInstance().getClock("system");
         if(Manager.isActive() ) {
             if( Manager.instance().getConfig().getNode("logger.date_format")!=null ) {
-            	setDateFormat(Manager.instance().getConfig().getProperty("logger.date_format"));
+                setDateFormat(Manager.instance().getConfig().getProperty("logger.date_format"));
             }
             if( Manager.instance().getConfig().getNode("logger.clock_type")!=null ) {
                 setClockType(Manager.instance().getConfig().getProperty("logger.clock_type"));
@@ -165,11 +170,13 @@ public class Logbuf {
     
     protected String getDate() {
         //桁落ちを防ぐために微少値を加算
-    	long sec = (long)(m_clock.getTime().toDouble()*1000+0.0000005);
-        Date date = new Date(sec);
+//        long sec = (long)(m_clock.getTime().toDouble()*1000+0.000000000005);
+//        Date date = new Date(sec);
         StringBuilder sb = new StringBuilder();
-        java.util.Formatter formatter = new java.util.Formatter(sb, java.util.Locale.US);
-        return formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date).toString();
+//        java.util.Formatter formatter = new java.util.Formatter(sb, java.util.Locale.US);
+//        return formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date).toString();
+        TimeFormatter formatter = new TimeFormatter(sb, java.util.Locale.US);
+        return formatter.format(m_dateFormat, m_clock);
     }
 
     /**
@@ -477,11 +484,11 @@ public class Logbuf {
      *   {@.en A clock type above mentioned.}
      */
     public void setClockType(String clocktype) {
-    	m_clock = ClockManager.getInstance().getClock(clocktype);
-    	//論理時間の場合は出力書式のデフォルト設定を変更
-    	if(m_clock instanceof LogicalClock) {
-    	    setDateFormat("%S %L");
-    	}
+        m_clock = ClockManager.getInstance().getClock(clocktype);
+        //論理時間の場合は出力書式のデフォルト設定を変更
+        if(m_clock instanceof LogicalClock) {
+            setDateFormat("%S %L");
+        }
     }
     
     /**
@@ -539,12 +546,45 @@ public class Logbuf {
     */
     private static boolean m_Enabled = false;
 
-    class NullHandler extends Handler{
+    private class NullHandler extends Handler{
         public void close() {
         }
         public void flush() {
         }
         public void publish(LogRecord record){
+        }
+    }
+    
+    private class TimeFormatter {
+        private java.util.Formatter formatter;
+        
+        public TimeFormatter(StringBuilder sb, Locale local ) {
+            formatter = new java.util.Formatter(sb, local);            
+        }
+        
+        public String format(String format, IClock clock) {
+            String result = "";
+            TimeValue time = clock.getTime();
+            
+            if(format.contains("%tN")) {
+                long mc = time.getUsec()%TIME_CONV_UNIT;
+                String strmc = "";
+                try {
+                    DecimalFormat df = new DecimalFormat();
+                    df.applyPattern("0");
+                    df.setMaximumIntegerDigits(3);
+                    df.setMinimumIntegerDigits(3);
+                    strmc = df.format(mc);
+                } catch(Exception e) {
+                    strmc = Long.valueOf(mc).toString();
+                }
+                format = format.replace("%tN", strmc);
+            }
+            long sec = (long)(time.toDouble()*TIME_CONV_UNIT+DELTA_TIME);
+            Date date = new Date(sec);
+            result = formatter.format(format,date,date,date,date,date,date,date,date,date,date).toString();
+            
+            return result;
         }
     }
 

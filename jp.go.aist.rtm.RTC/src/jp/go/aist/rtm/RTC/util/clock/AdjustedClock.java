@@ -12,19 +12,17 @@ import jp.go.aist.rtm.RTC.util.TimeValue;
  * {@.en This class stores a offset time with current system clock when
  * settime(), and gettime() returns adjusted clock by the offset.}
  */
-public class AdjustedClock implements IClock {
+public class AdjustedClock extends SystemClock {
     private TimeValue m_offset;
 
     public AdjustedClock() {
+        super();
         m_offset = new TimeValue(0.0);
     }
     
     public TimeValue getTime() {
         synchronized (m_offset) {
-            long msec = System.currentTimeMillis();
-            long sec = msec/1000;
-            long usec = (msec - sec*1000)*1000;
-            TimeValue base = new TimeValue(sec, usec);
+            TimeValue base = super.getTime();
             return base.minus(m_offset);
         }
     }
@@ -32,10 +30,11 @@ public class AdjustedClock implements IClock {
     public boolean setTime(TimeValue clocktime) {
         synchronized (m_offset) {
             long msec = System.currentTimeMillis();
-            long sec = msec/1000;
-            long usec = (msec - sec*1000)*1000;
+            long sec = msec/TIME_CONV_UNIT;
+            long usec = (msec - sec*TIME_CONV_UNIT)*TIME_CONV_UNIT;
             TimeValue base = new TimeValue(sec, usec);
             m_offset = base.minus(clocktime);
+            nanoBase = System.nanoTime();
         }
         return true;
     }
