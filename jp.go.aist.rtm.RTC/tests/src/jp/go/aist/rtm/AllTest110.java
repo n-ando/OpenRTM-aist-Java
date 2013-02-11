@@ -4,6 +4,8 @@ import jp.go.aist.rtm.RTC.log.LogBufTimeTest;
 import jp.go.aist.rtm.RTC.log.LogbufTest;
 import jp.go.aist.rtm.RTC.util.AdjustedClockTest;
 import jp.go.aist.rtm.RTC.util.TimeValueTest;
+import jp.go.aist.rtm.RTC.buffer.RingBufferTest;
+import jp.go.aist.rtm.RTC.executionContext.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -17,6 +19,9 @@ public class AllTest110 {
         suite.addTestSuite(AdjustedClockTest.class);
         
         suite.addTestSuite(LogBufTimeTest.class);
+        suite.addTestSuite(RingBufferTest.class);
+        suite.addTestSuite(ExtTrigExecutionContextTests.class);
+        suite.addTestSuite(PeriodicExecutionContextTests.class);
 
         return suite;
     }
