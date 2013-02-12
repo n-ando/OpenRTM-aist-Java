@@ -29,7 +29,7 @@ public class LogBufTimeTest extends TestCase {
         // Junit出力ファイル*.xmlの <system-err>の欄に出力される
         System.err.println("--- test_case0() adjusted ---");
         rtcout.println(Logbuf.PARANOID, "PARANOID string to STDOUT 2");
-        rtcout.setDateFormat("%b %d %H:%M:%S.%L %q");
+        rtcout.setDateFormat("%b %d %H:%M:%S.%Q %q");
         rtcout.println(Logbuf.VERBOSE, "VERBOSE string to STDOUT 2");
         rtcout.println(Logbuf.TRACE, "TRACE string to STDOUT 2");
         rtcout.println(Logbuf.DEBUG, "DEBUG string to STDOUT 2");
@@ -43,9 +43,9 @@ public class LogBufTimeTest extends TestCase {
         
         System.err.println("--- test_case0() system ---");
         rtcout.setClockType("system");
-        rtcout.setDateFormat("%b %d %H:%M:%S.%L");
+        rtcout.setDateFormat("%b %d %H:%M:%S.%Q");
         rtcout.println(Logbuf.PARANOID, "PARANOID string to STDOUT 2");
-        rtcout.setDateFormat("%b %d %H:%M:%S.%L %q");
+        rtcout.setDateFormat("%b %d %H:%M:%S.%Q %q");
         rtcout.println(Logbuf.VERBOSE, "VERBOSE string to STDOUT 2");
         rtcout.println(Logbuf.TRACE, "TRACE string to STDOUT 2");
         rtcout.println(Logbuf.DEBUG, "DEBUG string to STDOUT 2");
