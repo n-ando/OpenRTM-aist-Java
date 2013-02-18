@@ -338,9 +338,7 @@
 		</copy>
 		<delete dir="${source.openrtmtemp}" />
 		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar" encoding="UTF-8" />
-
-		<javac srcdir="${source.main}:${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8"  includes="go/aist/**" excludes="go/aist/ForSunOrb/**,go/aist/ForJacOrb/**"  />
-
+		<javac srcdir="${source.main}:${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
 		<javac srcdir="${source.extension}:" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
 		<delete dir="${source.examplestemp}" />
 		<native2ascii encoding="UTF-8" src="${source.examples}" dest="${source.examplestemp}" >
@@ -356,27 +354,6 @@
 		</copy>
 		<delete dir="${source.examplestemp}" />
 		<javac srcdir="${source.examples}:" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
-		<copy todir="${source.common}" overwrite="true">
-		    <fileset dir="${source.sunorb}" >
-		        <include name="**/*.java" />
-		    </fileset>
-		</copy>
-		<javac srcdir="${source.main}:${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" includes="go/aist/**" excludes="go/aist/ForSunOrb/**,go/aist/ForJacOrb/**"  />
-		<delete dir="${source.examplestemp}" />
-		<native2ascii encoding="UTF-8" src="${source.examples}" dest="${source.examplestemp}" >
-	            <include name="**/*.java" />
-	        </native2ascii>
-	        <fixcrlf srcdir="${source.examplestemp}" eol="crlf" >
-	            <include name="**/*.java" />
-	        </fixcrlf>
-		<copy todir="${source.examples}">
-		    <fileset dir="${source.examplestemp}" >
-		        <include name="**/*.java" />
-		    </fileset>
-		</copy>
-		<delete dir="${source.examplestemp}" />
-		<javac srcdir="${source.examples}:" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" />
-
 	</target>
 
 	<target name="compile_android" description="ソースをコンパイルします">
@@ -422,7 +399,7 @@
 		        <include name="**/*.java" />
 		    </fileset>
 		</copy>
-		<javac srcdir="${source.main}:${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar:/usr/local/JacORB/lib/jacorb.jar:"  encoding="UTF-8"  includes="go/aist/**" excludes="go/aist/ForSunOrb/**,go/aist/ForJacOrb/**" />
+		<javac srcdir="${source.main}:${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar:/usr/local/JacORB/lib/jacorb.jar:"  encoding="UTF-8"  includes="go/aist/**"  />
 		<delete dir="${source.examplestemp}" />
 		<native2ascii encoding="UTF-8" src="${source.examples}" dest="${source.examplestemp}" >
 	            <include name="**/*.java" />
@@ -441,7 +418,7 @@
 		        <include name="**/*.java" />
 		    </fileset>
 		</copy>
-		<javac srcdir="${source.examples}:" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar:/usr/local/JacORB/lib/jacorb.jar:"  encoding="UTF-8"  includes="go/aist/**" excludes="go/aist/ForSunOrb/**,go/aist/ForJacOrb/**" />
+		<javac srcdir="${source.examples}:" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar:/usr/local/JacORB/lib/jacorb.jar:"  encoding="UTF-8"  includes="go/aist/**"  />
 	</target>
 
 	<target name="compile_tests" description="ソースをコンパイルします">
@@ -473,8 +450,7 @@
 				</fileSet>
 			</batchtest>
 		</junit>
-		<echo>All Test complete!</echo>
-	</target>
+		<echo>All Test complete!</echo>	</target>
 	<target name="dist" description="ソースをエクスポートします">
 		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
