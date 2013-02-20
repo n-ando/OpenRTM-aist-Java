@@ -6,11 +6,13 @@
 '起動用オブジェクトの取得
 Set objShell = WScript.CreateObject("WScript.Shell")
 
-If GetOSVersion() >= 6 Then
-	'JDKのレジストリキーをセット
-	regJDKkey  = "HKLM\SOFTWARE\Wow6432Node\JavaSoft\Java Development Kit"
-Else
+strMode = objShell.Environment("Process").Item("PROCESSOR_ARCHITECTURE")
+
+'JDKのレジストリキーをセット
+If UCase(strMode) = "X86" Then
 	regJDKkey  = "HKLM\SOFTWARE\JavaSoft\Java Development Kit"
+Else
+	regJDKkey  = "HKLM\SOFTWARE\Wow6432Node\JavaSoft\Java Development Kit"
 End If
 
 'レジストリからJDKカレントバージョンを取得
