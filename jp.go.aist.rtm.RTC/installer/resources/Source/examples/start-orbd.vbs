@@ -6,8 +6,12 @@
 '起動用オブジェクトの取得
 Set objShell = WScript.CreateObject("WScript.Shell")
 
-'JDKのレジストリキーをセット
-regJDKkey  = "HKLM\SOFTWARE\JavaSoft\Java Development Kit"
+If GetOSVersion() >= 6 Then
+	'JDKのレジストリキーをセット
+	regJDKkey  = "HKLM\SOFTWARE\Wow6432Node\JavaSoft\Java Development Kit"
+Else
+	regJDKkey  = "HKLM\SOFTWARE\JavaSoft\Java Development Kit"
+End If
 
 'レジストリからJDKカレントバージョンを取得
 'objShell.RegRead("HKLM\SOFTWARE\JavaSoft\Java Development Kit\CurrentVersion")
@@ -28,3 +32,25 @@ objShell.Run targetexe & " -ORBInitialPort 2809 -ORBInitialHost localhost -defau
 '一応オブジェクトを開放
 Set objShell = Nothing
 
+
+' **********************************************************
+' OS バージョンの取得
+' **********************************************************
+Function GetOSVersion()
+
+    Dim strComputer, Wmi, colTarget, strWork, objRow, aData
+
+    strComputer = "."
+    Set Wmi = GetObject("winmgmts:{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
+    Set colTarget = Wmi.ExecQuery( "select Version from Win32_OperatingSystem" )
+
+    For Each objRow in colTarget
+        strWork = objRow.Version
+        Next
+
+        aData = Split( strWork, "." )
+        strWork = aData(0) & "." & aData(1)
+
+        GetOSVersion = CDbl( strWork )
+
+End Function
