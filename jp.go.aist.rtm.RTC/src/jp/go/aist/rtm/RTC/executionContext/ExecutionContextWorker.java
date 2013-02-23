@@ -623,7 +623,7 @@ public class ExecutionContextWorker {
  
     
     
-    protected void updateComponentList() {
+    public void updateComponentList() {
         synchronized (m_mutex) {
             synchronized (m_addedMutex) {// adding component
                 for (int ic=0; ic < m_addedComps.size(); ++ic) {

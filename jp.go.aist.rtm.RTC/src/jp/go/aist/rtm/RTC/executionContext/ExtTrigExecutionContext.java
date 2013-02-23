@@ -140,13 +140,11 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                 }
                 if(!m_workerthread.ticked_){continue;}
             }
-            TimeValue t0 = new TimeValue();
-            t0.convert(System.nanoTime()/1000000000.0);
+            TimeValue t0 = new TimeValue(System.nanoTime());
             m_worker.invokeWorkerPreDo();
             m_worker.invokeWorkerDo();
             m_worker.invokeWorkerPostDo();
-            TimeValue t1 = new TimeValue();
-            t1.convert(System.nanoTime()/1000000000.0);
+            TimeValue t1 = new TimeValue(System.nanoTime());
             synchronized (m_workerthread.mutex_) {
                 m_workerthread.ticked_ = false ;
             }
@@ -579,8 +577,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             (long )(m_activationTimeout.toDouble() / getPeriod().toDouble());
         rtcout.println(Logbuf.DEBUG,"Timeout is "+ m_activationTimeout.toDouble() + "[s] ("+ getRate() + "[s] in "+ cycle + " times");
                 // Wating INACTIVE -> ACTIVE
-        TimeValue starttime = new TimeValue();
-        starttime.convert(System.nanoTime()/1000000000.0);
+        TimeValue starttime = new TimeValue(System.nanoTime());
         while (rtobj.isCurrentState(LifeCycleState.INACTIVE_STATE))
         {
             ret = onWaitingActivated(rtobj, count); // Template method
@@ -606,8 +603,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            TimeValue delta= new TimeValue();
-            delta.convert(System.nanoTime()/1000000000.0);
+            TimeValue delta= new TimeValue(System.nanoTime());
             delta = delta.minus(starttime);
             rtcout.println(Logbuf.DEBUG,"Waiting to be ACTIVE state. " + delta + " [s] slept (" + count +"/" + cycle);
             ++count;
@@ -688,8 +684,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             (long )(m_deactivationTimeout.toDouble() / getPeriod().toDouble());
         rtcout.println(Logbuf.DEBUG,"Timeout is "+ m_deactivationTimeout.toDouble() + "[s] ("+ getRate() + "[s] in "+ cycle + " times");
         // Wating ACTIVE -> INACTIVE
-        TimeValue starttime = new TimeValue();
-        starttime.convert(System.nanoTime()/1000000000.0);
+        TimeValue starttime = new TimeValue(System.nanoTime());
         while (rtobj.isCurrentState(LifeCycleState.ACTIVE_STATE))
         {
             ret = onWaitingDeactivated(rtobj, count); // Template method
@@ -715,8 +710,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            TimeValue delta = new TimeValue();
-            delta.convert(System.nanoTime()/1000000000.0);
+            TimeValue delta = new TimeValue(System.nanoTime());
             delta = delta.minus(starttime);
             rtcout.println(Logbuf.DEBUG,"Waiting to be INACTIVE state. Sleeping " + delta + " [s] (" + count +"/" + cycle);
             ++count;
@@ -796,8 +790,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             (long )(m_resetTimeout.toDouble() / getPeriod().toDouble());
         rtcout.println(Logbuf.DEBUG,"Timeout is "+ m_resetTimeout.toDouble() + "[s] ("+ getRate() + "[s] in "+ cycle + " times");
         // Wating ERROR -> INACTIVE
-        TimeValue starttime = new TimeValue();
-        starttime.convert(System.nanoTime()/1000000000.0);
+        TimeValue starttime = new TimeValue(System.nanoTime());
         while (rtobj.isCurrentState(LifeCycleState.ERROR_STATE))
         {
             ret = onWaitingReset(rtobj, count); // Template method
@@ -823,8 +816,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            TimeValue delta = new TimeValue();
-            delta.convert(System.nanoTime()/1000000000.0);
+            TimeValue delta = new TimeValue(System.nanoTime());
             delta = delta.minus(starttime);
             rtcout.println(Logbuf.DEBUG,"Waiting to be INACTIVE state. Sleeping " + delta + " [s] (" + count +"/" + cycle);
             ++count;

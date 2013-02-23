@@ -33,6 +33,18 @@ public class TimeValue {
         this.tv_sec = sec;
         this.tv_usec = usec;
     }
+    
+    /**
+     * {@.ja コンストラクタ}
+     * {@.en Constructor}
+     * 
+     * @param nano
+     *   {@.ja システム時間}
+     *   {@.en System Time}
+     */
+    public TimeValue(long system) {
+        convert(system/1000000000.0);
+    }
     /**
      * {@.ja コンストラクタ}
      * 

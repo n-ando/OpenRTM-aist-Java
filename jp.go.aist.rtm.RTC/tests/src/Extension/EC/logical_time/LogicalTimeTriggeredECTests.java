@@ -1,4 +1,4 @@
-package jp.go.aist.rtm.RTC.executionContext;
+package Extension.EC.logical_time;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,9 +6,13 @@ import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.executionContext.ECFactoryBase;
+import jp.go.aist.rtm.RTC.executionContext.ECFactoryJava;
+import jp.go.aist.rtm.RTC.executionContext.ExecutionContextBase;
 import junit.framework.TestCase;
 
 import org.omg.CORBA.Any;
+import org.omg.CORBA.IntHolder;
 
 import RTC.ComponentProfile;
 import RTC.ExecutionContext;
@@ -26,10 +30,10 @@ import _SDOPackage.SDOService;
 import _SDOPackage.ServiceProfile;
 
 /**
-* ExtTrigExecutionContextクラス　テスト
-* 対象クラス：ExtTrigExecutionContext
+* LogicalTimeTriggeredECクラス　テスト
+* 対象クラス：LogicalTimeTriggeredEC
 */
-public class ExtTrigExecutionContextTests extends TestCase {
+public class LogicalTimeTriggeredECTests extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -43,8 +47,7 @@ public class ExtTrigExecutionContextTests extends TestCase {
      * <ul>
      * <li>ECを正常にstartできるか？</li>
      * <li>RTObjectを正常に登録できるか？</li>
-     * <li>RTObjectを正常にactivateできるか？</li>
-     * <li>tickメソッドの呼び出しで正常に処理が進むか？</li>
+     * <li>tickメソッドの呼び出しで正常に論理時間が設定される？</li>
      * </ul>
      * </p>
      */
@@ -56,7 +59,7 @@ public class ExtTrigExecutionContextTests extends TestCase {
         manager.activateManager();
 
         // ExecutionContextを生成する
-        ExtTrigExecutionContext ec = new ExtTrigExecutionContext(); // will be deleted automatically
+        LogicalTimeTriggeredEC ec = new LogicalTimeTriggeredEC(); // will be deleted automatically
         assertEquals(ReturnCode_t.RTC_OK, ec.start());
         try {
             Thread.sleep(500);
@@ -66,12 +69,7 @@ public class ExtTrigExecutionContextTests extends TestCase {
         assertEquals(ReturnCode_t.RTC_OK, ec.add_component(rto._this()));
         ec.m_worker.updateComponentList();
         assertEquals(ReturnCode_t.RTC_OK, ec.activate_component(rto.getObjRef()));
-        ec.tick();
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        ec.tick(1, 1);
         // tick()呼出を行い、その回数とon_execute()の呼出回数が一致していることを確認する
         for (int tickCalledCount = 2; tickCalledCount < 5; tickCalledCount++) {
             try {
@@ -85,9 +83,15 @@ public class ExtTrigExecutionContextTests extends TestCase {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            ec.tick();
+            ec.tick(tickCalledCount, tickCalledCount-1);
         }
-}
+        //入力した論理時間が設定されているか？
+        IntHolder secHolder = new IntHolder();
+        IntHolder usecHolder = new IntHolder();
+        ec.get_time(secHolder, usecHolder);
+        assertEquals(4, secHolder.value);
+        assertEquals(3, usecHolder.value);
+    }
     
     /**
      * <p>name()メソッドのテスト
@@ -97,10 +101,8 @@ public class ExtTrigExecutionContextTests extends TestCase {
      * </p>
      */
     public void test_name() {
-        String name = "jp.go.aist.rtm.RTC.executionContext.ExtTrigExecutionContext";
-        
+        String name = "Extension.EC.logical_time.LogicalTimeTriggeredEC";
         ECFactoryBase factory = new ECFactoryJava(name);
-        
         // コンストラクタで指定した名称を、name()メソッドで正しく取得できるか？
         assertEquals(name, factory.name());
     }
@@ -114,18 +116,16 @@ public class ExtTrigExecutionContextTests extends TestCase {
      * </p>
      */
     public void test_create_destroy() {
-        ECFactoryJava factory = new ECFactoryJava("jp.go.aist.rtm.RTC.executionContext.ExtTrigExecutionContext");
-        assertEquals("jp.go.aist.rtm.RTC.executionContext.ExtTrigExecutionContext", factory.m_name);
+        ECFactoryJava factory = new ECFactoryJava("Extension.EC.logical_time.LogicalTimeTriggeredEC");
+        assertEquals("Extension.EC.logical_time.LogicalTimeTriggeredEC", factory.name());
         ExecutionContextBase base = factory.create();
         assertNotNull(base);
-        //assertEquals(ExecutionKind.PERIODIC, base.get_kind());
         assertEquals(Double.valueOf(1000.0), Double.valueOf(base.getRate()));
         base = factory.destroy(base);
         assertNull(base);
     }
 
     private class LightweightRTObjectMock extends DataFlowComponentBase {
-
         protected Map<Integer, ExecutionContext> m_execContexts = new HashMap<Integer, ExecutionContext>();
         protected int m_nextUniqueId;
         protected Vector<String> m_log = new Vector<String>();
@@ -187,10 +187,10 @@ public class ExtTrigExecutionContextTests extends TestCase {
         }
 
         // RTC::_impl_LightweightRTObject
-        public ReturnCode_t initialize() {
-            m_log.add("initialize");
-            return ReturnCode_t.RTC_OK;
-        }
+//        public ReturnCode_t initialize() {
+//            m_log.add("initialize");
+//            return ReturnCode_t.RTC_OK;
+//        }
         public ReturnCode_t _finalize() {
             m_log.add("finalize");
             return ReturnCode_t.RTC_OK;

@@ -6,8 +6,8 @@ import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
-import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.POAUtil;
 import junit.framework.TestCase;
 
 import org.omg.CORBA.Any;
@@ -24,7 +24,6 @@ import RTC.LifeCycleState;
 import RTC.LightweightRTObject;
 import RTC.LightweightRTObjectHelper;
 import RTC.LightweightRTObjectPOA;
-import RTC.PortService;
 import RTC.ReturnCode_t;
 import _SDOPackage.Configuration;
 import _SDOPackage.DeviceProfile;

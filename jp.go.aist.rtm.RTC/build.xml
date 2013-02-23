@@ -59,7 +59,7 @@
 	<property name="idl.InterfaceDataTypes" value="${idl.path}/InterfaceDataTypes.idl" />
 	<property name="idl.ComponentObserver" value="${idl.path}/ComponentObserver.idl" />
 	<property name="idl.Logger" value="${idl.path}/Logger.idl" />
-	<property name="idl.test.CorbaConsumer" value="${idl.path.tests}/CorbaConsumer/Hello.idl" />
+	<property name="idl.LogicalTimeTriggeredEC" value="${idl.path}/LogicalTimeTriggeredEC.idl" />		<property name="idl.test.CorbaConsumer" value="${idl.path.tests}/CorbaConsumer/Hello.idl" />
 	<property name="idl.test.CorbaPort" value="${idl.path.tests}/CorbaPort/MyService.idl" />
 	<property name="idl.test.TypeCast" value="${idl.path.tests}/TypeCast/Mock.idl" />
 	<property name="idl.sample" value="${source.samples.java}/MyService.idl" />
@@ -266,7 +266,7 @@
 		<exec executable="${java.home}\..\bin\idlj">
 			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.Logger}"/>
 		</exec>
-	</target>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.LogicalTimeTriggeredEC}"/>		</exec>			</target>
 
 	<target name="idlCompileEtc" description="IDLファイル(追加分)をコンパイルします">
 		<delete dir="${source.tests.bind}" />

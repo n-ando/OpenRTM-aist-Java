@@ -1,20 +1,15 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
-import org.omg.CORBA.SystemException;
-
-import RTC.ExecutionContextService;
-import OpenRTM.ExtTrigExecutionContextServicePOA;
-
 import jp.go.aist.rtm.RTC.RTObjectStateMachine;
 import jp.go.aist.rtm.RTC.RTObject_impl;
-import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.TimeValue;
+import RTC.ExecutionContextService;
 import RTC.ExecutionKind;
 import RTC.LifeCycleState;
 import RTC.LightweightRTObject;
-import RTC.ReturnCode_t;
 import RTC.RTObject;
+import RTC.ReturnCode_t;
 
 /**
  * <p>Periodic Sampled Data Processing(周期実行用)ExecutionContextのベースとなる

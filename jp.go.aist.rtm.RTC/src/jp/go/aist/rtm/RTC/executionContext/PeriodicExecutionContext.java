@@ -1,6 +1,5 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
-import java.util.ArrayList;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.Manager;
@@ -13,16 +12,12 @@ import jp.go.aist.rtm.RTC.StateAction;
 import jp.go.aist.rtm.RTC.StateHolder;
 import jp.go.aist.rtm.RTC.StateMachine;
 import jp.go.aist.rtm.RTC.log.Logbuf;
-import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
-//import RTC.ExecutionContextProfile;
 import OpenRTM.DataFlowComponent;
-import OpenRTM.DataFlowComponentHelper;
-import RTC.ExecutionContextProfileHolder;
 import RTC.ExecutionContextService;
 import RTC.ExecutionContextServiceHelper;
 import RTC.ExecutionContextServicePOA;
@@ -152,12 +147,10 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                     }
                 }
             }
-            TimeValue t0 = new TimeValue();
-            t0.convert(System.nanoTime()/1000000000.0);
+            TimeValue t0 = new TimeValue(System.nanoTime());
             invokeWorkerDo();
             invokeWorkerPostDo();
-            TimeValue t1 = new TimeValue();
-            t1.convert(System.nanoTime()/1000000000.0);
+            TimeValue t1 = new TimeValue(System.nanoTime());
             TimeValue period = getPeriod();
             if(count > 1000){
                 TimeValue t1_w = t1;
