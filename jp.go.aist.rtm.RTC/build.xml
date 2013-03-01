@@ -116,38 +116,9 @@
 		<antcall target="junit" />
 	</target>
 
-	<target name="jar" description="jarファイルを作成します">
-		<mkdir dir="${dist.dir}" />
-		<delete file="${dist.dir}/${target.name}.jar" />
+	<target name="jar" description="jarファイルを作成します">		<mkdir dir="${dist.dir}" />		<delete file="${dist.dir}/${target.name}.jar" />		<jar destfile="${dist.dir}/${target.name}.jar"			 basedir="${build.dir}"			 excludes="RTMExamples/**, rtcd/**, rtcprof/**, Extension/**, OpenRTM/LogicalTimeTriggeredEC**" />		<delete file="${build.dir.jar}/${target.name}.jar" />		<copy file="${dist.dir}/${target.name}.jar" todir="${build.dir.jar}" />				<jar destfile="${dist.dir}/rtcd.jar"			 basedir="${build.dir}"			 includes="rtcd/**" />		<delete file="${build.dir.jar}/rtcd.jar" />		<copy file="${dist.dir}/rtcd.jar" todir="${build.dir.jar}" />				<jar destfile="${dist.dir}/rtcprof.jar"			 basedir="${build.dir}"                         manifest="${source.rtcprof}/META-INF/MANIFEST.MF"			 includes="rtcprof/**" />		<delete file="${build.dir.jar}/rtcprof.jar" />		<copy file="${dist.dir}/rtcprof.jar" todir="${build.dir.jar}" />				<jar destfile="${dist.dir}/LogicalTimeTriggeredEC.jar"			 basedir="${build.dir}"			 includes="Extension/EC/logical_time/**, OpenRTM/LogicalTimeTriggeredEC**" />		<delete file="${build.dir.jar}/LogicalTimeTriggeredEC.jar" />		<copy file="${dist.dir}/LogicalTimeTriggeredEC.jar" todir="${build.dir.jar}" />				<jar destfile="${dist.dir}/NameserviceFile.jar"			 basedir="${build.dir}"			 includes="Extension/LocalService/nameservice_file/**" />		<delete file="${build.dir.jar}/NameserviceFile.jar" />		<copy file="${dist.dir}/NameserviceFile.jar" todir="${build.dir.jar}" />	</target>
 
-		<jar destfile="${dist.dir}/${target.name}.jar"
-			 basedir="${build.dir}"
-			 excludes="RTMExamples/**, rtcd/**, rtcprof/**" />
-
-		<delete file="${build.dir.jar}/${target.name}.jar" />
-		<copy file="${dist.dir}/${target.name}.jar" todir="${build.dir.jar}" />
-		<jar destfile="${dist.dir}/rtcd.jar"
-			 basedir="${build.dir}"
-			 includes="rtcd/**" />
-		<delete file="${build.dir.jar}/rtcd.jar" />
-		<copy file="${dist.dir}/rtcd.jar" todir="${build.dir.jar}" />
-
-		<jar destfile="${dist.dir}/rtcprof.jar"
-			 basedir="${build.dir}"
-                         manifest="${source.rtcprof}/META-INF/MANIFEST.MF"
-			 includes="rtcprof/**" />
-		<delete file="${build.dir.jar}/rtcprof.jar" />
-		<copy file="${dist.dir}/rtcprof.jar" todir="${build.dir.jar}" />
-	</target>
-
-	<target name="javaExamples"  description="Sampleをコピーします">
-		<delete dir="${dist.samples}" />
-		
-		<copy todir="${dist.samples}">
-			<fileset dir="${source.samples.class}" />
-			<fileset dir="${source.samples.java}" />
-		</copy>
-	</target>
+	<target name="javaExamples"  description="Sampleをコピーします">		<delete dir="${dist.samples}" />		<copy todir="${dist.samples}">			<fileset dir="${source.samples.class}" />			<fileset dir="${source.samples.java}" />		</copy>	</target>
 
 	<target name="createExe" description="exeファイルを作成します">
 		<delete file="rtcd.jsmooth" />
@@ -237,68 +208,26 @@
 		</exec>
 	</target>
 
-	<target name="idlCompile" description="IDLファイルをコンパイルします">
-		<delete dir="src/_SDOPackage" />
-		<delete dir="src/RTC" />
-		<delete dir="src/OpenRTM" />
-		<delete dir="src/RTM" />
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.Manager}"/>
-		</exec>
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.OpenRTM}"/>
-		</exec>
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.DataPort}"/>
-		</exec>
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.BasicDataType}"/>
-		</exec>
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.ExtendedDataTypes}"/>
-		</exec>
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.InterfaceDataTypes}"/>
-		</exec>
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.ComponentObserver}"/>
-		</exec>
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.Logger}"/>
-		</exec>
-		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.LogicalTimeTriggeredEC}"/>		</exec>			</target>
+	<target name="idlCompile" description="IDLファイルをコンパイルします">		<delete dir="src/_SDOPackage" />		<delete dir="src/RTC" />		<delete dir="src/OpenRTM" />		<delete dir="src/RTM" />
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.Manager}"/>		</exec>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.OpenRTM}"/>		</exec>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.DataPort}"/>		</exec>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.BasicDataType}"/>		</exec>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.ExtendedDataTypes}"/>		</exec>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.InterfaceDataTypes}"/>		</exec>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.ComponentObserver}"/>		</exec>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.Logger}"/>		</exec>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.LogicalTimeTriggeredEC}"/>		</exec>	</target>
+	<target name="idlCompileEtc" description="IDLファイル(追加分)をコンパイルします">		<delete dir="${source.tests.bind}" />
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source.test} -pkgPrefix CorbaConsumer jp.go.aist.rtm.bind ${idl.test.CorbaConsumer}"/>		</exec>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source.test} -pkgPrefix CorbaPort jp.go.aist.rtm.bind ${idl.test.CorbaPort}"/>		</exec>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source.test} -pkgPrefix TypeCast jp.go.aist.rtm.bind ${idl.test.TypeCast}"/>		</exec>
+		<delete includeEmptyDirs="true">			<fileset dir="${source.samples.java.SimpleService}" excludes="**.idl,MyServiceConsumer**.java,MyServiceProvider**.java,MyServiceSVC_impl.java,rtc.conf" />		</delete>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -pkgPrefix SimpleService RTMExamples ${idl.sample}"/>		</exec>
+		<delete includeEmptyDirs="true">			<fileset dir="${source.samples.java.AutoTest}" excludes="**.idl,AutoTest**.java,MyServiceSVC_impl.java,**.conf" />		</delete>
+		<exec executable="${java.home}\..\bin\idlj">			<arg line="-v -fall -td ${source} -pkgPrefix AutoTest RTMExamples ${idl.autotest}"/>		</exec>	</target>
 
-	<target name="idlCompileEtc" description="IDLファイル(追加分)をコンパイルします">
-		<delete dir="${source.tests.bind}" />
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source.test} -pkgPrefix CorbaConsumer jp.go.aist.rtm.bind ${idl.test.CorbaConsumer}"/>
-		</exec>
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source.test} -pkgPrefix CorbaPort jp.go.aist.rtm.bind ${idl.test.CorbaPort}"/>
-		</exec>
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source.test} -pkgPrefix TypeCast jp.go.aist.rtm.bind ${idl.test.TypeCast}"/>
-		</exec>
-		<delete includeEmptyDirs="true">
-			<fileset dir="${source.samples.java.SimpleService}" excludes="**.idl,MyServiceConsumer**.java,MyServiceProvider**.java,MyServiceSVC_impl.java,rtc.conf" />
-		</delete>
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source} -pkgPrefix SimpleService RTMExamples ${idl.sample}"/>
-		</exec>
-		<delete includeEmptyDirs="true">
-			<fileset dir="${source.samples.java.AutoTest}" excludes="**.idl,AutoTest**.java,MyServiceSVC_impl.java,**.conf" />
-		</delete>
-		<exec executable="${java.home}\..\bin\idlj">
-			<arg line="-v -fall -td ${source} -pkgPrefix AutoTest RTMExamples ${idl.autotest}"/>
-		</exec>
-	</target>
-
-	<target name="clean" description="ビルドで生成されたファイルを削除します">
-		<delete includeEmptyDirs="true">
-			<fileset dir="${build.dir}" includes="**/*.class" />
-			<fileset dir="${build.dir.test}" includes="**/*.class" />
-		</delete>
-	</target>
+	<target name="clean" description="ビルドで生成されたファイルを削除します">		<delete includeEmptyDirs="true">			<fileset dir="${build.dir}" includes="**/*.class" />			<fileset dir="${build.dir.test}" includes="**/*.class" />		</delete>	</target>
 
 	<target name="compile" description="ソースをコンパイルします">
 		<native2ascii encoding="UTF-8" src="${source.sdo}" dest="${source.sdotemp}" >
