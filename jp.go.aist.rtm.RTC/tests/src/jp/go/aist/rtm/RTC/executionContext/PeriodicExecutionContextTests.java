@@ -461,6 +461,7 @@ public class PeriodicExecutionContextTests extends TestCase {
         
         // ExecutionContextにRTObjectを登録する
         assertEquals(ReturnCode_t.RTC_OK, ec.add_component(mock._this()));
+        ec.m_worker.updateComponentList();
         
         try {
             Thread.sleep(100);

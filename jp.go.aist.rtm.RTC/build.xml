@@ -423,7 +423,9 @@
 	</target>
 
 	<target name="compile_tests" description="ソースをコンパイルします">
-		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}:${source.main}:${source.examples}:${source.test}:${source.tests.bind}" destdir="${build.dir.test}" classpath="lib/commons-cli-1.1.jar:${env.JUNIT_HOME}/junit.jar:" encoding="UTF-8" />
+		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir.test}" classpath="lib/commons-cli-1.1.jar" encoding="UTF-8" />
+		<javac srcdir="${source.main}" destdir="${build.dir.test}" classpath="lib/commons-cli-1.1.jar"  encoding="UTF-8" includes="go/aist/**" excludes="go/aist/ForSunOrb/**,go/aist/ForJacOrb/**"/>
+		<javac srcdir="${source.examples}:${source.extension}:${source.test}:${source.tests.bind}" destdir="${build.dir.test}" classpath="lib/commons-cli-1.1.jar:${env.JUNIT_HOME}/junit.jar" encoding="UTF-8" debug="on"/>
 	</target>
 
 	<target name="junit" description="junit ソースをコンパイルします">
@@ -437,19 +439,21 @@
 				<pathelement location="${env.JUNIT_HOME}/junit.jar"/>
 				<pathelement location="${env.ANT_HOME}/lib/ant-junit.jar"/>
 			</classpath>
+			<test name="jp.go.aist.rtm.AllTest110"/>
 			<!--
 			<test name="jp.go.aist.rtm.RTC.FactoryTest"/>
 			<test name="jp.go.aist.rtm.RTC.StateMachineTests"/>
 			-->
+			<!--
 			<batchtest todir="${build.dir.test}/reports">
 				<fileSet dir="${build.dir.test}">
-					<include name="jp/go/aist/rtm/RTC/*Test.class" />
 					<include name="jp/go/aist/rtm/RTC/*Tests.class" />
 					<include name="jp/go/aist/rtm/RTC/**/*Test.class" />
 					<include name="jp/go/aist/rtm/RTC/**/*Tests.class" />
 					<exclude name="jp/go/aist/rtm/RTC/SampleTest.class" />
 				</fileSet>
 			</batchtest>
+			-->
 		</junit>
 		<echo>All Test complete!</echo>	</target>
 	<target name="dist" description="ソースをエクスポートします">

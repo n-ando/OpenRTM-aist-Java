@@ -60,10 +60,6 @@ public class SeqInTest extends SampleTest {
       comp = manager.createComponent("SeqIn");
     }
     protected void tearDown() throws Exception {
-        for(int intIdx=0;intIdx<manager.m_ecs.size();intIdx++) {
-            manager.m_ecs.elementAt(intIdx).stop();
-            Thread.yield();
-        }
         Thread.sleep(600);
         manager.shutdownComponents();
         manager.shutdownNaming();

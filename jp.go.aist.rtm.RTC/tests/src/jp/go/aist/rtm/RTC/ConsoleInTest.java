@@ -61,7 +61,6 @@ public class ConsoleInTest extends SampleTest {
     }
     protected void tearDown() throws Exception {
         for(int intIdx=0;intIdx<manager.m_ecs.size();intIdx++) {
-            manager.m_ecs.elementAt(intIdx).stop();
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {

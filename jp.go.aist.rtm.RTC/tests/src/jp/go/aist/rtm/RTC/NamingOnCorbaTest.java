@@ -57,10 +57,7 @@ public class NamingOnCorbaTest extends TestCase {
             final String name_server = "localhost:2809";
             NamingOnCorba noc = new NamingOnCorba(m_pORB, name_server);
 
-            // バインドするオブジェクトを作成しておく
-            CorbaObjectManager objMgr = new CorbaObjectManager(m_pORB, m_pPOA);
             RTObject_impl rto = new RTObject_impl(m_pORB, m_pPOA);
-//            objMgr.activate(rto);
             assertNotNull(rto.getObjRef());
 
             // RTObject_implオブジェクトをバインドできるか？
@@ -83,7 +80,6 @@ public class NamingOnCorbaTest extends TestCase {
                 nc.resolve(name);
                 fail("Exception not thrown.");
             } catch (Exception expected) {}
-            objMgr.deactivate(rto);
     }
 
     /**
@@ -98,10 +94,7 @@ public class NamingOnCorbaTest extends TestCase {
             final String name_server = "localhost:2809";
             NamingOnCorba noc = new NamingOnCorba(m_pORB, name_server);
 
-            // バインドするオブジェクトを作成しておく
-            CorbaObjectManager objMgr = new CorbaObjectManager(m_pORB, m_pPOA);
             ManagerServant rto = new ManagerServant();
-//            objMgr.activate(rto);
             assertNotNull(rto.getObjRef());
 
             // RTObject_implオブジェクトをバインドできるか？
@@ -124,7 +117,6 @@ public class NamingOnCorbaTest extends TestCase {
                 nc.resolve(name);
                 fail("Exception not thrown.");
             } catch (Exception expected) {}
-            objMgr.deactivate(rto);
     }
 
 }

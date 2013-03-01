@@ -1097,7 +1097,6 @@ public class ManagerTest extends TestCase {
         assertNotNull(manager.getORB());
         assertNotNull(manager.getPOA());
         assertNotNull(manager.getPOAManager());
-        assertNotNull(manager.m_objManager);
     }
 
     /**
@@ -1170,7 +1169,6 @@ public class ManagerTest extends TestCase {
         assertNotNull(manager.getORB());
         assertNotNull(manager.getPOA());
         assertNotNull(manager.getPOAManager());
-        assertNotNull(manager.m_objManager);
         assertNotNull(manager.m_namingManager);
         assertNotNull(manager.m_module);
         assertNotNull(manager.m_terminator);

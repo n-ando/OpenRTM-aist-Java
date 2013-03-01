@@ -6,7 +6,6 @@ import jp.go.aist.rtm.RTC.ConfigTest;
 import jp.go.aist.rtm.RTC.ConsoleInTest;
 import jp.go.aist.rtm.RTC.ConsoleOutTest;
 import jp.go.aist.rtm.RTC.CorbaNamingTest;
-import jp.go.aist.rtm.RTC.CorbaObjectManagerTest;
 import jp.go.aist.rtm.RTC.FactoryTest;
 import jp.go.aist.rtm.RTC.ManagerConfigTest;
 import jp.go.aist.rtm.RTC.ManagerTest;
@@ -75,7 +74,6 @@ public class AllTests {
         suite.addTestSuite(ConfigTest.class);
         suite.addTestSuite(CorbaConsumerTest.class);
         suite.addTestSuite(CorbaNamingTest.class);
-        suite.addTestSuite(CorbaObjectManagerTest.class);
         suite.addTestSuite(CorbaPortTest.class);
         suite.addTestSuite(DataHolderTest.class);
         suite.addTestSuite(DataInPortTest.class);

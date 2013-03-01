@@ -62,10 +62,6 @@ public class MyServiceConsumerTest extends SampleTest {
       comp = manager.createComponent("MyServiceConsumer");
     }
     protected void tearDown() throws Exception {
-        for(int intIdx=0;intIdx<manager.m_ecs.size();intIdx++) {
-            manager.m_ecs.elementAt(intIdx).stop();
-            Thread.yield();
-        }
         Thread.sleep(300);
         manager.shutdownComponents();
         manager.shutdownNaming();

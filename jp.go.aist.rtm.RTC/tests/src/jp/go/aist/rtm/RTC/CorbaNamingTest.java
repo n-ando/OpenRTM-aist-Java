@@ -93,7 +93,6 @@ public class CorbaNamingTest extends TestCase {
         try {
             naming.init("localhost:2809");
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
 
             naming.bindByString("localhost3.host_cxt/mgr3.mgr_cxt/sample3.rtc", rtobj.getObjRef());
 
@@ -156,7 +155,6 @@ public class CorbaNamingTest extends TestCase {
         try {
             naming.init("localhost:2809");
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
             assertNotNull(rtobj.getObjRef());
 
             // オブジェクトをバインドし、それが正しく設定されるか？
@@ -185,7 +183,6 @@ public class CorbaNamingTest extends TestCase {
             naming.init("localhost:2809");
             assertNotNull(naming.m_rootContext);
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
 
             naming.rebindByString("localhost.host_cxt/mgr.mgr_cxt/sample.rtc", rtobj.getObjRef());
 
@@ -243,7 +240,6 @@ public class CorbaNamingTest extends TestCase {
         try {
             naming.init("localhost:2809");
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
             assertNotNull(rtobj.getObjRef());
         
             final String fullName0 = "id0-lv0.kind0-lv0/id0-lv1.kind0-lv1";
@@ -274,7 +270,6 @@ public class CorbaNamingTest extends TestCase {
         try {
             naming.init("localhost:2809");
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
             assertNotNull(rtobj.getObjRef());
 
             // オブジェクトをバインドし、それが正しく設定されるか？
@@ -308,7 +303,6 @@ public class CorbaNamingTest extends TestCase {
             naming.init("localhost:2809");
             assertNotNull(naming.m_rootContext);
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
 
             naming.bindByString("localhost.host_cxt", rtobj.getObjRef());
 //            naming.bindByString("localhost.host_cxt", rtobj.getObjRef());
@@ -345,11 +339,9 @@ public class CorbaNamingTest extends TestCase {
         try {
             naming.init("localhost:2809");
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
             assertNotNull(rtobj.getObjRef());
 
             rtobj2 = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj2);
             assertNotNull(rtobj2.getObjRef());
 
             // オブジェクトをバインドし、それが正しく設定されるか？
@@ -379,10 +371,8 @@ public class CorbaNamingTest extends TestCase {
         try {
             naming.init("localhost:2809");
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
             assertNotNull(rtobj.getObjRef());
             rtobj2= new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj2);
             assertNotNull(rtobj2.getObjRef());
 
             // オブジェクトをバインドし、それが正しく設定されるか？
@@ -422,11 +412,9 @@ public class CorbaNamingTest extends TestCase {
             
             // テスト用にバインドするオブジェクトを作成しておく
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
             assertNotNull(rtobj.getObjRef());
             
             rtobj2 = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj2);
             assertNotNull(rtobj2.getObjRef());
             
             // １つ目のオブジェクトをバインドする
@@ -455,7 +443,6 @@ public class CorbaNamingTest extends TestCase {
         try {
             naming.init("localhost:2809");
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
             assertNotNull(rtobj.getObjRef());
         
             // テストに用いるコンテキストを準備しておく
@@ -499,7 +486,6 @@ public class CorbaNamingTest extends TestCase {
             
             // バインドするコンテキストを作成しておく
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
             assertNotNull(rtobj.getObjRef());
 
             NamingContext nc = naming.newContext();
@@ -531,10 +517,8 @@ public class CorbaNamingTest extends TestCase {
         try {
             naming.init("localhost:2809");
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
             assertNotNull(rtobj.getObjRef());
             rtobj2 = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj2);
             assertNotNull(rtobj2.getObjRef());
 
             NamingContext nc1 = naming.newContext();
@@ -581,11 +565,9 @@ public class CorbaNamingTest extends TestCase {
             
             // テストに用いるコンテキストを準備しておく
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
             assertNotNull(rtobj.getObjRef());
             
             rtobj2 = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj2);
             assertNotNull(rtobj2.getObjRef());
             
             NamingContext nc1 = naming.newContext();
@@ -623,7 +605,6 @@ public class CorbaNamingTest extends TestCase {
         try {
             naming.init("localhost:2809");
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
             assertNotNull(rtobj.getObjRef());
             
             // オブジェクトをバインドする
@@ -661,7 +642,6 @@ public class CorbaNamingTest extends TestCase {
             naming.init("localhost:2809");
             assertNotNull(naming.m_rootContext);
             rtobj = new RTObject_impl(manager);
-            manager.m_objManager.activate(rtobj);
 
             naming.rebindByString("localhost2.host_cxt2/mgr2/sample2.rtc2", rtobj.getObjRef());
 
@@ -884,7 +864,6 @@ public class CorbaNamingTest extends TestCase {
           try {
               naming.init("localhost:2809");
               rtobj = new RTObject_impl(manager);
-              manager.m_objManager.activate(rtobj);
               assertNotNull(rtobj.getObjRef());
 
               // 新しいコンテキストをバインドできるか？

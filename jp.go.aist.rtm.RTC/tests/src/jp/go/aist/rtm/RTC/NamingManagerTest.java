@@ -96,10 +96,7 @@ public class NamingManagerTest extends TestCase {
      */
     public void test_bindObject_and_unbindObject() throws Exception {
 
-        // バインドするオブジェクトを作成しておく
-        CorbaObjectManager objMgr = new CorbaObjectManager(m_pORB, m_pPOA);
         RTObject_impl rto = new RTObject_impl(m_pORB, m_pPOA);
-//        objMgr.activate(rto);
         assertNotNull(rto.getObjRef());
 
         ManagerServant mgs = new ManagerServant();
@@ -127,7 +124,6 @@ public class NamingManagerTest extends TestCase {
 
         mgs = null;
         rto = null;
-        objMgr = null;
     }
 
     /**
@@ -139,15 +135,10 @@ public class NamingManagerTest extends TestCase {
      */
     public void test_unbindAll() throws Exception {
 
-        // バインドするオブジェクトを作成しておく
-        CorbaObjectManager objMgr = new CorbaObjectManager(m_pORB, m_pPOA);
-        
         RTObject_impl rto1 = new RTObject_impl(m_pORB, m_pPOA);
-//        objMgr.activate(rto1);
         assertNotNull(rto1.getObjRef());
 
         RTObject_impl rto2 = new RTObject_impl(m_pORB, m_pPOA);
-//        objMgr.activate(rto2);
         assertNotNull(rto2.getObjRef());
 
         ManagerServant mgs1 = new ManagerServant();
@@ -187,7 +178,6 @@ public class NamingManagerTest extends TestCase {
         mgs1 = null;
         rto2 = null;
         rto1 = null;
-        objMgr = null;
     }
 
     /**
@@ -199,15 +189,10 @@ public class NamingManagerTest extends TestCase {
      */
     public void test_getObjects() throws Exception {
 
-        // バインドするオブジェクトを作成しておく
-        CorbaObjectManager objMgr = new CorbaObjectManager(m_pORB, m_pPOA);
-
         RTObject_impl rto1 = new RTObject_impl(m_pORB, m_pPOA);
-//        objMgr.activate(rto1);
         assertNotNull(rto1.getObjRef());
 
         RTObject_impl rto2 = new RTObject_impl(m_pORB, m_pPOA);
-//        objMgr.activate(rto2);
         assertNotNull(rto2.getObjRef());
 
         // NamingManagerを生成する
@@ -232,7 +217,6 @@ public class NamingManagerTest extends TestCase {
 
         rto2 = null;
         rto1 = null;
-        objMgr = null;
     }
 
     /**
@@ -255,11 +239,7 @@ public class NamingManagerTest extends TestCase {
         String kind = new String("kind"+Integer.toString(num));
         String idkind = id + "." + kind;
 
-        // バインドするオブジェクトを作成しておく
-        CorbaObjectManager objMgr = new CorbaObjectManager(m_pORB, m_pPOA);
-        
         RTObject_impl rto = new RTObject_impl(m_pORB, m_pPOA);
-//        objMgr.activate(rto);
         assertNotNull(rto.getObjRef());
 
 
@@ -285,7 +265,6 @@ public class NamingManagerTest extends TestCase {
 
 
         rto = null;
-        objMgr = null;
         nmgr = null;
     }
 
