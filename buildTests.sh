@@ -41,7 +41,8 @@ echo "------------------------------------------------------------"
 #
 #
 cd jp.go.aist.rtm.RTC
-ant buildTests -lib $ANT_HOME/lib/
+ant compile_tests -lib $ANT_HOME/lib/
+ant junit -lib $ANT_HOME/lib/
 if [ $? -ne 0 ];
 then 
  exit 1
