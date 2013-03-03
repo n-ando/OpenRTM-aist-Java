@@ -85,6 +85,14 @@
 		<antcall target="dist" />
 	</target>
 	
+	<target name="buildInstaller">
+	<taskdef name="jsmoothgen"
+	classname="net.charabia.jsmoothgen.ant.JSmoothGen"
+	classpath="${dir.jsmooth}/lib/jsmoothgen-ant.jar"/>
+		<antcall target="createExe" />
+		<antcall target="javaInstaller" />
+	</target>
+	
         <target name="buildAllLinux">
 		<antcall target="idlCompile" />
 		<antcall target="idlCompileEtc" />

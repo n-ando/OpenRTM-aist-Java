@@ -1,5 +1,5 @@
 cd jp.go.aist.rtm.RTC
-call ant javaInstaller -lib %ANT_HOME%\lib\
+call ant buildInstaller -lib %ANT_HOME%\lib\
 if ERRORLEVEL 1 goto error_end 
 cd ..
 exit /b 0
