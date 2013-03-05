@@ -62,23 +62,22 @@ public class InPortPushConnector extends InPortConnector {
             m_deleteBuffer = false;
         }
 
+        if (m_provider==null) {
+            rtcout.println(Logbuf.PARANOID, "    m_provider is null.");
+            throw new Exception("bad_alloc()");
+        }
+        m_provider.init(profile.properties);
+
         // publisher/buffer creation. This may throw std::bad_alloc;
         if (m_buffer == null) {
             m_buffer = createBuffer(profile);
         }
-        if (m_buffer == null || m_provider==null) {
-            if(m_buffer == null){
-                rtcout.println(Logbuf.PARANOID, "    m_buffer is null.");
-            }
-            if(m_provider == null){
-                rtcout.println(Logbuf.PARANOID, "    m_provider is null.");
-            }
-
+        if (m_buffer == null) {
+            rtcout.println(Logbuf.PARANOID, "    m_buffer is null.");
             throw new Exception("bad_alloc()");
         }
 
         m_buffer.init(profile.properties.getNode("buffer"));
-        m_provider.init(profile.properties);
         m_provider.setBuffer(m_buffer);
         m_provider.setListener(profile, m_listeners);
 

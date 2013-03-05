@@ -63,6 +63,7 @@ public class InPortPushConnectorTest extends TestCase {
           if (m_logger != null) {
               m_logger.log("InPortCorbaCdrProviderMock.init");
           }
+          prop.setProperty("buffer_type", "ring_buffer_mock");
       }
       /**
        *
@@ -234,9 +235,12 @@ public class InPortPushConnectorTest extends TestCase {
         rtcout.println(rtcout.PARANOID, "IN  test_InPortPushConnector()");
         RTC.ConnectorProfile prof = new RTC.ConnectorProfile();
         NVListHolder prof_holder = new NVListHolder(prof.properties);
+        // ここで"dataport.buffer_type"に"ring_buffer"を設定するが，
+        // InPortCorbaCdrProviderMock.init()にて"ring_buffer_mock"
+        // を設定しているため，"ring_buffer_mock"が使用されることを確認する．
         CORBA_SeqUtil.push_back(prof_holder,
 	  		       NVUtil.newNV("dataport.buffer_type",
-					     "ring_buffer_mock"));
+					     "ring_buffer"));
         prof.properties = prof_holder.value;
         prof.ports = new PortService[2];
         // prop: [port.outport].

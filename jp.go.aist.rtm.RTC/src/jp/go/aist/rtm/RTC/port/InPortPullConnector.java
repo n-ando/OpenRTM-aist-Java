@@ -103,10 +103,15 @@ public class InPortPullConnector extends InPortConnector {
         m_listeners = listeners; 
         rtcout = new Logbuf("InPortPullConnector");
 
+        if (m_consumer == null) {
+            throw new Exception("bad_alloc()");
+        }
+        m_consumer.init(profile.properties);
+        
         if (buffer == null) {
             m_buffer = createBuffer(m_profile);
         }
-        if (m_buffer == null || m_consumer == null) {
+        if (m_buffer == null) {
             throw new Exception("bad_alloc()");
         }
         m_buffer.init(profile.properties.getNode("buffer"));

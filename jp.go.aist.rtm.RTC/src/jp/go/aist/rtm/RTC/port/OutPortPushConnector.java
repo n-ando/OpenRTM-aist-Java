@@ -124,20 +124,23 @@ public class OutPortPushConnector extends OutPortConnector {
         m_buffer = buffer;
         m_listeners = listeners;
 
+        if (m_consumer == null) { 
+            rtcout.println(Logbuf.PARANOID, "m_consumer is null");
+            throw new Exception("bad_alloc()");
+        }
+        m_consumer.init(profile.properties);
+
         // publisher/buffer creation. This may throw std::bad_alloc;
         m_publisher = createPublisher(profile);
         if (m_buffer == null) {
             m_buffer = createBuffer(profile);
         }
-        if (m_publisher == null || m_buffer == null || m_consumer == null) { 
+        if (m_publisher == null || m_buffer == null) { 
             if (m_publisher == null) { 
                 rtcout.println(Logbuf.PARANOID, "m_publisher is null");
             }
             if (m_buffer == null) { 
                 rtcout.println(Logbuf.PARANOID, "m_buffer is null");
-            }
-            if (m_consumer == null) { 
-                rtcout.println(Logbuf.PARANOID, "m_consumer is null");
             }
             throw new Exception("bad_alloc()");
         }
@@ -147,8 +150,6 @@ public class OutPortPushConnector extends OutPortConnector {
             throw new Exception("bad_alloc()");
         }
         m_buffer.init(profile.properties.getNode("buffer"));
-        m_consumer.init(profile.properties);
-
         m_publisher.setConsumer(m_consumer);
         m_publisher.setBuffer(m_buffer);
         m_publisher.setListener(m_profile, m_listeners);

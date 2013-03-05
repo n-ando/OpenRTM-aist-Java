@@ -147,19 +147,24 @@ public class OutPortPullConnector extends OutPortConnector {
         m_buffer = buffer;
         m_listeners = listeners;
         m_orb = ORBUtil.getOrb();
+
+        if (m_provider == null) { 
+            throw new Exception("bad_alloc()");
+        }
+        m_provider.init(profile.properties);
+        
         // create buffer
         if (m_buffer == null) {
             m_buffer = createBuffer(profile);
         }
 
-        if (m_provider == null || m_buffer == null) { 
+        if (m_buffer == null) { 
             throw new Exception("bad_alloc()");
         }
 
         m_buffer.init(profile.properties.getNode("buffer"));
         m_provider.setBuffer(m_buffer);
         m_provider.setConnector(this);
-        //    m_provider.init(m_profile /* , m_listeners */);
         m_provider.setListener(profile, m_listeners);
 
         onConnect();

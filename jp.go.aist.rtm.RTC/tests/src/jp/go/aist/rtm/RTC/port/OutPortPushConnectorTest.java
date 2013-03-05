@@ -13,6 +13,7 @@ import org.omg.PortableServer.POA;
 
 import _SDOPackage.NVListHolder;
 import RTC.PortService;
+import RTC.ReturnCode_t;
 
 import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.PublisherBaseFactory;
@@ -21,6 +22,7 @@ import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.PeriodicTask;
 import jp.go.aist.rtm.RTC.PeriodicTaskBase;
+import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
@@ -75,6 +77,8 @@ public class OutPortPushConnectorTest extends TestCase {
           if (m_logger != null) {
               m_logger.log("InPortCorbaCdrConsumerMock.init");
           }
+          // ここで指定したバッファが使用されることを確認する
+          //prop.setProperty("buffer_type", "ring_buffer_mock2");
         }
         /**
          *
@@ -220,6 +224,7 @@ public class OutPortPushConnectorTest extends TestCase {
                     m_logger.log("buffer OK");
                 }
             }
+            //System.out.println("bufferName:"+buffer.toString());
             m_mock_logger.log("PublisherFlushMock.setBuffer");
             if(buffer == null) {
                 m_mock_logger.log("buffer NG");
@@ -277,7 +282,9 @@ public class OutPortPushConnectorTest extends TestCase {
             RTC.TimedLong tl = new RTC.TimedLong();
             RTC.TimedLongHolder tlh 
                 = new RTC.TimedLongHolder(tl);
+
             tlh._read(data.create_input_stream());
+            
             if (m_logger != null) {
                 m_logger.log("PublisherNewMock.write");
                 m_logger.log(Integer.toString(tlh.value.data));
@@ -431,6 +438,7 @@ public class OutPortPushConnectorTest extends TestCase {
                       new PeriodicTask(),
                       new PeriodicTask());
 
+          CdrRingBufferMock2.CdrRingBufferMock2Init();
       }
   		
       /**
@@ -491,7 +499,7 @@ public class OutPortPushConnectorTest extends TestCase {
                                      CORBA_SeqUtil.refToVstring(prof.ports),
                                      prop); 
           OutPortConnector connector = null;
-          ConnectorListeners listeners = null;
+          ConnectorListeners listeners = new ConnectorListeners();
           int init_counter = logger.countLog("InPortCorbaCdrConsumerMock.init");
           int setBuffer_counter = m_mock_logger.countLog("PublisherNewMock.setBuffer");
           int buffOk_counter = m_mock_logger.countLog("buffer OK");
@@ -631,23 +639,27 @@ public class OutPortPushConnectorTest extends TestCase {
                                      CORBA_SeqUtil.refToVstring(prof.ports),
                                      prop); 
           OutPortConnector connector = null;
-          ConnectorListeners listeners = null;
-          try {
+          ConnectorListeners listeners = new ConnectorListeners();
+          //try {
               //connector = new OutPortPushConnector(profile_new, consumer);
               connector = new OutPortPushConnector(profile_new, listeners, consumer);
               int write_counter = m_mock_logger.countLog("PublisherNewMock.write");
               int num_counter =  m_mock_logger.countLog("12345");
               OutputStream cdr = toStream(12345,0,0);
-              connector.write(12345);
-//              connector.write(cdr,cdr);
+              RTC.TimedLong out_val = new RTC.TimedLong(new RTC.Time(0,0),12345);
+              DataRef<RTC.TimedLong> out = new DataRef<RTC.TimedLong>(out_val);
+              OutPort<RTC.TimedLong> outPort = new OutPort<RTC.TimedLong>("out", out);
+              connector.setOutPortBase(outPort);
+              connector.write(out.v);
+              //connector.write(cdr);
               assertEquals("1:",write_counter+1, 
                      m_mock_logger.countLog("PublisherNewMock.write"));
               assertEquals("2:",num_counter+1, 
                      m_mock_logger.countLog("12345"));
-          }
-          catch(Exception e) {
-              fail("The exception not intended was thrown .");
-          }
+          //}
+          //catch(Exception e) {
+          //    fail("The exception not intended was thrown .");
+          //}
   
   
       }
@@ -695,7 +707,7 @@ public class OutPortPushConnectorTest extends TestCase {
                                      CORBA_SeqUtil.refToVstring(prof.ports),
                                      prop); 
           OutPortConnector connector=null;
-          ConnectorListeners listeners = null;
+          ConnectorListeners listeners = new ConnectorListeners();
           try {
               //connector = new OutPortPushConnector(profile_new, consumer);
               connector = new OutPortPushConnector(profile_new, listeners, consumer);
@@ -748,7 +760,7 @@ public class OutPortPushConnectorTest extends TestCase {
                                      CORBA_SeqUtil.refToVstring(prof.ports),
                                      prop); 
           OutPortConnector connector = null;
-          ConnectorListeners listeners = null;
+          ConnectorListeners listeners = new ConnectorListeners();
           try {
               //connector = new OutPortPushConnector(profile_new, consumer);
               connector = new OutPortPushConnector(profile_new, listeners, consumer);
@@ -786,5 +798,221 @@ public class OutPortPushConnectorTest extends TestCase {
             return cdr;
 
     }
-}
+};
+   
+/**
+ * 
+ * 
+ *
+ */
+class CdrRingBufferMock2 extends CdrRingBuffer{
+    
+        /**
+         * <p> creator_ </p>
+         * 
+         * @return Object Created instances
+         *
+         */
+        public BufferBase<OutputStream> creator_() {
+            return new RingBufferMock2<OutputStream>();
+        }
+        /**
+         * <p> destructor_ </p>
+         * 
+         * @param obj    The target instances for destruction
+         *
+         */
+        public void destructor_(Object obj) {
+            obj = null;
+        }
+
+        /**
+         * <p> CdrRingBufferInit </p>
+         *
+         */
+        public static void CdrRingBufferMock2Init() {
+            final BufferFactory<RingBufferMock2<OutputStream>,String> factory 
+                = BufferFactory.instance();
+
+            factory.addFactory("ring_buffer_mock2",
+                        new CdrRingBufferMock2(),
+                        new CdrRingBufferMock2());
+    
+        }
+    }
+
+    /**
+     * 
+     * 
+     *
+     */
+    class RingBufferMock2<DataType> extends RingBuffer<DataType>{
+        public RingBufferMock2() {
+            //m_logger = null;
+            //m_mock_logger.log("RingBufferMock.Constructor");
+            //m_read_return_value = jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK;
+            //m_write_return_value = jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public void set_read_return_value(jp.go.aist.rtm.RTC.buffer.ReturnCode value) {
+            //m_read_return_value = value;
+        }
+        /**
+         *
+         *
+         */
+        public void set_write_return_value(jp.go.aist.rtm.RTC.buffer.ReturnCode value) {
+            //m_write_return_value = value;
+        }
+        /**
+         *
+         *
+         */
+        public  void init(final Properties prop) {
+        }
+        /**
+         *
+         *
+         */
+        public int length() {
+            return 0;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode length(int n) {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode reset() {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public DataType wptr(int n) {
+            return m_data;
+        }
+        /**
+         *
+         *
+         */
+        public  jp.go.aist.rtm.RTC.buffer.ReturnCode advanceWptr(int n) {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode put(final DataType value) {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode write(final DataType value,
+                                 int sec, int nsec) {
+            /*!
+            if (m_logger != null) {
+                m_logger.log("RingBufferMock.write");
+            }
+            m_mock_logger.log("RingBufferMock.write");
+            */
+            return m_write_return_value; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public  int writable() {
+            return 0;
+        }
+        /**
+         *
+         *
+         */
+        public boolean full() {
+              return true;
+        }
+        /**
+         *
+         *
+         */
+        public DataType rptr(int n ) {
+            return m_data;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode advanceRptr(int n) {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode get(DataType value) {
+            return jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public DataType  get() {
+            return m_data;
+        }
+        /**
+         *
+         *
+         */
+        public jp.go.aist.rtm.RTC.buffer.ReturnCode read(DataRef<DataType> value,
+                              int sec, int nsec) {
+            /*!
+            if (m_logger != null) {
+                m_logger.log("RingBufferMock.read");
+            }
+            m_mock_logger.log("RingBufferMock.read");
+            */
+            return m_read_return_value; //BUFFER_OK;
+        }
+        /**
+         *
+         *
+         */
+        public int readable() {
+            return 0;
+        }
+        /**
+         *
+         *
+         */
+        public boolean empty() {
+            return true;
+        }
+        /**
+         *
+         *
+         */
+        public void setLogger(Logger logger) {
+            //m_logger = logger;
+        }
+
+        private DataType m_data;
+        private Vector<DataType> m_buffer;
+        private Logger m_logger;
+        private jp.go.aist.rtm.RTC.buffer.ReturnCode m_read_return_value;
+        private jp.go.aist.rtm.RTC.buffer.ReturnCode m_write_return_value;
+        //public static Logger m_mock_logger = null;
+  };
+
                             
