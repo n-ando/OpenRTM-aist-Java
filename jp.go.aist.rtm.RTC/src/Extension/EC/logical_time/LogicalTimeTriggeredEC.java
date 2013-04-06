@@ -1641,7 +1641,7 @@ public class LogicalTimeTriggeredEC extends LogicalTimeTriggeredECPOA implements
      * 
      * @param manager Managerオブジェクト
      */
-    public static void ExtTrigExecutionContextInit(Manager manager) {
+    public static void registerModule() {
         ExecutionContextFactory<ExecutionContextBase,String> factory 
                                         = ExecutionContextFactory.instance();
         factory.addFactory("Extension.EC.logical_time.LogicalTimeTriggeredEC",
