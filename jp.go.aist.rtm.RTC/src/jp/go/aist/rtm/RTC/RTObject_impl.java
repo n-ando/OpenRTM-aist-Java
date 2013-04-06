@@ -6325,7 +6325,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
                  Iterator it = avail_ec.iterator();
                  while (it.hasNext()) {
                      if(it.next().equals(ec_type)){
-                         find_flag= true; 
+                         find_flag= true;
+                         break;
                      }
                  }
                  if (!find_flag) {

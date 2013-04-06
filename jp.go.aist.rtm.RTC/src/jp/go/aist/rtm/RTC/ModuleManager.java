@@ -212,8 +212,7 @@ public class ModuleManager {
                 }
                 file = new File(fullClassName);
                 if(file.isAbsolute()){
-                    URLClassLoader url 
-                            = createURLClassLoader(file.getParent());
+                    URLClassLoader url = createURLClassLoader(file.getParent());
                     if(url!=null){
                         String name = file.getName();
                         name = getModuleName(name);
@@ -345,10 +344,8 @@ public class ModuleManager {
         try{
             URI uri = path.toURI();
             urls[0] = uri.toURL();
-        }
-        catch(java.net.MalformedURLException ex){
-            rtcout.println(Logbuf.WARN, 
-                "java.net.MalformedURLException: toURL() threw Exception."+ex);
+        } catch(java.net.MalformedURLException ex){
+            rtcout.println(Logbuf.WARN, "java.net.MalformedURLException: toURL() threw Exception."+ex);
             return null;
         }
         URLClassLoader url = new URLClassLoader(urls);
@@ -485,7 +482,7 @@ public class ModuleManager {
         //
         Method initMethod;
         try {
-            initMethod = target.getMethod(method_name);
+            initMethod = target.getMethod(method_name, null);
         } catch (SecurityException e) {
             throw e;
         } catch (NoSuchMethodException e) {
