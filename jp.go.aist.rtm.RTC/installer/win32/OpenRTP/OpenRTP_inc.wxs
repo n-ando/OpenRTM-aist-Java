@@ -7,13 +7,13 @@
 	<Environment Id="OPENRTP_ROOT" Name="OPENRTP_ROOT" Action="set"
 		     System="yes" Value="[openrtpVersion]" />
 		<File Id="Openrtp0000" Name="RTSystemEditorRCP.exe"
-	      DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\\\RTSystemEditorRCP.exe">
+	      DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\RTSystemEditorRCP.exe">
 	  	  <Shortcut Id="Openrtp0000" Directory="ToolsMenuFolder"
 		    Name="RTSystemEditor"
 		    Show="normal" WorkingDirectory="tools"/>
 	  	</File>
 		<File Id="Openrtp0001" Name=".eclipseproduct"
-	      DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\\\.eclipseproduct">
+	      DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\.eclipseproduct">
 	  	</File>
 	      </Component>
       
