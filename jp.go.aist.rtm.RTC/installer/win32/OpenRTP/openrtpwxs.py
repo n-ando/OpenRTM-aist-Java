@@ -18,10 +18,10 @@ data = [
     ("",                                  "*.jar *.exe .eclipseproduct"),
     ("configuration",                     "*.ini *.jar"),
     ("plugins",                           "*.jar"),
-    ("plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610",                           "*.*"),
-    ("plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610/META-INF",                           "*.*"),
-    ("plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731",                           "*.*"),
-    ("plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731/META-INF",                           "*.*"),
+#    ("plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610",                           "*.*"),
+#    ("plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610/META-INF",                           "*.*"),
+#    ("plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731",                           "*.*"),
+#    ("plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731/META-INF",                           "*.*"),
 ]
 
 import os
@@ -74,7 +74,7 @@ for (path, files) in data:
            "-o", dir_name + ".yaml",
            "-p",  base_dir + path]
     cmd += flist
-
+    print cmd
     makewxs.main(cmd)
 
 
