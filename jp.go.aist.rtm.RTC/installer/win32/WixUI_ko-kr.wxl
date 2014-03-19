@@ -2,7 +2,7 @@
 <!--
     Copyright (c) Microsoft Corporation.  All rights reserved.
 -->
-<WixLocalization Culture="ko-kr" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+<WixLocalization Culture="ko-kr" Codepage="949" xmlns="http://schemas.microsoft.com/wix/2006/localization">
     <String Id="WixUIBack" Overridable="yes">뒤로(&amp;B)</String>
     <String Id="WixUINext" Overridable="yes">다음(&amp;N)</String>
     <String Id="WixUICancel" Overridable="yes">취소</String>
