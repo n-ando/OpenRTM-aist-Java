@@ -1366,10 +1366,6 @@
 	<ComponentRef Id="Openrtp" />
 	<ComponentRef Id="OpenrtpConfiguration" />
 	<ComponentRef Id="OpenrtpPlugins" />
-	<ComponentRef Id="OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610" />
-	<ComponentRef Id="Meta_inf" />
-	<ComponentRef Id="OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731" />
-	<ComponentRef Id="Meta_inf_2" />
       </Feature>
     </Feature>
     <?endif ?>
