@@ -9,7 +9,8 @@
 		<File Id="Openrtp0000" Name="RTSystemEditorRCP.exe"
 	      DiskId="1" Source="C:\\distribution\\OpenRTP\\RTSystemEditor\\RTSystemEditorRCP.exe">
 	  	  <Shortcut Id="Openrtp0000" Directory="ToolsMenuFolder"
-		    Name="RTSystemEditor"
+                    Name="RTSystemEditor"
+		    Arguments="-data &quot;%USERPROFILE%\workspace&quot;"
 		    Show="normal" WorkingDirectory="tools"/>
 	  	</File>
 		<File Id="Openrtp0001" Name=".eclipseproduct"
