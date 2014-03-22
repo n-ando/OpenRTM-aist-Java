@@ -74,7 +74,7 @@ for (path, files) in data:
            "-o", dir_name + ".yaml",
            "-p",  base_dir + path]
     cmd += flist
-    print cmd
+    #print cmd
     makewxs.main(cmd)
 
 
@@ -82,5 +82,5 @@ cmd = ["wxs",
        "-o", "OpenRTP_inc.wxs",
        "-i", "OpenRTP_inc.wxs.in"]
 cmd += glob.glob("*.yaml")
-print "cmd:",cmd
+#print "cmd:",cmd
 makewxs.main(cmd)
