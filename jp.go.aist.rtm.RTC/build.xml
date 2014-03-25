@@ -369,7 +369,7 @@
 		<mkdir dir="${build.dir.test}/reports" />
 		<delete dir="${build.dir.test}/reports/*.xml" />
 		<delete dir="${build.dir.test}/reports/*.txt" />
-		<junit haltonfailure="No" >
+		<junit haltonfailure="Yes" >
 			<formatter type="xml" usefile="true" />
 			<classpath>
 				<pathelement path="bin:${env.JUNIT_HOME}/junit:${env.JUNIT_HOME}/junit/samples:${env.JUNIT_HOME}:${env.ANT_HOME}:${build.dir.test}:lib/commons-cli-1.1.jar"/>
