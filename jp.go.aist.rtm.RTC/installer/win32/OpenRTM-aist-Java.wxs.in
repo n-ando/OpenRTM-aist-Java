@@ -11,9 +11,9 @@
     <Package Id="*" 
              Keywords="Installer"
              Description="{% Package.Description %}"
-             InstallerVersion="300"
+             InstallerVersion="{% Package.InstallerVersion %}"
              Languages='$(var.language)'
-             Compressed="yes"
+             Compressed="{% Package.Compressed %}"
              SummaryCodepage='$(var.codepage)' />
 
     <!-- Property -->
@@ -65,7 +65,7 @@
                       Minimum="1.1.0"
                       Maximum="1.1.0.1"
                       Property="OLDERVERSIONBEINGUPGRADED"
-                      IncludeMaximum="no" /> 
+                      IncludeMaximum="yes" /> 
       <UpgradeVersion OnlyDetect='no' Property='PREVIOUSFOUND'
                       Minimum='1.1.0' IncludeMinimum='yes'
                       Maximum='1.2.0' IncludeMaximum='no' />
