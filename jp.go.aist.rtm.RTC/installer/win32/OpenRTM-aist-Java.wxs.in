@@ -44,7 +44,7 @@
     <Property Id="RTSE_FILEEXISTS">
       <DirectorySearch Id="CheckFileDir" Path="C:\Program Files\OpenRTM-aist\{% Product.ShortVersion %}">
         <DirectorySearch Id="CheckFileDir2" Path ="OpenRTP">
-          <DirectorySearch Id="CheckFileDir3" Path ="{% Product.ShortVersion %}\RTSystemEditor">
+          <DirectorySearch Id="CheckFileDir3" Path ="{% Product.ShortVersion %}">
             <FileSearch Id="CheckFile" Name="RTSystemEditorRCP.exe" />
           </DirectorySearch>
         </DirectorySearch>
@@ -112,6 +112,7 @@
             <Directory Id="bin" Name="bin">
               <Component Id="RtmSourceExamplesBin" Guid="{% RtmSourceExamplesBin.GUID %}">
                 <RemoveFolder Id='RtmSourceExamplesBin_f' On='uninstall'/>
+                <RemoveFolder Id='RemoveToolsMenuFolder' Directory='ToolsMenuFolder' On='uninstall' />
                 {% for file in RtmSourceExamplesBin.Files %}
                   <File Id="{% file.Id %}"
                        Name="{% file.Name %}" DiskId="1"
@@ -191,6 +192,7 @@
                   <Component Id="RtmSourceJavadoc" 
                              Guid="{% RtmSourceJavadoc.GUID %}">
                     <RemoveFolder Id='RtmSourceJavadoc_f' On='uninstall' />
+                    <RemoveFolder Id='RemoveDocMenuFolder' Directory='DocMenuFolder' On='uninstall' />
                     {% for file in RtmSourceJavadoc.Files %}
                     <File Id="{% file.Id %}"
                           Name="{% file.Name %}" DiskId="1"
@@ -1041,6 +1043,8 @@
                            Guid="{% RtmSourceExamplesBat.GUID %}">
                   <RemoveFile Id='RtmSourceExamplesBat' On='uninstall' Name='*.log' />
                   <RemoveFolder Id='RtmSourceExamplesBat_f' On='uninstall' />
+                  <RemoveFolder Id='RemoveExpMenuFolder' Directory='ExpMenuFolder' On='uninstall' />
+                  <RemoveFolder Id='RemoveComponents' Directory='Components' On='uninstall' />
                   {% for file in RtmSourceExamplesBat.Files %}
                     <File Id="{% file.Id %}"
                          Name="{% file.Name %}" DiskId="1"
@@ -1241,9 +1245,15 @@
       <!-- Program Folder -->
       <Directory Id="ProgramMenuFolder">
         <Directory Id="AppMenuFolder" Name="{% Product.Name %} {% Product.ShortVersion %}">
+          <Component Id="AppMenuFolder" Guid="7B97F931-CCBC-42d4-A280-5223F4EC3885">
+            <RemoveFolder Id='AppMenuFolder' On='uninstall' />	
+          </Component>
           <Directory Id="JavaMenuFolder" Name="Java">
+            <Component Id="JavaMenuFolder" Guid="4F6569FA-8492-441c-AF92-9E4B65C738EC">
+              <RemoveFolder Id='JavaMenuFolder' On='uninstall' />	
+            </Component>
             <Directory Id="ToolsMenuFolder" Name="tools">
-            </Directory>
+	    </Directory>
             <Directory Id="Components" Name="components">
               <Directory Id="ExpMenuFolder" Name="examples">
               </Directory>
