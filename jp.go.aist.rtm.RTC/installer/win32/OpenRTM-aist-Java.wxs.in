@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">   
-  <?define ProductName = "{% Product.Name %}-{% Product.Version %} for Java"?>
-  <Product Name="{% Product.Name %}-{% Product.Version %} for Java"
+  <Product Name='$(env.PRODUCT_NAME)'
            Id="{% Product.Id %}"
            Language='$(var.language)'
            Codepage='$(var.codepage)'
@@ -18,20 +17,16 @@
 
     <!-- Property -->
     <Property Id='USERPROFILEDIR' Value='%USERPROFILE%' />
-    <Property Id="JDK15">
-      <RegistrySearch Id="JDK15"
-                      Root="HKLM"
-                      Key="SOFTWARE\JavaSoft\Java Development Kit\1.5"
-                      Name="JavaHome"
+    <?if $(env.ARCH) = x86_64 ?>
+    <Property Id="JDK17">
+      <RegistrySearch Id="JDK17" 
+                      Root="HKLM" 
+                      Key="SOFTWARE\JavaSoft\Java Development Kit\1.7" 
+                      Name="JavaHome" 
+                      Win64="yes"
                       Type="raw" />
     </Property>
-    <Property Id="JDK16">
-      <RegistrySearch Id="JDK16"
-                      Root="HKLM"
-                      Key="SOFTWARE\JavaSoft\Java Development Kit\1.6"
-                      Name="JavaHome"
-                      Type="raw" />
-    </Property>
+    <?else?>
     <Property Id="JDK17">
       <RegistrySearch Id="JDK17" 
                       Root="HKLM" 
@@ -39,18 +34,7 @@
                       Name="JavaHome" 
                       Type="raw" />
     </Property>
-    <!-- RTSE Property-->
-
-    <Property Id="RTSE_FILEEXISTS">
-      <DirectorySearch Id="CheckFileDir" Path="C:\Program Files\OpenRTM-aist\{% Product.ShortVersion %}">
-        <DirectorySearch Id="CheckFileDir2" Path ="OpenRTP">
-          <DirectorySearch Id="CheckFileDir3" Path ="{% Product.ShortVersion %}">
-            <FileSearch Id="CheckFile" Name="RTSystemEditorRCP.exe" />
-          </DirectorySearch>
-        </DirectorySearch>
-      </DirectorySearch>
-    </Property>
-
+    <?endif ?>
 <!--     <SetProperty Id="FILEEXISTSDIR" After="AppSearch" Value="[FILEEXISTS]">
     </SetProperty>-->
 
@@ -80,13 +64,17 @@
     <!-- <Property Id="ALLUSERS" Value="1" /> -->
     
     <!-- Check Conditions -->
-    <Condition Message="[ProductName] requires JDK 1.5 or 1.6 or 1.7">
-      <![CDATA[Installed OR (JDK15 <> "" OR JDK16 <> "" OR JDK17 <> "")]]>
+    <Condition Message="[ProductName] requires JDK 1.7">
+      <![CDATA[Installed OR (JDK17 <> "")]]>
     </Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <!-- Program Files Folder -->
+      <?if $(env.ARCH) = x86 ?>
       <Directory Id="ProgramFilesFolder" SourceName="PFILE">
+      <?else?>
+      <Directory Id="ProgramFiles64Folder" SourceName="PFILE">
+      <?endif ?>
         <Directory Id="INSTALLLOCATION"
                Name="{% Product.Name %}">
           <Directory Id="Version"
@@ -97,6 +85,7 @@
               <Condition>
                 <![CDATA[ALLUSERS <> 1]]>
               </Condition>
+              <CreateFolder />
               <Environment Id="envRTMJAVAROOTlocal" Name="RTM_JAVA_ROOT" Action="set" 
                            System="no" Part="last" Value="[Version]"/>
             </Component>
@@ -104,6 +93,7 @@
               <Condition>
                 <![CDATA[ALLUSERS = 1 AND Privileged = 1]]>
               </Condition>
+              <CreateFolder />
               <Environment Id="envRTMJAVAROOTsystem" Name="RTM_JAVA_ROOT" Action="set" 
                            System="yes" Part="last" Value="[Version]"/>
             </Component>
@@ -118,8 +108,8 @@
                        Name="{% file.Name %}" DiskId="1"
                        Source="{% file.Source %}">
                     {% if file.Name is start-orbd.vbs %}
-                    <Shortcut Id="{% file.Id %}" Directory="ToolsMenuFolder"
-                              Name="Start Naming Service"
+                    <Shortcut Id="{% file.Id %}" Directory="CommonToolsMenuFolder"
+                              Name="Start Java Naming Service"
                               Show="normal" WorkingDirectory="bin"/>
                     {% endif %}
                     {% if file.Name is rtcd_java.exe %}
@@ -1223,7 +1213,8 @@
             </Directory>
             <!-- rtmtools components -->
             <?if $(env.INCLUDE_OPENRTP) = YES ?>
-            <?include OpenRTP_inc.wxs ?>
+            <Merge Id="Msi_RTSystemEditorRCP" Language="1041"
+                              SourceFile="RTSystemEditorRCP_$(env.ARCH).msm" DiskId="1" />
             <?endif ?>
             <!-- end of rtmtools -->
 
@@ -1231,16 +1222,12 @@
 	        
       </Directory>
         
-      <!-- rtmtools components -->
-<!--
-        <?if $(env.INCLUDE_OPENRTP) = YES ?>
-        <?include OpenRTP_inc.wxs ?>
-	<?endif ?>
--->
-        <!-- end of rtmtools -->
       <!-- end of Program Files Folder -->
-        
+      <?if $(env.ARCH) = "x86" ?>
       </Directory>
+      <?else?>
+      </Directory>
+      <?endif?>        
 
       <!-- Program Folder -->
       <Directory Id="ProgramMenuFolder">
@@ -1252,14 +1239,16 @@
             <Component Id="JavaMenuFolder" Guid="4F6569FA-8492-441c-AF92-9E4B65C738EC">
               <RemoveFolder Id='JavaMenuFolder' On='uninstall' />	
             </Component>
-            <Directory Id="ToolsMenuFolder" Name="tools">
-	    </Directory>
-            <Directory Id="Components" Name="components">
-              <Directory Id="ExpMenuFolder" Name="examples">
+            <Directory Id="ToolsMenuFolder" Name="Tools">
+            </Directory>
+            <Directory Id="Components" Name="Components">
+              <Directory Id="ExpMenuFolder" Name="Examples">
               </Directory>
             </Directory>
-            <Directory Id="DocMenuFolder" Name="documents">
+            <Directory Id="DocMenuFolder" Name="Documents">
             </Directory>
+          </Directory>
+          <Directory Id="CommonToolsMenuFolder" Name="Tools">
           </Directory>
         </Directory>
       </Directory>
@@ -1366,27 +1355,8 @@
 
     <!-- OpenRTP tools -->
     <?if $(env.INCLUDE_OPENRTP) = YES ?>
-    <Feature Id="OpenRTP" Level="1" Title="OpenRT Platform Tool Chain"
-			 ConfigurableDirectory="INSTALLLOCATION">
-      <Condition Level ="1"><![CDATA[ (RTSE_FILEEXISTS =  "") ]]></Condition>
-      <Condition Level ="0"><![CDATA[ (RTSE_FILEEXISTS <> "") ]]></Condition>
-
-      <!-- rtse rcp -->
-      <Feature Id="RTSystemEditor" Level="1" Title="RTSystemEditor">
-	<ComponentRef Id="Openrtp" />
-	<ComponentRef Id="OpenrtpConfiguration" />
-	<ComponentRef Id="OpenrtpPlugins" />
-	<!--
-	<ComponentRef Id="OpenrtpPluginsOrg_eclipse_core_runtime_compatibility_registry_3_2_200_v20080610" />
-	<ComponentRef Id="Meta_inf" />
-	<ComponentRef Id="OpenrtpPluginsOrg_eclipse_equinox_launcher_win32_win32_x86_1_0_101_r34x_v20080731" />
-	<ComponentRef Id="Meta_inf_2" />
-	-->
-	<ComponentRef Id="org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610" />
-	<ComponentRef Id="META_INF" />
-	<ComponentRef Id="org.eclipse.equinox.launcher.win32.win32.x86_1.0.101.R34x_v20080731" />
-	<ComponentRef Id="META_INF_2" />
-      </Feature>
+    <Feature Id="RTSE_ONLY" Level="1" Title="RTSystemEditorRCP 1.1">
+      <MergeRef Id="Msi_RTSystemEditorRCP" />
     </Feature>
     <?endif ?>
     
