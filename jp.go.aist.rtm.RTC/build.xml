@@ -396,7 +396,7 @@
 	<target name="dist" description="ソースをエクスポートします">
 		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
-		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}.zip" />
+		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.zip" />
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}/src" >
 			<fileset dir="src" />
 		</copy>
@@ -410,7 +410,7 @@
 		</copy>
 		<copy file=".project" todir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 		<copy file=".classpath" todir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
-		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
+		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 
 
 
@@ -418,7 +418,7 @@
 		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0" />
 		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1" />
 		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1" />
-		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar.zip" />
+		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE-jar.zip" />
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1/jar" >
 			<fileset dir="installer/resources/Source/jar">
 				<include name="rtcd.jar" />
@@ -447,7 +447,7 @@
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1/JavaDocEn" >
 			<fileset dir="installer/resources/Source/JavaDocEn" />
 		</copy>
-		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar" />
+		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE-jar.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar" />
 		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.tar.gz" />
 		<tar destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.tar.gz" 
 			basedir="../" 
