@@ -4,8 +4,8 @@
 @rem   usually only %TARGET% might be changed
 @rem ------------------------------------------------------------
 if not DEFINED ARCH       set ARCH=x86_64
+if not DEFINED INCLUDE_JRE  set INCLUDE_JRE=YES
 @set PATH_OLD=%PATH%
-@set PATH=%WIX%\bin;%PATH%
 @set INCLUDE_OPENRTP=YES
 @set VERSION=1.1.0
 @set TARGET=OpenRTM-aist-Java
@@ -13,10 +13,13 @@ if not DEFINED ARCH       set ARCH=x86_64
 @set TARGET_WIXOBJ=%TARGET%.wixobj
 @set TARGET_FULL=%TARGET%_%VERSION%-RELEASE_%ARCH%
 if "x%ARCH%" == "xx86_64" (
+   @set PYTHON_DIR=C:\Python27_x64
    @set OS_ARCH=64-bit OS
 ) else (
+   @set PYTHON_DIR=C:\Python27
    @set OS_ARCH=32-bit OS
 )
+@set PATH=%WIX%bin;%PYTHON_DIR%;%PATH%
 @set PRODUCT_NAME=OpenRTM-aist-%VERSION%-RELEASE (%OS_ARCH%) for Java
 
 @rem ------------------------------------------------------------
