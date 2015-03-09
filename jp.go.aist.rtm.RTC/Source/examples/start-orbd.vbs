@@ -1,42 +1,48 @@
-'orbd‹N“®—pƒXƒNƒŠƒvƒg
-'–{ƒXƒNƒŠƒvƒg‚ÍŠÂ‹«•Ï”TEMP‚ªİ’è‚³‚ê‚Ä‚¢‚é‚±‚Æ‚ğ‘O’ñ‚Æ‚µ‚Ü‚·
-'‚È‚¨AŠÂ‹«•Ï”TEMP‚Í’Ê—áOS‚É‚æ‚èƒfƒtƒHƒ‹ƒg‚Åİ’è‚³‚ê‚Ä‚¢‚Ü‚·
+'orbdèµ·å‹•ç”¨ã‚¹ã‚¯ãƒªãƒ—ãƒˆ
+'æœ¬ã‚¹ã‚¯ãƒªãƒ—ãƒˆã¯ç’°å¢ƒå¤‰æ•°TEMPãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ã“ã¨ã‚’å‰æã¨ã—ã¾ã™
+'ãªãŠã€ç’°å¢ƒå¤‰æ•°TEMPã¯é€šä¾‹OSã«ã‚ˆã‚Šãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§è¨­å®šã•ã‚Œã¦ã„ã¾ã™
 
 
-'‹N“®—pƒIƒuƒWƒFƒNƒg‚Ìæ“¾
+'èµ·å‹•ç”¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å–å¾—
 Set objShell = WScript.CreateObject("WScript.Shell")
 
 strMode = objShell.Environment("Process").Item("PROCESSOR_ARCHITECTURE")
 
-'JDK‚ÌƒŒƒWƒXƒgƒŠƒL[‚ğƒZƒbƒg
-If UCase(strMode) = "X86" Then
-	regJDKkey  = "HKLM\SOFTWARE\JavaSoft\Java Development Kit"
-Else
-	regJDKkey  = "HKLM\SOFTWARE\Wow6432Node\JavaSoft\Java Development Kit"
+'JDKã®ãƒ¬ã‚¸ã‚¹ãƒˆãƒªã‚­ãƒ¼ã‚’ã‚»ãƒƒãƒˆ
+regJDKkey  = "HKLM\SOFTWARE\JavaSoft\Java Development Kit"
+If not (UCase(strMode) = "X86") Then
+  '64bit OS
+  On Error Resume Next
+  regJDKkey = regJDKkey + "\"
+  If IsNull(objShell.RegRead(regJDKkey)) Then
+    'ã‚­ãƒ¼ãŒå­˜åœ¨ã—ãªã„
+    '64bitã®OSä¸Šã«32bitç‰ˆã®JavaãŒã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã•ã‚Œã¦ã„ã‚‹
+    regJDKkey  = "HKLM\SOFTWARE\Wow6432Node\JavaSoft\Java Development Kit"
+  End If
 End If
 
-'ƒŒƒWƒXƒgƒŠ‚©‚çJDKƒJƒŒƒ“ƒgƒo[ƒWƒ‡ƒ“‚ğæ“¾
+'ãƒ¬ã‚¸ã‚¹ãƒˆãƒªã‹ã‚‰JDKã‚«ãƒ¬ãƒ³ãƒˆãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚’å–å¾—
 'objShell.RegRead("HKLM\SOFTWARE\JavaSoft\Java Development Kit\CurrentVersion")
 
-'‚±‚ê‚ªA—á‚¦‚Î"1.5"‚¾‚Æ‚·‚é‚ÆA
+'ã“ã‚ŒãŒã€ä¾‹ãˆã°"1.5"ã ã¨ã™ã‚‹ã¨ã€
 'HKLM\SOFTWARE\JavaSoft\Java Development Kit\1.5\JavaHome
-'‚ÉJDKƒJƒŒƒ“ƒgƒo[ƒWƒ‡ƒ“‚Ìƒ‹[ƒgƒtƒHƒ‹ƒ_‚ª‹LÚ‚³‚ê‚Ä‚¢‚é
+'ã«JDKã‚«ãƒ¬ãƒ³ãƒˆãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®ãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€ãŒè¨˜è¼‰ã•ã‚Œã¦ã„ã‚‹
 Javahome  = regJDKkey & "\" & objShell.RegRead(regJDKkey & "\CurrentVersion") & "\JavaHome"
 
-'JDKƒJƒŒƒ“ƒgƒo[ƒWƒ‡ƒ“‚Ìƒ‹[ƒgƒtƒHƒ‹ƒ_Javahome‚Ì‰º‚Ìbin\orbd.exe‚ª–Ú“I‚ÌÀsƒtƒ@ƒCƒ‹
+'JDKã‚«ãƒ¬ãƒ³ãƒˆãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®ãƒ«ãƒ¼ãƒˆãƒ•ã‚©ãƒ«ãƒ€Javahomeã®ä¸‹ã®bin\orbd.exeãŒç›®çš„ã®å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«
 targetexe = """" & objShell.RegRead(Javahome) & "\bin\orbd.exe"""
 
-'–Ú“I‚ÌÀsƒtƒ@ƒCƒ‹targetexe‚ğ“KØ‚ÈƒIƒvƒVƒ‡ƒ“‚ğ‚Â‚¯‚ÄÀs‚³‚¹‚é
+'ç›®çš„ã®å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«targetexeã‚’é©åˆ‡ãªã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’ã¤ã‘ã¦å®Ÿè¡Œã•ã›ã‚‹
 objShell.Run targetexe & " -ORBInitialPort 2809 -ORBInitialHost localhost -defaultdb ""%TEMP%""\orb.db"
-'‚±‚ê‚Í—á‚¦‚ÎAŸ‚Ì‚æ‚¤‚È‚±‚Æ‚ğ‚â‚Á‚Ä‚éB‚½‚¾‚µAì‹ÆƒfƒBƒŒƒNƒgƒŠ‚ğƒ†[ƒU[‚ÌtempƒtƒHƒ‹ƒ_‚Éw’èB
+'ã“ã‚Œã¯ä¾‹ãˆã°ã€æ¬¡ã®ã‚ˆã†ãªã“ã¨ã‚’ã‚„ã£ã¦ã‚‹ã€‚ãŸã ã—ã€ä½œæ¥­ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’ãƒ¦ãƒ¼ã‚¶ãƒ¼ã®tempãƒ•ã‚©ãƒ«ãƒ€ã«æŒ‡å®šã€‚
 'cf:objShell.Run """C:\Program Files\Java\jdk1.5.0_14\bin\orbd.exe"" -ORBInitialPort 2809 -ORBInitialHost localhost"
 
-'ˆê‰ƒIƒuƒWƒFƒNƒg‚ğŠJ•ú
+'ä¸€å¿œã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’é–‹æ”¾
 Set objShell = Nothing
 
 
 ' **********************************************************
-' OS ƒo[ƒWƒ‡ƒ“‚Ìæ“¾
+' OS ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®å–å¾—
 ' **********************************************************
 Function GetOSVersion()
 
