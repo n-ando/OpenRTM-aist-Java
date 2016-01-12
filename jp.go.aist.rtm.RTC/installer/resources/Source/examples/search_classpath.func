@@ -1,0 +1,7 @@
+get_classpath()
+{
+  FILE1=`ls ${RTM_JAVA_ROOT}/jar/OpenRTM*`
+  FILE2=`ls ${RTM_JAVA_ROOT}/jar/commons-cli*`
+  CLASSPATH=.:$FILE1:$FILE2
+  echo ${CLASSPATH}
+}

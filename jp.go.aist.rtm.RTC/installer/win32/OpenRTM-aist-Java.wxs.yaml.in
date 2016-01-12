@@ -1,0 +1,17 @@
+Product:
+  Name: OpenRTM-aist
+  ShortName: OpenRTM
+  Id: __GUID__
+  Language: "1041"
+  Codepage: "932"
+  Version: 1.1.1
+  ShortVersion: 1.1
+  Manufacturer: AIST
+  UpgradeCode_x86: A8C8006F-E9D8-4528-AF4F-B8AE2D25AB47
+  UpgradeCode_x86_64: FFA49C40-82CE-11E5-93B2-005056C00008
+Package:
+  Description: OpenRTM-aist-Java Installer
+  InstallerVersion: "300"
+  Languages: "1041"
+  Compressed: 'yes'
+  SummaryCodepage: "932"
