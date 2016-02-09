@@ -38,7 +38,7 @@ public class TimeValue {
      * {@.ja コンストラクタ}
      * {@.en Constructor}
      * 
-     * @param nano
+     * @param system 
      *   {@.ja システム時間}
      *   {@.en System Time}
      */

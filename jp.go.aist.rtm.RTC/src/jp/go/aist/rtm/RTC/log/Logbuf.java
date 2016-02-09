@@ -466,7 +466,7 @@ public class Logbuf {
      * <pre>
      * ClockManager::instance().getClock("logical").settime()
      * </pre>
-     * で時刻を設定する必要がある。
+     * で時刻を設定する必要がある。}
      * 
      * {@.en This function sets a clock type getting time when it is used
      * for logging. Available clock types are,
