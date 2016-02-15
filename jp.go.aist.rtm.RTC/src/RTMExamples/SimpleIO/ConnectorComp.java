@@ -137,11 +137,16 @@ public class ConnectorComp {
                 NVUtil.newNVString("dataport.interface_type","corba_cdr"));
         CORBA_SeqUtil.push_back(nvholder, 
                 NVUtil.newNVString("dataport.dataflow_type", "push"));
+//        CORBA_SeqUtil.push_back(nvholder, 
+//                NVUtil.newNVString("dataport.dataflow_type", "pull"));
         CORBA_SeqUtil.push_back(nvholder, 
                 NVUtil.newNVString("dataport.subscription_type", subs_type));
         CORBA_SeqUtil.push_back(nvholder, 
                 NVUtil.newNVString("dataport.serializer.cdr.endian", endian));
-        
+//
+        CORBA_SeqUtil.push_back(nvholder, 
+                NVUtil.newNVString("dataport.outport.direct_dataput.disable", "NO"));
+
         if( !period.equals("") )
             CORBA_SeqUtil.push_back(nvholder, 
                 NVUtil.newNVString("dataport.push_interval", period));

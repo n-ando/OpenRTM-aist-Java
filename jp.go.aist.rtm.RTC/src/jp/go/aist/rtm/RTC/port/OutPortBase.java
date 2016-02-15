@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import jp.go.aist.rtm.Constants;
+import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.InPortConsumerFactory;
 import jp.go.aist.rtm.RTC.OutPortProviderFactory;
 import jp.go.aist.rtm.RTC.PublisherBaseFactory;
@@ -19,8 +20,11 @@ import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.Object;
 import org.omg.CORBA.TCKind;
 import org.omg.CORBA.portable.OutputStream;
+import org.omg.PortableServer.POA;
 
 import _SDOPackage.NVListHolder;
 import RTC.ConnectorProfile;
@@ -1514,6 +1518,20 @@ public abstract class OutPortBase extends PortBase {
                 }
                 rtcout.println(Logbuf.TRACE, "OutPortPushConnector create");
     
+                rtcout.println(Logbuf.PARANOID, "direct_dataput.disable= " + 
+                    prop.getProperty("direct_dataput.disable"));
+                // set direct InPort if ConnectorProfile
+                // .properties["dataport.outport.direct_dataput.disable"] != YES
+                if (!StringUtil.toBool(
+                    prop.getProperty("direct_dataput.disable"), 
+                    "YES", "NO", true)) {
+                    InPortBase inport = getLocalInPort(profile);
+                    if (inport != null) {
+                        connector.setInPort(inport);
+                    }
+                }
+                // end of direct port
+
                 m_connectors.add(connector);
                 rtcout.println(Logbuf.PARANOID, 
                                "connector push backed: "+m_connectors.size());
@@ -1564,6 +1582,44 @@ public abstract class OutPortBase extends PortBase {
                 return null;
             }
         }
+    }
+    /**
+     * {@.ja ローカルのピアInPortを取得}
+     * {@.en Getting local peer InPort if available}
+     */
+    protected InPortBase
+    getLocalInPort(final ConnectorBase.ConnectorInfo profile)
+    {
+        rtcout.println(Logbuf.DEBUG,
+                       "Trying direct port connection.");
+        ORB orb = Manager.instance().getORB();
+        rtcout.println(Logbuf.DEBUG,
+                        "Current connector profile: name=" 
+                        +profile.name + ", id=" + profile.id);
+        // finding peer port object
+        for (int ic = 0;  ic < profile.ports.size() ; ++ic) {
+            Object obj;
+            obj = orb.string_to_object(profile.ports.get(ic));
+            if (getPortRef()._is_equivalent(obj)) { 
+                continue; 
+            }
+            rtcout.println(Logbuf.DEBUG, "Peer port found: " 
+                        + profile.ports.get(ic));
+            try {
+                POA poa = Manager.instance().getPOA();
+                //InPort inport = (InPort)poa.reference_to_servant(obj);
+                InPortBase inport = (InPortBase)(poa.reference_to_servant(obj));
+                rtcout.println(Logbuf.DEBUG, 
+                            "InPortBase servant pointer is obtained.");
+                return inport;
+            }
+            catch  (Exception e) {
+                rtcout.println(Logbuf.TRACE, "126: "+e);
+                rtcout.println(Logbuf.DEBUG, 
+                            "Peer port is remote port.");
+            }
+        }
+        return null;
     }
     /**
      * {@.ja endian 情報を返す}

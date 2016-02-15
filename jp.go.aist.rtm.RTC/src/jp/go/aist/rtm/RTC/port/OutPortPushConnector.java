@@ -10,6 +10,7 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.StringUtil;
+import jp.go.aist.rtm.RTC.util.DataRef;
 
 import org.omg.CORBA.portable.OutputStream;
 import org.omg.CORBA.portable.Streamable;
@@ -198,6 +199,15 @@ public class OutPortPushConnector extends OutPortConnector {
      */
     public <DataType> ReturnCode write(final DataType data) {
         rtcout.println(Logbuf.TRACE, "write()");
+
+        if (m_directInPort != null) {
+            DataRef<DataType> dataref 
+                    = new DataRef<DataType>(data);
+            //static_cast<InPort<DataType>*>(m_directInPort).write(data);
+            ((InPort)m_directInPort).write(dataref);
+            return ReturnCode.PORT_OK;
+        }
+
         OutPort out = (OutPort)m_outport;
         OutputStream cdr 
             = new EncapsOutputStreamExt(m_orb,m_isLittleEndian);

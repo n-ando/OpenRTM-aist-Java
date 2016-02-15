@@ -28,6 +28,7 @@ public abstract class OutPortConnector extends ConnectorBase {
         rtcout = new Logbuf("OutPortConnector");
         m_profile = profile;
         m_isLittleEndian = true;
+        m_directInPort = null;
     }
 
     /**
@@ -128,6 +129,18 @@ public abstract class OutPortConnector extends ConnectorBase {
      */
     public abstract <DataType> ReturnCode write(final DataType data);
 
+
+    public boolean setInPort(InPortBase directInPort){
+        rtcout.println(Logbuf.TRACE, "setInPort()");
+        if (directInPort == null) {
+            rtcout.println(Logbuf.TRACE, "InPortBase is null.");
+            return false;
+        }
+
+        m_directInPort = directInPort;
+
+        return true;
+    }
     /**
      * {@.ja OutPortBaseを格納する。}
      * {@.en Stores OutPortBase.}
@@ -142,5 +155,6 @@ public abstract class OutPortConnector extends ConnectorBase {
     protected Logbuf rtcout;
     protected ConnectorInfo m_profile;
     protected boolean m_isLittleEndian;
+    protected InPortBase m_directInPort;
 }
 

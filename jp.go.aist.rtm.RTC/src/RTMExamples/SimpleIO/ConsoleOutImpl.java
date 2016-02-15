@@ -134,6 +134,7 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
     protected ReturnCode_t onExecute(int ec_id) {
         if( m_inIn.isNew() ) {
             m_inIn.read();
+//        if( m_inIn.read() ) {
             System.out.print( "Received: " + m_in.v.data + " " );
             System.out.print( "TimeStamp: " + m_in.v.tm.sec + "[s] " );
             System.out.println( m_in.v.tm.nsec + "[ns]" );

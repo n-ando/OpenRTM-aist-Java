@@ -124,6 +124,8 @@ public class InPort<DataType> extends InPortBase {
         this.m_OnOverflow = null;
         this.m_OnUnderflow = null;
 
+        this.m_directNewData = false;
+
         m_orb = ORBUtil.getOrb();
 
         Class cl = value.v.getClass();
@@ -214,6 +216,13 @@ public class InPort<DataType> extends InPortBase {
         rtcout.println(Logbuf.TRACE, "isNew()");
         int r = 0;
 
+        synchronized (m_directNewDataMutex){
+            if (m_directNewData == true) {
+                rtcout.println(Logbuf.DEBUG, 
+                              "isNew() returns true because of direct write.");
+                return true;
+            }
+        }
         synchronized (m_connectorsMutex){
             synchronized (m_connectors){
                 if (m_connectors.size() == 0) {
@@ -304,13 +313,32 @@ public class InPort<DataType> extends InPortBase {
     public boolean read() {
         rtcout.println(Logbuf.TRACE, "DataType read()");
 
+        if (m_OnRead != null) {
+            m_OnRead.run();
+            rtcout.println(Logbuf.TRACE, "OnRead called");
+        }
 
+        // 1) direct connection
+        synchronized (m_directNewDataMutex){
+            if (m_directNewData == true) {
+                rtcout.println(Logbuf.DEBUG, "Direct data transfer");
+                m_directNewData = false;
+                if (m_OnReadConvert != null) {
+                    m_value.v = m_OnReadConvert.run(m_value.v);
+                    rtcout.println(Logbuf.DEBUG, 
+                         "OnReadConvert for direct data called");
+                    return true;
+                }
+                return true;
+            }
+        }
+        // 2) network connection
         synchronized (m_connectorsMutex){
 
-            if (m_OnRead != null) {
-                m_OnRead.run();
-                rtcout.println(Logbuf.TRACE, "OnRead called");
-            }
+//            if (m_OnRead != null) {
+//                m_OnRead.run();
+//                rtcout.println(Logbuf.TRACE, "OnRead called");
+//            }
 
             ReturnCode ret;
             EncapsOutputStreamExt cdr = new EncapsOutputStreamExt(m_orb, 
@@ -464,6 +492,10 @@ public class InPort<DataType> extends InPortBase {
     public boolean isEmpty() {
         rtcout.println(Logbuf.TRACE, "isEmpty()");
 
+        if (m_directNewData == true) { 
+            return false; 
+        }
+
         int r = 0;
         synchronized (m_connectorsMutex){
             synchronized (m_connectors){
@@ -484,7 +516,14 @@ public class InPort<DataType> extends InPortBase {
                    "isEmpty() = false, data exists in the buffer");
         return false;
     }
-    
+    public void write(final DataRef<DataType> data)
+    {
+        rtcout.println(Logbuf.TRACE, "write()");
+        synchronized (m_directNewDataMutex){
+            m_value.v = data.v;
+            m_directNewData = true;
+        }
+    }     
     /**
      * {@.ja CDR化で使用するStreamableを設定する}
      * {@.en Sets Streamable. }
@@ -537,4 +576,8 @@ public class InPort<DataType> extends InPortBase {
     private Field m_field = null;
     
     private ORB m_orb;
+
+    private boolean m_directNewData;
+    private static String m_directNewDataMutex = new String();
+
 }
