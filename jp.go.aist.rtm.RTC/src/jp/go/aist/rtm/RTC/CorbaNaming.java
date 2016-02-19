@@ -6,6 +6,7 @@ import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.BindingIteratorHolder;
+import org.omg.CosNaming.Binding;
 import org.omg.CosNaming.BindingListHolder;
 import org.omg.CosNaming.BindingType;
 import org.omg.CosNaming.NameComponent;
@@ -1620,6 +1621,176 @@ public class CorbaNaming {
                         BindingListHolder bl, BindingIteratorHolder bi) {
         name_cxt.list((int)how_many, bl, bi);
     }
+
+    /**
+     * {@.ja 与えられた Naming パス以下のすべてのバインディングを取得する}
+     * {@.en Get all the binding under given naming path}
+     *
+     * <p>
+     * {@.ja 文字列で指定されたネーミング絶対パス以下のすべてのバインディング
+     * すなわちバインディングのタイプと参照のセットを取得する。パスは、
+     * ルートコンテキストから階層を "/"、名前とコンテキストを "." で区
+     * 切った文字列である。
+     *
+     * 例えば、<name0>.<context0>/.../<name[n]>.<context[n]> を指定する
+     * と<name[n]>.<context[n]> の下にバインドされているコンテキストま
+     * たはオブジェクトリファレンスのリストが BindingList として返され
+     * る。}
+     *
+     *
+     * {@en This operation obtains all the binding list, which are a pair
+     * of binding type and reference, under specified absolute naming
+     * path. The path string consists of the path from root context
+     * delimited by "/" and name and context delimited by ".".
+     *
+     * For example, when <name0>.<context0>/.../<name[n]>.<context[n]>
+     * is specified as the path, this operation returns all the
+     * contexts and references under the "<name[n]>.<context[n]>"
+     * context in a BindingList.}
+     *
+     * @param string_name
+     *   {@.ja 文字列で指定されるターゲットのパス}
+     *   {@.en The target path specified by a string}
+     * @param bl
+     *   {@.ja 指定されたパスの下のバインディングリスト}
+     *   {@.en Binding list under the specified path}
+     *
+     */
+    public void list(final String string_name,
+                         BindingListHolder bl) {
+        if (string_name.isEmpty()) { 
+            return; 
+        }
+        Object obj;
+        try {
+            obj = resolveStr(string_name);
+        }
+        catch (Exception e) {
+            return; 
+        }
+        NamingContext nc = NamingContextExtHelper.narrow(obj);
+        if (nc == null) {
+            bl.value = new Binding[0];
+            return;
+        }
+        int max_list_size = 65536;
+        BindingIteratorHolder bi = new BindingIteratorHolder();
+        nc.list(max_list_size, bl, bi);
+        int max_remaining = max_list_size - bl.value.length;
+        boolean more_bindings = true;
+        if(bi == null) {
+            more_bindings = false;
+        }
+
+
+        if (more_bindings) {
+            while (more_bindings && (max_remaining > 0)) {
+                BindingListHolder tmp_bl = new BindingListHolder();
+                more_bindings = bi.value.next_n(max_remaining, tmp_bl);
+                //Append 'tmp_bl' to 'bl'
+                int bl_len = bl.value.length;
+                bl.value = new Binding[bl_len + tmp_bl.value.length];
+                for (int ic=0; ic < tmp_bl.value.length; ++ic) {
+                    bl.value[ic + bl_len] = tmp_bl.value[ic];
+                }
+                max_remaining = max_list_size - bl.value.length;
+            }
+            bi.value.destroy();
+        }
+        return;
+    }
+  
+    /**
+     * {@.ja 与えられたパス以下の指定されたkindのバインディングを取得する}
+     * {@.en Get all the binding with specified kind under given naming path}
+     *
+     * <p>
+     * [@.ja 文字列で指定されたネーミング絶対パス以下のうち、指定された kind
+     * を持つすべてのバインディングを取得する。パスは、ルートコンテキス
+     * トから階層を "/"、名前とコンテキストを "." で区切った文字列であ
+     * る。
+     *
+     * 例えば、第1引数にパス
+     * <name0>.<context0>/.../<name[n]>.<context[n]> を指定し、第2引数
+     * の kind "hoge" を指定すると、と<name[n]>.<context[n]> の下にバイ
+     * ンドされているコンテキストまたはオブジェクトリファレンスのリスト
+     * のうち kind が "hoge" のものが BindingList として返される。
+     *
+     * 例えば、<name0>.<context0>/.../<name[n]>.<context[n]> を指定する
+     * と<name[n]>.<context[n]> の下にバインドされているコンテキストま
+     * たはオブジェクトリファレンスのリストが BindingList として返され
+     * る。}
+     *
+     *
+     * {@.en This operation obtains all the binding list with specified kind
+     * under specified absolute naming path. The path string consists
+     * of the path from root context delimited by "/" and name and
+     * context delimited by ".".
+     *
+     * For example, when <name0>.<context0>/.../<name[n]>.<context[n]>
+     * is specified in the first argument as the path, and "hoge" is
+     * specified the second argument as the kind, this operation
+     * returns all the contexts and references under the
+     * "<name[n]>.<context[n]>" context with kind "hoge" in a
+     * BindingList.}
+     *
+     * @param string_name 
+     *   {@.ja 文字列で指定されるターゲットのパス}
+     *   {@.en The target path specified by a string}
+     * @param string_kind
+     *   {@.ja 文字列で指定されるターゲットのkind}
+     *   {@.en The target kind specified by a string}
+     * @param bl
+     *   {@.ja 指定されたパスの下のバインディングリスト}
+     *   {@.en Binding list under the specified path}
+     *
+     */
+    public void listByKind(final String string_name,
+                               final String string_kind,
+                               BindingListHolder bl) {
+        if (string_name.isEmpty()) { 
+            bl.value = new Binding[0];
+            return; 
+        }
+        if (string_kind.isEmpty()) { 
+            bl.value = new Binding[0];
+            return; 
+        }
+        String kind = string_kind;
+
+        BindingListHolder tmp_bl = new BindingListHolder();
+        list(string_name, tmp_bl);
+
+        int tmp_len = tmp_bl.value.length;
+        bl.value =  new Binding[tmp_bl.value.length];
+        int list_len = 0;
+        for (int ic= 0; ic < tmp_len; ++ic) {
+            if (tmp_bl.value[ic].binding_type != BindingType.nobject) { 
+                continue; 
+            }
+            int last_index = tmp_bl.value[ic].binding_name.length - 1;
+            String tmp = tmp_bl.value[ic].binding_name[last_index].kind;
+            if (!kind.equals(tmp)) { 
+                 continue; 
+            }
+
+            bl.value[list_len] = tmp_bl.value[ic];
+            ++list_len;
+            String tmp_char;
+            try{
+                tmp_char = toString(tmp_bl.value[ic].binding_name);
+            }
+            catch (Exception e) {
+                ;
+            }
+ 
+            //delete tmp_char;
+        }
+        bl.value  = new Binding[list_len];
+        return;
+    }
+
+
 
     /**
      * {@.ja 与えられた NameComponent の文字列表現を返す。}
