@@ -1638,7 +1638,7 @@ public class CorbaNaming {
      * る。}
      *
      *
-     * {@en This operation obtains all the binding list, which are a pair
+     * {@.en This operation obtains all the binding list, which are a pair
      * of binding type and reference, under specified absolute naming
      * path. The path string consists of the path from root context
      * delimited by "/" and name and context delimited by ".".
