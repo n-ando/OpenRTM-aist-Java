@@ -66,6 +66,12 @@ public class CorbaPort extends PortBase {
 
         m_properties.merge(prop);
 
+        NVListHolder nvlistholder1 = new NVListHolder();
+        NVUtil.copyFromProperties(nvlistholder1, m_properties);
+        NVListHolder nvlistholder2 = new NVListHolder(m_profile.properties);
+        CORBA_SeqUtil.push_back_list(nvlistholder2, nvlistholder1);
+        m_profile.properties = nvlistholder2.value;
+
         rtcout.println(Logbuf.PARANOID, "updated properties:");
         dumpString = m_properties._dump(dumpString, m_properties, 0);
         rtcout.println(Logbuf.DEBUG, dumpString);
