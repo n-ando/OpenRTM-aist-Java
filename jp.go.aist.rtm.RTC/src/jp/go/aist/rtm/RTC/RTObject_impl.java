@@ -2936,7 +2936,34 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public boolean addPort(CorbaPort port) {
         rtcout.println(Logbuf.TRACE, "addPort(CrobaPort)");
         String propkey = "port.corbaport.";
+
+        String temp = port.getName();
+        String[] vtmp = temp.split("\\.");
+        rtcout.println(Logbuf.PARANOID, 
+            "port.getName[]: "+Arrays.toString(vtmp));
+        if(vtmp.length != 0) {
+            propkey = propkey + vtmp[vtmp.length - 1];
+        }
+        {
+            String dumpString = new String();
+            rtcout.println(Logbuf.PARANOID, 
+                "m_properties.getNode("+propkey+") :");
+            Properties prop = new Properties();
+            prop = m_properties.getNode(propkey);
+            dumpString = m_properties._dump(dumpString, m_properties, 0);
+            rtcout.println(Logbuf.PARANOID, dumpString);
+        }
         m_properties.getNode(propkey).merge(m_properties.getNode("port.corba"));
+
+        {
+            String dumpString = new String();
+            rtcout.println(Logbuf.PARANOID, 
+                "m_properties.getNode("+propkey+") :");
+            Properties prop = new Properties();
+            prop = m_properties.getNode(propkey);
+            dumpString = m_properties._dump(dumpString, m_properties, 0);
+            rtcout.println(Logbuf.PARANOID, dumpString);
+        }
     
         port.init(m_properties.getNode(propkey));
         return addPort((PortBase)port);
