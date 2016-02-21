@@ -3,6 +3,7 @@ package jp.go.aist.rtm.RTC;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.port.PortBase;
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 
@@ -57,7 +58,7 @@ public class NamingManager implements CallbackFunction {
 
 
         synchronized (m_names) {
-            m_names.add(new Names(method, name_server, name));
+            m_names.add(new NamingService(method, name_server, name));
         }
     }
 
@@ -98,6 +99,23 @@ public class NamingManager implements CallbackFunction {
         }
     }
 
+    public void bindObject(final String name, final PortBase port) {
+        rtcout.println(Logbuf.TRACE, "NamingManager.bindObject(" + name + ")");
+        synchronized (m_names) {
+            int len = m_names.size();
+            for(int intIdx=0; intIdx < len; ++intIdx ) {
+                if( m_names.elementAt(intIdx).ns != null ) {
+                    try{
+                        m_names.elementAt(intIdx).ns.bindObject(name, port);
+                    }
+                    catch(Exception ex){
+                        m_names.elementAt(intIdx).ns = null;
+                    }
+                }
+            }
+            this.registerPortName(name, port);
+        }
+    }
     /**
      * {@.ja 指定したManagerServantのNamingServiceへバインド。}
      * {@.en Bind the specified ManagerServants to NamingService}
@@ -207,7 +225,7 @@ public class NamingManager implements CallbackFunction {
      *   {@.en  NameServer}
      * 
      */
-    protected void retryConnection(Names ns){
+    protected void retryConnection(NamingService ns){
         // recreate NamingObj
         NamingBase nsobj = null;
         try {
@@ -320,7 +338,10 @@ public class NamingManager implements CallbackFunction {
         }
         return comps;
     }
-    
+
+    public Vector<NamingService> getNameServices() {
+        return m_names;
+    }
     /**
      * {@.ja NameServer 管理用オブジェクトの生成。}
      * {@.en Create objects for NameServer management}
@@ -416,6 +437,36 @@ public class NamingManager implements CallbackFunction {
     }
 
     /**
+     *
+     * {@.ja NameServer に登録するPortの設定}
+     * {o.en Configure the ports that will be registered to NameServer}
+     * 
+     * <p>
+     * {@.ja NameServer に登録するPortを設定する。}
+     * {@.en Configure the ports that will be registered to NameServer.}
+     *
+     * @param name
+     *   {@.ja コンポーネントの登録時名称}
+     *   {@.en Names of components at the registration}
+     * 
+     * @param port
+     *   {@.ja 登録対象port}
+     *   {@.en The target ports for registration}
+     *
+     */
+    protected void registerPortName(final String name, final PortBase port) {
+        int len = m_portNames.size();
+        for(int intIdx=0; intIdx < len; ++intIdx ) {
+            if( m_portNames.elementAt(intIdx).name.equals(name) ) {
+                m_portNames.elementAt(intIdx).port = port;
+                return;
+            }
+        }
+        m_portNames.add(new Port(name, port));
+        return;
+    }
+
+    /**
      * {@.ja NameServer に登録するManagerServantの設定。}
      * {@.en Configure the ManagerServants that will be registered 
      * to NameServer}
@@ -467,6 +518,8 @@ public class NamingManager implements CallbackFunction {
         return;
     }
 
+    protected void unregisterPortName(final String name) {
+    }
     /**
      * {@.ja NameServer に登録するManagerServantの設定解除。}
      * {@.en Unregister the ManagerServants that will be registered 
@@ -537,7 +590,7 @@ public class NamingManager implements CallbackFunction {
      * {@.ja 登録された NameServer リスト}
      * {@.en NameServer list}
      */
-    protected Vector<Names> m_names = new Vector<Names>();
+    protected Vector<NamingService> m_names = new Vector<NamingService>();
     /**
      * {@.ja Naming Service登録用コンポーネントクラス}
      * {@.en Class for component management}
@@ -569,6 +622,19 @@ public class NamingManager implements CallbackFunction {
          */
         public RTObject_impl rtobj;
     }
+
+    /**
+     * {@.ja コンポーネント管理用構造体}
+     * {@,en Structure for component management}
+     */
+    protected class Port {
+      public Port(final String n, final PortBase p) {
+          name = n;
+          port = p;
+      }
+      public String name;
+      public PortBase port;
+    };
     
     /**
      * {@.ja Naming Service登録用マネージャサーバントクラス}
@@ -606,6 +672,12 @@ public class NamingManager implements CallbackFunction {
      * {@.en Component list}
      */
     protected Vector<Comps> m_compNames = new Vector<Comps>();
+
+    /**
+     * {@.ja コンポーネントリスト}
+     * {@.en Component list}
+     */
+    protected Vector<Port> m_portNames = new Vector<Port>();
 
     /**
      * {@.ja 登録されたManagerServantリスト}

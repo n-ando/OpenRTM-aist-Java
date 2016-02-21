@@ -1,5 +1,6 @@
 package jp.go.aist.rtm.RTC;
 
+import jp.go.aist.rtm.RTC.port.PortBase;
   /**
    * {@.ja Naming Service管理用インターフェース。}
    * {@.en NamingService management interface}
@@ -37,6 +38,8 @@ public interface NamingBase {
      *   {@.en The target objects to be bound to the NamingSerivce}
      */
     public void bindObject(final String name, final RTObject_impl rtobj);
+
+    public void bindObject(final String name, final PortBase port);
 
     /**
      * {@.ja 指定したManagerServantをNamingServiceへバインドする純粋仮想関数}

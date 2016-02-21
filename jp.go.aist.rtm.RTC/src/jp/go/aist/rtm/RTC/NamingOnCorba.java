@@ -1,6 +1,7 @@
 package jp.go.aist.rtm.RTC;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.port.PortBase;
 
 import org.omg.CORBA.ORB;
   /**
@@ -86,6 +87,13 @@ class NamingOnCorba implements NamingBase {
         }
     }
 
+    public void bindObject(final String name, final PortBase port) {
+        rtcout.println(Logbuf.TRACE, "bindObject(" + name + ",rtobj)");
+        try{
+            m_cosnaming.rebindByString(name, port.getPortRef(), true);
+        } catch ( Exception ex ) {
+        }
+    }
     /**
      * {@.ja 指定したManagerServantをNamingServiceへバインド}
      * {@.en Bind the specified ManagerServants to NamingService}
@@ -143,6 +151,9 @@ class NamingOnCorba implements NamingBase {
         return m_cosnaming.isAlive();
     }
 
+    public CorbaNaming getCorbaNaming() {
+        return m_cosnaming;
+    }
     private CorbaNaming m_cosnaming;
     /**
      * {@.ja Logging用フォーマットオブジェクト}
