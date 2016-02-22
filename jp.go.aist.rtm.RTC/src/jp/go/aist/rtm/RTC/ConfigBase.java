@@ -92,6 +92,9 @@ abstract class ConfigBase {
      *
      */
     public void notifyUpdate(final String key, final String val){
+        if(m_admin == null || m_callback_name == null) {
+            return;
+        }
         try {
             Class clazz = m_admin.getClass();
 
