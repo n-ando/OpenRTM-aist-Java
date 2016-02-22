@@ -9,6 +9,8 @@ import jp.go.aist.rtm.RTC.port.InPortCorbaCdrProvider;
 import jp.go.aist.rtm.RTC.port.InPortCorbaCdrConsumer;
 import jp.go.aist.rtm.RTC.port.OutPortCorbaCdrProvider;
 import jp.go.aist.rtm.RTC.port.OutPortCorbaCdrConsumer;
+import jp.go.aist.rtm.RTC.port.InPortDirectProvider;
+import jp.go.aist.rtm.RTC.port.InPortDirectConsumer;
 
 /**
  * {@.ja Factory初期処理用クラス}
@@ -43,5 +45,7 @@ public class FactoryInit {
 	InPortCorbaCdrConsumer.InPortCorbaCdrConsumerInit();
 	OutPortCorbaCdrConsumer.OutPortCorbaCdrConsumerInit();
 	OutPortCorbaCdrProvider.OutPortCorbaCdrProviderInit();
+	InPortDirectProvider.InPortDirectProviderInit();
+	InPortDirectConsumer.InPortDirectConsumerInit();
     }
 }

@@ -540,11 +540,6 @@ public class Manager {
                     nvholder.value = new NameValue[0];
                 }
 
-                CORBA_SeqUtil.push_back(nvholder,
-                    NVUtil.newNVString("dataport.dataflow_type", "push"));
-                CORBA_SeqUtil.push_back(nvholder,
-                    NVUtil.newNVString("dataport.interface_type","corba_cdr"));
-
 
                 if ( conn_prop.length == 2 ) {
                     String[] opt_props = conn_prop[1].split("\\&");
@@ -556,6 +551,17 @@ public class Manager {
                             NVUtil.newNVString("dataport." + temp[0],temp[1]));
                     }
                 }
+                int index;
+                index = NVUtil.find_index(nvholder,"dataport.dataflow_type");
+                if(index<0) {
+                    CORBA_SeqUtil.push_back(nvholder,
+                        NVUtil.newNVString("dataport.dataflow_type", "push"));
+                }
+                index = NVUtil.find_index(nvholder,"dataport.interface_type");
+                if(index<0) {
+                    CORBA_SeqUtil.push_back(nvholder,
+                        NVUtil.newNVString("dataport.interface_type","corba_cdr"));
+                }
                 conn_prof.properties = nvholder.value;
 
                 ConnectorProfileHolder profileholder = new ConnectorProfileHolder();
@@ -565,6 +571,7 @@ public class Manager {
                     rtcout.println(Logbuf.ERROR, 
                         "Connection error: " + connectors[ic]);
                 }
+
                 NVUtil.dump(nvholder);
             }
     } // end of pre-connection

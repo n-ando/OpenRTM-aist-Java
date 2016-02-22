@@ -625,7 +625,7 @@ public class NamingManager implements CallbackFunction {
 
     /**
      * {@.ja コンポーネント管理用構造体}
-     * {@,en Structure for component management}
+     * {@.en Structure for component management}
      */
     protected class Port {
       public Port(final String n, final PortBase p) {

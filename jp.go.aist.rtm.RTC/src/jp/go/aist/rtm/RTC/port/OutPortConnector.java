@@ -24,11 +24,13 @@ public abstract class OutPortConnector extends ConnectorBase {
      *   {@.ja 接続情報を含む ConnectorInfo オブジェクト}
      *   {@.en ConnectorInfo object which includes connection information}
      */
-    public OutPortConnector(ConnectorBase.ConnectorInfo profile) {
+    public OutPortConnector(ConnectorBase.ConnectorInfo profile, 
+                        ConnectorListeners listeners) {
         rtcout = new Logbuf("OutPortConnector");
         m_profile = profile;
         m_isLittleEndian = true;
         m_directInPort = null;
+        m_listeners = listeners;
     }
 
     /**
@@ -138,6 +140,7 @@ public abstract class OutPortConnector extends ConnectorBase {
         }
 
         m_directInPort = directInPort;
+        m_inPortListeners = m_directInPort.getListeners();
 
         return true;
     }
@@ -155,6 +158,22 @@ public abstract class OutPortConnector extends ConnectorBase {
     protected Logbuf rtcout;
     protected ConnectorInfo m_profile;
     protected boolean m_isLittleEndian;
+    /**
+     * {@.ja 同一プロセス上のピアInPortのポインタ}
+     * {@.en InProt pointer to the peer in the same process}
+     */
     protected InPortBase m_directInPort;
+    /**
+     * {@.ja ConnectorListenrs への参照}
+     * {@.en A reference to a ConnectorListener}
+     */
+    protected ConnectorListeners m_listeners = new ConnectorListeners();
+
+    /**
+     * {@.ja InPort 側の ConnectorListenrs への参照}
+     * {@.en A pointer to a InPort's ConnectorListener}
+     */
+    protected ConnectorListeners m_inPortListeners = new ConnectorListeners();
+
 }
 

@@ -1516,21 +1516,23 @@ public abstract class OutPortBase extends PortBase {
                                    "old compiler? new returned 0;");
                     return null;
                 }
-                rtcout.println(Logbuf.TRACE, "OutPortPushConnector create");
+                rtcout.println(Logbuf.TRACE, "OutPortPushConnector created");
     
-                rtcout.println(Logbuf.PARANOID, "direct_dataput.disable= " + 
-                    prop.getProperty("direct_dataput.disable"));
-                // set direct InPort if ConnectorProfile
-                // .properties["dataport.outport.direct_dataput.disable"] != YES
-                if (!StringUtil.toBool(
-                    prop.getProperty("direct_dataput.disable"), 
-                    "YES", "NO", true)) {
+                String type = prop.getProperty("interface_type").trim();
+                rtcout.println(Logbuf.PARANOID, "interface_type= " + type);
+                // "interface_type" == "direct"
+                if (type.equals("direct")) {
                     InPortBase inport = getLocalInPort(profile);
-                    if (inport != null) {
-                        connector.setInPort(inport);
+                    if (inport == null) {
+                        rtcout.println(Logbuf.DEBUG, 
+                            "interface_type is direct, " +
+                            "but a peer InPort servant could not be obtained.");
+                        //delete connector;
+                        return null;
                     }
+                    connector.setInPort(inport);
                 }
-                // end of direct port
+                // end of direct interface_type
 
                 m_connectors.add(connector);
                 rtcout.println(Logbuf.PARANOID, 
@@ -1616,7 +1618,7 @@ public abstract class OutPortBase extends PortBase {
             catch  (Exception e) {
                 rtcout.println(Logbuf.TRACE, "126: "+e);
                 rtcout.println(Logbuf.DEBUG, 
-                            "Peer port is remote port.");
+                            "Peer port might be a remote port.");
             }
         }
         return null;

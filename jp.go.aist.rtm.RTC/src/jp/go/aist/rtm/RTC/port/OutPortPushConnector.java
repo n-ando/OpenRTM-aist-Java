@@ -61,7 +61,7 @@ public class OutPortPushConnector extends OutPortConnector {
                          InPortConsumer consumer,
                          ConnectorListeners listeners,
                          BufferBase<OutputStream> buffer) throws Exception {
-        super(profile);
+        super(profile,listeners);
         try {
             _Constructor(profile,consumer,listeners,buffer);
         }
@@ -106,7 +106,7 @@ public class OutPortPushConnector extends OutPortConnector {
     public OutPortPushConnector(ConnectorInfo profile,
                          ConnectorListeners listeners,
                          InPortConsumer consumer )  throws Exception {
-        super(profile);
+        super(profile,listeners);
         BufferBase<OutputStream> buffer = null;
         try {
             _Constructor(profile,consumer,listeners,buffer);
@@ -201,13 +201,54 @@ public class OutPortPushConnector extends OutPortConnector {
         rtcout.println(Logbuf.TRACE, "write()");
 
         if (m_directInPort != null) {
+            InPort inport = (InPort)m_directInPort;
+            if(inport.isNew()) {
+                // ON_BUFFER_OVERWRITE(In,Out), ON_RECEIVER_FULL(In,Out) callback
+                m_listeners.
+                  connectorData_[ConnectorDataListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
+                m_inPortListeners.
+                  connectorData_[ConnectorDataListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
+                m_listeners.
+                  connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
+                m_inPortListeners.
+                  connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
+                rtcout.println(Logbuf.PARANOID, 
+                    "ONBUFFER_OVERWRITE(InPort,OutPort), "
+                    + "ON_RECEIVER_FULL(InPort,OutPort) "
+                    + "callback called in direct mode.");
+
+            }
+            // ON_BUFFER_WRITE(In,Out) callback
+            m_listeners.
+                connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
+            m_inPortListeners .
+                connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
+            rtcout.println(Logbuf.PARANOID, 
+                    "ON_BUFFER_WRITE(InPort,OutPort), "
+                    + "callback called in direct mode.");
+            DataRef<DataType> dataref 
+                    = new DataRef<DataType>(data);
+            inport.write(dataref); // write to InPort variable!!
+            // ON_RECEIVED(In,Out) callback
+            m_listeners.
+                connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
+            m_inPortListeners.
+                connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
+            rtcout.println(Logbuf.PARANOID, 
+                    "ON_RECEIVED(InPort,OutPort), "
+                    + "callback called in direct mode.");
+            return ReturnCode.PORT_OK;
+
+/*
             DataRef<DataType> dataref 
                     = new DataRef<DataType>(data);
             //static_cast<InPort<DataType>*>(m_directInPort).write(data);
             ((InPort)m_directInPort).write(dataref);
             return ReturnCode.PORT_OK;
+*/
         }
 
+        // normal case
         OutPort out = (OutPort)m_outport;
         OutputStream cdr 
             = new EncapsOutputStreamExt(m_orb,m_isLittleEndian);

@@ -5,7 +5,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.omg.CORBA.portable.Streamable;
+import org.omg.CORBA.portable.OutputStream;
 
+import jp.go.aist.rtm.RTC.log.Logbuf;
   /**
    * {@.ja ConnectorDataListenerTクラス}
    * {@.en ConnectorDataListenerT class}
@@ -25,6 +27,7 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
      *
      */
     public ConnectorDataListenerT(Class<DataType> cl) {
+        rtcout = new Logbuf("ConnectorDataListenerT");
         String class_name = cl.getName();
         try {
             Class datatype = Class.forName(class_name,
@@ -74,19 +77,30 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
      *   {@.en Object}
      */
     public void update(Observable o, Object obj) {
-        ConnectorDataListenerArgument arg
-               = (ConnectorDataListenerArgument)obj;
-        try {
-            m_streamable._read(arg.m_data.create_input_stream());
-            m_datatype = (DataType)m_field.get(m_streamable);
+        //ConnectorDataListenerArgument arg
+        //       = (ConnectorDataListenerArgument)obj;
+        ConnectorDataListenerArgumentDataRef<DataType> arg 
+            = (ConnectorDataListenerArgumentDataRef<DataType>)obj;
+        String type = arg.m_info.properties.getProperty("interface_type");
+        //rtcout.println(Logbuf.TRACE, "interface_type:"+type);
+        if(type.equals("direct")) {
+            m_datatype = (DataType)arg.m_data;
         }
-        catch(IllegalAccessException e){
-            //set throws
-            e.printStackTrace();
-        }
-        catch(IllegalArgumentException e){
-            //invoke throws
-            e.printStackTrace();
+        else { 
+            try {
+                //m_streamable._read(arg.m_data.create_input_stream());
+                OutputStream out_data = (OutputStream)arg.m_data;
+                m_streamable._read(out_data.create_input_stream());
+                m_datatype = (DataType)m_field.get(m_streamable);
+            }
+            catch(IllegalAccessException e){
+                //set throws
+                e.printStackTrace();
+            }
+            catch(IllegalArgumentException e){
+                //invoke throws
+                e.printStackTrace();
+            }
         }
         operator(arg.m_info,m_datatype);
     }
@@ -112,6 +126,7 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
     private Streamable m_streamable = null;
     private Field m_field = null;
     private DataType m_datatype = null;
+    protected Logbuf rtcout;
 }
 
 

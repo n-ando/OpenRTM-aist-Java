@@ -1168,7 +1168,7 @@ public abstract class InPortBase extends PortBase {
      * {@.en OutPort consumer initialization}
      */
     protected void initConsumers() {
-        rtcout.println(Logbuf.TRACE, "iinitConsumers()");
+        rtcout.println(Logbuf.TRACE, "initConsumers()");
 
         // create OuPort consumers
         OutPortConsumerFactory<OutPortProvider,String> factory 
@@ -1425,6 +1425,26 @@ public abstract class InPortBase extends PortBase {
             }
         }
     }
+
+    /**
+     * {@.ja リスナホルダを取得する}
+     * {@.en Getting listeners holder}
+     *
+     * <p> 
+     * {@.ja InPortBaseが保持するリスナホルダを返す。}
+     * {@.en This operation returns listeners holder.}
+     *
+     * @return 
+     *   {@.ja ConnectorListeners}
+     *   {@.en ConnectorListeners}
+     *
+     */
+    public ConnectorListeners getListeners(){
+        return m_listeners;
+    }
+
+
+
     /**
      * {@.ja endian 設定を返す}
      * {@.en Returns endian}

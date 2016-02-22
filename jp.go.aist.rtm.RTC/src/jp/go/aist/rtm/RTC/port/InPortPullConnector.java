@@ -98,7 +98,7 @@ public class InPortPullConnector extends InPortConnector {
                         OutPortConsumer consumer,
                         ConnectorListeners listeners,
                         BufferBase<OutputStream> buffer) throws Exception {
-        super(profile, buffer);
+        super(profile, listeners, buffer);
         m_consumer = consumer;
         m_listeners = listeners; 
         rtcout = new Logbuf("InPortPullConnector");

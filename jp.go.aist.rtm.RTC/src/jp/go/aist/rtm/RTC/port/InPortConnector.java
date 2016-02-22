@@ -28,12 +28,14 @@ public abstract class InPortConnector extends ConnectorBase {
      *   {@.en A pointer to the buffer of the connector}
      */
     public InPortConnector(ConnectorBase.ConnectorInfo profile,
+                    ConnectorListeners listeners,
                     BufferBase<OutputStream> buffer) {
         rtcout = new Logbuf("InPortConnector");
         m_profile = profile;
         m_buffer = buffer;
         m_isLittleEndian = true;
         m_orb = ORBUtil.getOrb();
+        m_listeners = listeners;
     }
 
 
@@ -169,6 +171,12 @@ public abstract class InPortConnector extends ConnectorBase {
     protected BufferBase<OutputStream> m_buffer;
     protected boolean m_isLittleEndian;
     protected org.omg.CORBA.ORB m_orb;
+    /**
+     * {@.ja ConnectorListenrs への参照}
+     * {@.en A reference to a ConnectorListener}
+     */
+    ConnectorListeners m_listeners;
+
 }
 
 

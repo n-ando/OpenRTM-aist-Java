@@ -52,7 +52,7 @@ public class InPortPushConnector extends InPortConnector {
     public InPortPushConnector(ConnectorInfo profile, InPortProvider provider,
                         ConnectorListeners listeners,
                         BufferBase<OutputStream> buffer) throws Exception {
-        super(profile, buffer);
+        super(profile, listeners, buffer);
         m_provider = provider;
         m_listeners = listeners; 
         if (buffer == null ) {
