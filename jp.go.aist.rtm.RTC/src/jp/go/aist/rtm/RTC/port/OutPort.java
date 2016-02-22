@@ -350,11 +350,11 @@ public class OutPort<DataType> extends OutPortBase {
 
                 result = false;
                 String id = m_connectors.elementAt(i).id();
-                RTC.ConnectorProfile prof = findConnProfile(id);
 
                 if (ret.equals(ReturnCode.CONNECTION_LOST)) {
                     rtcout.println(Logbuf.TRACE, "connection_lost id: "+id);
                     if(m_onConnectionLost != null) {
+                        RTC.ConnectorProfile prof = findConnProfile(id);
                         RTC.ConnectorProfileHolder holder 
                             = new RTC.ConnectorProfileHolder(prof);
                         m_onConnectionLost.run(holder);
