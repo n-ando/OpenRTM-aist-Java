@@ -301,8 +301,29 @@ public abstract class InPortBase extends PortBase {
      */
     public void init(Properties prop) {
         rtcout.println(Logbuf.TRACE, "init()");
+        rtcout.println(Logbuf.PARANOID, "given properties:");
+        String str = new String();
+        prop._dump(str,prop,0);
+        rtcout.println(Logbuf.DEBUG, str);
+
+        rtcout.println(Logbuf.PARANOID, "m_properties:");
+        str = "";
+        m_properties._dump(str,m_properties,0);
+        rtcout.println(Logbuf.DEBUG, str);
 
         m_properties.merge(prop);
+
+        NVListHolder nvlistholder1 = new NVListHolder();
+        NVUtil.copyFromProperties(nvlistholder1, m_properties);
+        NVListHolder nvlistholder2 = new NVListHolder(m_profile.properties);
+        CORBA_SeqUtil.push_back_list(nvlistholder2, nvlistholder1);
+        m_profile.properties = nvlistholder2.value;
+
+        rtcout.println(Logbuf.PARANOID, "updated properties:");
+        str = "";
+        m_properties._dump(str,m_properties,0);
+        rtcout.println(Logbuf.DEBUG, str);
+
         if (m_singlebuffer) {
             rtcout.println(Logbuf.DEBUG, "single buffer mode.");
             final BufferFactory<RingBuffer<OutputStream>,String> factory 
