@@ -10,6 +10,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.ConsoleHandler;
 
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.util.TimeValue;
@@ -152,6 +153,18 @@ public class Logbuf {
 //            System.err.println("Logbuf.println() destination handler was not registered.");
             return;
         }
+        final  String color[] =
+        {
+            "\u001b[00m",         // SLILENT  (none)
+            "\u001b[00;31m", // FATAL    (red)
+            "\u001b[00;35m", // ERROR    (magenta)
+            "\u001b[00;33m", // WARN     (yellow)
+            "\u001b[00;34m", // INFO     (blue)
+            "\u001b[00;32m", // DEBUG    (green)
+            "\u001b[00;36m", // TRACE    (cyan)
+            "\u001b[00;39m", // VERBOSE  (default)
+            "\u001b[00;37m"  // PARANOID (white)
+        };
 //        StringBuilder sb = new StringBuilder();
 //
 //        // Send all output to the Appendable object sb
@@ -165,7 +178,20 @@ public class Logbuf {
 //        m_Logger.log(clevel, 
 //                    formatter.format(m_dateFormat,date,date,date,date,date,date,date,date,date,date) 
 //                    + " " + m_Suffix + " " + logLevelToStr(level) + " " + contents);
-        m_Logger.log(clevel, getDate() + " " + m_Suffix + " " + logLevelToStr(level) + " " + contents);
+        int stdoutflg = 0;
+        Handler[] h = m_Logger.getHandlers();
+        for (int ic=0; ic< h.length; ++ic) {
+            if(h[ic] instanceof ConsoleHandler) {
+                stdoutflg = 1;
+                break;
+            }
+        }
+        if (stdoutflg == 1) {
+            m_Logger.log(clevel, color[level] +getDate() + " " + m_Suffix + " " + logLevelToStr(level) + " " + contents + "\u001b[00m");
+        }
+        else {
+            m_Logger.log(clevel, getDate() + " " + m_Suffix + " " + logLevelToStr(level) + " " + contents);
+       }
     }
     
     protected String getDate() {
