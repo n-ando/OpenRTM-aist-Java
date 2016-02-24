@@ -18,6 +18,8 @@ import RTC.PortService;
 import RTC.PortServiceListHolder;
 import RTC.ReturnCode_t;
 
+import _SDOPackage.Configuration;
+import _SDOPackage.ConfigurationSet;
 import _SDOPackage.NameValue;
 import _SDOPackage.NVListHolder;
 
@@ -71,7 +73,7 @@ public class RTShellUtil {
      * 
      * @param rtc
      *   {@.ja RTコンポーネント}
-     *   {@.ja RTComponent}
+     *   {@.en RTComponent}
      *
      * @return 
      *   {@.ja true:生存している, false:生存していない}
@@ -1098,397 +1100,418 @@ public class RTShellUtil {
     /**
      *
      * {@.ja 指定したポートと指定したリスト内のポート全てと接続する}
-     *
+     * {@.en Connects all specified ports.}
      * 
      * @param name コネクタ名
      *   {@.ja コネクタ名}
+     *   {@.en connector name}
      * 
      * @param prop 
      *   {@.ja 設定}
+     *   {@.en connection properties}
      * 
      * @param port0 
      *   {@.ja 対象のポート}
+     *   {@.en Target Port}
      * 
      * @param port1 
      *   {@.ja 対象のポートのリスト}
-     * 
+     *   {@.en List of connected ports}
+     *
      * @return 
      *   {@.ja 全ての接続が成功した場合はRTC_OKを返す。
      * connect関数がRTC_OK以外を返した場合はRTC_ERRORを返す。}
+     *   {@.en Return code}
      *
      *
      * RTC::ReturnCode_t connect_multi(const std::string name,const coil::Properties prop,const RTC::PortService_ptr port,RTC::PortServiceList_var& target_ports)
      */
-/*
-    public static connect_multi(name, prop, port, target_ports){
-        ret = RTC.RTC_OK
+    public static ReturnCode_t connect_multi(String name, Properties prop, 
+                    PortService port, PortServiceListHolder target_ports){
+        ReturnCode_t ret = ReturnCode_t.RTC_OK;
   
-        for p in target_ports{
-            if p._is_equivalent(port){
-                continue
+        for (int ic=0; ic < target_ports.value.length; ++ic) {
+            if(target_ports.value[ic]._is_equivalent(port)){
+                continue;
             }
-            if already_connected(port, p){
-                continue
+            if(already_connected(port, target_ports.value[ic])){
+                continue;
             }
-            if RTC.RTC_OK != connect(name, prop, port, p){
-                ret = RTC.RTC_ERROR
+            ConnectorProfileHolder profileholder = new ConnectorProfileHolder();
+            profileholder.value 
+                = create_connector(name, prop, port, target_ports.value[ic]);
+            if(port.connect(profileholder) != ReturnCode_t.RTC_OK){
+                ret = ReturnCode_t.RTC_ERROR;
             }
         }
         return ret;
     }
-*/
-}
-/**
- * {@.ja ポートを名前から検索}
- *
- */
-//public static class find_port {
-  
-    /**
-     *
-     * {@.ja コンストラクタ}
-     * 
-     * <p>
-     * {@.ja 検索するポート名を指定する}
-     *
-     * @param name 
-     *   {@.ja ポート名}
-     *
-     * find_port(const std::string name)
-     */
-/*
-    public static __init__(self, name){
-        self._name = name
-    }
-*/
-    /**
-     *
-     * {@.ja 対象のポートの名前と指定したポート名が一致するか判定}
-     * 
-     * @param p 
-     *   {@.ja 対象のポート}
-     * 
-     * @return 
-     *   {@.ja true: 名前が一致、false:　名前が不一致}
-     * 
-     *
-     * bool operator()(RTC::PortService_var p)
-     */
-/*
-    public static __call__(self, p){
-        prof = p.get_port_profile()
-        c = prof.name
-    
-        return (self._name == c);
-    }
-*/ 
     /**
      *
      * {@.ja 対象のRTCの指定した名前のポートを接続する}
+     * {@.en Connects the ports specified by the name.}
      *
      * @param name 
      *   {@.ja コネクタ名}
+     *   {@.en connector name}
      * 
      * @param prop 
      *   {@.ja 設定}
+     *   {@.en connection properties}
      * 
      * @param rtc0 
      *   {@.ja 対象のRTCコンポーネント1}
+     *   {@.en Target RT-Component's instances}
      * 
      * @param portName0 
      *   {@.ja 対象のポート名1}
+     *   {@.en Target Port name}
      * 
      * @param rtc1 
      *   {@.ja 対象のRTCコンポーネント2}
+     *   {@.en Target RT-Component's instances}
      * 
      * @param portName1 
-     *   {@.ja 対象のRTCコンポーネント2}
+     *   {@.ja 対象のポート名2}
+     *   {@.en Target Port name}
      * 
      * @return 
      *   {@.ja RTC、ポートがnilの場合はBAD_PARAMETERを返す。
      * nilではない場合はport0.connect関数の戻り値を返す。RTC_OKの場合は接続が成功}
+     *   {@.en Return code}
      *
      *
      * RTC::ReturnCode_t connect_by_name(std::string name, coil::Properties prop,RTC::RTObject_ptr rtc0,const std::string portName0,RTC::RTObject_ptr rtc1,const std::string portName1)
      */
-/*
-    public static connect_by_name(name, prop, rtc0, portName0, RTObject rtc1, portName1){
-        if CORBA.is_nil(rtc0){
-            return RTC.BAD_PARAMETER;
+    public static ReturnCode_t connect_by_name( String name, Properties prop, 
+           RTObject rtc0, String portName0, RTObject rtc1, String portName1){
+        if(rtc0 == null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        if CORBA.is_nil(rtc1){
-            return RTC.BAD_PARAMETER;
+        if(rtc1 == null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        port0 = get_port_by_name(rtc0, portName0)
-        if CORBA.is_nil(port0){
-            return RTC.BAD_PARAMETER;
+        PortService port0 = get_port_by_name(rtc0, portName0);
+        if(port0 == null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
 
-        port1 = get_port_by_name(rtc1, portName1)
-        if CORBA.is_nil(port1){
-            return RTC.BAD_PARAMETER;
+        PortService port1 = get_port_by_name(rtc1, portName1);
+        if(port1==null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
 
         return connect(name, prop, port0, port1);
 
     }
-*/
     /**
      *
      * {@.ja 指定のコネクタを切断する}
+     * {@.en Disconnects specified connections.} 
      *
      * 
      * @param connector_prof 
      *   {@.ja コネクタプロファイル}
+     *   {@.en Conenctor Profile}
      * 
      * @return 
      *   {@.ja コネクタプロファイルで保持しているポートのオブジェクトリファレンスがnilの場合はBAD_PARAMETERを返す
      * nilではない場合はports[0].disconnect関数の戻り値を返す。RTC_OKの場合は切断が成功}
+     *   {@.en Return code}
      *
      *
      */
-/*
-    public static disconnect(connector_prof){
-        ports = connector_prof.ports
-        return disconnect_by_connector_id(ports[0], connector_prof.connector_id);
+    public static ReturnCode_t disconnect(ConnectorProfile connector_prof){
+        PortServiceListHolder ports = new PortServiceListHolder();
+        ports.value = connector_prof.ports;
+        return disconnect_by_connector_id(ports.value[0], 
+                    connector_prof.connector_id);
     }  
-*/  
 
     /**
      *
      * {@.ja 対象のポートで指定した名前のコネクタを切断}
+     * {@.en Disconnects the connectionis specified by name.}
      *
      * @param port 
      *   {@.ja 対象のポート}
+     *   {@.en Target Port}
      * 
      * @param name 
      *   {@.ja コネクタ名}
+     *   {@.en Connector name}
      * 
      * @return 
      *   {@.ja portがnilの場合はBAD_PARAMETERを返す
      * nilではない場合はdisconnect関数の戻り値を返す。RTC_OKの場合は切断が成功}
+     *   {@.en Return code}
      *
      *
      */
-/*
-    public static disconnect_by_connector_name(port, name){
-        if CORBA.is_nil(port){
-            return RTC.BAD_PARAMETER;
+    public static  ReturnCode_t disconnect_by_connector_name(PortService port, 
+                String name){
+        if(port == null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        conprof = port.get_connector_profiles()
-        for c in conprof{
-            if c.name == name{
-                return disconnect(c);
+        ConnectorProfileListHolder conprof =
+                new ConnectorProfileListHolder();
+        conprof.value = port.get_connector_profiles();
+        for(int ic=0;ic<conprof.value.length;++ic){
+            if(conprof.value[ic].name.equals(name)){
+                return disconnect(conprof.value[ic]);
             }
         }
-        return RTC.BAD_PARAMETERS;
+        return ReturnCode_t.BAD_PARAMETER;
 
     }
-*/
 
     /**
      *
      * {@.ja 対象のポートで指定したIDのコネクタを切断}
+     * {@.en Disconnects the connectionis specified by id.}
      *
      * 
      * @param port 
      *   {@.ja 対象のポート}
+     *   {@.en Target Port}
      * 
      * @param name 
      *   {@.ja コネクタID}
+     *   {@.en connector id}
      * 
      * @return 
      *   {@.ja portがnilの場合はBAD_PARAMETERを返す
      * nilではない場合はdisconnect関数の戻り値を返す。RTC_OKの場合は切断が成功}
+     *   {@.en Return code}
      *
      *
      */
-/*
-    public static disconnect_by_connector_id(port, id){
-        if CORBA.is_nil(port){
-            return RTC.BAD_PARAMETER;
+    public static ReturnCode_t disconnect_by_connector_id(PortService port, 
+                String id){
+        if(port == null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
         return port.disconnect(id);
 
     }
-*/
     /**
      *
      * {@.ja 対象ポートと接続しているポートで指定したポート名と一致した場合に切断}
-     *
+     * {@.en Disconnects a connection in specified by port.}
      * 
      * @param localport 
      *   {@.ja 対象のポート}
+     *   {@.en Target Port}
      *
      * @param othername 
      *   {@.ja 接続しているポート名}
+     *   {@.en port name}
      *
      * @return 
      *   {@.ja ポートがnilの場合、localportの名前とothernameが一致する場合、接続しているポートの名前でothernameと一致するものがない場合にBAD_PARAMETERを返す
      * 上記の条件に当てはまらない場合はdisconnect関数の戻り値を返す。RTC_OKの場合は切断が成功}
+     *   {@.en Return code}
      *
      *
      */
-/*
-    public static disconnect_by_port_name(localport, othername){
-        if CORBA.is_nil(localport){
-            return RTC.BAD_PARAMETER;
+    public static ReturnCode_t disconnect_by_port_name(PortService localport, 
+                String othername){
+        if(localport == null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        prof = localport.get_port_profile()
-        if prof.name == othername{
-            return RTC.BAD_PARAMETER;
+        PortProfile prof = localport.get_port_profile();
+        if( prof.name.equals(othername)){
+            return ReturnCode_t.BAD_PARAMETER;
         }
   
-        conprof = localport.get_connector_profiles()
-        for c in conprof{
-            for p in c.ports{
-                if not CORBA.is_nil(p){
-                    pp = p.get_port_profile()
-                    if pp.name == othername{
-                        return disconnect(c);
+        ConnectorProfileListHolder conprof =
+                new ConnectorProfileListHolder();
+        conprof.value = localport.get_connector_profiles();
+
+        for(int ic=0;ic<conprof.value.length;++ic){
+            ConnectorProfile cprof = conprof.value[ic];
+            for(int icc=0;icc<cprof.ports.length;++icc){
+                if(cprof.ports[icc] != null){
+                    PortProfile pp = cprof.ports[icc].get_port_profile();
+                    if(pp.name.equals(othername)){
+                        return disconnect(cprof);
                     }
+
                 }
             }
         }
-        return RTC.BAD_PARAMETER;
+
+        return ReturnCode_t.BAD_PARAMETER;
     }
-*/
     /**
      *
      * {@.ja 指定したRTコンポーネントのコンフィギュレーション取得}
+     * {@.en Get Configuration object}
      * 
      * @param rtc 
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RTComponent}
      *
      * @return 
      *   {@.ja rtcがnilの場合はNoneを返す。
      * nilではない場合はコンフィギュレーションを返す。}
-     *
-     *
+     *   {@.en The Configuration interface of an SDO.}
      *
      */
-/*
-    public static get_configuration(RTObject rtc){
-        if CORBA.is_nil(rtc){
-            return SDOPackage.Configuration._nil;
+    public static Configuration get_configuration(RTObject rtc){
+        if(rtc==null){
+            return null;
         }
-  
-        return rtc.get_configuration();
+        try { 
+            return rtc.get_configuration();
+        }
+        catch (Exception ex) {
+            return null;
+       }
     }
-*/
     /**
      *
      * {@.ja 指定したコンフィギュレーションセット名、パラメータ名のコンフィギュレーションパラメータを取得}
+     * {@.en Get Configuration object}
      * <p>
      * {@.ja コンポーネントのプロパティ取得}
      * 
      * @param conf 
      *   {@.ja コンフィギュレーション}
+     *   {@.en Configuration}
      * 
      * @param confset_name 
      *   {@.ja コンフィギュレーションセット名}
+     *   {@.en ConfigurationSet name}
      * 
      * @param value_name 
      *   {@.ja パラメータ名}
+     *   {@.en Paramter name}
      * 
      * @return パラメータ
      *   {@.ja パラメータ}
+     *   {@.en Property value}
      * 
      */
-/*
-    public static get_parameter_by_key(RTObject rtc, confset_name, value_name){
-        conf = rtc.get_configuration()
-  
-    
-        confset = conf.get_configuration_set(confset_name)
-        confData = confset.configuration_data
-        prop = OpenRTM_aist.Properties()
-        OpenRTM_aist.NVUtil.copyToProperties(prop, confData)
-        return prop.getProperty(value_name);
+    public static String get_parameter_by_key(RTObject rtc, 
+                String confset_name, String value_name){
+        try { 
+            Configuration conf = rtc.get_configuration();
+            ConfigurationSet confset = conf.get_configuration_set(confset_name);
+            NVListHolder confData = new NVListHolder();
+            confData.value = confset.configuration_data;
+            Properties prop = new Properties();
+            NVUtil.copyToProperties(prop, confData);
+            return prop.getProperty(value_name);
+        }
+        catch (Exception ex) {
+            return "";
+        }
     
     }  
-*/
 
     /**
      *
      * {@.ja 対象のRTCのアクティブなコンフィギュレーションセット名を取得する}
+     * {@.en Get Configuration object}
      *
      * @param rtc 
      *   {@.ja RTコンポーネント}
+     *   {@.en RTComponent}
      * 
      * @return 
      *   {@.ja コンフィギュレーションセット名
      * コンフィギュレーションの取得に失敗した場合は空の文字列を返す}
+     *   {@.en configuration name}
      * 
      *
      *
      */
-/*
-    public static get_current_configuration_name(RTObject rtc){
-        conf = rtc.get_configuration()
-        confset = conf.get_active_configuration_set()
-        return confset.id;
+    public static String get_current_configuration_name(RTObject rtc){
+        try { 
+            Configuration conf = rtc.get_configuration();
+            ConfigurationSet confset = conf.get_active_configuration_set();
+            return confset.id;
+        }
+        catch (Exception ex) {
+            return "";
+        }
     }
-*/
     /**
-     *:
      *
      * {@.ja アクティブなコンフィギュレーションセットを取得}
+     * {@.en Get Configuration object}
      *
      * @param rtc 
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RTComponent}
      * 
      * @return 
      *   {@.ja アクティブなコンフィギュレーションセット}
+     *   {@.en ConfigurationSet}
      * 
      *
      *
      */
-/*
-    public static get_active_configuration(RTObject rtc){
-        conf = rtc.get_configuration()
+    public static Properties get_active_configuration(RTObject rtc){
+        try {
+            Configuration conf = rtc.get_configuration();
 
-        confset = conf.get_active_configuration_set()
-        confData = confset.configuration_data
-        prop = OpenRTM_aist.Properties()
-        OpenRTM_aist.NVUtil.copyToProperties(prop, confData)
-        return prop;
+            ConfigurationSet confset = conf.get_active_configuration_set();
+            NVListHolder confData = new NVListHolder();
+            confData.value = confset.configuration_data;
+            Properties prop = new Properties();
+            NVUtil.copyToProperties(prop, confData);
+            return prop;
+        }
+        catch (Exception ex) {
+            return null;
+        }
     
     }
-*/
     /**
      *
      * {@.ja コンフィギュレーションパラメータを設定}
+     * {@.en Set Configuration }
      *
      * @param confset_name 
      *   {@.ja コンフィギュレーションセット名}
+     *   {@.en ConfigurationSet name}
      * 
      * @param value_name 
      *   {@.ja パラメータ名}
+     *   {@.en  trametername}
      * 
      * @param value パラメータ
      *   {@.ja パラメータ}
+     *   {@.en Paramter}
      * 
      * @return 
      *   {@.ja true:設定に成功、false:設定に失敗}
+     *   {@.en true: succeeded, false: failed}
      * 
      *
      */
-/*
-    public static set_configuration(rRTObject tc, confset_name, value_name, value){
-        conf = rtc.get_configuration()
+    public static boolean set_configuration(RTObject rtc, String confset_name, 
+                String value_name, String value){
+        try {
+            Configuration conf = rtc.get_configuration();
   
-        confset = conf.get_configuration_set(confset_name)
-        confData = confset.configuration_data
-        prop = OpenRTM_aist.Properties()
-        OpenRTM_aist.NVUtil.copyToProperties(prop, confData)
-        prop.setProperty(value_name,value)
-        OpenRTM_aist.NVUtil.copyFromProperties(confData,prop)
-        confset.configuration_data = confData
-        conf.set_configuration_set_values(confset)
+            ConfigurationSet confset = conf.get_configuration_set(confset_name);
+            NVListHolder confData = new NVListHolder();
+            confData.value = confset.configuration_data;
+            Properties prop = new Properties();
+            NVUtil.copyToProperties(prop, confData);
+            prop.setProperty(value_name,value);
+            NVUtil.copyFromProperties(confData,prop);
+            confset.configuration_data = confData.value;
+            conf.set_configuration_set_values(confset);
   
-        conf.activate_configuration_set(confset_name)
-        return true;
+            conf.activate_configuration_set(confset_name);
+            return true;
+        }
+        catch (Exception ex) {
+            return false;
+        }
     }    
-*/
-//}    
+}    
