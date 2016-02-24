@@ -1,36 +1,28 @@
 package jp.go.aist.rtm.RTC.util;
 
-import RTC.RTObject;
-/*
 import java.util.Vector;
 
-import org.omg.CORBA.ORB;
+import RTC.RTObject;
 
 import RTC.ComponentProfile;
-import RTC.ComponentProfileListHolder;
 import RTC.ConnectorProfile;
+import RTC.ConnectorProfileHolder;
 import RTC.ConnectorProfileListHolder;
 import RTC.ExecutionContext;
-import RTC.ExecutionContextListHolder;
+import RTC.ExecutionContextProfile;
 import RTC.ExecutionContextService;
-import RTC.ExecutionContextServiceListHolder;
-import RTC.PortService;
-import RTC.PortInterfaceProfile;
-import RTC.PortInterfaceProfileListHolder;
+import RTC.ExecutionContextServiceHelper;
+import RTC.LifeCycleState;
 import RTC.PortProfile;
-import RTC.PortProfileListHolder;
+import RTC.PortService;
 import RTC.PortServiceListHolder;
-import RTC.RTCListHolder;
-import _SDOPackage.NVListHolder;
-import _SDOPackage.NameValue;
-import _SDOPackage.Organization;
-import _SDOPackage.OrganizationListHolder;
-import _SDOPackage.SDO;
-import _SDOPackage.SDOListHolder;
-import _SDOPackage.ServiceProfile;
-import _SDOPackage.ServiceProfileListHolder;
-*/
+import RTC.ReturnCode_t;
 
+import _SDOPackage.NameValue;
+import _SDOPackage.NVListHolder;
+
+import jp.go.aist.rtm.RTC.RTObject_impl;
+import jp.go.aist.rtm.RTC.port.PortBase;
 
 /**
  * {@.ja コンポーネントの各種操作ユーティリティクラス。}
@@ -43,63 +35,35 @@ import _SDOPackage.ServiceProfileListHolder;
  */
 public class RTShellUtil {
     /**
-     * {@.ja CORBA sequence に対して functor を適用する。}
-     * {@.en Apply the functor to all CORBA sequence elements}
-     *
-     * <p>
-     * {@.ja 指定されたシーケンス内の各NameValueオブジェクト対して、順次、
-     * 指定された操作を行う。}
-     * {@.en Apply the given functor to the given CORBA sequence.}
-     * 
-     * @param seq 
-     *   {@.ja NameValueオブジェクトシーケンスを
-     *   内部に保持するNVListHolderオブジェクト}
-     *   {@.en NVListHolder object that hold NameValue object sequence 
-     *   internally.}
-     * @param func 
-     *   {@.ja 各NameValueオブジェクトに適用するoperatorFuncオブジェクト}
-     *   {@.en OperatorFunc object applied to each NameValue object}
-     * @return 
-     *   {@.ja 引数で指定されたoperatorFuncオブジェクト}
-     *   {@.en OperatorFunc object specified by argument}
-     */
-/*
-    public static operatorFunc for_each(NVListHolder seq, operatorFunc func) {
-        if( seq.value == null ) return null;
-        for (int i = 0; i < seq.value.length; ++i) {
-            func.operator(seq.value[i]);
-        }
-        
-        return func;
-    }
-*/
-    /**
      *
      * {@.ja コンポーネントのプロパティ取得}
-     * {@.en  }
-     *
+     * {@.en Get RTC's profile}
+     * <p>
+     * {@.ja 当該コンポーネントのプロファイル情報を返す。}
+     * {@.en This operation returns the ComponentProfile of the RTC.}
      * 
      * @param rtc 
      *   {@.ja RTコンポーネント}
-     *   {@.en  }
+     *   {@.ja RTComponent}
      *
      * @return 
      *   {@.ja コンポーネントのプロパティ}
-     *   {@.en  }
+     *   {@.en ComponentProfile}
      *
      * coil::Properties get_component_profile(const RTC::RTObject_ptr rtc)
      */
-/*
-public get_component_profile(rtc):
-  prop = OpenRTM_aist.Properties()
-  if CORBA.is_nil(rtc):
-    return prop
-  prof = rtc.get_component_profile()
-  OpenRTM_aist.NVUtil.copyToProperties(prop, prof.properties)
-  return prop
-*/
+    public static Properties get_component_profile(final RTObject rtc){
+            if(rtc == null){
+            return null;
+        }
+        ComponentProfile prof = rtc.get_component_profile();
+        NVListHolder nvholder = 
+                new NVListHolder(prof.properties);
+        Properties prop = new Properties();
+        NVUtil.copyToProperties(prop, nvholder);
+        return prop;
 
-
+    }
 
     /**
      * {@.ja コンポーネントの生存を確認}
@@ -114,7 +78,7 @@ public get_component_profile(rtc):
      *   {@.en true: alive, false:non not alive}
      *
      */
-    public boolean is_existing(RTObject rtc) {
+    public static boolean is_existing(RTObject rtc) {
         try{
             if (rtc._non_existent()) { 
                 return false; 
@@ -128,71 +92,97 @@ public get_component_profile(rtc):
     /**
      *
      * {@.ja RTCがデフォルトの実行コンテキストでalive状態かを判定する}
+     * {@.en Confirm whether RTC is the alive state}
      *
      * @param rtc
      *   {@.ja RTコンポーネント}
+     *   {@.ja RTComponent}
      *
      * @return 
      *   {@.ja true:alive状態}
+     *   {@.en Result of Alive state confirmation}
      * 
      */
-/*
-    public boolean is_alive_in_default_ec(rtc){
-        ec = get_actual_ec(rtc)
-        if  CORBA.is_nil(ec) {
+    public static boolean is_alive_in_default_ec(RTObject rtc){
+        ExecutionContext ec = get_actual_ec(rtc);
+        if(ec==null){
             return false;
         }
-        return rtc.is_alive(ec)
+        try {
+            return rtc.is_alive(ec);
+        }
+        catch (Exception ex) {
+            return false;
+        }
     }
-
-*/
     /**
      * {@.ja RTコンポーネントに関連付けした実行コンテキストから指定したIDの実行コンテキストを取得}
+     * {@.en Get ExecutionContext.}
      * 
+     * {@.en Obtain a reference to the execution context represented 
+     * by the given handle and RTC.}
      * @param rtc 
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      *
      * @param ec_id 
      *   {@.ja 実行コンテキストのID}
+     *   {@.en ExecutionContext handle}
      *
      * @return 
-     *   {@.ja 実行コンテキストのオブジェクトリファレンス}
+     *   {@.ja 実行コンテキスト}
+     *   {@.en ExecutionContext}
      *
      * RTC::ExecutionContext_var get_actual_ec(const RTC::RTObject_ptr rtc,RTC::UniqueId ec_id = 0)
      */
-/*
-    public get_actual_ec(rtc, ec_id=0) {
-        if ec_id < 0{
-            return RTC.ExecutionContext._nil
+    public static ExecutionContext get_actual_ec(RTObject rtc, int ec_id) {
+        if( ec_id < 0){
+            return null;
         }
-        if CORBA.is_nil(rtc){
-            return RTC.ExecutionContext._nil
+        if(rtc == null) {
+            return null;
         }
-        if ec_id < 1000{
-            eclist = rtc.get_owned_contexts()
-            if ec_id >= len(eclist):
-                return RTC.ExecutionContext._nil
+        if( ec_id < RTObject_impl.ECOTHER_OFFSET){
+            ExecutionContext[] eclist = rtc.get_owned_contexts();
+            if( ec_id >= eclist.length){
+                return null;
             }
-            if CORBA.is_nil(eclist[ec_id]):
-                return RTC.ExecutionContext._nil
+            if(eclist[ec_id] == null){
+                return null;
             }
-            return eclist[ec_id]
+            return eclist[ec_id];
         }
-        elif ec_id >= 1000r{
-            pec_id = ec_id - 1000
-            eclist = rtc.get_participating_contexts()
-            if pec_id >= len(eclist):
-                return RTC.ExecutionContext._nil
+        else {
+            int pec_id = ec_id - RTObject_impl.ECOTHER_OFFSET;
+            ExecutionContext[] eclist = rtc.get_participating_contexts();
+            if(pec_id >= eclist.length){
+                return null;
             }
-            if CORBA.is_nil(eclist[pec_id]):
-                return RTC.ExecutionContext._nil
+            if(eclist[pec_id]==null){
+                return null;
             }
-            return eclist[pec_id]
+            return eclist[pec_id];
         }
-        return RTC.ExecutionContext._nil
     }    
-*/
 
+    /**
+     * {@.ja RTコンポーネントに関連付けした実行コンテキストから指定したIDの実行コンテキストを取得}
+     * {@.en Get ExecutionContext.}
+     * 
+     * {@.en Obtain a reference to the execution context represented 
+     * by the given handle and RTC.}
+     * @param rtc 
+     *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     *
+     * @return 
+     *   {@.ja 実行コンテキスト}
+     *   {@.en ExecutionContext}
+     *
+     */
+    public static ExecutionContext get_actual_ec(RTObject rtc) {
+        return get_actual_ec(rtc,0);
+    }
     /**
      *
      * {@.ja 対象のRTコンポーネントから指定した実行コンテキストのIDを取得する}
@@ -200,719 +190,911 @@ public get_component_profile(rtc):
      * 
      * @param rtc 
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      *
      * @param ec 
      *   {@.ja 実行コンテキスト}
+     *   {@.en ExecutionContext}
      *
      * @return 
      *   {@.ja 実行コンテキストのID 指定した実行コンテキストがRTコンポーネントに関連付けられていなかった場合は-1を返す}
      *
      */
-/*
-    public get_ec_id(rtc, ec):
-        if CORBA.is_nil(rtc){
-            return -1
+    public static int get_ec_id(RTObject rtc, ExecutionContext ec){
+        if(rtc == null){
+            return -1;
         }
-        eclist_own = rtc.get_owned_contexts()
+        ExecutionContext[] eclist = rtc.get_owned_contexts();
   
-        count = 0
-        for e in eclist_own{
-            if not CORBA.is_nil(e){
-                if e._is_equivalent(ec){
-                      return count
+        for(int ic=0;ic<eclist.length;++ic){
+            if(eclist[ic] != null){
+                if(eclist[ic]._is_equivalent(ec)){
+                      return ic;
                 }
-                count += 1
             }
         }
-        eclist_pec = rtc.get_participating_contexts()
-        count = 0
-        for e in eclist_pec{
-            if not CORBA.is_nil(e){
-                if e._is_equivalent(ec){
-                    return count+1000
+        ExecutionContext[] eclist_pec = rtc.get_participating_contexts();
+        for(int ic=0;ic<eclist_pec.length;++ic){
+            if(eclist_pec[ic] != null){
+                if(eclist[ic]._is_equivalent(ec)){
+                    return ic+RTObject_impl.ECOTHER_OFFSET;
                 }
-                count += 1
             }
         }
-        return -1
+        return -1;
     }
-*/
     /**
      *
      * {@.ja RTCを指定した実行コンテキストでアクティベーションする}
-     *
+     * {@.en Activates RTC via Specified ExecutionContext.}
      * 
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      *
      * @param ec_id 
      *   {@.ja 実行コンテキストのID}
+     *   {@.en ExecutionContext handle}
      *
      * @return 
      *   {@.ja RTC、ECのオブジェクトリファレンスがnilの場合はBAD_PARAMETERを返す
      * nilではない場合はactivate_component関数の戻り値を返す。RTC_OKの場合はアクティベーションが成功}
      }
+     *   {@.en Return code}
      * RTC::ReturnCode_t activate(RTC::RTObject_ptr rtc, RTC::UniqueId ec_id = 0)
      */
-/*
-    public activate(rtc, ec_id=0){
-        if CORBA.is_nil(rtc){
-          return RTC.BAD_PARAMETER
+    public static ReturnCode_t activate(RTObject rtc, int ec_id){
+        if(rtc==null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        ec = get_actual_ec(rtc, ec_id)
-        if CORBA.is_nil(ec){
-            return RTC.BAD_PARAMETER
+        ExecutionContext ec = get_actual_ec(rtc, ec_id);
+        if(ec==null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        return ec.activate_component(rtc)
+        return ec.activate_component(rtc);
   
     }
-*/
     /**
      *
-     * {@.ja RTCを指定した実行コンテキストで非アクティベーションする}
+     * {@.ja RTCをアクティベーションする}
+     * {@.en Activates RTC}
      * 
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     *
+     * @return 
+     *   {@.ja RTC、ECのオブジェクトリファレンスがnilの場合はBAD_PARAMETERを返す
+     * nilではない場合はactivate_component関数の戻り値を返す。RTC_OKの場合はアクティベーションが成功}
+     *   {@.en Return code}
+     }
+     * RTC::ReturnCode_t activate(RTC::RTObject_ptr rtc, RTC::UniqueId ec_id = 0)
+     */
+    public static ReturnCode_t activate(RTObject rtc){
+        return activate(rtc,0);
+    }
+    /**
+     *
+     * {@.ja RTCを指定した実行コンテキストで非アクティベーションする}
+     * {@.en Deactivates RTC via Specified ExecutionContext.}
+     * 
+     * @param rtc
+     *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      *
      * @param ec_id 
      *   {@.ja 実行コンテキストのID}
+     *   {@.en ExecutionContext handle}
      *
      * @return 
      *   {@.ja RTC、ECのオブジェクトリファレンスがnilの場合はBAD_PARAMETERを返す
      * nilではない場合はdeactivate_component関数の戻り値を返す。RTC_OKの場合は非アクティベーションが成功}
      * RTC::ReturnCode_t deactivate(RTC::RTObject_ptr rtc, RTC::UniqueId ec_id = 0)
+     *   {@.en Return code}
      */
-/*
-    public deactivate(rtc, ec_id=0){
+    public static ReturnCode_t deactivate(RTObject rtc, int ec_id){
 
-        if CORBA.is_nil(rtc){
-            return RTC.BAD_PARAMETER
+        if(rtc==null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        ec = get_actual_ec(rtc, ec_id)
-        if CORBA.is_nil(ec){
-            return RTC.BAD_PARAMETER
+        ExecutionContext ec = get_actual_ec(rtc, ec_id);
+        if(ec==null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        return ec.deactivate_component(rtc)
+        return ec.deactivate_component(rtc);
     }
-*/
     /**
      *
-     * {@.ja RTCを指定した実行コンテキストでリセットする}
+     * {@.ja RTCを非アクティベーションする}
+     * {@.en Deactivates RTC.}
      * 
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     *
+     * @return 
+     *   {@.ja RTC、ECのオブジェクトリファレンスがnilの場合はBAD_PARAMETERを返す
+     * nilではない場合はdeactivate_component関数の戻り値を返す。RTC_OKの場合は非アクティベーションが成功}
+     * RTC::ReturnCode_t deactivate(RTC::RTObject_ptr rtc, RTC::UniqueId ec_id = 0)
+     *   {@.en Return code}
+     */
+    public static ReturnCode_t deactivate(RTObject rtc){
+        return deactivate( rtc, 0);
+    }
+    /**
+     *
+     * {@.ja RTCを指定した実行コンテキストでリセットする}
+     * {@.en Resets RTC via Specified RTC.}
+     * 
+     * @param rtc
+     *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      *
      * @param ec_id 
      *   {@.ja 実行コンテキストのID}
+     *   {@.en ExecutionContext handle}
      *
      * @return 
      *   {@.ja RTC、ECのオブジェクトリファレンスがnilの場合はBAD_PARAMETERを返す
      * nilではない場合はdeactivate_component関数の戻り値を返す。RTC_OKの場合はリセットが成功}
+     *   {@.en Return code}
      *
      * RTC::ReturnCode_t reset(RTC::RTObject_ptr rtc, RTC::UniqueId ec_id = 0)
      */
-/*
-    public reset(rtc, ec_id=0){
-        if CORBA.is_nil(rtc){
-             return RTC.BAD_PARAMETER
+    public static ReturnCode_t reset(RTObject rtc, int ec_id){
+        if(rtc==null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        ec = get_actual_ec(rtc, ec_id)
-        if CORBA.is_nil(ec){
-            return RTC.BAD_PARAMETER
+        ExecutionContext ec = get_actual_ec(rtc, ec_id);
+        if(ec==null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        return ec.reset_component(rtc)
+        return ec.reset_component(rtc);
     }
-*/
+    /**
+     *
+     * {@.ja RTCをリセットする}
+     * {@.en Resets RTC}
+     * 
+     * @param rtc
+     *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     *
+     * @return 
+     *   {@.ja RTC、ECのオブジェクトリファレンスがnilの場合はBAD_PARAMETERを返す
+     * nilではない場合はdeactivate_component関数の戻り値を返す。RTC_OKの場合はリセットが成功}
+     *   {@.en Return code}
+     *
+     */
+    public static ReturnCode_t reset(RTObject rtc){
+        return reset(rtc,0);
+    }
     /**
      *
      * {@.ja 対象のRTコンポーネントの指定した実行コンテキストでの状態を取得}
+     * {@.en Get RTC's status}
      * 
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      *
      * @param ec_id 
      *   {@.ja 実行コンテキストのID}
-     *
-     * @param ret 
-     *   {@.ja RTCの状態}
+     *   {@.en ExecutionContext handle}
      *
      * @return 
-     *   {@.ja rtc、ecがnilの場合はfalseを返す。
-     *         nilではない場合はret[0]に状態を代入してtrueを返す。}
+     *   {@.ja RTCの状態}
+     *   {@.en RTC's status}
      *
      *
      */
-/*
-    public get_state(rtc, ec_id=0, ret=[None]){
-        if CORBA.is_nil(rtc){
-            return false
+    public static LifeCycleState get_state(RTObject rtc, int ec_id){
+        if(rtc==null){
+            return LifeCycleState.ERROR_STATE;
         }
-        ec = get_actual_ec(rtc, ec_id)
-        if CORBA.is_nil(ec){
-            return false
+        ExecutionContext ec = get_actual_ec(rtc, ec_id);
+        if(ec==null){
+            return LifeCycleState.ERROR_STATE;
         }
-        ret[0] = ec.get_component_state(rtc)
-        return true
+        return ec.get_component_state(rtc);
     }
-*/
+    /**
+     *
+     * {@.ja 対象のRTコンポーネントの状態を取得}
+     * {@.en Get RTC's status}
+     * 
+     * @param rtc
+     *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     *
+     * @return 
+     *   {@.ja RTCの状態}
+     *   {@.en RTC's status}
+     *
+     *
+     */
+    public static LifeCycleState get_state(RTObject rtc){
+        return get_state(rtc, 0);
+    }
     /**
      *
      * {@.ja 対象のRTコンポーネントの指定した実行コンテキストでINACTIVE状態かどうか判定}
+     * {@.en Confirm to INACTIVE}
      *
      * 
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      *
      * @param ec_id 
      *   {@.ja 実行コンテキストのID}
+     *   {@.en ExecutionContext handle}
      *
      * @return 
      *   {@.ja INACTIVE状態の時はtrue、それ以外はfalse
      * rtc、ecがnilの場合もfalseを返す}
+     *   {@.en Result of state confirmation
+     *         (INACTIVE state:true, other state:false)}
      *
      */
-/*
-    public is_in_inactive(rtc, ec_id=0){
-        ret = [None]
-        if get_state(rtc, ec_id, ret){
-            if ret[0] == RTC.INACTIVE_STATE{
-                return true
-            }
+    public static boolean is_in_inactive(RTObject rtc, int ec_id){
+        if( get_state(rtc, ec_id) == LifeCycleState.INACTIVE_STATE){
+                return true;
         }
-        return false
+        return false;
     }
-*/
     /**
      *
-     * {@.ja 対象のRTコンポーネントの指定した実行コンテキストでACTIVE状態かどうか判定}
+     * {@.ja 対象のRTコンポーネントの指定した実行コンテキストでINACTIVE状態かどうか判定}
+     * {@.en Confirm to INACTIVE}
+     *
      * 
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     *
+     *
+     * @return 
+     *   {@.ja INACTIVE状態の時はtrue、それ以外はfalse
+     * rtc、ecがnilの場合もfalseを返す}
+     *   {@.en Result of state confirmation
+     *         (INACTIVE state:true, other state:false)}
+     *
+     */
+    public static boolean is_in_inactive(RTObject rtc){
+        return is_in_inactive(rtc, 0);
+    }
+    /**
+     *
+     * {@.ja 対象のRTコンポーネントの指定した実行コンテキストでACTIVE状態かどうか判定}
+     * {@.en Confirm to ACTIVE}
+     * 
+     * @param rtc
+     *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @param ec_id 
      *   {@.ja 実行コンテキストのID}
+     *   {@.en ExecutionContext handle}
      * 
      * @return 
      *   {@.ja ACTIVE状態の時はtrue、それ以外はfalse
      * rtc、ecがnilの場合もfalseを返す}
+     *   {@.en Result of state confirmation
+     *         (ACTIVE state:true, other state:false)}
      *
      */
-/*
-    public is_in_active(rtc, ec_id=0){
-        ret = [None]
-        if get_state(rtc, ec_id, ret){
-            if ret[0] == RTC.ACTIVE_STATE{
-                return true
-            }
+    public static boolean is_in_active(RTObject rtc, int ec_id){
+        if(get_state(rtc, ec_id) == LifeCycleState.ACTIVE_STATE){
+                return true;
         }
-        return false
+        return false;
     }
-*/
     /**
      *
-     * {@.ja 対象のRTコンポーネントの指定した実行コンテキストでERROR状態かどうか判定}
+     * {@.ja 対象のRTコンポーネントがACTIVE状態かどうか判定}
+     * {@.en Confirm to ACTIVE}
      * 
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     * 
+     * @return 
+     *   {@.ja ACTIVE状態の時はtrue、それ以外はfalse
+     * rtc、ecがnilの場合もfalseを返す}
+     *   {@.en Result of state confirmation
+     *         (ACTIVE state:true, other state:false)}
+     *
+     */
+    public static boolean is_in_active(RTObject rtc){
+        return is_in_active(rtc, 0);
+    }
+    /**
+     *
+     * {@.ja 対象のRTコンポーネントの指定した実行コンテキストでERROR状態かどうか判定}
+     * {@.en Confirm to ERROR}
+     * 
+     * @param rtc
+     *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @param 
      *   {@.ja ec_id 実行コンテキストのID}
+     *   {@.en ExecutionContext handle}
      * 
      * @return 
      *   {@.ja ERROR状態の時はtrue、それ以外はfalse
      * rtc、ecがnilの場合もfalseを返す}
+     *   {@.en Result of state confirmation
+     *         (ERROR state:true, other state:false)}
      *
      */
-/*
-    public is_in_error(rtc, ec_id=0){
-        ret = [None]
-        if get_state(rtc, ec_id, ret){
-            if ret[0] == RTC.ERROR_STATE{
-                return true
-            }
+    public static boolean is_in_error(RTObject rtc, int ec_id){
+        if(get_state(rtc, ec_id) == LifeCycleState.ERROR_STATE){
+                return true;
         }
-        return false
+        return false;
     }
-*/
+    /**
+     *
+     * {@.ja 対象のRTコンポーネントがERROR状態かどうか判定}
+     * {@.en Confirm to ERROR}
+     * 
+     * @param rtc
+     *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     * 
+     * 
+     * @return 
+     *   {@.ja ERROR状態の時はtrue、それ以外はfalse
+     * rtc、ecがnilの場合もfalseを返す}
+     *   {@.en Result of state confirmation
+     *         (ERROR state:true, other state:false)}
+     *
+     */
+    public static boolean is_in_error(RTObject rtc){
+        return is_in_error(rtc,0);
+    }
     /**
      *
      * {@.ja RTCのデフォルトの実行コンテキストの実行周期を取得する}
+     * {@.en Get execution rate(Hz) of ExecutionContext}
      *
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @return 
      *   {@.ja 実行周期}
+     *   {@.en Execution cycle(Unit:Hz)}
      */
-/*
-    public get_default_rate(rtc){
-        ec = get_actual_ec(rtc)
-        return ec.get_rate()
+    public static double get_default_rate(RTObject rtc){
+        ExecutionContext ec = get_actual_ec(rtc);
+        return ec.get_rate();
     }
-*/
     /**
      *
      * {@.ja RTCのデフォルトの実行コンテキストの実行周期を設定する}
+     * {@.en Set execution rate(Hz) of ExecutionContext}
      *
      * 
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     * 
      * 
      * @param rate 
      *   {@.ja 実行周期}
+     *   {@.en Execution cycle(Unit:Hz)}
      * 
      * @return 
      *   {@.ja set_rate関数の戻り値を返す。 RTC_OKで設定が成功}
+     *   {@.en Return code}
      *
      */
-/*
-    public set_default_rate(rtc, rate){
-        ec = get_actual_ec(rtc)
-        return ec.set_rate(rate)
+    public static ReturnCode_t set_default_rate(RTObject rtc, double rate){
+        ExecutionContext ec = get_actual_ec(rtc);
+        return ec.set_rate(rate);
 
     }  
-*/
-    /**
-     *
-     * {@.ja RTCの指定IDの実行コンテキストの周期を設定}
-     * 
-     * @param rtc
-     *   {@.ja 対象のRTコンポーネント}
-     * 
-     * @param ec_id 
-     *   {@.ja 指定の実行コンテキストのID}
-     * 
-     * @return 
-     *   {@.ja 実行周期}
-     *
-     */
-/*
-    public get_current_rate(rtc, ec_id){
-        ec = get_actual_ec(rtc, ec_id)
-        return ec.get_rate()
-    }
-*/
     /**
      *
      * {@.ja RTCの指定IDの実行コンテキストの周期を取得}
+     * {@.en Get execution rate(Hz) of specified ExecutionContext}
      * 
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @param ec_id 
      *   {@.ja 指定の実行コンテキストのID}
+     *   {@.en ExecutionContext handle}
+     * 
+     * @return 
+     *   {@.ja 実行周期}
+     *   {@.en Execution cycle(Unit:Hz)}
+     *
+     */
+    public static double get_current_rate(RTObject rtc, int ec_id){
+        ExecutionContext ec = get_actual_ec(rtc, ec_id);
+        return ec.get_rate();
+    }
+    /**
+     *
+     * {@.ja RTCの指定IDの実行コンテキストの周期を設定}
+     * {@.en Set execution rate(Hz) of specified ExecutionContext}
+     * 
+     * @param rtc
+     *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     * 
+     * @param ec_id 
+     *   {@.ja 指定の実行コンテキストのID}
+     *   {@.en ExecutionContext handle}
      * 
      * @return 
      *   {@.ja set_rate関数の戻り値を返す。RTC_OKで設定が成功}
-     *
+     *   {@.en Return code}
      *
      */
-/*
-    public set_current_rate(rtc, ec_id, rate){
-        ec = get_actual_ec(rtc, ec_id)
-        return ec.set_rate(rate)
+    public static ReturnCode_t set_current_rate(RTObject rtc, 
+            int  ec_id, double rate){
+        ExecutionContext ec = get_actual_ec(rtc, ec_id);
+        return ec.set_rate(rate);
     }
-*/
     /**
      *
      * {@.ja 対象のRTCのデフォルトの実行コンテキストに指定のRTCを関連付ける}
+     * {@.en Add an RT-component to The target RT-Component of ExecutionContext}
      *
      * 
      * @param localcomp
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @param othercomp 
      *   {@.ja 実行コンテキストに関連付けるRTコンポーネント}
+     *   {@.en The target RT-Component for add}
      * 
      * @return 
      *   {@.ja ecの取得に失敗した場合はRTC_ERRORを返す
      * そうでない場合はaddComponent関数の戻り値を返す。RTC_OKで接続成功。}
+     *   {@.en The return code of ReturnCode_t type}
      *
      */
-/*
-    public add_rtc_to_default_ec(localcomp, othercomp){
-        ec = get_actual_ec(localcomp)
-        if CORBA.is_nil(ec){
-            return RTC.RTC_ERROR
+    public static ReturnCode_t add_rtc_to_default_ec(RTObject localcomp, 
+            RTObject othercomp){
+        ExecutionContext ec = get_actual_ec(localcomp);
+        if(ec==null){
+            return ReturnCode_t.RTC_ERROR;
         }
-        return ec.add_component(othercomp)
+        return ec.add_component(othercomp);
     }
-*/
     /**
      *
      * {@.ja 対象のRTCのデフォルトの実行コンテキストの指定のRTCへの関連付けを解除する}
+     * {@.en Remove the RT-Component from participant list of  ExecutionContext}
      *
      * 
      * @param localcomp
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @param othercomp 
      *   {@.ja 実行コンテキストとの関連付けを解除するRTコンポーネント}
+     *   {@.en The target RT-Component for delete}
      * 
      * @return 
      *   {@.ja ecの取得に失敗した場合はRTC_ERRORを返す
      * そうでない場合はremoveComponent関数の戻り値を返す。RTC_OKで接続成功。}
+     *   {@.en The return code of ReturnCode_t type}
      *
      */
-/*
-    public remove_rtc_to_default_ec(localcomp, othercomp){
-        ec = get_actual_ec(localcomp)
-        if CORBA.is_nil(ec){
-            return RTC.RTC_ERROR
+    public static ReturnCode_t remove_rtc_to_default_ec(RTObject localcomp, 
+            RTObject othercomp){
+        ExecutionContext ec = get_actual_ec(localcomp);
+        if(ec==null){
+            return ReturnCode_t.RTC_ERROR;
         }
-        return ec.remove_component(othercomp)
+        return ec.remove_component(othercomp);
     }
-*/
     /**
-     * @if jp
      *
      * {@.ja RTCのデフォルトの実行コンテキストに参加しているRTCのリストを取得する}
+     * {@.en Getting participant RTC list}
      * <p>
      * {@.ja 実行コンテキストがnilの場合は空のリストを返す}
      *
      * 
      * @param rtc
      *   {@.ja RTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @return 
      *   {@.ja RTCのリスト}
+     *   {@.en Participants RTC list}
      */
-/*
-    public get_participants_rtc(rtc){
-        ec = get_actual_ec(rtc)
-        if CORBA.is_nil(ec){
-            return []
+    public static RTObject[] get_participants_rtc(RTObject rtc){
+        ExecutionContext ec = get_actual_ec(rtc);
+        if(ec==null){
+            return null;
         }
-        prifile = ec.get_profile()
-        return prifile.participants
+        ExecutionContextService ecs;
+        ecs = ExecutionContextServiceHelper.narrow(ec);
+        if(ecs==null){
+            return null;
+        }
+        ExecutionContextProfile prifile = ecs.get_profile();
+        return prifile.participants;
     }
-*/
     /**
      *
-     * {@.ja 指定したRTCの保持するポートの名前を取得}
+     * {@.ja 指定したRTCの保持するポートの名前を取得} 
+     * {@.en Gets the port name a specified RTC maintains.}
      * 
      * @param rtc 
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @return 
      *   {@.ja ポート名のリスト}
+     *   {@.en List of port names}
      * 
      */
-/*
-    public get_port_names(rtc){
-        names = []
-        if CORBA.is_nil(rtc){
-            return names
+    public static Vector<String> get_port_names(RTObject rtc){
+        if(rtc==null){
+            return null;
         }
-        ports = rtc.get_ports()
-        for p in ports{
-            pp = p.get_port_profile()
-            s = pp.name
-           names.append(s)
+        Vector<String> names = new Vector<String>();
+        PortServiceListHolder ports = new PortServiceListHolder();
+        ports.value = rtc.get_ports();
+        for (int ic=0; ic < ports.value.length; ++ic) {
+            PortProfile pp = ports.value[ic].get_port_profile();
+            String str = pp.name;
+            names.add(str);
         }
-        return names
+        return names;
     }
-*/
     /**
      *
      * {@.ja 指定したRTCの保持するインポートの名前を取得}
+     * {@.en Gets the inport name a specified RTC maintains.}
      * 
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @return 
      *   {@.ja ポート名のリスト}
+     *   {@.en List of port names}
      * 
      *
      */
-/*
-    public get_inport_names(rtc) {
-        names = []
-        if CORBA.is_nil(rtc){
-            return names
+    public static Vector<String> get_inport_names(RTObject rtc) {
+        if(rtc==null){
+            return null;
         }
   
-        ports = rtc.get_ports()
-        for p in ports{
-            pp = p.get_port_profile()
-            prop = OpenRTM_aist.Properties()
-            OpenRTM_aist.NVUtil.copyToProperties(prop, pp.properties)
-            if prop.getProperty("port.port_type") == "DataInPort" {
-                s = pp.name
-                names.append(s)
+        Vector<String> names = new Vector<String>();
+        PortServiceListHolder ports = new PortServiceListHolder();
+        ports.value = rtc.get_ports();
+        for (int ic=0; ic < ports.value.length; ++ic) {
+            PortProfile pp = ports.value[ic].get_port_profile();
+            NVListHolder nvholder = 
+                    new NVListHolder(pp.properties);
+            Properties prop = new Properties();
+            NVUtil.copyToProperties(prop, nvholder);
+            String str = prop.getProperty("port.port_type");
+            if(str.equals("DataInPort")){
+                names.add(pp.name);
             }
         }
-        return names
+        return names;
     }
-*/
     /**
      *
      * {@.ja 指定したRTCの保持するアウトポートの名前を取得}
+     * {@.en Gets the outport name a specified RTC maintains.}
      *
      * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @return 
      *   {@.ja ポート名のリスト}
+     *   {@.en List of port names}
      *
      */
-/*
-    public get_outport_names(rtc){
-        names = []
-        if CORBA.is_nil(rtc){
-           return names
+    public static  Vector<String> get_outport_names(RTObject rtc){
+        if(rtc==null){
+            return null;
         }
+        Vector<String> names = new Vector<String>();
+        PortServiceListHolder ports = new PortServiceListHolder();
   
-        ports = rtc.get_ports()
-        for p in ports{
-            pp = p.get_port_profile()
-            prop = OpenRTM_aist.Properties()
-            OpenRTM_aist.NVUtil.copyToProperties(prop, pp.properties)
-            if prop.getProperty("port.port_type") == "DataOutPort"{
-                s = pp.name
-                names.append(s)
+        ports.value = rtc.get_ports();
+        for (int ic=0; ic < ports.value.length; ++ic) {
+            PortProfile pp = ports.value[ic].get_port_profile();
+            NVListHolder nvholder = 
+                    new NVListHolder(pp.properties);
+            Properties prop = new Properties();
+            NVUtil.copyToProperties(prop, nvholder);
+            String str = prop.getProperty("port.port_type");
+            if(str.equals("DataOutPort")){
+                names.add(pp.name);
             }
         }
-        return names
+        return names;
     }
-*/
 
 
     /**
      * {@.ja 指定したRTCの保持するサービスポートの名前を取得}
+     * {@.en Gets names of service port a specified RTC maintains.}
      *
-     * @param rtc 対象のRTコンポーネント
+     * @param rtc
      *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @return 
      *   {@.ja ポート名のリスト}
+     *   {@.en List of port names}
      */
-/*
-    public get_svcport_names(rtc){
-        names = []
-        if CORBA.is_nil(rtc){
-            return names
+    public static Vector<String> get_svcport_names(RTObject rtc){
+        if(rtc==null){
+            return null;
         }
   
-        ports = rtc.get_ports()
-        for p in ports{
-            pp = p.get_port_profile()
-            prop = OpenRTM_aist.Properties()
-            OpenRTM_aist.NVUtil.copyToProperties(prop, pp.properties)
-            if prop.getProperty("port.port_type") == "CorbaPort"{
-                s = pp.name
-                names.append(s)
+        Vector<String> names = new Vector<String>();
+  
+        PortServiceListHolder ports = new PortServiceListHolder();
+        ports.value = rtc.get_ports();
+        for (int ic=0; ic < ports.value.length; ++ic) {
+            PortProfile pp = ports.value[ic].get_port_profile();
+            NVListHolder nvholder = 
+                    new NVListHolder(pp.properties);
+            Properties prop = new Properties();
+            NVUtil.copyToProperties(prop, nvholder);
+            String str = prop.getProperty("port.port_type");
+            if(str.equals("CorbaPort")){
+                names.add(pp.name);
             }
         }
-        return names
+        return names;
     }
 
-*/
     /**
      *
      * {@.ja 対象のRTCから指定した名前のポートを取得}
+     * {@.en Get a port of the specified name from ports Component maintains.}
      *
      * @param rtc
      *   {@.ja RTコンポーネント}
+     *   {@.en Target RT-Component's instances}
      * 
      * @param name 
      *   {@.ja ポート名}
+     *   {@.en the name of port}
      * 
      * @return
      *   {@.ja ポート}
-     *
-     *
+     *   {@.en PortService}
      *
      * RTC::PortService_var get_port_by_name(const RTC::RTObject_ptr rtc, std::string name)
      */
-/*
-    public get_port_by_name(rtc, name){
-        if CORBA.is_nil(rtc){
-            return RTC.PortService._nil
+    public static PortService get_port_by_name(RTObject rtc, String name){
+        if(rtc==null){
+            return null;
         }
-        ports = rtc.get_ports()
-        for p in ports{
-            pp = p.get_port_profile()
-            s = pp.name
-    
-            if name == s{
-                return p
+        PortServiceListHolder ports = new PortServiceListHolder();
+        ports.value = rtc.get_ports();
+        for (int ic=0; ic < ports.value.length; ++ic) {
+            PortProfile pp = ports.value[ic].get_port_profile();
+            if(pp.name.equals(name)){
+                return ports.value[ic];
             }
         }
-        return RTC.PortService._nil
+        return null;
     }
-*/
     /**
      *
      * {@.ja 指定したポートの保持しているコネクタの名前のリストを取得}
+     * {@.en Gets a list of the ports name specified port maintains.}
      *
      * @param port 
      *   {@.ja 対象のポート}
+     *   {@.en Target Port}
      * 
      * @return 
      *   {@.ja コネクタ名のリスト}
+     *   {@.en List of port names}
      *
      *
      */
-/*
-    public get_connector_names(port){
-        names = []
-        if CORBA.is_nil(port){
-            return names
+    public static Vector<String> get_connector_names(PortBase port){
+        if(port==null){
+            return null;
         }
-        conprof = port.get_connector_profiles()
-        for c in conprof{
-            names.append(c.name)
+        Vector<String> names = new Vector<String>();
+        ConnectorProfileListHolder conprof =
+                new ConnectorProfileListHolder();
+        conprof.value = port.get_connector_profiles();
+        for(int ic=0;ic<conprof.value.length;++ic){
+            names.add(conprof.value[ic].name);
         }
-        return names
-  
+        return names;
     }
-*/
 
     /**
      *
      * {@.ja 指定したポートの保持しているコネクタのIDのリストを取得}
+     * {@.en Gets a list of the connectorIDs specified port maintains.}
      *
      * 
      * @param port 対象のポート
      *   {@.ja 対象のポート}
+     *   {@.en Target Port}
      * 
      * @return 
      *   {@.ja コネクタのIDのリスト}
+     *   {@.en List of connectorIDs}
      * 
      *
      */
-/*
-   public get_connector_ids(port){
-        ids = []
-        if CORBA.is_nil(port){
-            return ids
+    public static Vector<String> get_connector_ids(PortBase port){
+        if(port == null){
+            return null;
         }
-        conprof = port.get_connector_profiles()
-        for c in conprof{
-            ids.append(c.connector_id)
+        Vector<String> ids = new Vector<String>();
+        ConnectorProfileListHolder conprof =
+                new ConnectorProfileListHolder();
+        conprof.value = port.get_connector_profiles();
+        for(int ic=0;ic<conprof.value.length;++ic){
+            ids.add(conprof.value[ic].connector_id);
         }
-        return ids
+        return ids;
     }
-*/
     /**
      *
      * {@.ja 指定したポートを接続するためのコネクタプロファイルを取得}
+     * {@.en Gets ConnectorProfile for connect specified ports}
      *
      * 
      * @param name 
      *   {@.ja コネクタ名}
+     *   {@.en connector name}
      * 
      * @param prop_arg 
      *   {@.ja 設定}
+     *   {@.en connection properties}
      * 
      * @param port0 
      *   {@.ja 対象のポート1}
+     *   {@.en Target Port}
      * 
      * @param port1 
      *   {@.ja 対象のポート2}
+     *   {@.en Target Port}
      *
      * @return 
      *   {@.ja コネクタプロファイル}
+     *   {@.en ConnectorProfile}
      *
      *
      * RTC::ConnectorProfile_var create_connector(const std::string name,const coil::Properties prop_arg,const RTC::PortService_ptr port0,const RTC::PortService_ptr port1)
      */
-/*
-    public create_connector(name, prop_arg, port0, port1){
-        prop = prop_arg
-        conn_prof = RTC.ConnectorProfile(name, "", [port0, port1],[])
+    public static ConnectorProfile create_connector(String name, 
+            Properties prop_arg, PortService port0, PortService port1){
+        Properties prop = new Properties(prop_arg);
+        String connector_id = new String();
+        PortService[] ports = new PortService[2];
+        ports[0] = port0;
+        ports[1] = port1;
+        NameValue[] properties = new NameValue[0];
+        ConnectorProfile conn_prof = new  ConnectorProfile(
+                name,
+                connector_id,
+                ports,
+                properties 
+        );
 
-
-
-        if not str(prop.getProperty("dataport.dataflow_type")){
-            prop.setProperty("dataport.dataflow_type","push")
+        if(prop.getProperty("dataport.dataflow_type").isEmpty()){
+            prop.setProperty("dataport.dataflow_type","push");
         }
  
 
-        if not str(prop.getProperty("dataport.interface_type")){
-            prop.setProperty("dataport.interface_type","corba_cdr")
+        if(prop.getProperty("dataport.interface_type").isEmpty()){
+            prop.setProperty("dataport.interface_type","corba_cdr");
         }
 
-        conn_prof.properties = []
-        OpenRTM_aist.NVUtil.copyFromProperties(conn_prof.properties, prop)
+        NVListHolder nvlist = new NVListHolder();
+        NVUtil.copyFromProperties(nvlist, prop);
+        conn_prof.properties = nvlist.value;
   
-        return conn_prof
+        return conn_prof;
   
     }
- */ 
                                             
     /**
      *
-     * {@.ja 指定したポート同士が接続されているかを判定}
+     * {@.ja 指定したポート同士が接続されているかを判定}S
+     * {@.en Cconfirms the connection in specified ports.}
      *
      * 
      * @param localport
      *   {@.ja 対象のポート1}
+     *   {@.en Target Port}
      * 
      * @param otherport 
      *   {@.ja 対象のポート2}
+     *   {@.en Target Port}
      * 
      * @return 
      *   {@.ja true: 接続済み、false: 未接続}
-     *
+     *   {p.en already connected:true}
      *
      */
-/*
-    public already_connected(localport, otherport){
-        conprof = localport.get_connector_profiles()
-        for c in conprof{
-            for p in c.ports{
-                if p._is_equivalent(otherport){
-                    return true
+    public static boolean already_connected(PortService localport, 
+            PortService otherport){
+        ConnectorProfileListHolder conprof =
+                new ConnectorProfileListHolder();
+        conprof.value = localport.get_connector_profiles();
+        for(int ic=0;ic<conprof.value.length;++ic){
+            ConnectorProfile cprof = conprof.value[ic];
+            for(int icc=0;icc<cprof.ports.length;++icc){
+                if(cprof.ports[icc]._is_equivalent(otherport)){
+                    return true;
                 }
             }
         }
-
-        return false
-
+        return false;
     } 
-*/
     /**
      *
      *
      * {@.ja 指定したポートを接続する}
+     * {@.en Connects specified ports.}
      *
      * 
      * @param name 
      *   {@.ja コネクタ名}
+     *   {@.en connector name}
      * 
      * @param prop 
      *   {@.ja 設定}
+     *   {@.en connection properties}
      * 
      * @param port0 
      *   {@.ja 対象のポート1}
+     *   {@.en Target Port}
      * 
      * @param port1 
      *   {@.ja 対象のポート2}
+     *   {@.en Target Port}
      * 
      * @return 
      *   {@.ja RTC、ECのオブジェクトリファレンスがnilの場合はBAD_PARAMETERを返す
      * nilではない場合はport0.connect関数の戻り値を返す。RTC_OKの場合は接続が成功}
+     *   {@.en Return code}
      *
      * RTC::ReturnCode_t connect(const std::string name,const coil::Properties prop,const RTC::PortService_ptr port0,const RTC::PortService_ptr port1)
      */
-/*
-    public connect(name, prop, port0, port1){
-        if CORBA.is_nil(port0){
-            RTC.BAD_PARAMETER
+    public static ReturnCode_t connect(String name, Properties prop, 
+            PortService port0, PortService port1){
+        if(port0 == null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        if CORBA.is_nil(port1){
-            RTC.BAD_PARAMETER
+        if(port1 == null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        if port0._is_equivalent(port1){
-            RTC.BAD_PARAMETER
+        if(port0._is_equivalent(port1)){
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        cprof = create_connector(name, prop, port0, port1)
-        return port0.connect(cprof)[0]
+        ConnectorProfileHolder profileholder = new ConnectorProfileHolder();
+        profileholder.value = create_connector(name, prop, port0, port1);
+        return port0.connect(profileholder);
 
     }
-*/
     /**
      *
      * {@.ja 指定したポートと指定したリスト内のポート全てと接続する}
@@ -938,7 +1120,7 @@ public get_component_profile(rtc):
      * RTC::ReturnCode_t connect_multi(const std::string name,const coil::Properties prop,const RTC::PortService_ptr port,RTC::PortServiceList_var& target_ports)
      */
 /*
-    public connect_multi(name, prop, port, target_ports){
+    public static connect_multi(name, prop, port, target_ports){
         ret = RTC.RTC_OK
   
         for p in target_ports{
@@ -952,7 +1134,7 @@ public get_component_profile(rtc):
                 ret = RTC.RTC_ERROR
             }
         }
-        return ret
+        return ret;
     }
 */
 }
@@ -960,7 +1142,7 @@ public get_component_profile(rtc):
  * {@.ja ポートを名前から検索}
  *
  */
-//public class find_port {
+//public static class find_port {
   
     /**
      *
@@ -975,7 +1157,7 @@ public get_component_profile(rtc):
      * find_port(const std::string name)
      */
 /*
-    public __init__(self, name){
+    public static __init__(self, name){
         self._name = name
     }
 */
@@ -993,11 +1175,11 @@ public get_component_profile(rtc):
      * bool operator()(RTC::PortService_var p)
      */
 /*
-    public __call__(self, p){
+    public static __call__(self, p){
         prof = p.get_port_profile()
         c = prof.name
     
-        return (self._name == c)
+        return (self._name == c);
     }
 */ 
     /**
@@ -1030,24 +1212,24 @@ public get_component_profile(rtc):
      * RTC::ReturnCode_t connect_by_name(std::string name, coil::Properties prop,RTC::RTObject_ptr rtc0,const std::string portName0,RTC::RTObject_ptr rtc1,const std::string portName1)
      */
 /*
-    public connect_by_name(name, prop, rtc0, portName0, rtc1, portName1){
+    public static connect_by_name(name, prop, rtc0, portName0, RTObject rtc1, portName1){
         if CORBA.is_nil(rtc0){
-            return RTC.BAD_PARAMETER
+            return RTC.BAD_PARAMETER;
         }
         if CORBA.is_nil(rtc1){
-            return RTC.BAD_PARAMETER
+            return RTC.BAD_PARAMETER;
         }
         port0 = get_port_by_name(rtc0, portName0)
         if CORBA.is_nil(port0){
-            return RTC.BAD_PARAMETER
+            return RTC.BAD_PARAMETER;
         }
 
         port1 = get_port_by_name(rtc1, portName1)
         if CORBA.is_nil(port1){
-            return RTC.BAD_PARAMETER
+            return RTC.BAD_PARAMETER;
         }
 
-        return connect(name, prop, port0, port1)
+        return connect(name, prop, port0, port1);
 
     }
 */
@@ -1066,9 +1248,9 @@ public get_component_profile(rtc):
      *
      */
 /*
-    public disconnect(connector_prof){
+    public static disconnect(connector_prof){
         ports = connector_prof.ports
-        return disconnect_by_connector_id(ports[0], connector_prof.connector_id)
+        return disconnect_by_connector_id(ports[0], connector_prof.connector_id);
     }  
 */  
 
@@ -1089,17 +1271,17 @@ public get_component_profile(rtc):
      *
      */
 /*
-    public disconnect_by_connector_name(port, name){
+    public static disconnect_by_connector_name(port, name){
         if CORBA.is_nil(port){
-            return RTC.BAD_PARAMETER
+            return RTC.BAD_PARAMETER;
         }
         conprof = port.get_connector_profiles()
         for c in conprof{
             if c.name == name{
-                return disconnect(c)
+                return disconnect(c);
             }
         }
-        return RTC.BAD_PARAMETER
+        return RTC.BAD_PARAMETERS;
 
     }
 */
@@ -1122,11 +1304,11 @@ public get_component_profile(rtc):
      *
      */
 /*
-    public disconnect_by_connector_id(port, id){
+    public static disconnect_by_connector_id(port, id){
         if CORBA.is_nil(port){
-            return RTC.BAD_PARAMETER
+            return RTC.BAD_PARAMETER;
         }
-        return port.disconnect(id)
+        return port.disconnect(id);
 
     }
 */
@@ -1148,13 +1330,13 @@ public get_component_profile(rtc):
      *
      */
 /*
-    public disconnect_by_port_name(localport, othername){
+    public static disconnect_by_port_name(localport, othername){
         if CORBA.is_nil(localport){
-            return RTC.BAD_PARAMETER
+            return RTC.BAD_PARAMETER;
         }
         prof = localport.get_port_profile()
         if prof.name == othername{
-            return RTC.BAD_PARAMETER
+            return RTC.BAD_PARAMETER;
         }
   
         conprof = localport.get_connector_profiles()
@@ -1163,12 +1345,12 @@ public get_component_profile(rtc):
                 if not CORBA.is_nil(p){
                     pp = p.get_port_profile()
                     if pp.name == othername{
-                        return disconnect(c)
+                        return disconnect(c);
                     }
                 }
             }
         }
-        return RTC.BAD_PARAMETER
+        return RTC.BAD_PARAMETER;
     }
 */
     /**
@@ -1186,12 +1368,12 @@ public get_component_profile(rtc):
      *
      */
 /*
-    public get_configuration(rtc){
+    public static get_configuration(RTObject rtc){
         if CORBA.is_nil(rtc){
-            return SDOPackage.Configuration._nil
+            return SDOPackage.Configuration._nil;
         }
   
-        return rtc.get_configuration()
+        return rtc.get_configuration();
     }
 */
     /**
@@ -1214,7 +1396,7 @@ public get_component_profile(rtc):
      * 
      */
 /*
-    public get_parameter_by_key(rtc, confset_name, value_name){
+    public static get_parameter_by_key(RTObject rtc, confset_name, value_name){
         conf = rtc.get_configuration()
   
     
@@ -1222,7 +1404,7 @@ public get_component_profile(rtc):
         confData = confset.configuration_data
         prop = OpenRTM_aist.Properties()
         OpenRTM_aist.NVUtil.copyToProperties(prop, confData)
-        return prop.getProperty(value_name)
+        return prop.getProperty(value_name);
     
     }  
 */
@@ -1242,10 +1424,10 @@ public get_component_profile(rtc):
      *
      */
 /*
-    public get_current_configuration_name(rtc){
+    public static get_current_configuration_name(RTObject rtc){
         conf = rtc.get_configuration()
         confset = conf.get_active_configuration_set()
-        return confset.id
+        return confset.id;
     }
 */
     /**
@@ -1263,14 +1445,14 @@ public get_component_profile(rtc):
      *
      */
 /*
-    public get_active_configuration(rtc){
+    public static get_active_configuration(RTObject rtc){
         conf = rtc.get_configuration()
 
         confset = conf.get_active_configuration_set()
         confData = confset.configuration_data
         prop = OpenRTM_aist.Properties()
         OpenRTM_aist.NVUtil.copyToProperties(prop, confData)
-        return prop
+        return prop;
     
     }
 */
@@ -1293,7 +1475,7 @@ public get_component_profile(rtc):
      *
      */
 /*
-    public set_configuration(rtc, confset_name, value_name, value){
+    public static set_configuration(rRTObject tc, confset_name, value_name, value){
         conf = rtc.get_configuration()
   
         confset = conf.get_configuration_set(confset_name)
@@ -1306,7 +1488,7 @@ public get_component_profile(rtc):
         conf.set_configuration_set_values(confset)
   
         conf.activate_configuration_set(confset_name)
-        return true
+        return true;
     }    
 */
 //}    
