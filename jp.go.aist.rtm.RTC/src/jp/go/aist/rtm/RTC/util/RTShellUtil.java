@@ -5,6 +5,8 @@ import java.util.Vector;
 import RTC.RTObject;
 
 import RTC.ComponentProfile;
+import RTC.ComponentProfileHolder;
+import RTC.ComponentProfileListHolder;
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
 import RTC.ConnectorProfileListHolder;
@@ -58,11 +60,13 @@ public class RTShellUtil {
             if(rtc == null){
             return null;
         }
-        ComponentProfile prof = rtc.get_component_profile();
+        ComponentProfile cprofs = rtc.get_component_profile();
         NVListHolder nvholder = 
-                new NVListHolder(prof.properties);
+                new NVListHolder(cprofs.properties);
+        
         Properties prop = new Properties();
         NVUtil.copyToProperties(prop, nvholder);
+
         return prop;
 
     }
