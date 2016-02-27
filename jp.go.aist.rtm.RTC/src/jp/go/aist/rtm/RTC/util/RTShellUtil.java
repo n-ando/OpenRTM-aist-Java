@@ -578,6 +578,10 @@ public class RTShellUtil {
      *   {@.en Execution cycle(Unit:Hz)}
      */
     public static double get_default_rate(RTObject rtc){
+        if(rtc==null)
+        {
+            return 0.0;
+        }
         ExecutionContext ec = get_actual_ec(rtc);
         return ec.get_rate();
     }
@@ -602,6 +606,10 @@ public class RTShellUtil {
      *
      */
     public static ReturnCode_t set_default_rate(RTObject rtc, double rate){
+        if(rtc==null)
+        {
+            return ReturnCode_t.BAD_PARAMETER;
+        }
         ExecutionContext ec = get_actual_ec(rtc);
         return ec.set_rate(rate);
 

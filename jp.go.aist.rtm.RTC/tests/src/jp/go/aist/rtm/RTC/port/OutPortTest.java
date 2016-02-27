@@ -56,6 +56,7 @@ public class OutPortTest extends TestCase {
         }
         private double m_amplitude;
     };
+/*
     class MockOutPortConnector extends OutPortConnector {
         public MockOutPortConnector(ConnectorInfo profile, 
                     BufferBase<OutputStream> buffer) {
@@ -90,7 +91,7 @@ public class OutPortTest extends TestCase {
         protected Double m_data= new Double(0.0);
         
     }
-    
+*/    
     protected void setUp() throws Exception {
         super.setUp();
     }
@@ -212,7 +213,7 @@ public class OutPortTest extends TestCase {
         assertEquals(0.0D, onOverflow.data);
     }
 */
-
+/*
     public void test_write_OnWriteConvert() {
         DataRef<Double> bindValue = new DataRef<Double>(0d);
         OutPort<Double> outPort = new OutPort<Double>("OutPort", bindValue, 8);
@@ -238,7 +239,7 @@ public class OutPortTest extends TestCase {
             assertEquals(expectedValue, outport_conn.m_data);
         }
     }
-    
+*/    
     
     /**
      * <p>データ書き込み/読み込みのテストです。</p>
@@ -249,6 +250,7 @@ public class OutPortTest extends TestCase {
      * </ol>
      * </p>
      */
+/*
     public void test_wr() {
         
         DataRef<Double> value = new DataRef<Double>(0d);
@@ -274,7 +276,7 @@ public class OutPortTest extends TestCase {
             assertEquals(value, outport_conn.m_data);
         }
     }
-    
+*/    
     /**
      * <p>ブロッキングモードにおけるデータ書き込みタイムアウトのテストです。</p>
      * <p>次の内容にてテストを行います。

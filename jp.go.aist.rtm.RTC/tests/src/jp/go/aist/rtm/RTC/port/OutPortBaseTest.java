@@ -44,7 +44,7 @@ import _SDOPackage.NVListHolder;
  * <p>OutPortBaseクラスのためのテストケースです。</p>
  */
 public class OutPortBaseTest extends TestCase {
-
+/*
   class OutPortPushConnector extends OutPortConnector {
     //public OutPortPushConnector(Profile profile,
     public OutPortPushConnector(ConnectorBase.ConnectorInfo profile,
@@ -111,6 +111,8 @@ public class OutPortBaseTest extends TestCase {
     } 
 
   }
+*/
+/*
   class OutPortPullConnector extends OutPortConnector {
 
     //public OutPortPullConnector(Profile profile,
@@ -149,7 +151,7 @@ public class OutPortBaseTest extends TestCase {
         return ReturnCode.PORT_OK;
     }
   }
-
+*/
 
     public static <DataType> String toTypeCode(DataRef<DataType> value) { 
         DataType data = value.v;

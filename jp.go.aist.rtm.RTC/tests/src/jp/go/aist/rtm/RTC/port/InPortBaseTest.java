@@ -359,7 +359,7 @@ public class InPortBaseTest extends TestCase {
           return true;
       }
   };
-
+/*
     class MockInPortConnector extends InPortConnector {
         public MockInPortConnector(ConnectorInfo profile, 
                     BufferBase<OutputStream> buffer) {
@@ -381,6 +381,7 @@ public class InPortBaseTest extends TestCase {
         }
         protected double _data = 0.0;
     }
+*/
     public static Logger m_mock_logger = null;
     private ORB m_orb;
     private POA m_poa;
@@ -1544,6 +1545,7 @@ public class InPortBaseTest extends TestCase {
      * @brief subscribeInterfaces()
      *
      */
+/*
     public void test_subscribeInterfaces2()
     {
         //
@@ -1626,6 +1628,7 @@ public class InPortBaseTest extends TestCase {
 
         portAdmin.deletePort(inport);
     }
+*/
     /**
      * @brief subscribeInterfaces()
      * 

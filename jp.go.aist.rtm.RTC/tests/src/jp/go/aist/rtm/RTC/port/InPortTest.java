@@ -67,7 +67,7 @@ public class InPortTest extends TestCase {
         }
         double m_amplitude;
     }
-    
+/*    
     class MockInPortConnector extends InPortConnector {
         public MockInPortConnector(ConnectorInfo profile, 
                     BufferBase<OutputStream> buffer) {
@@ -99,6 +99,7 @@ public class InPortTest extends TestCase {
         }
         protected double _data = 0.0;
     }
+*/
     /**
      * <p>write()メソッドとread()メソッドのテスト
      * <ul>
@@ -106,6 +107,7 @@ public class InPortTest extends TestCase {
      * </ul>
      * </p>
      */
+/*
     public void test_write_and_read() {
         Vector<InPortConnector> cons = m_pInport.connectors();
         MockInPortConnector inport_conn = new MockInPortConnector(null,null);
@@ -121,7 +123,7 @@ public class InPortTest extends TestCase {
             assertEquals(writeValue, readValue.data);
         }
     }
-
+*/
     /**
      * <p>ポート名取得のテスト
      * <ul>

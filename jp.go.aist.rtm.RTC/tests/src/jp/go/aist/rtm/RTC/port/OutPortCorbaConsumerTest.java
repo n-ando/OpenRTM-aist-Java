@@ -73,6 +73,7 @@ public class OutPortCorbaConsumerTest extends TestCase {
      * </ul>
      * </p>
      */
+/*
     public void test_get() throws Exception {
         OutPortAnyMock outPortAny = new OutPortAnyMock();
         byte[] oid = this.m_poa.activate_object(outPortAny);
@@ -105,6 +106,7 @@ public class OutPortCorbaConsumerTest extends TestCase {
         // テスト用に設定しておいたデータを読み取ったデータを比較し、正しく取得できたことを確認する
         assertTrue( Math.abs(writeValue.doubleValue()-readValue.v) < 0.00001);
     }
+*/
     /**
      * <p>pull()メソッドのテスト
      * <ul>
