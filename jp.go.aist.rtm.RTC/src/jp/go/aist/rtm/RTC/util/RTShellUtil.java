@@ -206,10 +206,14 @@ public class RTShellUtil {
      *   {@.en ExecutionContext}
      *
      * @return 
-     *   {@.ja 実行コンテキストのID 指定した実行コンテキストがRTコンポーネントに関連付けられていなかった場合は-1を返す}
+     *   {@.ja 実行コンテキストのID 
+     * 指定した実行コンテキストがRTコンポーネントに
+     * 関連付けられていなかった場合は-1を返す}
+     *   {@.en ID of ExecutionContext}
      *
      */
     public static int get_ec_id(RTObject rtc, ExecutionContext ec){
+
         if(rtc == null){
             return -1;
         }
@@ -225,7 +229,7 @@ public class RTShellUtil {
         ExecutionContext[] eclist_pec = rtc.get_participating_contexts();
         for(int ic=0;ic<eclist_pec.length;++ic){
             if(eclist_pec[ic] != null){
-                if(eclist[ic]._is_equivalent(ec)){
+                if(eclist_pec[ic]._is_equivalent(ec)){
                     return ic+RTObject_impl.ECOTHER_OFFSET;
                 }
             }
@@ -527,8 +531,8 @@ public class RTShellUtil {
      *   {@.ja 対象のRTコンポーネント}
      *   {@.en Target RT-Component's instances}
      * 
-     * @param 
-     *   {@.ja ec_id 実行コンテキストのID}
+     * @param ec_id 
+     *   {@.ja 実行コンテキストのID}
      *   {@.en ExecutionContext handle}
      * 
      * @return 
@@ -1125,11 +1129,11 @@ public class RTShellUtil {
      *   {@.ja 設定}
      *   {@.en connection properties}
      * 
-     * @param port0 
+     * @param port 
      *   {@.ja 対象のポート}
      *   {@.en Target Port}
      * 
-     * @param port1 
+     * @param target_ports 
      *   {@.ja 対象のポートのリスト}
      *   {@.en List of connected ports}
      *
@@ -1290,7 +1294,7 @@ public class RTShellUtil {
      *   {@.ja 対象のポート}
      *   {@.en Target Port}
      * 
-     * @param name 
+     * @param id
      *   {@.ja コネクタID}
      *   {@.en connector id}
      * 
@@ -1386,12 +1390,13 @@ public class RTShellUtil {
     }
     /**
      *
-     * {@.ja 指定したコンフィギュレーションセット名、パラメータ名のコンフィギュレーションパラメータを取得}
+     * {@.ja 指定したコンフィギュレーションセット名、パラメータ名の
+     * コンフィギュレーションパラメータを取得}
      * {@.en Get Configuration object}
      * <p>
      * {@.ja コンポーネントのプロパティ取得}
      * 
-     * @param conf 
+     * @param rtc 
      *   {@.ja コンフィギュレーション}
      *   {@.en Configuration}
      * 
