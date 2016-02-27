@@ -92,13 +92,13 @@ public class RTShellUtil {
             return true;
         }
         catch (Exception ex) {
-            return true;
+            return false; 
         }
     }
     /**
      *
      * {@.ja RTCがデフォルトの実行コンテキストでalive状態かを判定する}
-     * {@.en Confirm whether RTC is the alive state}
+     * {@.en Confirms the existence of EC of RTC.}
      *
      * @param rtc
      *   {@.ja RTコンポーネント}
@@ -110,6 +110,9 @@ public class RTShellUtil {
      * 
      */
     public static boolean is_alive_in_default_ec(RTObject rtc){
+        if(rtc==null) {
+            return false;
+        }
         ExecutionContext ec = get_actual_ec(rtc);
         if(ec==null){
             return false;
