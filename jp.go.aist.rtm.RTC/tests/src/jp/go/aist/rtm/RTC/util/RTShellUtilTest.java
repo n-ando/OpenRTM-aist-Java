@@ -35,9 +35,11 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
-import OpenRTM.DataFlowComponent;
 import RTC.ExecutionContext;
 import RTC.ExecutionContextListHolder;
+import RTC.ExecutionContextService;
+import RTC.ExecutionContextServiceHelper;
+import RTC.ExecutionContextProfile;
 import RTC.LifeCycleState;
 import RTC.PortService;
 import RTC.PortServiceListHolder;
@@ -45,6 +47,7 @@ import RTC.RTObject;
 import RTC.RTObjectHolder;
 import RTC.RTObjectHelper;
 import RTC.ReturnCode_t;
+import OpenRTM.DataFlowComponent;
 import _SDOPackage.NVListHolder;
 import _SDOPackage.NameValue;
 
@@ -53,17 +56,39 @@ public class RTShellUtilTest extends TestCase {
     private ORB m_orb;
     private CorbaConsumer<DataFlowComponent> m_conout =
             new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
+    private CorbaConsumer<DataFlowComponent> m_conin =
+            new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
+    private CorbaConsumer<DataFlowComponent> m_sercon =
+            new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
+
     private RTObjectHolder m_conoutRef
+                    = new RTObjectHolder();
+    private RTObjectHolder m_coninRef
+                    = new RTObjectHolder();
+    private RTObjectHolder m_serconRef
                     = new RTObjectHolder();
     //private RTObject m_conoutRef;
     private ExecutionContextListHolder m_eclisto 
+                    = new ExecutionContextListHolder();
+    private ExecutionContextListHolder m_eclisti 
                     = new ExecutionContextListHolder();
     private ExecutionContextListHolder m_eclistseq 
                     = new ExecutionContextListHolder();
 
     private RTObject_impl m_out_impl;
-    protected void setUp() throws Exception {
-        super.setUp();
+    private RTObject_impl m_in_impl;
+    private RTObject_impl m_out_seq_impl;
+    
+    public RTShellUtilTest(String name){
+        super(name);
+
+        m_eclisto = new ExecutionContextListHolder();
+        m_eclisti = new ExecutionContextListHolder();
+        m_eclistseq = new ExecutionContextListHolder();
+
+        m_conoutRef = new RTObjectHolder();
+        m_coninRef = new RTObjectHolder();
+        m_serconRef = new RTObjectHolder();
 
         String[] args = new String[0];
         //Manager manager = Manager.init(null);
@@ -87,18 +112,21 @@ public class RTShellUtilTest extends TestCase {
         //
         Properties prop_in = new Properties(ConsoleIn.component_conf);
         m_manager.registerFactory(prop_in, new ConsoleIn(), new ConsoleIn());
-        RTObject_impl in_impl = m_manager.createComponent("ConsoleIn");
-        if(in_impl==null)
+        //RTObject_impl in_impl = m_manager.createComponent("ConsoleIn");
+        m_in_impl = m_manager.createComponent("ConsoleIn");
+        if(m_in_impl==null)
         {
             System.out.println("ConsoleIn is null.");
         }
         //
-        Properties prop_out_seq = new Properties(MyServiceConsumer.component_conf);
+        Properties prop_out_seq 
+            = new Properties(MyServiceConsumer.component_conf);
         m_manager.registerFactory(prop_out_seq, 
                 new MyServiceConsumer(), new MyServiceConsumer());
-        RTObject_impl out_seq_impl 
+        //RTObject_impl out_seq_impl 
+        m_out_seq_impl 
             = m_manager.createComponent("MyServiceConsumer");
-        if(out_seq_impl==null)
+        if(m_out_seq_impl==null)
         {
             System.out.println("MyServiceConsumer is null.");
         }
@@ -112,26 +140,33 @@ public class RTShellUtilTest extends TestCase {
         //ExecutionContextListHolder eclisto = new ExecutionContextListHolder();
         m_eclisto.value = new ExecutionContext[0];
         m_eclisto.value =  m_out_impl.get_owned_contexts();
-        System.out.println( "m_eclisto.value.length : "
-                + m_eclisto.value.length);
+        //System.out.println( "m_eclisto.value.length : "
+        //        + m_eclisto.value.length);
         //
-        ExecutionContextListHolder eclisti = new ExecutionContextListHolder();
-        eclisti.value = new ExecutionContext[0];
-        eclisti.value =  in_impl.get_owned_contexts();
-        System.out.println( "eclisti.value.length : "+ eclisti.value.length);
+        //ExecutionContextListHolder eclisti = new ExecutionContextListHolder();
+        m_eclisti.value = new ExecutionContext[0];
+        m_eclisti.value =  m_in_impl.get_owned_contexts();
+        //System.out.println( "m_eclisti.value.length : "+ m_eclisti.value.length);
         // 
         //ExecutionContextListHolder eclistseq = new ExecutionContextListHolder();
         m_eclistseq.value = new ExecutionContext[0];
-        m_eclistseq.value =  out_seq_impl.get_owned_contexts();
-        System.out.println( "m_eclistseq.value.length : "+ m_eclistseq.value.length);
+        m_eclistseq.value =  m_out_seq_impl.get_owned_contexts();
+        //System.out.println( "m_eclistseq.value.length : "+ m_eclistseq.value.length);
         //
         // bind
         //
-        m_out_impl.bindContext(eclisti.value[0]);
+        //System.out.println( "bind0 : "+ m_eclisto.value[0]);
+        //System.out.println( "bind1 : "+ m_eclisti.value[0]);
+        m_out_impl.bindContext(m_eclisti.value[0]);
         m_eclisto.value =  m_out_impl.get_owned_contexts();
-        System.out.println( "m_eclisto.value.length : "
-                + m_eclisto.value.length);
+        //System.out.println( "m_eclisto.value.length : "
+        //        + m_eclisto.value.length);
 
+        //System.out.println( "bind2 : "+ m_eclisto.value[0]);
+        //System.out.println( "bind3 : "+ m_eclisto.value[1]);
+        //
+        //
+        //
         //ORB orb = ORBUtil.getOrb();
         m_orb = ORBUtil.getOrb();
         CorbaNaming naming = null;
@@ -159,8 +194,40 @@ public class RTShellUtilTest extends TestCase {
         eclist.value = new ExecutionContext[0];
         m_conoutRef.value = m_conout._ptr();
         eclist.value =  m_conoutRef.value.get_owned_contexts();
-        System.out.println( "eclist.value.length : "+ eclist.value.length);
+        //System.out.println( "eclist.value.length : "+ eclist.value.length);
 
+
+        try {
+            m_conin.setObject(naming.resolve(".host_cxt/ConsoleIn0.rtc"));
+        } catch (NotFound e) {
+            e.printStackTrace();
+        } catch (CannotProceed e) {
+            e.printStackTrace();
+        } catch (InvalidName e) {
+            e.printStackTrace();
+        }
+
+        // 
+        m_coninRef.value = m_conin._ptr();
+
+
+        try {
+            m_sercon.setObject(naming.resolve(".host_cxt/MyServiceConsumer0.rtc"));
+        } catch (NotFound e) {
+            e.printStackTrace();
+        } catch (CannotProceed e) {
+            e.printStackTrace();
+        } catch (InvalidName e) {
+            e.printStackTrace();
+        }
+
+        // 
+        m_serconRef.value = m_sercon._ptr();
+    }
+
+
+    protected void setUp() throws Exception {
+        super.setUp();
         try{
             Thread.sleep(500); 
         }
@@ -170,6 +237,20 @@ public class RTShellUtilTest extends TestCase {
 
     protected void tearDown() throws Exception {
         super.tearDown();
+        for(int ic=0;ic<m_eclisto.value.length;++ic){
+            m_eclisto.value[ic].stop();
+        }
+        for(int ic=0;ic<m_eclisti.value.length;++ic){
+            m_eclisti.value[ic].stop();
+        }
+        for(int ic=0;ic<m_eclistseq.value.length;++ic){
+            m_eclistseq.value[ic].stop();
+        }
+        if(m_manager!=null){
+            m_manager.shutdown();
+            m_manager = null;
+        }
+        Thread.sleep(300);
     }
 
     /**
@@ -177,60 +258,91 @@ public class RTShellUtilTest extends TestCase {
      * 
      */
     public void test_get_actual_ec() {
+        System.out.println( "test_get_actual_ec()" );
+        ExecutionContext[] list = m_conoutRef.value.get_owned_contexts();
         ExecutionContext ec = RTShellUtil.get_actual_ec(m_conoutRef.value,0);
-        assertTrue(ec._is_equivalent(m_eclisto.value[0]));
+        {
+        //System.out.println( "m_conoutRef.value.get_owned_contexts()[0]: " 
+        //        +list[0]);
+        }
+        //System.out.println( "ec : " +ec);
+        //System.out.println( "m_eclisto.value[0] : " +m_eclisto.value[0]);
+        //assertTrue("test:id is 0",ec._is_equivalent(m_eclisto.value[0]));
+        assertTrue("test:id is 0",ec._is_equivalent(list[0]));
 
         ec = RTShellUtil.get_actual_ec(m_conoutRef.value,1);
-        assertTrue(ec._is_equivalent(m_eclisto.value[1]));
+        //assertTrue("test:id is 1",ec._is_equivalent(m_eclisto.value[1]));
+        assertTrue("test:id is 1",ec._is_equivalent(list[1]));
 
         ec = RTShellUtil.get_actual_ec(m_conoutRef.value,2);
-        assertTrue(ec == null);
+        assertTrue("test:id is out of range",ec == null);
 
         ec = RTShellUtil.get_actual_ec(null,0);
-        assertTrue(ec == null);
-
+        assertTrue("test:rtc is null",ec == null);
     }
     /**
      *
      * 
      */
     public void test_get_ec_id(){
-        System.out.println( "110 : " );
+        System.out.println( "test_get_ec_id()" );
         ExecutionContext[] list = m_conoutRef.value.get_owned_contexts();
+/*
         System.out.println( "115 : " +list.length);
         System.out.println( "116 : " +m_eclisto.value.length);
+        System.out.println( "117-0 : " +list[0]);
+        System.out.println( "117-1 : " +list[1]);
+        System.out.println( "118-0 : " +m_eclisto.value[0]);
+        System.out.println( "118-1 : " +m_eclisto.value[1]);
+        if(list[0]._is_equivalent(list[0])){
+           System.out.println( "119 : " );
+        }
         if(list[0]._is_equivalent(m_eclisto.value[0])){
            System.out.println( "120 : " );
         }
         if(list[0] == m_eclisto.value[0]){
            System.out.println( "130 : " );
         }
+        if(list[1]._is_equivalent(m_eclisto.value[0])){
+           System.out.println( "121 : " );
+        }
+        if(list[0]._is_equivalent(m_eclisto.value[1])){
+           System.out.println( "122 : " );
+        }
+        if(list[1]._is_equivalent(m_eclisto.value[1])){
+           System.out.println( "123 : " );
+        }
         System.out.println( "140 : " );
-        int id = RTShellUtil.get_ec_id(m_conoutRef.value, m_eclisto.value[0]);
-        System.out.println( "id : " + id );
-        assertTrue(id == 0);
+*/
+        //int id = RTShellUtil.get_ec_id(m_conoutRef.value, m_eclisto.value[0]);
+        int id = RTShellUtil.get_ec_id(m_conoutRef.value, list[0]);
+        //System.out.println( "id : " + id );
+        assertTrue("test:id is 0.",id == 0);
 
-        id = RTShellUtil.get_ec_id(m_conoutRef.value, m_eclisto.value[1]);
-        System.out.println( "id : " + id );
-        assertTrue(id == 1);
+        //id = RTShellUtil.get_ec_id(m_conoutRef.value, m_eclisto.value[1]);
+        id = RTShellUtil.get_ec_id(m_conoutRef.value, list[1]);
+        //System.out.println( "id : " + id );
+        assertTrue("test:id is 1",id == 1);
 
         id = RTShellUtil.get_ec_id(m_conoutRef.value, null);
-        System.out.println( "id : " + id );
-        assertTrue(id == -1);
+        //System.out.println( "id : " + id );
+        assertTrue("test:list is null",id == -1);
 
-        id = RTShellUtil.get_ec_id(null, m_eclisto.value[1]);
-        System.out.println( "id : " + id );
-        assertTrue(id == -1);
+        //id = RTShellUtil.get_ec_id(null, m_eclisto.value[1]);
+        id = RTShellUtil.get_ec_id(null, list[0]);
+        //System.out.println( "id : " + id );
+        assertTrue("test:rtc is null",id == -1);
 
         id = RTShellUtil.get_ec_id(m_conoutRef.value, m_eclistseq.value[0]);
-        System.out.println( "id : " + id );
-        assertTrue(id == -1);
+        //System.out.println( "id : " + id );
+        assertTrue("test:not foud",id == -1);
     }
     /**
      *
      * 
      */
     public void test_activate_deactivate(){
+        System.out.println( "test_activate_deactivate()" );
         ReturnCode_t ret = RTShellUtil.activate(null, 0);
         assertTrue(ret == ReturnCode_t.BAD_PARAMETER);
 
@@ -268,6 +380,332 @@ public class RTShellUtilTest extends TestCase {
         assertTrue(ret == ReturnCode_t.RTC_OK);
 */
     }
+    /**
+     *
+     * get_state
+     *
+     */
+    public static String getStateString(LifeCycleState state) {
+      final String st[] = {
+        "CREATED_STATE",
+        "INACTIVE_STATE",
+        "ACTIVE_STATE",
+        "ERROR_STATE"
+      };
+        return st[state.value()]; 
+    }
+    public void test_get_state(){
+        LifeCycleState ret = RTShellUtil.get_state(m_conoutRef.value, 0);
+        String str_ret = getStateString(ret);
+        System.out.println(str_ret);
+        assertTrue("test:inactive_state",str_ret.equals("INACTIVE_STATE"));
+        //
+        RTShellUtil.activate(m_conoutRef.value, 0);
+        try{
+            Thread.sleep(500); 
+        }
+        catch(InterruptedException e){
+        }
+        ret = RTShellUtil.get_state(m_conoutRef.value, 0);
+        str_ret = getStateString(ret);
+        System.out.println(str_ret);
+        assertTrue("test:active_state",str_ret.equals("ACTIVE_STATE"));
+        //
+        RTShellUtil.deactivate(m_conoutRef.value, 0);
+        try{
+            Thread.sleep(500); 
+        }
+        catch(InterruptedException e){
+        }
+        ret = RTShellUtil.get_state(m_conoutRef.value, 0);
+        str_ret = getStateString(ret);
+        System.out.println(str_ret);
+        assertTrue("test:inactive_state",str_ret.equals("INACTIVE_STATE"));
+        //
+        ret = RTShellUtil.get_state(null, 0);
+        str_ret = getStateString(ret);
+        System.out.println(str_ret);
+        assertTrue("test:error_state",str_ret.equals("ERROR_STATE"));
+        //
+        ret = RTShellUtil.get_state(m_conoutRef.value, 3);
+        str_ret = getStateString(ret);
+        System.out.println(str_ret);
+        assertTrue("test:error_state",str_ret.equals("ERROR_STATE"));
+    }
+    /**
+     *
+     * is_in_active
+     *
+     */
+    public void test_is_in_active(){
+         boolean ret;
+        ret = RTShellUtil.is_in_active(m_conoutRef.value, 0);
+        assertTrue("test:is",!ret);
+        //
+        RTShellUtil.activate(m_conoutRef.value, 0);
+        try{
+            Thread.sleep(500); 
+        }
+        catch(InterruptedException e){
+        }
+        ret = RTShellUtil.is_in_active(m_conoutRef.value, 0);
+        assertTrue("test:is",ret);
+        //
+        RTShellUtil.deactivate(m_conoutRef.value, 0);
+        try{
+            Thread.sleep(500); 
+        }
+        catch(InterruptedException e){
+        }
+        ret = RTShellUtil.is_in_active(m_conoutRef.value, 0);
+        assertTrue("test:is",!ret);
+        //
+        ret = RTShellUtil.is_in_active(null, 0);
+        assertTrue("test:is",!ret);
+        ret = RTShellUtil.is_in_active(m_conoutRef.value, 3);
+        assertTrue("test:is",!ret);
+    }
 
+    /**
+     *
+     * get_default_rate/set_default_rate
+     *
+     */
+    public void test_get_default_rate_set_default_rate(){
+
+        double ret = RTShellUtil.get_default_rate(m_conoutRef.value);
+        assertTrue("test:get_default_rate 1000.0 get value="+ret,ret == 1000.0);
+        RTShellUtil.set_default_rate(m_conoutRef.value, 500.0);
+        ret = RTShellUtil.get_default_rate(m_conoutRef.value);
+        assertTrue("test:get_default_rate 500.0",ret == 500.0);
+        //
+        //
+        //
+        ret = RTShellUtil.get_default_rate(null);
+        ReturnCode_t code = RTShellUtil.set_default_rate(null, 500.0);
+        assertTrue("test:set_default_rate",code == ReturnCode_t.BAD_PARAMETER);
+        // 
+    }
+    /**
+     *
+     * get_current_rate/set_current_rate
+     *
+     */
+    public void test_get_current_rate_set_current_rate(){
+        RTShellUtil.set_default_rate(m_conoutRef.value, 1000.0);
+        double ret = RTShellUtil.get_current_rate(m_conoutRef.value,0);
+        assertTrue("test:get_rate 1000.0 get value="+ret,ret == 1000.0);
+        ret = RTShellUtil.get_current_rate(m_conoutRef.value,1);
+        assertTrue("test:get_rate 1000.0",ret == 1000.0);
+        //
+        RTShellUtil.set_current_rate(m_conoutRef.value,0,500.0);
+        ret = RTShellUtil.get_current_rate(m_conoutRef.value,0);
+        assertTrue("test:get_rate 500.0",ret == 500.0);
+        RTShellUtil.set_current_rate(m_conoutRef.value,1,500.0);
+        ret = RTShellUtil.get_current_rate(m_conoutRef.value,1);
+        assertTrue("test:get_rate 500.0",ret == 500.0);
+        //
+        //
+        //
+        ret = RTShellUtil.get_current_rate(null,0);
+        assertTrue("test:",ret == -1.0);
+        ret = RTShellUtil.get_current_rate(null,1);
+        assertTrue("test:",ret == -1.0);
+        ReturnCode_t code;
+        code = RTShellUtil.set_current_rate(null, 0, 500.0);
+        assertTrue("test:set_rate",code == ReturnCode_t.BAD_PARAMETER);
+        code = RTShellUtil.set_current_rate(null, 1, 500.0);
+        assertTrue("test:set_rate",code == ReturnCode_t.BAD_PARAMETER);
+        //
+        ret = RTShellUtil.get_current_rate(m_conoutRef.value,2);
+        code = RTShellUtil.set_current_rate(m_conoutRef.value, 2, 500.0);
+        assertTrue("test:set_rate",code == ReturnCode_t.BAD_PARAMETER);
+  
+        RTShellUtil.set_current_rate(m_conoutRef.value,0,1000.0);
+        RTShellUtil.set_current_rate(m_conoutRef.value,1,1000.0);
+    }
+    /**
+     *
+     * add_rtc_to_default_ec
+     * remove_rtc_to_default_ec
+     * get_participants_rtc
+     *
+     */
+    public void test_rtc_to_default_ec(){
+        ReturnCode_t code;
+        code =  RTShellUtil.add_rtc_to_default_ec(m_conoutRef.value, 
+                m_serconRef.value);
+        assertTrue("test:add_rtc",code == ReturnCode_t.RTC_OK);
+
+        RTObject[] objs;
+        objs = RTShellUtil.get_participants_rtc(m_conoutRef.value);
+        //System.out.println( "length : "+ objs.length);
+        assertTrue("test:get_rtc",objs.length == 1);
+
+        code = RTShellUtil.remove_rtc_to_default_ec(m_conoutRef.value,
+                m_serconRef.value);
+        assertTrue("test:remove_rtc : "+code.value() ,code == ReturnCode_t.RTC_OK);
+
+        objs = RTShellUtil.get_participants_rtc(m_conoutRef.value);
+        //System.out.println( "length : "+ objs.length);
+        assertTrue("test:get_rtc",objs.length == 0);
+
+        //
+        //
+        //
+        code =  RTShellUtil.add_rtc_to_default_ec(null, m_serconRef.value);
+        assertTrue("test:add_rtc",code == ReturnCode_t.RTC_ERROR);
+        code =  RTShellUtil.add_rtc_to_default_ec(m_conoutRef.value, null);
+        assertTrue("test:add_rtc",code == ReturnCode_t.RTC_ERROR);
+        code =  RTShellUtil.add_rtc_to_default_ec(null, null);
+        assertTrue("test:add_rtc",code == ReturnCode_t.RTC_ERROR);
+        //
+        code = RTShellUtil.remove_rtc_to_default_ec(null, m_serconRef.value);
+        assertTrue("test:remove_rtc",code == ReturnCode_t.RTC_ERROR);
+        code = RTShellUtil.remove_rtc_to_default_ec(m_conoutRef.value,null);
+        assertTrue("test:remove_rtc",code == ReturnCode_t.RTC_ERROR);
+        code = RTShellUtil.remove_rtc_to_default_ec(null,null);
+        assertTrue("test:remove_rtc",code == ReturnCode_t.RTC_ERROR);
+        objs = RTShellUtil.get_participants_rtc(null);
+        assertTrue("test:",objs == null);
+
+    }
+    /**
+     *
+     * get_port_names
+     * get_inport_names
+     * get_outport_names
+     * get_svcport_names
+     *
+     */
+    public void test_get_port_names(){
+        Vector<String> names;
+        //
+        //
+        //
+        names = RTShellUtil.get_port_names(m_conoutRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 1);
+
+        names = RTShellUtil.get_port_names(m_coninRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 1);
+
+        names = RTShellUtil.get_port_names(m_serconRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 1);
+
+        //
+        //
+        //
+        names = RTShellUtil.get_inport_names(m_conoutRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 1);
+
+        names = RTShellUtil.get_inport_names(m_coninRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 0);
+
+        names = RTShellUtil.get_inport_names(m_serconRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 0);
+
+        //
+        //
+        //
+        names = RTShellUtil.get_outport_names(m_conoutRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 0);
+
+        names = RTShellUtil.get_outport_names(m_coninRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 1);
+
+        names = RTShellUtil.get_outport_names(m_serconRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 0);
+
+        //
+        //
+        //
+        names = RTShellUtil.get_svcport_names(m_conoutRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 0);
+
+        names = RTShellUtil.get_svcport_names(m_coninRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 0);
+
+        names = RTShellUtil.get_svcport_names(m_serconRef.value);
+        System.out.println( "names : "+ names.toString());
+        assertTrue("test:",names.size() == 1);
+
+
+        names = RTShellUtil.get_port_names(null);
+        assertTrue("test:",names == null);
+        names = RTShellUtil.get_inport_names(null);
+        assertTrue("test:",names == null);
+        names = RTShellUtil.get_outport_names(null);
+        assertTrue("test:",names == null);
+        names = RTShellUtil.get_svcport_names(null);
+        assertTrue("test:",names == null);
+    }
+    /**
+     *
+     * get_port_by_name
+     *
+     */
+    public void test_get_port_by_name(){
+        PortService ps;
+        ps = RTShellUtil.get_port_by_name(m_conoutRef.value, 
+                 "ConsoleOut0.in");
+        System.out.println( "name : "+ ps.get_port_profile().name);
+        assertTrue("test:",ps.get_port_profile().name.equals("ConsoleOut0.in"));
+        
+        ps = RTShellUtil.get_port_by_name(null,
+                 "ConsoleOut0.in");
+        assertTrue("test:",ps == null);
+
+        ps = RTShellUtil.get_port_by_name(m_conoutRef.value, "");
+        assertTrue("test:",ps == null);
+    }
+    /**
+     *
+     * connect
+     *
+     */
+    public void test_connect(){
+
+        PortService port1 = RTShellUtil.get_port_by_name(m_conoutRef.value, 
+                 "ConsoleOut0.in");
+        PortService port2 = RTShellUtil.get_port_by_name(m_coninRef.value, 
+                 "ConsoleIn0.out");
+        Properties prop = new Properties();
+        String[] conprop = {
+            "dataport.interface_type","corba_cdr",
+            "dataport.dataflow_type", "push",
+            ""
+        };
+        
+        prop.setDefaults(conprop);
+        ReturnCode_t code;
+        code = RTShellUtil.connect("kamo",prop,port1,port2);
+        assertTrue("test:",code == ReturnCode_t.RTC_OK);
+        try{
+            Thread.sleep(10000); 
+        }
+        catch(InterruptedException e){
+        }
+        //
+        //
+        //
+        code = RTShellUtil.connect("",prop,port1,port2);
+        code = RTShellUtil.connect("kamo",null,port1,port2);
+        code = RTShellUtil.connect("kamo",prop,null,port2);
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+        code = RTShellUtil.connect("kamo",prop,port1,null);
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+    
+    }
 }
 

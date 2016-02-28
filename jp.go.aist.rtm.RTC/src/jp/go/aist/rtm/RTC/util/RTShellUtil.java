@@ -637,7 +637,15 @@ public class RTShellUtil {
      *
      */
     public static double get_current_rate(RTObject rtc, int ec_id){
+        if(rtc == null)
+        {
+            return -1.0;
+        }
         ExecutionContext ec = get_actual_ec(rtc, ec_id);
+        if(ec == null)
+        {
+            return -1.0;
+        }
         return ec.get_rate();
     }
     /**
@@ -660,7 +668,15 @@ public class RTShellUtil {
      */
     public static ReturnCode_t set_current_rate(RTObject rtc, 
             int  ec_id, double rate){
+        if(rtc == null)
+        {
+            return ReturnCode_t.BAD_PARAMETER;
+        }
         ExecutionContext ec = get_actual_ec(rtc, ec_id);
+        if(ec == null)
+        {
+            return ReturnCode_t.BAD_PARAMETER;
+        }
         return ec.set_rate(rate);
     }
     /**
@@ -685,6 +701,10 @@ public class RTShellUtil {
      */
     public static ReturnCode_t add_rtc_to_default_ec(RTObject localcomp, 
             RTObject othercomp){
+        if(othercomp == null)
+        {
+            return ReturnCode_t.RTC_ERROR;
+        }
         ExecutionContext ec = get_actual_ec(localcomp);
         if(ec==null){
             return ReturnCode_t.RTC_ERROR;
@@ -693,7 +713,8 @@ public class RTShellUtil {
     }
     /**
      *
-     * {@.ja 対象のRTCのデフォルトの実行コンテキストの指定のRTCへの関連付けを解除する}
+     * {@.ja 対象のRTCのデフォルトの実行コンテキストの指定のRTCへの関連付けを
+     * 解除する}
      * {@.en Remove the RT-Component from participant list of  ExecutionContext}
      *
      * 
@@ -713,6 +734,10 @@ public class RTShellUtil {
      */
     public static ReturnCode_t remove_rtc_to_default_ec(RTObject localcomp, 
             RTObject othercomp){
+        if(othercomp == null)
+        {
+            return ReturnCode_t.RTC_ERROR;
+        }
         ExecutionContext ec = get_actual_ec(localcomp);
         if(ec==null){
             return ReturnCode_t.RTC_ERROR;
@@ -721,7 +746,8 @@ public class RTShellUtil {
     }
     /**
      *
-     * {@.ja RTCのデフォルトの実行コンテキストに参加しているRTCのリストを取得する}
+     * {@.ja RTCのデフォルトの実行コンテキストに参加しているRTCのリストを
+     * 取得する}
      * {@.en Getting participant RTC list}
      * <p>
      * {@.ja 実行コンテキストがnilの場合は空のリストを返す}
@@ -1094,8 +1120,10 @@ public class RTShellUtil {
      *   {@.en Target Port}
      * 
      * @return 
-     *   {@.ja RTC、ECのオブジェクトリファレンスがnilの場合はBAD_PARAMETERを返す
-     * nilではない場合はport0.connect関数の戻り値を返す。RTC_OKの場合は接続が成功}
+     *   {@.ja RTC、ECのオブジェクトリファレンスがnilの場合はBAD_PARAMETERを
+     * 返す
+     * nilではない場合はport0.connect関数の戻り値を返す。
+     * RTC_OKの場合は接続が成功}
      *   {@.en Return code}
      *
      * RTC::ReturnCode_t connect(const std::string name,const coil::Properties prop,const RTC::PortService_ptr port0,const RTC::PortService_ptr port1)
@@ -1110,6 +1138,9 @@ public class RTShellUtil {
         }
         if(port0._is_equivalent(port1)){
             return ReturnCode_t.BAD_PARAMETER;
+        }
+        if(prop == null){
+           prop = new Properties();
         }
         ConnectorProfileHolder profileholder = new ConnectorProfileHolder();
         profileholder.value = create_connector(name, prop, port0, port1);
