@@ -13,6 +13,7 @@ import java.lang.Thread;
 import RTMExamples.SimpleIO.ConsoleIn;
 import RTMExamples.SimpleIO.ConsoleOut;
 import RTMExamples.SimpleService.MyServiceConsumer;
+import RTMExamples.ConfigSample.ConfigSample;
 
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.ModuleInitProc;
@@ -58,15 +59,24 @@ public class RTShellUtilTest extends TestCase {
             new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
     private CorbaConsumer<DataFlowComponent> m_conin =
             new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
+    private CorbaConsumer<DataFlowComponent> m_conin2 =
+            new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
     private CorbaConsumer<DataFlowComponent> m_sercon =
+            new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
+    private CorbaConsumer<DataFlowComponent> m_config =
             new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
 
     private RTObjectHolder m_conoutRef
                     = new RTObjectHolder();
     private RTObjectHolder m_coninRef
                     = new RTObjectHolder();
+    private RTObjectHolder m_coninRef2
+                    = new RTObjectHolder();
     private RTObjectHolder m_serconRef
                     = new RTObjectHolder();
+    private RTObjectHolder m_configRef
+                    = new RTObjectHolder();
+
     //private RTObject m_conoutRef;
     private ExecutionContextListHolder m_eclisto 
                     = new ExecutionContextListHolder();
@@ -78,6 +88,7 @@ public class RTShellUtilTest extends TestCase {
     private RTObject_impl m_out_impl;
     private RTObject_impl m_in_impl;
     private RTObject_impl m_out_seq_impl;
+    private RTObject_impl m_config_impl;
     
     public RTShellUtilTest(String name){
         super(name);
@@ -88,11 +99,13 @@ public class RTShellUtilTest extends TestCase {
 
         m_conoutRef = new RTObjectHolder();
         m_coninRef = new RTObjectHolder();
+        m_coninRef2 = new RTObjectHolder();
         m_serconRef = new RTObjectHolder();
+        m_configRef = new RTObjectHolder();
 
         String[] args = new String[0];
         //Manager manager = Manager.init(null);
-        Manager m_manager = Manager.init(null);
+        m_manager = Manager.init(null);
         // 
         // 
         // 
@@ -129,6 +142,18 @@ public class RTShellUtilTest extends TestCase {
         if(m_out_seq_impl==null)
         {
             System.out.println("MyServiceConsumer is null.");
+        }
+        //
+        Properties prop_config 
+            = new Properties(ConfigSample.component_conf);
+        m_manager.registerFactory(prop_config,
+                new ConfigSample(), new ConfigSample());
+        //RTObject_impl 
+        m_config_impl
+            = m_manager.createComponent("ConfigSample");
+        if(m_config_impl==null)
+        {
+            System.out.println("ConfigSample is null.");
         }
         //
         //
@@ -206,9 +231,21 @@ public class RTShellUtilTest extends TestCase {
         } catch (InvalidName e) {
             e.printStackTrace();
         }
-
+        // 
         // 
         m_coninRef.value = m_conin._ptr();
+        try {
+            m_conin2.setObject(naming.resolve(".host_cxt/ConsoleIn1.rtc"));
+        } catch (NotFound e) {
+            e.printStackTrace();
+        } catch (CannotProceed e) {
+            e.printStackTrace();
+        } catch (InvalidName e) {
+            e.printStackTrace();
+        }
+        // 
+        // 
+        m_coninRef2.value = m_conin2._ptr();
 
 
         try {
@@ -223,6 +260,20 @@ public class RTShellUtilTest extends TestCase {
 
         // 
         m_serconRef.value = m_sercon._ptr();
+        // 
+        //
+        try {
+            m_config.setObject(naming.resolve(".host_cxt/ConfigSample0.rtc"));
+        } catch (NotFound e) {
+            e.printStackTrace();
+        } catch (CannotProceed e) {
+            e.printStackTrace();
+        } catch (InvalidName e) {
+            e.printStackTrace();
+        }
+
+        // 
+        m_configRef.value = m_config._ptr();
     }
 
 
@@ -237,6 +288,7 @@ public class RTShellUtilTest extends TestCase {
 
     protected void tearDown() throws Exception {
         super.tearDown();
+/*
         for(int ic=0;ic<m_eclisto.value.length;++ic){
             m_eclisto.value[ic].stop();
         }
@@ -246,10 +298,13 @@ public class RTShellUtilTest extends TestCase {
         for(int ic=0;ic<m_eclistseq.value.length;++ic){
             m_eclistseq.value[ic].stop();
         }
+*/
+/*
         if(m_manager!=null){
             m_manager.shutdown();
             m_manager = null;
         }
+*/
         Thread.sleep(300);
     }
 
@@ -689,23 +744,295 @@ public class RTShellUtilTest extends TestCase {
         
         prop.setDefaults(conprop);
         ReturnCode_t code;
-        code = RTShellUtil.connect("kamo",prop,port1,port2);
-        assertTrue("test:",code == ReturnCode_t.RTC_OK);
+        code = RTShellUtil.connect("kamo0",prop,port1,port2);
+        assertTrue("test:connect",code == ReturnCode_t.RTC_OK);
+/*
         try{
             Thread.sleep(10000); 
         }
         catch(InterruptedException e){
         }
+*/
         //
         //
         //
         code = RTShellUtil.connect("",prop,port1,port2);
-        code = RTShellUtil.connect("kamo",null,port1,port2);
-        code = RTShellUtil.connect("kamo",prop,null,port2);
+        assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
+        code = RTShellUtil.connect("kamo1",null,port1,port2);
+        assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
+        code = RTShellUtil.connect("kamo2",prop,null,port2);
         assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
-        code = RTShellUtil.connect("kamo",prop,port1,null);
+        code = RTShellUtil.connect("kamo3",prop,port1,null);
         assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+ 
+        code = RTShellUtil.disconnect_by_connector_name(port1, "kamo0");
+        assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
+/*
+        try{
+            Thread.sleep(10000); 
+        }
+        catch(InterruptedException e){
+        }
+*/
+        code = RTShellUtil.disconnect_by_connector_name(null, "kamo0");
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+        code = RTShellUtil.disconnect_by_connector_name(port1, "kamo5");
+        assertTrue("test:"+code.value(),code == ReturnCode_t.BAD_PARAMETER);
     
     }
+    /**
+     *
+     * connect
+     *
+     */
+    public void test_connect_by_name(){
+
+        PortService port1 = RTShellUtil.get_port_by_name(m_conoutRef.value, 
+                 "ConsoleOut0.in");
+        PortService port2 = RTShellUtil.get_port_by_name(m_coninRef.value, 
+                 "ConsoleIn0.out");
+        Properties prop = new Properties();
+        String[] conprop = {
+            "dataport.interface_type","corba_cdr",
+            "dataport.dataflow_type", "push",
+            ""
+        };
+        
+        prop.setDefaults(conprop);
+        ReturnCode_t code;
+        code = RTShellUtil.connect_by_name("kamo0",prop,
+                m_conoutRef.value,"ConsoleOut0.in",
+                m_coninRef.value,"ConsoleIn0.out");
+        assertTrue("test:connect",code == ReturnCode_t.RTC_OK);
+/*
+        try{
+            Thread.sleep(10000); 
+        }
+        catch(InterruptedException e){
+        }
+*/
+        //
+        //
+        //
+        code = RTShellUtil.connect_by_name("",prop,
+                m_conoutRef.value,"ConsoleOut0.in",
+                m_coninRef.value,"ConsoleIn0.out");
+        assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
+        code = RTShellUtil.connect_by_name("kamo1",null,
+                m_conoutRef.value,"ConsoleOut0.in",
+                m_coninRef.value,"ConsoleIn0.out");
+        assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
+        code = RTShellUtil.connect_by_name("kamo2",prop,
+                null,"ConsoleOut0.in",
+                m_coninRef.value,"ConsoleIn0.out");
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+        code = RTShellUtil.connect_by_name("kamo3",prop,
+                m_conoutRef.value,"ConsoleOut0.in",
+                m_coninRef.value,"");
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+        
+        
+        ConnectorProfile[] cprofs = port1.get_connector_profiles();
+        for(int ic=0;ic<cprofs.length;++ic){
+            if(cprofs[ic].name.equals("kamo0")){
+                code = RTShellUtil.disconnect(cprofs[ic]);
+                break;
+            }
+        }
+        
+        assertTrue("test:disconnect "+code.value(),code == ReturnCode_t.RTC_OK);
+/*
+        try{
+            Thread.sleep(10000); 
+        }
+        catch(InterruptedException e){
+        }
+*/
+        code = RTShellUtil.disconnect(null);
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+    }
+    /**
+     *
+     * disconnect
+     *
+     */
+    public void test_disconnect_by_id(){
+
+        PortService port1 = RTShellUtil.get_port_by_name(m_conoutRef.value, 
+                 "ConsoleOut0.in");
+        PortService port2 = RTShellUtil.get_port_by_name(m_coninRef.value, 
+                 "ConsoleIn0.out");
+        Properties prop = new Properties();
+        String[] conprop = {
+            "dataport.interface_type","corba_cdr",
+            "dataport.dataflow_type", "push",
+            ""
+        };
+        
+        prop.setDefaults(conprop);
+        ReturnCode_t code;
+        code = RTShellUtil.connect("kamo0",prop,port1,port2);
+        assertTrue("test:connect",code == ReturnCode_t.RTC_OK);
+        //
+        //
+        //
+        String id = new String(); 
+        ConnectorProfile[] cprofs = port1.get_connector_profiles();
+        for(int ic=0;ic<cprofs.length;++ic){
+            if(cprofs[ic].name.equals("kamo0")){
+                id = cprofs[ic].connector_id;
+                break;
+            }
+        }
+        code = RTShellUtil.disconnect_by_connector_id(port1,id);
+        assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
+
+
+
+        code = RTShellUtil.disconnect_by_connector_id(null,id);
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+        code = RTShellUtil.disconnect_by_connector_id(port1,"");
+        assertTrue("test:"+code.value(),code == ReturnCode_t.BAD_PARAMETER);
+    
+    }
+    /**
+     *
+     * disconnect
+     *
+     */
+    public void test_disconnect_by_port_name(){
+        PortService port1 = RTShellUtil.get_port_by_name(m_conoutRef.value, 
+                 "ConsoleOut0.in");
+        PortService port2 = RTShellUtil.get_port_by_name(m_coninRef.value, 
+                 "ConsoleIn0.out");
+        Properties prop = new Properties();
+        String[] conprop = {
+            "dataport.interface_type","corba_cdr",
+            "dataport.dataflow_type", "push",
+            ""
+        };
+        
+        prop.setDefaults(conprop);
+        ReturnCode_t code;
+        code = RTShellUtil.connect("kamo0",prop,port1,port2);
+        assertTrue("test:connect",code == ReturnCode_t.RTC_OK);
+
+
+
+
+        code = RTShellUtil.disconnect_by_port_name(port1,"ConsoleIn0.out");
+        assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
+
+        code = RTShellUtil.disconnect_by_port_name(port1,"");
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+        code = RTShellUtil.disconnect_by_port_name(null,"ConsoleIn0.out");
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+
+    }
+    /**
+     *
+     * get_parameter_by_key
+     * get_current_configuration_name
+     * get_active_configuration
+     * set_configuration
+     */
+    public void test_get_parameter_by_key(){
+        String str;
+        str = RTShellUtil.get_parameter_by_key(m_configRef.value,
+                "default","double_param0");
+        assertTrue("test:",str.equals("0.11"));
+    
+        str = RTShellUtil.get_parameter_by_key(m_configRef.value,
+                "","double_param0");
+        assertTrue("test:",str.equals(""));
+        str = RTShellUtil.get_parameter_by_key(m_configRef.value,
+                "default","");
+        assertTrue("test:",str.equals(""));
+
+
+
+        str = RTShellUtil.get_current_configuration_name(m_configRef.value);
+        assertTrue("test:",str.equals("default"));
+        str = RTShellUtil.get_current_configuration_name(null);
+        assertTrue("test:",str.equals(""));
+
+
+
+        Properties prop 
+            = RTShellUtil.get_active_configuration(m_configRef.value);
+        str = prop.getProperty("double_param0");
+        assertTrue("test:",str.equals("0.11"));
+        prop = RTShellUtil.get_active_configuration(null);
+        assertTrue("test:",prop==null);
+    
+        boolean bool = RTShellUtil.set_configuration(m_configRef.value, 
+                "default", "double_param0","305.8560");
+        assertTrue("test:",bool);
+        str = RTShellUtil.get_parameter_by_key(m_configRef.value,
+                "default","double_param0");
+        assertTrue("test:",str.equals("305.8560"));
+        //
+        bool = RTShellUtil.set_configuration(null, 
+                "default", "double_param0","305.8560");
+        assertTrue("test:",!bool);
+        bool = RTShellUtil.set_configuration(m_configRef.value, 
+                "", "double_param0","305.8560");
+        assertTrue("test:",!bool);
+        bool = RTShellUtil.set_configuration(m_configRef.value, 
+                "default", "double_param2","123.456");
+        assertTrue("test:",bool);
+        str = RTShellUtil.get_parameter_by_key(m_configRef.value,
+                "default","double_param2");
+        assertTrue("test:",str.equals("123.456"));
+
+
+    }
+    /**
+     *
+     * connect
+     *
+     */
+    public void test_connect_multi(){
+
+        PortService port1 = RTShellUtil.get_port_by_name(m_conoutRef.value, 
+                 "ConsoleOut0.in");
+        PortService port2 = RTShellUtil.get_port_by_name(m_coninRef.value, 
+                 "ConsoleIn0.out");
+        PortService port3 = RTShellUtil.get_port_by_name(m_coninRef2.value, 
+                 "ConsoleIn1.out");
+        Properties prop = new Properties();
+        String[] conprop = {
+            "dataport.interface_type","corba_cdr",
+            "dataport.dataflow_type", "push",
+            ""
+        };
+        PortServiceListHolder target_ports = new PortServiceListHolder();
+        target_ports.value = new PortService[2];
+        target_ports.value[0] = port2;
+        target_ports.value[1] = port3;
+        prop.setDefaults(conprop);
+        ReturnCode_t code;
+        code = RTShellUtil.connect_multi("kamo10", prop, 
+                    port1,  target_ports);
+        assertTrue("test:",code == ReturnCode_t.RTC_OK);
+/*
+        try{
+            Thread.sleep(30000); 
+        }
+        catch(InterruptedException e){
+        }
+*/
+        code = RTShellUtil.connect_multi("kamo11", prop, 
+                    null,  target_ports);
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+        code = RTShellUtil.connect_multi("kamo11", prop, 
+                    port1,  null);
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+        PortServiceListHolder error_ports = new PortServiceListHolder();
+        code = RTShellUtil.connect_multi("kamo11", prop, 
+                    port1, error_ports );
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+    }
 }
+  
 

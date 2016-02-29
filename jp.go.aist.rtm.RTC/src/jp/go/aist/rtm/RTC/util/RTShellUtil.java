@@ -1180,6 +1180,15 @@ public class RTShellUtil {
                     PortService port, PortServiceListHolder target_ports){
         ReturnCode_t ret = ReturnCode_t.RTC_OK;
   
+        if(port == null){
+            return ReturnCode_t.BAD_PARAMETER;
+        }
+        if(target_ports == null){
+            return ReturnCode_t.BAD_PARAMETER;
+        }
+        if(target_ports.value == null){
+            return ReturnCode_t.BAD_PARAMETER;
+        }
         for (int ic=0; ic < target_ports.value.length; ++ic) {
             if(target_ports.value[ic]._is_equivalent(port)){
                 continue;
@@ -1227,7 +1236,8 @@ public class RTShellUtil {
      * 
      * @return 
      *   {@.ja RTC、ポートがnilの場合はBAD_PARAMETERを返す。
-     * nilではない場合はport0.connect関数の戻り値を返す。RTC_OKの場合は接続が成功}
+     * nilではない場合はport0.connect関数の戻り値を返す。
+     * RTC_OKの場合は接続が成功}
      *   {@.en Return code}
      *
      *
@@ -1265,13 +1275,18 @@ public class RTShellUtil {
      *   {@.en Conenctor Profile}
      * 
      * @return 
-     *   {@.ja コネクタプロファイルで保持しているポートのオブジェクトリファレンスがnilの場合はBAD_PARAMETERを返す
-     * nilではない場合はports[0].disconnect関数の戻り値を返す。RTC_OKの場合は切断が成功}
+     *   {@.ja コネクタプロファイルで保持しているポートの
+     * オブジェクトリファレンスがnilの場合はBAD_PARAMETERを返す
+     * nilではない場合はports[0].disconnect関数の戻り値を返す。
+     * RTC_OKの場合は切断が成功}
      *   {@.en Return code}
      *
      *
      */
     public static ReturnCode_t disconnect(ConnectorProfile connector_prof){
+        if(connector_prof == null){
+            return ReturnCode_t.BAD_PARAMETER;
+        }
         PortServiceListHolder ports = new PortServiceListHolder();
         ports.value = connector_prof.ports;
         return disconnect_by_connector_id(ports.value[0], 
@@ -1346,7 +1361,8 @@ public class RTShellUtil {
     }
     /**
      *
-     * {@.ja 対象ポートと接続しているポートで指定したポート名と一致した場合に切断}
+     * {@.ja 対象ポートと接続しているポートで指定したポート名と一致した場合に
+     * 切断}
      * {@.en Disconnects a connection in specified by port.}
      * 
      * @param localport 
@@ -1358,8 +1374,11 @@ public class RTShellUtil {
      *   {@.en port name}
      *
      * @return 
-     *   {@.ja ポートがnilの場合、localportの名前とothernameが一致する場合、接続しているポートの名前でothernameと一致するものがない場合にBAD_PARAMETERを返す
-     * 上記の条件に当てはまらない場合はdisconnect関数の戻り値を返す。RTC_OKの場合は切断が成功}
+     *   {@.ja ポートがnilの場合、localportの名前とothernameが一致する場合、
+     * 接続しているポートの名前でothernameと一致するものがない場合に
+     * BAD_PARAMETERを返す
+     * 上記の条件に当てはまらない場合はdisconnect関数の戻り値を返す。
+     * RTC_OKの場合は切断が成功}
      *   {@.en Return code}
      *
      *

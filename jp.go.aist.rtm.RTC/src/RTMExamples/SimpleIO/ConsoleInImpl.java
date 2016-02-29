@@ -99,6 +99,9 @@ public class ConsoleInImpl extends DataFlowComponentBase {
         m_outOut.addConnectorListener(
                             ConnectorListenerType.ON_CONNECT,
                             new Listener("ON_CONNECT"));
+        m_outOut.addConnectorListener(
+                            ConnectorListenerType.ON_DISCONNECT,
+                            new Listener("ON_DISCONNECT"));
         return super.onInitialize();
     }
     // The finalize action (on ALIVE->END transition)
