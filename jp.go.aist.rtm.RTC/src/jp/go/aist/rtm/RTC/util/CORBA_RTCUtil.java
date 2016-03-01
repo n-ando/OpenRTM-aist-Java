@@ -974,7 +974,7 @@ public class CORBA_RTCUtil {
      *
      *
      */
-    public static Vector<String> get_connector_names(PortBase port){
+    public static Vector<String> get_connector_names_by_portref(PortBase port){
         if(port==null){
             return null;
         }
@@ -987,7 +987,40 @@ public class CORBA_RTCUtil {
         }
         return names;
     }
-
+    /**
+     * {@.ja 対象のRTCの指定したポートのコネクタの名前のリストを取得}
+     * {@.en Gets a list of the ports name specified port maintains.}
+     *
+     * @param rtc
+     *   {@.ja RTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     *
+     * @param port 
+     *   {@.ja 対象のポート}
+     *   {@.en Target Port}
+     * 
+     * @return 
+     *   {@.ja コネクタ名のリスト}
+     *   {@.en List of port names}
+     */
+    public static Vector<String> get_connector_names(RTObject rtc, 
+                    String port_name){
+        if(rtc==null){
+            return null;
+        }
+        Vector<String> names = new Vector<String>();
+        PortService port = get_port_by_name(rtc, port_name);
+        if(port == null){
+            return null;
+        }
+        ConnectorProfileListHolder conprof =
+                new ConnectorProfileListHolder();
+        conprof.value = port.get_connector_profiles();
+        for(int ic=0;ic<conprof.value.length;++ic){
+            names.add(conprof.value[ic].name);
+        }
+        return names;
+    }
     /**
      *
      * {@.ja 指定したポートの保持しているコネクタのIDのリストを取得}
@@ -1004,7 +1037,7 @@ public class CORBA_RTCUtil {
      * 
      *
      */
-    public static Vector<String> get_connector_ids(PortBase port){
+    public static Vector<String> get_connector_ids_by_portref(PortBase port){
         if(port == null){
             return null;
         }
@@ -1014,6 +1047,42 @@ public class CORBA_RTCUtil {
         conprof.value = port.get_connector_profiles();
         for(int ic=0;ic<conprof.value.length;++ic){
             ids.add(conprof.value[ic].connector_id);
+        }
+        return ids;
+    }
+    /**
+     *
+     * {@.ja 対象のRTCの指定したポートのコネクタのIDのリストを取得}
+     * {@.en Gets a list of the connectorIDs specified port maintains 
+     *  of target RTC.}
+     *
+     * 
+     * @param rtc
+     *   {@.ja RTコンポーネント}
+     *   {@.en Target RT-Component's instances}
+     *
+     * @param name 
+     *   {@.ja ポート名}
+     *   {@.en the name of port}
+     * 
+     * @return 
+     *   {@.ja コネクタのIDのリスト}
+     *   {@.en List of connectorIDs}
+     *
+     */
+    public static Vector<String> get_connector_ids(RTObject rtc, 
+                    String port_name){
+        if(rtc==null){
+            return null;
+        }
+        Vector<String> ids = new Vector<String>();
+        PortService port = get_port_by_name(rtc, port_name);
+        if(port==null){
+            return null;
+        }
+        ConnectorProfile[] conprof = port.get_connector_profiles();
+        for(int ic=0;ic<conprof.length;++ic){
+            ids.add(conprof[ic].connector_id);
         }
         return ids;
     }
