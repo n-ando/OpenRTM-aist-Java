@@ -169,8 +169,7 @@ public class NamingManager implements CallbackFunction {
      *
      * void bindPortObject(const char* name, PortBase* port)
      */
-/*
-    public void  bindPortObject(String name,PortBaes port){
+    public void  bindPortObject(String name,PortBase port){
         rtcout.println(Logbuf.TRACE, 
                 "NamingManager.bindPortObject(" + name + ")");
         synchronized (m_names) {
@@ -178,17 +177,17 @@ public class NamingManager implements CallbackFunction {
             for(int intIdx=0; intIdx < len; ++intIdx ) {
                 if( m_names.elementAt(intIdx).ns != null ) {
                     try{
-                        m_names.elementAt(intIdx).ns.bindPortObject(name, rtobj);
+                        m_names.elementAt(intIdx).ns.bindPortObject(
+                                name, port);
                     }
                     catch(Exception ex){
                         m_names.elementAt(intIdx).ns = null;
                     }
                 }
             }
-            this.registerPortName(name, rtobj);
+            this.registerPortName(name, port);
         }
     }
-*/
     /**
      * {@.ja NamingServer の情報の更新。}
      * {@.en Update information of NamingServer}
