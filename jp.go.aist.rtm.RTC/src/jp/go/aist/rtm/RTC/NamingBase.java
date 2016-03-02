@@ -93,4 +93,22 @@ public interface NamingBase {
   # virtual RTCList string_to_component(string name) = 0;
      */
     public RTObject[] string_to_component(String name);
+    /**
+     *
+     * {@.ja 指定した CORBA オブジェクトのNamingServiceへバインド}
+     * {@.en Binds specified CORBA object to NamingService.}
+     * <p>
+     * {@.ja 指定した CORBA オブジェクトを指定した名称で CORBA NamingService へ
+     * バインドする。}
+     * {@.en Binds specified CORBA object to NamingService.}
+     *
+     * @param name 
+     *   {@.ja バインド時の名称}
+     *   {@.en The name to be bound to the NamingService}
+     *
+     * @param port 
+     *   {@.ja バインド対象オブジェクト}
+     *   {@.en The target objects to be bound to the object}
+     */
+    public void bindPortObject(final String name, final PortBase port);
 }
