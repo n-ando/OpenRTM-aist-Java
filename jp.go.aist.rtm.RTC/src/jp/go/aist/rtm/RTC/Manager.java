@@ -44,6 +44,7 @@ import RTC.ExecutionContextListHolder;
 import RTC.ReturnCode_t;
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
+import RTC.PortProfile;
 import RTC.PortService;
 import RTC.PortServiceHolder;
 import RTC.PortServiceListHolder;
@@ -349,7 +350,189 @@ public class Manager {
     public Properties getConfig() {
         return m_config;
     }
+
+
+  
+    /**
+     *
+     * {@.ja 指定したRTコンポーネントの保持するポートを
+     * NamingServiceにバインドする}
+     * {@.en Bind ports in NamingService. }
+     * <p>
+     * {@.ja ポートのpublish_topicというプロパティでトピック名を設定し、
+     * トピック名のコンテキストの下に登録}
+     *
+     * @param comp
+     *   {@.ja RTコンポーネント}
+     *   {@.en RT Component}
+     * void publishPorts(RTObject_impl* comp)
+     */
+    public void publishPorts(RTObject_impl comp){
+/*
+        //PortServiceListHolder ports = new PortServiceListHolder();
+        PortService[] ports = comp.get_ports();
+        for(int ic=0;ic<ports.length;++ic){
+            PortProfile prof = ports[ic].get_port_profile();
+            NVListHolder nvholder = 
+                new NVListHolder(prof.properties);
+            Properties prop = new Properties();
+            NVUtil.copyToProperties(prop, nvholder);
+
+            if(
+               ( prop.hasKey("publish_topic")==null ||
+                 prop.getProperty("publish_topic")!=null )
+               &&
+               ( prop.hasKey("subscribe_topic")==null ||
+                 prop.getProperty("subscribe_topic")!=null )
+               &&
+               ( prop.hasKey("rendezvous_point")==null ||
+                 prop.getProperty("rendezvous_point")!=null )
+            ){
+               
+                
+                continue;
+            }
+            String name = new String();
+            if(prop.getProperty("port.port_type").equals("DataOutPort"){
+                name  = "dataports.port_cxt/"
+                name += prop.getProperty("publish_topic") + ".topic_cxt/"
+                name += prof.name
+                name += ".outport"
+            }
+            else if(prop.getProperty("port.port_type").equals("DataInPort"){
+                name  = "dataports.port_cxt/"
+                name += str(prop.getProperty("publish_topic")) + ".topic_cxt/"
+                name += prof.name
+                name += ".inport"
+            }
+            else if(prop.getProperty("port.port_type").equals("CorbaPort"){
+                name  = "svcports.port_cxt/"
+                name += str(prop.getProperty("publish_topic")) + ".topic_cxt/"
+                name += prof.name
+                name += ".svc"
+            }
+            else{
+        
+                rtcout.println(Logbuf.WARN, 
+                "Unknown port type: "+prop.getProperty("port.port_type"));
+                continue
+            }
+            POA poa = Manager.instance().getPOA();
+            PortBase port = (PortBase)(poa.reference_to_servant(ports[ic]));
+      
+//            m_namingManager.bindPortObject(name, comp);
+        }
+*/
+/*
+        for p in ports{
+            prof = p.get_port_profile()
+            prop = OpenRTM_aist.Properties()
+            OpenRTM_aist.NVUtil.copyToProperties(prop, prof.properties)
+      
+            if (prop.hasKey("publish_topic") is None or not str(prop.getProperty("publish_topic"))) and (prop.hasKey("subscribe_topic") is None or not str(prop.getProperty("subscribe_topic"))) and (prop.hasKey("rendezvous_point") is None or not str(prop.getProperty("rendezvous_point"))){
+                continue
+            }
+
+
+            if prop.getProperty("port.port_type") == "DataOutPort"{
+                name  = "dataports.port_cxt/"
+                name += str(prop.getProperty("publish_topic")) + ".topic_cxt/"
+                name += prof.name
+                name += ".outport"
+            }
+            elif prop.getProperty("port.port_type") == "DataInPort"{
+                name  = "dataports.port_cxt/"
+                name += str(prop.getProperty("publish_topic")) + ".topic_cxt/"
+                name += prof.name
+                name += ".inport"
+            }
+            elif prop.getProperty("port.port_type") == "CorbaPort"{
+                name  = "svcports.port_cxt/"
+                name += str(prop.getProperty("publish_topic")) + ".topic_cxt/"
+                name += prof.name
+                name += ".svc"
+            }
+            else{
+        
+                self._rtcout.RTC_WARN("Unknown port type: %s" % str(prop.getProperty("port.port_type")))
+                continue
+            }
+      
+            port = self._poa.reference_to_servant(p)
+      
+            self._namingManager.bindPortObject(name, port)
+        }
+*/
+    }
+    /**
+     *
+     * {@.ja 指定したRTコンポーネントの保持するポートを
+     * 同じトピック名以下の接続可能なポートと接続}
+     * {@.en connects a port by a topic name.}
+     *
+     *
+     * @param comp
+     *   {@.ja RTコンポーネント}
+     *   {@.en RT Component}
+     *
+     *  # void subscribePorts(RTObject_impl* comp)
+     */
+    public void subscribePorts(RTObject_impl comp){
+/*
+        ports = comp.get_ports();
     
+        foro(int ic=0; ic<ports.length; ++ic ){
+      
+            prof = p.get_port_profile()
+            prop = OpenRTM_aist.Properties()
+            OpenRTM_aist.NVUtil.copyToProperties(prop, prof.properties)
+      
+            if (prop.hasKey("publish_topic") is None or not str(prop.getProperty("publish_topic"))) and (prop.hasKey("subscribe_topic") is None or not str(prop.getProperty("subscribe_topic"))) and (prop.hasKey("rendezvous_point") is None or not str(prop.getProperty("rendezvous_point"))){
+                continue
+            }      
+            
+      
+      
+            if prop.getProperty("port.port_type") == "DataOutPort"{
+                name  = "dataports.port_cxt/"
+                name += str(prop.getProperty("publish_topic")) + ".topic_cxt"
+        
+                nsports = self.getPortsOnNameServers(name, "inport")
+        
+                self.connectDataPorts(p, nsports)
+            }
+            elif prop.getProperty("port.port_type") == "DataInPort"{
+                name  = "dataports.port_cxt/"
+                name += str(prop.getProperty("publish_topic")) + ".topic_cxt"
+                nsports = self.getPortsOnNameServers(name, "outport")
+                self.connectDataPorts(p, nsports)
+            }
+            elif prop.getProperty("port.port_type") == "CorbaPort"{
+                name  = "svcports.port_cxt/"
+                name += str(prop.getProperty("publish_topic")) + ".topic_cxt"
+                nsports = self.getPortsOnNameServers(name, "svc")
+                self.connectServicePorts(p, nsports)
+            }
+        }
+*/
+    }
+    /**
+     *
+     * {@ja NamingManagerを取得する}
+     * {@.en Gets NamingManager Managfer has.}
+     *
+     *
+     * @return 
+     *   {@.ja NamingManager}
+     *   {@.en NamingManager}
+     *
+     *  # NamingManager* getNaming()
+     */
+    public NamingManager getNaming(){
+        rtcout.println(Logbuf.TRACE, "Manager.getNaming()");
+        return m_namingManager;
+
+    }    
     /**
      * {@.ja 初期化プロシージャのセット。}
      * {@.en Set initial procedure}
@@ -1547,6 +1730,9 @@ public class Manager {
         }
         m_listeners.naming_.postBind(comp,names);
 
+        publishPorts(comp);
+        subscribePorts(comp);
+       
         return true;
     }
     

@@ -7,6 +7,7 @@ import jp.go.aist.rtm.RTC.port.PortBase;
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 
+import RTC.RTObject;
   /**
    * {@.ja NamingServer 管理クラス。}
    * {@.en NamingServer management class}
@@ -153,7 +154,41 @@ public class NamingManager implements CallbackFunction {
             this.registerMgrName(name, mgr);
         }
     }
-
+    /**
+     *
+     * {@.ja @brief 指定したポートのNamingServiceへバインド}
+     * {@.en Bind the specified port to NamingService}
+     *
+     * @param name バインド時の名称
+     *   {@.ja RTコンポーネント}
+     *   {@.ja バインド時の名称}
+     *
+     * @param port バインド対象のポート
+     *   {@.ja バインド対象のポート}
+     *   {@.en The target port for the binding}
+     *
+     * void bindPortObject(const char* name, PortBase* port)
+     */
+/*
+    public void  bindPortObject(String name,PortBaes port){
+        rtcout.println(Logbuf.TRACE, 
+                "NamingManager.bindPortObject(" + name + ")");
+        synchronized (m_names) {
+            int len = m_names.size();
+            for(int intIdx=0; intIdx < len; ++intIdx ) {
+                if( m_names.elementAt(intIdx).ns != null ) {
+                    try{
+                        m_names.elementAt(intIdx).ns.bindPortObject(name, rtobj);
+                    }
+                    catch(Exception ex){
+                        m_names.elementAt(intIdx).ns = null;
+                    }
+                }
+            }
+            this.registerPortName(name, rtobj);
+        }
+    }
+*/
     /**
      * {@.ja NamingServer の情報の更新。}
      * {@.en Update information of NamingServer}
@@ -341,6 +376,34 @@ public class NamingManager implements CallbackFunction {
 
     public Vector<NamingService> getNameServices() {
         return m_names;
+    }
+    /**
+     *
+     * {@.ja rtcloc形式でRTCのオブジェクトリファレンスを取得}
+     * {@.en Gets RTC objects by rtcloc form.}
+     *
+     * @param name 
+     *   {@.ja rtcloc形式でのRTC名
+     *   rtcloc://localhost:2809/example/ConsoleIn}
+     *   {@.en The RTC name expressed by rtcloc form
+     *   rtcloc://localhost:2809/example/ConsoleIn}
+     *
+     * @return
+     *   {@.ja RTCのオブジェクトリファレンス}
+     *   {@.en List of RTC objects}
+     *
+     *  # RTCList string_to_component(string name);
+     */
+    public RTObject[]  string_to_component(String name){
+        synchronized (m_names) {
+            for(int ic=0;ic<m_names.size();++ic){
+                RTObject[] comps = m_names.get(ic).ns.string_to_component(name);
+                if(comps == null){
+                    return comps;
+                }
+            }
+        }
+        return null;
     }
     /**
      * {@.ja NameServer 管理用オブジェクトの生成。}

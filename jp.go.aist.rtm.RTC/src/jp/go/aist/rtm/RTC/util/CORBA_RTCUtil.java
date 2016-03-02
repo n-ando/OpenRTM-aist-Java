@@ -1,8 +1,9 @@
 package jp.go.aist.rtm.RTC.util;
 
-import java.util.Vector;
+import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.NamingManager;
 
-import RTC.RTObject;
+import java.util.Vector;
 
 import RTC.ComponentProfile;
 import RTC.ComponentProfileHolder;
@@ -15,6 +16,7 @@ import RTC.ExecutionContextProfile;
 import RTC.ExecutionContextService;
 import RTC.ExecutionContextServiceHelper;
 import RTC.LifeCycleState;
+import RTC.RTObject;
 import RTC.PortProfile;
 import RTC.PortService;
 import RTC.PortServiceListHolder;
@@ -472,7 +474,8 @@ public class CORBA_RTCUtil {
     }
     /**
      *
-     * {@.ja 対象のRTコンポーネントの指定した実行コンテキストでINACTIVE状態かどうか判定}
+     * {@.ja 対象のRTコンポーネントの指定した実行コンテキストで
+     * INACTIVE状態かどうか判定}
      * {@.en Confirm to INACTIVE}
      *
      * 
@@ -483,7 +486,7 @@ public class CORBA_RTCUtil {
      *
      * @return 
      *   {@.ja INACTIVE状態の時はtrue、それ以外はfalse
-     * rtc、ecがnilの場合もfalseを返す}
+     *   rtc、ecがnilの場合もfalseを返す}
      *   {@.en Result of state confirmation
      *         (INACTIVE state:true, other state:false)}
      *
@@ -1374,7 +1377,7 @@ public class CORBA_RTCUtil {
         }
         PortServiceListHolder ports = new PortServiceListHolder();
         ports.value = connector_prof.ports;
-        return disconnect_by_connector_id(ports.value[0], 
+        return disconnect_by_portref_connector_id(ports.value[0], 
                     connector_prof.connector_id);
     }  
 
@@ -1393,13 +1396,14 @@ public class CORBA_RTCUtil {
      * 
      * @return 
      *   {@.ja portがnilの場合はBAD_PARAMETERを返す
-     * nilではない場合はdisconnect関数の戻り値を返す。RTC_OKの場合は切断が成功}
+     *   nilではない場合はdisconnect関数の戻り値を返す。
+     *   RTC_OKの場合は切断が成功}
      *   {@.en Return code}
      *
      *
      */
-    public static  ReturnCode_t disconnect_by_connector_name(PortService port, 
-                String name){
+    public static ReturnCode_t disconnect_by_portref_connector_name(
+                PortService port, String name){
         if(port == null){
             return ReturnCode_t.BAD_PARAMETER;
         }
@@ -1413,6 +1417,41 @@ public class CORBA_RTCUtil {
         }
         return ReturnCode_t.BAD_PARAMETER;
 
+    }
+    /**
+     *
+     * {@.ja 対象の名前のポートで指定した名前のコネクタを切断}
+     * {@.en Disconnects the connectionis specified  by name.}
+     *
+     * 
+     * @param port _name
+     *   {@.ja 対象のポート名}
+     *   {@.en Target Port name}
+     *
+     * @param conn_name
+     *   {@.ja コネクタ名}
+     *   {@.en Connector name}
+     *
+     * @return 
+     *   {@.ja portがnilの場合はBAD_PARAMETERを返す
+     *   nilではない場合はdisconnect関数の戻り値を返す。
+     *   RTC_OKの場合は切断が成功}
+     *   {@.en Return code}
+     *
+     */
+    public static ReturnCode_t disconnect_by_portname_connector_name(
+                String port_name, String conn_name){
+        PortService port_ref = get_port_by_url(port_name);
+        if(port_ref == null){
+            return ReturnCode_t.BAD_PARAMETER;
+        }   
+        ConnectorProfile[] conprof = port_ref.get_connector_profiles();
+        for(int ic=0;ic<conprof.length;++ic){
+            if(conprof[ic].name.equals(conn_name)){
+                return disconnect(conprof[ic]);
+            }
+        }
+        return ReturnCode_t.BAD_PARAMETER;
     }
 
     /**
@@ -1431,17 +1470,125 @@ public class CORBA_RTCUtil {
      * 
      * @return 
      *   {@.ja portがnilの場合はBAD_PARAMETERを返す
-     * nilではない場合はdisconnect関数の戻り値を返す。RTC_OKの場合は切断が成功}
+     *   nilではない場合はdisconnect関数の戻り値を返す。
+     *   RTC_OKの場合は切断が成功}
      *   {@.en Return code}
      *
      *
      */
-    public static ReturnCode_t disconnect_by_connector_id(PortService port, 
-                String id){
+    public static ReturnCode_t disconnect_by_portref_connector_id(
+                PortService port, String id){
         if(port == null){
             return ReturnCode_t.BAD_PARAMETER;
         }
         return port.disconnect(id);
+
+    }
+    /**
+     *
+     * {@.ja 対象の名前のポートで指定したIDのコネクタを切断}
+     * {@.en Disconnects the connectionis specified by id.}
+     *
+     * 
+     * @param port_name 
+     *   {@.ja 対象のポート名}
+     *   {@.en Target Port Name}
+     *
+     * @param name コネクタID
+     *   {@.ja コネクタID}
+     *   {@.en connector id}
+     *
+     * @return 
+     *   {@.ja portがnilの場合はBAD_PARAMETERを返す
+     *   nilではない場合はdisconnect関数の戻り値を返す。
+     *   RTC_OKの場合は切断が成功}
+     *   {@.en Return code}
+     *
+     */
+    public static ReturnCode_t disconnect_by_portname_connector_id(
+                String port_name, String conn_id){
+        PortService port_ref = get_port_by_url(port_name);
+        if(port_ref == null){
+            return ReturnCode_t.BAD_PARAMETER;
+        }
+  
+        return port_ref.disconnect(conn_id);
+    }
+    /**
+     *
+     * {@ja 対象のポートのコネクタを全て切断}
+     * {@.en Disconnect all connectors in the target port.}
+     *
+     * 
+     * @param port_ref 
+     *   {@.ja ポートのオブジェクトリファレンス}
+     *   {@.en Object reference of port}
+     *
+     * @return 
+     *   {@.ja portがnilの場合はBAD_PARAMETERを返す
+     *   切断できた場合はRTC_OKを返す}
+     *   {@.en Return code}
+     *
+     */
+    public static ReturnCode_t disconnect_all_by_ref(PortService port_ref){
+        if(port_ref == null) {
+            return ReturnCode_t.BAD_PARAMETER;
+        }
+        return port_ref.disconnect_all();
+    }
+    /**
+     *
+     * {@ja 指定ポート名のポートのコネクタを全て切断}
+     * {@.en Disconnect all connectors in the target port name.}
+     *
+     * 
+     * @param port_name 
+     *   {@.ja ポート名}
+     *   {@.en port name}
+     *
+     * @return 
+     *   {@.ja portが存在しない場合はBAD_PARAMETERを返す
+     *   切断できた場合はRTC_OKを返す}
+     *   {@.en Return code}
+     *
+     */
+    public static ReturnCode_t disconnect_all_by_name(String port_name){
+        PortService port_ref = get_port_by_url(port_name);
+        if(port_ref == null){
+            return ReturnCode_t.BAD_PARAMETER;
+        }
+        return port_ref.disconnect_all();
+
+    }
+    /**
+     *
+     * {@ja 指定した名前のポートを取得}
+     * {@.en Gets a port of the designated name.}
+     * 
+     * @param port_name 
+     *   {@.ja ポート名}
+     *   {@.en a port name}
+     * @return 
+     *   {@.a ポートのオブジェクトリファレンス 
+     *   portが存在しない場合はnilを返す}
+     *   {@.en Object reference of port}
+     *
+     */
+    public static PortService get_port_by_url(String port_name){
+        Manager mgr = Manager.instance();
+        NamingManager nm = mgr.getNaming();
+        String[] ports  = port_name.split("\\.");
+        if(ports.length < 2){
+            return null;
+        }
+        RTObject[] rtcs = nm.string_to_component(ports[0]);
+        if(rtcs.length<1){
+            return null;
+        }
+  
+        String[] pn = port_name.split("/");
+  
+        return get_port_by_name(rtcs[0],pn[pn.length-1]);
 
     }
     /**
@@ -1582,7 +1729,7 @@ public class CORBA_RTCUtil {
      *
      *
      */
-    public static String get_current_configuration_name(RTObject rtc){
+    public static String get_active_configuration_name(RTObject rtc){
         try { 
             Configuration conf = rtc.get_configuration();
             ConfigurationSet confset = conf.get_active_configuration_set();
@@ -1635,7 +1782,7 @@ public class CORBA_RTCUtil {
      * 
      * @param value_name 
      *   {@.ja パラメータ名}
-     *   {@.en  trametername}
+     *   {@.en ParamterName}
      * 
      * @param value パラメータ
      *   {@.ja パラメータ}
@@ -1669,4 +1816,85 @@ public class CORBA_RTCUtil {
             return false;
         }
     }    
+    /**
+     *
+     * {@.ja アクティブなコンフィギュレーションセットのパラメータを設定}
+     * {@.en SetConfiguration object}
+     *
+     *
+     * @param rtc
+     *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RTComponent}
+     *
+     * @param value_name 
+     *   {@.ja パラメータ名}
+     *   {@.en ParamterName}
+     * 
+     * @param value パラメータ
+     *   {@.ja パラメータ}
+     *   {@.en Paramter}
+     * 
+     * @return
+     *   {@.ja true:設定に成功、false:設定に失敗}
+     *   {@.en true: succeeded, false: failed}
+     *
+     */
+    public static boolean set_active_configuration(
+            RTObject rtc, String value_name, String value){
+        try {
+            Configuration conf = rtc.get_configuration();
+  
+            ConfigurationSet confset = conf.get_active_configuration_set();
+            set_configuration_parameter(conf, confset, value_name, value);
+   
+            conf.activate_configuration_set(confset.id);
+            return true;
+        }
+        catch (Exception ex) {
+            return false;
+        }
+    }
+    /**
+     *
+     * {@.ja コンフィギュレーションパラメータの設定}
+     * {@.en Set configuration paramters.}
+     *
+     *
+     * @param conf コンフィギュレーション
+     *   {@.ja コンフィギュレーション}
+     *   {@.en Configurationme}
+     *
+     * @param confset
+     *   {@.ja コンフィギュレーションセット}
+     *   {@.en ConfigurationSete}
+     *
+     * @param value_name
+     *   {@.ja パラメータ名}
+     *   {@.en ParamterName}
+     *
+     * @param value
+     * @return True:設定に成功、False:設定に失敗
+     *   {@.ja true:設定に成功、false:設定に失敗}
+     *   {@.en true: succeeded, false: failed}
+     */
+    public static boolean set_configuration_parameter(
+            Configuration conf, ConfigurationSet confset, String value_name, 
+            String value){
+        try{
+            NVListHolder confData = new NVListHolder();
+            confData.value = confset.configuration_data;
+            Properties prop = new Properties();
+
+            NVUtil.copyToProperties(prop, confData);
+            prop.setProperty(value_name,value);
+            NVUtil.copyFromProperties(confData,prop);
+            confset.configuration_data = confData.value;
+            conf.set_configuration_set_values(confset);
+            return true;
+        }
+        catch (Exception ex) {
+            return false;
+        }
+  
+    }
 }    

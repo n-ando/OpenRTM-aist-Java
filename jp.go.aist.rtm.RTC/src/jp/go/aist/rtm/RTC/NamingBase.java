@@ -1,6 +1,9 @@
 package jp.go.aist.rtm.RTC;
 
 import jp.go.aist.rtm.RTC.port.PortBase;
+
+import RTC.RTObject;
+
   /**
    * {@.ja Naming Service管理用インターフェース。}
    * {@.en NamingService management interface}
@@ -78,4 +81,16 @@ public interface NamingBase {
      *
      */
     public boolean isAlive();
+
+    /**
+     *
+     * {@.ja rtcloc形式でRTCのオブジェクトリファレンスを取得する}
+     * {@.en Gets RTC objects by rtcloc form.}
+     * 
+     * @return 
+     *   {@.ja RTCのオブジェクトリファレンス}
+     *   {@.en RTC objects}
+  # virtual RTCList string_to_component(string name) = 0;
+     */
+    public RTObject[] string_to_component(String name);
 }
