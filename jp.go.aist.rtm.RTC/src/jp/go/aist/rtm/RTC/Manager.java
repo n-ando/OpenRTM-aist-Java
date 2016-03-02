@@ -22,6 +22,7 @@ import jp.go.aist.rtm.RTC.executionContext.OpenHRPExecutionContext;
 import jp.go.aist.rtm.RTC.executionContext.PeriodicECSharedComposite;
 import jp.go.aist.rtm.RTC.executionContext.PeriodicExecutionContext;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.port.PortBase;
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.IiopAddressComp;
@@ -368,7 +369,6 @@ public class Manager {
      * void publishPorts(RTObject_impl* comp)
      */
     public void publishPorts(RTObject_impl comp){
-/*
         //PortServiceListHolder ports = new PortServiceListHolder();
         PortService[] ports = comp.get_ports();
         for(int ic=0;ic<ports.length;++ic){
@@ -393,36 +393,41 @@ public class Manager {
                 continue;
             }
             String name = new String();
-            if(prop.getProperty("port.port_type").equals("DataOutPort"){
-                name  = "dataports.port_cxt/"
-                name += prop.getProperty("publish_topic") + ".topic_cxt/"
-                name += prof.name
-                name += ".outport"
+            if(prop.getProperty("port.port_type").equals("DataOutPort")){
+                name  = "dataports.port_cxt/";
+                name += prop.getProperty("publish_topic") + ".topic_cxt/";
+                name += prof.name;
+                name += ".outport";
             }
-            else if(prop.getProperty("port.port_type").equals("DataInPort"){
-                name  = "dataports.port_cxt/"
-                name += str(prop.getProperty("publish_topic")) + ".topic_cxt/"
-                name += prof.name
-                name += ".inport"
+            else if(prop.getProperty("port.port_type").equals("DataInPort")){
+                name  = "dataports.port_cxt/";
+                name += prop.getProperty("publish_topic") + ".topic_cxt/";
+                name += prof.name;
+                name += ".inport";
             }
-            else if(prop.getProperty("port.port_type").equals("CorbaPort"){
-                name  = "svcports.port_cxt/"
-                name += str(prop.getProperty("publish_topic")) + ".topic_cxt/"
-                name += prof.name
-                name += ".svc"
+            else if(prop.getProperty("port.port_type").equals("CorbaPort")){
+                name  = "svcports.port_cxt/";
+                name += prop.getProperty("publish_topic") + ".topic_cxt/";
+                name += prof.name;
+                name += ".svc";
             }
             else{
         
                 rtcout.println(Logbuf.WARN, 
                 "Unknown port type: "+prop.getProperty("port.port_type"));
-                continue
+                continue;
             }
-            POA poa = Manager.instance().getPOA();
-            PortBase port = (PortBase)(poa.reference_to_servant(ports[ic]));
+            try {
+                POA poa = Manager.instance().getPOA();
+                PortBase port = (PortBase)(poa.reference_to_servant(ports[ic]));
       
-//            m_namingManager.bindPortObject(name, comp);
+                m_namingManager.bindPortObject(name, port);
+            }
+            catch  (Exception e) {
+                rtcout.println(Logbuf.DEBUG, 
+                            "Peer port might be a remote port.");
+            }
         }
-*/
 /*
         for p in ports{
             prof = p.get_port_profile()
@@ -478,21 +483,51 @@ public class Manager {
      *  # void subscribePorts(RTObject_impl* comp)
      */
     public void subscribePorts(RTObject_impl comp){
-/*
-        ports = comp.get_ports();
+        PortService[] ports = comp.get_ports();
     
-        foro(int ic=0; ic<ports.length; ++ic ){
+        for(int ic=0; ic<ports.length; ++ic ){
+            PortProfile prof = ports[ic].get_port_profile();
+            NVListHolder nvholder = 
+                new NVListHolder(prof.properties);
+            Properties prop = new Properties();
+            NVUtil.copyToProperties(prop, nvholder);
       
-            prof = p.get_port_profile()
-            prop = OpenRTM_aist.Properties()
-            OpenRTM_aist.NVUtil.copyToProperties(prop, prof.properties)
-      
-            if (prop.hasKey("publish_topic") is None or not str(prop.getProperty("publish_topic"))) and (prop.hasKey("subscribe_topic") is None or not str(prop.getProperty("subscribe_topic"))) and (prop.hasKey("rendezvous_point") is None or not str(prop.getProperty("rendezvous_point"))){
-                continue
-            }      
-            
-      
-      
+            if(
+               ( prop.hasKey("publish_topic")==null ||
+                 prop.getProperty("publish_topic")!=null )
+               &&
+               ( prop.hasKey("subscribe_topic")==null ||
+                 prop.getProperty("subscribe_topic")!=null )
+               &&
+               ( prop.hasKey("rendezvous_point")==null ||
+                 prop.getProperty("rendezvous_point")!=null )
+            ){
+               
+                
+                continue;
+            }
+            PortService[] nsports;
+            String name = new String();
+            if(prop.getProperty("port.port_type").equals("DataOutPort")){
+                name  = "dataports.port_cxt/";
+                name += prop.getProperty("publish_topic") + ".topic_cxt";
+                nsports = getPortsOnNameServers(name, "inport");
+        
+                //connectDataPorts(ports[ic], nsports);
+            }
+            else if(prop.getProperty("port.port_type").equals("DataInPort")){
+                name  = "dataports.port_cxt/";
+                name += prop.getProperty("publish_topic") + ".topic_cxt";
+                nsports = getPortsOnNameServers(name, "outport");
+                //connectDataPorts(ports[ic], nsports);
+            }
+            else if(prop.getProperty("port.port_type").equals("CorbaPort")){
+                name  = "svcports.port_cxt/";
+                name += prop.getProperty("publish_topic") + ".topic_cxt";
+                nsports = getPortsOnNameServers(name, "svc");
+                //connectServicePorts(ports[ic], nsports);
+            }
+/*      
             if prop.getProperty("port.port_type") == "DataOutPort"{
                 name  = "dataports.port_cxt/"
                 name += str(prop.getProperty("publish_topic")) + ".topic_cxt"
@@ -513,9 +548,73 @@ public class Manager {
                 nsports = self.getPortsOnNameServers(name, "svc")
                 self.connectServicePorts(p, nsports)
             }
-        }
 */
+        }
     }
+    /**
+     *
+     * {@.ja 与えられたパス以下の指定されたkindのポートを取得する}
+     * {@.en Gets specified ports from the path.}
+     * @brief 
+     * 
+     * @param nsname 
+     *   {@.ja パス}
+     *   {@.en path}
+     }
+     * @param kind 
+     *   {@.ja kind}
+     *   {@.en kind}
+     *
+     * @return 
+     *   {@.ja ポートのオブジェクトリファレンスのリスト}
+     *   {@.en List of port objects}
+     *
+     * PortServiceList_var getPortsOnNameServers(std::string nsname,std::string kind)
+     */
+    public PortService[] getPortsOnNameServers(String nsname, String kind){
+/*
+        PortService[] ports;
+        NameService[] ns = m_namingManager.getNameServices();
+        for n in ns{
+            noc = n.ns;
+            if noc is None{
+                continue
+            }
+            cns = noc._cosnaming
+            if cns is None{
+                continue
+            } 
+            bl = cns.listByKind(nsname,kind)
+      
+            for b in bl{
+                if b.binding_type != CosNaming.nobject{
+                    continue
+                }
+                tmp = b.binding_name[0].id + "." + b.binding_name[0].kind
+                
+                nspath = "/" + nsname + "/" + tmp
+                nspath.replace("\\","")
+        
+                obj = cns.resolveStr(nspath)
+                portsvc = obj
+        
+                if CORBA.is_nil(portsvc){
+                    continue
+                } 
+                try{
+                    p = portsvc.get_port_profile()
+                }          
+                except{
+                    continue
+                }
+                ports.append(portsvc)
+            }
+        }
+        return ports
+*/
+        return null;
+    }
+
     /**
      *
      * {@ja NamingManagerを取得する}
@@ -1730,7 +1829,7 @@ public class Manager {
         }
         m_listeners.naming_.postBind(comp,names);
 
-        publishPorts(comp);
+        //publishPorts(comp);
         subscribePorts(comp);
        
         return true;
