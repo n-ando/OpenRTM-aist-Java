@@ -765,7 +765,8 @@ public class CORBA_RTCUtilTest extends TestCase {
         code = CORBA_RTCUtil.connect("kamo3",prop,port1,null);
         assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
  
-        code = CORBA_RTCUtil.disconnect_by_connector_name(port1, "kamo0");
+        code = CORBA_RTCUtil.disconnect_by_portref_connector_name(
+                port1, "kamo0");
         assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
 /*
         try{
@@ -774,9 +775,11 @@ public class CORBA_RTCUtilTest extends TestCase {
         catch(InterruptedException e){
         }
 */
-        code = CORBA_RTCUtil.disconnect_by_connector_name(null, "kamo0");
+        code = CORBA_RTCUtil.disconnect_by_portref_connector_name(
+                null, "kamo0");
         assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
-        code = CORBA_RTCUtil.disconnect_by_connector_name(port1, "kamo5");
+        code = CORBA_RTCUtil.disconnect_by_portref_connector_name(
+                port1, "kamo5");
         assertTrue("test:"+code.value(),code == ReturnCode_t.BAD_PARAMETER);
     
     }
@@ -884,14 +887,14 @@ public class CORBA_RTCUtilTest extends TestCase {
                 break;
             }
         }
-        code = CORBA_RTCUtil.disconnect_by_connector_id(port1,id);
+        code = CORBA_RTCUtil.disconnect_by_portref_connector_id(port1,id);
         assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
 
 
 
-        code = CORBA_RTCUtil.disconnect_by_connector_id(null,id);
+        code = CORBA_RTCUtil.disconnect_by_portref_connector_id(null,id);
         assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
-        code = CORBA_RTCUtil.disconnect_by_connector_id(port1,"");
+        code = CORBA_RTCUtil.disconnect_by_portref_connector_id(port1,"");
         assertTrue("test:"+code.value(),code == ReturnCode_t.BAD_PARAMETER);
     
     }
@@ -951,9 +954,9 @@ public class CORBA_RTCUtilTest extends TestCase {
 
 
 
-        str = CORBA_RTCUtil.get_current_configuration_name(m_configRef.value);
+        str = CORBA_RTCUtil.get_active_configuration_name(m_configRef.value);
         assertTrue("test:",str.equals("default"));
-        str = CORBA_RTCUtil.get_current_configuration_name(null);
+        str = CORBA_RTCUtil.get_active_configuration_name(null);
         assertTrue("test:",str.equals(""));
 
 
@@ -1033,6 +1036,135 @@ public class CORBA_RTCUtilTest extends TestCase {
                     port1, error_ports );
         assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
     }
+
+    /**
+     *
+     * connect
+     *
+     */
+    public void test_disconnect_by_portname_connector_name(){
+
+        PortService port1 = CORBA_RTCUtil.get_port_by_name(m_conoutRef.value, 
+                 "ConsoleOut0.in");
+        PortService port2 = CORBA_RTCUtil.get_port_by_name(m_coninRef.value, 
+                 "ConsoleIn0.out");
+        Properties prop = new Properties();
+        String[] conprop = {
+            "dataport.interface_type","corba_cdr",
+            "dataport.dataflow_type", "push",
+            ""
+        };
+        
+        prop.setDefaults(conprop);
+        ReturnCode_t code;
+        code = CORBA_RTCUtil.connect("kamo0",prop,port1,port2);
+        assertTrue("test:connect",code == ReturnCode_t.RTC_OK);
+/*
+        try{
+            Thread.sleep(50000); 
+        }
+        catch(InterruptedException e){
+        }
+*/
+
+        code = CORBA_RTCUtil.disconnect_by_portname_connector_name(
+                "rtcname://localhost:2809/.host_cxt/ConsoleOut0.in", "kamo0");
+        assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
+/*
+        code = CORBA_RTCUtil.disconnect_by_portref_connector_name(
+                port1, "kamo0");
+*/
+        assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
+/*
+        try{
+            Thread.sleep(50000); 
+        }
+        catch(InterruptedException e){
+        }
+*/
+
+/*
+        code = CORBA_RTCUtil.disconnect_by_portref_connector_name(
+                null, "kamo0");
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+        code = CORBA_RTCUtil.disconnect_by_portref_connector_name(
+                port1, "kamo5");
+        assertTrue("test:"+code.value(),code == ReturnCode_t.BAD_PARAMETER);
+*/
+    
+    }
+    /**
+     *
+     * connect
+     *
+     */
+    public void test_connect_by_name2(){
+
+        PortService port1 = CORBA_RTCUtil.get_port_by_name(m_conoutRef.value, 
+                 "ConsoleOut0.in");
+        PortService port2 = CORBA_RTCUtil.get_port_by_name(m_coninRef.value, 
+                 "ConsoleIn0.out");
+        Properties prop = new Properties();
+        String[] conprop = {
+            "dataport.interface_type","corba_cdr",
+            "dataport.dataflow_type", "push",
+            ""
+        };
+        
+        prop.setDefaults(conprop);
+        ReturnCode_t code;
+        code = CORBA_RTCUtil.connect_by_name("kamo0",prop,
+                m_conoutRef.value,"ConsoleOut0.in",
+                m_coninRef.value,"ConsoleIn0.out");
+        assertTrue("test:connect",code == ReturnCode_t.RTC_OK);
+/*
+        try{
+            Thread.sleep(10000); 
+        }
+        catch(InterruptedException e){
+        }
+*/
+        //
+        //
+        //
+        code = CORBA_RTCUtil.connect_by_name("",prop,
+                m_conoutRef.value,"ConsoleOut0.in",
+                m_coninRef.value,"ConsoleIn0.out");
+        assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
+        code = CORBA_RTCUtil.connect_by_name("kamo1",null,
+                m_conoutRef.value,"ConsoleOut0.in",
+                m_coninRef.value,"ConsoleIn0.out");
+        assertTrue("test:disconnect",code == ReturnCode_t.RTC_OK);
+        code = CORBA_RTCUtil.connect_by_name("kamo2",prop,
+                null,"ConsoleOut0.in",
+                m_coninRef.value,"ConsoleIn0.out");
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+        code = CORBA_RTCUtil.connect_by_name("kamo3",prop,
+                m_conoutRef.value,"ConsoleOut0.in",
+                m_coninRef.value,"");
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+        
+        
+        ConnectorProfile[] cprofs = port1.get_connector_profiles();
+        for(int ic=0;ic<cprofs.length;++ic){
+            if(cprofs[ic].name.equals("kamo0")){
+                code = CORBA_RTCUtil.disconnect(cprofs[ic]);
+                break;
+            }
+        }
+        
+        assertTrue("test:disconnect "+code.value(),code == ReturnCode_t.RTC_OK);
+/*
+        try{
+            Thread.sleep(10000); 
+        }
+        catch(InterruptedException e){
+        }
+*/
+        code = CORBA_RTCUtil.disconnect(null);
+        assertTrue("test:",code == ReturnCode_t.BAD_PARAMETER);
+    }
+
 }
   
 

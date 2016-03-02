@@ -97,7 +97,9 @@ public class CorbaNaming {
         }
 //        m_nameServer = "corbaloc:iiop:1.2@" + m_nameServer + "/NameService";
 
+        //rtcout.println(Logbuf.PARANOID, "m_nameServer="+m_nameServer);
         obj = m_varORB.string_to_object(m_nameServer);
+        //rtcout.println(Logbuf.PARANOID, "obj="+obj);
         m_rootContext =  NamingContextExtHelper.narrow(obj);
         if (m_rootContext==null) {
             throw new Exception("bad_alloc()");

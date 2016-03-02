@@ -395,10 +395,12 @@ public class NamingManager implements CallbackFunction {
      *  # RTCList string_to_component(string name);
      */
     public RTObject[]  string_to_component(String name){
+        rtcout.println(Logbuf.PARANOID, "name: "+name);
         synchronized (m_names) {
+             rtcout.println(Logbuf.PARANOID, "m_names.size():"+m_names.size());
             for(int ic=0;ic<m_names.size();++ic){
                 RTObject[] comps = m_names.get(ic).ns.string_to_component(name);
-                if(comps == null){
+                if(comps != null){
                     return comps;
                 }
             }

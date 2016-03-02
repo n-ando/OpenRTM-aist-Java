@@ -1575,14 +1575,26 @@ public class CORBA_RTCUtil {
      *
      */
     public static PortService get_port_by_url(String port_name){
+        System.out.println("get_port_by_url:"+port_name);
         Manager mgr = Manager.instance();
         NamingManager nm = mgr.getNaming();
         String[] ports  = port_name.split("\\.");
+        //System.out.println("ports.length="+ports.length);
+        int index  = port_name.lastIndexOf('.');
+        String comp;
+        if(index<-1){
+            comp = port_name;
+        }
+        else{
+            comp = port_name.substring(0,index);
+        }
+        //System.out.println("component:"+comp);
         if(ports.length < 2){
             return null;
         }
-        RTObject[] rtcs = nm.string_to_component(ports[0]);
-        if(rtcs.length<1){
+//        RTObject[] rtcs = nm.string_to_component(ports[0]);
+        RTObject[] rtcs = nm.string_to_component(comp);
+        if(rtcs == null){
             return null;
         }
   
