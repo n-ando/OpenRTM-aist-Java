@@ -111,4 +111,8 @@ public interface NamingBase {
      *   {@.en The target objects to be bound to the object}
      */
     public void bindPortObject(final String name, final PortBase port);
+
+    /**
+     */
+    public CorbaNaming getCorbaNaming(); 
 }

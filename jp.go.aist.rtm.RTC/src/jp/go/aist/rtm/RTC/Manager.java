@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.FileHandler;
 import java.util.logging.ConsoleHandler;
@@ -25,6 +26,7 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.port.PortBase;
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.CORBA_RTCUtil;
 import jp.go.aist.rtm.RTC.util.IiopAddressComp;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
@@ -37,9 +39,12 @@ import jp.go.aist.rtm.RTC.util.equalFunctor;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
 import org.omg.CORBA.SystemException;
+import org.omg.CosNaming.BindingListHolder;
+import org.omg.CosNaming.BindingType;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 import org.omg.PortableServer.POAManager;
+
 import RTC.ExecutionContext;
 import RTC.ExecutionContextListHolder;
 import RTC.ReturnCode_t;
@@ -47,6 +52,7 @@ import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
 import RTC.PortProfile;
 import RTC.PortService;
+import RTC.PortServiceHelper;
 import RTC.PortServiceHolder;
 import RTC.PortServiceListHolder;
 
@@ -513,19 +519,19 @@ public class Manager {
                 name += prop.getProperty("publish_topic") + ".topic_cxt";
                 nsports = getPortsOnNameServers(name, "inport");
         
-                //connectDataPorts(ports[ic], nsports);
+                connectDataPorts(ports[ic], nsports);
             }
             else if(prop.getProperty("port.port_type").equals("DataInPort")){
                 name  = "dataports.port_cxt/";
                 name += prop.getProperty("publish_topic") + ".topic_cxt";
                 nsports = getPortsOnNameServers(name, "outport");
-                //connectDataPorts(ports[ic], nsports);
+                connectDataPorts(ports[ic], nsports);
             }
             else if(prop.getProperty("port.port_type").equals("CorbaPort")){
                 name  = "svcports.port_cxt/";
                 name += prop.getProperty("publish_topic") + ".topic_cxt";
                 nsports = getPortsOnNameServers(name, "svc");
-                //connectServicePorts(ports[ic], nsports);
+                connectServicePorts(ports[ic], nsports);
             }
 /*      
             if prop.getProperty("port.port_type") == "DataOutPort"{
@@ -572,9 +578,54 @@ public class Manager {
      * PortServiceList_var getPortsOnNameServers(std::string nsname,std::string kind)
      */
     public PortService[] getPortsOnNameServers(String nsname, String kind){
+        ArrayList<PortService> ports = new ArrayList<PortService>();
+        //PortService[] ports = new ;
+        Vector<NamingService> ns = m_namingManager.getNameServices();
+        Iterator<NamingService> it = ns.iterator();
+        while (it.hasNext()) {
+            //NamingOnCorba noc = it.next().ns;
+            NamingBase noc = it.next().ns;
+            if(noc == null){
+                continue;
+            }
+            CorbaNaming cns = noc.getCorbaNaming();
+            if(cns == null){
+                continue;
+            }
+            BindingListHolder bl = new BindingListHolder();
+            cns.listByKind(nsname,kind,bl);
+            for(int ic=0;ic<bl.value.length;++ic){
+                if(bl.value[ic].binding_type != BindingType.nobject){
+                    continue;
+                }
+                String tmp = bl.value[ic].binding_name[0].id + "." 
+                                + bl.value[ic].binding_name[0].kind;
+                String nspath = "/" + nsname + "/" + tmp;
+                nspath.replace("\\","");
+
+                Object obj;
+                try {
+                    obj = cns.resolve(nspath);
+                }
+                catch (Exception e) {
+                    continue;
+                }
+                PortService portsvc  = PortServiceHelper.narrow(obj);
+                if(portsvc == null){
+                    continue;
+                } 
+                try{
+                    PortProfile prof = portsvc.get_port_profile();
+                }          
+                catch(Exception ex){
+                    continue;
+                }
+                ports.add(portsvc);
+            }
+        }
+        PortService[] ret = (PortService[])ports.toArray(new PortService[0]);
+        return ret;
 /*
-        PortService[] ports;
-        NameService[] ns = m_namingManager.getNameServices();
         for n in ns{
             noc = n.ns;
             if noc is None{
@@ -584,7 +635,7 @@ public class Manager {
             if cns is None{
                 continue
             } 
-            bl = cns.listByKind(nsname,kind)
+            bl = cns.listByKind(nsname,kind,bl);
       
             for b in bl{
                 if b.binding_type != CosNaming.nobject{
@@ -612,9 +663,112 @@ public class Manager {
         }
         return ports
 */
-        return null;
     }
 
+    /**
+     *
+     * {@ja 指定したデータポートを指定したリスト内のデータポート全てと接続する}
+     * {@.en Connects all specified ports.}
+     *
+     * @param port
+     *   {@.ja 対象のデータポート}
+     *   {@.en Target DataPort}
+     *
+     * @param target_ports 
+     *   {@.ja 接続対象のデータポートのリスト}
+     *   {@.en List of connected DataPorts}
+     *
+  # void connectDataPorts(PortService_ptr port,PortServiceList_var& target_ports)
+     */
+    public void connectDataPorts(PortService port,PortService[] target_ports){
+        for(int ic=0;ic<target_ports.length;++ic){
+            if(port._is_equivalent(target_ports[ic])){
+                continue;
+            }
+            String con_name = "";
+            PortProfile prof0 = port.get_port_profile();
+            PortProfile prof1 = target_ports[ic].get_port_profile();
+            con_name += prof0.name;
+            con_name += ":";
+            con_name += prof1.name;
+            Properties prop = new Properties();
+            ReturnCode_t ret = CORBA_RTCUtil.connect(
+                        con_name,prop,port,target_ports[ic]);
+            if(ret != ReturnCode_t.RTC_OK){
+                rtcout.println(Logbuf.ERROR, 
+                            "Connection error in topic connection.");
+            }
+        }
+    }    
+/*
+    for p in target_ports:
+      if port._is_equivalent(p):
+        continue
+      con_name = ""
+      p0 = port.get_port_profile()
+      p1 = p.get_port_profile()
+      con_name += p0.name
+      con_name += ":"
+      con_name += p1.name
+      prop = OpenRTM_aist.Properties()
+      if RTC.RTC_OK != OpenRTM_aist.CORBA_RTCUtil.connect(con_name,prop,port,p):
+        self._rtcout.RTC_ERROR("Connection error in topic connection.")
+    }
+*/
+
+    /**
+     * 
+     * {@ja 指定したサービスポートを指定したリスト内のサービスポート全てと
+     * 接続する}
+     * {@.en Connects all specified serviceports.}
+     *
+     *
+     * @param port
+     *   {@.ja 対象のサービスポート}
+     *   {@.en Target ServicePort}
+     *
+     * @param target_ports 
+     *   {@.ja 接続対象のサービスポートのリスト}
+     *   {@.en List of connected ServicePorts}
+  # void connectServicePorts(PortService_ptr port,PortServiceList_var& target_ports)
+     */
+    public void connectServicePorts(PortService port, 
+                    PortService[] target_ports){
+        for(int ic=0;ic<target_ports.length;++ic){
+            if(port._is_equivalent(target_ports[ic])){
+                continue;
+            }
+
+            String con_name = "";
+            PortProfile prof0 = port.get_port_profile();
+            PortProfile prof1 = target_ports[ic].get_port_profile();
+            con_name += prof0.name;
+            con_name += ":";
+            con_name += prof1.name;
+            Properties prop = new Properties();
+            ReturnCode_t ret = CORBA_RTCUtil.connect(
+                        con_name,prop,port,target_ports[ic]);
+            if(ret != ReturnCode_t.RTC_OK){
+                rtcout.println(Logbuf.ERROR, 
+                            "Connection error in topic connection.");
+            }
+        }
+    }    
+/*
+    for p in target_ports:
+      if port._is_equivalent(p):
+        continue
+      con_name = ""
+      p0 = port.get_port_profile()
+      p1 = p.get_port_profile()
+      con_name += p0.name
+      con_name += ":"
+      con_name += p1.name
+      prop = OpenRTM_aist.Properties()
+      if RTC.RTC_OK != OpenRTM_aist.CORBA_RTCUtil.connect(con_name,prop,port,p):
+        self._rtcout.RTC_ERROR("Connection error in topic connection.")
+
+*/
     /**
      *
      * {@ja NamingManagerを取得する}
@@ -1829,7 +1983,7 @@ public class Manager {
         }
         m_listeners.naming_.postBind(comp,names);
 
-        //publishPorts(comp);
+        publishPorts(comp);
         subscribePorts(comp);
        
         return true;

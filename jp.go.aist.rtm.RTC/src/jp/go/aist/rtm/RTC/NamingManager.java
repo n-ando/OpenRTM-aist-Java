@@ -1,6 +1,7 @@
 package jp.go.aist.rtm.RTC;
 
 import java.util.Vector;
+import java.util.ArrayList;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.port.PortBase;
