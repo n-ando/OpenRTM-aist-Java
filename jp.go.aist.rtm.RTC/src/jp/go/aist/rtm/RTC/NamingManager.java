@@ -314,6 +314,7 @@ public class NamingManager implements CallbackFunction {
             }
             unregisterCompName(name);
             unregisterMgrName(name);
+            unregisterPortName(name);
         }
     }
 
@@ -351,9 +352,20 @@ public class NamingManager implements CallbackFunction {
                 unbindObject(names.elementAt(i));
             }
         }
+        synchronized (m_portNames) {
+            Vector<String> names = new Vector<String>();
+            // unbindObject modifiy m_portNames
+            for (int i=0, len=m_portNames.size(); i < len; ++i) {
+                names.add(m_portNames.elementAt(i).name);
+            }
+            for (int i=0; i < names.size(); ++i) {
+                unbindObject(names.elementAt(i));
+            }
+        }
     }
 
     /**
+     *
      * {@.ja バインドされている全てのオブジェクトを取得。}
      * {@.en Get all bound objects}
      * 
@@ -374,6 +386,15 @@ public class NamingManager implements CallbackFunction {
         return comps;
     }
 
+    /**
+     *
+     * {@.ja 登録したネームサービスのリストを取得する}
+     * {@.en Get the list of registered NameServices.}
+     *
+     * @return 
+     *   {@.ja ネームサービスのリスト}
+     *   {@.en List of NameService}
+     */
     public Vector<NamingService> getNameServices() {
         return m_names;
     }
@@ -583,7 +604,24 @@ public class NamingManager implements CallbackFunction {
         return;
     }
 
+    /**
+     * {@.ja NameServer に登録するポートの設定解除}
+     * {@.en releases setting in the port registered with NameServer.}
+     *
+     * @param name 
+     *   {@.ja 設定解除対象ポートの名称}
+     *   {@.en portname)
+     *
+     */
     protected void unregisterPortName(final String name) {
+        int len = m_portNames.size();
+        for( int intIdx=0; intIdx < len; ++intIdx ) {
+            if( m_portNames.elementAt(intIdx).name.equals(name)) {
+                m_portNames.remove(m_portNames.elementAt(intIdx));
+                return;
+            }
+        }
+        return;
     }
     /**
      * {@.ja NameServer に登録するManagerServantの設定解除。}
