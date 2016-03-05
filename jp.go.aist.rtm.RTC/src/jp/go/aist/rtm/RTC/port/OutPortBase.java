@@ -1348,8 +1348,12 @@ public abstract class OutPortBase extends PortBase {
             rtcout.println(Logbuf.DEBUG, 
                            "dataflow_type pull is supported");
             appendProperty("dataport.dataflow_type", "pull");
-            appendProperty("dataport.interface_type",
-                           StringUtil.flatten((Set)provider_types));
+            Iterator iterator = provider_types.iterator();
+            while(iterator.hasNext()) {
+                appendProperty("dataport.interface_type",
+                                (String)iterator.next());
+
+            } 
         }
 
 	Iterator it = provider_types.iterator();
@@ -1403,8 +1407,12 @@ public abstract class OutPortBase extends PortBase {
             rtcout.println(Logbuf.DEBUG, 
                            "dataflow_type pull is supported");
             appendProperty("dataport.dataflow_type", "push");
-            appendProperty("dataport.interface_type",
-                           StringUtil.flatten(consumer_types));
+            Iterator iterator = consumer_types.iterator();
+            while(iterator.hasNext()) {
+                appendProperty("dataport.interface_type",
+                                (String)iterator.next());
+
+            } 
         }
 
 	Iterator it = consumer_types.iterator();
