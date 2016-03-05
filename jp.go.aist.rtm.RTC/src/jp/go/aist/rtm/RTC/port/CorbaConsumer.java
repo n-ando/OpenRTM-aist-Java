@@ -1,7 +1,9 @@
 package jp.go.aist.rtm.RTC.port;
 
+import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.util.TypeCast;
 import org.omg.CORBA.Object;
+import org.omg.PortableServer.POA;
 
 /**
  * <p>CORBAを通信手段とするコンシューマの実装クラスです。</p>
@@ -66,7 +68,19 @@ public class CorbaConsumer<OBJECT_TYPE> extends CorbaConsumerBase {
      * @return CORBAオブジェクト
      */
     public OBJECT_TYPE _ptr() {
-        
+        if(m_sev != null){
+            return this.m_sev;
+        }
+        try{
+            POA poa = Manager.instance().getPOA();
+            m_sev = (OBJECT_TYPE)(poa.reference_to_servant((Object)m_var));
+            if(m_sev != null){
+                return this.m_sev;
+            }
+        }
+        catch(Exception ex){
+            return this.m_var;
+        }        
         return this.m_var;
     }
     
@@ -78,12 +92,16 @@ public class CorbaConsumer<OBJECT_TYPE> extends CorbaConsumerBase {
         
         super.releaseObject();
         this.m_var = null;
+        this.m_sev = null;
     }
     
     /**
      * <p>設定されているCORBAオブジェクトです。</p>
      */
     protected OBJECT_TYPE m_var;
+    protected OBJECT_TYPE m_sev;
     private TypeCast<OBJECT_TYPE> TYPE_CAST;
+
+
     
 }
