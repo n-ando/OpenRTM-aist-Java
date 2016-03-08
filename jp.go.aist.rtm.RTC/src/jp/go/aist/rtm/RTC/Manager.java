@@ -561,12 +561,11 @@ public class Manager {
      *
      * {@.ja 与えられたパス以下の指定されたkindのポートを取得する}
      * {@.en Gets specified ports from the path.}
-     * @brief 
      * 
      * @param nsname 
      *   {@.ja パス}
      *   {@.en path}
-     }
+     *
      * @param kind 
      *   {@.ja kind}
      *   {@.en kind}
@@ -667,7 +666,7 @@ public class Manager {
 
     /**
      *
-     * {@ja 指定したデータポートを指定したリスト内のデータポート全てと接続する}
+     * {@.ja 指定したデータポートを指定したリスト内のデータポート全てと接続する}
      * {@.en Connects all specified ports.}
      *
      * @param port
@@ -718,7 +717,7 @@ public class Manager {
 
     /**
      * 
-     * {@ja 指定したサービスポートを指定したリスト内のサービスポート全てと
+     * {@.ja 指定したサービスポートを指定したリスト内のサービスポート全てと
      * 接続する}
      * {@.en Connects all specified serviceports.}
      *
@@ -771,7 +770,7 @@ public class Manager {
 */
     /**
      *
-     * {@ja NamingManagerを取得する}
+     * {@.ja NamingManagerを取得する}
      * {@.en Gets NamingManager Managfer has.}
      *
      *

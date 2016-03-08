@@ -610,7 +610,7 @@ public class NamingManager implements CallbackFunction {
      *
      * @param name 
      *   {@.ja 設定解除対象ポートの名称}
-     *   {@.en portname)
+     *   {@.en portname}
      *
      */
     protected void unregisterPortName(final String name) {

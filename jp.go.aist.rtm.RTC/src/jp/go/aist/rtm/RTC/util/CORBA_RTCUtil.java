@@ -998,7 +998,7 @@ public class CORBA_RTCUtil {
      *   {@.ja RTコンポーネント}
      *   {@.en Target RT-Component's instances}
      *
-     * @param port 
+     * @param port_name
      *   {@.ja 対象のポート}
      *   {@.en Target Port}
      * 
@@ -1064,7 +1064,7 @@ public class CORBA_RTCUtil {
      *   {@.ja RTコンポーネント}
      *   {@.en Target RT-Component's instances}
      *
-     * @param name 
+     * @param port_name 
      *   {@.ja ポート名}
      *   {@.en the name of port}
      * 
@@ -1424,7 +1424,7 @@ public class CORBA_RTCUtil {
      * {@.en Disconnects the connectionis specified  by name.}
      *
      * 
-     * @param port _name
+     * @param port_name
      *   {@.ja 対象のポート名}
      *   {@.en Target Port name}
      *
@@ -1494,7 +1494,7 @@ public class CORBA_RTCUtil {
      *   {@.ja 対象のポート名}
      *   {@.en Target Port Name}
      *
-     * @param name コネクタID
+     * @param conn_id
      *   {@.ja コネクタID}
      *   {@.en connector id}
      *
@@ -1516,7 +1516,7 @@ public class CORBA_RTCUtil {
     }
     /**
      *
-     * {@ja 対象のポートのコネクタを全て切断}
+     * {@.ja 対象のポートのコネクタを全て切断}
      * {@.en Disconnect all connectors in the target port.}
      *
      * 
@@ -1538,7 +1538,7 @@ public class CORBA_RTCUtil {
     }
     /**
      *
-     * {@ja 指定ポート名のポートのコネクタを全て切断}
+     * {@.ja 指定ポート名のポートのコネクタを全て切断}
      * {@.en Disconnect all connectors in the target port name.}
      *
      * 
@@ -1562,14 +1562,14 @@ public class CORBA_RTCUtil {
     }
     /**
      *
-     * {@ja 指定した名前のポートを取得}
+     * {@.ja 指定した名前のポートを取得}
      * {@.en Gets a port of the designated name.}
      * 
      * @param port_name 
      *   {@.ja ポート名}
      *   {@.en a port name}
      * @return 
-     *   {@.a ポートのオブジェクトリファレンス 
+     *   {@.ja ポートのオブジェクトリファレンス 
      *   portが存在しない場合はnilを返す}
      *   {@.en Object reference of port}
      *
