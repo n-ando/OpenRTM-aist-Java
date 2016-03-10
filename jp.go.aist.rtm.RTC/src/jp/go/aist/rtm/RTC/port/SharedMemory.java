@@ -1,5 +1,12 @@
 package jp.go.aist.rtm.RTC.util;
 
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileChannel.MapMode;
+
 import OpenRTM.CdrDataHolder;
 import OpenRTM.PortSharedMemory;
 
@@ -20,8 +27,8 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
 
 
 public abstract class SharedMemory implements PortSharedMemory {
-    private static final long DEFAULT_SIZE = 8;
-    private static final long DEFAULT_MEMORY_SIZE = 2*1024*1024;
+    private static final int DEFAULT_SIZE = 8;
+    private static final int DEFAULT_MEMORY_SIZE = 2*1024*1024;
 
 
     /**
@@ -30,6 +37,7 @@ public abstract class SharedMemory implements PortSharedMemory {
      */
     public SharedMemory(){
         rtcout = new Logbuf("SharedMemory");
+        m_memory_size = DEFAULT_MEMORY_SIZE;
 
     }
 
@@ -86,6 +94,12 @@ public abstract class SharedMemory implements PortSharedMemory {
   # void create_memory(int memory_size, string shm_address);
      */
     public void create_memory (int memory_size, String shm_address){
+        rtcout.println(Logbuf.TRACE, 
+                "create():memory_size="
+                + memory_size +",shm_address=" + shm_address);
+        m_memory_size = memory_size;
+        m_shm_address = shm_address;
+        
 /*
     
     if self._shmem is None:
@@ -132,6 +146,18 @@ public abstract class SharedMemory implements PortSharedMemory {
   # void open_memory(int memory_size, string shm_address);
      */
     public void open_memory (int memory_size, String shm_address){
+        rtcout.println(Logbuf.TRACE, 
+                "open():memory_size="
+                + memory_size +",shm_address=" + shm_address);
+        m_memory_size = memory_size;
+        m_shm_address = shm_address;
+        try{
+            RandomAccessFile file = new RandomAccessFile(m_shm_address, "rw");
+            file.setLength(m_memory_size);
+        }
+        catch(Exception ex) {
+            rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
+        }
 /*
     self._rtcout.RTC_TRACE("open():memory_size="+str(memory_size)+",shm_address="+str(shm_address))
     self._memory_size = memory_size
@@ -162,6 +188,8 @@ public abstract class SharedMemory implements PortSharedMemory {
   # void close_memory(boolean unlink);
      */
     public void close_memory(boolean unlink){
+        File file = new File(m_shm_address);
+        file.delete();
 /*
     self._rtcout.RTC_TRACE("open()")
     if self._shmem:
@@ -196,9 +224,27 @@ public abstract class SharedMemory implements PortSharedMemory {
      * @param data 
      *  {@.ja 書き込むデータ} 
      *  {@.en data}
-  # void write(cdrMemoryStream& data);
+     *
+     * # void write(cdrMemoryStream& data);
      */
     public void write(CdrDataHolder data){
+        rtcout.println(Logbuf.TRACE, "write()");
+        try{
+            RandomAccessFile file = new RandomAccessFile(m_shm_address, "rw");
+            FileChannel channel = file.getChannel();
+            int length = (int)channel.size();
+            MappedByteBuffer buffer
+                = channel.map(FileChannel.MapMode.READ_WRITE, 0, length);
+            buffer.order(ByteOrder.LITTLE_ENDIAN);
+//            buffer.putInt((offset * 4/* size of int */), value);
+
+
+            channel.close();
+            file.close();
+        }
+        catch(Exception ex) {
+            rtcout.println(Logbuf.ERROR,"write error  "+ex.toString() );
+        }
 /*
     self._rtcout.RTC_TRACE("write()")
     
@@ -293,6 +339,10 @@ public abstract class SharedMemory implements PortSharedMemory {
     public OpenRTM.PortStatus get(){
         return OpenRTM.PortStatus.UNKNOWN_ERROR;
     }
+
     private Logbuf rtcout;
+    private String m_shm_address = new String();
+    private int m_memory_size;
+    
 }
 
