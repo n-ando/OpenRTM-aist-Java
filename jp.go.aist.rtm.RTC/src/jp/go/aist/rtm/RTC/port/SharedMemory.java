@@ -1,4 +1,6 @@
-package jp.go.aist.rtm.RTC.util;
+package jp.go.aist.rtm.RTC.port;
+
+import java.lang.Long;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -61,7 +63,17 @@ public abstract class SharedMemory implements PortSharedMemory {
   # int string_to_MemorySize(string size_str);
      */
     public long string_to_MemorySize(String size_str){
-        return DEFAULT_MEMORY_SIZE;
+        if( size_str==null || size_str.equals("") ) {
+            return DEFAULT_MEMORY_SIZE;
+        }
+        String str = size_str.toUpperCase();
+        if(str.indexOf('M')>0){
+            return (1024  * 1024 * Long.parseLong(str.split("M")[0]));
+        }
+        else if(str.indexOf('K')>0){
+            return (1024 * Long.parseLong(str.split("K")[0]));
+        }
+        return (Long.parseLong(str));
 /*
     memory_size = SharedMemory.default_memory_size
     if size_str:
@@ -91,7 +103,7 @@ public abstract class SharedMemory implements PortSharedMemory {
      * @param shm_address 
      *  {@.ja 空間名}
      *  {@.en name of memory}
-  # void create_memory(int memory_size, string shm_address);
+     * # void create_memory(int memory_size, string shm_address);
      */
     public void create_memory (int memory_size, String shm_address){
         rtcout.println(Logbuf.TRACE, 
@@ -236,6 +248,13 @@ public abstract class SharedMemory implements PortSharedMemory {
             MappedByteBuffer buffer
                 = channel.map(FileChannel.MapMode.READ_WRITE, 0, length);
             buffer.order(ByteOrder.LITTLE_ENDIAN);
+/*
+            OutPort out = (OutPort)m_outport;
+            OutputStream cdr 
+                = new EncapsOutputStreamExt(m_orb,m_isLittleEndian);
+            out.write_stream(data,cdr);
+*/
+
 //            buffer.putInt((offset * 4/* size of int */), value);
 
 
@@ -283,6 +302,22 @@ public abstract class SharedMemory implements PortSharedMemory {
   # void read(::OpenRTM::CdrData_out data);
      */
     public void read(CdrDataHolder data){
+        rtcout.println(Logbuf.TRACE, "read()");
+        try {
+            RandomAccessFile file = new RandomAccessFile(m_shm_address, "rw");
+            FileChannel channel = file.getChannel();
+            int length = (int)channel.size();
+            MappedByteBuffer buffer
+                = channel.map(FileChannel.MapMode.READ_WRITE, 0, length);
+            buffer.order(ByteOrder.LITTLE_ENDIAN);
+            //int value = buffer.getInt(offset * 4/* size of int */);
+            channel.close();
+            file.close();
+        }
+        catch(Exception ex) {
+            rtcout.println(Logbuf.ERROR,"read error  "+ex.toString() );
+        }
+
 /*
     self._rtcout.RTC_TRACE("read()")
     if self._shmem:
