@@ -36,6 +36,7 @@ public abstract class InPortConnector extends ConnectorBase {
         m_isLittleEndian = true;
         m_orb = ORBUtil.getOrb();
         m_listeners = listeners;
+        m_directOutPort = null;
     }
 
 
@@ -165,6 +166,29 @@ public abstract class InPortConnector extends ConnectorBase {
      *
      */
     public abstract ReturnCode read(DataRef<InputStream> data);
+    /**
+     * {@.ja OutPortのオブジェクトを設定する。}
+     * {@.en Sets the object of OutPort}
+     * <p>
+     * {@.ja ダイレクトポートのためにOutPortrBaseのオブジェクトを設定する。}
+     * {@.en Set an object of OutPortBase for a direct port.}
+     * @param directOutPort
+     *   {@.ja OutPortBase オブジェクト}
+     *   {@.en OutPortBase object}
+     *
+     */
+    public boolean setOutPort(OutPortBase directOutPort){
+        rtcout.println(Logbuf.TRACE, "setOutPort()");
+        if (directOutPort == null) {
+            rtcout.println(Logbuf.TRACE, "OutPortBase is null.");
+            return false;
+        }
+
+        m_directOutPort = directOutPort;
+        m_outPortListeners = m_directOutPort.getListeners();
+
+        return true;
+    }
 
     protected Logbuf rtcout;
     protected ConnectorInfo m_profile;
@@ -176,6 +200,16 @@ public abstract class InPortConnector extends ConnectorBase {
      * {@.en A reference to a ConnectorListener}
      */
     ConnectorListeners m_listeners;
+    /**
+     * {@.ja 同一プロセス上のピアOutPortのポインタ}
+     * {@.en OutProt pointer to the peer in the same process}
+     */
+    protected OutPortBase m_directOutPort;
+    /**
+     * {@.ja OutPort 側の ConnectorListenrs への参照}
+     * {@.en A pointer to a OutPort's ConnectorListener}
+     */
+    protected ConnectorListeners m_outPortListeners = new ConnectorListeners();
 
 }
 

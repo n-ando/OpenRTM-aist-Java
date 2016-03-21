@@ -132,6 +132,17 @@ public abstract class OutPortConnector extends ConnectorBase {
     public abstract <DataType> ReturnCode write(final DataType data);
 
 
+    /**
+     * {@.ja InPortのオブジェクトを設定する。}
+     * {@.en Sets the object of InPort}
+     * <p>
+     * {@.ja ダイレクトポートのためにInPortrBaseのオブジェクトを設定する。}
+     * {@.en Set an object of InPortBase for a direct port.}
+     * @param directInPort
+     *   {@.ja InPortBase オブジェクト}
+     *   {@.en InPortBase object}
+     *
+     */
     public boolean setInPort(InPortBase directInPort){
         rtcout.println(Logbuf.TRACE, "setInPort()");
         if (directInPort == null) {

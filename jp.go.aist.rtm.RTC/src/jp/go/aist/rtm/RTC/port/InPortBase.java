@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import jp.go.aist.rtm.Constants;
+import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.BufferFactory;
 import jp.go.aist.rtm.RTC.InPortProviderFactory;
 import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
@@ -17,8 +18,11 @@ import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.Object;
 import org.omg.CORBA.TCKind;
 import org.omg.CORBA.portable.OutputStream;
+import org.omg.PortableServer.POA;
 
 import _SDOPackage.NVListHolder;
 import RTC.ConnectorProfile;
@@ -1387,7 +1391,7 @@ public abstract class InPortBase extends PortBase {
                                    "old compiler? new returned 0;");
                     return null;
                 }
-                rtcout.println(Logbuf.TRACE, "InPortPushConnector create");
+                rtcout.println(Logbuf.TRACE, "InPortPushConnector created");
     
                 m_connectors.add(connector);
                 rtcout.println(Logbuf.PARANOID, 
@@ -1440,7 +1444,23 @@ public abstract class InPortBase extends PortBase {
                                    "old compiler? new returned 0;");
                     return null;
                 }
-                rtcout.println(Logbuf.TRACE, "InPortPullConnector create");
+                rtcout.println(Logbuf.TRACE, "InPortPullConnector created");
+                
+                String type = prop.getProperty("interface_type").trim();
+                rtcout.println(Logbuf.PARANOID, "interface_type= " + type);
+                // "interface_type" == "direct"
+                if (type.equals("direct")) {
+                    OutPortBase outport = getLocalOutPort(profile);
+                    if (outport == null) {
+                        rtcout.println(Logbuf.DEBUG, 
+                            "interface_type is direct, " +
+                            "but a peer InPort servant could not be obtained.");
+                        //delete connector;
+                        return null;
+                    }
+                    connector.setOutPort(outport);
+                }
+                // end of direct interface_type
 
                 m_connectors.add(connector);
                 rtcout.println(Logbuf.PARANOID, 
@@ -1455,6 +1475,44 @@ public abstract class InPortBase extends PortBase {
         }
     }
 
+    /**
+     * {@.ja ローカルのピアOutPortを取得}
+     * {@.en Getting local peer OutPort if available}
+     */
+    protected OutPortBase
+    getLocalOutPort(final ConnectorBase.ConnectorInfo profile)
+    {
+        rtcout.println(Logbuf.DEBUG,
+                       "Trying direct port connection.");
+        ORB orb = Manager.instance().getORB();
+        rtcout.println(Logbuf.DEBUG,
+                        "Current connector profile: name=" 
+                        +profile.name + ", id=" + profile.id);
+        // finding peer port object
+        for (int ic = 0;  ic < profile.ports.size() ; ++ic) {
+            Object obj;
+            obj = orb.string_to_object(profile.ports.get(ic));
+            if (getPortRef()._is_equivalent(obj)) { 
+                continue; 
+            }
+            rtcout.println(Logbuf.DEBUG, "Peer port found: " 
+                        + profile.ports.get(ic));
+            try {
+                POA poa = Manager.instance().getPOA();
+                //InPort inport = (InPort)poa.reference_to_servant(obj);
+                OutPortBase outport = (OutPortBase)(poa.reference_to_servant(obj));
+                rtcout.println(Logbuf.DEBUG, 
+                            "OutPortBase servant pointer is obtained.");
+                return outport;
+            }
+            catch  (Exception e) {
+                rtcout.println(Logbuf.TRACE, "126: "+e);
+                rtcout.println(Logbuf.DEBUG, 
+                            "Peer port might be a remote port.");
+            }
+        }
+        return null;
+    }
     /**
      * {@.ja リスナホルダを取得する}
      * {@.en Getting listeners holder}

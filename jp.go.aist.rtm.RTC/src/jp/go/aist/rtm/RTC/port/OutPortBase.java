@@ -1645,6 +1645,22 @@ public abstract class OutPortBase extends PortBase {
         return null;
     }
     /**
+     * {@.ja リスナホルダを取得する}
+     * {@.en Getting listeners holder}
+     *
+     * <p> 
+     * {@.ja OutPortBaseが保持するリスナホルダを返す。}
+     * {@.en This operation returns listeners holder.}
+     *
+     * @return 
+     *   {@.ja ConnectorListeners}
+     *   {@.en ConnectorListeners}
+     *
+     */
+    public ConnectorListeners getListeners(){
+        return m_listeners;
+    }
+    /**
      * {@.ja endian 情報を返す}
      * {@.en Returns endian information}
      *

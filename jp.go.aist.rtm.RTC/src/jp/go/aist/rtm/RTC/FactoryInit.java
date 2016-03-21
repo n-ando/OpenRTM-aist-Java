@@ -11,6 +11,8 @@ import jp.go.aist.rtm.RTC.port.OutPortCorbaCdrProvider;
 import jp.go.aist.rtm.RTC.port.OutPortCorbaCdrConsumer;
 import jp.go.aist.rtm.RTC.port.InPortDirectProvider;
 import jp.go.aist.rtm.RTC.port.InPortDirectConsumer;
+import jp.go.aist.rtm.RTC.port.OutPortDirectProvider;
+import jp.go.aist.rtm.RTC.port.OutPortDirectConsumer;
 import jp.go.aist.rtm.RTC.port.InPortSHMProvider;
 import jp.go.aist.rtm.RTC.port.InPortSHMConsumer;
 import jp.go.aist.rtm.RTC.port.OutPortSHMProvider;
@@ -49,8 +51,11 @@ public class FactoryInit {
 	InPortCorbaCdrConsumer.InPortCorbaCdrConsumerInit();
 	OutPortCorbaCdrConsumer.OutPortCorbaCdrConsumerInit();
 	OutPortCorbaCdrProvider.OutPortCorbaCdrProviderInit();
+
 	InPortDirectProvider.InPortDirectProviderInit();
 	InPortDirectConsumer.InPortDirectConsumerInit();
+	OutPortDirectProvider.OutPortDirectProviderInit();
+	OutPortDirectConsumer.OutPortDirectConsumerInit();
 
 	InPortSHMProvider.InPortSHMProviderInit();
 	InPortSHMConsumer.InPortSHMConsumerInit();

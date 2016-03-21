@@ -313,6 +313,19 @@ public class OutPort<DataType> extends OutPortBase {
             rtcout.println(Logbuf.TRACE, "OnWrite called");
         }
 
+        // 1) direct connection
+        synchronized (m_directNewDataMutex){
+            rtcout.println(Logbuf.DEBUG, "Direct data transfer");
+            if (m_OnWriteConvert != null) {
+                m_value.v = m_OnReadConvert.run(m_value.v);
+                rtcout.println(Logbuf.DEBUG, 
+                     "OnReadConvert for direct data called");
+                m_OnWriteConvert.run(value);
+                m_value.v = value;
+                return true;
+            }
+        }
+        // 2) network connection
         boolean result = true;
         Vector<String> disconnect_ids = new Vector<String>();
         synchronized (m_connectorsMutex){
@@ -679,6 +692,18 @@ public class OutPort<DataType> extends OutPortBase {
         return false;
     }
 
+    /**
+     * {@.ja 値を読み出す}
+     * {@.en Readout the value}
+     * <p>
+     */
+    public void read(DataRef<DataType> data) {
+        rtcout.println(Logbuf.TRACE, "read()");
+        synchronized (m_value){
+            data.v  = m_value.v;
+        }
+
+    }
 
     private BufferBase<DataType> m_buffer;
     private DataRef<DataType> m_value;
@@ -701,4 +726,7 @@ public class OutPort<DataType> extends OutPortBase {
     private Streamable m_streamable = null;
     private Field m_field = null;
     private Vector<ReturnCode> m_status = new Vector<ReturnCode>();
+
+    private static String m_directNewDataMutex = new String();
+
 }

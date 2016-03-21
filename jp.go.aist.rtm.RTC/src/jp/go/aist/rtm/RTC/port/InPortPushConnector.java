@@ -119,6 +119,15 @@ public class InPortPushConnector extends InPortConnector {
      */
     public ReturnCode read(DataRef<InputStream> data) {
         rtcout.println(Logbuf.TRACE, "read()");
+        if (m_directOutPort != null) {
+            OutPort outport = (OutPort)m_directOutPort;
+            //DataRef<DataType> dataref 
+            //        = new DataRef<DataType>(data);
+            outport.read(data); 
+            // ON_RECEIVED(In,Out) callback
+            return ReturnCode.PORT_OK;
+
+        }
         /*
          * buffer returns
          *   BUFFER_OK

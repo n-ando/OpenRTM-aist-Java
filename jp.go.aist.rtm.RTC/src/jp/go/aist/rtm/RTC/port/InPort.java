@@ -516,6 +516,14 @@ public class InPort<DataType> extends InPortBase {
                    "isEmpty() = false, data exists in the buffer");
         return false;
     }
+    /**
+     * {@.ja データ書き込み}
+     * {@.en Write data}
+     * @param value 
+     *   {@.ja 書き込み対象データ}
+     *   {@.en The target data for writing}
+     *
+     */
     public void write(final DataRef<DataType> data)
     {
         rtcout.println(Logbuf.TRACE, "write()");
