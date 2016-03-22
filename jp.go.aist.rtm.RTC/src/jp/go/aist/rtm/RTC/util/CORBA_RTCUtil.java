@@ -1684,6 +1684,45 @@ public class CORBA_RTCUtil {
     }
     /**
      *
+     * {@.ja 対象のRTコンポーネントの指定した名前の
+     * コンフィギュレーションセットをkey-valueで取得}
+     * {@.en Get Configuration object}
+     * 
+     * @param rtc 
+     *   {@.ja 対象のRTコンポーネント}
+     *   {@.en Target RTComponent}
+     *
+     * @param conf_name 
+     *   {@.ja コンフィギュレーションセット名}
+     *   {@.en name of ConfigurationSet}
+     *
+     * @return 
+     *   {@.ja rtcがnilの場合はNoneを返す。
+     * nilではない場合はPropertiesを返す。}
+     *   {@.en Properties}
+     *
+     */
+    public Properties get_configuration(RTObject rtc, 
+                    String conf_name){
+        if(rtc==null){
+            return null;
+        }
+        try { 
+            Configuration conf = rtc.get_configuration();
+            ConfigurationSet confset = conf.get_configuration_set(conf_name);
+            NVListHolder nvholder = 
+                new NVListHolder(confset.configuration_data);
+            Properties prop = new Properties();
+            NVUtil.copyToProperties(prop, nvholder);
+            return prop;
+        }
+        catch (Exception ex) {
+            return null;
+       }
+    }
+
+    /**
+     *
      * {@.ja 指定したコンフィギュレーションセット名、パラメータ名の
      * コンフィギュレーションパラメータを取得}
      * {@.en Get Configuration object}
