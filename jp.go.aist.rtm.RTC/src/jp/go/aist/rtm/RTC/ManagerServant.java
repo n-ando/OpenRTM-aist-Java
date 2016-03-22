@@ -1,6 +1,7 @@
 package jp.go.aist.rtm.RTC;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -1238,6 +1239,55 @@ System.err.println("Manager's IOR information: "+ior);
         orb.register_initial_reference( 
                 "manager", m_mgr.getPOA().servant_to_reference(this) );
 */
+    }
+    /**
+     * {@.ja 指定名のRTCを取得}
+     * {@.en Get RTC Object.}
+     *
+     * @param name 
+     *   {@.ja RTC名}
+     *   {@.en RTC name}
+     *
+     * @return 
+     *   {@.ja RTCList}
+     *   {@.en RTCList}
+     *
+     * RTCList get_components_by_name(string name)
+     * 
+     */
+    public RTObject[] get_components_by_name(String name){
+        rtcout.println(Logbuf.TRACE, "get_components_by_name()");
+        Vector<RTObject_impl> rtcs = m_mgr.getComponents();
+        ArrayList<RTObject> crtcs = new ArrayList<RTObject>();
+        name.trim();
+        String[] rtc_name = name.split("/");
+        Iterator<RTObject_impl> iterator = rtcs.iterator();
+        while (iterator.hasNext()) {
+            RTObject_impl rtc = iterator.next();
+            if(rtc_name.length == 1){
+                if(rtc.getInstanceName().equals(rtc_name[0])){
+                    crtcs.add(rtc.getObjRef());
+                }
+            }
+            else{ 
+                if(rtc_name[0].equals("*")){
+                    if(rtc.getInstanceName().equals(rtc_name[1])){
+                        crtcs.add(rtc.getObjRef());
+                    }
+                }
+                else{
+                    if(rtc.getCategory().equals(rtc_name[0])){
+                        if(rtc.getInstanceName().equals(rtc_name[1])){
+                            crtcs.add(rtc.getObjRef());
+                        }
+                    }
+                }
+            }
+        }
+        
+       RTObject[] arr 
+               = (RTObject[])crtcs.toArray(new RTObject[0]);
+       return arr;
     }
     /**
      * <p></p>

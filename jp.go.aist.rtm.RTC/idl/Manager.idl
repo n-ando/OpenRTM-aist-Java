@@ -47,22 +47,22 @@ module RTM
 
   interface Manager
   {
-    // module 娭楢
+    // module 簇息
     /*!
      * @if jp
-     * @brief 儌僕儏乕儖傪儘乕僪偡傞
+     * @brief モジュ〖ルをロ〖ドする
      *
-     * 摉奩儅僱乕僕儍偵巜掕偝傟偨儌僕儏乕儖傪儘乕僪偟丄巜掕偝傟偨弶婜壔
-     * 娭悢偱弶婜壔傪峴偆丅
+     * 碰澈マネ〖ジャに回年されたモジュ〖ルをロ〖ドし、回年された介袋步
+     * 簇眶で介袋步を乖う。
      *
-     * @param pathname 儌僕儏乕儖傊偺僷僗
-     * @param initfunc 儌僕儏乕儖偺弶婜壔娭悢
-     * @return 儕僞乕儞僐乕僪
+     * @param pathname モジュ〖ルへのパス
+     * @param initfunc モジュ〖ルの介袋步簇眶
+     * @return リタ〖ンコ〖ド
      *
      * @else
      * @brief Loading a module
      *
-     * This operation loads a specified loadable module丄and perform
+     * This operation loads a specified loadable module、and perform
      * initialization with the specified function.
      *
      * @param pathname A path to a loading module.
@@ -75,12 +75,12 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 儌僕儏乕儖傪傾儞儘乕僪偡傞
+     * @brief モジュ〖ルをアンロ〖ドする
      *
-     * 摉奩儅僱乕僕儍偵巜掕偝傟偨儌僕儏乕儖傪傾儞儘乕僪偡傞丅
+     * 碰澈マネ〖ジャに回年されたモジュ〖ルをアンロ〖ドする。
      *
-     * @param pathname 儌僕儏乕儖傊偺僷僗
-     * @return 儕僞乕儞僐乕僪
+     * @param pathname モジュ〖ルへのパス
+     * @return リタ〖ンコ〖ド
      *
      * @else
      * @brief Unloading a module
@@ -96,11 +96,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 儘乕僪壜擻側儌僕儏乕儖偺僾儘僼傽僀儖傪庢摼偡傞
+     * @brief ロ〖ド材墙なモジュ〖ルのプロファイルを艰评する
      *
-     * 儘乕僪壜擻側儌僕儏乕儖偺僾儘僼傽僀儖傪庢摼偡傞丅
+     * ロ〖ド材墙なモジュ〖ルのプロファイルを艰评する。
      *
-     * @return 儌僕儏乕儖僾儘僼傽僀儖
+     * @return モジュ〖ルプロファイル
      *
      * @else
      * @brief Getting loadable module profiles
@@ -115,11 +115,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 儘乕僪嵪傒偺儌僕儏乕儖偺僾儘僼傽僀儖傪庢摼偡傞
+     * @brief ロ〖ド貉みのモジュ〖ルのプロファイルを艰评する
      *
-     * 儘乕僪嵪傒偺儌僕儏乕儖偺僾儘僼傽僀儖傪庢摼偡傞丅
+     * ロ〖ド貉みのモジュ〖ルのプロファイルを艰评する。
      *
-     * @return 儌僕儏乕儖僾儘僼傽僀儖
+     * @return モジュ〖ルプロファイル
      *
      * @else
      * @brief Getting loaded module profiles
@@ -132,15 +132,15 @@ module RTM
      */
     ModuleProfileList get_loaded_modules();
     
-    // component 娭楢
+    // component 簇息
     /*!
      * @if jp
-     * @brief 僐儞億乕僱儞僩僼傽僋僩儕偺僾儘僼傽僀儖傪庢摼偡傞
+     * @brief コンポ〖ネントファクトリのプロファイルを艰评する
      *
-     * 儘乕僪嵪傒偺儌僕儏乕儖偺偆偪丄RT僐儞億乕僱儞僩偺儌僕儏乕儖偑帩偮
-     * 僼傽僋僩儕偺僾儘僼傽僀儖偺儕僗僩傪庢摼偡傞丅
+     * ロ〖ド貉みのモジュ〖ルのうち、RTコンポ〖ネントのモジュ〖ルが积つ
+     * ファクトリのプロファイルのリストを艰评する。
      *
-     * @return 僐儞億乕僱儞僩僼傽僋僩儕偺僾儘僼傽僀儖儕僗僩
+     * @return コンポ〖ネントファクトリのプロファイルリスト
      *
      * @else
      * @brief Getting component factory profiles
@@ -156,11 +156,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 僐儞億乕僱儞僩傪惗惉偡傞
+     * @brief コンポ〖ネントを栏喇する
      *
-     * 堷悢偵巜掕偝傟偨僐儞億乕僱儞僩傪惗惉偡傞丅
+     * 苞眶に回年されたコンポ〖ネントを栏喇する。
      *
-     * @return 惗惉偝傟偨RT僐儞億乕僱儞僩
+     * @return 栏喇されたRTコンポ〖ネント
      *
      * @else
      * @brief Creating an RT-Component
@@ -176,11 +176,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 僐儞億乕僱儞僩傪嶍彍偡傞
+     * @brief コンポ〖ネントを猴近する
      *
-     * 堷悢偵巜掕偝傟偨僐儞億乕僱儞僩傪嶍彍偡傞丅
+     * 苞眶に回年されたコンポ〖ネントを猴近する。
      *
-     * @return 儕僞乕儞僐乕僪
+     * @return リタ〖ンコ〖ド
      *
      * @else
      * @brief Deleting an RT-Component
@@ -196,11 +196,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 婲摦拞偺僐儞億乕僱儞僩偺儕僗僩傪庢摼偡傞
+     * @brief 弹瓢面のコンポ〖ネントのリストを艰评する
      *
-     * 尰嵼摉奩儅僱乕僕儍忋偱婲摦拞偺僐儞億乕僱儞僩偺儕僗僩傪曉偡丅
+     * 附哼碰澈マネ〖ジャ惧で弹瓢面のコンポ〖ネントのリストを手す。
      *
-     * @return RT僐儞億乕僱儞僩偺儕僗僩
+     * @return RTコンポ〖ネントのリスト
      *
      * @else
      * @brief Getting RT-Component list running on this manager
@@ -215,12 +215,12 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 婲摦拞偺僐儞億乕僱儞僩僾儘僼傽僀儖偺儕僗僩傪庢摼偡傞
+     * @brief 弹瓢面のコンポ〖ネントプロファイルのリストを艰评する
      *
-     * 尰嵼摉奩儅僱乕僕儍忋偱婲摦拞偺僐儞億乕僱儞僩偺僾儘僼傽僀儖偺儕僗
-     * 僩傪曉偡丅
+     * 附哼碰澈マネ〖ジャ惧で弹瓢面のコンポ〖ネントのプロファイルのリス
+     * トを手す。
      *
-     * @return RT僐儞億乕僱儞僩僾儘僼傽僀儖偺儕僗僩
+     * @return RTコンポ〖ネントプロファイルのリスト
      *
      * @else
      * @brief Getting RT-Component's profile list running on this manager
@@ -234,14 +234,14 @@ module RTM
      */
     RTC::ComponentProfileList get_component_profiles();
 
-    // manager 婎杮
+    // manager 答塑
     /*!
      * @if jp
-     * @brief 儅僱乕僕儍偺僾儘僼傽僀儖傪庢摼偡傞
+     * @brief マネ〖ジャのプロファイルを艰评する
      *
-     * 尰嵼摉奩儅僱乕僕儍偺僾儘僼傽僀儖傪庢摼偡傞丅
+     * 附哼碰澈マネ〖ジャのプロファイルを艰评する。
      *
-     * @return 儅僱乕僕儍僾儘僼傽僀儖
+     * @return マネ〖ジャプロファイル
      *
      * @else
      * @brief Getting this manager's profile.
@@ -256,11 +256,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 儅僱乕僕儍偺僐儞僼傿僊儏儗乕僔儑儞傪庢摼偡傞
+     * @brief マネ〖ジャのコンフィギュレ〖ションを艰评する
      *
-     * 尰嵼摉奩儅僱乕僕儍偺僐儞僼傿僊儏儗乕僔儑儞傪庢摼偡傞丅
+     * 附哼碰澈マネ〖ジャのコンフィギュレ〖ションを艰评する。
      *
-     * @return 儅僱乕僕儍僐儞僼傿僊儏儗乕僔儑儞
+     * @return マネ〖ジャコンフィギュレ〖ション
      *
      * @else
      * @brief Getting this manager's configuration.
@@ -275,13 +275,13 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 儅僱乕僕儍偺僐儞僼傿僊儏儗乕僔儑儞傪愝掕偡傞
+     * @brief マネ〖ジャのコンフィギュレ〖ションを肋年する
      *
-     * 尰嵼摉奩儅僱乕僕儍偺僐儞僼傿僊儏儗乕僔儑儞傪愝掕偡傞丅
+     * 附哼碰澈マネ〖ジャのコンフィギュレ〖ションを肋年する。
      *
-     * @param name 僙僢僩偡傞僐儞僼傿僊儏儗乕僔儑儞偺僉乕柤
-     * @param value 僙僢僩偡傞僐儞僼傿僊儏儗乕僔儑儞偺抣
-     * @return 儕僞乕儞僐乕僪
+     * @param name セットするコンフィギュレ〖ションのキ〖叹
+     * @param value セットするコンフィギュレ〖ションの猛
+     * @return リタ〖ンコ〖ド
      *
      * @else
      * @brief Setting manager's configuration
@@ -298,12 +298,12 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 儅僱乕僕儍偑儅僗僞乕偐偳偆偐
+     * @brief マネ〖ジャがマスタ〖かどうか
      *
-     * 偙偺娭悢偼儅僱乕僕儍偑儅僗僞乕偐偳偆偐傪曉偡丅True側傜偽丄摉奩儅
-     * 僱乕僕儍偼儅僗僞乕偱偁傝丄偦傟埲奜偼 False 傪曉偡丅
+     * この簇眶はマネ〖ジャがマスタ〖かどうかを手す。Trueならば、碰澈マ
+     * ネ〖ジャはマスタ〖であり、それ笆嘲は False を手す。
      *
-     * @return 儅僗僞乕儅僱乕僕儍偐偳偆偐偺bool抣
+     * @return マスタ〖マネ〖ジャかどうかのbool猛
      *
      * @else
      * @brief Whether this manager is master or not
@@ -319,13 +319,13 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 儅僗僞乕儅僱乕僕儍偺庢摼
+     * @brief マスタ〖マネ〖ジャの艰评
      *
-     * 偙偺儅僱乕僕儍偑僗儗乕僽儅僱乕僕儍偺応崌丄儅僗僞乕偲側偭偰偄傞儅
-     * 僱乕僕儍偺儕僗僩傪曉偡丅偙偺儅僱乕僕儍偑儅僗僞乕偺応崌丄嬻偺儕僗
-     * 僩偑曉傞丅
+     * このマネ〖ジャがスレ〖ブマネ〖ジャの眷圭、マスタ〖となっているマ
+     * ネ〖ジャのリストを手す。このマネ〖ジャがマスタ〖の眷圭、鄂のリス
+     * トが手る。
      *
-     * @return 儅僗僞乕儅僱乕僕儍偺儕僗僩
+     * @return マスタ〖マネ〖ジャのリスト
      *
      * @else
      * @brief Getting master managers
@@ -342,11 +342,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 儅僗僞乕儅僱乕僕儍偺捛壛
+     * @brief マスタ〖マネ〖ジャの纳裁
      *
-     * 偙偺儅僱乕僕儍偺儅僗僞偲偟偰儅僱乕僕儍傪堦偮捛壛偡傞丅
+     * このマネ〖ジャのマスタとしてマネ〖ジャを办つ纳裁する。
      *
-     * @param mgr 儅僗僞乕儅僱乕僕儍
+     * @param mgr マスタ〖マネ〖ジャ
      * @return ReturnCode_t
      *
      * @else
@@ -363,11 +363,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 儅僗僞乕儅僱乕僕儍偺嶍彍
+     * @brief マスタ〖マネ〖ジャの猴近
      *
-     * 偙偺儅僱乕僕儍偑曐帩偡傞儅僗僞偺偆偪丄巜掕偝傟偨傕偺傪嶍彍偡傞丅
+     * このマネ〖ジャが瘦积するマスタのうち、回年されたものを猴近する。
      *
-     * @param mgr 儅僗僞乕儅僱乕僕儍
+     * @param mgr マスタ〖マネ〖ジャ
      * @return ReturnCode_t
      *
      * @else
@@ -384,13 +384,13 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 僗儗乕僽儅僱乕僕儍偺庢摼
+     * @brief スレ〖ブマネ〖ジャの艰评
      *
-     * 偙偺儅僱乕僕儍偑僗儗乕僽儅僱乕僕儍偺応崌丄僗儗乕僽偲側偭偰偄傞儅
-     * 僱乕僕儍偺儕僗僩傪曉偡丅偙偺儅僱乕僕儍偑僗儗乕僽偺応崌丄嬻偺儕僗
-     * 僩偑曉傞丅
+     * このマネ〖ジャがスレ〖ブマネ〖ジャの眷圭、スレ〖ブとなっているマ
+     * ネ〖ジャのリストを手す。このマネ〖ジャがスレ〖ブの眷圭、鄂のリス
+     * トが手る。
      *
-     * @return 僗儗乕僽儅僱乕僕儍偺儕僗僩
+     * @return スレ〖ブマネ〖ジャのリスト
      *
      * @else
      * @brief Getting slave managers
@@ -406,11 +406,11 @@ module RTM
     ManagerList get_slave_managers();
     /*!
      * @if jp
-     * @brief 僗儗乕僽儅僱乕僕儍偺捛壛
+     * @brief スレ〖ブマネ〖ジャの纳裁
      *
-     * 偙偺儅僱乕僕儍偺儅僗僞偲偟偰儅僱乕僕儍傪堦偮捛壛偡傞丅
+     * このマネ〖ジャのマスタとしてマネ〖ジャを办つ纳裁する。
      *
-     * @param mgr 僗儗乕僽儅僱乕僕儍
+     * @param mgr スレ〖ブマネ〖ジャ
      * @return ReturnCode_t
      *
      * @else
@@ -427,11 +427,11 @@ module RTM
 
     /*!
      * @if jp
-     * @brief 僗儗乕僽儅僱乕僕儍偺嶍彍
+     * @brief スレ〖ブマネ〖ジャの猴近
      *
-     * 偙偺儅僱乕僕儍偑曐帩偡傞儅僗僞偺偆偪丄巜掕偝傟偨傕偺傪嶍彍偡傞丅
+     * このマネ〖ジャが瘦积するマスタのうち、回年されたものを猴近する。
      *
-     * @param mgr 僗儗乕僽儅僱乕僕儍
+     * @param mgr スレ〖ブマネ〖ジャ
      * @return ReturnCode_t
      *
      * @else
@@ -449,6 +449,28 @@ module RTM
     RTC::ReturnCode_t fork();
     RTC::ReturnCode_t shutdown();
     RTC::ReturnCode_t restart();
+
+
+     /*!
+     * @if jp
+     * @brief 回年叹のRTCオブジェクトリファレンスを艰评
+     *
+     * 
+     *
+     * @param name RTC叹
+     * @return RTCリスト
+     *
+     * @else
+     * @brief 
+     *
+     *
+     * 
+     * @param name name
+     * @return list of RTC
+     *
+     * @endig
+     */
+    RTC::RTCList get_components_by_name(in string name);
 
     Object get_service(in string name);
     //    ServiceProfileList get_service_profiles();
