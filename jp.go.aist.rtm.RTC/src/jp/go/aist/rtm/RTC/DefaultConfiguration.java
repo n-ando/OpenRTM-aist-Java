@@ -62,6 +62,7 @@ interface DefaultConfiguration {
         "manager.auto_shutdown_duration",        "10.0",
         "manager.name",                     "manager",
         "manager.command",                  "rtcd",
+        "manager.nameservers",              "default",
         "sdo.service.provider.enabled_services",  "ALL",
         "sdo.service.consumer.enabled_services",  "ALL",
         "manager.local_service.enabled_services","ALL",

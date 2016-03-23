@@ -472,6 +472,13 @@ public class NamingManager implements CallbackFunction {
                 return null;
             }
         }
+        else if( m.endsWith("manager")) {
+            NamingBase name = new NamingOnManager(m_manager.getORB(),m_manager);
+            if( name == null ) {
+                return null;
+            }
+            return name;
+        }
         return null;
     }
 

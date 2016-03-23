@@ -768,6 +768,27 @@ public class Manager {
         self._rtcout.RTC_ERROR("Connection error in topic connection.")
 
 */
+
+    /**
+     *
+     * {@.ja ManagerServantを取得する}
+     * {@.en Gets ManagerServant Managfer has.}
+     *
+     *
+     * @return 
+     *   {@.ja ManagerServant}
+     *   {@.en ManagerServant}
+     *
+     * # ManagerServant* getManagerServant()
+     */
+    public ManagerServant  getManagerServant(){
+
+        rtcout.println(Logbuf.TRACE, "Manager.getManagerServant()");
+        return m_mgrservant;
+    }
+
+
+
     /**
      *
      * {@.ja NamingManagerを取得する}
@@ -2592,6 +2613,30 @@ public class Manager {
             }
         }
 
+        // To load SSL communication modules.
+        // ex)
+        //   manager.modules.preload: SSLTransport
+        String[] mods
+            = m_config.getProperty("manager.preload.modules").split(",");
+
+        for (int ic=0; ic < mods.length; ++ic) {
+            if ( mods[ic].length() == 0) {
+                continue;
+            }
+	    mods[ic] = mods[ic].trim();
+            String[] str = mods[ic].split("\\.");
+            String basename = str[0]+"Init";
+            try {
+                m_module.load(mods[ic], basename);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                rtcout.println(Logbuf.ERROR, "Module load error: " + mods[ic]);
+            } catch (ClassNotFoundException e) {
+                rtcout.println(Logbuf.ERROR, "Module not found: " + mods[ic]);
+            } catch (Exception ex) {
+                rtcout.println(Logbuf.ERROR, "Unknown Exception");
+            }
+        }
     }
     
     /**
