@@ -63,6 +63,7 @@ interface DefaultConfiguration {
         "manager.name",                     "manager",
         "manager.command",                  "rtcd",
         "manager.nameservers",              "default",
+        "manager.components.naming_policy", "process_unique",
         "sdo.service.provider.enabled_services",  "ALL",
         "sdo.service.consumer.enabled_services",  "ALL",
         "manager.local_service.enabled_services","ALL",

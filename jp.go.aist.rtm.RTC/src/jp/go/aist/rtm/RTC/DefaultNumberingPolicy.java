@@ -11,7 +11,7 @@ import java.util.Vector;
  * 管理するためのクラス。}
  * {@.en This is a class to manage the naming policy when creating objects.}
  */
-class DefaultNumberingPolicy implements NumberingPolicy {
+class DefaultNumberingPolicy implements NumberingPolicy, ObjectCreator<NumberingPolicy>, ObjectDestructor {
 
   /**
    * {@.ja コンストラクタ}
@@ -120,6 +120,49 @@ class DefaultNumberingPolicy implements NumberingPolicy {
         throw new Exception("ObjectNotFound");
     }
 
+    /**
+     * {@.ja DefaultNumberingPolicy を生成する}
+     * {@.en Creats DefaultNumberingPolicy}
+     * 
+     * @return 
+     *   {@.ja 生成されたNumberingPolicy}
+     *   {@.en Object Created instances}
+     *
+     *
+     */
+    public NumberingPolicy creator_() {
+        return new DefaultNumberingPolicy();
+    }
+    /**
+     * {@.ja Object を破棄する}
+     * {@.en Destructs Object}
+     * 
+     * @param obj
+     *   {@.ja 破棄するインタスタンス}
+     *   {@.en The target instances for destruction}
+     *
+     */
+    public void destructor_(Object obj) {
+        obj = null;
+    }
+    /**
+     * {@.ja モジュール初期化関数}
+     * {@.en Module initialization}
+     * <p>
+     * {@.ja DefaultNumberingPolicy のファクトリを登録する初期化関数。}
+     * {@.en This initialization function registers DefaultNumberingPolicy's 
+     * factory.}
+     */
+    public static void DefaultNumberingPolicyInit() {
+        final NumberingPolicyFactory<NumberingPolicy,String> 
+            factory 
+                = NumberingPolicyFactory.instance();
+
+        factory.addFactory("process_unique",
+                    new DefaultNumberingPolicy(),
+                    new DefaultNumberingPolicy());
+    
+    }
     private int m_num;
     private Vector m_objects = new Vector();
 }

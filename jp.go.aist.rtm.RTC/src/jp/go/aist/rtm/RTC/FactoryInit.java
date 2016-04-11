@@ -61,5 +61,9 @@ public class FactoryInit {
 	InPortSHMConsumer.InPortSHMConsumerInit();
 	OutPortSHMProvider.OutPortSHMProviderInit();
 	OutPortSHMConsumer.OutPortSHMConsumerInit();
+
+        DefaultNumberingPolicy.DefaultNumberingPolicyInit();
+        NodeNumberingPolicy.NodeNumberingPolicyInit();
+        NamingServiceNumberingPolicy.NamingServiceNumberingPolicyInit();
     }
 }

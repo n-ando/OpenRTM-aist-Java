@@ -1351,7 +1351,20 @@ public class Manager {
                 + profile.getProperty("type_name") + ")");
 
         try {
-            FactoryBase factory = new FactoryJava(profile, new_func, delete_func);
+            String policy_name 
+                = m_config.getProperty("manager.components.naming_policy");
+      
+            if(!policy_name.isEmpty()){ 
+                policy_name = "process_unique";
+            }
+            final NumberingPolicyFactory<NumberingPolicy,String> np_factory 
+                    = NumberingPolicyFactory.instance();
+            NumberingPolicy policy 
+                = np_factory.createObject(policy_name);
+            //NumberingPolicy policy 
+            //    = NumberingPolicyFactory.instance().createObject(policy_name);
+            FactoryBase factory 
+                = new FactoryJava(profile, new_func, delete_func, policy);
             m_factory.registerObject(factory, new FactoryPredicate(factory));
             return true;
             
