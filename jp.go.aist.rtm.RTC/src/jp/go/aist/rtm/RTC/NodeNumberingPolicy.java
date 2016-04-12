@@ -2,9 +2,10 @@ package jp.go.aist.rtm.RTC;
 
 import RTC.RTObject;
 
+import java.lang.Integer;
+
 import java.util.Vector;
 
-import java.lang.Integer;
 /**
  * {@.ja オブジェクト生成時ネーミング・ポリシー(命名規則)管理用クラス.}
  * {@.en This class manages a naming policy.}
@@ -13,14 +14,14 @@ import java.lang.Integer;
  * {@.ja ネーミングサービスからRTCを検索してナンバリングを行うi}
  * {@.en This class searches for RTC from naming service and does a numbering.}
  */
-class NamingServiceNumberingPolicy implements NumberingPolicy, ObjectCreator<NumberingPolicy>, ObjectDestructor {
+class NodeNumberingPolicy implements NumberingPolicy, ObjectCreator<NumberingPolicy>, ObjectDestructor {
     /**
      * {@.ja コンストラクタ}
      * {@.en Constructor}
      * <p>
      *
      */
-    public NamingServiceNumberingPolicy() {
+    public NodeNumberingPolicy() {
         m_num = 0;
         m_mgr = Manager.instance();
     }
@@ -103,36 +104,8 @@ class NamingServiceNumberingPolicy implements NumberingPolicy, ObjectCreator<Num
         } 
     }
     /**
-     * {@.ja オブジェクトの検索}
-     * {@.en Find the object}
-     *
-     * <p>
-     * {@.ja オブジェクトリストから指定されたオブジェクトを検索し、
-     * 該当するオブジェクトが格納されている場合にはインデックスを返す。}
-     * {@.en Find the specified object in the object list and return its index
-     * when it is stored.}
-     * 
-     * @param obj 
-     *   {@.ja 検索対象オブジェクト}
-     *   {@.en The target object for the find}
-     *
-     * @return 
-     *   {@.ja オブジェクト格納インデックス}
-     *   {@.en Object index for storage}
-     *
-     * @exception Exception 
-     *   {@.ja 検索対象オブジェクトが存在しない。}
-     *   {@.en The object doesn't exist.}
-     */
-    protected long find(Object obj) throws Exception {
-        for(int intIdx=0;intIdx<m_objects.size();++intIdx) {
-            if(m_objects.elementAt(intIdx) == obj) return intIdx;
-        }
-        throw new Exception("ObjectNotFound");
-    }
-    /**
-     * {@.ja NamingServiceNumberingPolicy を生成する}
-     * {@.en Creats NamingServiceNumberingPolicy}
+     * {@.ja NodeNumberingPolicy を生成する}
+     * {@.en Creats NodeNumberingPolicy}
      * 
      * @return 
      *   {@.ja 生成されたNumberingPolicy}
@@ -141,7 +114,7 @@ class NamingServiceNumberingPolicy implements NumberingPolicy, ObjectCreator<Num
      *
      */
     public NumberingPolicy creator_() {
-        return new NamingServiceNumberingPolicy();
+        return new NodeNumberingPolicy();
     }
     /**
      * {@.ja Object を破棄する}
@@ -163,14 +136,14 @@ class NamingServiceNumberingPolicy implements NumberingPolicy, ObjectCreator<Num
      * {@.en This initialization function registers DefaultNumberingPolicy's 
      * factory.}
      */
-    public static void NamingServiceNumberingPolicyInit() {
-        final NumberingPolicyFactory<NamingServiceNumberingPolicy,String> 
+    public static void NodeNumberingPolicyInit() {
+        final NumberingPolicyFactory<NumberingPolicy,String> 
             factory 
                 = NumberingPolicyFactory.instance();
 
-        factory.addFactory("ns_unique",
-                    new NamingServiceNumberingPolicy(),
-                    new NamingServiceNumberingPolicy());
+        factory.addFactory("node_unique",
+                    new NodeNumberingPolicy(),
+                    new NodeNumberingPolicy());
     
     }
 
