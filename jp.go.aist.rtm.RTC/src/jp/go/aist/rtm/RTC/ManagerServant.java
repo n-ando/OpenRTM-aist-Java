@@ -18,6 +18,7 @@ import jp.go.aist.rtm.RTC.util.ManagerServantUtil;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
 
+
 import RTC.ComponentProfile;
 import RTC.ComponentProfileListHolder;
 import RTC.RTCListHolder;
@@ -1289,6 +1290,648 @@ System.err.println("Manager's IOR information: "+ior);
                = (RTObject[])crtcs.toArray(new RTObject[0]);
        return arr;
     }
+
+    /**
+     * {@.ja 指定名のマネージャを取得}
+     * {@.en Get the manager specified by the name.}
+     *
+     * <p>
+     * {@.ja マネージャがマスターの場合は
+     * 登録されているスレーブマネージャから検索する。
+     * マネージャがスレーブの場合は
+     * 登録されているマスターマネージャからスレーブマネージャを検索する}
+     *
+     * @param manager_name
+     *   {@.ja マネージャ名}
+     *   {@.en manager name}
+     *
+     * @return 
+     *   {@.ja マネージャ}
+     *   {@.en Manager}
+     *
+     * RTC::Manager_ptr findManager_by_name(string manager_name)
+     * 
+     */
+    public RTM.Manager findManager_by_name(String manager_name){
+        rtcout.println(Logbuf.TRACE, "findManager_by_name(manager_name = "
+                        + manager_name +")");
+        Properties prop = m_mgr.getConfig();
+        String name = prop.getProperty("manager.instance_name");
+        if(name.equals(manager_name)){
+            return getObjRef();
+        }
+        if(m_isMaster){
+            synchronized (m_slaveMutex) {
+                for (int ic=0; ic < m_slaves.length; ++ic) {
+                    _SDOPackage.NameValue[] prof 
+                            = m_slaves[ic]. get_configuration();
+                    NVListHolder nvholder = 
+                        new NVListHolder(prof);
+                    Properties proper = new Properties();
+                    NVUtil.copyToProperties(proper, nvholder);
+                    String i_name = proper.getProperty("manager.instance_name");
+                    if(i_name.equals(manager_name)){
+                        return m_slaves[ic];
+                    }
+                }
+            }
+        }
+        else{
+            synchronized (m_masterMutex) {
+                for (int ic=0; ic < m_masters.length; ++ic) {
+                    RTM.Manager[] slaves = m_masters[ic].get_slave_managers();
+                    for (int icc=0; icc < slaves.length; ++icc) {
+                        _SDOPackage.NameValue[] prof 
+                            = m_slaves[ic]. get_configuration();
+                        NVListHolder nvholder = 
+                            new NVListHolder(prof);
+                        Properties proper = new Properties();
+                        NVUtil.copyToProperties(proper, nvholder);
+                        String i_name 
+                            = proper.getProperty("manager.instance_name");
+                        if(i_name.equals(manager_name)){
+                            return m_slaves[icc];
+                        }
+                    }
+                    _SDOPackage.NameValue[] prof 
+                                = m_masters[ic].get_configuration();
+                    NVListHolder nvholder = 
+                            new NVListHolder(prof);
+                    Properties proper = new Properties();
+                    NVUtil.copyToProperties(proper, nvholder);
+                    String i_name = proper.getProperty("manager.instance_name");
+                    if(i_name.equals(manager_name)){
+                        return m_masters[ic];
+                    }
+                }
+            }
+        }
+        return null;
+    }
+/*
+    prop = self._mgr.getConfig()
+    name = prop.getProperty("manager.instance_name")
+    if name == manager_name:
+      return self.getObjRef()
+    if self._isMaster:
+      guard = OpenRTM_aist.ScopedLock(self._slaveMutex)
+      for slave in self._slaves[:]:
+        try:
+          prof = slave.get_configuration()
+          prop = OpenRTM_aist.Properties()
+          OpenRTM_aist.NVUtil.copyToProperties(prop, prof)
+          name = prop.getProperty("manager.instance_name")
+          if name == manager_name:
+            return slave
+        
+        except:
+          self._rtcout.RTC_ERROR("Unknown exception cought.")
+          self._rtcout.RTC_DEBUG(OpenRTM_aist.Logger.print_exception())
+          self.remove_slave_manager(slave)
+      del guard
+    else:
+      guard = OpenRTM_aist.ScopedLock(self._masterMutex)
+      for master in self._masters:
+        slaves = master.get_slave_managers()
+        for slave in slaves[:]:
+          try:
+            prof = slave.get_configuration()
+            prop = OpenRTM_aist.Properties()
+            OpenRTM_aist.NVUtil.copyToProperties(prop, prof)
+            name = prop.getProperty("manager.instance_name")
+            if name == manager_name:
+              return slave
+          except:
+            self._rtcout.RTC_ERROR("Unknown exception cought.")
+            self._rtcout.RTC_DEBUG(OpenRTM_aist.Logger.print_exception())
+            master.remove_slave_manager(slave)
+        try:
+          prof = master.get_configuration()
+          prop = OpenRTM_aist.Properties()
+          OpenRTM_aist.NVUtil.copyToProperties(prop, prof)
+          name = prop.getProperty("manager.instance_name")
+          if name == manager_name:
+            return master
+        except:
+          self._rtcout.RTC_ERROR("Unknown exception cought.")
+          self._rtcout.RTC_DEBUG(OpenRTM_aist.Logger.print_exception())
+      del guard
+
+    return RTM.Manager._nil
+*/
+
+
+    /**
+     * {@.ja モジュール名からパラメータを取り出す}
+     * {@.en Get a parameter by a specified module name.}
+     *
+     * <p>
+     * {@.ja &param_name=value　もしくは ?param_name=value
+     * のvalueを取り出す}
+     *
+     * @param param_name
+     *   {@.ja パラメータ名}
+     *   {@.en parameter name}
+     *
+     * @param module_name
+     *   {@.ja モジュール名}
+     *   {@.en module name}
+     *
+     * @return 
+     *   {@.ja パラメータ}
+     *   {@.en parameter}
+     *
+     * RTC::RTObject_ptr get_parameter_by_modulename(string param_name, 
+     *             string &module_name)
+     * 
+     */
+    public String get_parameter_by_modulename(String param_name, 
+                    String[] module_name){
+        
+        String arg = module_name[0];
+        int pos = arg.indexOf("&"+param_name+"=");
+        if(pos == -1){
+            pos = arg.indexOf("?"+param_name+"=");
+            if(pos==-1){
+                return null;
+            }
+        }
+        int endpos = arg.indexOf('&', pos + 1);
+        String paramstr;
+        if(endpos == -1){
+            paramstr = arg.substring(pos + 1);
+        }
+        else{
+            paramstr = arg.substring(pos + 1, endpos);
+        }
+        rtcout.println(Logbuf.VERBOSE, param_name+" arg: "+ paramstr);
+        int eqpos = paramstr.indexOf("=");
+        if(eqpos==-1){
+            rtcout.println(Logbuf.WARN, "Invalid argument: "+module_name);
+            return null;
+        }
+        paramstr = paramstr.substring(eqpos + 1);
+        rtcout.println(Logbuf.DEBUG, param_name + " is "+paramstr);
+
+
+        if(endpos == -1){
+            arg = arg.substring(0,pos);
+        }
+        else{
+            arg = arg.substring(0,pos) + arg.substring(endpos);
+        }
+
+        module_name[0] = arg;
+        return paramstr;
+       
+
+    }
+/*
+  def get_parameter_by_modulename(self, param_name, module_name):
+    arg = module_name[0]
+    pos0 = arg.find("&"+param_name+"=")
+    pos1 = arg.find("?"+param_name+"=")
+    
+    
+
+    if pos0 == -1 and pos1 == -1:
+      return ""
+
+    if pos0 == -1:
+      pos = pos1
+    else:
+      pos = pos0
+
+    endpos = arg.find('&', pos + 1)
+    if endpos == -1:
+      paramstr = arg[(pos + 1):]
+    else:
+      paramstr = arg[(pos + 1): endpos]
+    self._rtcout.RTC_VERBOSE("%s arg: %s", (param_name, paramstr))
+
+    
+
+    eqpos = paramstr.find("=")
+    if eqpos == -1:
+      self._rtcout.RTC_WARN("Invalid argument: %s", module_name)
+      return ""
+
+    paramstr = paramstr[eqpos + 1:]
+    self._rtcout.RTC_DEBUG("%s is %s",(param_name, paramstr))
+
+    if endpos == -1:
+      arg = arg[:pos]
+    else:
+      arg = arg[:pos] + arg[endpos:]
+
+    module_name[0] = arg
+
+    return paramstr
+
+*/
+
+
+    
+
+    /**
+     * {@.ja 指定のマネージャでRTCを起動する}
+     * {@.en Starts RTC by a specified manager.}
+     *
+     * <p>
+     * {@.ja comp&manager_name=mgr
+     * のようにRTC名&manager_name=マネージャ名と指定する}
+     * {@.en How to specify: RTCName&manager_name=ManageName
+     * Example:comp&manager_name=mgr}
+     * 
+     * @param module_name
+     *   {@.ja 起動するRTC、マネージャ名}
+     *   {@.en RTCNrame ManagerName}
+     *
+     *
+     * @return 
+     *   {@.ja RTC}
+     *   {@.en RTC}
+     *
+     * RTC::RTObject_ptr create_component_by_mgrname(string module_name)
+     * 
+     */
+    public RTC.RTObject create_component_by_mgrname(String module_name) {
+        String arg = module_name;
+        String[] tmp = new String[1];
+        tmp[0] = arg;
+        String mgrstr = get_parameter_by_modulename("manager_name",tmp);
+        arg = tmp[0];
+
+        if(mgrstr.isEmpty()){
+            return null;
+        }
+
+        RTM.Manager mgrobj = findManager_by_name(mgrstr);
+
+        tmp[0] = arg;
+        String language = get_parameter_by_modulename("language",tmp);
+        arg = tmp[0];
+
+        if(language.isEmpty()){
+            language = "Java";
+        }
+  
+        if(mgrobj == null){
+            rtcout.println(Logbuf.WARN, mgrstr +" cannot be found.");
+            Properties config = m_mgr.getConfig();
+            String rtcd_cmd = 
+                config.getProperty("manager.modules."+language+".manager_cmd");
+            if(rtcd_cmd.isEmpty()){
+                rtcd_cmd = "rtcd_java";
+            }
+            List<String> cmd = new ArrayList();
+            cmd.add(rtcd_cmd);
+            cmd.add("-o");
+            cmd.add("manager.is_master:NO");
+            cmd.add("-o");
+            cmd.add("manager.corba_servant:YES");
+            cmd.add("-o");
+            String corba_master = config.getProperty("corba.master_manager");
+            cmd.add("corba.master_manager:"+corba_master);
+            cmd.add("-o");
+            String man_name = config.getProperty("manger.name");
+            cmd.add("manger.name:"+man_name);
+            cmd.add("-o");
+            cmd.add("manager.instance_name:"+mgrstr);
+/*
+            String cmd = rtcd_cmd;
+            cmd += " -o " + "manager.is_master:NO";
+            cmd += " -o " + "manager.corba_servant:YES";
+            cmd += " -o " + "corba.master_manager:" 
+                + config.getProperty("corba.master_manager");
+            cmd += " -o " + "manger.name:" + config.getProperty("manger.name");
+            cmd += " -o " + "manager.instance_name:" + mgrstr;
+*/
+
+            rtcout.println(Logbuf.DEBUG, "Invoking command: "+ cmd + ".");
+            try{
+                ProcessBuilder pb = new ProcessBuilder(cmd);
+                Process p = pb.start();
+            }
+            catch(Exception ex){
+                rtcout.println(Logbuf.DEBUG, cmd + ": failed");
+                return null;
+            }
+
+            try{
+                Thread.sleep(10);   //10ms
+            }
+            catch(InterruptedException ex){
+                 //do nothing
+            }
+            int count = 0;
+            while (mgrobj == null) {
+                mgrobj = findManager_by_name(mgrstr);
+                ++count;
+                if (count > 1000) { 
+                    break; 
+                }
+                try{
+                    Thread.sleep(10);   //10ms
+                }
+                catch(InterruptedException ex){
+                    //do nothing
+                }
+            }
+            if (mgrobj == null) {
+                rtcout.println(Logbuf.WARN, "Manager cannot be found.");
+                return null;
+            }
+        }
+        rtcout.println(Logbuf.DEBUG, "Creating component on "+mgrstr);
+        rtcout.println(Logbuf.DEBUG, "arg: "+arg);
+        try {
+            RTObject rtobj;
+            rtobj = mgrobj.create_component(arg);
+            rtcout.println(Logbuf.DEBUG, "Component created "+arg);
+            return rtobj;
+        }
+        catch (org.omg.CORBA.SystemException e) {
+            rtcout.println(Logbuf.DEBUG, 
+                        "Exception was caught while creating component.");
+            return null;
+        }
+    }
+/*
+    arg = module_name
+    
+    tmp = [arg]
+    mgrstr = self.get_parameter_by_modulename("manager_name",tmp)
+    arg = tmp[0]
+
+    if not mgrstr:
+      return RTC.RTObject._nil
+    
+
+
+    mgrobj = self.findManager_by_name(mgrstr)
+
+    tmp = [arg]
+    language = self.get_parameter_by_modulename("language",tmp)
+    arg = tmp[0]
+    if not language:
+      language = "Python"
+    
+    
+    
+    
+    
+    if CORBA.is_nil(mgrobj):
+      self._rtcout.RTC_WARN("%s cannot be found.", mgrstr)
+      config = copy.deepcopy(self._mgr.getConfig())
+      rtcd_cmd = config.getProperty("manager.modules."+language+".manager_cmd")
+      
+      if not rtcd_cmd:
+        rtcd_cmd = "rtcd_python"
+      
+      cmd = rtcd_cmd
+      cmd += " -o " + "manager.is_master:NO"
+      cmd += " -o " + "manager.corba_servant:YES"
+      cmd += " -o " + "corba.master_manager:" + config.getProperty("corba.master_manager")
+      cmd += " -o " + "manger.name:" + config.getProperty("manger.name")
+      cmd += " -o " + "manager.instance_name:" + mgrstr
+      #cmd += " -o " + "manager.supported_languages:" + language
+      
+      
+      
+      self._rtcout.RTC_DEBUG("Invoking command: %s.", cmd)
+      ret = OpenRTM_aist.launch_shell(cmd)
+      
+      if ret == -1:
+        self._rtcout.RTC_DEBUG("%s: failed", cmd)
+        return RTC.RTObject._nil
+      time.sleep(0.01)
+      count = 0
+      while CORBA.is_nil(mgrobj):
+        mgrobj = self.findManager_by_name(mgrstr)
+        count += 1
+        if count > 1000:
+          break
+        time.sleep(0.01)
+      
+      if CORBA.is_nil(mgrobj):
+        self._rtcout.RTC_WARN("Manager cannot be found.")
+        return RTC.RTObject._nil
+      
+
+
+    
+    
+    
+
+    
+
+      
+    self._rtcout.RTC_DEBUG("Creating component on %s",  mgrstr)
+    self._rtcout.RTC_DEBUG("arg: %s", arg)
+    
+    
+    try:
+      rtobj = mgrobj.create_component(arg)
+      
+      return rtobj
+    except CORBA.SystemException:
+      self._rtcout.RTC_DEBUG("Exception was caught while creating component.")
+      self._rtcout.RTC_ERROR(OpenRTM_aist.Logger.print_exception())
+      return RTC.RTObject._nil
+    except:
+      self._rtcout.RTC_DEBUG(OpenRTM_aist.Logger.print_exception())
+      return RTC.RTObject._nil
+    return RTC.RTObject._nil
+    
+*/    
+
+    /**
+     * {@.ja 指定のマネージャでRTCを起動する}
+     * {@.en Starts RTC by a specified manager.}
+     *
+     * <p>
+     * {@.ja comp&manager_address=localhost:2810
+     * のようにRTC名&manager_address=マネージャのホスト名、ポート番号を
+     * 指定する}
+     * {@.en How to specify: RTCName&manager_address=ManageHostName
+     * Example:comp&manager_address=localhost:2810}
+     * 
+     * @param module_name
+     *   {@.ja 起動するRTC、マネージャのホストアドレス}
+     *   {@.en RTCNrame ManagerHostAdress}
+     *
+     *
+     * @return 
+     *   {@.ja RTC}
+     *   {@.en RTC}
+     *
+     * RTC::RTObject_ptr create_component_by_address(string module_name)
+     * 
+     */
+    public RTC.RTObject create_component_by_address(String module_name) {
+        String arg = module_name;
+        String[] tmp = new String[1];
+        tmp[0] = arg;
+        String mgrstr = get_parameter_by_modulename("manager_address",tmp);
+        arg = tmp[0];
+
+        if(mgrstr.isEmpty()){
+            return null;
+        }
+
+        String[] mgrvstr = mgrstr.split(":");
+        if(mgrvstr.length != 2){
+            rtcout.println(Logbuf.WARN, "Invalid manager name: "+mgrstr);
+            return null;
+        }
+
+        RTM.Manager mgrobj = findManager(mgrstr);
+        
+        tmp[0] = arg;
+        String language = get_parameter_by_modulename("language",tmp);
+        arg = tmp[0];
+
+        if(language.isEmpty()){
+            language = "Java";
+        }
+
+        if(mgrobj == null){
+            Properties config = m_mgr.getConfig();
+            String rtcd_cmd = 
+                config.getProperty("manager.modules."+language+".manager_cmd");
+
+            if(rtcd_cmd.isEmpty()){
+                rtcd_cmd = "rtcd_java";
+            }
+
+            List<String> cmd = new ArrayList();
+            cmd.add(rtcd_cmd);
+            cmd.add("-p");
+            cmd.add(mgrvstr[1]);
+
+            rtcout.println(Logbuf.DEBUG, "Invoking command: "+ cmd + ".");
+
+            try{
+                ProcessBuilder pb = new ProcessBuilder(cmd);
+                Process p = pb.start();
+            }
+            catch(Exception ex){
+                rtcout.println(Logbuf.DEBUG, cmd + ": failed");
+                return null;
+            }
+            try{
+                Thread.sleep(10);   //10ms
+            }
+            catch(InterruptedException ex){
+                 //do nothing
+            }
+            int count = 0;
+            while (mgrobj == null) {
+                mgrobj = findManager(mgrstr);
+                ++count;
+                if (count > 1000) { 
+                    break; 
+                }
+                try{
+                    Thread.sleep(10);   //10ms
+                }
+                catch(InterruptedException ex){
+                    //do nothing
+                }
+            }
+        }
+        if (mgrobj == null) {
+            rtcout.println(Logbuf.WARN, "Manager cannot be found.");
+            return null;
+        }
+        rtcout.println(Logbuf.DEBUG, "Creating component on "+mgrstr);
+        rtcout.println(Logbuf.DEBUG, "arg: "+arg);
+        try {
+            RTObject rtobj;
+            rtobj = mgrobj.create_component(arg);
+            rtcout.println(Logbuf.DEBUG, "Component created "+arg);
+            return rtobj;
+        }
+        catch (org.omg.CORBA.SystemException e) {
+            rtcout.println(Logbuf.DEBUG, 
+                        "Exception was caught while creating component.");
+            return null;
+        }
+    }
+/*
+    arg = module_name
+    tmp = [arg]
+    mgrstr = self.get_parameter_by_modulename("manager_address",tmp)
+    arg = tmp[0]
+
+    if not mgrstr:
+      return RTC.RTObject._nil
+    
+    mgrvstr = mgrstr.split(":")
+    if len(mgrvstr) != 2:
+      self._rtcout.RTC_WARN("Invalid manager name: %s", mgrstr)
+      return RTC.RTObject._nil
+
+    
+    # find manager
+    mgrobj = self.findManager(mgrstr)
+
+    tmp = [arg]
+    language = self.get_parameter_by_modulename("language",tmp)
+    arg = tmp[0]
+    if not language:
+      language = "Python"
+
+
+    if CORBA.is_nil(mgrobj):
+      config = copy.deepcopy(self._mgr.getConfig())
+      rtcd_cmd = config.getProperty("manager.modules."+language+".manager_cmd")
+      if not rtcd_cmd:
+        rtcd_cmd = "rtcd_python"
+
+      cmd = rtcd_cmd
+      cmd = " -p "
+      cmd += mgrvstr[1] # port number
+
+      self._rtcout.RTC_DEBUG("Invoking command: %s.", cmd)
+      ret = OpenRTM_aist.launch_shell(cmd)
+      if ret == -1:
+        self._rtcout.RTC_DEBUG("%s: failed", cmd)
+        return RTC.RTObject._nil
+
+      # find manager
+      time.sleep(0.01)
+      count = 0
+      while CORBA.is_nil(mgrobj):
+        mgrobj = self.findManager(mgrstr)
+        count += 1
+        if count > 1000:
+          break
+        time.sleep(0.01)
+
+    if CORBA.is_nil(mgrobj):
+      self._rtcout.RTC_WARN("Manager cannot be found.")
+      return RTC.RTObject._nil
+    
+    
+    self._rtcout.RTC_DEBUG("Creating component on %s",  mgrstr)
+    self._rtcout.RTC_DEBUG("arg: %s", arg)
+    try:
+      rtobj = mgrobj.create_component(arg)
+      self._rtcout.RTC_DEBUG("Component created %s",  arg)
+      return rtobj
+    except CORBA.SystemException:
+      self._rtcout.RTC_DEBUG("Exception was caught while creating component.")
+      self._rtcout.RTC_ERROR(OpenRTM_aist.Logger.print_exception())
+      return RTC.RTObject._nil
+    except:
+      self._rtcout.RTC_DEBUG(OpenRTM_aist.Logger.print_exception())
+
+    return RTC.RTObject._nil
+*/
+
+
     /**
      * <p></p>
      */
