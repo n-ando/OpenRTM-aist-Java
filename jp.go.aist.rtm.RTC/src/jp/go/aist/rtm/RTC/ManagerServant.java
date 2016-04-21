@@ -553,123 +553,44 @@ System.err.println("Manager's IOR information: "+ior);
     public RTC.RTObject create_component(final String module_name) {
         rtcout.println(Logbuf.TRACE, "create_component("+module_name+")");
 
-        String arg = module_name;
-        int pos0 = arg.indexOf("&manager=");
-        int pos1 = arg.indexOf("?manager=");
+        RTC.RTObject rtc = create_component_by_address(module_name);
+        if(rtc != null){
+            return rtc;
+        }
 
-        if (pos0 < 0 && pos1 < 0){
-            if (false) { //is_master()
-                rtcout.println(Logbuf.TRACE, 
-                    "Master manager cannot create component: "+module_name);
-                return null;
+        rtc = create_component_by_mgrname(module_name);
+        if(rtc  != null){
+            return rtc;
+        }
+
+        if(m_isMaster){
+            synchronized(m_slaveMutex) {
+                for (int ic=0; ic < m_slaves.length; ++ic) {
+                    try {
+                        rtc = m_slaves[ic].create_component(module_name);
+                        if(rtc != null){
+                            return rtc;
+                        }
+                    }
+                    catch (org.omg.CORBA.SystemException ex) {
+                        rtcout.println(Logbuf.ERROR, 
+                                    "Unknown exception cought.");
+                        rtcout.println(Logbuf.DEBUG, ex.toString());
+                    }
+                }
             }
+        }
+
+
         // create on this manager
-            RTObject_impl rtc = m_mgr.createComponent(module_name);
-            if (rtc == null) {
-                return null;
-            }
-            return rtc.getObjRef();
-        }
-
-
-        // create other manager
-        // extract manager's location
-        int pos;
-        if(! (pos0 < 0) ){
-            pos = pos0;
-        }
-        else{
-            pos = pos1;
-        }
     
-        int endpos;
-        endpos = arg.indexOf('&', pos + 1);
-        if(endpos<0){
-            endpos = arg.length();
-        }
-        String mgrstr = arg.substring(pos + 1, endpos);
-        rtcout.println(Logbuf.VERBOSE, "Manager arg: "+mgrstr);
-        String[] mgrvstr = mgrstr.split(":");
-        if (mgrvstr.length != 2) {
-            rtcout.println(Logbuf.WARN, "Invalid manager name: "+mgrstr);
-            return null;
-        }
-        int  eqpos = mgrstr.indexOf("=");
-        if (eqpos < 0) {
-            rtcout.println(Logbuf.WARN, "Invalid argument: "+module_name);
-            return null;
-        }
-        mgrstr =  mgrstr.substring(eqpos + 1);
-        rtcout.println(Logbuf.DEBUG, "Manager is : "+mgrstr);
-
-        // find manager
-        RTM.Manager mgrobj = findManager(mgrstr);
-        if (mgrobj==null) {
-            List<String> cmd = new ArrayList();
-/*
-            cmd.add("java");
-            cmd.add("-jar");
-            String rtm_java_root = System.getenv("RTM_JAVA_ROOT");
-            String rtcd = rtm_java_root+"/jar/rtcd.jar";
-            cmd.add(rtcd);
-*/
-            cmd.add("rtcd_java");
-            cmd.add("-p");
-            cmd.add(mgrvstr[1]); // port number
-
-            rtcout.println(Logbuf.DEBUG, "Invoking command: "+cmd);
-            try{
-                ProcessBuilder pb = new ProcessBuilder(cmd);
-                Process p = pb.start();
-            }
-            catch(Exception ex){
-                rtcout.println(Logbuf.DEBUG, cmd + ": failed");
-                return null;
-            }
-
-            // find manager
-            try{
-                Thread.sleep(10);   //10ms
-            }
-            catch(InterruptedException ex){
-                 //do nothing
-            }
-            int count = 0;
-            while (mgrobj == null) {
-                mgrobj = findManager(mgrstr);
-                ++count;
-                if (count > 1000) { 
-                    break; 
-                }
-                try{
-                    Thread.sleep(10);   //10ms
-                }
-                catch(InterruptedException ex){
-                    //do nothing
-                }
-            }
+        RTObject_impl rtobj = m_mgr.createComponent(module_name);
+        if(rtobj != null){
+            return rtobj.getObjRef();
         }
 
-        if (mgrobj == null) {
-            rtcout.println(Logbuf.WARN, "Manager cannot be found.");
-            return null;
-        }
-    
-        // create component on the manager    
-        arg = arg.substring(0, pos);
-        rtcout.println(Logbuf.DEBUG, "Creating component on "+mgrstr);
-        rtcout.println(Logbuf.DEBUG, "arg: "+arg);
-        try {
-            RTObject rtobj;
-            rtobj = mgrobj.create_component(arg);
-            rtcout.println(Logbuf.DEBUG, "Component created "+arg);
-            return rtobj;
-        }
-        catch (org.omg.CORBA.SystemException e) {
-            rtcout.println(Logbuf.DEBUG, 
-                        "Exception was caught while creating component.");
-            return null;
-        }
+        return null;
+
     }
 
     /**
@@ -1368,58 +1289,6 @@ System.err.println("Manager's IOR information: "+ior);
         }
         return null;
     }
-/*
-    prop = self._mgr.getConfig()
-    name = prop.getProperty("manager.instance_name")
-    if name == manager_name:
-      return self.getObjRef()
-    if self._isMaster:
-      guard = OpenRTM_aist.ScopedLock(self._slaveMutex)
-      for slave in self._slaves[:]:
-        try:
-          prof = slave.get_configuration()
-          prop = OpenRTM_aist.Properties()
-          OpenRTM_aist.NVUtil.copyToProperties(prop, prof)
-          name = prop.getProperty("manager.instance_name")
-          if name == manager_name:
-            return slave
-        
-        except:
-          self._rtcout.RTC_ERROR("Unknown exception cought.")
-          self._rtcout.RTC_DEBUG(OpenRTM_aist.Logger.print_exception())
-          self.remove_slave_manager(slave)
-      del guard
-    else:
-      guard = OpenRTM_aist.ScopedLock(self._masterMutex)
-      for master in self._masters:
-        slaves = master.get_slave_managers()
-        for slave in slaves[:]:
-          try:
-            prof = slave.get_configuration()
-            prop = OpenRTM_aist.Properties()
-            OpenRTM_aist.NVUtil.copyToProperties(prop, prof)
-            name = prop.getProperty("manager.instance_name")
-            if name == manager_name:
-              return slave
-          except:
-            self._rtcout.RTC_ERROR("Unknown exception cought.")
-            self._rtcout.RTC_DEBUG(OpenRTM_aist.Logger.print_exception())
-            master.remove_slave_manager(slave)
-        try:
-          prof = master.get_configuration()
-          prop = OpenRTM_aist.Properties()
-          OpenRTM_aist.NVUtil.copyToProperties(prop, prof)
-          name = prop.getProperty("manager.instance_name")
-          if name == manager_name:
-            return master
-        except:
-          self._rtcout.RTC_ERROR("Unknown exception cought.")
-          self._rtcout.RTC_DEBUG(OpenRTM_aist.Logger.print_exception())
-      del guard
-
-    return RTM.Manager._nil
-*/
-
 
     /**
      * {@.ja モジュール名からパラメータを取り出す}
@@ -1486,49 +1355,6 @@ System.err.println("Manager's IOR information: "+ior);
        
 
     }
-/*
-  def get_parameter_by_modulename(self, param_name, module_name):
-    arg = module_name[0]
-    pos0 = arg.find("&"+param_name+"=")
-    pos1 = arg.find("?"+param_name+"=")
-    
-    
-
-    if pos0 == -1 and pos1 == -1:
-      return ""
-
-    if pos0 == -1:
-      pos = pos1
-    else:
-      pos = pos0
-
-    endpos = arg.find('&', pos + 1)
-    if endpos == -1:
-      paramstr = arg[(pos + 1):]
-    else:
-      paramstr = arg[(pos + 1): endpos]
-    self._rtcout.RTC_VERBOSE("%s arg: %s", (param_name, paramstr))
-
-    
-
-    eqpos = paramstr.find("=")
-    if eqpos == -1:
-      self._rtcout.RTC_WARN("Invalid argument: %s", module_name)
-      return ""
-
-    paramstr = paramstr[eqpos + 1:]
-    self._rtcout.RTC_DEBUG("%s is %s",(param_name, paramstr))
-
-    if endpos == -1:
-      arg = arg[:pos]
-    else:
-      arg = arg[:pos] + arg[endpos:]
-
-    module_name[0] = arg
-
-    return paramstr
-
-*/
 
 
     
@@ -1657,94 +1483,6 @@ System.err.println("Manager's IOR information: "+ior);
             return null;
         }
     }
-/*
-    arg = module_name
-    
-    tmp = [arg]
-    mgrstr = self.get_parameter_by_modulename("manager_name",tmp)
-    arg = tmp[0]
-
-    if not mgrstr:
-      return RTC.RTObject._nil
-    
-
-
-    mgrobj = self.findManager_by_name(mgrstr)
-
-    tmp = [arg]
-    language = self.get_parameter_by_modulename("language",tmp)
-    arg = tmp[0]
-    if not language:
-      language = "Python"
-    
-    
-    
-    
-    
-    if CORBA.is_nil(mgrobj):
-      self._rtcout.RTC_WARN("%s cannot be found.", mgrstr)
-      config = copy.deepcopy(self._mgr.getConfig())
-      rtcd_cmd = config.getProperty("manager.modules."+language+".manager_cmd")
-      
-      if not rtcd_cmd:
-        rtcd_cmd = "rtcd_python"
-      
-      cmd = rtcd_cmd
-      cmd += " -o " + "manager.is_master:NO"
-      cmd += " -o " + "manager.corba_servant:YES"
-      cmd += " -o " + "corba.master_manager:" + config.getProperty("corba.master_manager")
-      cmd += " -o " + "manger.name:" + config.getProperty("manger.name")
-      cmd += " -o " + "manager.instance_name:" + mgrstr
-      #cmd += " -o " + "manager.supported_languages:" + language
-      
-      
-      
-      self._rtcout.RTC_DEBUG("Invoking command: %s.", cmd)
-      ret = OpenRTM_aist.launch_shell(cmd)
-      
-      if ret == -1:
-        self._rtcout.RTC_DEBUG("%s: failed", cmd)
-        return RTC.RTObject._nil
-      time.sleep(0.01)
-      count = 0
-      while CORBA.is_nil(mgrobj):
-        mgrobj = self.findManager_by_name(mgrstr)
-        count += 1
-        if count > 1000:
-          break
-        time.sleep(0.01)
-      
-      if CORBA.is_nil(mgrobj):
-        self._rtcout.RTC_WARN("Manager cannot be found.")
-        return RTC.RTObject._nil
-      
-
-
-    
-    
-    
-
-    
-
-      
-    self._rtcout.RTC_DEBUG("Creating component on %s",  mgrstr)
-    self._rtcout.RTC_DEBUG("arg: %s", arg)
-    
-    
-    try:
-      rtobj = mgrobj.create_component(arg)
-      
-      return rtobj
-    except CORBA.SystemException:
-      self._rtcout.RTC_DEBUG("Exception was caught while creating component.")
-      self._rtcout.RTC_ERROR(OpenRTM_aist.Logger.print_exception())
-      return RTC.RTObject._nil
-    except:
-      self._rtcout.RTC_DEBUG(OpenRTM_aist.Logger.print_exception())
-      return RTC.RTObject._nil
-    return RTC.RTObject._nil
-    
-*/    
 
     /**
      * {@.ja 指定のマネージャでRTCを起動する}
@@ -1859,77 +1597,6 @@ System.err.println("Manager's IOR information: "+ior);
             return null;
         }
     }
-/*
-    arg = module_name
-    tmp = [arg]
-    mgrstr = self.get_parameter_by_modulename("manager_address",tmp)
-    arg = tmp[0]
-
-    if not mgrstr:
-      return RTC.RTObject._nil
-    
-    mgrvstr = mgrstr.split(":")
-    if len(mgrvstr) != 2:
-      self._rtcout.RTC_WARN("Invalid manager name: %s", mgrstr)
-      return RTC.RTObject._nil
-
-    
-    # find manager
-    mgrobj = self.findManager(mgrstr)
-
-    tmp = [arg]
-    language = self.get_parameter_by_modulename("language",tmp)
-    arg = tmp[0]
-    if not language:
-      language = "Python"
-
-
-    if CORBA.is_nil(mgrobj):
-      config = copy.deepcopy(self._mgr.getConfig())
-      rtcd_cmd = config.getProperty("manager.modules."+language+".manager_cmd")
-      if not rtcd_cmd:
-        rtcd_cmd = "rtcd_python"
-
-      cmd = rtcd_cmd
-      cmd = " -p "
-      cmd += mgrvstr[1] # port number
-
-      self._rtcout.RTC_DEBUG("Invoking command: %s.", cmd)
-      ret = OpenRTM_aist.launch_shell(cmd)
-      if ret == -1:
-        self._rtcout.RTC_DEBUG("%s: failed", cmd)
-        return RTC.RTObject._nil
-
-      # find manager
-      time.sleep(0.01)
-      count = 0
-      while CORBA.is_nil(mgrobj):
-        mgrobj = self.findManager(mgrstr)
-        count += 1
-        if count > 1000:
-          break
-        time.sleep(0.01)
-
-    if CORBA.is_nil(mgrobj):
-      self._rtcout.RTC_WARN("Manager cannot be found.")
-      return RTC.RTObject._nil
-    
-    
-    self._rtcout.RTC_DEBUG("Creating component on %s",  mgrstr)
-    self._rtcout.RTC_DEBUG("arg: %s", arg)
-    try:
-      rtobj = mgrobj.create_component(arg)
-      self._rtcout.RTC_DEBUG("Component created %s",  arg)
-      return rtobj
-    except CORBA.SystemException:
-      self._rtcout.RTC_DEBUG("Exception was caught while creating component.")
-      self._rtcout.RTC_ERROR(OpenRTM_aist.Logger.print_exception())
-      return RTC.RTObject._nil
-    except:
-      self._rtcout.RTC_DEBUG(OpenRTM_aist.Logger.print_exception())
-
-    return RTC.RTObject._nil
-*/
 
 
     /**
