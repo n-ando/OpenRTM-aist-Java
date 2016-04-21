@@ -279,10 +279,10 @@ class NamingOnManager implements NamingBase {
     public RTObject[] string_to_component(String name){
         rtcout.println(Logbuf.PARANOID, "string_to_component("+name+")");
         RTCListHolder rtc_list = new RTCListHolder();
-        String[] tmps = name.split("//");
+        String[] tmps = name.split("://");
         if(tmps.length > 1){
             rtcout.println(Logbuf.PARANOID, "tmps[0]:"+tmps[0]);
-            if(tmps[0].equals("rtcloc:")){
+            if(tmps[0].equals("rtcloc")){
                 String tag = tmps[0];
                 String url = tmps[1];
                 rtcout.println(Logbuf.PARANOID, "tmps[1]:"+tmps[1]);
