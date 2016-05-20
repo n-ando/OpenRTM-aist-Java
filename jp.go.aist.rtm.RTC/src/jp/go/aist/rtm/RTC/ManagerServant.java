@@ -1,5 +1,6 @@
 package jp.go.aist.rtm.RTC;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -1135,6 +1136,13 @@ System.err.println("Manager's IOR information: "+ior);
      *   {@.en Manager reference}
      */
     public RTM.Manager getObjRef() {
+        if (m_objref == null) {
+            try {
+                m_objref = ManagerHelper.narrow(POAUtil.getRef(this));
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
         return (RTM.Manager)m_objref;
     }
 
@@ -1631,7 +1639,8 @@ System.err.println("Manager's IOR information: "+ior);
         }
 */
         public boolean equalof(final java.lang.Object object) {
-            return m_mgr._is_equivalent((RTM.Manager)object);
+            boolean ret = m_mgr._is_equivalent((RTM.Manager)object);
+            return ret;
         }
     }
 }
