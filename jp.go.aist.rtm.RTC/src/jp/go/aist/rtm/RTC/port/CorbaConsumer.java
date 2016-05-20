@@ -68,9 +68,14 @@ public class CorbaConsumer<OBJECT_TYPE> extends CorbaConsumerBase {
      * @return CORBAオブジェクト
      */
     public OBJECT_TYPE _ptr() {
-        if(m_sev != null){
+
+        if(this.m_sev != null){
             return this.m_sev;
         }
+        if(this.m_var != null){
+            return this.m_var;
+        }
+     
         try{
             POA poa = Manager.instance().getPOA();
             m_sev = (OBJECT_TYPE)(poa.reference_to_servant((Object)m_var));
@@ -82,6 +87,7 @@ public class CorbaConsumer<OBJECT_TYPE> extends CorbaConsumerBase {
             return this.m_var;
         }        
         return this.m_var;
+
     }
     
     /**

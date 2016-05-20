@@ -247,6 +247,11 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
     public ReturnCode_t onStopping()
     {
+
+        synchronized (m_svcmutex) {
+            m_svc = false;
+        }
+
         return ReturnCode_t.RTC_OK;
     }
     public ReturnCode_t onStopped()
