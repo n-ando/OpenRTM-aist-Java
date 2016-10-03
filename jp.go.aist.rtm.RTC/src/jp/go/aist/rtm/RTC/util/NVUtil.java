@@ -1,6 +1,7 @@
 package jp.go.aist.rtm.RTC.util;
 
 import java.util.Vector;
+import java.lang.reflect.Method;
 
 import org.omg.CORBA.Any;
 import org.omg.CORBA.TCKind;
@@ -173,7 +174,7 @@ public class NVUtil {
      *   {@.en NVList of copy source}
      */
     public static void copyToProperties(Properties prop, final NVListHolder nvlist) {
-        
+
         for (int intIdx = 0; intIdx < nvlist.value.length; ++intIdx) {
             try {
                 Any anyVal = nvlist.value[intIdx].value;
@@ -203,7 +204,78 @@ public class NVUtil {
 		    value =  Long.toString(anyVal.extract_longlong());
                 } else if( anyVal.type().kind() == TCKind.tk_octet ) {
 		    value =  Byte.toString(anyVal.extract_octet());
+                } else if( anyVal.type().kind() == TCKind.tk_struct ) {
+
+                    if(anyVal.type().name().equals("TimedLong")) {
+                        value = RTC.TimedLongHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedBoolean")) {
+                        value = RTC.TimedBooleanHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedChar")) {
+                        value = RTC.TimedCharHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedDouble")) {
+                        value = RTC.TimedDoubleHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedFloat")) {
+                        value = RTC.TimedFloatHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedOctet")) {
+                        value = RTC.TimedOctetHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedShort")) {
+                        value = RTC.TimedShortHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedBooleanSeq")) {
+                        value = RTC.TimedBooleanSeqHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedCharSeq")) {
+                        value = RTC.TimedCharSeqHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedDoubleSeq")) {
+                        value = RTC.TimedDoubleSeqHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedFloatSeq")) {
+                        value = RTC.TimedFloatSeqHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedLongSeq")) {
+                        value = RTC.TimedLongSeqHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedOctetSeq")) {
+                        value = RTC.TimedOctetSeqHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedShortSeq")) {
+                        value = RTC.TimedShortSeqHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedStringSeq")) {
+                        value = RTC.TimedStringSeqHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedULongSeq")) {
+                        value = RTC.TimedULongSeqHelper.extract(anyVal).toString();
+                    }
+                    else if(anyVal.type().name().equals("TimedUShortSeq")) {
+                        value = RTC.TimedUShortSeqHelper.extract(anyVal).toString();
+                    }
+                    else {
+                        try {
+                            String className = anyVal.type().name();
+                            Class helper = Class.forName(className + "Helper", 
+                                           true, 
+                                           anyVal.getClass().getClassLoader()); 
+                            Method method = helper.getMethod("extract",
+                                                   org.omg.CORBA.Any.class);
+                            Object targetObject = method.invoke(
+                                null, // invoke static method.
+                                anyVal);
+                            value = targetObject.toString();
+                        } catch ( Exception ex) {
+                            throw new ClassCastException("Unknown data type.");
+                        }
+                    }
 		} else {
+                    Class cl = anyVal.getClass();
+                    String str = cl.getName();
 		    value = anyVal.extract_Value().toString();
                 }
                 final String name = nvlist.value[intIdx].name;

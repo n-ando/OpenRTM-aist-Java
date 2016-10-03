@@ -2,6 +2,8 @@ package jp.go.aist.rtm.RTC.port;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import java.util.Vector;
 
@@ -10,11 +12,14 @@ import jp.go.aist.rtm.RTC.buffer.RingBuffer;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.port.publisher.PublisherBase;
 import jp.go.aist.rtm.RTC.util.DataRef;
+import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 
 import org.omg.CORBA.portable.OutputStream;
 import org.omg.CORBA.portable.Streamable;
 
+import _SDOPackage.NVListHolder;
 /**
  * {@.ja 出力ポートの実装。}
  * {@.en Implementation of OutPort}
@@ -29,6 +34,42 @@ import org.omg.CORBA.portable.Streamable;
  */
 public class OutPort<DataType> extends OutPortBase {
 
+    /**
+     * {@.ja }
+     * {@.en }
+     */
+/*
+    private class getInfo{
+        private HashMap<String, Class> types 
+            = new HashMap<String, Class>();
+
+        private HashMap<String, Integer> nums = new HashMap<String, Integer>();
+
+        public getInfo() {
+            types.put("byte",byte.class);
+            types.put("char",char.class);
+            types.put("short",short.class);
+            types.put("int",int.class);
+            types.put("long",long.class);
+            types.put("float",float.class);
+            types.put("double",double.class);
+
+            nums.put("byte",0);
+            nums.put("char",1);
+            nums.put("short",2);
+            nums.put("int",3);
+            nums.put("long",4);
+            nums.put("float",5);
+            nums.put("double",6);
+        }
+        public Class getType(String className) {
+            return (Class) types.get(className);
+        } 
+        public int getNumber(String className) {
+            return nums.get(className);
+        } 
+    }
+*/
     /**
      * <p> toTypeCode </p>
      * <p> This function gets TypeCode of data. </p>
@@ -266,6 +307,16 @@ public class OutPort<DataType> extends OutPortBase {
             rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
+
+
+
+        addProperty("dataport.data_value", valueRef.v, cl); 
+
+        synchronized (m_profile.properties) {
+            NVListHolder nvholder = new NVListHolder(m_profile.properties);
+            m_propValueIndex = NVUtil.find_index(nvholder, 
+                                                 "dataport.data_value");
+        }
     }
     
     /**
@@ -312,6 +363,24 @@ public class OutPort<DataType> extends OutPortBase {
             m_OnWrite.run(value);
             rtcout.println(Logbuf.TRACE, "OnWrite called");
         }
+
+        synchronized (m_profile.properties) {
+            NVListHolder nvholder = 
+                 new NVListHolder(m_profile.properties);
+            try{
+                CORBA_SeqUtil.erase(nvholder, m_propValueIndex);
+             } catch (Exception ex) {
+                throw new InternalError("remove_organization_property()");
+            }
+
+            m_profile.properties = nvholder.value;
+            Class cl = value.getClass();
+            addProperty("dataport.data_value", value, cl);
+            nvholder.value = m_profile.properties;
+            m_propValueIndex = NVUtil.find_index(nvholder, "dataport.data_value");
+
+        }
+
 
         // 1) direct connection
         synchronized (m_directNewDataMutex){
@@ -728,5 +797,7 @@ public class OutPort<DataType> extends OutPortBase {
     private Vector<ReturnCode> m_status = new Vector<ReturnCode>();
 
     private static String m_directNewDataMutex = new String();
+
+    private int m_propValueIndex;
 
 }
