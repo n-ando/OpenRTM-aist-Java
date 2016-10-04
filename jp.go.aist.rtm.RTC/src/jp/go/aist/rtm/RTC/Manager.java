@@ -892,6 +892,9 @@ public class Manager {
         }
 
         precreateComponent();
+        initPreActivation();
+        initPreConnection();
+/*
         { // pre-connection
             String preconnect 
                 = m_config.getProperty("manager.components.preconnect");
@@ -1031,7 +1034,8 @@ public class Manager {
                 NVUtil.dump(nvholder);
             }
     } // end of pre-connection
-
+*/
+/*
     { // pre-activation
         String preactivation 
             = m_config.getProperty("manager.components.preactivation");
@@ -1059,7 +1063,7 @@ public class Manager {
             eclistholder.value[0].activate_component(comp.getObjRef());
         }
     } // end of pre-activation
-
+*/
         return true;
     }
 
@@ -1102,7 +1106,7 @@ public class Manager {
      *
      * <p>
      * {@.ja このメソッドは"manager.components.precreate"に設定されている
-     * コンポーネントを生成する。
+     * コンポーネントを生成する。}
      * {@.en This method creates components set to 
      * "Manager.components.precreate".}
      */
@@ -1116,6 +1120,198 @@ public class Manager {
             }
 	    comp[i] = comp[i].trim();
             this.createComponent(comp[i]);
+        }
+    }
+    /**
+     * {@.ja 起動時にrtc.confで指定したRTCをアクティベーションする。}
+     * {@.en Activates RTC designated in rtc.conf,when starting.}
+     *
+     * <p>
+     * {@.ja このメソッドは"manager.components.preactivation"に設定される
+     * コンポーネントを活性化する。
+     * 例:
+     * manager.components.preactivation: RTC1,RTC2~}
+     * {@.en This method activates components set to 
+     * "manager.components.preactivation".}
+     *
+     */
+    private void initPreActivation() {
+        String preactivation 
+            = m_config.getProperty("manager.components.preactivation");
+        rtcout.println(Logbuf.TRACE, 
+            "Components pre-activation: " 
+            + Arrays.toString(preactivation.split(",")));
+        String[] comps = new String[0];
+        if ( preactivation == null || preactivation.length() == 0 ) {
+        }
+        else {
+            comps = preactivation.split(",");
+        }
+
+        for (int ic=0; ic < comps.length; ++ic) {
+            comps[ic] = comps[ic].trim();
+            if(!comps[ic].isEmpty()) { 
+                 RTC.RTObject comp_ref;
+                if(comps[ic].indexOf("://") == -1) { 
+                    RTObject_impl comp = getComponent(comps[ic]);
+                    if (comp == null) { 
+                        rtcout.println(Logbuf.ERROR, comps[ic] + " not found.");
+                        continue; 
+                    }
+                    comp_ref = comp.getObjRef();
+                }
+                else {
+                    RTC.RTObject[] rtcs = m_namingManager.string_to_component(comps[ic]);
+                    if(rtcs.length == 0) {
+                        rtcout.println(Logbuf.ERROR, comps[ic] + " not found.");
+                        continue;
+                    }
+                    comp_ref = rtcs[0];
+                }
+                ReturnCode_t ret = CORBA_RTCUtil.activate(comp_ref);
+                if (ret != ReturnCode_t.RTC_OK) { 
+                    rtcout.println(Logbuf.ERROR, comps[ic] + " activation filed.");
+                }
+                else {
+                    rtcout.println(Logbuf.INFO, comps[ic] + " activated.");
+                }
+/*
+                ExecutionContextListHolder eclistholder 
+                        = new ExecutionContextListHolder();
+                eclistholder.value = new ExecutionContext[0];
+                eclistholder.value = comp.get_owned_contexts();
+                eclistholder.value[0].activate_component(comp_ref);
+*/
+            }
+        }
+    }
+    /**
+     * {@.ja 起動時にrtc.confで指定したポートを接続する。}
+     * {@.en Connects ports of RTC designated in rtc.conf,when starting.}
+     *
+     * <p>
+     * {@.ja このメソッドは"manager.components.preactivation"に設定される
+     * コンポーネントを活性化する。
+     * 例:
+     * manager.components.preconnect: RTC0.port0^RTC0.port1(interface_type=corba_cdr&dataflow_type=pull&~),~}
+     * {@.en This method activates components set to 
+     * "manager.components.preconnect".}
+     *
+     */
+    private void initPreConnection() { // pre-connection
+        String preconnect 
+            = m_config.getProperty("manager.components.preconnect");
+        rtcout.println(Logbuf.TRACE, "Connection pre-connection: " 
+                + preconnect);
+        String[] connectors = new String[0];
+        if ( preconnect == null || preconnect.length() == 0 ) {
+        }
+        else {
+            connectors = preconnect.split(",");
+            rtcout.println(Logbuf.TRACE, "connectors: " 
+                +Arrays.toString(connectors));
+        }
+        for (int ic=0; ic < connectors.length; ++ic) {
+            // ConsoleIn.out^Console.in(dataflow_type=push&....)
+            String[] conn_prop = connectors[ic].split("\\(");
+            if ( conn_prop == null || conn_prop.length == 0 ) {
+            }
+            if ( conn_prop.length == 2 ) {
+                conn_prop[1] = conn_prop[1].replace(")","");
+            }
+            String[] comp_ports = conn_prop[0].split("\\^"); //"^" is expressing a connection between ports.
+            if(comp_ports.length != 2) {
+                rtcout.println(Logbuf.ERROR, 
+                    "Invalid format for pre-connection.");
+                rtcout.println(Logbuf.ERROR, 
+                    "Format must be Comp0.port0:Comp1.port1");
+                continue;
+            }
+            String comp0_name = comp_ports[0].split("\\.")[0];
+            String port0_name = comp_ports[0];
+            RTC.RTObject comp0_ref;
+            if(comp0_name.indexOf("://") == -1){
+                RTObject_impl comp0 = getComponent(comp0_name);
+                if (comp0 == null) { 
+                    rtcout.println(Logbuf.ERROR, 
+                    comp0_name + " not found.");
+                    continue;
+                }
+                comp0_ref = comp0.getObjRef();
+            }
+            else {
+                RTC.RTObject[] rtcs = m_namingManager.string_to_component(comp0_name);
+                if(rtcs.length == 0) {
+                    rtcout.println(Logbuf.ERROR, comp0_name + " not found.");
+                    continue;
+                }
+                comp0_ref = rtcs[0];
+                String[] array = comp_ports[0].split("/");
+                port0_name = array[array.length-1];
+            }
+
+            PortService port0_var = CORBA_RTCUtil.get_port_by_name(comp0_ref, port0_name);
+        
+            if(port0_var == null){
+                rtcout.println(Logbuf.ERROR, "port " + port0_name + " not found.");
+                continue;
+            }
+            
+
+            String comp1_name = comp_ports[1].split("\\.")[0];
+            String port1_name = comp_ports[1];
+            RTC.RTObject comp1_ref;
+            if(comp1_name.indexOf("://") == -1){
+                RTObject_impl comp1 = getComponent(comp1_name);
+                if (comp1 == null) { 
+                    rtcout.println(Logbuf.ERROR, 
+                    comp1_name + " not found.");
+                    continue;
+                }
+                comp1_ref = comp1.getObjRef();
+            }
+            else{
+                RTC.RTObject[] rtcs = m_namingManager.string_to_component(comp1_name);
+                if(rtcs.length == 0) {
+                    rtcout.println(Logbuf.ERROR, comp1_name + " not found.");
+                    continue;
+                }
+                comp1_ref = rtcs[0];
+                String[] array = comp_ports[1].split("/");
+                port1_name = array[array.length-1];
+            }
+
+
+            PortService port1_var = CORBA_RTCUtil.get_port_by_name(comp1_ref, port1_name);
+            if(port1_var == null){
+                rtcout.println(Logbuf.ERROR, "port " + port1_name + " not found.");
+                continue;
+            }
+
+
+            NVListHolder nvholder = new NVListHolder();
+            if( nvholder.value==null ) {
+                nvholder.value = new NameValue[0];
+            }
+            String[] opt_props = conn_prop[1].split("\\&");
+            for (int o=0; o < opt_props.length; ++o) {
+                String[] temp = opt_props[o].split("=");
+                //prop["dataport." + temp[0]] = temp[1];
+                if(temp.length  == 2){
+                    rtcout.println(Logbuf.TRACE, "options: " + Arrays.toString(temp));
+                    CORBA_SeqUtil.push_back(nvholder,
+                        NVUtil.newNVString("dataport." + temp[0],temp[1]));
+                }
+            }
+            Properties prop = new Properties();
+            NVUtil.copyToProperties(prop, nvholder);
+            ReturnCode_t ret = CORBA_RTCUtil.connect(
+                        connectors[ic],prop,port0_var, port1_var);
+            if(ret != ReturnCode_t.RTC_OK){
+                rtcout.println(Logbuf.ERROR, 
+                            "Connection error in topic connection.");
+            }
+            NVUtil.dump(nvholder);
         }
     }
 
