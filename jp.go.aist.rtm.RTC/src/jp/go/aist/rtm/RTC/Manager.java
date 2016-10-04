@@ -1162,7 +1162,7 @@ public class Manager {
                 }
                 else {
                     RTC.RTObject[] rtcs = m_namingManager.string_to_component(comps[ic]);
-                    if(rtcs.length == 0) {
+                    if(rtcs == null || rtcs.length == 0) {
                         rtcout.println(Logbuf.ERROR, comps[ic] + " not found.");
                         continue;
                     }
@@ -1241,7 +1241,7 @@ public class Manager {
             }
             else {
                 RTC.RTObject[] rtcs = m_namingManager.string_to_component(comp0_name);
-                if(rtcs.length == 0) {
+                if(rtcs == null || rtcs.length == 0) {
                     rtcout.println(Logbuf.ERROR, comp0_name + " not found.");
                     continue;
                 }
@@ -1272,7 +1272,7 @@ public class Manager {
             }
             else{
                 RTC.RTObject[] rtcs = m_namingManager.string_to_component(comp1_name);
-                if(rtcs.length == 0) {
+                if(rtcs == null || rtcs.length == 0) {
                     rtcout.println(Logbuf.ERROR, comp1_name + " not found.");
                     continue;
                 }
