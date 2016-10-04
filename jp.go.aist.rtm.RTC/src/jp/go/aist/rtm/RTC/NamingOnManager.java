@@ -278,51 +278,76 @@ class NamingOnManager implements NamingBase {
      */
     public RTObject[] string_to_component(String name){
         rtcout.println(Logbuf.PARANOID, "string_to_component("+name+")");
+System.out.println("105 " + "name:"+name);
         RTCListHolder rtc_list = new RTCListHolder();
         String[] tmps = name.split("://");
+System.out.println("110 tmps.length:"+tmps.length);
         if(tmps.length > 1){
             rtcout.println(Logbuf.PARANOID, "tmps[0]:"+tmps[0]);
+System.out.println("120 "+"tmps[0]:"+tmps[0]);
             if(tmps[0].equals("rtcloc")){
                 String tag = tmps[0];
                 String url = tmps[1];
                 rtcout.println(Logbuf.PARANOID, "tmps[1]:"+tmps[1]);
+System.out.println("130 "+"tmps[1]:"+tmps[1]);
                 String[] elements = url.split("/");
+System.out.println("140 "+"elements.length:"+elements.length);
                 if(elements.length > 1){
                     String host = elements[0];
                     rtcout.println(Logbuf.PARANOID, "host:"+host);
+System.out.println("150 "+"host:"+host);
           
                     String rtc_name = url.substring(host.length()+1);
                     rtcout.println(Logbuf.PARANOID, "rtc_name:"+rtc_name);
           
                     RTM.Manager mgr = getManager(host);
                     if(mgr!=null){
+System.out.println("160 ");
                         rtc_list.value = 
                                 mgr.get_components_by_name(rtc_name);
+System.out.println("170 ");
 
                         RTM.Manager[] slaves = mgr.get_slave_managers();
+System.out.println("180 "+ "slaves.length:"+slaves.length);
                         for(int ic=0;ic<slaves.length;++ic){
                             try{
-                                RTObject[] rtobjects = 
+System.out.println("190 ");
+                                if(slaves[ic] == null){
+System.out.println("192 "+"slaves[ic] is null");
+                                }
+                                //RTCListHolder rtobjects = new RTCListHolder();
+                                if(slaves[ic] != null){
+                                    //rtobjects.value =
+                                    RTObject[] rtobjects = 
                                     slaves[ic].get_components_by_name(rtc_name);
-                                System.arraycopy(
-                                    rtobjects, 0, 
-                                    rtc_list.value, rtc_list.value.length, 
-                                    rtobjects.length);
+                                    System.arraycopy(
+                                        rtobjects, 0, 
+                                        rtc_list.value, rtc_list.value.length, 
+                                        rtobjects.length);
+                                }
+System.out.println("1a0 ");
 //                                rtc_list.extend(
 //                                    slaves[ic].get_components_by_name(rtc_name));
                             }
                             catch (Exception ex) {
+System.out.println("1c0 ");
                                 rtcout.println(Logbuf.DEBUG, ex.toString());
+                                if(slaves[ic] == null){
+System.out.println("1c2 "+"slaves[ic] is null");
+                                }
                                 mgr.remove_slave_manager(slaves[ic]);
+System.out.println("1d0 ");
                             }
                         }
                     }
+System.out.println("1E0 ");
                     return rtc_list.value;
                 }
             }
         }
 
       
+System.out.println("1F0 ");
         return rtc_list.value;
     }
     /**
