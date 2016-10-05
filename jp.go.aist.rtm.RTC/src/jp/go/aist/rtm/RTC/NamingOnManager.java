@@ -53,7 +53,7 @@ class NamingOnManager implements NamingBase {
             e.printStackTrace();
         }
 */
-        rtcout = new Logbuf("NamingOnManager");
+        rtcout = new Logbuf("manager.NamingOnManager");
         m_cosnaming = null;
         m_orb = orb;
         m_mgr = mgr;
