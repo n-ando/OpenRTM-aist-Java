@@ -386,13 +386,13 @@ public class Manager {
 
             if(
                ( prop.hasKey("publish_topic")==null ||
-                 prop.getProperty("publish_topic")!=null )
+                 prop.getProperty("publish_topic")=="" )
                &&
                ( prop.hasKey("subscribe_topic")==null ||
-                 prop.getProperty("subscribe_topic")!=null )
+                 prop.getProperty("subscribe_topic")=="" )
                &&
                ( prop.hasKey("rendezvous_point")==null ||
-                 prop.getProperty("rendezvous_point")!=null )
+                 prop.getProperty("rendezvous_point")=="" )
             ){
                
                 
@@ -500,13 +500,13 @@ public class Manager {
       
             if(
                ( prop.hasKey("publish_topic")==null ||
-                 prop.getProperty("publish_topic")!=null )
+                 prop.getProperty("publish_topic")=="" )
                &&
                ( prop.hasKey("subscribe_topic")==null ||
-                 prop.getProperty("subscribe_topic")!=null )
+                 prop.getProperty("subscribe_topic")=="" )
                &&
                ( prop.hasKey("rendezvous_point")==null ||
-                 prop.getProperty("rendezvous_point")!=null )
+                 prop.getProperty("rendezvous_point")=="" )
             ){
                
                 
