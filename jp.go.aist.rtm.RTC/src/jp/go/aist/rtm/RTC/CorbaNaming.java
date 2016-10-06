@@ -1680,7 +1680,7 @@ public class CorbaNaming {
         nc.list(max_list_size, bl, bi);
         int max_remaining = max_list_size - bl.value.length;
         boolean more_bindings = true;
-        if(bi == null) {
+        if(bi.value == null) {
             more_bindings = false;
         }
 
