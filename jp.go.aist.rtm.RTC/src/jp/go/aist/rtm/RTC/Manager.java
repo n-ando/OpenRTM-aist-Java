@@ -577,6 +577,8 @@ public class Manager {
      * PortServiceList_var getPortsOnNameServers(std::string nsname,std::string kind)
      */
     public PortService[] getPortsOnNameServers(String nsname, String kind){
+        rtcout.println(Logbuf.PARANOID,
+                            "getPortsOnNameServers("+nsname+","+kind+")");
         ArrayList<PortService> ports = new ArrayList<PortService>();
         //PortService[] ports = new ;
         Vector<NamingService> ns = m_namingManager.getNameServices();
@@ -594,6 +596,9 @@ public class Manager {
             BindingListHolder bl = new BindingListHolder();
             cns.listByKind(nsname,kind,bl);
             for(int ic=0;ic<bl.value.length;++ic){
+                if(bl.value[ic] == null){
+                    continue;
+                }
                 if(bl.value[ic].binding_type != BindingType.nobject){
                     continue;
                 }
