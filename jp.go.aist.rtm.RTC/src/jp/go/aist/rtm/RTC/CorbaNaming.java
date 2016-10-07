@@ -1788,7 +1788,6 @@ public class CorbaNaming {
  
             //delete tmp_char;
         }
-        bl.value  = new Binding[list_len];
         return;
     }
 
@@ -1859,7 +1858,9 @@ public class CorbaNaming {
         int nc_length = 0;
         name_comps = string_name.split("/");
         nc_length = name_comps.length;
-        if( !(nc_length>0) ) throw new InvalidName();
+        if( !(nc_length>0) ) {
+           throw new InvalidName();
+        }
       
         // Name components are allocated
         NameComponent[] name = new NameComponent[nc_length];

@@ -489,6 +489,7 @@ public class Manager {
      *  # void subscribePorts(RTObject_impl* comp)
      */
     public void subscribePorts(RTObject_impl comp){
+        rtcout.println(Logbuf.TRACE, "Manager.subscribePorts()");
         PortService[] ports = comp.get_ports();
     
         for(int ic=0; ic<ports.length; ++ic ){
@@ -518,7 +519,6 @@ public class Manager {
                 name  = "dataports.port_cxt/";
                 name += prop.getProperty("publish_topic") + ".topic_cxt";
                 nsports = getPortsOnNameServers(name, "inport");
-        
                 connectDataPorts(ports[ic], nsports);
             }
             else if(prop.getProperty("port.port_type").equals("DataInPort")){
@@ -604,7 +604,8 @@ public class Manager {
                 }
                 String tmp = bl.value[ic].binding_name[0].id + "." 
                                 + bl.value[ic].binding_name[0].kind;
-                String nspath = "/" + nsname + "/" + tmp;
+                //String nspath = "/" + nsname + "/" + tmp;
+                String nspath = nsname + "/" + tmp;
                 nspath.replace("\\","");
 
                 Object obj;
@@ -685,6 +686,7 @@ public class Manager {
   # void connectDataPorts(PortService_ptr port,PortServiceList_var& target_ports)
      */
     public void connectDataPorts(PortService port,PortService[] target_ports){
+        rtcout.println(Logbuf.TRACE, "Manager.connectDataPorts()");
         for(int ic=0;ic<target_ports.length;++ic){
             if(port._is_equivalent(target_ports[ic])){
                 continue;
