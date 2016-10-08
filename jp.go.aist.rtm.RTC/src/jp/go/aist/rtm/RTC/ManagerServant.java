@@ -1626,15 +1626,13 @@ System.err.println("Manager's IOR information: "+ior);
     protected Logbuf rtcout;
     private boolean m_isMaster;
     private String m_masterMutex = new String();
-    private RTM.Manager m_masters[] = new RTM.Manager[1];
+    private RTM.Manager m_masters[] = new RTM.Manager[0];
     private String m_slaveMutex = new String();
-    private RTM.Manager m_slaves[] = new RTM.Manager[1];
+    private RTM.Manager m_slaves[] = new RTM.Manager[0];
 
     private class is_equiv implements equalFunctor {
         private RTM.Manager m_mgr;
         public is_equiv(RTM.Manager mgr) {
-            if(mgr == null){
-            }
             m_mgr = (RTM.Manager)mgr;
             m_mgr = (RTM.Manager)mgr._duplicate();
         }
