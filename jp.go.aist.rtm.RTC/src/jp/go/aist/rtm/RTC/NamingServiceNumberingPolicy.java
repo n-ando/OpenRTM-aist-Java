@@ -49,7 +49,7 @@ class NamingServiceNumberingPolicy implements NumberingPolicy, ObjectCreator<Num
             String num_str = Integer.toString(num);
             String name = obj.getTypeName() + num_str;
             boolean pos = this.find(name);
-            if(pos){
+            if(!pos){
                 return num_str;
             }
             num = num + 1;
@@ -96,6 +96,9 @@ class NamingServiceNumberingPolicy implements NumberingPolicy, ObjectCreator<Num
         rtc_name = rtc_name + name;
         RTObject[] rtcs = m_mgr.getNaming().string_to_component(rtc_name);
 
+        if(rtcs==null){
+            return false;
+        }
         if(rtcs.length>0){
             return true;
         }
