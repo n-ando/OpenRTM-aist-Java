@@ -1557,7 +1557,8 @@ public class Manager {
             String policy_name 
                 = m_config.getProperty("manager.components.naming_policy");
       
-            if(!policy_name.isEmpty()){ 
+            //if(!policy_name.isEmpty()){ 
+            if(policy_name.isEmpty()){ 
                 policy_name = "process_unique";
             }
             final NumberingPolicyFactory<NumberingPolicy,String> np_factory 
@@ -2222,6 +2223,18 @@ public class Manager {
         publishPorts(comp);
         subscribePorts(comp);
        
+        try {
+            Object obj = m_pORB.resolve_initial_references("omniINSPOA");
+            POA poa = POAHelper.narrow(obj);
+            poa.the_POAManager().activate();
+            String id = comp.getCategory() + "/" + comp.getInstanceName();
+            byte[] oid = id.getBytes();
+            poa.activate_object_with_id(oid, comp);
+        }
+        catch(Exception ex){
+                rtcout.println(Logbuf.DEBUG, 
+                        "Exception caught."+ex.toString());
+        } 
         return true;
     }
     
@@ -2258,6 +2271,18 @@ public class Manager {
         }
         m_listeners.naming_.postUnbind(comp, names);
         
+        try {
+            Object obj = m_pORB.resolve_initial_references("omniINSPOA");
+            POA poa = POAHelper.narrow(obj);
+            poa.the_POAManager().activate();
+            String id = comp.getCategory() + "/" + comp.getInstanceName();
+            byte[] oid = id.getBytes();
+            poa.deactivate_object(oid);
+        }
+        catch(Exception ex){
+                rtcout.println(Logbuf.DEBUG, 
+                        "Exception caught."+ex.toString());
+        } 
         return true;
     }
     
@@ -3045,6 +3070,7 @@ public class Manager {
             // Get the POAManager
             m_pPOAManager = m_pPOA.the_POAManager();
             //m_objManager = new CorbaObjectManager(m_pORB, m_pPOA);
+
             
         } catch (Exception ex) {
             rtcout.println(Logbuf.DEBUG, 

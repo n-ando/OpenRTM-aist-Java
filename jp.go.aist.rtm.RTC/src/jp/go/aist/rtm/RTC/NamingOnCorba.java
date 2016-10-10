@@ -59,7 +59,7 @@ class NamingOnCorba implements NamingBase {
             e.printStackTrace();
         }
 
-        rtcout = new Logbuf("NamingOnCorba");
+        rtcout = new Logbuf("manager.NamingOnCorba");
 
     }
     
@@ -270,22 +270,23 @@ class NamingOnCorba implements NamingBase {
      * virtual RTCList string_to_component(string name) = 0;
      */
     public RTObject[] string_to_component(String name){
+System.out.println("- 2016/10/10 0b400 -  name="+name);
         rtcout.println(Logbuf.PARANOID, "string_to_component("+name+")");
         RTCListHolder rtc_list = new RTCListHolder();
         String[] tmps = name.split("://");
         if(tmps.length > 1){
-            rtcout.println(Logbuf.PARANOID, "tmps[0]:"+tmps[0]);
+            rtcout.println(Logbuf.PARANOID, "tmps[0]="+tmps[0]);
             if(tmps[0].equals("rtcname")){
                 String tag = tmps[0];
                 String url = tmps[1];
-                rtcout.println(Logbuf.PARANOID, "tmps[1]:"+tmps[1]);
+                rtcout.println(Logbuf.PARANOID, "tmps[1]="+tmps[1]);
                 String[] elements = url.split("/");
                 if(elements.length > 1){
                     String host = elements[0];
-                    rtcout.println(Logbuf.PARANOID, "host:"+host);
+                    rtcout.println(Logbuf.PARANOID, "host="+host);
           
                     String rtc_name = url.substring(host.length()+1);
-                    rtcout.println(Logbuf.PARANOID, "rtc_name:"+rtc_name);
+                    rtcout.println(Logbuf.PARANOID, "rtc_name="+rtc_name);
           
                     try{
                         CorbaNaming cns;

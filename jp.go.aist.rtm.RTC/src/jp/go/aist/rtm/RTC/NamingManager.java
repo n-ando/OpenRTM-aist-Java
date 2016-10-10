@@ -30,7 +30,7 @@ public class NamingManager implements CallbackFunction {
     public NamingManager(Manager manager) {
         m_manager = manager;
 
-        rtcout = new Logbuf("NamingManager");
+        rtcout = new Logbuf("manager.NamingManager");
     }
 
     /**

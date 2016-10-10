@@ -91,8 +91,7 @@ class NamingServiceNumberingPolicy implements NumberingPolicy, ObjectCreator<Num
      *
      */
     protected boolean find(String name) {
-        //String rtc_name = "rtcloc://*/*/";
-        String rtc_name = "rtcname://*/*/";
+        String rtc_name = "rtcname://*/";
         rtc_name = rtc_name + name;
         RTObject[] rtcs = m_mgr.getNaming().string_to_component(rtc_name);
 
