@@ -699,10 +699,13 @@ System.err.println("Manager's IOR information: "+ior);
      *
      */
     public RTC.ComponentProfile[] get_component_profiles() {
+System.out.println("- 2016/10/9 05100 -");
         rtcout.println(Logbuf.TRACE, "get_component_profiles()");
 
         ComponentProfileListHolder cprofs = new ComponentProfileListHolder();
+System.out.println("- 2016/10/9 05200 -");
         Vector<RTObject_impl> rtcs = m_mgr.getComponents();
+System.out.println("- 2016/10/9 05300 -  rtcs.size()="+rtcs.size());
         cprofs.value = new ComponentProfile[rtcs.size()];
 
         for (int i=0, len=rtcs.size(); i < len; ++i) {
@@ -712,6 +715,7 @@ System.err.println("Manager's IOR information: "+ior);
         synchronized(m_slaveMutex) {
             rtcout.println(Logbuf.DEBUG,
                                     m_slaves.length+" slaves exists.");
+System.out.println("- 2016/10/9 05400 -  m_slaves.length="+m_slaves.length);
             for (int i=0, len=m_slaves.length; i < len; ++i) {
                 try {
                     if (m_slaves[i]!=null) {
@@ -737,6 +741,7 @@ System.err.println("Manager's IOR information: "+ior);
                 m_slaves = holder.value;
             }
         }
+System.out.println("- 2016/10/9 05e00 -  cprofs.value="+cprofs.value);
         return cprofs.value;
     }
 
@@ -1398,6 +1403,9 @@ System.err.println("Manager's IOR information: "+ior);
         String mgrstr = get_parameter_by_modulename("manager_name",tmp);
         arg = tmp[0];
 
+        if(mgrstr==null){
+            return null;
+        }
         if(mgrstr.isEmpty()){
             return null;
         }
@@ -1408,6 +1416,9 @@ System.err.println("Manager's IOR information: "+ior);
         String language = get_parameter_by_modulename("language",tmp);
         arg = tmp[0];
 
+        if(language==null){
+            language = "Java";
+        }
         if(language.isEmpty()){
             language = "Java";
         }
@@ -1524,6 +1535,9 @@ System.err.println("Manager's IOR information: "+ior);
         String mgrstr = get_parameter_by_modulename("manager_address",tmp);
         arg = tmp[0];
 
+        if(mgrstr==null){
+            return null;
+        }
         if(mgrstr.isEmpty()){
             return null;
         }
@@ -1540,6 +1554,9 @@ System.err.println("Manager's IOR information: "+ior);
         String language = get_parameter_by_modulename("language",tmp);
         arg = tmp[0];
 
+        if(language==null){
+            language = "Java";
+        }
         if(language.isEmpty()){
             language = "Java";
         }
