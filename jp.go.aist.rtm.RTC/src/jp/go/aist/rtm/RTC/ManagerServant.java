@@ -699,13 +699,10 @@ System.err.println("Manager's IOR information: "+ior);
      *
      */
     public RTC.ComponentProfile[] get_component_profiles() {
-System.out.println("- 2016/10/9 05100 -");
         rtcout.println(Logbuf.TRACE, "get_component_profiles()");
 
         ComponentProfileListHolder cprofs = new ComponentProfileListHolder();
-System.out.println("- 2016/10/9 05200 -");
         Vector<RTObject_impl> rtcs = m_mgr.getComponents();
-System.out.println("- 2016/10/9 05300 -  rtcs.size()="+rtcs.size());
         cprofs.value = new ComponentProfile[rtcs.size()];
 
         for (int i=0, len=rtcs.size(); i < len; ++i) {
@@ -715,7 +712,6 @@ System.out.println("- 2016/10/9 05300 -  rtcs.size()="+rtcs.size());
         synchronized(m_slaveMutex) {
             rtcout.println(Logbuf.DEBUG,
                                     m_slaves.length+" slaves exists.");
-System.out.println("- 2016/10/9 05400 -  m_slaves.length="+m_slaves.length);
             for (int i=0, len=m_slaves.length; i < len; ++i) {
                 try {
                     if (m_slaves[i]!=null) {
@@ -741,7 +737,6 @@ System.out.println("- 2016/10/9 05400 -  m_slaves.length="+m_slaves.length);
                 m_slaves = holder.value;
             }
         }
-System.out.println("- 2016/10/9 05e00 -  cprofs.value="+cprofs.value);
         return cprofs.value;
     }
 
@@ -1340,7 +1335,7 @@ System.out.println("- 2016/10/9 05e00 -  cprofs.value="+cprofs.value);
                 return null;
             }
         }
-        int endpos = arg.indexOf('&', pos + 1);
+        int endpos = arg.indexOf("&", pos + 1);
         String paramstr;
         if(endpos == -1){
             paramstr = arg.substring(pos + 1);
@@ -1441,8 +1436,8 @@ System.out.println("- 2016/10/9 05e00 -  cprofs.value="+cprofs.value);
             String corba_master = config.getProperty("corba.master_manager");
             cmd.add("corba.master_manager:"+corba_master);
             cmd.add("-o");
-            String man_name = config.getProperty("manger.name");
-            cmd.add("manger.name:"+man_name);
+            String man_name = config.getProperty("manager.name");
+            cmd.add("manager.name:"+man_name);
             cmd.add("-o");
             cmd.add("manager.instance_name:"+mgrstr);
 /*
@@ -1451,7 +1446,7 @@ System.out.println("- 2016/10/9 05e00 -  cprofs.value="+cprofs.value);
             cmd += " -o " + "manager.corba_servant:YES";
             cmd += " -o " + "corba.master_manager:" 
                 + config.getProperty("corba.master_manager");
-            cmd += " -o " + "manger.name:" + config.getProperty("manger.name");
+            cmd += " -o " + "manager.name:" + config.getProperty("manager.name");
             cmd += " -o " + "manager.instance_name:" + mgrstr;
 */
 
