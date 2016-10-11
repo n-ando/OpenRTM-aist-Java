@@ -14,8 +14,10 @@ import jp.go.aist.rtm.RTC.util.Properties;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.OptionBuilder;
 
 /**
  * {@.ja Managerのコンフィグレーションを表現するクラスです。}
@@ -222,9 +224,18 @@ class ManagerConfig {
         options.addOption("a", false, "create manager's corba service or not");
         options.addOption("f", true, "configuration file");
         options.addOption("l", true, "load module");
-        options.addOption("o", true, "other options");
+        //options.addOption("o", true, "other options");
         options.addOption("p", true, "multiple endpoint options");
         options.addOption("d", false, "use default configuration");
+        Option opt_oter = OptionBuilder.
+                                withLongOpt("other"). 
+                                withDescription("other options").
+                                hasArgs(60).
+                                isRequired(false).
+                                withArgName("other").
+                                create('o');
+        options.addOption(opt_oter);
+
 
 	CommandLine commandLine = null;
         try {
@@ -235,6 +246,17 @@ class ManagerConfig {
             throw new IllegalArgumentException("Could not parse arguments.");
         }
 
+        String[] searchArgs = commandLine.getOptionValues("o");
+        if(searchArgs!=null){
+            for(int ic=0;ic<searchArgs.length;++ic) {
+                String optarg = searchArgs[ic].trim();
+                int pos = optarg.indexOf(":");
+                if (pos >= 0) {
+                    m_argprop.setProperty(optarg.substring(0, pos), 
+                                                    optarg.substring(pos + 1));
+                }
+            }
+        }
         if (commandLine.hasOption("a")) {
             m_argprop.setProperty("manager.corba_servant","NO");;
         }
@@ -244,6 +266,7 @@ class ManagerConfig {
         if (commandLine.hasOption("l")) {
             // do nothing
         }
+/*
         if (commandLine.hasOption("o")) {
             String optarg = commandLine.getOptionValue("o").trim();
             int pos = optarg.indexOf(":");
@@ -252,6 +275,7 @@ class ManagerConfig {
                                                     optarg.substring(pos + 1));
             }
         }
+*/
         if (commandLine.hasOption("p")) {
         // ORB's port number
             String str = commandLine.getOptionValue("p").trim();
