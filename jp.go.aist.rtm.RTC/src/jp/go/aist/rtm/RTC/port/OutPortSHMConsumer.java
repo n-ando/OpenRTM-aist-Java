@@ -16,7 +16,10 @@ import org.omg.CORBA.TCKind;
 import org.omg.CORBA.portable.OutputStream;
 
 import _SDOPackage.NVListHolder;
+import OpenRTM.CdrDataHolder;
 import OpenRTM.PortSharedMemory;
+import OpenRTM.PortSharedMemoryHelper;
+
 /**
  * {@.ja OutPortSHMConsumer クラス}
  * {@.en OutPortSHMConsumer class}
@@ -162,32 +165,37 @@ public class OutPortSHMConsumer extends CorbaConsumer<PortSharedMemory> implemen
         rtcout.println(Logbuf.TRACE, "OutPortSHMConsumer.get()");
         OpenRTM.CdrDataHolder cdr_data = new OpenRTM.CdrDataHolder();
         try {
-            OpenRTM.PortStatus ret = _ptr().get();
-            //OpenRTM.PortStatus ret = _ptr().get(cdr_data);
-            if (ret == OpenRTM.PortStatus.PORT_OK) {
-                rtcout.println(Logbuf.DEBUG, "get() successful");
-                data.write_octet_array(cdr_data.value, 0, 
+            PortSharedMemory outportcdr = PortSharedMemoryHelper.narrow(getObject());
+            m_outportcdr = outportcdr;
+
+            synchronized(m_mutex) {
+                OpenRTM.PortStatus ret = outportcdr.get();
+                if (ret == OpenRTM.PortStatus.PORT_OK) {
+                    rtcout.println(Logbuf.DEBUG, "get() successful");
+                    data.write_octet_array(cdr_data.value, 0, 
                                         cdr_data.value.length);
-                rtcout.println(Logbuf.PARANOID, 
+                    rtcout.println(Logbuf.PARANOID, 
                                 "CDR data length: "+cdr_data.value.length);
   
-                onReceived(data);
-                onBufferWrite(data);
-
-                if (m_buffer.full()) {
-                    rtcout.println(Logbuf.INFO, 
+                    //CdrDataHolder cdr_data = new CdrDataHolder();
+                    m_shmem.read(cdr_data);
+                    onReceived(data);
+                    onBufferWrite(data);
+                    if (m_buffer.full()) {
+                        rtcout.println(Logbuf.INFO, 
                                 "InPort buffer is full.");
-                    onBufferFull(data);
-                    onReceiverFull(data);
+                        onBufferFull(data);
+                        onReceiverFull(data);
+                    }
+
+                    m_buffer.put(data);
+                    m_buffer.advanceWptr();
+                    m_buffer.advanceRptr();
+
+                    return ReturnCode.PORT_OK;
                 }
-
-                m_buffer.put(data);
-                m_buffer.advanceWptr();
-                m_buffer.advanceRptr();
-
-                return ReturnCode.PORT_OK;
+                return convertReturn(ret);
             }
-            return convertReturn(ret);
         }
         catch (Exception e) {
             rtcout.println(Logbuf.WARN, 
@@ -530,5 +538,9 @@ public class OutPortSHMConsumer extends CorbaConsumer<PortSharedMemory> implemen
     private InPortConnector m_connector;
     private ConnectorListeners m_listeners;
     private ConnectorBase.ConnectorInfo m_profile;
+    private SharedMemory m_shmem = new SharedMemory();
+    private PortSharedMemory m_outportcdr;
+    private Properties m_properties = new Properties();
+    private static String m_mutex = new String();
 }
 

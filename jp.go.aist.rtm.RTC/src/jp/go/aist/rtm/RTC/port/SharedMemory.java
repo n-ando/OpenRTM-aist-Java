@@ -28,7 +28,9 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
  */
 
 
-public abstract class SharedMemory implements PortSharedMemory {
+//public abstract class SharedMemory implements PortSharedMemory {
+//public class SharedMemory implements OpenRTM.PortSharedMemory {
+public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
     private static final int DEFAULT_SIZE = 8;
     private static final int DEFAULT_MEMORY_SIZE = 2*1024*1024;
 

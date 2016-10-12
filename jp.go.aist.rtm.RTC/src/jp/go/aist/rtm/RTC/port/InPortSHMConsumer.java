@@ -11,13 +11,16 @@ import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 
 import org.omg.CORBA.BAD_OPERATION;
+import org.omg.CORBA.Object;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.TCKind;
 import org.omg.CORBA.portable.OutputStream;
 
 import _SDOPackage.NVListHolder;
 import OpenRTM.PortSharedMemory;
-
+import OpenRTM.CdrDataHolder;
+import OpenRTM.PortSharedMemory;
+import OpenRTM.PortSharedMemoryHelper;
 
 /**
  * {@.ja InPortSHMConsumer クラス}
@@ -42,8 +45,8 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
         super(OpenRTM.PortSharedMemory.class);
         rtcout = new Logbuf("InPortSHMConsumer");
 
-//        m_shm_address = UUID.randomUUID().toString();
-
+        m_shm_address = UUID.randomUUID().toString();
+        
 //        rtcout.setLevel("PARANOID");
 //        m_orb = ORBUtil.getOrb();
     }
@@ -71,7 +74,7 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
         rtcout.println(Logbuf.TRACE, "init()");
         m_properties = prop;
         String ds = prop.getProperty("shem_default_size");
-        //m_memory_size = m_shmem.string_to_MemorySize(ds);
+        m_memory_size = (int)m_shmem.string_to_MemorySize(ds);
     }
 
     /**
@@ -112,6 +115,32 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
     public ReturnCode put(final OutputStream data) {
         rtcout.println(Logbuf.PARANOID, "put");
         
+        try {
+            Object obj = getObject();
+            if(obj != null){
+                PortSharedMemory inportcdr = PortSharedMemoryHelper.narrow(obj);
+                OpenRTM.PortStatus ret;
+                synchronized(m_mutex) {
+                    m_shmem.create_memory(m_memory_size, m_shm_address);
+                    EncapsOutputStreamExt cdr;
+                    cdr = (EncapsOutputStreamExt)data;
+                    byte[] ch = cdr.getByteArray();
+                    CdrDataHolder cdr_data = new CdrDataHolder();
+                    cdr_data.value = ch;
+                    m_shmem.write(cdr_data);
+        
+                    ret = inportcdr.put();
+                }
+                return convertReturn(ret);
+            }
+            return ReturnCode.CONNECTION_LOST;
+        } 
+        catch (Exception ex) {
+            rtcout.println(Logbuf.WARN, "Exception caught: "+ex.toString());
+            return ReturnCode.CONNECTION_LOST;
+        }
+        
+/* 
         EncapsOutputStreamExt cdr;
         cdr = (EncapsOutputStreamExt)data;
         byte[] ch = cdr.getByteArray();
@@ -127,6 +156,7 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
         catch (Exception e) {
             return ReturnCode.CONNECTION_LOST;
         }
+*/
     }
     /**
      * {@.ja InterfaceProfile情報を公開する}
@@ -440,7 +470,7 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
      *   {@.en The target instances for destruction}
      *
      */
-    public void destructor_(Object obj) {
+    public void destructor_(java.lang.Object obj) {
         obj = null;
     }
     /**
@@ -477,8 +507,9 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
     private OutPortConnector m_connector;
     private ORB m_orb;
     private String m_shm_address = new String();
-    //private SharedMemory m_shmem = new SharedMemory();
-    private long m_memory_size;
+    private SharedMemory m_shmem = new SharedMemory();
+    private int m_memory_size;
+    private static String m_mutex = new String();
 }
 
 
