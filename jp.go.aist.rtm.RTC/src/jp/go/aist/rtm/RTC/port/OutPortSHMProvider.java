@@ -1,5 +1,7 @@
 package jp.go.aist.rtm.RTC.port;
 
+import java.util.UUID;
+
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.OutPortProviderFactory;
@@ -66,6 +68,8 @@ public class OutPortSHMProvider extends PortSharedMemoryPOA implements OutPortPr
         push_back(m_properties,
                   NVUtil.newNV("dataport.corba_cdr.outport_ref",
                                  m_objref, OpenRTM.PortSharedMemory.class ));
+
+        m_shm_address = UUID.randomUUID().toString();
     }
     /**
      * {@.ja 当該OpenRTM.PortSharedMemoryのCORBAオブジェクト参照を取得する。}
@@ -114,6 +118,8 @@ public class OutPortSHMProvider extends PortSharedMemoryPOA implements OutPortPr
      *
      */
     public void init(Properties prop) {
+        String ds = prop.getProperty("shem_default_size");
+        m_memory_size = (int)m_shmem.string_to_MemorySize(ds);
     }
 
     /**
@@ -253,7 +259,7 @@ public class OutPortSHMProvider extends PortSharedMemoryPOA implements OutPortPr
         final OutPortProviderFactory<OutPortProvider,String> factory 
             = OutPortProviderFactory.instance();
 
-        factory.addFactory("corba_cdr",
+        factory.addFactory("shared_memory",
                     new OutPortSHMProvider(),
                     new OutPortSHMProvider());
     
@@ -694,6 +700,7 @@ public class OutPortSHMProvider extends PortSharedMemoryPOA implements OutPortPr
     private ConnectorListeners m_listeners;
     private ConnectorBase.ConnectorInfo m_profile;
 
+    private SharedMemory m_shmem = new SharedMemory();
     private String m_shm_address = new String();
     private int m_memory_size;
 }
