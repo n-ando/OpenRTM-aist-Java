@@ -70,23 +70,12 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         }
         String str = size_str.toUpperCase();
         if(str.indexOf('M')>0){
-            return (1024  * 1024 * Long.parseLong(str.split("M")[0]));
+            return (1048576 * Long.parseLong(str.split("M")[0]));
         }
         else if(str.indexOf('K')>0){
             return (1024 * Long.parseLong(str.split("K")[0]));
         }
         return (Long.parseLong(str));
-/*
-    memory_size = SharedMemory.default_memory_size
-    if size_str:
-      if size_str[-1] == "M":
-        memory_size = 1024 * 1024 * int(size_str[0:-1])
-      elif size_str[-1] == "k":
-        memory_size = 1024 * int(size_str[0:-1])
-      else:
-        memory_size = int(size_str[0:-1])
-    return memory_size
-*/
     }
 
 
@@ -114,36 +103,6 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         m_memory_size = memory_size;
         m_shm_address = shm_address;
         
-/*
-    
-    if self._shmem is None:
-      self._rtcout.RTC_TRACE("create():memory_size="+str(memory_size)+",shm_address="+str(shm_address))
-      self._memory_size = memory_size
-      self._shm_address = shm_address
-
-      if platform.system() == "Windows":
-        self._shmem = mmap.mmap(0, self._memory_size, self._shm_address, mmap.ACCESS_WRITE)
-      else:
-        O_RDWR = 2
-        O_CREAT = 64
-
-        S_IRUSR = 256
-        S_IWUSR = 128
-        S_IRGRP = 32
-        S_IWGRP = 16
-        S_IROTH = 4
-
-        self.fd = self.rt.shm_open(self._shm_address,O_RDWR | O_CREAT,S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH)
-        if self.fd < 0:
-          return self.UNKNOWN_ERROR
-        self.rt.ftruncate(self.fd, self._memory_size)
-        self._shmem = mmap.mmap(self.fd, self._memory_size, mmap.MAP_SHARED)
-        self.rt.close( self.fd )
-
-      
-      if self._smInterface:
-        self._smInterface.open_memory(self._memory_size, self._shm_address)
-*/
 
     }
     /**
@@ -172,23 +131,6 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         catch(Exception ex) {
             rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
         }
-/*
-    self._rtcout.RTC_TRACE("open():memory_size="+str(memory_size)+",shm_address="+str(shm_address))
-    self._memory_size = memory_size
-    self._shm_address = shm_address
-    if self._shmem is None:
-      if platform.system() == "Windows":
-        self._shmem = mmap.mmap(0, self._memory_size, self._shm_address, mmap.ACCESS_READ)
-      else:
-        O_RDWR = 2
-        self.fd = self.rt.shm_open(self._shm_address,O_RDWR,0)
-        if self.fd < 0:
-          return self.UNKNOWN_ERROR
-        self.rt.ftruncate(self.fd, self._memory_size)
-        self._shmem = mmap.mmap(self.fd, self._memory_size, mmap.MAP_SHARED)
-        self.rt.close( self.fd )
-    
-*/
     }
     /**
      * 
@@ -204,20 +146,6 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
     public void close_memory(boolean unlink){
         File file = new File(m_shm_address);
         file.delete();
-/*
-    self._rtcout.RTC_TRACE("open()")
-    if self._shmem:
-      self._shmem.close()
-      if platform.system() == "Windows":
-        pass
-      else:
-        if unlink:
-           self.rt.shm_unlink(self._shm_address)
-      self._shmem = None
-
-      if self._smInterface:
-        self._smInterface.close_memory(False)
-*/
     }  
     
     public void close_memory(){
@@ -266,31 +194,6 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         catch(Exception ex) {
             rtcout.println(Logbuf.ERROR,"write error  "+ex.toString() );
         }
-/*
-    self._rtcout.RTC_TRACE("write()")
-    
-    if self._shmem:
-      data_size = len(data)
-
-      
-      if data_size + SharedMemory.default_size > self._memory_size:
-        self._memory_size = data_size + SharedMemory.default_size
-
-        if self._smInterface:
-          self._smInterface.close_memory(False)
-
-
-        self.close_memory(True)
-        self.create_memory(self._memory_size, self._shm_address)
-
-        
-        
-      data_size_cdr = cdrMarshal(CORBA.TC_ulong, data_size)
-      
-      self._shmem.seek(os.SEEK_SET)
-      self._shmem.write(data_size_cdr)
-      self._shmem.write(data)
-*/
     }
     /**
      * 
@@ -320,22 +223,6 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             rtcout.println(Logbuf.ERROR,"read error  "+ex.toString() );
         }
 
-/*
-    self._rtcout.RTC_TRACE("read()")
-    if self._shmem:
-      
-      self._shmem.seek(os.SEEK_SET)
-      
-      data_size_cdr = self._shmem.read(SharedMemory.default_size)
-      data_size = cdrUnmarshal(CORBA.TC_ulong, data_size_cdr)
-      
-      
-      
-      shm_data = self._shmem.read(data_size)
-      
-      return shm_data
-    return ""
-*/
     }
 
     /**
