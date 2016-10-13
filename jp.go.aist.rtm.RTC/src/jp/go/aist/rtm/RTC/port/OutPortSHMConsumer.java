@@ -72,6 +72,25 @@ public class OutPortSHMConsumer extends CorbaConsumer<PortSharedMemory> implemen
     public void init(Properties prop) {
         rtcout.println(Logbuf.TRACE, "OutPortSHMConsumer.init()");
     }
+    /**
+     * <p>CORBAオブジェクトを設定します。</p>
+     * 
+     * @param obj CORBAオブジェクト
+     * @return 設定に成功した場合はtrueを、さもなくばflaseを返します。
+     */
+    public boolean setObject(Object obj) {
+        
+        if (super.setObject(obj)) {
+            Object ref = getObject();
+            if(ref!=null){
+                PortSharedMemory outportcdr = PortSharedMemoryHelper.narrow(ref);
+                //outportcdr.setInterface(m_shmem);
+                m_shmem.setInterface(outportcdr);
+	        return true;
+            }
+        }
+        return false; // object is null
+    }
 
     /**
      * {@.ja バッファをセットする}
@@ -172,13 +191,13 @@ public class OutPortSHMConsumer extends CorbaConsumer<PortSharedMemory> implemen
                 OpenRTM.PortStatus ret = outportcdr.get();
                 if (ret == OpenRTM.PortStatus.PORT_OK) {
                     rtcout.println(Logbuf.DEBUG, "get() successful");
+                    //CdrDataHolder cdr_data = new CdrDataHolder();
+                    m_shmem.read(cdr_data);
                     data.write_octet_array(cdr_data.value, 0, 
                                         cdr_data.value.length);
                     rtcout.println(Logbuf.PARANOID, 
                                 "CDR data length: "+cdr_data.value.length);
   
-                    //CdrDataHolder cdr_data = new CdrDataHolder();
-                    m_shmem.read(cdr_data);
                     onReceived(data);
                     onBufferWrite(data);
                     if (m_buffer.full()) {

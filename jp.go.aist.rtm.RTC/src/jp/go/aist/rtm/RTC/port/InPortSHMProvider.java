@@ -17,6 +17,7 @@ import org.omg.CORBA.SystemException;
 import org.omg.CORBA.portable.OutputStream;
 
 import OpenRTM.PortSharedMemoryPOA;
+import OpenRTM.CdrDataHolder;
 import _SDOPackage.NVListHolder;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
+
 
 /**
  * {@.ja InPortSHMProvider クラス}
@@ -37,7 +39,8 @@ import java.nio.channels.FileChannel.MapMode;
  *
  *
  */
-public class InPortSHMProvider extends PortSharedMemoryPOA implements InPortProvider, ObjectCreator<InPortProvider>, ObjectDestructor {
+//public class InPortSHMProvider extends PortSharedMemoryPOA implements InPortProvider, ObjectCreator<InPortProvider>, ObjectDestructor {
+public class InPortSHMProvider extends SharedMemory implements InPortProvider, ObjectCreator<InPortProvider>, ObjectDestructor {
     /**
      * {@.ja コンストラクタ}
      * {@.en Constructor}
@@ -152,26 +155,38 @@ public class InPortSHMProvider extends PortSharedMemoryPOA implements InPortProv
 
         rtcout.println(Logbuf.PARANOID, "InPortSHMProvider.put()");
 
+        CdrDataHolder cdr_data = new CdrDataHolder();
+        read(cdr_data);
+//        for(int ic=0;ic<cdr_data.value.length;++ic){
+//            data[ic] = cdr_data.value[ic];
+//        }
+         
         if (m_buffer == null) {
             EncapsOutputStreamExt cdr 
             = new EncapsOutputStreamExt(m_orb,m_connector.isLittleEndian());
-            cdr.write_octet_array(data, 0, data.length);
+            cdr.write_octet_array(cdr_data.value, 0, data.length);
             onReceiverError(cdr);
             return OpenRTM.PortStatus.PORT_ERROR;
         }
 
 
-        rtcout.println(Logbuf.PARANOID, "received data size: "+data.length);
+        rtcout.println(Logbuf.PARANOID, "received data size: "+cdr_data.value.length);
 
 
         EncapsOutputStreamExt cdr 
             = new EncapsOutputStreamExt(m_orb,m_connector.isLittleEndian());
-        cdr.write_octet_array(data, 0, data.length);
+        cdr.write_octet_array(cdr_data.value, 0, cdr_data.value.length);
 
         int len = cdr.getByteArray().length;
         rtcout.println(Logbuf.PARANOID, "converted CDR data size: "+len);
         onReceived(cdr);
+   
+        if(m_connector==null){
+            return OpenRTM.PortStatus.PORT_ERROR;
+        }
+
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
+        //jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_connector.write(cdr);
         return convertReturn(ret,cdr);
     }
 

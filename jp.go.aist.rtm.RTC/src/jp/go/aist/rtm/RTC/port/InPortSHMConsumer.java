@@ -76,6 +76,24 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
         String ds = prop.getProperty("shem_default_size");
         m_memory_size = (int)m_shmem.string_to_MemorySize(ds);
     }
+    /**
+     * <p>CORBAオブジェクトを設定します。</p>
+     * 
+     * @param obj CORBAオブジェクト
+     * @return 設定に成功した場合はtrueを、さもなくばflaseを返します。
+     */
+    public boolean setObject(Object obj) {
+        
+        if (super.setObject(obj)) {
+            Object ref = getObject();
+            if(ref!=null){
+                PortSharedMemory inportcdr = PortSharedMemoryHelper.narrow(ref);
+                m_shmem.setInterface(inportcdr);
+	        return true;
+            }
+        }
+        return false; // object is null
+    }
 
     /**
      * <p> Send data to the destination port </p>

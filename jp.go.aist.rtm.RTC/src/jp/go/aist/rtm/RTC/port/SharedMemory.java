@@ -229,7 +229,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
     /**
      * 
      * {@.ja データを書き込む}
-     * {@.en Wwrites in data.}
+     * {@.en Writes in data.}
      * <p>
      * {@.ja 先頭8byteにデータサイズを書き込み、その後ろにデータを書き込む
      * 設定したデータサイズが共有メモリのサイズを上回った場合、

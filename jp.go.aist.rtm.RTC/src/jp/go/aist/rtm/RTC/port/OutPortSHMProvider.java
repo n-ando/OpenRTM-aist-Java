@@ -43,7 +43,8 @@ import java.nio.channels.FileChannel.MapMode;
  *        provider}
  *
  */
-public class OutPortSHMProvider extends PortSharedMemoryPOA implements OutPortProvider, ObjectCreator<OutPortProvider>, ObjectDestructor {
+//public class OutPortSHMProvider extends PortSharedMemoryPOA implements OutPortProvider, ObjectCreator<OutPortProvider>, ObjectDestructor {
+public class OutPortSHMProvider extends SharedMemory implements OutPortProvider, ObjectCreator<OutPortProvider>, ObjectDestructor {
     /**
      * {@.ja コンストラクタ}
      * {@.en Constructor}
@@ -172,6 +173,10 @@ public class OutPortSHMProvider extends PortSharedMemoryPOA implements OutPortPr
             return OpenRTM.PortStatus.UNKNOWN_ERROR;
         }
 
+        if (m_buffer.empty()) {
+            rtcout.println(Logbuf.PARANOID, "m_buffer is empty.");
+            return OpenRTM.PortStatus.BUFFER_EMPTY;
+        }
         OutputStream cdr = null;
         DataRef<OutputStream> cdr_ref = new DataRef<OutputStream>(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret 
@@ -182,8 +187,14 @@ public class OutPortSHMProvider extends PortSharedMemoryPOA implements OutPortPr
             EncapsOutputStreamExt outcdr;
             outcdr = (EncapsOutputStreamExt)cdr_ref.v;
             data.value =  outcdr.getByteArray();
+            if(data.value.length==0){
+                rtcout.println(Logbuf.PARANOID, "m_buffer is empty.");
+                return OpenRTM.PortStatus.BUFFER_EMPTY;
+            }
 
         }
+        create_memory(m_memory_size, m_shm_address);
+        write(data);
         return convertReturn(ret);
     }
     /**
