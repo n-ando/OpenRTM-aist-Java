@@ -152,42 +152,8 @@ public class InPortSHMProvider extends SharedMemory implements InPortProvider, O
      */
     public OpenRTM.PortStatus put(byte[] data)
       throws SystemException {
+        return OpenRTM.PortStatus.UNKNOWN_ERROR;
 
-        rtcout.println(Logbuf.PARANOID, "InPortSHMProvider.put()");
-
-        CdrDataHolder cdr_data = new CdrDataHolder();
-        read(cdr_data);
-//        for(int ic=0;ic<cdr_data.value.length;++ic){
-//            data[ic] = cdr_data.value[ic];
-//        }
-         
-        if (m_buffer == null) {
-            EncapsOutputStreamExt cdr 
-            = new EncapsOutputStreamExt(m_orb,m_connector.isLittleEndian());
-            cdr.write_octet_array(cdr_data.value, 0, data.length);
-            onReceiverError(cdr);
-            return OpenRTM.PortStatus.PORT_ERROR;
-        }
-
-
-        rtcout.println(Logbuf.PARANOID, "received data size: "+cdr_data.value.length);
-
-
-        EncapsOutputStreamExt cdr 
-            = new EncapsOutputStreamExt(m_orb,m_connector.isLittleEndian());
-        cdr.write_octet_array(cdr_data.value, 0, cdr_data.value.length);
-
-        int len = cdr.getByteArray().length;
-        rtcout.println(Logbuf.PARANOID, "converted CDR data size: "+len);
-        onReceived(cdr);
-   
-        if(m_connector==null){
-            return OpenRTM.PortStatus.PORT_ERROR;
-        }
-
-        jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
-        //jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_connector.write(cdr);
-        return convertReturn(ret,cdr);
     }
 
     /**
@@ -621,50 +587,6 @@ public class InPortSHMProvider extends SharedMemory implements InPortProvider, O
 
     /**
      * 
-     * {@.ja 共有メモリのマッピングを行う}
-     * {@.en Open a shared memory.}
-     *
-     * @param memory_size 
-     *  {@.ja 共有メモリのサイズ}
-     *  {@.en size of shared momoery}
-     * @param shm_address 
-     *  {@.ja 空間名}
-     *  {@.en name of memory}
-  # void open_memory(int memory_size, string shm_address);
-     */
-    public void open_memory (int memory_size, String shm_address){
-        rtcout.println(Logbuf.TRACE, 
-                "open():memory_size="
-                + memory_size +",shm_address=" + shm_address);
-        m_memory_size = memory_size;
-        m_shm_address = shm_address;
-        try{
-            RandomAccessFile file = new RandomAccessFile(m_shm_address, "rw");
-            file.setLength(m_memory_size);
-        }
-        catch(Exception ex) {
-            rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
-        }
-/*
-    self._rtcout.RTC_TRACE("open():memory_size="+str(memory_size)+",shm_address="+str(shm_address))
-    self._memory_size = memory_size
-    self._shm_address = shm_address
-    if self._shmem is None:
-      if platform.system() == "Windows":
-        self._shmem = mmap.mmap(0, self._memory_size, self._shm_address, mmap.ACCESS_READ)
-      else:
-        O_RDWR = 2
-        self.fd = self.rt.shm_open(self._shm_address,O_RDWR,0)
-        if self.fd < 0:
-          return self.UNKNOWN_ERROR
-        self.rt.ftruncate(self.fd, self._memory_size)
-        self._shmem = mmap.mmap(self.fd, self._memory_size, mmap.MAP_SHARED)
-        self.rt.close( self.fd )
-    
-*/
-    }
-    /**
-     * 
      * {@.ja 共有メモリの初期化}
      * {@.en Initializes a shared memory.}
      * 
@@ -752,7 +674,38 @@ public class InPortSHMProvider extends SharedMemory implements InPortProvider, O
      * {@.en Put data.}
      */
     public OpenRTM.PortStatus put(){
-        return OpenRTM.PortStatus.UNKNOWN_ERROR;
+        rtcout.println(Logbuf.PARANOID, "InPortSHMProvider.put()");
+
+        CdrDataHolder cdr_data = new CdrDataHolder();
+        cdr_data.value = new byte[0];
+        read(cdr_data);
+        if (m_buffer == null) {
+            EncapsOutputStreamExt cdr 
+            = new EncapsOutputStreamExt(m_orb,m_connector.isLittleEndian());
+            cdr.write_octet_array(cdr_data.value, 0, cdr_data.value.length);
+            onReceiverError(cdr);
+            return OpenRTM.PortStatus.PORT_ERROR;
+        }
+
+
+        rtcout.println(Logbuf.PARANOID, "received data size: "+cdr_data.value.length);
+
+
+        EncapsOutputStreamExt cdr 
+            = new EncapsOutputStreamExt(m_orb,m_connector.isLittleEndian());
+        cdr.write_octet_array(cdr_data.value, 0, cdr_data.value.length);
+
+        int len = cdr.getByteArray().length;
+        rtcout.println(Logbuf.PARANOID, "converted CDR data size: "+len);
+        onReceived(cdr);
+   
+        if(m_connector==null){
+            return OpenRTM.PortStatus.PORT_ERROR;
+        }
+
+        jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
+        //jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_connector.write(cdr);
+        return convertReturn(ret,cdr);
     }
     /**
      * <p>インタフェース情報を保持するオブジェクトです。</p>

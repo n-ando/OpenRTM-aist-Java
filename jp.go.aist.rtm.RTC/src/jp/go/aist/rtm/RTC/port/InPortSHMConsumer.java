@@ -46,6 +46,7 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
         rtcout = new Logbuf("InPortSHMConsumer");
 
         m_shm_address = UUID.randomUUID().toString();
+
         
 //        rtcout.setLevel("PARANOID");
 //        m_orb = ORBUtil.getOrb();
@@ -132,7 +133,6 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
      */
     public ReturnCode put(final OutputStream data) {
         rtcout.println(Logbuf.PARANOID, "put");
-        
         try {
             Object obj = getObject();
             if(obj != null){
@@ -305,7 +305,8 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
             return false;
         }
     
-        if (!super.setObject(obj)) {
+        //if (!super.setObject(obj)) {
+        if (!setObject(obj)) {
             rtcout.println(Logbuf.WARN, "Setting object to consumer failed.");
             return false;
         }
@@ -347,7 +348,8 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
             return false;
         }
     
-        if (!super.setObject(obj)) {
+        //if (!super.setObject(obj)) {
+        if (!setObject(obj)) {
             rtcout.println(Logbuf.ERROR, "Setting object to consumer failed.");
             return false;
         }

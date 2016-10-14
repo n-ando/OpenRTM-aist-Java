@@ -13,6 +13,11 @@ import OpenRTM.CdrDataHolder;
 import OpenRTM.PortSharedMemory;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.LongHolder;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+
+import org.omg.CORBA.portable.OutputStream;
+import org.omg.CORBA.portable.InputStream;
 
 /**
  * {@.ja SharedMemory クラス}
@@ -102,6 +107,10 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
                 + memory_size +",shm_address=" + shm_address);
         m_memory_size = memory_size;
         m_shm_address = shm_address;
+
+        if(m_smInterface!=null){
+            m_smInterface.open_memory(m_memory_size, m_shm_address);
+        }
         
 
     }
@@ -146,6 +155,9 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
     public void close_memory(boolean unlink){
         File file = new File(m_shm_address);
         file.delete();
+        if(m_smInterface!=null){
+            m_smInterface.close_memory(false);
+        }
     }  
     
     public void close_memory(){
@@ -178,14 +190,18 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             MappedByteBuffer buffer
                 = channel.map(FileChannel.MapMode.READ_WRITE, 0, length);
             buffer.order(ByteOrder.LITTLE_ENDIAN);
-/*
-            OutPort out = (OutPort)m_outport;
-            OutputStream cdr 
-                = new EncapsOutputStreamExt(m_orb,m_isLittleEndian);
-            out.write_stream(data,cdr);
-*/
 
-//            buffer.putInt((offset * 4/* size of int */), value);
+
+            LongHolder len = new LongHolder(data.value.length);
+            //OutputStream cdr 
+            EncapsOutputStreamExt cdr 
+                = new EncapsOutputStreamExt(ORBUtil.getOrb(),true);
+            len._write(cdr);
+            byte[] ch = cdr.getByteArray();
+            buffer.put(ch, 0, ch.length);
+
+//            buffer.put(data.value, 8, data.value.length);
+            buffer.put(data.value);
 
 
             channel.close();
@@ -215,7 +231,18 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             MappedByteBuffer buffer
                 = channel.map(FileChannel.MapMode.READ_WRITE, 0, length);
             buffer.order(ByteOrder.LITTLE_ENDIAN);
-            //int value = buffer.getInt(offset * 4/* size of int */);
+            byte[] len_data = new byte[8];
+            buffer.get(len_data,0,len_data.length);
+
+            EncapsOutputStreamExt cdr 
+                = new EncapsOutputStreamExt(ORBUtil.getOrb(),true);
+            cdr.write_octet_array(len_data, 0, len_data.length);
+            InputStream instream = cdr.create_input_stream();
+            LongHolder len = new LongHolder();
+            len._read(instream);
+            data.value = new byte[(int)len.value.intValue()];
+            buffer.get(data.value);
+            //buffer.get(data.value,8,data.value.length);
             channel.close();
             file.close();
         }
@@ -239,7 +266,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
   # void close(int memory_size, string shm_address);
      */
     public void setInterface (OpenRTM.PortSharedMemory sm){
-        //self._smInterface = sm
+        m_smInterface = sm;
     }
     
 
@@ -267,6 +294,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
     private Logbuf rtcout;
     private String m_shm_address = new String();
     private int m_memory_size;
+    private OpenRTM.PortSharedMemory m_smInterface;
     
 }
 
