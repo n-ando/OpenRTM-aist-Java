@@ -39,6 +39,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
     private static final int DEFAULT_SIZE = 8;
     private static final int DEFAULT_MEMORY_SIZE = 2*1024*1024;
 
+    static private String SHARED_NAME = "/dev/shm/";
 
     /**
      * {@.ja コンストラクタ}
@@ -134,7 +135,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         m_memory_size = memory_size;
         m_shm_address = shm_address;
         try{
-            RandomAccessFile file = new RandomAccessFile(m_shm_address, "rw");
+            RandomAccessFile file = new RandomAccessFile(SHARED_NAME+m_shm_address, "rw");
             file.setLength(m_memory_size);
         }
         catch(Exception ex) {
@@ -153,7 +154,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
   # void close_memory(boolean unlink);
      */
     public void close_memory(boolean unlink){
-        File file = new File(m_shm_address);
+        File file = new File(SHARED_NAME+m_shm_address);
         file.delete();
         if(m_smInterface!=null){
             m_smInterface.close_memory(false);
@@ -184,7 +185,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
     public void write(CdrDataHolder data){
         rtcout.println(Logbuf.TRACE, "write()");
         try{
-            RandomAccessFile file = new RandomAccessFile(m_shm_address, "rw");
+            RandomAccessFile file = new RandomAccessFile(SHARED_NAME+m_shm_address, "rw");
 //file.setLength(m_memory_size);
             FileChannel channel = file.getChannel();
             int length = (int)channel.size();
@@ -225,7 +226,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
     public void read(CdrDataHolder data){
         rtcout.println(Logbuf.TRACE, "read()");
         try {
-            RandomAccessFile file = new RandomAccessFile(m_shm_address, "rw");
+            RandomAccessFile file = new RandomAccessFile(SHARED_NAME+m_shm_address, "rw");
             FileChannel channel = file.getChannel();
             int length = (int)channel.size();
             MappedByteBuffer buffer
