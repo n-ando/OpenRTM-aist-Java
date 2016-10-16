@@ -51,20 +51,16 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
      *
      */
     public OutPortSHMProvider() {
-System.out.println("- 2016/10/14 0a100 -  ");
         m_buffer = null;
         rtcout = new Logbuf("OutPortSHMProvider");
         // PortProfile setting
         setInterfaceType("shared_memory");
     
-System.out.println("- 2016/10/14 0a200 -  ");
         // ConnectorProfile setting
         m_objref = this._this();
     
         // set outPort's reference
         ORB orb = ORBUtil.getOrb();
-System.out.println("- 2016/10/14 0a200 -  "+m_objref);
-System.out.println("- 2016/10/14 0a200 -  "+orb.object_to_string(m_objref));
         CORBA_SeqUtil.
         push_back(m_properties,
                   NVUtil.newNVString("dataport.corba_cdr.outport_ior",
@@ -75,7 +71,6 @@ System.out.println("- 2016/10/14 0a200 -  "+orb.object_to_string(m_objref));
                                  m_objref, OpenRTM.PortSharedMemory.class ));
 
         m_shm_address = UUID.randomUUID().toString();
-System.out.println("- 2016/10/14 0a800 -  ");
     }
     /**
      * {@.ja 当該OpenRTM.PortSharedMemoryのCORBAオブジェクト参照を取得する。}
@@ -87,22 +82,17 @@ System.out.println("- 2016/10/14 0a800 -  ");
      * 
      */
     public OpenRTM.PortSharedMemory _this() {
-System.out.println("- 2016/10/14 0b100 -  ");
         
         if (this.m_objref == null) {
-System.out.println("- 2016/10/14 0b200 -  ");
             try {
                 this.m_objref 
                     = OpenRTM.PortSharedMemoryHelper.narrow(POAUtil.getRef(this));
 
-System.out.println("- 2016/10/14 0b300 -  ");
             } catch (Exception e) {
-System.out.println("- 2016/10/14 0be00 -  ");
                 throw new IllegalStateException(e);
             }
         }
         
-System.out.println("- 2016/10/14 0b800 -  ");
         return this.m_objref;
     }
     /**
@@ -176,7 +166,6 @@ System.out.println("- 2016/10/14 0b800 -  ");
     public OpenRTM.PortStatus get(OpenRTM.CdrDataHolder data) {
         return OpenRTM.PortStatus.UNKNOWN_ERROR;
 /*
-System.out.println("- 2016/10/14 04100 -  ");
         rtcout.println(Logbuf.PARANOID, "OutPortSHMProvider.get()");
 
         if (m_buffer == null) {
@@ -190,12 +179,10 @@ System.out.println("- 2016/10/14 04100 -  ");
             return OpenRTM.PortStatus.BUFFER_EMPTY;
         }
         OutputStream cdr = null;
-System.out.println("- 2016/10/14 04200 -  ");
         DataRef<OutputStream> cdr_ref = new DataRef<OutputStream>(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret 
                           = m_buffer.read(cdr_ref,0,0);
 
-System.out.println("- 2016/10/14 04300 -  ");
         if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
 
             EncapsOutputStreamExt outcdr;
@@ -207,11 +194,8 @@ System.out.println("- 2016/10/14 04300 -  ");
             }
 
         }
-System.out.println("- 2016/10/14 04400 -  ");
         create_memory(m_memory_size, m_shm_address);
-System.out.println("- 2016/10/14 04500 -  ");
         write(data);
-System.out.println("- 2016/10/14 04600 -  ");
         return convertReturn(ret);
 */
     }
@@ -712,47 +696,37 @@ System.out.println("- 2016/10/14 04600 -  ");
      * {@.en Get data.}
      */
     public OpenRTM.PortStatus get(){
-System.out.println("- 2016/10/14 04100 -  ");
         rtcout.println(Logbuf.PARANOID, "OutPortSHMProvider.get()");
 
         if (m_buffer == null) {
             onSenderError();
             rtcout.println(Logbuf.PARANOID, "m_buffer is null.");
-System.out.println("- 2016/10/14 04120 -  ");
             return OpenRTM.PortStatus.UNKNOWN_ERROR;
         }
 
         if (m_buffer.empty()) {
             rtcout.println(Logbuf.PARANOID, "m_buffer is empty.");
-System.out.println("- 2016/10/14 04130 -  ");
             return OpenRTM.PortStatus.BUFFER_EMPTY;
         }
         OutputStream cdr = null;
         OpenRTM.CdrDataHolder data = new OpenRTM.CdrDataHolder();
-System.out.println("- 2016/10/14 04200 -  ");
         DataRef<OutputStream> cdr_ref = new DataRef<OutputStream>(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret 
                           = m_buffer.read(cdr_ref,0,0);
 
-System.out.println("- 2016/10/14 04300 -  "+ret);
         if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
 
-System.out.println("- 2016/10/14 04350 -  ");
             EncapsOutputStreamExt outcdr;
             outcdr = (EncapsOutputStreamExt)cdr_ref.v;
             data.value =  outcdr.getByteArray();
             if(data.value.length==0){
-System.out.println("- 2016/10/14 043e0 -  "+"m_buffer is empty.");
                 rtcout.println(Logbuf.PARANOID, "m_buffer is empty.");
                 return OpenRTM.PortStatus.BUFFER_EMPTY;
             }
 
         }
-System.out.println("- 2016/10/14 04400 -  "+m_memory_size+" "+m_shm_address);
         create_memory(m_memory_size, m_shm_address);
-System.out.println("- 2016/10/14 04500 -  ");
         write(data);
-System.out.println("- 2016/10/14 04600 -  ");
         return convertReturn(ret);
     }
     /**
