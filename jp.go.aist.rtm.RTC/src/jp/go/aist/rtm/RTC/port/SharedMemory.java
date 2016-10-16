@@ -185,7 +185,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         rtcout.println(Logbuf.TRACE, "write()");
         try{
             RandomAccessFile file = new RandomAccessFile(m_shm_address, "rw");
-file.setLength(m_memory_size);
+//file.setLength(m_memory_size);
             FileChannel channel = file.getChannel();
             int length = (int)channel.size();
             MappedByteBuffer buffer

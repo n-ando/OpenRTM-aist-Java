@@ -270,7 +270,6 @@ class NamingOnCorba implements NamingBase {
      * virtual RTCList string_to_component(string name) = 0;
      */
     public RTObject[] string_to_component(String name){
-System.out.println("- 2016/10/10 0b400 -  name="+name);
         rtcout.println(Logbuf.PARANOID, "string_to_component("+name+")");
         RTCListHolder rtc_list = new RTCListHolder();
         String[] tmps = name.split("://");
