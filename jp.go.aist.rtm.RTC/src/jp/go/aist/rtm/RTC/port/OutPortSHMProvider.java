@@ -51,16 +51,20 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
      *
      */
     public OutPortSHMProvider() {
+System.out.println("- 2016/10/14 0a100 -  ");
         m_buffer = null;
         rtcout = new Logbuf("OutPortSHMProvider");
         // PortProfile setting
         setInterfaceType("shared_memory");
     
+System.out.println("- 2016/10/14 0a200 -  ");
         // ConnectorProfile setting
         m_objref = this._this();
     
         // set outPort's reference
         ORB orb = ORBUtil.getOrb();
+System.out.println("- 2016/10/14 0a200 -  "+m_objref);
+System.out.println("- 2016/10/14 0a200 -  "+orb.object_to_string(m_objref));
         CORBA_SeqUtil.
         push_back(m_properties,
                   NVUtil.newNVString("dataport.corba_cdr.outport_ior",
@@ -71,6 +75,7 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
                                  m_objref, OpenRTM.PortSharedMemory.class ));
 
         m_shm_address = UUID.randomUUID().toString();
+System.out.println("- 2016/10/14 0a800 -  ");
     }
     /**
      * {@.ja 当該OpenRTM.PortSharedMemoryのCORBAオブジェクト参照を取得する。}
@@ -82,20 +87,24 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
      * 
      */
     public OpenRTM.PortSharedMemory _this() {
+System.out.println("- 2016/10/14 0b100 -  ");
         
         if (this.m_objref == null) {
+System.out.println("- 2016/10/14 0b200 -  ");
             try {
                 this.m_objref 
                     = OpenRTM.PortSharedMemoryHelper.narrow(POAUtil.getRef(this));
-                
+
+System.out.println("- 2016/10/14 0b300 -  ");
             } catch (Exception e) {
+System.out.println("- 2016/10/14 0be00 -  ");
                 throw new IllegalStateException(e);
             }
         }
         
+System.out.println("- 2016/10/14 0b800 -  ");
         return this.m_objref;
     }
-
     /**
      *
      * {@.ja 設定初期化}
@@ -120,7 +129,7 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
      */
     public void init(Properties prop) {
         String ds = prop.getProperty("shem_default_size");
-        m_memory_size = (int)m_shmem.string_to_MemorySize(ds);
+        m_memory_size = (int)string_to_MemorySize(ds);
     }
 
     /**
@@ -165,6 +174,9 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
      *
      */
     public OpenRTM.PortStatus get(OpenRTM.CdrDataHolder data) {
+        return OpenRTM.PortStatus.UNKNOWN_ERROR;
+/*
+System.out.println("- 2016/10/14 04100 -  ");
         rtcout.println(Logbuf.PARANOID, "OutPortSHMProvider.get()");
 
         if (m_buffer == null) {
@@ -178,10 +190,12 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
             return OpenRTM.PortStatus.BUFFER_EMPTY;
         }
         OutputStream cdr = null;
+System.out.println("- 2016/10/14 04200 -  ");
         DataRef<OutputStream> cdr_ref = new DataRef<OutputStream>(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret 
                           = m_buffer.read(cdr_ref,0,0);
 
+System.out.println("- 2016/10/14 04300 -  ");
         if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
 
             EncapsOutputStreamExt outcdr;
@@ -193,9 +207,13 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
             }
 
         }
+System.out.println("- 2016/10/14 04400 -  ");
         create_memory(m_memory_size, m_shm_address);
+System.out.println("- 2016/10/14 04500 -  ");
         write(data);
+System.out.println("- 2016/10/14 04600 -  ");
         return convertReturn(ret);
+*/
     }
     /**
      * {@.ja ReturnCodeをPortStatusに変換する。}
@@ -577,7 +595,8 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
      *  {@.en name of memory}
   # void open_memory(int memory_size, string shm_address);
      */
-    public void open_memory (int memory_size, String shm_address){
+//    public void open_memory (int memory_size, String shm_address){
+/*
         rtcout.println(Logbuf.TRACE, 
                 "open():memory_size="
                 + memory_size +",shm_address=" + shm_address);
@@ -590,6 +609,7 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
         catch(Exception ex) {
             rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
         }
+*/
 /*
     self._rtcout.RTC_TRACE("open():memory_size="+str(memory_size)+",shm_address="+str(shm_address))
     self._memory_size = memory_size
@@ -607,7 +627,7 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
         self.rt.close( self.fd )
     
 */
-    }
+//    }
     /**
      * 
      * {@.ja 共有メモリの初期化}
@@ -625,6 +645,7 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
      *  {@.en name of memory}
      * # void create_memory(int memory_size, string shm_address);
      */
+/*
     public void create_memory (int memory_size, String shm_address){
         rtcout.println(Logbuf.TRACE, 
                 "create():memory_size="
@@ -632,6 +653,7 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
         m_memory_size = memory_size;
         m_shm_address = shm_address;
     }
+*/
     /**
      * 
      * {@.ja マッピングした共有メモリをアンマップする}
@@ -679,17 +701,59 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
      *   {@.ja SharedMemoryのオブジェクトリファレンス}
      *   {@.en Object reference of shared momory}
      */
+/*
     public void setInterface (OpenRTM.PortSharedMemory sm){
-        //self._smInterface = sm
+        m_smInterface = sm
     }
-    
+*/
     /**
      * 
      * {@.ja データの送信を要求する}
      * {@.en Get data.}
      */
     public OpenRTM.PortStatus get(){
-        return OpenRTM.PortStatus.UNKNOWN_ERROR;
+System.out.println("- 2016/10/14 04100 -  ");
+        rtcout.println(Logbuf.PARANOID, "OutPortSHMProvider.get()");
+
+        if (m_buffer == null) {
+            onSenderError();
+            rtcout.println(Logbuf.PARANOID, "m_buffer is null.");
+System.out.println("- 2016/10/14 04120 -  ");
+            return OpenRTM.PortStatus.UNKNOWN_ERROR;
+        }
+
+        if (m_buffer.empty()) {
+            rtcout.println(Logbuf.PARANOID, "m_buffer is empty.");
+System.out.println("- 2016/10/14 04130 -  ");
+            return OpenRTM.PortStatus.BUFFER_EMPTY;
+        }
+        OutputStream cdr = null;
+        OpenRTM.CdrDataHolder data = new OpenRTM.CdrDataHolder();
+System.out.println("- 2016/10/14 04200 -  ");
+        DataRef<OutputStream> cdr_ref = new DataRef<OutputStream>(cdr);
+        jp.go.aist.rtm.RTC.buffer.ReturnCode ret 
+                          = m_buffer.read(cdr_ref,0,0);
+
+System.out.println("- 2016/10/14 04300 -  "+ret);
+        if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
+
+System.out.println("- 2016/10/14 04350 -  ");
+            EncapsOutputStreamExt outcdr;
+            outcdr = (EncapsOutputStreamExt)cdr_ref.v;
+            data.value =  outcdr.getByteArray();
+            if(data.value.length==0){
+System.out.println("- 2016/10/14 043e0 -  "+"m_buffer is empty.");
+                rtcout.println(Logbuf.PARANOID, "m_buffer is empty.");
+                return OpenRTM.PortStatus.BUFFER_EMPTY;
+            }
+
+        }
+System.out.println("- 2016/10/14 04400 -  "+m_memory_size+" "+m_shm_address);
+        create_memory(m_memory_size, m_shm_address);
+System.out.println("- 2016/10/14 04500 -  ");
+        write(data);
+System.out.println("- 2016/10/14 04600 -  ");
+        return convertReturn(ret);
     }
     /**
      * 
@@ -711,7 +775,7 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
     private ConnectorListeners m_listeners;
     private ConnectorBase.ConnectorInfo m_profile;
 
-    private SharedMemory m_shmem = new SharedMemory();
+    //private SharedMemory m_shmem = new SharedMemory();
     private String m_shm_address = new String();
     private int m_memory_size;
 }

@@ -7,6 +7,7 @@ import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 
 import org.omg.CORBA.BAD_OPERATION;
@@ -71,6 +72,7 @@ public class OutPortSHMConsumer extends CorbaConsumer<PortSharedMemory> implemen
      */
     public void init(Properties prop) {
         rtcout.println(Logbuf.TRACE, "OutPortSHMConsumer.init()");
+        m_properties = prop;
     }
     /**
      * <p>CORBAオブジェクトを設定します。</p>
@@ -84,8 +86,19 @@ public class OutPortSHMConsumer extends CorbaConsumer<PortSharedMemory> implemen
             Object ref = getObject();
             if(ref!=null){
                 PortSharedMemory outportcdr = PortSharedMemoryHelper.narrow(ref);
-                //outportcdr.setInterface(m_shmem);
-                m_shmem.setInterface(outportcdr);
+                //outportcdr.setInterface((PortSharedMemory)m_shmem);
+                //outportcdr.setInterface(m_shmem._this(Manager.instance().getORB()));
+                PortSharedMemory objref;
+                try {
+                    objref = OpenRTM.PortSharedMemoryHelper.narrow(
+                                 POAUtil.getRef(m_shmem));
+                } 
+                catch (Exception e) {
+                    return false; // object is null
+                }
+                outportcdr.setInterface(objref);
+
+                //m_shmem.setInterface(outportcdr);
 	        return true;
             }
         }
@@ -188,8 +201,10 @@ public class OutPortSHMConsumer extends CorbaConsumer<PortSharedMemory> implemen
             m_outportcdr = outportcdr;
 
             synchronized(m_mutex) {
+                //OpenRTM.PortStatus ret = _ptr().get();
                 OpenRTM.PortStatus ret = outportcdr.get();
-                if (ret == OpenRTM.PortStatus.PORT_OK) {
+//                if (ret == OpenRTM.PortStatus.PORT_OK) {
+                if (ret.equals(OpenRTM.PortStatus.PORT_OK)) {
                     rtcout.println(Logbuf.DEBUG, "get() successful");
                     //CdrDataHolder cdr_data = new CdrDataHolder();
                     m_shmem.read(cdr_data);
@@ -281,7 +296,8 @@ public class OutPortSHMConsumer extends CorbaConsumer<PortSharedMemory> implemen
                 return false;
             }
     
-            if (!super.setObject(var)) {
+            //if (!super.setObject(var)) {
+            if (!setObject(var)) {
                 rtcout.println(Logbuf.ERROR, 
                                     "Invalid object reference.");
                 return false;

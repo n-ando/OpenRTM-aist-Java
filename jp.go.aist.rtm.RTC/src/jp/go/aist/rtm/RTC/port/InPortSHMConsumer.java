@@ -305,7 +305,6 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
             return false;
         }
     
-        //if (!super.setObject(obj)) {
         if (!setObject(obj)) {
             rtcout.println(Logbuf.WARN, "Setting object to consumer failed.");
             return false;
@@ -348,7 +347,6 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
             return false;
         }
     
-        //if (!super.setObject(obj)) {
         if (!setObject(obj)) {
             rtcout.println(Logbuf.ERROR, "Setting object to consumer failed.");
             return false;
