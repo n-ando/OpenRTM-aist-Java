@@ -186,7 +186,6 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         rtcout.println(Logbuf.TRACE, "write()");
         try{
             RandomAccessFile file = new RandomAccessFile(SHARED_NAME+m_shm_address, "rw");
-//file.setLength(m_memory_size);
             FileChannel channel = file.getChannel();
             int length = (int)channel.size();
             MappedByteBuffer buffer
@@ -194,7 +193,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
 
 
-            LongHolder len = new LongHolder(data.value.length);
+            org.omg.CORBA.LongHolder len = new org.omg.CORBA.LongHolder(data.value.length);
             EncapsOutputStreamExt cdr 
                 = new EncapsOutputStreamExt(ORBUtil.getOrb(),true);
             len._write(cdr);
@@ -239,9 +238,9 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
                 = new EncapsOutputStreamExt(ORBUtil.getOrb(),true);
             cdr.write_octet_array(len_data, 0, len_data.length);
             InputStream instream = cdr.create_input_stream();
-            LongHolder len = new LongHolder();
+            org.omg.CORBA.LongHolder len = new org.omg.CORBA.LongHolder();
             len._read(instream);
-            data.value = new byte[(int)len.value.intValue()];
+            data.value = new byte[(int)len.value];
             buffer.get(data.value);
             //buffer.get(data.value,8,data.value.length);
             channel.close();
