@@ -109,6 +109,14 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         m_memory_size = memory_size;
         m_shm_address = shm_address;
 
+        try{
+            RandomAccessFile file = new RandomAccessFile(SHARED_NAME+m_shm_address, "rw");
+            file.setLength(m_memory_size);
+        }
+        catch(Exception ex) {
+            rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
+        }
+
         if(m_smInterface!=null){
             m_smInterface.open_memory(m_memory_size, m_shm_address);
         }
@@ -197,6 +205,8 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             EncapsOutputStreamExt cdr 
                 = new EncapsOutputStreamExt(ORBUtil.getOrb(),true);
             len._write(cdr);
+            //cdr.write_ulong(data.value.length);
+            //cdr.write_ulonglong(data.value.length);
             byte[] ch = cdr.getByteArray();
             buffer.put(ch, 0, ch.length);
 
