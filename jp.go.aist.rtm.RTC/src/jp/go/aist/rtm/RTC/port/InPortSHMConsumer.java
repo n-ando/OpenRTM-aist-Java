@@ -49,7 +49,7 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
 
         
 //        rtcout.setLevel("PARANOID");
-//        m_orb = ORBUtil.getOrb();
+        m_orb = ORBUtil.getOrb();
     }
     /**
      * {@.ja 設定初期化}
@@ -143,8 +143,12 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
                     EncapsOutputStreamExt cdr;
                     cdr = (EncapsOutputStreamExt)data;
                     byte[] ch = cdr.getByteArray();
+                    EncapsOutputStreamExt output_stream 
+                        = new EncapsOutputStreamExt(m_orb, m_connector.isLittleEndian());
+                    output_stream.write_octet_array(ch,0,ch.length);
                     CdrDataHolder cdr_data = new CdrDataHolder();
-                    cdr_data.value = ch;
+                    //cdr_data.value = ch;
+                    cdr_data.value = output_stream.getByteArray();
                     m_shmem.write(cdr_data);
         
                     ret = inportcdr.put();

@@ -201,12 +201,12 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
 
 
-            org.omg.CORBA.LongHolder len = new org.omg.CORBA.LongHolder(data.value.length);
+            //org.omg.CORBA.LongHolder len = new org.omg.CORBA.LongHolder(data.value.length);
             EncapsOutputStreamExt cdr 
                 = new EncapsOutputStreamExt(ORBUtil.getOrb(),true);
-            len._write(cdr);
+            //len._write(cdr);
             //cdr.write_ulong(data.value.length);
-            //cdr.write_ulonglong(data.value.length);
+            cdr.write_ulonglong(data.value.length);
             byte[] ch = cdr.getByteArray();
             buffer.put(ch, 0, ch.length);
 
@@ -248,9 +248,12 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
                 = new EncapsOutputStreamExt(ORBUtil.getOrb(),true);
             cdr.write_octet_array(len_data, 0, len_data.length);
             InputStream instream = cdr.create_input_stream();
-            org.omg.CORBA.LongHolder len = new org.omg.CORBA.LongHolder();
-            len._read(instream);
-            data.value = new byte[(int)len.value];
+            //org.omg.CORBA.LongHolder len = new org.omg.CORBA.LongHolder();
+            //len._read(instream);
+            //data.value = new byte[(int)len.value];
+	    //long len = instream.read_ulong();
+	    long len = instream.read_ulonglong();
+            data.value = new byte[(int)len];
             buffer.get(data.value);
             //buffer.get(data.value,8,data.value.length);
             channel.close();
