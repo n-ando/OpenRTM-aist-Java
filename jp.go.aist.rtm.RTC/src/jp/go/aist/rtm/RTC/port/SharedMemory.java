@@ -48,7 +48,8 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
     public SharedMemory(){
         rtcout = new Logbuf("SharedMemory");
         m_memory_size = DEFAULT_MEMORY_SIZE;
-
+        m_endian  = true;
+        m_os = System.getProperty("os.name").toLowerCase();
     }
 
   
@@ -102,7 +103,8 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
      *  {@.en name of memory}
      * # void create_memory(int memory_size, string shm_address);
      */
-    public void create_memory (int memory_size, String shm_address){
+    //public void create_memory (int memory_size, String shm_address){
+    public void create_memory (long memory_size, String shm_address){
         rtcout.println(Logbuf.TRACE, 
                 "create():memory_size="
                 + memory_size +",shm_address=" + shm_address);
@@ -136,7 +138,8 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
      *  {@.en name of memory}
   # void open_memory(int memory_size, string shm_address);
      */
-    public void open_memory (int memory_size, String shm_address){
+    //public void open_memory (int memory_size, String shm_address){
+    public void open_memory (long memory_size, String shm_address){
         rtcout.println(Logbuf.TRACE, 
                 "open():memory_size="
                 + memory_size +",shm_address=" + shm_address);
@@ -203,7 +206,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
 
             //org.omg.CORBA.LongHolder len = new org.omg.CORBA.LongHolder(data.value.length);
             EncapsOutputStreamExt cdr 
-                = new EncapsOutputStreamExt(ORBUtil.getOrb(),true);
+                = new EncapsOutputStreamExt(ORBUtil.getOrb(),m_endian);
             //len._write(cdr);
             //cdr.write_ulong(data.value.length);
             cdr.write_ulonglong(data.value.length);
@@ -245,7 +248,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             buffer.get(len_data,0,len_data.length);
 
             EncapsOutputStreamExt cdr 
-                = new EncapsOutputStreamExt(ORBUtil.getOrb(),true);
+                = new EncapsOutputStreamExt(ORBUtil.getOrb(),m_endian);
             cdr.write_octet_array(len_data, 0, len_data.length);
             InputStream instream = cdr.create_input_stream();
             //org.omg.CORBA.LongHolder len = new org.omg.CORBA.LongHolder();
@@ -281,8 +284,24 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
     public void setInterface(OpenRTM.PortSharedMemory sm){
         m_smInterface = sm;
     }
-    
-
+    /**
+     * 
+     * {@.ja エンディアンを設定する}
+     * {@.en Sets an endian.}
+     * 
+     * @param endian
+     *   {@.ja true: little, false: big}
+     *   {@.en true: little, false: big}
+     * 
+     * PortStatus setEndian();
+     */
+    public void setEndian(boolean isLittleEndian){
+        m_endian = isLittleEndian;
+        if(m_smInterface!=null){
+            m_smInterface.setEndian(isLittleEndian);
+        }
+      
+    }
     /**
      * 
      * {@.ja データの送信を知らせる}
@@ -306,8 +325,11 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
 
     private Logbuf rtcout;
     private String m_shm_address = new String();
-    private int m_memory_size;
+    //private int m_memory_size;
+    private long m_memory_size;
     private OpenRTM.PortSharedMemory m_smInterface;
+    private String m_os;
+    protected boolean m_endian;
     
 }
 

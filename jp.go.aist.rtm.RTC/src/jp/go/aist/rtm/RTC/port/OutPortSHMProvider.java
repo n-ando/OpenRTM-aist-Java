@@ -165,39 +165,6 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
      */
     public OpenRTM.PortStatus get(OpenRTM.CdrDataHolder data) {
         return OpenRTM.PortStatus.UNKNOWN_ERROR;
-/*
-        rtcout.println(Logbuf.PARANOID, "OutPortSHMProvider.get()");
-
-        if (m_buffer == null) {
-            onSenderError();
-            rtcout.println(Logbuf.PARANOID, "m_buffer is null.");
-            return OpenRTM.PortStatus.UNKNOWN_ERROR;
-        }
-
-        if (m_buffer.empty()) {
-            rtcout.println(Logbuf.PARANOID, "m_buffer is empty.");
-            return OpenRTM.PortStatus.BUFFER_EMPTY;
-        }
-        OutputStream cdr = null;
-        DataRef<OutputStream> cdr_ref = new DataRef<OutputStream>(cdr);
-        jp.go.aist.rtm.RTC.buffer.ReturnCode ret 
-                          = m_buffer.read(cdr_ref,0,0);
-
-        if (ret.equals(jp.go.aist.rtm.RTC.buffer.ReturnCode.BUFFER_OK)) {
-
-            EncapsOutputStreamExt outcdr;
-            outcdr = (EncapsOutputStreamExt)cdr_ref.v;
-            data.value =  outcdr.getByteArray();
-            if(data.value.length==0){
-                rtcout.println(Logbuf.PARANOID, "m_buffer is empty.");
-                return OpenRTM.PortStatus.BUFFER_EMPTY;
-            }
-
-        }
-        create_memory(m_memory_size, m_shm_address);
-        write(data);
-        return convertReturn(ret);
-*/
     }
     /**
      * {@.ja ReturnCodeをPortStatusに変換する。}
@@ -725,6 +692,7 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
             }
 
         }
+        setEndian(m_connector.isLittleEndian());
         create_memory(m_memory_size, m_shm_address);
         write(data);
         return convertReturn(ret);

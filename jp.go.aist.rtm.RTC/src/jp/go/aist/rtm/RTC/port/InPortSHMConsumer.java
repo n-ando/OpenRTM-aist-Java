@@ -139,6 +139,7 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
                 PortSharedMemory inportcdr = PortSharedMemoryHelper.narrow(obj);
                 OpenRTM.PortStatus ret;
                 synchronized(m_mutex) {
+                    m_shmem.setEndian(m_connector.isLittleEndian());
                     m_shmem.create_memory(m_memory_size, m_shm_address);
                     EncapsOutputStreamExt cdr;
                     cdr = (EncapsOutputStreamExt)data;
