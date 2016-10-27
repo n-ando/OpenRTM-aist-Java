@@ -103,7 +103,6 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
      *  {@.en name of memory}
      * # void create_memory(int memory_size, string shm_address);
      */
-    //public void create_memory (int memory_size, String shm_address){
     public void create_memory (long memory_size, String shm_address){
         rtcout.println(Logbuf.TRACE, 
                 "create():memory_size="
@@ -111,8 +110,16 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         m_memory_size = memory_size;
         m_shm_address = shm_address;
 
+        String address;
+        if(m_os.startsWith("windows")){
+            address = m_shm_address;
+        }
+        else {
+            address = SHARED_NAME+m_shm_address;
+        }
+
         try{
-            RandomAccessFile file = new RandomAccessFile(SHARED_NAME+m_shm_address, "rw");
+            RandomAccessFile file = new RandomAccessFile(address, "rw");
             file.setLength(m_memory_size);
         }
         catch(Exception ex) {
@@ -138,15 +145,21 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
      *  {@.en name of memory}
   # void open_memory(int memory_size, string shm_address);
      */
-    //public void open_memory (int memory_size, String shm_address){
     public void open_memory (long memory_size, String shm_address){
         rtcout.println(Logbuf.TRACE, 
                 "open():memory_size="
                 + memory_size +",shm_address=" + shm_address);
         m_memory_size = memory_size;
         m_shm_address = shm_address;
+        String address;
+        if(m_os.startsWith("windows")){
+            address = m_shm_address;
+        }
+        else {
+            address = SHARED_NAME+m_shm_address;
+        }
         try{
-            RandomAccessFile file = new RandomAccessFile(SHARED_NAME+m_shm_address, "rw");
+            RandomAccessFile file = new RandomAccessFile(address, "rw");
             file.setLength(m_memory_size);
         }
         catch(Exception ex) {
@@ -195,8 +208,15 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
      */
     public void write(CdrDataHolder data){
         rtcout.println(Logbuf.TRACE, "write()");
+        String address;
+        if(m_os.startsWith("windows")){
+            address = m_shm_address;
+        }
+        else {
+            address = SHARED_NAME+m_shm_address;
+        }
         try{
-            RandomAccessFile file = new RandomAccessFile(SHARED_NAME+m_shm_address, "rw");
+            RandomAccessFile file = new RandomAccessFile(address, "rw");
             FileChannel channel = file.getChannel();
             int length = (int)channel.size();
             MappedByteBuffer buffer
@@ -204,16 +224,12 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
 
 
-            //org.omg.CORBA.LongHolder len = new org.omg.CORBA.LongHolder(data.value.length);
             EncapsOutputStreamExt cdr 
                 = new EncapsOutputStreamExt(ORBUtil.getOrb(),m_endian);
-            //len._write(cdr);
-            //cdr.write_ulong(data.value.length);
             cdr.write_ulonglong(data.value.length);
             byte[] ch = cdr.getByteArray();
             buffer.put(ch, 0, ch.length);
 
-//            buffer.put(data.value, 8, data.value.length);
             buffer.put(data.value);
 
 
@@ -237,8 +253,15 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
      */
     public void read(CdrDataHolder data){
         rtcout.println(Logbuf.TRACE, "read()");
+        String address;
+        if(m_os.startsWith("windows")){
+            address = m_shm_address;
+        }
+        else {
+            address = SHARED_NAME+m_shm_address;
+        }
         try {
-            RandomAccessFile file = new RandomAccessFile(SHARED_NAME+m_shm_address, "rw");
+            RandomAccessFile file = new RandomAccessFile(address, "rw");
             FileChannel channel = file.getChannel();
             int length = (int)channel.size();
             MappedByteBuffer buffer
