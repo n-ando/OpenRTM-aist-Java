@@ -4,6 +4,7 @@ import java.lang.Long;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -19,6 +20,9 @@ import jp.go.aist.rtm.RTC.util.ORBUtil;
 import org.omg.CORBA.portable.OutputStream;
 import org.omg.CORBA.portable.InputStream;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 /**
  * {@.ja SharedMemory クラス}
  * {@.en SharedMemory class}
@@ -50,6 +54,8 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         m_memory_size = DEFAULT_MEMORY_SIZE;
         m_endian  = true;
         m_os = System.getProperty("os.name").toLowerCase();
+        m_hMapping = null;
+        m_pMappingView = null;
     }
 
   
@@ -112,12 +118,40 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
 
         String address;
         if(m_os.startsWith("windows")){
-            address = m_shm_address;
+            HANDLE fileHandle = new HANDLE(new Pointer(0xffffffff));
+            WinNT.SECURITY_ATTRIBUTES psa = null;
+            try{
+                m_hMapping = Kernel32.INSTANCE.CreateFileMappingA(
+                            fileHandle,
+                            psa,
+                            0x04,//PAGE_READWRITE
+                            0,
+                            (int)m_memory_size, 
+                            m_shm_address
+                        );
+                m_pMappingView = Kernel32.INSTANCE.MapViewOfFile(
+                                   m_hMapping,
+                                   0x001f,//FILE_MAP_ALL_ACCESS
+                                   0,
+                                   0,
+                                   (int)m_memory_size
+                               );
+            }
+            catch(Exception ex) {
+                rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
+            }
         }
         else {
             address = SHARED_NAME+m_shm_address;
+            try{
+                RandomAccessFile file = new RandomAccessFile(address, "rw");
+                file.setLength(m_memory_size);
+            }
+            catch(Exception ex) {
+                rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
+            }
         }
-
+/*
         try{
             RandomAccessFile file = new RandomAccessFile(address, "rw");
             file.setLength(m_memory_size);
@@ -125,7 +159,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         catch(Exception ex) {
             rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
         }
-
+*/
         if(m_smInterface!=null){
             m_smInterface.open_memory(m_memory_size, m_shm_address);
         }
@@ -153,11 +187,40 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         m_shm_address = shm_address;
         String address;
         if(m_os.startsWith("windows")){
-            address = m_shm_address;
+            HANDLE fileHandle = new HANDLE(new Pointer(0xffffffff));
+            WinNT.SECURITY_ATTRIBUTES psa = null;
+            try{
+                m_hMapping = Kernel32.INSTANCE.CreateFileMappingA(
+                            fileHandle,
+                            psa,
+                            0x04,//PAGE_READWRITE
+                            0,
+                            (int)m_memory_size, 
+                            m_shm_address
+                        );
+                m_pMappingView = Kernel32.INSTANCE.MapViewOfFile(
+                                   m_hMapping,
+                                   0x001f,//FILE_MAP_ALL_ACCESS
+                                   0,
+                                   0,
+                                   (int)m_memory_size
+                               );
+            }
+            catch(Exception ex) {
+                rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
+            }
         }
         else {
             address = SHARED_NAME+m_shm_address;
+            try{
+                RandomAccessFile file = new RandomAccessFile(address, "rw");
+                file.setLength(m_memory_size);
+            }
+            catch(Exception ex) {
+                rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
+            }
         }
+/*
         try{
             RandomAccessFile file = new RandomAccessFile(address, "rw");
             file.setLength(m_memory_size);
@@ -165,6 +228,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         catch(Exception ex) {
             rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
         }
+*/
     }
     /**
      * 
@@ -178,10 +242,16 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
   # void close_memory(boolean unlink);
      */
     public void close_memory(boolean unlink){
-        File file = new File(SHARED_NAME+m_shm_address);
-        file.delete();
-        if(m_smInterface!=null){
-            m_smInterface.close_memory(false);
+        if(m_os.startsWith("windows")){
+            Kernel32.INSTANCE.UnmapViewOfFile(m_pMappingView);
+            Kernel32.INSTANCE.CloseHandle(m_hMapping);
+        }
+        else {
+            File file = new File(SHARED_NAME+m_shm_address);
+            file.delete();
+            if(m_smInterface!=null){
+                m_smInterface.close_memory(false);
+            }
         }
     }  
     
@@ -210,34 +280,48 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         rtcout.println(Logbuf.TRACE, "write()");
         String address;
         if(m_os.startsWith("windows")){
-            address = m_shm_address;
+            HANDLE fileHandle = new HANDLE(new Pointer(0xffffffff));
+            WinNT.SECURITY_ATTRIBUTES psa = null;
+            try{
+                EncapsOutputStreamExt cdr 
+                    = new EncapsOutputStreamExt(ORBUtil.getOrb(),m_endian);
+                cdr.write_ulonglong(data.value.length);
+                byte[] ch = cdr.getByteArray();
+
+                m_pMappingView.write((long)0, ch, 0, ch.length);
+
+                m_pMappingView.write((long)8, data.value, 0, data.value.length);
+            }
+            catch(Exception ex) {
+                rtcout.println(Logbuf.ERROR,"write error  "+ex.toString() );
+            }
         }
         else {
             address = SHARED_NAME+m_shm_address;
-        }
-        try{
-            RandomAccessFile file = new RandomAccessFile(address, "rw");
-            FileChannel channel = file.getChannel();
-            int length = (int)channel.size();
-            MappedByteBuffer buffer
-                = channel.map(FileChannel.MapMode.READ_WRITE, 0, length);
-            buffer.order(ByteOrder.LITTLE_ENDIAN);
+            try{
+                RandomAccessFile file = new RandomAccessFile(address, "rw");
+                FileChannel channel = file.getChannel();
+                int length = (int)channel.size();
+                MappedByteBuffer buffer
+                    = channel.map(FileChannel.MapMode.READ_WRITE, 0, length);
+                buffer.order(ByteOrder.LITTLE_ENDIAN);
 
 
-            EncapsOutputStreamExt cdr 
-                = new EncapsOutputStreamExt(ORBUtil.getOrb(),m_endian);
-            cdr.write_ulonglong(data.value.length);
-            byte[] ch = cdr.getByteArray();
-            buffer.put(ch, 0, ch.length);
+                EncapsOutputStreamExt cdr 
+                    = new EncapsOutputStreamExt(ORBUtil.getOrb(),m_endian);
+                cdr.write_ulonglong(data.value.length);
+                byte[] ch = cdr.getByteArray();
+                buffer.put(ch, 0, ch.length);
 
-            buffer.put(data.value);
+                buffer.put(data.value);
 
 
-            channel.close();
-            file.close();
-        }
-        catch(Exception ex) {
-            rtcout.println(Logbuf.ERROR,"write error  "+ex.toString() );
+                channel.close();
+                file.close();
+            }
+            catch(Exception ex) {
+                rtcout.println(Logbuf.ERROR,"write error  "+ex.toString() );
+            }
         }
     }
     /**
@@ -256,37 +340,51 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         String address;
         if(m_os.startsWith("windows")){
             address = m_shm_address;
+            HANDLE fileHandle = new HANDLE(new Pointer(0xffffffff));
+            WinNT.SECURITY_ATTRIBUTES psa = null;
+            try{
+                byte[] len_data = new byte[8];
+                len_data = m_pMappingView.getByteArray(0,8);
+                EncapsOutputStreamExt cdr 
+                    = new EncapsOutputStreamExt(ORBUtil.getOrb(),m_endian);
+                cdr.write_octet_array(len_data, 0, len_data.length);
+                InputStream instream = cdr.create_input_stream();
+	        long len = instream.read_ulonglong();
+                data.value = new byte[(int)len];
+                ByteBuffer buffer =  m_pMappingView.getByteBuffer(8, len);
+                buffer.get(data.value);
+
+
+            }
+            catch(Exception ex) {
+                rtcout.println(Logbuf.ERROR,"read error  "+ex.toString() );
+            }
         }
         else {
             address = SHARED_NAME+m_shm_address;
-        }
-        try {
-            RandomAccessFile file = new RandomAccessFile(address, "rw");
-            FileChannel channel = file.getChannel();
-            int length = (int)channel.size();
-            MappedByteBuffer buffer
-                = channel.map(FileChannel.MapMode.READ_WRITE, 0, length);
-            buffer.order(ByteOrder.LITTLE_ENDIAN);
-            byte[] len_data = new byte[8];
-            buffer.get(len_data,0,len_data.length);
+            try {
+                RandomAccessFile file = new RandomAccessFile(address, "rw");
+                FileChannel channel = file.getChannel();
+                int length = (int)channel.size();
+                MappedByteBuffer buffer
+                    = channel.map(FileChannel.MapMode.READ_WRITE, 0, length);
+                buffer.order(ByteOrder.LITTLE_ENDIAN);
+                byte[] len_data = new byte[8];
+                buffer.get(len_data,0,len_data.length);
 
-            EncapsOutputStreamExt cdr 
-                = new EncapsOutputStreamExt(ORBUtil.getOrb(),m_endian);
-            cdr.write_octet_array(len_data, 0, len_data.length);
-            InputStream instream = cdr.create_input_stream();
-            //org.omg.CORBA.LongHolder len = new org.omg.CORBA.LongHolder();
-            //len._read(instream);
-            //data.value = new byte[(int)len.value];
-	    //long len = instream.read_ulong();
-	    long len = instream.read_ulonglong();
-            data.value = new byte[(int)len];
-            buffer.get(data.value);
-            //buffer.get(data.value,8,data.value.length);
-            channel.close();
-            file.close();
-        }
-        catch(Exception ex) {
-            rtcout.println(Logbuf.ERROR,"read error  "+ex.toString() );
+                EncapsOutputStreamExt cdr 
+                    = new EncapsOutputStreamExt(ORBUtil.getOrb(),m_endian);
+                cdr.write_octet_array(len_data, 0, len_data.length);
+                InputStream instream = cdr.create_input_stream();
+	        long len = instream.read_ulonglong();
+                data.value = new byte[(int)len];
+                buffer.get(data.value);
+                channel.close();
+                file.close();
+            }
+            catch(Exception ex) {
+                rtcout.println(Logbuf.ERROR,"read error  "+ex.toString() );
+            }
         }
 
     }
@@ -352,6 +450,8 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
     private long m_memory_size;
     private OpenRTM.PortSharedMemory m_smInterface;
     private String m_os;
+    private HANDLE m_hMapping;
+    private Pointer m_pMappingView;
     protected boolean m_endian;
     
 }
