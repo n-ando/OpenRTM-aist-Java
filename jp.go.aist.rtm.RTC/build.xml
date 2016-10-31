@@ -277,6 +277,16 @@
 			 includes="Extension/LocalService/nameservice_file/**" />
 		<delete file="${build.dir.jar}/NameserviceFile.jar" />
 		<copy file="${dist.dir}/NameserviceFile.jar" todir="${build.dir.jar}" />
+
+		<jar destfile="${dist.dir}/jna-4.2.2.jar" />
+		<delete file="${build.dir.jar}/jna-4.2.2.jar" />
+		<copy file="${dist.dir}/jna-4.2.2.jar" todir="${build.dir.jar}" />
+		<jar destfile="${dist.dir}/jna-platform-4.2.2.jar" />
+		<delete file="${build.dir.jar}/jna-platform-4.2.2.jar" />
+		<copy file="${dist.dir}/jna-platform-4.2.2.jar" todir="${build.dir.jar}" />
+		<jar destfile="${dist.dir}/commons-cli-1.1.jar" />
+		<delete file="${build.dir.jar}/commons-cli-1.1.jar" />
+		<copy file="${dist.dir}/commons-cli-1.1.jar" todir="${build.dir.jar}" />
 	</target>
 
 
@@ -893,6 +903,8 @@
 				<include name="*${version}.jar" />
 
 				<include name="commons-cli-1.1.jar" />
+				<include name="LogicalTimeTriggeredEC.jar" />
+				<include name="NameserviceFile.jar" />
 				<include name="jna-platform-4.2.2.jar" />
 				<include name="jna-4.2.2.jar" />
 
