@@ -347,7 +347,7 @@
 
                         docencoding="UTF-8"
 
-			author="true" doctitle="OpenRTM-aist Java" 
+			author="true" doctitle="OpenRTM-aist-Java ${version}" 
 
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 
@@ -371,7 +371,7 @@
 
                         docencoding="UTF-8"
 
-			author="true" doctitle="OpenRTM-aist Java" 
+			author="true" doctitle="OpenRTM-aist-Java ${version}" 
 
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 
