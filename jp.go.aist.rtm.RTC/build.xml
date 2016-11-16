@@ -1,8 +1,8 @@
-<project name="OpenRTM-aist-1.1.2" default="jar">
+<project name="OpenRTM-aist-1.2.0" default="jar">
 
-	<property name="version" value="1.1.2"/>
+	<property name="version" value="1.2.0"/>
 
-	<property name="target.name" value="OpenRTM-aist-1.1.2"/>
+	<property name="target.name" value="OpenRTM-aist-1.2.0"/>
 
 
 
