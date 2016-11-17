@@ -1,8 +1,8 @@
-<project name="OpenRTM-aist-1.2.0" default="jar">
+<project name="OpenRTM-aist-Java" default="jar">
 
 	<property name="version" value="1.2.0"/>
-
-	<property name="target.name" value="OpenRTM-aist-1.2.0"/>
+	<property name="short_ver" value="1.2"/>
+	<property name="target.name" value="OpenRTM-aist-${version}"/>
 
 
 
@@ -888,11 +888,11 @@
 
 		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1" />
 
-		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1" />
+		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}" />
 
 		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE-jar.zip" />
 
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1/jar" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}/jar" >
 
 			<fileset dir="installer/resources/Source/jar">
 
@@ -918,7 +918,7 @@
 
 		</copy>
 
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1/examples" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}/examples" >
 
 			<fileset dir="installer/resources/Source/examples">
 
@@ -936,19 +936,19 @@
 
 		</copy>
 
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1/examples/RTMExamples" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}/examples/RTMExamples" >
 
 			<fileset dir="installer/resources/Source/examples/RTMExamples" />
 
 		</copy>
 
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1/JavaDoc" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}/JavaDoc" >
 
 			<fileset dir="installer/resources/Source/JavaDoc" />
 
 		</copy>
 
-		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1/JavaDocEn" >
+		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}/JavaDocEn" >
 
 			<fileset dir="installer/resources/Source/JavaDocEn" />
 
