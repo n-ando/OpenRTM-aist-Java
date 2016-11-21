@@ -64,7 +64,6 @@
 
 	
 
-	<property name="distribution.dir" value="C:/distribution/" />
 	<property name="build.dir" value="bin"/>
 
 	<property name="build.dir.test" value="tests/bin"/>
@@ -82,21 +81,7 @@
 	<property name="build.dir.prof" value="bin/rtcprof" />
 
 
-
-	<property name="installer.dir" value="installer/resources" />
-
-	<property name="installer.script" value="installer/commands/genwxs.vbs" />
-
 	<property environment="env"/>
-
-	<!--	
-
-	<property name="wix.dir" value="C:/Wix" />
-
-	-->
-
-	<property name="wix.dir" value="${env.WIX_HOME}" />
-
 
 
 	<property name="idl.path" value="idl" />
@@ -164,21 +149,7 @@
 
 		<antcall target="javaDoc" />
 
-		<antcall target="javaInstaller" />
-
 		<antcall target="dist" />
-
-	</target>
-
-	
-	<target name="buildInstaller">
-
-	<taskdef name="jsmoothgen"
-	classname="net.charabia.jsmoothgen.ant.JSmoothGen"
-	classpath="${dir.jsmooth}/lib/jsmoothgen-ant.jar"/>
-		<antcall target="createExe" />
-
-		<antcall target="javaInstaller" />
 
 	</target>
 
@@ -384,57 +355,6 @@
                         <taglet name="JaOffTaglet"  path="./util"/>
                 </javadoc>
 	</target>
-
-
-
-	<target name="javaInstaller"  description="インストーラを作成します">
-
-		<!-- copy idl files -->
-		<mkdir dir="installer/resources/Source/rtm_java/idl" />
-
-		<mkdir dir="installer/resources/Source/rtm_java/idl/device_interfaces" />
-
-		<copy todir="installer/resources/Source/rtm_java/idl">
-
-			<fileset dir="idl" />
-		</copy>
-
-		<copy todir="installer/resources/Source/rtm_java/idl/device_interfaces">
-
-			<fileset dir="idl/device_interfaces" />
-		</copy>
-
-		<!-- コマンド実行 -->		
-		<exec dir="installer/win32" executable="cmd">
-
-			<arg value="/c cleanup.cmd"/>
-
-		</exec>
-
-		<!-- フォルダ削除 -->
-		<delete dir="${distribution.dir}/OpenRTM-aist-Java-${version}" />
-
-		<!-- フォルダ生成 -->		
-		<mkdir dir="${distribution.dir}/OpenRTM-aist-Java-${version}" />
-
-		<mkdir dir="${distribution.dir}/OpenRTM-aist-Java-${version}/Source" />
-
-		<!-- 情報コピー -->
-		<copy todir="${distribution.dir}/OpenRTM-aist-Java-${version}/Source">
-
-			<fileset dir="installer/resources/Source" />
-		</copy>
-
-
-		<!-- コマンド実行 -->		
-		<exec dir="installer/win32" executable="cmd">
-
-			<arg value="/c build.cmd"/>
-
-		</exec>
-
-	</target>
-
 
 
 	<target name="idlCompile" description="IDLファイルをコンパイルします">

@@ -27,14 +27,3 @@ rem jarファイルの削除（jarの出力ファイル）
 rem
 for /r ./ %%L in (*aist*.jar) do del %%L
 
-rem
-rem msiファイルの削除
-rem
-for /r ./ %%L in (*.msi) do del %%L
-
-rem
-rem mixobjファイルの削除
-rem
-for /r ./ %%L in (*.wixobj) do del %%L
-
-
