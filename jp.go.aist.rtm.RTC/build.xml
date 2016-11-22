@@ -221,43 +221,23 @@
 		<jar destfile="${dist.dir}/${target.name}.jar"
 			 basedir="${build.dir}"
 			 excludes="RTMExamples/**, rtcd/**, rtcprof/**, Extension/**, OpenRTM/LogicalTimeTriggeredEC**" />
-		<delete file="${build.dir.jar}/${target.name}.jar" />
-		<copy file="${dist.dir}/${target.name}.jar" todir="${build.dir.jar}" />
 		
 		<jar destfile="${dist.dir}/rtcd.jar"
 			 basedir="${build.dir}"
 			 includes="rtcd/**" />
-		<delete file="${build.dir.jar}/rtcd.jar" />
-		<copy file="${dist.dir}/rtcd.jar" todir="${build.dir.jar}" />
 		
 		<jar destfile="${dist.dir}/rtcprof.jar"
 			 basedir="${build.dir}"
                          manifest="${source.rtcprof}/META-INF/MANIFEST.MF"
 			 includes="rtcprof/**" />
-		<delete file="${build.dir.jar}/rtcprof.jar" />
-		<copy file="${dist.dir}/rtcprof.jar" todir="${build.dir.jar}" />
 		
 		<jar destfile="${dist.dir}/LogicalTimeTriggeredEC.jar"
 			 basedir="${build.dir}"
 			 includes="Extension/EC/logical_time/**, OpenRTM/LogicalTimeTriggeredEC**" />
-		<delete file="${build.dir.jar}/LogicalTimeTriggeredEC.jar" />
-		<copy file="${dist.dir}/LogicalTimeTriggeredEC.jar" todir="${build.dir.jar}" />
 		
 		<jar destfile="${dist.dir}/NameserviceFile.jar"
 			 basedir="${build.dir}"
 			 includes="Extension/LocalService/nameservice_file/**" />
-		<delete file="${build.dir.jar}/NameserviceFile.jar" />
-		<copy file="${dist.dir}/NameserviceFile.jar" todir="${build.dir.jar}" />
-
-		<jar destfile="${dist.dir}/jna-4.2.2.jar" />
-		<delete file="${build.dir.jar}/jna-4.2.2.jar" />
-		<copy file="${dist.dir}/jna-4.2.2.jar" todir="${build.dir.jar}" />
-		<jar destfile="${dist.dir}/jna-platform-4.2.2.jar" />
-		<delete file="${build.dir.jar}/jna-platform-4.2.2.jar" />
-		<copy file="${dist.dir}/jna-platform-4.2.2.jar" todir="${build.dir.jar}" />
-		<jar destfile="${dist.dir}/commons-cli-1.1.jar" />
-		<delete file="${build.dir.jar}/commons-cli-1.1.jar" />
-		<copy file="${dist.dir}/commons-cli-1.1.jar" todir="${build.dir.jar}" />
 	</target>
 
 
@@ -799,14 +779,7 @@
 
 		<zip destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.zip" basedir="${dist.dir}/source/OpenRTM-aist-Java-${version}" />
 
-
-
-
-		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/0.4" />
-
-		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.0" />
-
-		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/1.1" />
+		<delete dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}" />
 
 		<mkdir dir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}" />
 
@@ -814,20 +787,21 @@
 
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}/jar" >
 
-			<fileset dir="installer/resources/Source/jar">
-
+			<fileset dir="${dist.dir}">
 				<include name="rtcd.jar" />
-
 				<include name="rtcprof.jar" />
-
 				<include name="*${version}.jar" />
-
 				<include name="commons-cli-1.1.jar" />
 				<include name="LogicalTimeTriggeredEC.jar" />
 				<include name="NameserviceFile.jar" />
 				<include name="jna-platform-4.2.2.jar" />
 				<include name="jna-4.2.2.jar" />
-
+			</fileset>
+      
+			<fileset dir="lib">
+				<include name="commons-cli-1.1.jar" />
+				<include name="jna-platform-4.2.2.jar" />
+				<include name="jna-4.2.2.jar" />
 			</fileset>
 
 			<fileset dir="installer/win32">
