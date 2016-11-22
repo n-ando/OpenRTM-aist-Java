@@ -74,8 +74,6 @@
 
 	<property name="build.doc.jp" value="installer/resources/Source/JavaDocJa"/>
 
-	<property name="build.dir.jar" value="installer/resources/Source/jar" />
-
 	<property name="build.dir.rtcd" value="bin/rtcd" />
 
 	<property name="build.dir.prof" value="bin/rtcprof" />
