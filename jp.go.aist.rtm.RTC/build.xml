@@ -68,11 +68,9 @@
 
 	<property name="build.dir.test" value="tests/bin"/>
 
-	<property name="build.doc" value="installer/resources/Source/JavaDoc"/>
+	<property name="build.doc" value="docs/JavaDoc"/>
 
-	<property name="build.doc.us" value="installer/resources/Source/JavaDocEn"/>
-
-	<property name="build.doc.jp" value="installer/resources/Source/JavaDocJa"/>
+	<property name="build.doc.us" value="docs/JavaDocEn"/>
 
 	<property name="build.dir.rtcd" value="bin/rtcd" />
 
@@ -836,13 +834,13 @@
 
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}/JavaDoc" >
 
-			<fileset dir="installer/resources/Source/JavaDoc" />
+			<fileset dir="${build.doc}" />
 
 		</copy>
 
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}/JavaDocEn" >
 
-			<fileset dir="installer/resources/Source/JavaDocEn" />
+			<fileset dir="${build.doc.us}" />
 
 		</copy>
 
