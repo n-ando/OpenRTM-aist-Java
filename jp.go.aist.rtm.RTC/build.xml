@@ -129,7 +129,7 @@
 
 		<antcall target="clean" />
 
-		<antcall target="compile" />
+		<antcall target="compile_win" />
 
 		<antcall target="jar" />
 
@@ -382,7 +382,7 @@
 		</exec>
 
 		<delete includeEmptyDirs="true">
-			<fileset dir="${source.samples.java.SimpleService}" excludes="**.idl,MyServiceConsumer**.java,MyServiceProvider**.java,MyServiceSVC_impl.java,rtc.conf" />
+			<fileset dir="${source.samples.java.SimpleService}" excludes="**.idl,MyServiceConsumer**.java,MyServiceProvider**.java,MyServiceSVC_impl.java,*.conf" />
 		</delete>
 
 		<exec executable="${java.home}\..\bin\idlj">
@@ -411,7 +411,16 @@
 
 
 
-	<target name="compile" description="ソースをコンパイルします">
+	<target name="compile" description="ソースをコンパイルします(Linux)">
+		<mkdir dir="${build.dir}" />
+		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar:lib/jna-4.2.2.jar:lib/jna-platform-4.2.2.jar" encoding="UTF-8" />
+		<javac srcdir="${source.main}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar:lib/jna-4.2.2.jar:lib/jna-platform-4.2.2.jar"  encoding="UTF-8" includes="go/aist/**" excludes="go/aist/ForSunOrb/**,go/aist/ForJacOrb/**"/>
+		<javac srcdir="${source.rtcd}:${source.rtcprof}" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar:lib/jna-4.2.2.jar:lib/jna-platform-4.2.2.jar"  encoding="UTF-8"/>
+		<javac srcdir="${source.extension}:" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar:lib/jna-4.2.2.jar:lib/jna-platform-4.2.2.jar"  encoding="UTF-8" />
+		<javac srcdir="${source.examples}:" destdir="${build.dir}" classpath="lib/commons-cli-1.1.jar:lib/jna-4.2.2.jar:lib/jna-platform-4.2.2.jar"  encoding="UTF-8" />
+	</target>
+
+	<target name="compile_win" description="ソースをコンパイルします(Windows)">
 		<mkdir dir="${build.dir}" />
 
 		<native2ascii encoding="UTF-8" src="${source.sdo}" dest="${source.sdotemp}" >
@@ -654,7 +663,7 @@
 	</target>
 
 
-	<target name="compile_tests" description="ソースをコンパイルします">
+	<target name="compile_tests" description="テスト用">
 
 		<javac srcdir="${source.sdo}:${source.rtc}:${source.rtm}:${source.openrtm}" destdir="${build.dir.test}" classpath="lib/commons-cli-1.1.jar:lib/jna-4.2.2.jar:lib/jna-platform-4.2.2.jar" encoding="UTF-8" />
 
