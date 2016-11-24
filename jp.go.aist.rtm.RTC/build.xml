@@ -25,6 +25,7 @@
 	<property name="source.openrtmtemp" value="src/OpenRTMTemp"/>
 
 	<property name="source.examples" value="src/RTMExamples"/>
+	<property name="source.examples.scripts" value="src/RTMExamples_scripts"/>
 
 	<property name="source.extension" value="src/Extension"/>
 
@@ -55,12 +56,7 @@
 	<property name="source.rtcprof" value="src/rtcprof"/>
 
 
-
 	<property name="dist.dir" value="jar" />
-
-	<property name="dist.bat" value="installer/resources/Source/examples/"/>
-
-	
 
 	<property name="build.dir" value="bin"/>
 
@@ -241,7 +237,7 @@
 		classpath="${dir.jsmooth}/lib/jsmoothgen-ant.jar"/>
 		<jsmoothgen project="rtcd.jsmooth"
 			skeletonroot="${dir.jsmooth}/skeletons"/>
-		<copy file="rtcd_java.exe" todir="${dist.bat}" />
+		<copy file="rtcd_java.exe" todir="${source.examples.scripts}" />
 
 		<delete file="rtcd_java.exe" />
 
@@ -405,8 +401,10 @@
 
 
 	<target name="clean" description="ビルドで生成されたファイルを削除します">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+		<delete dir="docs" />
 		<delete includeEmptyDirs="true">
-			<fileset dir="${build.dir}" includes="**/*.class" />
 			<fileset dir="${build.dir.test}" includes="**/*.class" />
 		</delete>
 	</target>
@@ -414,6 +412,7 @@
 
 
 	<target name="compile" description="ソースをコンパイルします">
+		<mkdir dir="${build.dir}" />
 
 		<native2ascii encoding="UTF-8" src="${source.sdo}" dest="${source.sdotemp}" >
 
@@ -787,7 +786,7 @@
 
 		<copy todir="${dist.dir}/source/OpenRTM-aist-Java-${version}-jar/OpenRTM-aist/${short_ver}/examples" >
 
-			<fileset dir="installer/resources/Source/examples">
+			<fileset dir="${source.examples.scripts}">
 
 				<include name="*.exe" />
 
