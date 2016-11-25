@@ -135,10 +135,6 @@
 
 		<antcall target="createExe" />
 
-		<antcall target="javaDoc" />
-
-		<antcall target="dist" />
-
 	</target>
 
 	
@@ -836,15 +832,12 @@
 		<delete file="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.tar.gz" />
 
 		<tar destfile="${dist.dir}/source/OpenRTM-aist-Java-${version}-RELEASE.tar.gz" 
-			basedir="../" 
+			basedir="../../" 
 			compression="gzip" 
-			excludes="jp.go.aist.rtm.RTC/installer/**, 
-				jp.go.aist.rtm.RTC/jar/source/**, 
-				jp.go.aist.rtm.RTC/Source/**, 
-				jp.go.aist.rtm.RTC/build_org.xml, 
-				jp.go.aist.rtm.RTC/jcoverage.ser, 
-				buildRTC.bat, buildRTC.sh, clean.bat, 
-				clean.sh, cmd.bat, **/*.swp" />
+			excludes="OpenRTM-aist-Java/jp.go.aist.rtm.RTC/jcoverage.ser, 
+				OpenRTM-aist-Java/jp.go.aist.rtm.RTC/License.*,
+				OpenRTM-aist-Java/buildRTC.*, OpenRTM-aist-Java/clean.*, 
+				**/*.swp" />
 
 
 	</target>
