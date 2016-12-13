@@ -410,7 +410,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
      * {@.ja エンディアンを設定する}
      * {@.en Sets an endian.}
      * 
-     * @param endian
+     * @param isLittleEndian
      *   {@.ja true: little, false: big}
      *   {@.en true: little, false: big}
      * 
