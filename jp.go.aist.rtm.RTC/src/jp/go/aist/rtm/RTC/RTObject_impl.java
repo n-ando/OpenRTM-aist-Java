@@ -5984,6 +5984,186 @@ public class RTObject_impl extends DataFlowComponentPOA {
     {
         m_configsets.removeConfigurationSetNameListener(type,listener);
     }
+
+    //============================================================
+    // FSM Listener
+    /**
+     * {@.ja PreFsmActionListener リスナを追加する}
+     * {@.en Adding PreFsmAction type listener}
+     *
+     */
+    public void 
+    addPreFsmActionListener(int listener_type,
+                          PreFsmActionListener listener,
+                          boolean autoclean) {
+      m_fsmActionListeners.
+        preaction_[listener_type].addObserver(listener);
+    }
+    public <DataType> 
+    PreFsmActionListener
+    addPreFsmActionListener(int listener_type,
+                                   DataType obj,
+                                   String memfunc) {
+        class Noname extends PreFsmActionListener {
+            public Noname(DataType obj, String memfunc) {
+                m_obj = obj;
+                try {
+                    Class clazz = m_obj.getClass();
+
+                    m_method = clazz.getMethod(memfunc,String.class,String.class);
+
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            public void operator(final String state) {
+                try {
+                    m_method.invoke(
+                          state);
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            private DataType m_obj;
+            private Method m_method;
+        };
+        Noname listener = new Noname(obj, memfunc);
+        addPreFsmActionListener(listener_type, listener, true);
+        return listener;
+    }
+  
+  
+    /**
+     * {@.ja PreFsmActionListener リスナを削除する}
+     * {@.en Removing PreFsmAction type listener}
+     *
+     */
+    public void
+    removePreFsmActionListener(int listener_type,
+                             PreFsmActionListener listener) {
+      m_fsmActionListeners.
+        preaction_[listener_type].deleteObserver(listener);
+    }
+
+
+    /**
+     * {@.ja PostFsmActionListener リスナを追加する}
+     * {@.en Adding PostFsmAction type listener}
+     *
+     */
+    public void
+    addPostFsmActionListener(int listener_type,
+                             PostFsmActionListener listener,
+                             boolean autoclean) {
+      m_fsmActionListeners.
+        postaction_[listener_type].addObserver(listener);
+    }
+  
+  
+    /**
+     * {@.ja PostFsmActionListener リスナを削除する}
+     * {@.en Removing PostFsmAction type listener}
+     *
+     */
+    public void
+    removePostFsmActionListener(int listener_type,
+                              PostFsmActionListener listener) {
+      m_fsmActionListeners.
+        postaction_[listener_type].deleteObserver(listener);
+    }
+
+    /**
+     * {@.ja FsmProfileListener リスナを追加する}
+     * {@.en Adding FsmProfile type listener}
+     */
+    public void
+    addFsmProfileListener(int listener_type,
+                            FsmProfileListener listener,
+                            boolean autoclean) {
+      m_fsmActionListeners.
+        profile_[listener_type].addObserver(listener);
+    }
+    public <DataType> 
+    FsmProfileListener
+    addFsmProfileListener(int listener_type,
+                                   DataType obj,
+                                   String memfunc) {
+        class Noname extends FsmProfileListener {
+            public Noname(DataType obj, String memfunc) {
+                m_obj = obj;
+                try {
+                    Class clazz = m_obj.getClass();
+
+                    m_method = clazz.getMethod(memfunc,String.class,String.class);
+
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            public void operator(final RTC.FsmProfile profile) {
+                try {
+                    m_method.invoke(
+                          m_obj,
+                          profile);
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            private DataType m_obj;
+            private Method m_method;
+        };
+        Noname listener = new Noname(obj, memfunc);
+        addFsmProfileListener(listener_type, listener, true);
+        return listener;
+    }
+
+
+    /**
+     * {@.ja FsmProfileListener リスナを削除する}
+     * {@.en Removing FsmProfile type listener}
+     *
+     */
+    public void
+    removeFsmProfileListener(int listener_type,
+                               FsmProfileListener listener) {
+      m_fsmActionListeners.
+        profile_[listener_type].deleteObserver(listener);
+    }
+
+    /**
+     * {@.ja FsmStructureListener リスナを追加する}
+     * {@.en Adding FsmStructure type listener}
+     *
+     */
+    public void
+    addFsmStructureListener(int listener_type,
+                            FsmStructureListener listener,
+                            boolean autoclean) {
+      m_fsmActionListeners.
+        structure_[listener_type].addObserver(listener);
+    }
+
+
+    /**
+     * {@.ja FsmStructureListener リスナを削除する}
+     * {@.en Removing FsmStructure type listener}
+     *
+     */
+    public void
+    removeFsmStructureListener(int listener_type,
+                               FsmStructureListener listener) {
+      m_fsmActionListeners.
+        structure_[listener_type].deleteObserver(listener);
+    }
+
     /**
      * {@.ja RTC を終了する。}
      * {@.en Shutdown RTC}
@@ -6768,4 +6948,24 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *
      */
     protected ComponentActionListeners m_actionListeners = new ComponentActionListeners();
+    /**
+     * {@.ja PortConnectListenerホルダ}
+     * {@.en PortConnectListener holder}
+     * <p>
+     * {@.ja PortConnectListenrを保持するホルダ}
+     * {@.en Holders of PortConnectListeners}
+     */
+    //protected PortConnectListeners m_portconnListeners = new PortConnectListeners();
+
+
+    /**
+     * {@.ja ComponentActionListenerホルダ}
+     * {@.en ComponentActionListener holder}
+     * <p>
+     * {@.ja ComponentActionListenrを保持するホルダ}
+     * {@.en Holders of ComponentActionListeners}
+     *
+     */
+    protected FsmActionListeners m_fsmActionListeners = new FsmActionListeners();
+
 }
