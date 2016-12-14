@@ -101,6 +101,7 @@
 	<property name="idl.ManipulatorCommonInterface_DataTypes" value="${idl.path}/ManipulatorCommonInterface_DataTypes.idl" />
 	<property name="idl.ManipulatorCommonInterface_Middle" value="${idl.path}/ManipulatorCommonInterface_Middle.idl" />
 	<property name="idl.SharedMemory" value="${idl.path}/SharedMemory.idl" />
+	<property name="idl.RTC_ComponentObserver" value="${idl.path}/fsm4rtc/ComponentObserver.idl" />
 
 	<property name="idl.test.CorbaConsumer" value="${idl.path.tests}/CorbaConsumer/Hello.idl" />
 
@@ -270,7 +271,7 @@
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 
 
-			package="yes" source="1.5" splitindex="true" 
+			package="yes" splitindex="true" 
                         use="true" version="true" charset="UTF-8" 
                         classpath="lib/commons-cli-1.1.jar:lib/jna-4.2.2.jar:lib/jna-platform-4.2.2.jar" 
                         >
@@ -294,7 +295,7 @@
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 
 
-			package="yes" source="1.5" splitindex="true" 
+			package="yes" splitindex="true" 
                         use="true" version="true" charset="UTF-8"
                         classpath="lib/commons-cli-1.1.jar:lib/jna-4.2.2.jar:lib/jna-platform-4.2.2.jar" 
                         >
@@ -336,6 +337,10 @@
 
 		<exec executable="${java.home}\..\bin\idlj">
 			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.ComponentObserver}"/>
+		</exec>
+
+		<exec executable="${java.home}\..\bin\idlj">
+			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.RTC_ComponentObserver}"/>
 		</exec>
 
 		<exec executable="${java.home}\..\bin\idlj">
