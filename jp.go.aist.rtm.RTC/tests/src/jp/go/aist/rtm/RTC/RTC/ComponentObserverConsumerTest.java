@@ -147,7 +147,7 @@ public class ComponentObserverConsumerTest extends TestCase {
         value[2] = new NameValue("observed_status",any2);
 
         org.omg.CORBA.Any any3 = orb.create_any();
-        any3.insert_string("NO");
+        any3.insert_string("YES");
         value[3] = new NameValue("ec_heartbeat.enable",any3);
 
         org.omg.CORBA.Any any4 = orb.create_any();
