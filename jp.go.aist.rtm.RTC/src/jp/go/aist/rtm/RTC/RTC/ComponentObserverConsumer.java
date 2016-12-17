@@ -28,6 +28,7 @@ import jp.go.aist.rtm.RTC.ConfigurationSetListener;
 import jp.go.aist.rtm.RTC.ConfigurationSetNameListener;
 import jp.go.aist.rtm.RTC.PreFsmActionListener;
 import jp.go.aist.rtm.RTC.PreFsmActionListenerType;
+import jp.go.aist.rtm.RTC.PostComponentActionListenerArgument;
 
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
@@ -756,7 +757,8 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.ja PostComponentActionListener class}
      * {@.en PostComponentActionListener class}
      */
-    private class CompStatMsg {
+    //private class CompStatMsg {
+    public class CompStatMsg {
         public CompStatMsg(ComponentObserverConsumer coc) {
             activatedListener = null;
             deactivatedListener = null;
@@ -773,7 +775,9 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
             }
         }
         public void onActivated(int ec_id, ReturnCode_t ret) {
+        //public void onActivated(PostComponentActionListenerArgument arg) {
             onGeneric("ACTIVE:", ec_id, ret);
+            //onGeneric("ACTIVE:", arg.m_exec_handle,arg.m_ret);
         }
         public void onDeactivated(int ec_id, ReturnCode_t ret) {
             onGeneric("INACTIVE:", ec_id, ret);
@@ -800,7 +804,8 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.ja PortActionListener}
      * {@.en PortActionListener}
      */
-    private class PortAction {
+    //private class PortAction {
+    public class PortAction {
         public PortAction(ComponentObserverConsumer coc) {
             portAddListener = null;
             portRemoveListener = null;
@@ -843,7 +848,8 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.ja ExecutionContextActionListener}
      * {@.en ExecutionContextActionListener}
      */
-    private class ECAction {
+    //private class ECAction {
+    public class ECAction {
         public ECAction(ComponentObserverConsumer coc) {
             ecAttached = null;
             ecDetached = null;
@@ -889,7 +895,8 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.ja ConfigActionListener}
      * {@.en ConfigActionListener}
      */
-    private class ConfigAction {
+    //private class ConfigAction {
+    public class ConfigAction {
         public ConfigAction(ComponentObserverConsumer coc) {
             updateConfigParamListener = null;
             setConfigSetListener = null;
@@ -946,7 +953,8 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.ja FSMAction}
      * {@.en FSMAction}
      */
-    private class FSMAction {
+    //private class FSMAction {
+    public class FSMAction {
         public FSMAction(ComponentObserverConsumer coc) {
             m_coc = coc;
         }
