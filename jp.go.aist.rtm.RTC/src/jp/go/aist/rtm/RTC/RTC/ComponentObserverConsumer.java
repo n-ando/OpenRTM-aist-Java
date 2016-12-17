@@ -81,6 +81,8 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         for (int ic = 0; ic < StatusKind._STATUS_KIND_NUM; ++ic) {
             m_observed[ic] = false;
         }
+        m_rtc_heartbeat = new RTC_HeartBeat(this);
+        m_ec_heartbeat = new EC_HeartBeat(this);
     }
 
 
@@ -357,9 +359,8 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
             }
             TimeValue tm;
             tm = m_rtcInterval;
-            m_rtcHblistenerid = m_timer.
-              //registerListenerObj(ComponentObserverConsumer.heartbeat, tm);
-              registerListenerObj(this, tm);
+            m_rtcHblistenerid = m_timer.registerListenerObj(m_rtc_heartbeat, tm);
+            //m_rtcHblistenerid = m_timer.registerListenerObj(this, tm);
             m_timer.start();
         }
         else {
@@ -407,9 +408,8 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
             }
             TimeValue tm;
             tm = m_ecInterval;
-            m_ecHblistenerid = m_timer.
-              //registerListenerObj(ComponentObserverConsumer.heartbeat, tm);
-              registerListenerObj(this, tm);
+            m_ecHblistenerid = m_timer.registerListenerObj(m_ec_heartbeat, tm);
+            //m_ecHblistenerid = m_timer.registerListenerObj(this, tm);
             m_timer.start();
         }
         else {
@@ -720,6 +720,39 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
 
 
     /**
+     * {@.ja RTC_HeartBeat class}
+     * {@.en RTC_HeartBeat class}
+     * <p>
+     * {@.ja The call back function for RTC Heart Beat.}
+     * {@.en The call back function for RTC Heart Beat.}
+     */
+    private class RTC_HeartBeat implements CallbackFunction{
+        private ComponentObserverConsumer m_coc;
+        public RTC_HeartBeat(ComponentObserverConsumer coc){
+            m_coc = coc;
+        }
+        public void doOperate(){
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._RTC_HEARTBEAT), "");
+        }
+    }
+    /**
+     * {@.ja EC_HeartBeat class}
+     * {@.en EC_HeartBeat class}
+     * <p>
+     * {@.ja The call back function for EC Heart Beat.}
+     * {@.en The call back function for EC Heart Beat.}
+     */
+    private class EC_HeartBeat implements CallbackFunction{
+        private ComponentObserverConsumer m_coc;
+        public EC_HeartBeat(ComponentObserverConsumer coc){
+            m_coc = coc;
+        }
+        public void doOperate(){
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._EC_HEARTBEAT), "");
+        }
+    }
+
+    /**
      * {@.ja PostComponentActionListener class}
      * {@.en PostComponentActionListener class}
      */
@@ -962,7 +995,6 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
                     new ComponentObserverConsumer(),
                     new ComponentObserverConsumer());
     
-        System.out.println("Init()" ); 
     }
 
     private RTObject_impl m_rtobj;
@@ -988,6 +1020,9 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
     private TimeValue m_ecInterval;
     private boolean m_ecHeartbeat;
     private ListenerBase m_ecHblistenerid;
+
+    private RTC_HeartBeat m_rtc_heartbeat;
+    private EC_HeartBeat m_ec_heartbeat;
 
     // このタイマーはいずれグローバルなタイマにおきかえる
     private Timer m_timer;
