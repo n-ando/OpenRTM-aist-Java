@@ -103,6 +103,7 @@
 	<property name="idl.SharedMemory" value="${idl.path}/SharedMemory.idl" />
 	<property name="idl.RTC_ComponentObserver" value="${idl.path}/fsm4rtc/ComponentObserver.idl" />
 	<property name="idl.ExtendedFsmService" value="${idl.path}/fsm4rtc/ExtendedFsmService.idl" />
+	<property name="idl.RTC_DataPort" value="${idl.path}/fsm4rtc/DataPort.idl" />
 
 	<property name="idl.test.CorbaConsumer" value="${idl.path.tests}/CorbaConsumer/Hello.idl" />
 
@@ -346,6 +347,10 @@
 
 		<exec executable="${java.home}\..\bin\idlj">
 			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.ExtendedFsmService}"/>
+		</exec>
+
+		<exec executable="${java.home}\..\bin\idlj">
+			<arg line="-v -fall -td ${source} -i ${idl.path} -emitAll ${idl.RTC_DataPort}"/>
 		</exec>
 
 		<exec executable="${java.home}\..\bin\idlj">
@@ -720,6 +725,7 @@
 			-->
 			<test name="jp.go.aist.rtm.RTC.NamingManagerTest"/>
 			<!--
+			<test name="jp.go.aist.rtm.RTC.ExtendedFsmServiceProviderTest"/>
 			<test name="jp.go.aist.rtm.RTC.RTC.ComponentObserverConsumerTest"/>
 			<batchtest todir="${build.dir.test}/reports">
 				<fileSet dir="${build.dir.test}">
