@@ -47,7 +47,7 @@ public class ExtendedFsmServiceProvider extends ExtendedFsmServicePOA implements
         + "    <transition event=\"toggle\" target=\"state0\" />"
         + "  </state>"
         + " </scxml>" ;
-        m_fsmStructure.event_profiles = new FsmEventProfile[0];
+        m_fsmStructure.event_profiles = new FsmEventProfile[1];
         FsmEventProfile event0 = new FsmEventProfile();
         event0.name = "toggle";
         event0.data_type = "TimedShort";
