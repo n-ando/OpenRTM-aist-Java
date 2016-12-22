@@ -4519,7 +4519,8 @@ public class RTObject_impl extends DataFlowComponentPOA {
                 try {
                     Class clazz = m_obj.getClass();
 
-                    m_method = clazz.getMethod(memfunc,int.class, RTC.ReturnCode_t.class);
+                    //m_method = clazz.getMethod(memfunc,int.class, RTC.ReturnCode_t.class);
+                    m_method = clazz.getDeclaredMethod(memfunc,int.class, RTC.ReturnCode_t.class);
 
                 }
                 catch(java.lang.Exception e){
@@ -6010,7 +6011,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
                 try {
                     Class clazz = m_obj.getClass();
 
-                    m_method = clazz.getMethod(memfunc,String.class,String.class);
+                    m_method = clazz.getMethod(memfunc,String.class);
 
                 }
                 catch(java.lang.Exception e){

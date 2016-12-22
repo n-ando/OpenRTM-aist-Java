@@ -775,9 +775,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
             }
         }
         public void onActivated(int ec_id, ReturnCode_t ret) {
-        //public void onActivated(PostComponentActionListenerArgument arg) {
             onGeneric("ACTIVE:", ec_id, ret);
-            //onGeneric("ACTIVE:", arg.m_exec_handle,arg.m_ret);
         }
         public void onDeactivated(int ec_id, ReturnCode_t ret) {
             onGeneric("INACTIVE:", ec_id, ret);
