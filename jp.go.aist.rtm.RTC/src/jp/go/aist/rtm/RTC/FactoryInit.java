@@ -17,6 +17,10 @@ import jp.go.aist.rtm.RTC.port.InPortSHMProvider;
 import jp.go.aist.rtm.RTC.port.InPortSHMConsumer;
 import jp.go.aist.rtm.RTC.port.OutPortSHMProvider;
 import jp.go.aist.rtm.RTC.port.OutPortSHMConsumer;
+import jp.go.aist.rtm.RTC.port.InPortDSProvider;
+import jp.go.aist.rtm.RTC.port.InPortDSConsumer;
+import jp.go.aist.rtm.RTC.port.OutPortDSProvider;
+import jp.go.aist.rtm.RTC.port.OutPortDSConsumer;
 
 /**
  * {@.ja Factory初期処理用クラス}
@@ -61,6 +65,11 @@ public class FactoryInit {
 	InPortSHMConsumer.InPortSHMConsumerInit();
 	OutPortSHMProvider.OutPortSHMProviderInit();
 	OutPortSHMConsumer.OutPortSHMConsumerInit();
+
+	InPortDSProvider.InPortDSProviderInit();
+	InPortDSConsumer.InPortDSConsumerInit();
+	OutPortDSProvider.OutPortDSProviderInit();
+	OutPortDSConsumer.OutPortDSConsumerInit();
 
         DefaultNumberingPolicy.DefaultNumberingPolicyInit();
         NodeNumberingPolicy.NodeNumberingPolicyInit();
