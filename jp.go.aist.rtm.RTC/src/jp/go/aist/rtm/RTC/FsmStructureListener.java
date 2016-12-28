@@ -3,7 +3,7 @@ package jp.go.aist.rtm.RTC;
 import java.util.Observable;
 import java.util.Observer;
 
-import java.lang.Integer;
+import RTC.FsmStructure;
   /**
    * {@.ja FsmStructureListener クラス}
    * {@.en FsmStructureListener class}
@@ -41,8 +41,8 @@ import java.lang.Integer;
    */
 public abstract class FsmStructureListener implements Observer{
     public void update(Observable o, Object obj) {
-           Integer arg = (Integer)obj;
-           operator(arg.intValue());
+           FsmStructure arg = (FsmStructure)obj;
+           operator(arg);
     }
     /**
      * {@.ja 仮想コールバック関数}
@@ -52,6 +52,6 @@ public abstract class FsmStructureListener implements Observer{
      * {@.en This is a the Callback function for FsmStructureListener.}
      *
      */
-    public abstract void operator(final int exec_handle);
+    public abstract void operator(final FsmStructure fstruct);
 }
 

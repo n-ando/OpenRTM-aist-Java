@@ -17,6 +17,7 @@ import _SDOPackage.ServiceProfile;
 import _SDOPackage.ServiceProfileListHolder;
 import _SDOPackage.SDOService;
 import _SDOPackage.SDOServiceHolder;
+import _SDOPackage.SDOServiceHelper;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
@@ -106,6 +107,7 @@ public class  SdoServiceAdmin {
         rtcout.println(Logbuf.DEBUG,"sdo.service.provider.available_services:"+
                    prop.getProperty("sdo.service.provider.available_services"));
 
+
     
         // If types include '[Aa][Ll][Ll]', all types enabled in this RTC
         Set activeProviderTypes = new HashSet();
@@ -133,7 +135,7 @@ public class  SdoServiceAdmin {
             ServiceProfile prof = new ServiceProfile();
 	    prof.id = str;
             prof.interface_type = str;
-            prof.service = (SDOService)svc;
+            prof.service = (SDOService)svc.getSDOService();
             String propkey = ifrToKey(str);
             NVListHolder nvholder = 
                 new NVListHolder(prof.properties);

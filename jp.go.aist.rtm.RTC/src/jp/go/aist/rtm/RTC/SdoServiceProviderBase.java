@@ -2,6 +2,8 @@ package jp.go.aist.rtm.RTC;
 
 import _SDOPackage.ServiceProfile;
 import _SDOPackage.SDOServicePOA;
+import _SDOPackage.SDOService;
+import RTC.FsmService;
   /**
    * {@.ja SdoServiceProviderBase インターフェース。}
    * {@.en SdoServiceProviderBase Interface.}
@@ -103,8 +105,8 @@ import _SDOPackage.SDOServicePOA;
    */ 
 
 
-//public interface SdoServiceProviderBase extends SDOServicePOA{
 public interface SdoServiceProviderBase {
+
 
     /**
      * {@.ja コンシューマクラスの初期化関数}
@@ -179,5 +181,7 @@ public interface SdoServiceProviderBase {
      *
      */
     public void finalize();
+
+    public _SDOPackage.SDOService getSDOService();
 
 }

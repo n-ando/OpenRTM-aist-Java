@@ -18,6 +18,7 @@ import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.IntegerHolder;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.POAUtil;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 import _SDOPackage.Configuration;
 import _SDOPackage.ConfigurationSet;
@@ -37,7 +38,8 @@ import RTC.StatusKindHolder;
 import RTC.TimedLong;
 import RTC.ReturnCode_t;
 import RTC.ExecutionContextListHolder;
-
+import RTC.ExtendedFsmServiceHelper;
+import RTC.FsmStructure;
 
 import org.omg.CORBA.ORB;
 import org.omg.PortableServer.POA;
@@ -247,6 +249,35 @@ public class ExtendedFsmServiceProviderTest extends TestCase {
         m_mgr = null;
     }
 
+    private class RTObject_impl_Mock extends RTObject_impl {
+        public RTObject_impl_Mock(Manager manager) {
+            super(manager);
+        }
+        FsmActionListeners getFsmActionListeners() {
+            return m_fsmActionListeners;
+        }
+    }
+
+    class Listener extends FsmStructureListener{
+        public Listener(final String name){
+            m_name = name;
+        }
+
+        public void operator(final FsmStructure arg){
+            System.out.println("------------------------------");
+            System.out.println("Listener:                "+m_name);
+            System.out.println("FsmStructure::name:      "+arg.name);
+            System.out.println("FsmStructure::structure: "+arg.structure);
+            System.out.println("------------------------------");
+            m_fsm_strcut = arg;
+        }
+        public String m_name;
+        public FsmStructure m_fsm_strcut;
+        public FsmStructure getFsmStructure() {
+            return m_fsm_strcut;
+        }
+        
+    }
 
     /**
      *<pre>
@@ -254,7 +285,36 @@ public class ExtendedFsmServiceProviderTest extends TestCase {
      */
     public void test_test001() {
 
-        ExtendedFsmServiceProvider.ExtendedFsmServiceProviderInit();
+        //ExtendedFsmServiceProvider.ExtendedFsmServiceProviderInit();
+
+        Manager mgr = Manager.init(null);
+        try {
+            POA pPOA = mgr.getPOA();
+            pPOA.the_POAManager().activate();
+        }
+        catch (Exception ex) {
+            System.out.println("Exception:"+ex.getMessage());
+        }
+     
+        RTObject_impl_Mock rtobj = new RTObject_impl_Mock(mgr);
+
+        rtobj.addFsmStructureListener(0,new Listener("SET_FSM_PROFILE"),true);
+        rtobj.addFsmStructureListener(1,new Listener("GET_FSM_PROFILE"),true);
+
+        final SdoServiceProviderFactory<ExtendedFsmServiceProvider,String> 
+            factory = SdoServiceProviderFactory.instance();
+
+        ExtendedFsmServiceProvider provider;
+        provider = factory.createObject(ExtendedFsmServiceHelper.id());
+        provider.setFsmActionListenerHolder(rtobj.getFsmActionListeners());
+        RTC.FsmStructureHolder fsm_structure = new RTC.FsmStructureHolder();
+        provider.get_fsm_structure(fsm_structure);
+        fsm_structure.value.structure = 
+               "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" "
+               +"version=\"1.0\""
+               +"initial=\"init-travel-plan\">";
+        
+        provider.set_fsm_structure(fsm_structure.value);
     }   
 
 }

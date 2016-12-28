@@ -3,6 +3,8 @@ package jp.go.aist.rtm.RTC;
 import java.util.Observable;
 
 import RTC.ReturnCode_t;
+import RTC.FsmStructure;
+
   /**
    * {@.ja FsmStructureListener ホルダクラス}
    * {@.en FsmStructureListener holder class}
@@ -14,11 +16,9 @@ import RTC.ReturnCode_t;
    */
 
 public class FsmStructureListenerHolder extends Observable{
-    public void notify(final int ec_id,  RTC.ReturnCode_t ret) {
+    public void notify(FsmStructure fstruct) {
         super.setChanged();
-        FsmStructureListenerArgument arg 
-            = new FsmStructureListenerArgument(ec_id,ret);
-        super.notifyObservers((Object)arg);
+        super.notifyObservers(fstruct);
         super.clearChanged();
     }
 }

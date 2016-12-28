@@ -17,11 +17,23 @@ public class FsmStructureListenerType {
 
     public static final int SET_FSM_STRUCTURE = 0;
     public static final int GET_FSM_STRUCTURE = 1;
-    public static final int FSM_STRUCTURE_LISTENER_NUM = 2; 
+    public static final int ADD_STATE = 2;
+    public static final int REMOVE_STATE = 3;
+    public static final int ADD_TRANSITION = 4;
+    public static final int REMOVE_TRANSITION = 5;
+    public static final int BIND_EVENT = 6;
+    public static final int UNBIND_EVENT = 7;
+    public static final int FSM_STRUCTURE_LISTENER_NUM = 8; 
 
     private static final String[] TypeString = {
         "SET_FSM_STRUCTURE",
         "GET_FSM_STRUCTURE",
+        "ADD_STATE",
+        "REMOVE_STATE",
+        "ADD_TRANSITION",
+        "REMOVE_TRANSITION",
+        "BIND_EVENT",
+        "UNBIND_EVENT",
         "FSM_STRUCTURE_LISTENER_NUM",
     };
 

@@ -9,15 +9,17 @@ import RTC.FsmStructureHolder;
 import RTC.ReturnCode_t;
 
 import _SDOPackage.NVListHolder;
+import _SDOPackage.SDOService;
 
 import jp.go.aist.rtm.RTC.util.NVUtil;
+import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
   /**
    * 
    * 
    * 
    */
-public class ExtendedFsmServiceProvider extends ExtendedFsmServicePOA implements SdoServiceProviderBase , ObjectCreator<SdoServiceProviderBase>, ObjectDestructor{
+public class ExtendedFsmServiceProvider extends ExtendedFsmServicePOA implements SdoServiceProviderBase, ObjectCreator<SdoServiceProviderBase>, ObjectDestructor{
     /**
      * {@.ja ctor of ExtendedFsmServiceProvider}
      * {@.en ctor of ExtendedFsmServiceProvider}
@@ -25,6 +27,7 @@ public class ExtendedFsmServiceProvider extends ExtendedFsmServicePOA implements
     public ExtendedFsmServiceProvider(){
         m_rtobj = null;
         System.out.println("ExtendedFsmServiceProvider()");
+        m_objref = this._this();
 
         // dummy code
         m_fsmStructure.name = "dummy_name";
@@ -62,6 +65,33 @@ public class ExtendedFsmServiceProvider extends ExtendedFsmServicePOA implements
 
 
     /**
+     * {@.ja 当該RTC.ExtendedFsmServiceのCORBAオブジェクト参照を取得する。}
+     * {@.en Gets CORBA object referense of this RTC.ExtendedFsmService}
+     * 
+     * @return 
+     *   {@.ja 当該PortのCORBAオブジェクト参照}
+     *   {@.en CORBA object referense of this OpenRTM.InPortCdr}
+     * 
+     */
+    public RTC.ExtendedFsmService _this() {
+        
+        if (this.m_objref == null) {
+            try {
+                this.m_objref = 
+                        ExtendedFsmServiceHelper.narrow(POAUtil.getRef(this));
+            } catch (Exception e) {
+                //rtcout.println(Logbuf.WARN, "The exception was caught.");
+                throw new IllegalStateException(e);
+            }
+        }
+        
+        //System.out.println("this.m_objref="+this.m_objref);
+        return this.m_objref;
+    }
+    public _SDOPackage.SDOService getSDOService() {
+        return this._this();
+    }
+    /**
      * {@.ja 初期化}
      * {@.en Initialization}
      */
@@ -69,6 +99,7 @@ public class ExtendedFsmServiceProvider extends ExtendedFsmServicePOA implements
                       final _SDOPackage.ServiceProfile profile){
         m_rtobj = rtobj;
         m_profile = profile;
+        //m_profile.service = this._this();
 /*
         NVListHolder nvholder = 
                 new NVListHolder(profile.properties);
@@ -166,6 +197,7 @@ public class ExtendedFsmServiceProvider extends ExtendedFsmServicePOA implements
     public ReturnCode_t
     set_fsm_structure(final RTC.FsmStructure fsm_structure) {
         m_fsmStructure = fsm_structure; 
+        setFsmStructure(m_fsmStructure);
         return ReturnCode_t.RTC_OK;
     }
 
@@ -206,6 +238,7 @@ public class ExtendedFsmServiceProvider extends ExtendedFsmServicePOA implements
     public ReturnCode_t
     get_fsm_structure(RTC.FsmStructureHolder fsm_structure) {
         fsm_structure.value = m_fsmStructure;
+        getFsmStructure(m_fsmStructure);
         return ReturnCode_t.RTC_OK;
     }
 
@@ -315,7 +348,8 @@ public class ExtendedFsmServiceProvider extends ExtendedFsmServicePOA implements
      *
      */
     public static void  ExtendedFsmServiceProviderInit() {
-        final SdoServiceProviderFactory<SdoServiceProviderBase,String> factory 
+//        final SdoServiceProviderFactory<SdoServiceProviderBase,String> factory 
+        final SdoServiceProviderFactory<ExtendedFsmServiceProvider,String> factory 
             = SdoServiceProviderFactory.instance();
 
         factory.addFactory(ExtendedFsmServiceHelper.id(),
@@ -324,10 +358,39 @@ public class ExtendedFsmServiceProvider extends ExtendedFsmServicePOA implements
     
     }
 
+    /**
+     * {@.ja FsmActionListener のホルダをセットする}
+     * {@.en Setting FsmActionListener holder}
+     * <p>
+     *
+     * @param fsmActionListeners 
+     *   {@.ja FsmActionListeners オブジェクトのポインタ}
+     *   {@.en a pointer to FsmActionListeners}
+     *
+     */
+    public void setFsmActionListenerHolder(FsmActionListeners fsmActionListeners){
+        m_fsmActionListeners = fsmActionListeners;
+    }
+    protected void setFsmStructure(FsmStructure fstruct)
+    {
+      
+      if (m_fsmActionListeners != null) {
+          m_fsmActionListeners.structure_[FsmStructureListenerType.SET_FSM_STRUCTURE].notify(fstruct);
+      }
+    }
+    protected void getFsmStructure(FsmStructure fstruct)
+    {
+      if (m_fsmActionListeners != null) {
+          m_fsmActionListeners.structure_[FsmStructureListenerType.GET_FSM_STRUCTURE].notify(fstruct);
+      }
+    }
+
     private _SDOPackage.ServiceProfile m_profile;
     private RTObject_impl m_rtobj;
     private FsmStructure m_fsmStructure = new  FsmStructure();
     private String m_fsmState = new String();
 
+    private RTC.ExtendedFsmService m_objref;
+    protected FsmActionListeners m_fsmActionListeners = null;
 };
 
