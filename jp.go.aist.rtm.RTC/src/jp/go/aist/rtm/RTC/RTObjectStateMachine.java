@@ -34,9 +34,10 @@ public class RTObjectStateMachine {
         m_dfcVar  = null;
         m_fsmVar  = null;
         m_modeVar = null;
-		m_rtobjPtr = null;
-		m_measure = false;
-		m_count = 0;
+        m_rtobjPtr = null;
+        m_fsmobjPtr = null;
+        m_measure = false;
+        m_count = 0;
         // Setting Action callback objects
         setComponentAction(comp);
         setDataFlowComponentAction(comp);
@@ -58,6 +59,10 @@ public class RTObjectStateMachine {
                              new onError());
         m_sm.setExitAction  (LifeCycleState.ERROR_STATE,
                              new onReset());
+
+        m_sm.setDoAction    (LifeCycleState.ACTIVE_STATE,
+                             new onAction());
+
         // Setting inital state
         StateHolder<LifeCycleState> st = new StateHolder<LifeCycleState>();
         st.prev = LifeCycleState.INACTIVE_STATE;
@@ -234,6 +239,22 @@ public class RTObjectStateMachine {
                 return; 
             }
             if (m_caVar.on_reset(m_id) != ReturnCode_t.RTC_OK) {
+                m_sm.goTo(LifeCycleState.ERROR_STATE);
+                return;
+            }
+            return;
+        }
+    }
+    /**
+     * {@.ja onActionアクション定義用抽象クラス}
+     */
+    private class onAction implements StateAction {
+        public void doAction(StateHolder state) {
+            if (!m_fsm) { 
+                return; 
+            }
+            ReturnCode_t ret = m_fsmVar.on_action(m_id);
+            if (ret != ReturnCode_t.RTC_OK) {
                 m_sm.goTo(LifeCycleState.ERROR_STATE);
                 return;
             }
@@ -580,11 +601,12 @@ public class RTObjectStateMachine {
     private DataFlowComponentAction  m_dfcVar;
     private FsmParticipantAction     m_fsmVar;
     private MultiModeComponentAction m_modeVar;
-	private RTObject_impl m_rtobjPtr;
-	private boolean m_measure;
-	private TimeMeasure m_svtMeasure = new TimeMeasure();
-	private TimeMeasure m_refMeasure = new TimeMeasure();
-	private int m_count;
+    private RTObject_impl m_rtobjPtr;
+    private FsmParticipantBase m_fsmobjPtr;
+    private boolean m_measure;
+    private TimeMeasure m_svtMeasure = new TimeMeasure();
+    private TimeMeasure m_refMeasure = new TimeMeasure();
+    private int m_count;
     //    char dara[1000];
     // Component action invoker
     

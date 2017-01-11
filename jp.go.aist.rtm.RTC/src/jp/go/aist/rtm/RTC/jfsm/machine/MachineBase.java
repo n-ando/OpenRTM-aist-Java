@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import jp.go.aist.rtm.RTC.ExtendedFsmServiceProvider;
 import jp.go.aist.rtm.RTC.jfsm.Event;
 import jp.go.aist.rtm.RTC.jfsm.State;
 import jp.go.aist.rtm.RTC.jfsm.StateDef;
@@ -15,7 +16,7 @@ import jp.go.aist.rtm.RTC.jfsm.StateDef;
 //import org.slf4j.LoggerFactory;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
-public class MachineBase {
+public class MachineBase extends ExtendedFsmServiceProvider {
 
     //private static final Logger LOGGER = LoggerFactory.getLogger(MachineBase.class);
 

@@ -17,11 +17,11 @@ import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
-import OpenRTM.DataFlowComponent;
 import RTC.ExecutionContextService;
 import RTC.ExecutionContextServiceHelper;
 import RTC.ExecutionContextServicePOA;
 import RTC.ExecutionKind;
+import RTC.FsmParticipant;
 import RTC.LifeCycleState;
 import RTC.LightweightRTObject;
 import RTC.ReturnCode_t;
@@ -49,11 +49,11 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * <p>
      * {@.ja デフォルトコンストラクタ
      * プロファイルに以下の項目を設定する。
-     *  - kind : PERIODIC
+     *  - kind : EVENT_DRIVEN
      *  - rate : 0.0}
      * {@.en Default Constructor
      * Set the following items to profile.
-     *  - kind : PERIODIC
+     *  - kind : EVENT_DRIVEN
      *  - rate : 0.0}
      */
     public EventDrivenExecutionContext() {
@@ -62,10 +62,12 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         m_svc = false;
         m_nowait = false;
         setObjRef((ExecutionContextService)this.__this());
-        setKind(ExecutionKind.PERIODIC);
+        setKind(ExecutionKind.EVENT_DRIVEN);
+/*
         setRate(1000);
         rtcout.println(Logbuf.DEBUG, "Actual period: " + m_profile.getPeriod().sec() + " [sec], "
                 + m_profile.getPeriod().usec() + " [usec]");
+*/
     }
 
 
@@ -99,7 +101,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         rtcout.println(Logbuf.TRACE, "EventDrivenExecutionContext.setObjRef()");
         m_worker.setECRef(ref);
         m_profile.setObjRef(ref);
-		m_ref = ref;
+        m_ref = ref;
     }
 
     /**
@@ -223,6 +225,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 
      * @return 実行判定結果
      */
+    @Override
     public boolean is_running() {
         return isRunning();
     }
@@ -476,6 +479,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 
      * @return 実行結果
      */
+    @Override
     public ReturnCode_t start() {
 
         rtcout.println(Logbuf.TRACE, "EventDrivenExecutionContext.start()");
@@ -508,6 +512,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 
      * @return 実行結果
      */
+    @Override
     public ReturnCode_t stop(){
 
         rtcout.println(Logbuf.TRACE, "EventDrivenExecutionContext.stop()");
@@ -538,6 +543,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 
      * @return 実行周期(Hz)
      */
+    @Override
     public double get_rate() {
 
         rtcout.println(Logbuf.TRACE, "EventDrivenExecutionContext.get_rate()");
@@ -555,6 +561,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 
      * @param rate 実行周期(Hz)
      */
+    @Override
     public ReturnCode_t set_rate(double rate) {
 
         rtcout.println(Logbuf.TRACE, "EventDrivenExecutionContext.set_rate("+rate+")");
@@ -586,6 +593,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 
      * @return 実行結果
      */
+    @Override
     public ReturnCode_t activate_component(LightweightRTObject comp) {
 
         rtcout.println(Logbuf.TRACE, "EventDrivenExecutionContext.activate_component()");
@@ -695,6 +703,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 
      * @return 実行結果
      */
+    @Override
     public ReturnCode_t deactivate_component(LightweightRTObject comp) {
 
         rtcout.println(Logbuf.TRACE, "EventDrivenExecutionContext.deactivate_component()");
@@ -803,6 +812,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 
      * @return 実行結果
      */
+    @Override
     public ReturnCode_t reset_component(LightweightRTObject comp){
 
         rtcout.println(Logbuf.TRACE, "EventDrivenExecutionContext.reset_component()");
@@ -911,6 +921,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 
      * @return コンポーネント状態
      */
+    @Override
     public LifeCycleState get_component_state(LightweightRTObject comp) {
 
         rtcout.println(Logbuf.TRACE, "EventDrivenExecutionContext.get_component_state()");
@@ -937,6 +948,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * 
      * @return ExecutionKind
      */
+    @Override
     public ExecutionKind get_kind() {
 
         rtcout.println(Logbuf.TRACE, "EventDrivenExecutionContext.get_kind() ="
@@ -980,6 +992,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *
      *
      */
+    @Override
     public ReturnCode_t add_component(LightweightRTObject comp) {
 
         rtcout.println(Logbuf.TRACE, 
@@ -1070,6 +1083,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *   {@.en The return code of ReturnCode_t type}
      *
      */
+    @Override
     public ReturnCode_t remove_component(LightweightRTObject comp) {
 
         rtcout.println(Logbuf.TRACE, 
@@ -1127,7 +1141,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
 
     /**
-     * <p>DataFlowComponentのAction定義用抽象クラスです。</p>
+     * <p>FsmParticipantComponentのAction定義用抽象クラスです。</p>
      */
     protected abstract class DFPBase {
         /**
@@ -1141,12 +1155,12 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             m_sm.setListener(this);
             StateHolder st = new StateHolder();
             m_sm.setEntryAction(LifeCycleState.ACTIVE_STATE, new onActivated());
-            m_sm.setDoAction(LifeCycleState.ACTIVE_STATE, new onExecute());
-            m_sm.setPostDoAction(LifeCycleState.ACTIVE_STATE, new onStateUpdate());
             m_sm.setExitAction(LifeCycleState.ACTIVE_STATE, new onDeactivated());
             m_sm.setEntryAction(LifeCycleState.ERROR_STATE, new onAborting());
             m_sm.setDoAction(LifeCycleState.ERROR_STATE, new onError());
             m_sm.setExitAction(LifeCycleState.ERROR_STATE, new onReset());
+
+            m_sm.setDoAction(LifeCycleState.ACTIVE_STATE, new onAction());
 
             st.prev = LifeCycleState.INACTIVE_STATE;
             st.curr = LifeCycleState.INACTIVE_STATE;
@@ -1160,22 +1174,6 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         private class onActivated implements StateAction {
             public void doAction(StateHolder state) {
                 on_activated(state);
-            }
-        }
-        /**
-         * <p>onExecuteアクション定義用抽象クラスです。</p>
-         */
-        private class onExecute implements StateAction {
-            public void doAction(StateHolder state) {
-                on_execute(state);
-            }
-        }
-        /**
-         * <p>onStateUpdateアクション定義用抽象クラスです。</p>
-         */
-        private class onStateUpdate implements StateAction {
-            public void doAction(StateHolder state) {
-                on_state_update(state);
             }
         }
         /**
@@ -1210,6 +1208,14 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                 on_reset(state);
             }
         }
+        /**
+         * <p>onActionアクション定義用抽象クラスです。</p>
+         */
+        private class onAction implements StateAction {
+            public void doAction(StateHolder state) {
+                on_action(state);
+            }
+        }
 
         /**
          * <p>ExecutionContextのstart時に呼ばれる抽象メソッドです。</p>
@@ -1241,18 +1247,9 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
          */
         public abstract void on_reset(final StateHolder st);
         /**
-         * <p>コンポーネント実行時に呼ばれる抽象メソッドです。</p>
+         * <p>action時に呼ばれる抽象メソッドです。</p>
          */
-        public abstract void on_execute(final StateHolder st);
-        /**
-         * <p>コンポーネントの実行時に呼ばれる抽象メソッドです。</p>
-         */
-        public abstract void on_state_update(final StateHolder st);
-
-        /**
-         * <p>ExecutionContextの実行周期変更時に呼ばれる抽象メソッドです。</p>
-         */
-        public abstract void on_rate_changed();
+        public abstract void on_action(final StateHolder st);
         /**
          * <p>ExecutionContextの状態遷移用ワーカーです。</p>
          */
@@ -1290,7 +1287,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
 
     /**
-     * <p>DataFlowComponentのAction定義用抽象クラスです。</p>
+     * <p>FsmParticipantのAction定義用抽象クラスです。</p>
      */
     protected class DFP extends DFPBase {
         /**
@@ -1299,7 +1296,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
          * @param obj 対象コンポーネント
          * @param id ExecutionContextのID
          */
-        public DFP(DataFlowComponent obj, int id) {
+        public DFP(FsmParticipant obj, int id) {
             super(id);
             m_obj = obj;
         }
@@ -1358,32 +1355,16 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             return;
         }
         /**
-         * <p>onExecuteアクション定義用メソッドです。</p>
+         * <p>onActionアクション定義用メソッドです。</p>
          */
-        public void on_execute(final StateHolder st) {
-            if( m_obj.on_execute(ec_id) != ReturnCode_t.RTC_OK) {
+        public void on_action(final StateHolder st) {
+            if( m_obj.on_action(ec_id) != ReturnCode_t.RTC_OK) {
                 m_sm.goTo(LifeCycleState.ERROR_STATE);
                 return;
             }  
             return;
         }
-        /**
-         * <p>onStateUpdateアクション定義用メソッドです。</p>
-         */
-        public void on_state_update(final StateHolder st) {
-            if( m_obj.on_state_update(ec_id) != ReturnCode_t.RTC_OK) {
-                m_sm.goTo(LifeCycleState.ERROR_STATE);
-                return;
-            }
-            return;
-        }
-        /**
-         * <p>onRateChangedアクション定義用メソッドです。</p>
-         */
-        public void on_rate_changed() {
-            m_obj.on_rate_changed(ec_id);
-        }
-        private DataFlowComponent m_obj; 
+        private FsmParticipant m_obj; 
     }
 
     /**
@@ -1397,7 +1378,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
          * @param dfp ExecutionContextの対象StateMachine
          * @param id ExecutionContextのID
          */
-        public Comp(LightweightRTObject ref, DataFlowComponent dfp, int id) {
+        public Comp(LightweightRTObject ref, FsmParticipant dfp, int id) {
             this._ref = ref;
             this._sm = new DFP(dfp, id);
         }
@@ -1456,12 +1437,6 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
          */
         public void invoke_on_shutdown(){
             this._sm.on_shutdown();
-        }
-        /**
-         * <p>RateChanged時に呼び出されるメソッドです。</p>
-         */
-        public void invoke_on_rate_changed(){
-            this._sm.on_rate_changed();
         }
         /**
          * <p>StateMachine管理対象コンポーネントです。</p>
@@ -1709,6 +1684,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *         BAD_PARAMETER: Invalid value. The value might be negative.}
      *
      */
+    @Override
     public ReturnCode_t setRate(double rate) {
       return m_profile.setRate(rate);
     }
@@ -1891,12 +1867,9 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         rtcout.println(Logbuf.DEBUG, "Configuration " + key +" not found.");
         return false;
     }
-    /*!
-     * @if jp
-     * @brief Propertiesから実行コンテキストをセットする
-     * @else
-     * @brief Setting execution rate from given properties.
-     * @endif
+    /**
+     * {@.ja Propertiesから実行コンテキストをセットする}
+     * {@.en Setting execution rate from given properties.}
      */
     public boolean setExecutionRate(Properties props)
     {
