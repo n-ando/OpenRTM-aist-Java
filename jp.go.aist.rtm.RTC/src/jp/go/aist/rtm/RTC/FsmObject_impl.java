@@ -64,12 +64,12 @@ public class FsmObject_impl extends FsmObjectPOA {
      * with * ReturnCode_t::BAD_PARAMETER.}
      *
      * @param ids 
-     *   {@.ja }
-     *   {@.en }
+     *   {@.ja Event Message}
+     *   {@.en Event Message}
      *
      * @param id 
-     *   {@.ja }
-     *   {@.en }
+     *   {@.ja EC handle}
+     *   {@.en EC handle}
      *
      * @return 
      *   {@.ja ReturnCode_t 型のリターンコード}

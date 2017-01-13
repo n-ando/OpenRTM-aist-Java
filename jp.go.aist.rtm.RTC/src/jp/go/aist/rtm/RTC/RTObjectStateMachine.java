@@ -602,7 +602,7 @@ public class RTObjectStateMachine {
     private FsmParticipantAction     m_fsmVar;
     private MultiModeComponentAction m_modeVar;
     private RTObject_impl m_rtobjPtr;
-    private FsmParticipantBase m_fsmobjPtr;
+    private FiniteStateMachineComponentBase m_fsmobjPtr;
     private boolean m_measure;
     private TimeMeasure m_svtMeasure = new TimeMeasure();
     private TimeMeasure m_refMeasure = new TimeMeasure();

@@ -38,9 +38,15 @@ import org.omg.CORBA.ORB;
 import org.omg.CORBA.SystemException;
 import org.omg.PortableServer.POA;
 
+import OpenRTM.DataFlowFiniteStateMachineComponent;
+import OpenRTM.DataFlowFiniteStateMachineComponentHelper;
+import OpenRTM.DataFlowFiniteStateMachineComponentPOA;
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
 import OpenRTM.DataFlowComponentPOA;
+import OpenRTM.FiniteStateMachineComponent;
+
+
 import RTC.ComponentProfile;
 import RTC.ConnectorProfile;
 import RTC.ExecutionContext;
@@ -49,11 +55,13 @@ import RTC.ExecutionContextListHolder;
 import RTC.ExecutionContextService;
 import RTC.ExecutionContextServiceHelper;
 import RTC.ExecutionContextServiceListHolder;
+//import RTC.FsmParticipant;
 import RTC.LightweightRTObject;
 import RTC.PortProfile;
 import RTC.PortService;
 import RTC.RTObject;
 import RTC.RTObjectHelper;
+import RTC.RTObjectPOA;
 import RTC.ReturnCode_t;
 import _SDOPackage.Configuration;
 import _SDOPackage.DeviceProfile;
@@ -99,7 +107,13 @@ import _SDOPackage.ServiceProfileListHolder;
    * (In current implementation, since only Periodic Sampled Data Processing is
    * supported, this class inherits dataFlowComponent directly.)}
    */
-public class RTObject_impl extends DataFlowComponentPOA {
+//public class RTObject_impl extends DataFlowFiniteStateMachineComponentPOA {
+//public class RTObject_impl extends DataFlowComponentPOA {
+//public class RTObject_impl<COMP_TYPE extends RTObject> implements DataFlowComponent, FiniteStateMachineComponent{
+//public class RTObject_impl<COMP_TYPE extends RTObject> implements DataFlowComponent, FiniteStateMachineComponent{
+//public class RTObject_impl<COMP_TYPE extends org.omg.CORBA.portable.InvokeHandler> extends COMP_TYPE {
+//public class RTObject_impl<COMP_TYPE extends RTObject> implements DataFlowComponent, FiniteStateMachineComponent{
+public class RTObject_impl<COMP_TYPE extends RTObject> extends RTObjectPOA{
 
     /**
      * {@.ja RTコンポーネントのデフォルト・コンポーネント・プロファイル。}
@@ -228,7 +242,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
      *   {@.ja DataFlowComponentオブジェクト}
      *   {@.en OpenRTM.DataFlowComponent object.}
      */
-    public DataFlowComponent _this() {
+    //public RTObject _this(){
+    //public DataFlowFiniteStateMachineComponent _this(){
+    //public DataFlowComponent _this() {
+    public COMP_TYPE _this() {
         if (this.m_objref == null) {
             try {
                 this.m_objref = RTObjectHelper.narrow(POAUtil.getRef(this));
@@ -237,7 +254,12 @@ public class RTObject_impl extends DataFlowComponentPOA {
             }
         }
         
-        return DataFlowComponentHelper.narrow(this.m_objref);
+        
+         return (COMP_TYPE) this.m_objref;
+         //return DataFlowComponentHelper.narrow(this.m_objref);
+         //return DataFlowFiniteStateMachineComponentHelper.narrow(this.m_objref);
+         //return this.m_objref;
+
     }
 
     /**
@@ -1804,6 +1826,22 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
         postOnRateChanged(ec_id, ret);
         return ret;
+    }
+    /**
+     *
+     * @param ec_id 
+     *   {@.ja 対象ExecutionContextのID}
+     *   {@.en ID of target ExecutionContext}
+     *
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type}
+     */
+    public ReturnCode_t on_action(int ec_id) {
+
+        rtcout.println(Logbuf.TRACE, "on_action(" + ec_id + ")");
+        return ReturnCode_t.RTC_OK;
+
     }
 
     /**
