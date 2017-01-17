@@ -4,15 +4,15 @@ import jp.go.aist.rtm.RTC.util.POAUtil;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
-import OpenRTM.FiniteStateMachineComponent;
-import OpenRTM.FiniteStateMachineComponentHelper;
+//import OpenRTM.FiniteStateMachineComponent;
+//import OpenRTM.FiniteStateMachineComponentHelper;
 
 import RTC.ComponentProfile;
 import RTC.ExecutionContext;
 import RTC.ExecutionContextListHolder;
-//import RTC.FsmParticipant;
-//import RTC.FsmParticipantHelper;
-//import RTC.FsmParticipantPOA;
+import RTC.FsmParticipant;
+import RTC.FsmParticipantHelper;
+import RTC.FsmParticipantPOA;
 import RTC.PortService;
 import RTC.ReturnCode_t;
 
@@ -37,8 +37,8 @@ public class FiniteStateMachineComponentBase  extends RTObject_impl {
     public FiniteStateMachineComponentBase(Manager manager) {
         super(manager);
         rtcout = new Logbuf("FiniteStateMachineComponentBase");
-        m_ref = this._this();
-        m_objref = m_ref;
+        //m_ref = this._this();
+        //m_objref = m_ref;
     }
     
     /**
@@ -47,11 +47,12 @@ public class FiniteStateMachineComponentBase  extends RTObject_impl {
      * @return 
      *   {@.ja 当該オブジェクトのCORBAオブジェクト参照}
      */
-    public FiniteStateMachineComponent _this() {
+/*
+    public RTObject _this() {
         
         if (this.m_ref == null) {
             try {
-                this.m_ref = FiniteStateMachineComponentHelper.narrow(POAUtil.getRef(this));
+                this.m_ref = FsmParticipantHelper.narrow(POAUtil.getRef(this));
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
@@ -59,6 +60,7 @@ public class FiniteStateMachineComponentBase  extends RTObject_impl {
         
         return this.m_ref;
     }
+*/
 
     /**
      * {@.ja [CORBA interface] RTCを初期化する}
@@ -759,7 +761,7 @@ public class FiniteStateMachineComponentBase  extends RTObject_impl {
 
 
 
-    private FiniteStateMachineComponent m_ref;
+    private FsmParticipant m_ref;
     /**
      * {@.ja ロガーストリーム}
      * {@.en Logger stream}

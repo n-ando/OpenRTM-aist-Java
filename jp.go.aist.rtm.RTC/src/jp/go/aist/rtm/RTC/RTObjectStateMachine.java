@@ -35,7 +35,7 @@ public class RTObjectStateMachine {
         m_fsmVar  = null;
         m_modeVar = null;
         m_rtobjPtr = null;
-        m_fsmobjPtr = null;
+//        m_fsmobjPtr = null;
         m_measure = false;
         m_count = 0;
         // Setting Action callback objects
@@ -59,10 +59,10 @@ public class RTObjectStateMachine {
                              new onError());
         m_sm.setExitAction  (LifeCycleState.ERROR_STATE,
                              new onReset());
-
-        m_sm.setDoAction    (LifeCycleState.ACTIVE_STATE,
-                             new onAction());
-
+//
+//        m_sm.setDoAction    (LifeCycleState.ACTIVE_STATE,
+//                             new onAction());
+//
         // Setting inital state
         StateHolder<LifeCycleState> st = new StateHolder<LifeCycleState>();
         st.prev = LifeCycleState.INACTIVE_STATE;
@@ -602,7 +602,7 @@ public class RTObjectStateMachine {
     private FsmParticipantAction     m_fsmVar;
     private MultiModeComponentAction m_modeVar;
     private RTObject_impl m_rtobjPtr;
-    private FiniteStateMachineComponentBase m_fsmobjPtr;
+//    private FiniteStateMachineComponentBase m_fsmobjPtr;
     private boolean m_measure;
     private TimeMeasure m_svtMeasure = new TimeMeasure();
     private TimeMeasure m_refMeasure = new TimeMeasure();

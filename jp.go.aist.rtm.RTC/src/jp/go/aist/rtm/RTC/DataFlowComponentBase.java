@@ -4,7 +4,6 @@ import jp.go.aist.rtm.RTC.util.POAUtil;
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
 
-import RTC.RTObject;
 
 /**
  * {@.ja データフローコンポーネントのベースクラスです。}
@@ -16,8 +15,7 @@ import RTC.RTObject;
  * {@.en Inherit this class when implementing various data flow 
  * type RT-Components.}
  */
-//public class DataFlowComponentBase extends RTObject_impl {
-public class DataFlowComponentBase extends RTObject_impl<DataFlowComponent> {
+public class DataFlowComponentBase extends RTObject_impl {
 
     /**
      * {@.ja コンストラクタ}
@@ -30,7 +28,7 @@ public class DataFlowComponentBase extends RTObject_impl<DataFlowComponent> {
     public DataFlowComponentBase(Manager manager) {
         
         super(manager);
-        m_ref = DataFlowComponentHelper.narrow(this._this());
+        m_ref = this._this();
         m_objref = m_ref;
     }
     
@@ -40,9 +38,7 @@ public class DataFlowComponentBase extends RTObject_impl<DataFlowComponent> {
      * @return 
      *   {@.ja 当該オブジェクトのCORBAオブジェクト参照}
      */
-    //public RTObject _this() {
     public DataFlowComponent _this() {
-        
         if (this.m_ref == null) {
             try {
                 this.m_ref = DataFlowComponentHelper.narrow(POAUtil.getRef(this));

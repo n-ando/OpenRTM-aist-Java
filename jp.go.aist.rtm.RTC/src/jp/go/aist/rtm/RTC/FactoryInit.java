@@ -75,6 +75,6 @@ public class FactoryInit {
         NodeNumberingPolicy.NodeNumberingPolicyInit();
         NamingServiceNumberingPolicy.NamingServiceNumberingPolicyInit();
 
-        ExtendedFsmServiceProvider.ExtendedFsmServiceProviderInit();
+        //ExtendedFsmServiceProvider.ExtendedFsmServiceProviderInit();
     }
 }

@@ -154,6 +154,7 @@ System.err.println("Manager's IOR information: "+ior);
      *   {@.en RTM.Manager object.}
      */
     public RTM.Manager _this() {
+System.out.println("--20170113 00D00");
         if (this.m_objref == null) {
             try {
                 this.m_objref = ManagerHelper.narrow(POAUtil.getRef(this));

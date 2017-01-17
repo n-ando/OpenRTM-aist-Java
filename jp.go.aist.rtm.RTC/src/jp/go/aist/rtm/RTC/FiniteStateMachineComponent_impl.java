@@ -41,9 +41,9 @@ import org.omg.PortableServer.POA;
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
 import OpenRTM.DataFlowComponentPOA;
-import OpenRTM.FiniteStateMachineComponent;
-import OpenRTM.FiniteStateMachineComponentHelper;
-import OpenRTM.FiniteStateMachineComponentPOA;
+//import OpenRTM.FiniteStateMachineComponent;
+//import OpenRTM.FiniteStateMachineComponentHelper;
+//import OpenRTM.FiniteStateMachineComponentPOA;
 
 import RTC.ComponentProfile;
 import RTC.ConnectorProfile;
@@ -76,6 +76,9 @@ import _SDOPackage.ServiceProfile;
 import _SDOPackage.ServiceProfileHolder;
 import _SDOPackage.ServiceProfileListHolder;
 
+import RTC.FsmParticipant;
+import RTC.FsmParticipantHelper;
+import RTC.FsmParticipantPOA;
   /**
    * {@.ja RTコンポーネントクラス。}
    * {@.en RT-Component class}
@@ -103,7 +106,7 @@ import _SDOPackage.ServiceProfileListHolder;
    * (In current implementation, since only Periodic Sampled Data Processing is
    * supported, this class inherits dataFlowComponent directly.)}
    */
-public class FiniteStateMachineComponent_impl extends FiniteStateMachineComponentPOA{
+public class FiniteStateMachineComponent_impl extends FsmParticipantPOA{
 
     /**
      * {@.ja RTコンポーネントのデフォルト・コンポーネント・プロファイル。}
@@ -158,7 +161,7 @@ public class FiniteStateMachineComponent_impl extends FiniteStateMachineComponen
             manager.getConfig().getProperty("sdo.service.consumer.enabled_services"));
         //m_sdoservice = new SdoServiceAdmin(this);
 
-        m_objref = this._this();
+        //m_objref = this._this();
         m_pSdoConfigImpl = new Configuration_impl(m_configsets,m_sdoservice);
         m_pSdoConfig = m_pSdoConfigImpl.getObjRef();
         if( m_ecMine == null ) {
@@ -203,7 +206,7 @@ public class FiniteStateMachineComponent_impl extends FiniteStateMachineComponen
         rtcout = new Logbuf("FiniteStateMachineComponent_impl");
         //m_sdoservice = new SdoServiceAdmin(this);
         
-        m_objref = this._this();
+        //m_objref = this._this();
         m_pSdoConfigImpl = new Configuration_impl(m_configsets,m_sdoservice);
         m_pSdoConfig = m_pSdoConfigImpl.getObjRef();
 
@@ -232,7 +235,7 @@ public class FiniteStateMachineComponent_impl extends FiniteStateMachineComponen
      *   {@.ja DataFlowComponentオブジェクト}
      *   {@.en OpenRTM.DataFlowComponent object.}
      */
-    public FiniteStateMachineComponent _this() {
+    public FsmParticipant _this() {
         if (this.m_objref == null) {
             try {
                 this.m_objref = RTObjectHelper.narrow(POAUtil.getRef(this));
@@ -242,7 +245,7 @@ public class FiniteStateMachineComponent_impl extends FiniteStateMachineComponen
         }
         
         
-         return FiniteStateMachineComponentHelper.narrow(this.m_objref);
+         return FsmParticipantHelper.narrow(this.m_objref);
     }
 
     /**
