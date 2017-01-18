@@ -353,9 +353,23 @@ public class OutPortPushConnector extends OutPortConnector {
      * <p> create publisher </p>
      */
     protected PublisherBase createPublisher(ConnectorInfo profile) {
-        String pub_type;
-        pub_type = profile.properties.getProperty("subscription_type",
-                                              "flush");
+        String pub_type="";
+        pub_type = profile.properties.getProperty("io_mode");
+        if(pub_type.isEmpty()) {
+            pub_type = profile.properties.getProperty("subscription_type",
+                                                  "flush");
+         
+            if(pub_type.equals("flush")) {
+                profile.properties.setProperty("io_mode","block");
+            }
+            else if(pub_type.equals("new")) {
+                profile.properties.setProperty("io_mode","nonblock");
+            }
+            else {
+                profile.properties.setProperty("io_mode",pub_type);
+            }
+            
+        }
         pub_type = StringUtil.normalize(pub_type);
         PublisherBaseFactory<PublisherBase,String> factory  
                 = PublisherBaseFactory.instance();

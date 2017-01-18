@@ -634,6 +634,12 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         factory.addFactory(id_name,
                     new PublisherNew(),
                     new PublisherNew());
+        // FSM4RTC formal/16-04-01 p.25
+        // In the FSM4RTC specification, publisher type is defined as "io_mode"
+        // Publisher "new" is functionally equals to "io_mode: nonblock".
+        factory.addFactory("nonblock",
+                    new PublisherNew(),
+                    new PublisherNew());
     
     }
     /**

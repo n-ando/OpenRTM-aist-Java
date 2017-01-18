@@ -75,6 +75,12 @@ public abstract class OutPortBase extends PortBase {
         rtcout.println(Logbuf.DEBUG,
                        "available subscription_type: "+pubs);
         addProperty("dataport.subscription_type", pubs, String.class);
+
+        // FSM4RTC formal/16-04-01 p.25
+        // In the FSM4RTC specification, publisher type is defined as "io_mode"
+        addProperty("dataport.io_mode",  pubs, String.class);
+
+
     }
 
     /**

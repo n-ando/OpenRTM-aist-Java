@@ -264,6 +264,13 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
         factory.addFactory(id_name,
                     new PublisherFlush(),
                     new PublisherFlush());
+
+        // FSM4RTC formal/16-04-01 p.25
+        // In the FSM4RTC specification, publisher type is defined as "io_mode"
+        // Publisher "flush" is functionally equals to "io_mode: block".
+        factory.addFactory("block",
+                    new PublisherFlush(),
+                    new PublisherFlush());
     
     }
     /**
