@@ -232,9 +232,9 @@ public class StaticFsmImpl extends DataFlowComponentBase {
           while (!m_que.isEmpty()) {
               Event ev = m_que.poll();
               machine_.dispatch(ev);
-              //machine_.current().EvConfig(m_EvConfig_val);
           }
       }
+      machine_.current().on_do();
       return super.onExecute(ec_id);
   }
 

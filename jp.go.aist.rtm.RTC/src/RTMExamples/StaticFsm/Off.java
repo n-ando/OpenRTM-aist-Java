@@ -28,6 +28,7 @@ public class Off extends Top {
     @Override
     public void EvOn(TimedLong param){
         System.out.println("Off::EvOn");
+        setState(new State(NotShooting.class));
     }
 }
 
