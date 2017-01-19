@@ -228,11 +228,12 @@ public class StaticFsmImpl extends DataFlowComponentBase {
    */
   @Override
   protected ReturnCode_t onExecute(int ec_id) {
-      System.out.println(m_que.size());
-      while (!m_que.isEmpty()) {
-          Event ev = m_que.poll();
-          machine_.dispatch(ev);
-          //machine_.current().EvConfig(m_EvConfig_val);
+      synchronized (m_que) {
+          while (!m_que.isEmpty()) {
+              Event ev = m_que.poll();
+              machine_.dispatch(ev);
+              //machine_.current().EvConfig(m_EvConfig_val);
+          }
       }
       return super.onExecute(ec_id);
   }
@@ -458,7 +459,11 @@ public class StaticFsmImpl extends DataFlowComponentBase {
           System.out.println("Listener:       "+m_name);
           System.out.println("Data:           "+data.data);
           System.out.println("------------------------------");
-          m_que.offer(new Event(m_name,(Object)data));
+          synchronized (m_que) {
+              Class<?>[] args = new Class<?>[1];
+              args[0] = data.getClass();
+              m_que.offer(new Event(m_name,args,(Object)data));
+          }
       }
 
       private String m_name;

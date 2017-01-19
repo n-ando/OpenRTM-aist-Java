@@ -33,7 +33,7 @@ public class StaticFsmComp implements ModuleInitProc {
         mgr.registerFactory(prop, new StaticFsm(), new StaticFsm());
 
         // Create a component
-        System.out.println("Creating a component: \"ConsoleOut\"....");
+        System.out.println("Creating a component: \"StaticFsm\"....");
         RTObject_impl comp = mgr.createComponent("StaticFsm");
         if( comp==null ) {
     	    System.err.println("Component create failed.");
