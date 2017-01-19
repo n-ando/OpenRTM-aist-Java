@@ -10,9 +10,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.jfsm.Event;
 import jp.go.aist.rtm.RTC.jfsm.Machine;
+import jp.go.aist.rtm.RTC.jfsm.machine.EventBase;
 import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.port.InPort;
 import jp.go.aist.rtm.RTC.port.OutPort;
@@ -97,33 +102,38 @@ public class StaticFsmImpl extends DataFlowComponentBase {
       addInPort("EvShutterHalf", m_EvShutterHalfIn);
       addInPort("EvShutterReleased", m_EvShutterReleasedIn);
       
+      machine_ = new Machine<>(Top.class, CameraProtocol.class, null);
+      m_que = new ArrayDeque<Event>();
+
+
       m_EvConfigIn.addConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("ON_RECEIVED"));
+                            new DataListener("EvConfig",m_que));
       m_EvInFocusIn.addConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("ON_RECEIVED"));
+                            new DataListener("EvInFocus",m_que));
       m_EvOffIn.addConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("ON_RECEIVED"));
+                            new DataListener("EvOff",m_que));
       m_EvOnIn.addConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("ON_RECEIVED"));
+                            new DataListener("EvOn",m_que));
       m_EvShutterFullIn.addConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("ON_RECEIVED"));
+                            new DataListener("EvShutter",m_que));
       m_EvShutterHalfIn.addConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("ON_RECEIVED"));
+                            new DataListener("EvShutterHalf",m_que));
       m_EvShutterReleasedIn.addConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("ON_RECEIVED"));
+                            new DataListener("EvShutterReleased",m_que));
 
       // Set OutPort buffer
       addOutPort("out", m_outOut);
       // </rtc-template>
       
-      machine_ = new Machine<>(Top.class, CameraProtocol.class, null);
+      
+
       return super.onInitialize();
   }
 
@@ -218,6 +228,12 @@ public class StaticFsmImpl extends DataFlowComponentBase {
    */
   @Override
   protected ReturnCode_t onExecute(int ec_id) {
+      System.out.println(m_que.size());
+      while (!m_que.isEmpty()) {
+          Event ev = m_que.poll();
+          machine_.dispatch(ev);
+          //machine_.current().EvConfig(m_EvConfig_val);
+      }
       return super.onExecute(ec_id);
   }
 
@@ -356,7 +372,8 @@ public class StaticFsmImpl extends DataFlowComponentBase {
    */
   protected OutPort<TimedLong> m_outOut;
 
-  Machine<Top, CameraProtocol> machine_;
+  private Machine<Top, CameraProtocol> machine_;
+  private Queue<Event> m_que;
     
   // </rtc-template>
 
@@ -426,10 +443,12 @@ public class StaticFsmImpl extends DataFlowComponentBase {
           }
       }
   }
+
   class DataListener extends ConnectorDataListenerT<TimedLong>{
-      public DataListener(final String name){
+      public DataListener(final String name, Queue<Event> que){
           super(TimedLong.class);
           m_name = name;
+          m_que = que;
       }
 
       public void operator(final ConnectorBase.ConnectorInfo arg,
@@ -437,11 +456,12 @@ public class StaticFsmImpl extends DataFlowComponentBase {
           ConnectorBase.ConnectorInfo info =(ConnectorBase.ConnectorInfo)arg;
           System.out.println("------------------------------");
           System.out.println("Listener:       "+m_name);
-          System.out.println("Profile::name:  "+info.name);
-          System.out.println("Profile::id:    "+info.id);
           System.out.println("Data:           "+data.data);
           System.out.println("------------------------------");
+          m_que.offer(new Event(m_name,(Object)data));
       }
-      public String m_name;
+
+      private String m_name;
+      private Queue<Event> m_que;
   }
 }

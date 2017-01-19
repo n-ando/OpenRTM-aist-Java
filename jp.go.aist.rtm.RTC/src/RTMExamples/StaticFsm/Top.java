@@ -64,16 +64,23 @@ public class Top extends StateDef implements CameraProtocol {
 
     @Override
     public void onEntry() {
-        System.out.println("Top::on_entry");
+        System.out.println("Top::onEntry");
     }
 
     @Override
     public void onInit() {
-        //setState(new State(Operational.class));
+        System.out.println("Top::onInit");
+        setState(new State(Off.class));
+    }
+
+    @Override
+    public void onExit() {
+        System.out.println("Top::onExit");
     }
 
     @Override
     public void on_do() {
+        System.out.println("Top::on_do");
     }
 
     @Override

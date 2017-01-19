@@ -11,15 +11,29 @@ import RTC.TimedLong;
 public class ShootingCamera extends Top {
 
     @Override
+    public void onEntry() {
+        System.out.println("ShootingCamera::onEntry");
+    }
+
+    @Override
     public void onInit() {
+        System.out.println("ShootingCamera::onInit");
+    }
+
+    @Override
+    public void onExit() {
+        System.out.println("ShootingCamera::onExit");
     }
 
     @Override
     public void on_do() {
+        System.out.println("ShootingCamera::on_do");
     }
 
     @Override
     public void EvShutterReleased(TimedLong param){
+        System.out.println("ShootingCamera::EvShutterReleased");
+        setState(new State(NotShooting.class));
     }
 
 }

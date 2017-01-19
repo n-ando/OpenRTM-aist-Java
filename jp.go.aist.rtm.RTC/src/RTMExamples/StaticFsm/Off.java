@@ -11,15 +11,23 @@ import RTC.TimedLong;
 public class Off extends Top {
 
     @Override
-    public void onInit() {
+    public void onEntry() {
+        System.out.println("Off::onEntry");
+    }
+
+    @Override
+    public void onExit() {
+        System.out.println("Off::onExit");
     }
 
     @Override
     public void on_do() {
+        System.out.println("Off::on_do");
     }
 
     @Override
     public void EvOn(TimedLong param){
+        System.out.println("Off::EvOn");
     }
 }
 

@@ -11,15 +11,24 @@ import RTC.TimedLong;
 public class Idle extends NotShooting {
 
     @Override
-    public void onInit() {
+    public void onEntry() {
+        System.out.println("Idle::onEntry");
+    }
+
+    @Override
+    public void onExit() {
+        System.out.println("Idle::onExit");
     }
 
     @Override
     public void on_do() {
+        System.out.println("Idle::on_do");
     }
 
     @Override
     public void EvConfig(TimedLong param){
+        System.out.println("Idle::EvConfig");
+        setState(new State(Configuring.class));
     }
 
 }
