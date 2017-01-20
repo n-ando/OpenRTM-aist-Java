@@ -14,7 +14,7 @@ import RTC.ReturnCode_t;
    */
 
 public class PostFsmActionListenerHolder extends Observable{
-    public void notify(final int ec_id,  RTC.ReturnCode_t ret) {
+    public void notify(final String ec_id,  RTC.ReturnCode_t ret) {
         super.setChanged();
         PostFsmActionListenerArgument arg 
             = new PostFsmActionListenerArgument(ec_id,ret);

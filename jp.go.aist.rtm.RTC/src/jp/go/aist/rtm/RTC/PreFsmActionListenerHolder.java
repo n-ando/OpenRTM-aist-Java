@@ -13,10 +13,9 @@ import java.lang.Integer;
    *
    */
 public class PreFsmActionListenerHolder extends Observable{
-    public void notify(final int exec_handle) {
+    public void notify(final String state) {
         super.setChanged();
-        Integer arg = new Integer(exec_handle);
-        super.notifyObservers(arg);
+        super.notifyObservers(state);
         super.clearChanged();
     }
 }

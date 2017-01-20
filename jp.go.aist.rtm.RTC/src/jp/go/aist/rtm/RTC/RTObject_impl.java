@@ -6356,6 +6356,54 @@ public class RTObject_impl extends DataFlowComponentPOA {
     {
       m_actionListeners.ecaction_[ExecutionContextActionListenerType.EC_DETACHED].notify(ec_id);
     }
+
+
+    /**
+     * FSM related listeners
+     */
+    protected void preOnFsmInit(final String state)
+    {
+      m_fsmActionListeners.preaction_[PreFsmActionListenerType.PRE_ON_INIT].notify(state);
+    }
+    protected void preOnFsmEntry(final String state)
+    {
+      m_fsmActionListeners.preaction_[PreFsmActionListenerType.PRE_ON_ENTRY].notify(state);
+    }
+    protected void preOnFsmDo(final String state)
+    {
+      m_fsmActionListeners.preaction_[PreFsmActionListenerType.PRE_ON_DO].notify(state);
+    }
+    protected void preOnFsmExit(final String state)
+    {
+      m_fsmActionListeners.preaction_[PreFsmActionListenerType.PRE_ON_EXIT].notify(state);
+    }
+    protected void preOnFsmStateChange(final String state)
+    {
+      m_fsmActionListeners.preaction_[PreFsmActionListenerType.PRE_ON_STATE_CHANGE].notify(state);
+    }
+    /**
+     * FSM related listeners
+     */
+    protected void postOnFsmInit(final String state, ReturnCode_t ret)
+    {
+      m_fsmActionListeners.postaction_[PostFsmActionListenerType.POST_ON_INIT].notify(state, ret);
+    }
+    protected void postOnFsmEntry(final String state, ReturnCode_t ret)
+    {
+      m_fsmActionListeners.postaction_[PostFsmActionListenerType.POST_ON_ENTRY].notify(state, ret);
+    }
+    protected void postOnFsmDo(final String state, ReturnCode_t ret)
+    {
+      m_fsmActionListeners.postaction_[PostFsmActionListenerType.POST_ON_DO].notify(state, ret);
+    }
+    protected void postOnFsmExit(final String state, ReturnCode_t ret)
+    {
+      m_fsmActionListeners.postaction_[PostFsmActionListenerType.POST_ON_EXIT].notify(state, ret);
+    }
+    protected void postOnFsmStateChange(final String state, ReturnCode_t ret)
+    {
+      m_fsmActionListeners.postaction_[PostFsmActionListenerType.POST_ON_STATE_CHANGE].notify(state, ret);
+    }
     
     protected ReturnCode_t getInheritedECOptions(Properties default_opts){
         final String inherited_opts[] =
