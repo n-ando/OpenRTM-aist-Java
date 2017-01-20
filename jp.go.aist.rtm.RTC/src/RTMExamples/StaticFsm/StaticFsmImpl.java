@@ -120,7 +120,7 @@ public class StaticFsmImpl extends DataFlowComponentBase {
                             new DataListener("EvOn",m_que));
       m_EvShutterFullIn.addConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("EvShutter",m_que));
+                            new DataListener("EvShutterFull",m_que));
       m_EvShutterHalfIn.addConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
                             new DataListener("EvShutterHalf",m_que));
@@ -233,6 +233,11 @@ public class StaticFsmImpl extends DataFlowComponentBase {
               Event ev = m_que.poll();
               machine_.dispatch(ev);
           }
+      }
+      while (!machine_.current().isOutputData()) {
+          m_out_val.data = machine_.current().getOutputData();
+          System.out.println("output data: "  + m_out_val.data);
+          m_outOut.write();
       }
       machine_.current().on_do();
       return super.onExecute(ec_id);

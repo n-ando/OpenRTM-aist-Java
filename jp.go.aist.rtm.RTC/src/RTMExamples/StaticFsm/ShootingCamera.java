@@ -13,11 +13,13 @@ public class ShootingCamera extends Top {
     @Override
     public void onEntry() {
         System.out.println("ShootingCamera::onEntry");
+        setOutputData(5);
     }
 
     @Override
     public void onInit() {
         System.out.println("ShootingCamera::onInit");
+        setState(new State(ShootingCamera_Shooting.class));
     }
 
     @Override

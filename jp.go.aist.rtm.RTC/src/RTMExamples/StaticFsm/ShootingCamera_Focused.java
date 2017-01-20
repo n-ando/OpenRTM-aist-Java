@@ -13,6 +13,7 @@ public class ShootingCamera_Focused extends ShootingCamera_Shooting {
     @Override
     public void onEntry() {
         System.out.println("ShootingCamera_Focused::onEntry");
+        setOutputData(8);
     }
 
     @Override

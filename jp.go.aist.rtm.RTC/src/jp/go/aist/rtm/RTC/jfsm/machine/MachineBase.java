@@ -16,7 +16,8 @@ import jp.go.aist.rtm.RTC.jfsm.StateDef;
 //import org.slf4j.LoggerFactory;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
-public class MachineBase extends ExtendedFsmServiceProvider {
+//public class MachineBase extends ExtendedFsmServiceProvider {
+public class MachineBase {
 
     //private static final Logger LOGGER = LoggerFactory.getLogger(MachineBase.class);
 

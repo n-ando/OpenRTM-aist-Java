@@ -13,6 +13,7 @@ public class ShootingCamera_Shooting extends ShootingCamera {
     @Override
     public void onEntry() {
         System.out.println("ShootingCamera_Shooting::onEntry");
+        setOutputData(6);
     }
 
     @Override

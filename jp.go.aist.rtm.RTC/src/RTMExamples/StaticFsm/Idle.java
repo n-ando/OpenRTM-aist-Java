@@ -13,6 +13,7 @@ public class Idle extends NotShooting {
     @Override
     public void onEntry() {
         System.out.println("Idle::onEntry");
+        setOutputData(3);
     }
 
     @Override

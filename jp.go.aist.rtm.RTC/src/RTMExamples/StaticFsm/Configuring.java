@@ -13,6 +13,7 @@ public class Configuring extends NotShooting {
     @Override
     public void onEntry() {
         System.out.println("Configuring::onEntry");
+        setOutputData(4);
     }
 
     @Override

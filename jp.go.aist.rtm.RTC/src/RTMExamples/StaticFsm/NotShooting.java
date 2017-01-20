@@ -13,6 +13,7 @@ public class NotShooting extends Top {
     @Override
     public void onEntry() {
         System.out.println("NotShooting::onEntry");
+        setOutputData(2);
     }
 
     @Override

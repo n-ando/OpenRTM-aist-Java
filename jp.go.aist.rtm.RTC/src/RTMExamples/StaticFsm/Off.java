@@ -13,6 +13,7 @@ public class Off extends Top {
     @Override
     public void onEntry() {
         System.out.println("Off::onEntry");
+        setOutputData(1);
     }
 
     @Override

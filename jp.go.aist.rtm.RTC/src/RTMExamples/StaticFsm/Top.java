@@ -5,13 +5,16 @@ import jp.go.aist.rtm.RTC.jfsm.State;
 import jp.go.aist.rtm.RTC.jfsm.StateDef;
 
 import RTC.TimedLong;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 /**
  * 
  */
 //@DataType(Top.Data.class)
 public class Top extends StateDef implements CameraProtocol {
 
-    //private static final Logger LOGGER = LoggerFactory.getLogger(Top.class);
 /*
     public static class Data {
 
@@ -65,6 +68,7 @@ public class Top extends StateDef implements CameraProtocol {
     @Override
     public void onEntry() {
         System.out.println("Top::onEntry");
+        setOutputData(0);
     }
 
     @Override
@@ -104,35 +108,22 @@ public class Top extends StateDef implements CameraProtocol {
     @Override
     public void EvShutterReleased(TimedLong param){
     }
-/*
-    public void open() {
-        // do nothing
+
+    @Override
+    public int getOutputData() {
+        return m_que.poll();
     }
 
     @Override
-    public void close() {
-        // do nothing
+    public boolean isOutputData() {
+        return m_que.isEmpty();
     }
 
-    @Override
-    public void minute() {
-        // do nothing
+    protected void setOutputData(int val) {
+         m_que.offer(val);
     }
 
-    @Override
-    public void start() {
-        // do nothing
-    }
-
-    @Override
-    public void stop() {
-        // do nothing
-    }
-
-    @Override
-    public void tick() {
-        // do nothing
-    }
-*/
+    private int m_val;
+    private static Queue<Integer> m_que = new ArrayDeque<Integer>();;
 }
 
