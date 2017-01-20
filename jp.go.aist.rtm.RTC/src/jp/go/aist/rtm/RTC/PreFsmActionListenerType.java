@@ -3,19 +3,24 @@ package jp.go.aist.rtm.RTC;
    * {@.ja PreFsmActionListener のタイプ}
    * {@.en The types of PreFsmActionListener}
    * <p>
-   * {@.ja <ul> 
+   * {@.ja PreFsmActionListener には以下のフックポイントが定義されている。こ
+   * れらが呼び出されるかどうかは、FSMの実装に依存する。
+   * <ul> 
    * <li> PRE_ON_INIT:         on_init 直前
    * <li> PRE_ON_ENTRY:        on_entry 直前
    * <li> PRE_ON_DO:           on_do 直前
    * <li> PRE_ON_EXIT:         on_exit 直前
    * <li> PRE_ON_STATE_CAHNGE: 状態遷移直前
    * </ul>}
-   * {@.en <ul> 
-   * <li> PRE_ON_INIT:         on_init 直前
-   * <li> PRE_ON_ENTRY:        on_entry 直前
-   * <li> PRE_ON_DO:           on_do 直前
-   * <li> PRE_ON_EXIT:         on_exit 直前
-   * <li> PRE_ON_STATE_CAHNGE: 
+   * {@.en PreFsmActionListener has the following hook points. If these
+   * listeners are actually called or not called are depends on FSM
+   * implementations.
+   * <ul> 
+   * <li> - PRE_ON_INIT:          just before "init" action
+   * <li> - PRE_ON_ENTRY:         just before "entry" action
+   * <li> - PRE_ON_DO:            just before "do" action
+   * <li> - PRE_ON_EXIT:          just before "exit" action
+   * <li> - PRE_ON_STATE_CHANGE:  just before state transition action
    * </ul>}
    * </p>
    */

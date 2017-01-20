@@ -3,21 +3,26 @@ package jp.go.aist.rtm.RTC;
    * {@.ja PostFsmActionListener のタイプ}
    * {@.en The types of PostFsmActionListener}
    * <p>
-   * {@.ja <ul> 
-   * <li> POST_ON_INIT:         on_init 直前
-   * <li> POST_ON_ENTRY:        on_entry 直前
-   * <li> POST_ON_DO:           on_do 直前
-   * <li> POST_ON_EXIT:         on_exit 直前
-   * <li> POST_ON_STATE_CAHNGE: 状態遷移直前
+   * {@.ja PostFsmActionListener には以下のフックポイントが定義されている。こ
+   * れらが呼び出されるかどうかは、FSMの実装に依存する。
+   * <ul> 
+   * <li> - POST_ON_INIT:          init 直後
+   * <li> - POST_ON_ENTRY:         entry 直後
+   * <li> - POST_ON_DO:            do 直後
+   * <li> - POST_ON_EXIT:          exit 直後
+   * <li> - POST_ON_STATE_CHANGE:  状態遷移直後
    * </ul>}
-   * {@.en <ul> 
-   * <li> POST_ON_INIT:         on_init 直前
-   * <li> POST_ON_ENTRY:        on_entry 直前
-   * <li> POST_ON_DO:           on_do 直前
-   * <li> POST_ON_EXIT:         on_exit 直前
-   * <li> POST_ON_STATE_CAHNGE: 
+   * {@.en PostFsmActionListener has the following hook points. If these
+   * listeners are actually called or not called are depends on FSM
+   * implementations.
+   * <ul> 
+   * <li> - POST_ON_INIT:          just after "init" action
+   * <li> - POST_ON_ENTRY:         just after "entry" action
+   * <li> - POST_ON_DO:            just after "do" action
+   * <li> - POST_ON_EXIT:          just after "exit" action
+   * <li> - POST_ON_STATE_CHANGE:  just after state transition action
    * </ul>}
-   * </p>
+   * 
    */
 public class PostFsmActionListenerType {
     public static final int POST_ON_INIT = 0;
