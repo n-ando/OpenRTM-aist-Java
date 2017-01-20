@@ -16,5 +16,7 @@ public interface CameraProtocol {
     void EvShutterFull(TimedLong param);
     void EvShutterReleased(TimedLong param);
 
+    public boolean isOutputData(); 
+    public int getOutputData(); 
 }
 
