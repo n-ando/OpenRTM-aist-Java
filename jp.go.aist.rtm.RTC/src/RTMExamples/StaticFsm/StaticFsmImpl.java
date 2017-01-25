@@ -458,8 +458,8 @@ public class StaticFsmImpl extends DataFlowComponentBase {
           m_que = que;
       }
 
-      public ReturnCode operator(final ConnectorBase.ConnectorInfo arg,
-                             final TimedLong data) {
+      public ReturnCode operator(ConnectorBase.ConnectorInfo arg,
+                             TimedLong data) {
           ConnectorBase.ConnectorInfo info =(ConnectorBase.ConnectorInfo)arg;
           System.out.println("------------------------------");
           System.out.println("Listener:       "+m_name);

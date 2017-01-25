@@ -218,8 +218,8 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
             m_name = name;
         }
 
-        public ReturnCode operator(final ConnectorBase.ConnectorInfo arg,
-                               final TimedLong data) {
+        public ReturnCode operator(ConnectorBase.ConnectorInfo arg,
+                               TimedLong data) {
             ConnectorBase.ConnectorInfo info =(ConnectorBase.ConnectorInfo)arg;
             System.out.println("------------------------------");
             System.out.println("Listener:       "+m_name);

@@ -40,8 +40,7 @@ import RTC.ReturnCode_t;
    *         super(TimedLong.class);
    *         m_name = name;
    *     }
-   *     public void operator()(ConnectorInfo& info, TimedLong& data) {
-   *         ConnectorBase.ConnectorInfo info =(ConnectorBase.ConnectorInfo)arg;
+   *     public ReturnCode operator(ConnectorBase.ConnectorInfo info, TimedLong data) {
    *         System.out.println("Listener:       "+m_name);
    *         System.out.println("Data:           "+data.data);
    *         System.out.println("Profile::name:  "+info.name);
@@ -169,11 +168,21 @@ import RTC.ReturnCode_t;
    * value. The following example is the use of ConnectorDataListenerT.
    *
    * <pre>{@code
-   * protected ReturnCode_t onInitialize() {
-   *     m_outOut.addConnectorDataListener(
-   *                         ConnectorDataListenerType.ON_BUFFER_WRITE,
-   *                         new MyDataListener("ON_BUFFER_WRITE"));
-   *    :
+   * class MyDataListener extends ConnectorDataListenerT<RTC::TimedLong> {
+   *     public MyDataListener(final String name){
+   *         super(TimedLong.class);
+   *         m_name = name;
+   *     }
+   *     public ReturnCode operator(ConnectorBase.ConnectorInfo info, TimedLong data) {
+   *         System.out.println("Listener:       "+m_name);
+   *         System.out.println("Data:           "+data.data);
+   *         System.out.println("Profile::name:  "+info.name);
+   *         System.out.println("Profile::id:    "+info.id);
+   *         System.out.println("Profile::properties: ");
+   *         System.out.println(info.properties);
+   *     };
+   *     public String m_name;
+   * };
    * }</pre>
    *
    * The listener class defained as above can be attached to a

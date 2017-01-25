@@ -33,7 +33,7 @@ import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
    *     public MyListener(final String name){
    *         m_name = name;
    *     }
-   *     public void operator(final ConnectorBase.ConnectorInfo arg){
+   *     public ReturnCode operator(ConnectorBase.ConnectorInfo arg){
    *         System.out.println("Listener:          "+m_name);
    *         System.out.println("Profile::name:     "+arg.name);
    *         System.out.println("Profile::id:       "+arg.id);
@@ -143,7 +143,7 @@ import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
    *     public MyListener(final String name){
    *         m_name = name;
    *     }
-   *     public void operator(final ConnectorBase.ConnectorInfo arg){
+   *     public ReturnCode operator(ConnectorBase.ConnectorInfo arg){
    *         System.out.println("Listener:          "+m_name);
    *         System.out.println("Profile::name:     "+arg.name);
    *         System.out.println("Profile::id:       "+arg.id);
