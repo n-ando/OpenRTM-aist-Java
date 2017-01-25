@@ -145,7 +145,7 @@ public class InPortPushConnector extends InPortConnector {
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret 
                                         = m_buffer.read(dataref, -1, -1);
         data.v = dataref.v.create_input_stream();
-        return convertReturn(ret);
+        return convertReturn(ret,dataref.v);
     }
 
     /**
@@ -236,6 +236,18 @@ public class InPortPushConnector extends InPortConnector {
                                                                     m_profile);
     }
 
+    protected void onBufferRead(OutputStream data) {
+        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
+    }
+
+    protected void onBufferEmpty() {
+      m_listeners.connector_[ConnectorListenerType.ON_BUFFER_EMPTY].notify(m_profile);
+    }
+
+    protected void onBufferReadTimeout(){
+      m_listeners.connector_[ConnectorListenerType.ON_BUFFER_READ_TIMEOUT].notify(m_profile);
+    }
+
     /**
      * {@.ja buffer.ReturnCodeをport.ReturnCodeに変換する。}
      * {@.en Converts buffer.ReturnCode into port.ReturnCode.}
@@ -247,13 +259,16 @@ public class InPortPushConnector extends InPortConnector {
      *   {@.ja jp.go.aist.rtm.RTC.port.ReturnCode}
      *   {@.en jp.go.aist.rtm.RTC.port.ReturnCode}
      */
-    protected ReturnCode convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status) {
+    protected ReturnCode convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status, OutputStream data) {
         switch (status) {
             case BUFFER_OK:
+                onBufferRead(data);
                 return ReturnCode.PORT_OK;
             case BUFFER_EMPTY:
+                onBufferEmpty();
                 return ReturnCode.BUFFER_EMPTY;
             case TIMEOUT:
+                onBufferReadTimeout();
                 return ReturnCode.BUFFER_TIMEOUT;
             case PRECONDITION_NOT_MET:
                 return ReturnCode.PRECONDITION_NOT_MET;
