@@ -7,6 +7,7 @@ import RTC.ReturnCode_t;
 import RTC.TimedLong;
 import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
 import jp.go.aist.rtm.RTC.port.InPort;
 import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListener;
@@ -258,7 +259,7 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
             m_name = name;
         }
 
-        public void operator(final ConnectorBase.ConnectorInfo arg,
+        public ReturnCode operator(final ConnectorBase.ConnectorInfo arg,
                                final TimedLong data) {
             ConnectorBase.ConnectorInfo info =(ConnectorBase.ConnectorInfo)arg;
             System.out.println("------------------------------");
@@ -269,6 +270,7 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
 //            System.out.println(info.properties);
             System.out.println("Data:           "+data.data);
             System.out.println("------------------------------");
+            return ReturnCode.NO_CHANGE;
         }
         public String m_name;
     }

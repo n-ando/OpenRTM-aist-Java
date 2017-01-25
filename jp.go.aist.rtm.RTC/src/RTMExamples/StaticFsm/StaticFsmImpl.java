@@ -15,6 +15,7 @@ import java.util.Queue;
 
 import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
 import jp.go.aist.rtm.RTC.jfsm.Event;
 import jp.go.aist.rtm.RTC.jfsm.Machine;
 import jp.go.aist.rtm.RTC.jfsm.machine.EventBase;
@@ -457,7 +458,7 @@ public class StaticFsmImpl extends DataFlowComponentBase {
           m_que = que;
       }
 
-      public void operator(final ConnectorBase.ConnectorInfo arg,
+      public ReturnCode operator(final ConnectorBase.ConnectorInfo arg,
                              final TimedLong data) {
           ConnectorBase.ConnectorInfo info =(ConnectorBase.ConnectorInfo)arg;
           System.out.println("------------------------------");
@@ -469,6 +470,7 @@ public class StaticFsmImpl extends DataFlowComponentBase {
               args[0] = data.getClass();
               m_que.offer(new Event(m_name,args,(Object)data));
           }
+          return ReturnCode.NO_CHANGE;
       }
 
       private String m_name;

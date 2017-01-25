@@ -425,7 +425,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      *   {@.ja OutputStream}
      *   {@.en OutputStream}
      */
-    private void onBufferWrite(final OutputStream data) {
+    private void onBufferWrite(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
     }
 
@@ -436,7 +436,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      *   {@.ja OutputStream}
      *   {@.en OutputStream}
      */
-    private void onBufferFull(final OutputStream data) {
+    private void onBufferFull(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_FULL].notify(m_profile, data);
     }
 
@@ -463,7 +463,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      *   {@.ja OutputStream}
      *   {@.en OutputStream}
      */
-    private void onReceived(final OutputStream data) {
+    private void onReceived(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
     }
 
@@ -474,7 +474,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      *   {@.ja OutputStream}
      *   {@.en OutputStream}
      */
-    private void onReceiverFull(final OutputStream data) {
+    private void onReceiverFull(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
     }
 

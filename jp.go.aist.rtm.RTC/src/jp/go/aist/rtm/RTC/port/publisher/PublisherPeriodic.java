@@ -83,7 +83,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         rtcout.println(Logbuf.TRACE, "pushAll()");
 
         while (m_buffer.readable() > 0) {
-            final OutputStream cdr = m_buffer.get();
+            OutputStream cdr = m_buffer.get();
             onBufferRead(cdr);
 
             onSend(cdr);
@@ -111,7 +111,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             rtcout.println(Logbuf.DEBUG, "buffer empty");
             return ReturnCode.BUFFER_EMPTY;
         }
-        final OutputStream cdr = m_buffer.get();
+        OutputStream cdr = m_buffer.get();
         onBufferRead(cdr);
 
         onSend(cdr);
@@ -146,7 +146,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         int postskip = m_skipn - m_leftskip;
         for (int i = 0; i < loopcnt; ++i) {
             m_buffer.advanceRptr(postskip);
-            final OutputStream cdr = m_buffer.get();
+            OutputStream cdr = m_buffer.get();
             onBufferRead(cdr);
 
             onSend(cdr);
@@ -181,7 +181,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         m_readback = true;
         m_buffer.advanceRptr(m_buffer.readable() - 1);
     
-        final OutputStream cdr = m_buffer.get();
+        OutputStream cdr = m_buffer.get();
         onBufferRead(cdr);
 
         onSend(cdr);
@@ -559,7 +559,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      *                             has been performed.
      *         TIMEOUT             Timeout occurred when writing to the buffer.}
      */
-    public ReturnCode write(final OutputStream data, int sec, int usec) {
+    public ReturnCode write(OutputStream data, int sec, int usec) {
         rtcout.println(Logbuf.PARANOID, "write()" );
         if (m_consumer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
         if (m_buffer == null) { return ReturnCode.PRECONDITION_NOT_MET; }
@@ -583,7 +583,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     
         return convertReturn(ret,data);
     }
-    public ReturnCode write(final OutputStream data) {
+    public ReturnCode write(OutputStream data) {
         return this.write(data,-1,0);
     }
  
@@ -649,7 +649,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      */
     protected ReturnCode convertReturn(
                                  jp.go.aist.rtm.RTC.buffer.ReturnCode status,
-                                 final OutputStream data) {
+                                 OutputStream data) {
         switch (status) {
             case BUFFER_OK:
                 return ReturnCode.PORT_OK;
@@ -671,7 +671,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         }
     }
     protected ReturnCode invokeListener(ReturnCode status,
-                                    final OutputStream data) {
+                                    OutputStream data) {
         // ret:
         // PORT_OK, PORT_ERROR, SEND_FULL, SEND_TIMEOUT, CONNECTION_LOST,
         // UNKNOWN_ERROR
@@ -736,15 +736,15 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     /**
      * <p> Connector data listener functions </p>
      */
-    protected void onBufferWrite(final OutputStream data) {
+    protected void onBufferWrite(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
     }
 
-    protected void onBufferFull(final OutputStream data) {
+    protected void onBufferFull(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_FULL].notify(m_profile, data);
     }
 
-    protected void onBufferWriteTimeout(final OutputStream data) {
+    protected void onBufferWriteTimeout(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT].notify(m_profile, data);
     }
 
@@ -752,27 +752,27 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
 //        m_listeners.connectorData_[ConnectorListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
 //    }
 
-    protected void onBufferRead(final OutputStream data) {
+    protected void onBufferRead(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
     }
 
-    protected void onSend(final OutputStream data) {
+    protected void onSend(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_SEND].notify(m_profile, data);
     }
 
-    protected void onReceived(final OutputStream data) {
+    protected void onReceived(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
     }
 
-    protected void onReceiverFull(final OutputStream data) {
+    protected void onReceiverFull(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
     }
 
-    protected void onReceiverTimeout(final OutputStream data) {
+    protected void onReceiverTimeout(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_TIMEOUT].notify(m_profile, data);
     }
 
-    protected void onReceiverError(final OutputStream data) {
+    protected void onReceiverError(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_ERROR].notify(m_profile, data);
     }
 

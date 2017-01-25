@@ -129,7 +129,7 @@ public abstract class OutPortConnector extends ConnectorBase {
      * {@.en The write function to write data from OutPort to Buffer}
      *
      */
-    public abstract <DataType> ReturnCode write(final DataType data);
+    public abstract <DataType> ReturnCode write(DataType data);
 
 
     /**

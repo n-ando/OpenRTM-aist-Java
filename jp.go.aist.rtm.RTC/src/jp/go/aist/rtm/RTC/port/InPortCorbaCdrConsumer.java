@@ -103,7 +103,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
      *   {@.ja リターンコード}
      *   {@.en ReturnCode}
      */
-    public ReturnCode put(final OutputStream data) {
+    public ReturnCode put(OutputStream data) {
         rtcout.println(Logbuf.PARANOID, "put");
         
         EncapsOutputStreamExt cdr;

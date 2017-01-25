@@ -478,13 +478,13 @@ public class OutPortCorbaCdrProvider extends OutPortCdrPOA implements OutPortPro
 //        connectorData_[ConnectorDataListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
 //    }
 
-    private void onBufferRead(final OutputStream data)
+    private void onBufferRead(OutputStream data)
     {
       m_listeners.
         connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
     }
 
-    private void onSend(final OutputStream data)
+    private void onSend(OutputStream data)
     {
       m_listeners.
         connectorData_[ConnectorDataListenerType.ON_SEND].notify(m_profile, data);

@@ -100,7 +100,7 @@ public class InPortDirectConsumer implements InPortConsumer, ObjectCreator<InPor
      *   {@.ja リターンコード}
      *   {@.en ReturnCode}
      */
-    public ReturnCode put(final OutputStream data) {
+    public ReturnCode put(OutputStream data) {
         rtcout.println(Logbuf.PARANOID, "put(): never called.");
         
         return ReturnCode.UNKNOWN_ERROR;

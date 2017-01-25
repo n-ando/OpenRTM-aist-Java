@@ -50,7 +50,7 @@ public interface InPortConsumer {
      * <p> Pure virtual function to send data to the destination port. <p>
      *
      */
-    public ReturnCode put(final OutputStream data);
+    public ReturnCode put(OutputStream data);
     /**
      * <p> publishInterfaceProfile </p>
      * <p> Publish interfaceProfile information. </p>

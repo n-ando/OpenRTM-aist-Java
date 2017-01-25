@@ -7,7 +7,11 @@ import java.util.Observer;
 import org.omg.CORBA.portable.Streamable;
 import org.omg.CORBA.portable.OutputStream;
 
+import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+
+import RTC.ReturnCode_t;
+
   /**
    * {@.ja ConnectorDataListenerTクラス}
    * {@.en ConnectorDataListenerT class}
@@ -102,7 +106,25 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
                 e.printStackTrace();
             }
         }
-        operator(arg.m_info,m_datatype);
+        ReturnCode ret = operator(arg.m_info,m_datatype);
+        if (ret == ReturnCode.DATA_CHANGED || ret == ReturnCode.BOTH_CHANGED) {
+            //cdrdata.rewindPtrs();
+            //data >>= cdrdata;
+            try {
+                OutputStream out_data = (OutputStream)arg.m_data;
+                m_field.set(m_streamable,m_datatype);
+                m_streamable._write(out_data);
+            }
+            catch(IllegalAccessException e){
+                //set throws
+                e.printStackTrace();
+            }
+            catch(IllegalArgumentException e){
+                //invoke throws
+                e.printStackTrace();
+            }
+        }
+        arg.setReturnCode(ret);
     }
     /**
      * {@.ja 抽象コールバックメソッド}
@@ -121,8 +143,10 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
      *   {@.en Data}
      *
      */
-    public abstract void operator(final ConnectorBase.ConnectorInfo info, 
-                                  final DataType data);
+    //public abstract void operator(final ConnectorBase.ConnectorInfo info, 
+    //                              final DataType data);
+    public abstract ReturnCode operator(ConnectorBase.ConnectorInfo info, 
+                                  DataType data);
     private Streamable m_streamable = null;
     private Field m_field = null;
     private DataType m_datatype = null;

@@ -166,7 +166,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
      *         CONNECTION_LOST     detected that the connection has been lost}
      *
      */
-    public ReturnCode write(final OutputStream data, int sec, int usec) {
+    public ReturnCode write(OutputStream data, int sec, int usec) {
         if (m_consumer == null ) { 
             return ReturnCode.PRECONDITION_NOT_MET; 
         }
@@ -206,7 +206,7 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
         }
 
     }
-    public ReturnCode write(final OutputStream data) {
+    public ReturnCode write(OutputStream data) {
         return this.write(data, -1, 0);
     }
     /**
@@ -309,23 +309,23 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
 //        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
 //    }
 
-    protected void onSend(final OutputStream data) {
+    protected void onSend(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_SEND].notify(m_profile, data);
     }
 
-    protected void onReceived(final OutputStream data) {
+    protected void onReceived(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
     }
 
-    protected void onReceiverFull(final OutputStream data) {
+    protected void onReceiverFull(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
     }
 
-    protected void onReceiverTimeout(final OutputStream data) {
+    protected void onReceiverTimeout(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_TIMEOUT].notify(m_profile, data);
     }
 
-    protected void onReceiverError(final OutputStream data) {
+    protected void onReceiverError(OutputStream data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_ERROR].notify(m_profile, data);
     }
 

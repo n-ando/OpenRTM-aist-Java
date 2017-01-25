@@ -49,8 +49,8 @@ public abstract class PublisherBase {
      * @param usec
      * @return ReturnCode
      */
-    public abstract ReturnCode write(final OutputStream data, int sec, int usec);
-    public abstract ReturnCode write(final OutputStream data);
+    public abstract ReturnCode write(OutputStream data, int sec, int usec);
+    public abstract ReturnCode write(OutputStream data);
     /**
      * <p> isActive </p>
      *

@@ -197,7 +197,7 @@ public class OutPortPushConnector extends OutPortConnector {
      *         PORT_ERROR           Other error}
      *
      */
-    public <DataType> ReturnCode write(final DataType data) {
+    public <DataType> ReturnCode write(DataType data) {
         rtcout.println(Logbuf.TRACE, "write()");
 
         if (m_directInPort != null) {
@@ -213,7 +213,7 @@ public class OutPortPushConnector extends OutPortConnector {
                 m_inPortListeners.
                   connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
                 rtcout.println(Logbuf.PARANOID, 
-                    "ONBUFFER_OVERWRITE(InPort,OutPort), "
+                    "ON_BUFFER_OVERWRITE(InPort,OutPort), "
                     + "ON_RECEIVER_FULL(InPort,OutPort) "
                     + "callback called in direct mode.");
 

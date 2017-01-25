@@ -9,6 +9,7 @@ import java.util.Observable;
 
 import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
 import jp.go.aist.rtm.RTC.port.OutPort;
 import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.port.ConnectorListener;
@@ -229,7 +230,7 @@ public class ConsoleInImpl extends DataFlowComponentBase {
             m_name = name;
         }
 
-        public void operator(final ConnectorBase.ConnectorInfo arg,
+        public ReturnCode operator(final ConnectorBase.ConnectorInfo arg,
                                final TimedLong data) {
             ConnectorBase.ConnectorInfo info =(ConnectorBase.ConnectorInfo)arg;
             System.out.println("------------------------------");
@@ -240,6 +241,7 @@ public class ConsoleInImpl extends DataFlowComponentBase {
 //            System.out.println(info.properties);
             System.out.println("Data:           "+data.data);
             System.out.println("------------------------------");
+            return ReturnCode.NO_CHANGE;
         }
         public String m_name;
     }
@@ -248,7 +250,7 @@ public class ConsoleInImpl extends DataFlowComponentBase {
             m_name = name;
         }
 
-        public void operator(final ConnectorBase.ConnectorInfo arg){
+        public ReturnCode operator(final ConnectorBase.ConnectorInfo arg){
             System.out.println("------------------------------");
             System.out.println("Listener:          "+m_name);
             System.out.println("Profile::name:     "+arg.name);
@@ -256,6 +258,7 @@ public class ConsoleInImpl extends DataFlowComponentBase {
             String str = new String();
             System.out.println("Profile::data_type:"+arg.properties.getProperty("data_type"));
             System.out.println("------------------------------");
+            return ReturnCode.NO_CHANGE;
         }
         public String m_name;
     }
