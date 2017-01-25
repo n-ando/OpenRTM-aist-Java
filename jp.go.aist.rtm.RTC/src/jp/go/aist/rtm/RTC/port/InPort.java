@@ -161,6 +161,11 @@ public class InPort<DataType> extends InPortBase {
             rtcout.println(Logbuf.WARN, 
                    "Exception caught."+e.toString());
         }
+        this.addConnectorDataListener(ConnectorDataListenerType.ON_RECEIVED,
+                                     new Timestamp<DataType>("on_received",cl));
+        this.addConnectorDataListener(ConnectorDataListenerType.ON_BUFFER_READ,
+                                     new Timestamp<DataType>("on_read",cl));
+
     }
     
     /**

@@ -317,6 +317,11 @@ public class OutPort<DataType> extends OutPortBase {
             m_propValueIndex = NVUtil.find_index(nvholder, 
                                                  "dataport.data_value");
         }
+        this.addConnectorDataListener(ConnectorDataListenerType.ON_BUFFER_WRITE,
+                                     new Timestamp<DataType>("on_write",cl));
+        this.addConnectorDataListener(ConnectorDataListenerType.ON_SEND,
+                                     new Timestamp<DataType>("on_send",cl));
+
     }
     
     /**
