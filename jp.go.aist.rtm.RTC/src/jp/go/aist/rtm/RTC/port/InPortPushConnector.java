@@ -144,8 +144,11 @@ public class InPortPushConnector extends InPortConnector {
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret 
                                         = m_buffer.read(dataref, -1, -1);
+        //data.v = dataref.v.create_input_stream();
+        //return convertReturn(ret,dataref.v);
+        ReturnCode code = convertReturn(ret,dataref);
         data.v = dataref.v.create_input_stream();
-        return convertReturn(ret,dataref.v);
+        return code;
     }
 
     /**
@@ -236,7 +239,7 @@ public class InPortPushConnector extends InPortConnector {
                                                                     m_profile);
     }
 
-    protected void onBufferRead(OutputStream data) {
+    protected void onBufferRead(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
     }
 
@@ -259,10 +262,13 @@ public class InPortPushConnector extends InPortConnector {
      *   {@.ja jp.go.aist.rtm.RTC.port.ReturnCode}
      *   {@.en jp.go.aist.rtm.RTC.port.ReturnCode}
      */
-    protected ReturnCode convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status, OutputStream data) {
+    protected ReturnCode convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status, DataRef<OutputStream> data) {
         switch (status) {
             case BUFFER_OK:
+                //DataRef<OutputStream> dataref = new DataRef<OutputStream>(data);
+                //onBufferRead(data);
                 onBufferRead(data);
+                //data = (EncapsOutputStreamExt)dataref.v;
                 return ReturnCode.PORT_OK;
             case BUFFER_EMPTY:
                 onBufferEmpty();

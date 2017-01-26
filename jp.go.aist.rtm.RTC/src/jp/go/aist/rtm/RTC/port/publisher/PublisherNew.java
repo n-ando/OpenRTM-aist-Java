@@ -105,9 +105,12 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         try {
             while (m_buffer.readable() > 0) {
                 OutputStream cdr = m_buffer.get();
-                onBufferRead(cdr);
-
                 DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+                //onBufferRead(cdr);
+                onBufferRead(dataref);
+                cdr = (EncapsOutputStreamExt)dataref.v;
+
+                dataref.v = cdr;
                 onSend(dataref);
                 //onSend(cdr);
                 cdr = (EncapsOutputStreamExt)dataref.v;
@@ -140,9 +143,12 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         rtcout.println(Logbuf.TRACE, "pushFifo()");
         try {
             OutputStream cdr = m_buffer.get();
-            onBufferRead(cdr);
-
             DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+            //onBufferRead(cdr);
+            onBufferRead(dataref);
+            cdr = (EncapsOutputStreamExt)dataref.v;
+
+            dataref.v = cdr;
             onSend(dataref);
             //onSend(cdr);
             cdr = (EncapsOutputStreamExt)dataref.v;
@@ -182,9 +188,12 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                 m_buffer.advanceRptr(postskip);
 
                 OutputStream cdr = m_buffer.get();
-                onBufferRead(cdr);
-        
                 DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+                //onBufferRead(cdr);
+                onBufferRead(dataref);
+                cdr = (EncapsOutputStreamExt)dataref.v;
+        
+                dataref.v = cdr;
                 onSend(dataref);
                 //onSend(cdr);
                 cdr = (EncapsOutputStreamExt)dataref.v;
@@ -230,9 +239,12 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             m_buffer.advanceRptr(m_buffer.readable() - 1);
         
             OutputStream cdr = m_buffer.get();
-            onBufferRead(cdr);
-
             DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+            //onBufferRead(cdr);
+            onBufferRead(dataref);
+            cdr = (EncapsOutputStreamExt)dataref.v;
+
+            dataref.v = cdr;
             //onSend(cdr);
             onSend(dataref);
             cdr = (EncapsOutputStreamExt)dataref.v;
@@ -771,7 +783,8 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
     }
 
-    protected void onBufferRead(OutputStream data) {
+    //protected void onBufferRead(OutputStream data) {
+    protected void onBufferRead(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
     }
 

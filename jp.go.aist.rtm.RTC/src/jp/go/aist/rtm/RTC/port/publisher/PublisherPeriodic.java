@@ -86,9 +86,12 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
 
         while (m_buffer.readable() > 0) {
             OutputStream cdr = m_buffer.get();
-            onBufferRead(cdr);
-
             DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+            //onBufferRead(cdr);
+            onBufferRead(dataref);
+            cdr = (EncapsOutputStreamExt)dataref.v;
+
+            dataref.v = cdr;
             //onSend(cdr);
             onSend(dataref);
             cdr = (EncapsOutputStreamExt)dataref.v;
@@ -120,9 +123,12 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             return ReturnCode.BUFFER_EMPTY;
         }
         OutputStream cdr = m_buffer.get();
-        onBufferRead(cdr);
-
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+        //onBufferRead(cdr);
+        onBufferRead(dataref);
+        cdr = (EncapsOutputStreamExt)dataref.v;
+
+        dataref.v = cdr;
         //onSend(cdr);
         onSend(dataref);
         cdr = (EncapsOutputStreamExt)dataref.v;
@@ -161,9 +167,12 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         for (int i = 0; i < loopcnt; ++i) {
             m_buffer.advanceRptr(postskip);
             OutputStream cdr = m_buffer.get();
-            onBufferRead(cdr);
-
             DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+            //onBufferRead(cdr);
+            onBufferRead(dataref);
+            cdr = (EncapsOutputStreamExt)dataref.v;
+
+            dataref.v = cdr;
             //onSend(cdr);
             onSend(dataref);
             cdr = (EncapsOutputStreamExt)dataref.v;
@@ -202,9 +211,12 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         m_buffer.advanceRptr(m_buffer.readable() - 1);
     
         OutputStream cdr = m_buffer.get();
-        onBufferRead(cdr);
-
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+        //onBufferRead(cdr);
+        onBufferRead(dataref);
+        cdr = (EncapsOutputStreamExt)dataref.v;
+
+        dataref.v =cdr;
         //onSend(cdr);
         onSend(dataref);
         cdr = (EncapsOutputStreamExt)dataref.v;
@@ -778,7 +790,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
 //        m_listeners.connectorData_[ConnectorListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
 //    }
 
-    protected void onBufferRead(OutputStream data) {
+    protected void onBufferRead(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
     }
 

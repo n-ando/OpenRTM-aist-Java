@@ -470,8 +470,7 @@ public class OutPortSHMProvider extends SharedMemory implements OutPortProvider,
 //        connectorData_[ConnectorDataListenerType.ON_BUFFER_OVERWRITE].notify(m_profile, data);
 //    }
 
-    private void onBufferRead(final OutputStream data)
-    {
+    private void onBufferRead(DataRef<OutputStream> data) {
       m_listeners.
         connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
     }
