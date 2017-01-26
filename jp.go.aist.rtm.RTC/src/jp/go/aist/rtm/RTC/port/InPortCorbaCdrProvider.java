@@ -151,7 +151,10 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
             EncapsOutputStreamExt cdr 
             = new EncapsOutputStreamExt(m_orb,m_connector.isLittleEndian());
             cdr.write_octet_array(data, 0, data.length);
-            onReceiverError(cdr);
+            DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+            //onReceiverError(cdr);
+            onReceiverError(dataref);
+            cdr = (EncapsOutputStreamExt)dataref.v;
             return OpenRTM.PortStatus.PORT_ERROR;
         }
 
@@ -169,7 +172,9 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
         onReceived(dataref);
         cdr = (EncapsOutputStreamExt)dataref.v;
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
-        return convertReturn(ret,cdr);
+        //return convertReturn(ret,cdr);
+        OpenRTM.PortStatus stat =  convertReturn(ret,dataref);
+        return stat;
     }
 
     /**
@@ -205,7 +210,8 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      */
     protected OpenRTM.PortStatus 
     convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status,
-                  EncapsOutputStreamExt data) {
+                  DataRef<OutputStream> data){
+//                  EncapsOutputStreamExt data) {
         switch (status) {
             case BUFFER_OK:
                 onBufferWrite(data);
@@ -486,7 +492,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onBufferWrite(OutputStream data) {
+    private void onBufferWrite(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
     }
 
@@ -497,7 +503,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onBufferFull(OutputStream data) {
+    private void onBufferFull(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_FULL].notify(m_profile, data);
     }
 
@@ -508,7 +514,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onBufferWriteTimeout(OutputStream data) {
+    private void onBufferWriteTimeout(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT].notify(m_profile, data);
     }
 
@@ -549,7 +555,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onReceiverFull(OutputStream data) {
+    private void onReceiverFull(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
     }
 
@@ -560,7 +566,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onReceiverTimeout(OutputStream data) {
+    private void onReceiverTimeout(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_TIMEOUT].notify(m_profile, data);
     }
 
@@ -571,7 +577,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onReceiverError(OutputStream data) {
+    private void onReceiverError(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_ERROR].notify(m_profile, data);
     }
 

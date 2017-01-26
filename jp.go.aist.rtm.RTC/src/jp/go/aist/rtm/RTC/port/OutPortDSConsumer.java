@@ -221,7 +221,10 @@ public class OutPortDSConsumer extends CorbaConsumer<DataPullService> implements
                 onReceived(dataref);
                 data = (EncapsOutputStreamExt)dataref.v;
                 //onReceived(data);
-                onBufferWrite(data);
+
+                dataref.v = data;
+                onBufferWrite(dataref);
+                data = (EncapsOutputStreamExt)dataref.v;
 
                 if (m_buffer.full()) {
                     rtcout.println(Logbuf.INFO, 
@@ -476,7 +479,7 @@ public class OutPortDSConsumer extends CorbaConsumer<DataPullService> implements
      *   {@.ja OutputStream}
      *   {@.en OutputStream}
      */
-    private void onBufferWrite(final OutputStream data) {
+    private void onBufferWrite(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
     }
 

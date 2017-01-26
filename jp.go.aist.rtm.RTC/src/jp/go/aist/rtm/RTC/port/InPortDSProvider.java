@@ -192,7 +192,8 @@ public class InPortDSProvider extends RTC.DataPushServicePOA implements InPortPr
      */
     protected RTC.PortStatus 
     convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status,
-                  final EncapsOutputStreamExt data) {
+                  DataRef<OutputStream> data){
+//                  final EncapsOutputStreamExt data) {
         switch (status) {
             case BUFFER_OK:
                 onBufferWrite(data);
@@ -472,7 +473,7 @@ public class InPortDSProvider extends RTC.DataPushServicePOA implements InPortPr
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onBufferWrite(final OutputStream data) {
+    private void onBufferWrite(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
     }
 
@@ -483,7 +484,7 @@ public class InPortDSProvider extends RTC.DataPushServicePOA implements InPortPr
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onBufferFull(final OutputStream data) {
+    private void onBufferFull(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_FULL].notify(m_profile, data);
     }
 
@@ -494,7 +495,7 @@ public class InPortDSProvider extends RTC.DataPushServicePOA implements InPortPr
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onBufferWriteTimeout(final OutputStream data) {
+    private void onBufferWriteTimeout(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT].notify(m_profile, data);
     }
 
@@ -536,7 +537,7 @@ public class InPortDSProvider extends RTC.DataPushServicePOA implements InPortPr
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onReceiverFull(final OutputStream data) {
+    private void onReceiverFull(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
     }
 
@@ -547,7 +548,7 @@ public class InPortDSProvider extends RTC.DataPushServicePOA implements InPortPr
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onReceiverTimeout(final OutputStream data) {
+    private void onReceiverTimeout(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_TIMEOUT].notify(m_profile, data);
     }
 
@@ -558,7 +559,7 @@ public class InPortDSProvider extends RTC.DataPushServicePOA implements InPortPr
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onReceiverError(final OutputStream data) {
+    private void onReceiverError(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_ERROR].notify(m_profile, data);
     }
 

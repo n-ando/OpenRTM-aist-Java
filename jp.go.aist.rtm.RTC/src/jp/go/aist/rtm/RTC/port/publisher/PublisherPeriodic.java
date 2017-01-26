@@ -613,7 +613,9 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             return ReturnCode.BUFFER_FULL;
         }
     
-        onBufferWrite(data);
+        DataRef<OutputStream> dataref = new DataRef<OutputStream>(data);
+        onBufferWrite(dataref);
+        data = (EncapsOutputStreamExt)dataref.v;
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret;
         ret = m_buffer.write(data, sec, usec);
         rtcout.println(Logbuf.DEBUG, ret.name() +" = write()" );
@@ -774,7 +776,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     /**
      * <p> Connector data listener functions </p>
      */
-    protected void onBufferWrite(OutputStream data) {
+    protected void onBufferWrite(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
     }
 

@@ -210,7 +210,8 @@ public class InPortDirectProvider implements InPortProvider, ObjectCreator<InPor
      */
     protected OpenRTM.PortStatus 
     convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status,
-                  EncapsOutputStreamExt data) {
+                  DataRef<OutputStream> data){
+//                  EncapsOutputStreamExt data) {
         switch (status) {
             case BUFFER_OK:
                 onBufferWrite(data);
@@ -498,7 +499,7 @@ public class InPortDirectProvider implements InPortProvider, ObjectCreator<InPor
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onBufferWrite(OutputStream data) {
+    private void onBufferWrite(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
     }
 
@@ -509,7 +510,7 @@ public class InPortDirectProvider implements InPortProvider, ObjectCreator<InPor
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onBufferFull(OutputStream data) {
+    private void onBufferFull(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_FULL].notify(m_profile, data);
     }
 
@@ -520,7 +521,7 @@ public class InPortDirectProvider implements InPortProvider, ObjectCreator<InPor
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onBufferWriteTimeout(OutputStream data) {
+    private void onBufferWriteTimeout(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT].notify(m_profile, data);
     }
 
@@ -562,7 +563,7 @@ public class InPortDirectProvider implements InPortProvider, ObjectCreator<InPor
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onReceiverFull(OutputStream data) {
+    private void onReceiverFull(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_FULL].notify(m_profile, data);
     }
 
@@ -573,7 +574,7 @@ public class InPortDirectProvider implements InPortProvider, ObjectCreator<InPor
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onReceiverTimeout(OutputStream data) {
+    private void onReceiverTimeout(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_TIMEOUT].notify(m_profile, data);
     }
 
@@ -584,7 +585,7 @@ public class InPortDirectProvider implements InPortProvider, ObjectCreator<InPor
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onReceiverError(OutputStream data) {
+    private void onReceiverError(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVER_ERROR].notify(m_profile, data);
     }
 

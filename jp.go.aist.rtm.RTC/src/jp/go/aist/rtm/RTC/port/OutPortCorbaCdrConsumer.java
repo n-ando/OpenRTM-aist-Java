@@ -174,7 +174,10 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
                 onReceived(dataref);
                 data = (EncapsOutputStreamExt)dataref.v;
                 //onReceived(data);
-                onBufferWrite(data);
+
+                dataref.v = data;
+                onBufferWrite(dataref);
+                data = (EncapsOutputStreamExt)dataref.v;
 
                 if (m_buffer.full()) {
                     rtcout.println(Logbuf.INFO, 
@@ -429,7 +432,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      *   {@.ja OutputStream}
      *   {@.en OutputStream}
      */
-    private void onBufferWrite(OutputStream data) {
+    private void onBufferWrite(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
     }
 

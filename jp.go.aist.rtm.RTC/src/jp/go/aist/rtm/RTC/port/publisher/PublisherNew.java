@@ -598,7 +598,9 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
     
         assert m_buffer != null;
     
-        onBufferWrite(data);
+        DataRef<OutputStream> dataref = new DataRef<OutputStream>(data);
+        onBufferWrite(dataref);
+        data = (EncapsOutputStreamExt)dataref.v;
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret;
         ret = m_buffer.write(data, sec, usec);
     
@@ -767,7 +769,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
     /**
      * <p> Connector data listener functions </p>
      */
-    private void onBufferWrite(OutputStream data) {
+    private void onBufferWrite(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_WRITE].notify(m_profile, data);
     }
 
