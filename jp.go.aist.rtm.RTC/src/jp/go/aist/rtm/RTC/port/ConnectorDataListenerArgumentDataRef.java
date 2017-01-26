@@ -31,7 +31,7 @@ public class ConnectorDataListenerArgumentDataRef<DataType> {
     // public EnumSet<ReturnCode> m_ret;
     public ReturnCode m_ret;
     public void setReturnCode(ReturnCode ret) {
-        //m_ret.or(ret);
+        m_ret = ReturnCode.or(m_ret,ret);
     }
     public ReturnCode getReturnCode() {
         return m_ret;

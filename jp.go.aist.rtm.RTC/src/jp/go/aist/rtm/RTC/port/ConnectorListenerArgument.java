@@ -19,8 +19,9 @@ public class ConnectorListenerArgument {
     public ReturnCode m_ret;
 //    public EnumSet<ReturnCode> m_ret;
     public void setReturnCode(ReturnCode ret) {
-      m_ret.or(ret.getValue());
+      //m_ret.or(ret.getValue());
 //    EnumSet<ReturnCode> m_flag = EnumSet.noneOf(ReturnCode.class);
+        m_ret = ReturnCode.or(m_ret,ret);
     }
     public ReturnCode getReturnCode() {
         return m_ret;

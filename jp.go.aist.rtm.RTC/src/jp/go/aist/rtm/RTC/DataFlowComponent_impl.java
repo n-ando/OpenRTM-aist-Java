@@ -128,7 +128,6 @@ public class DataFlowComponent_impl extends DataFlowComponentPOA {
     public static final int ECOTHER_OFFSET = 1000;
 
     public DataFlowComponent_impl() {
-System.out.println("--20170113 00A00");
     }
     /**
      * {@.ja コンストラクタ。}

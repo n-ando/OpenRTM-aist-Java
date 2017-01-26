@@ -37,9 +37,28 @@ public enum ReturnCode {
     private ReturnCode(int val){
         m_val = val;
     }
-    public void or(int flag){
-//        m_flag.add(flag);
-        m_val = m_val | flag;
+    public static ReturnCode or(ReturnCode ret, ReturnCode flag){
+        
+        if(flag == ret){
+            return ret;
+        }
+        if(flag == ReturnCode.BOTH_CHANGED || ret == ReturnCode.BOTH_CHANGED){
+            return ret;
+        }
+        if(flag == ReturnCode.NO_CHANGE){
+            return ret;
+        }
+        if(ret == ReturnCode.NO_CHANGE){
+            return flag;
+        }
+        if(flag == ReturnCode.INFO_CHANGED || ret == ReturnCode.DATA_CHANGED){
+            return ReturnCode.BOTH_CHANGED;
+        }
+        if(flag == ReturnCode.DATA_CHANGED || ret == ReturnCode.INFO_CHANGED){
+            return ReturnCode.BOTH_CHANGED;
+        }
+        
+        return ReturnCode.BOTH_CHANGED;
     }
     public int getValue(){
         return m_val;

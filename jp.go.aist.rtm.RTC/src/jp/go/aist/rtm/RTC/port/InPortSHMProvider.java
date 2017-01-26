@@ -6,6 +6,7 @@ import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
@@ -523,7 +524,8 @@ public class InPortSHMProvider extends SharedMemory implements InPortProvider, O
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onReceived(final OutputStream data) {
+    //private void onReceived(final OutputStream data) {
+    private void onReceived(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
     }
 
@@ -697,7 +699,10 @@ public class InPortSHMProvider extends SharedMemory implements InPortProvider, O
 
         int len = cdr.getByteArray().length;
         rtcout.println(Logbuf.PARANOID, "converted CDR data size: "+len);
-        onReceived(cdr);
+        DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+        //onReceived(cdr);
+        onReceived(dataref);
+        cdr = (EncapsOutputStreamExt)dataref.v;
    
         if(m_connector==null){
             return OpenRTM.PortStatus.PORT_ERROR;

@@ -13,8 +13,10 @@ import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
 import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
 import jp.go.aist.rtm.RTC.port.ConnectorListeners;
+import jp.go.aist.rtm.RTC.port.EncapsOutputStreamExt;
 import jp.go.aist.rtm.RTC.port.InPortConsumer;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
+import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 
@@ -105,14 +107,20 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                 OutputStream cdr = m_buffer.get();
                 onBufferRead(cdr);
 
-                onSend(cdr);
+                DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+                onSend(dataref);
+                //onSend(cdr);
+                cdr = (EncapsOutputStreamExt)dataref.v;
                 ReturnCode ret = m_consumer.put(cdr);
             
                 if (!ret.equals(ReturnCode.PORT_OK)) {
                     rtcout.println(Logbuf.DEBUG, ret + " = consumer.put()");
                     return invokeListener(ret, cdr);
                 }
-                onReceived(cdr);
+                dataref.v = cdr;
+                onReceived(dataref);
+                cdr = (EncapsOutputStreamExt)dataref.v;
+                //onReceived(cdr);
 
                 m_buffer.advanceRptr();
             }
@@ -134,14 +142,20 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             OutputStream cdr = m_buffer.get();
             onBufferRead(cdr);
 
-            onSend(cdr);
+            DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+            onSend(dataref);
+            //onSend(cdr);
+            cdr = (EncapsOutputStreamExt)dataref.v;
             ReturnCode ret = m_consumer.put(cdr);
         
             if (!ret.equals(ReturnCode.PORT_OK)) {
                 rtcout.println(Logbuf.DEBUG, ret + " = consumer.put()");
                 return invokeListener(ret, cdr);
             }
-            onReceived(cdr);
+            dataref.v  = cdr;
+            onReceived(dataref);
+            cdr = (EncapsOutputStreamExt)dataref.v;
+            //onReceived(cdr);
 
             m_buffer.advanceRptr();
         
@@ -170,14 +184,20 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                 OutputStream cdr = m_buffer.get();
                 onBufferRead(cdr);
         
-                onSend(cdr);
+                DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+                onSend(dataref);
+                //onSend(cdr);
+                cdr = (EncapsOutputStreamExt)dataref.v;
                 ret = m_consumer.put(cdr);
                 if (!ret.equals(ReturnCode.PORT_OK)) {
                     m_buffer.advanceRptr(-postskip);
                     rtcout.println(Logbuf.DEBUG, ret + " = consumer.put()");
                     return invokeListener(ret, cdr);
                 }
-                onReceived(cdr);
+                dataref.v = cdr;
+                onReceived(dataref);
+                cdr = (EncapsOutputStreamExt)dataref.v;
+                //onReceived(cdr);
                 postskip = m_skipn +1;
             }
             m_buffer.advanceRptr(m_buffer.readable());
@@ -212,14 +232,20 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             OutputStream cdr = m_buffer.get();
             onBufferRead(cdr);
 
-            onSend(cdr);
+            DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+            //onSend(cdr);
+            onSend(dataref);
+            cdr = (EncapsOutputStreamExt)dataref.v;
             ReturnCode ret = m_consumer.put(cdr);
 
             if (!ret.equals(ReturnCode.PORT_OK)) {
                 rtcout.println(Logbuf.DEBUG, ret + " = consumer.put()");
                 return invokeListener(ret, cdr);
             }
-            onReceived(cdr);
+            dataref.v = cdr;
+            onReceived(dataref);
+            cdr = (EncapsOutputStreamExt)dataref.v;
+            //onReceived(cdr);
             m_buffer.advanceRptr();
             return ret;
         }
@@ -749,11 +775,12 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
     }
 
-    protected void onSend(OutputStream data) {
+    protected void onSend(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_SEND].notify(m_profile, data);
     }
 
-    protected void onReceived(OutputStream data) {
+    //protected void onReceived(OutputStream data) {
+    protected void onReceived(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
     }
 

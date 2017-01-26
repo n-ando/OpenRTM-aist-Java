@@ -21,6 +21,7 @@ public class Timestamp<DataType> extends ConnectorDataListenerT<DataType>{
         TimeValue tv = m_clock.getTime();
         RTC.Time tm = new RTC.Time((int)(tv.getSec()),
                                    (int)(tv.getUsec()*1000));
+//        RTC.Time tm = new RTC.Time((int)0, (int)0);
         Class cl = data.getClass();
         String str = cl.getName();
         try {

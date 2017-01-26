@@ -10,6 +10,8 @@ import org.omg.CORBA.portable.OutputStream;
 import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
+import jp.go.aist.rtm.RTC.util.ORBUtil;
+
 import RTC.ReturnCode_t;
 
   /**
@@ -108,20 +110,41 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
         }
         ReturnCode ret = operator(arg.m_info,m_datatype);
         if (ret == ReturnCode.DATA_CHANGED || ret == ReturnCode.BOTH_CHANGED) {
-            //cdrdata.rewindPtrs();
-            //data >>= cdrdata;
+            arg.m_data  = m_datatype;
             try {
-                OutputStream out_data = (OutputStream)arg.m_data;
+
+                String endian_type = arg.m_info.properties.
+                        getProperty("serializer.cdr.endian","little");
+                rtcout.println(Logbuf.PARANOID, 
+                        "serializer.cdr.endian:"+endian_type);
+                String[] endian = endian_type.split(",");
+                boolean endian_flag = true;
+                rtcout.println(Logbuf.PARANOID, 
+                        "serializer.cdr.endian[0]:"+endian[0]);
+                if(!endian[0].equals("little")){
+                    endian_flag = false;
+                }
+                OutputStream out_data 
+                    = new EncapsOutputStreamExt(ORBUtil.getOrb(),endian_flag);
                 m_field.set(m_streamable,m_datatype);
                 m_streamable._write(out_data);
+
+                Class cl = obj.getClass();
+                String str = cl.getName();
+                rtcout.println(Logbuf.PARANOID,"class name:"+str);
+                cl.getField("m_data").set(obj,out_data);
+            }
+            catch(NoSuchFieldException e){
+                rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
             }
             catch(IllegalAccessException e){
-                //set throws
-                e.printStackTrace();
+                rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
             }
             catch(IllegalArgumentException e){
-                //invoke throws
-                e.printStackTrace();
+                rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
             }
         }
         arg.setReturnCode(ret);
@@ -143,8 +166,6 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
      *   {@.en Data}
      *
      */
-    //public abstract void operator(final ConnectorBase.ConnectorInfo info, 
-    //                              final DataType data);
     public abstract ReturnCode operator(ConnectorBase.ConnectorInfo info, 
                                   DataType data);
     private Streamable m_streamable = null;

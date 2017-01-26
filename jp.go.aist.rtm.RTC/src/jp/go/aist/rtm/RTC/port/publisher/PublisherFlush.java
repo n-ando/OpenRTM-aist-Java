@@ -8,8 +8,10 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.port.ConnectorBase;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
 import jp.go.aist.rtm.RTC.port.ConnectorListeners;
+import jp.go.aist.rtm.RTC.port.EncapsOutputStreamExt;
 import jp.go.aist.rtm.RTC.port.InPortConsumer;
 import jp.go.aist.rtm.RTC.port.ReturnCode;
+import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.Properties;
 
 import org.omg.CORBA.portable.OutputStream;
@@ -178,12 +180,16 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
             return m_retcode;
         }
 
-        onSend(data);
-        //return m_consumer.put(data);
+        DataRef<OutputStream> dataref = new DataRef<OutputStream>(data);
+        onSend(dataref);
+        data = (EncapsOutputStreamExt)dataref.v;
         ReturnCode ret = m_consumer.put(data);
         switch (ret) {
             case PORT_OK:
-                onReceived(data);
+                dataref.v = data;
+                onReceived(dataref);
+                data = (EncapsOutputStreamExt)dataref.v;
+                //onReceived(data);
                 return ret;
             case PORT_ERROR:
                 onReceiverError(data);
@@ -309,11 +315,12 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
 //        m_listeners.connectorData_[ConnectorDataListenerType.ON_BUFFER_READ].notify(m_profile, data);
 //    }
 
-    protected void onSend(OutputStream data) {
+    protected void onSend(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_SEND].notify(m_profile, data);
     }
 
-    protected void onReceived(OutputStream data) {
+    //protected void onReceived(OutputStream data) {
+    protected void onReceived(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
     }
 

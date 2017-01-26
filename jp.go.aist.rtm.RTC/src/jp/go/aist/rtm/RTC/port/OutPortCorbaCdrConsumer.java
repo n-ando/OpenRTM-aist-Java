@@ -6,6 +6,7 @@ import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.OutPortConsumerFactory;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.log.Logbuf;
+import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
 
@@ -169,7 +170,10 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
                 rtcout.println(Logbuf.PARANOID, 
                                 "CDR data length: "+cdr_data.value.length);
   
-                onReceived(data);
+                DataRef<OutputStream> dataref = new DataRef<OutputStream>(data);
+                onReceived(dataref);
+                data = (EncapsOutputStreamExt)dataref.v;
+                //onReceived(data);
                 onBufferWrite(data);
 
                 if (m_buffer.full()) {
@@ -463,7 +467,8 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
      *   {@.ja OutputStream}
      *   {@.en OutputStream}
      */
-    private void onReceived(OutputStream data) {
+    //private void onReceived(OutputStream data) {
+    private void onReceived(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
     }
 

@@ -6,6 +6,7 @@ import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.NVListHolderFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
@@ -164,7 +165,9 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
 
         int len = cdr.getByteArray().length;
         rtcout.println(Logbuf.PARANOID, "converted CDR data size: "+len);
-        onReceived(cdr);
+        DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
+        onReceived(dataref);
+        cdr = (EncapsOutputStreamExt)dataref.v;
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
         return convertReturn(ret,cdr);
     }
@@ -535,7 +538,7 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
      *   {@.ja OutputStream} 
      *   {@.en OutputStream} 
      */
-    private void onReceived(OutputStream data) {
+    private void onReceived(DataRef<OutputStream> data) {
       m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
     }
 

@@ -15,21 +15,21 @@ import org.omg.CORBA.portable.OutputStream;
    *
    */
 public class ConnectorDataListenerHolder<DataType> extends Observable
-//                            implements ConnectorListenerStatus{
                             {
     public ConnectorDataListenerHolder(){
         rtcout = new Logbuf("ConnectorDataListenerHolder");
     }
-    //public void notify(final ConnectorBase.ConnectorInfo info,
-    public ReturnCode notify(final ConnectorBase.ConnectorInfo info,
-                final OutputStream cdrdata) {
+    public ReturnCode notify(ConnectorBase.ConnectorInfo info,
+                DataRef<OutputStream> cdrdata) {
+//                OutputStream cdrdata) {
         super.setChanged();
         ReturnCode ret =  ReturnCode.NO_CHANGE;
         //ConnectorDataListenerArgument arg 
         //    = new ConnectorDataListenerArgument(info,cdrdata);
         ConnectorDataListenerArgumentDataRef<OutputStream> arg 
-            = new ConnectorDataListenerArgumentDataRef<OutputStream>(info,cdrdata);
-        super.notifyObservers((Object)arg);    
+            = new ConnectorDataListenerArgumentDataRef<OutputStream>(info,cdrdata.v);
+        super.notifyObservers((Object)arg);
+        cdrdata.v = arg.m_data;
         ret = arg.getReturnCode();
         return ret;
     }
