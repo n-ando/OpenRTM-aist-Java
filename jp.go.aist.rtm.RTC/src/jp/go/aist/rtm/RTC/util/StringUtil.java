@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class StringUtil {
 
@@ -447,4 +448,71 @@ public class StringUtil {
 	return false;
     }
 
+    private static final Pattern V4_FORMAT = Pattern.compile("((([01]?\\d{1,2})|(2[0-4]\\d)|(25[0-5]))\\.){3}(([01]?\\d{1,2})|(2[0-4]\\d)|(25[0-5]))");
+    public static boolean isIPv4(final String str, boolean strict) {
+        if (strict) {
+            return V4_FORMAT.matcher(str).matches();
+        }
+        String[] addrs = str.split("\\.");
+        if (addrs.length != 4) {
+            return false;
+        }
+        for (String addr : addrs) {
+            try {
+                int b = Integer.parseInt(addr);
+                if (b < 0 || 255 < b) return false;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static final Pattern V6_FORMAT = Pattern.compile("(([0-9a-f]{1,4})(:([0-9a-f]{1,4})){7}((\\.|#|p| port )\\d{1,4})?)|\\[([0-9a-f]{1,4})(:([0-9a-f]{1,4})){7}\\]:\\d{1,4}");
+    public static boolean isIPv6(final String str, boolean strict) {
+        if (strict) {
+            return V6_FORMAT.matcher(str).matches();
+        }
+        // IPv6 address must be
+        // 1111:1111:1111:1111:1111:1111:1111:1111 (addr)
+        // [1111:1111:1111:1111:1111:1111:1111:1111]:11111 (addr, port)
+        for (int ic=0; ic < str.length(); ++ic) {
+             if (!((str.charAt(ic) >= '0' && str.charAt(ic) <= '9') ||
+                  (str.charAt(ic) >= 'a' && str.charAt(ic) <= 'f') ||
+                  (str.charAt(ic) >= 'A' && str.charAt(ic) <= 'F') ||
+                   str.charAt(ic) == ':' || str.charAt(ic) == '[' || str.charAt(ic) == ']')) { 
+                 return false; 
+             }
+        }
+        String[] tmp = str.split("]:");
+        if (tmp.length > 2) {
+            return false; 
+        }
+        if (tmp.length == 2) {
+             if (tmp[0].charAt(0) != '[') { 
+                 return false; 
+             }
+             tmp[0] = tmp[0].replace("[", "");
+        }
+     
+        String[] ipv6 = tmp[0].split(":");
+        if (ipv6.length > 8) { 
+            return false; 
+        }
+        for (int ic=0; ic < ipv6.length; ++ic) {
+            try {
+                if (ipv6[ic].isEmpty()) { 
+                    continue; 
+                }
+                int hexval = Integer.decode("0x"+ipv6[ic]);
+                if (hexval < 0x0 || hexval > 0xFFFF) { 
+                    return false; 
+                }
+            }
+            catch(Exception ex){
+                return false;
+            }
+        }
+        return true;
+    }
 }
