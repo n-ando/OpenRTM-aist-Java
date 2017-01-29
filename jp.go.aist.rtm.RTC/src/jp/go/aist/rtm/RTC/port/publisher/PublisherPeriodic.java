@@ -350,7 +350,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
      */
     protected void setPushPolicy(final Properties prop) {
         // push_policy default: NEW
-        String push_policy = prop.getProperty("publisher.push_policy", "new");
+        String push_policy = prop.getProperty("publisher.push_policy", "periodic");
         rtcout.println(Logbuf.DEBUG, "push_policy: " + push_policy );
     
         push_policy = StringUtil.normalize(push_policy);
