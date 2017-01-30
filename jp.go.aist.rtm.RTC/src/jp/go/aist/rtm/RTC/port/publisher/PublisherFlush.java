@@ -189,7 +189,6 @@ public class PublisherFlush extends PublisherBase implements ObjectCreator<Publi
                 dataref.v = data;
                 onReceived(dataref);
                 data = (EncapsOutputStreamExt)dataref.v;
-                //onReceived(data);
                 return ret;
             case PORT_ERROR:
                 onReceiverError(data);

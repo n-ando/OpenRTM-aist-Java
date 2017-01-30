@@ -106,13 +106,11 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             while (m_buffer.readable() > 0) {
                 OutputStream cdr = m_buffer.get();
                 DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
-                //onBufferRead(cdr);
                 onBufferRead(dataref);
                 cdr = (EncapsOutputStreamExt)dataref.v;
 
                 dataref.v = cdr;
                 onSend(dataref);
-                //onSend(cdr);
                 cdr = (EncapsOutputStreamExt)dataref.v;
                 ReturnCode ret = m_consumer.put(cdr);
             
@@ -123,7 +121,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                 dataref.v = cdr;
                 onReceived(dataref);
                 cdr = (EncapsOutputStreamExt)dataref.v;
-                //onReceived(cdr);
 
                 m_buffer.advanceRptr();
             }
@@ -150,7 +147,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
 
             dataref.v = cdr;
             onSend(dataref);
-            //onSend(cdr);
             cdr = (EncapsOutputStreamExt)dataref.v;
             ReturnCode ret = m_consumer.put(cdr);
         
@@ -161,7 +157,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             dataref.v  = cdr;
             onReceived(dataref);
             cdr = (EncapsOutputStreamExt)dataref.v;
-            //onReceived(cdr);
 
             m_buffer.advanceRptr();
         
@@ -195,7 +190,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         
                 dataref.v = cdr;
                 onSend(dataref);
-                //onSend(cdr);
                 cdr = (EncapsOutputStreamExt)dataref.v;
                 ret = m_consumer.put(cdr);
                 if (!ret.equals(ReturnCode.PORT_OK)) {
@@ -206,7 +200,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
                 dataref.v = cdr;
                 onReceived(dataref);
                 cdr = (EncapsOutputStreamExt)dataref.v;
-                //onReceived(cdr);
                 postskip = m_skipn +1;
             }
             m_buffer.advanceRptr(m_buffer.readable());
@@ -245,7 +238,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             cdr = (EncapsOutputStreamExt)dataref.v;
 
             dataref.v = cdr;
-            //onSend(cdr);
             onSend(dataref);
             cdr = (EncapsOutputStreamExt)dataref.v;
             ReturnCode ret = m_consumer.put(cdr);
@@ -257,7 +249,6 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
             dataref.v = cdr;
             onReceived(dataref);
             cdr = (EncapsOutputStreamExt)dataref.v;
-            //onReceived(cdr);
             m_buffer.advanceRptr();
             return ret;
         }

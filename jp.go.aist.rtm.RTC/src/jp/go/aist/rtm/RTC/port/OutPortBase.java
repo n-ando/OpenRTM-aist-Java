@@ -1599,7 +1599,22 @@ public abstract class OutPortBase extends PortBase {
                     return null;
                 }
                 rtcout.println(Logbuf.TRACE, "OutPortPullConnector create");
+
     
+                String type = prop.getProperty("interface_type").trim();
+                rtcout.println(Logbuf.PARANOID, "interface_type= " + type);
+                if (type.equals("direct")) {
+                    InPortBase inport = getLocalInPort(profile);
+                    if (inport == null) {
+                        rtcout.println(Logbuf.DEBUG, 
+                            "interface_type is direct, " +
+                            "but a peer InPort servant could not be obtained.");
+                        //delete connector;
+                        return null;
+                    }
+                    connector.setInPort(inport);
+                }
+
                 m_connectors.add(connector);
                 rtcout.println(Logbuf.PARANOID, 
                            "connector push backed: "+m_connectors.size());

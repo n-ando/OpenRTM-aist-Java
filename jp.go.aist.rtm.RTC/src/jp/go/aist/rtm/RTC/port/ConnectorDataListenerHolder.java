@@ -21,7 +21,6 @@ public class ConnectorDataListenerHolder<DataType> extends Observable
     }
     public ReturnCode notify(ConnectorBase.ConnectorInfo info,
                 DataRef<OutputStream> cdrdata) {
-//                OutputStream cdrdata) {
         super.setChanged();
         ReturnCode ret =  ReturnCode.NO_CHANGE;
         //ConnectorDataListenerArgument arg 

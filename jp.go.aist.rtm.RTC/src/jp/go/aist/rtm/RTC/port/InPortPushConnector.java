@@ -265,10 +265,7 @@ public class InPortPushConnector extends InPortConnector {
     protected ReturnCode convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status, DataRef<OutputStream> data) {
         switch (status) {
             case BUFFER_OK:
-                //DataRef<OutputStream> dataref = new DataRef<OutputStream>(data);
-                //onBufferRead(data);
                 onBufferRead(data);
-                //data = (EncapsOutputStreamExt)dataref.v;
                 return ReturnCode.PORT_OK;
             case BUFFER_EMPTY:
                 onBufferEmpty();

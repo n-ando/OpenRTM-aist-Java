@@ -210,7 +210,6 @@ public class OutPortDirectProvider implements OutPortProvider, ObjectCreator<Out
     protected OpenRTM.PortStatus 
     convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status,
                   DataRef<OutputStream> data) {
-//                  final EncapsOutputStreamExt data) {
         switch (status) {
             case BUFFER_OK:
                 onBufferWrite(data);

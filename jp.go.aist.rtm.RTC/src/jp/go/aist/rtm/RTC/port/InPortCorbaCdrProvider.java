@@ -211,7 +211,6 @@ public class InPortCorbaCdrProvider extends InPortCdrPOA implements InPortProvid
     protected OpenRTM.PortStatus 
     convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status,
                   DataRef<OutputStream> data){
-//                  EncapsOutputStreamExt data) {
         switch (status) {
             case BUFFER_OK:
                 onBufferWrite(data);

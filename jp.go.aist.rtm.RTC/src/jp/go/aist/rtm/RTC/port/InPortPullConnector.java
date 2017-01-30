@@ -148,12 +148,10 @@ public class InPortPullConnector extends InPortConnector {
     public ReturnCode read(DataRef<InputStream> data){
         rtcout.println(Logbuf.TRACE, "InPortPullConnector.read()");
         if (m_directOutPort != null) {
-            OutPort outport = (OutPort)m_directOutPort;
-            //DataRef<DataType> dataref 
-            //        = new DataRef<DataType>(data);
-            outport.read(data); 
-            // ON_RECEIVED(In,Out) callback
-            return ReturnCode.PORT_OK;
+            return ReturnCode.BUFFER_EMPTY;
+            //OutPort outport = (OutPort)m_directOutPort;
+            //outport.read(data); 
+            //return ReturnCode.PORT_OK;
 
         }
         if (m_consumer == null) {

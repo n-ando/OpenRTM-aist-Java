@@ -193,7 +193,6 @@ public class InPortSHMProvider extends SharedMemory implements InPortProvider, O
     protected OpenRTM.PortStatus 
     convertReturn(jp.go.aist.rtm.RTC.buffer.ReturnCode status,
                   DataRef<OutputStream> data){
-//                  final EncapsOutputStreamExt data) {
         switch (status) {
             case BUFFER_OK:
                 onBufferWrite(data);

@@ -87,12 +87,10 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         while (m_buffer.readable() > 0) {
             OutputStream cdr = m_buffer.get();
             DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
-            //onBufferRead(cdr);
             onBufferRead(dataref);
             cdr = (EncapsOutputStreamExt)dataref.v;
 
             dataref.v = cdr;
-            //onSend(cdr);
             onSend(dataref);
             cdr = (EncapsOutputStreamExt)dataref.v;
             ReturnCode ret = m_consumer.put(cdr);
@@ -104,7 +102,6 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             dataref.v = cdr;
             onReceived(dataref);
             cdr = (EncapsOutputStreamExt)dataref.v;
-            //onReceived(cdr);
             m_buffer.advanceRptr();
         }
         return ReturnCode.PORT_OK;
@@ -124,12 +121,10 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         }
         OutputStream cdr = m_buffer.get();
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
-        //onBufferRead(cdr);
         onBufferRead(dataref);
         cdr = (EncapsOutputStreamExt)dataref.v;
 
         dataref.v = cdr;
-        //onSend(cdr);
         onSend(dataref);
         cdr = (EncapsOutputStreamExt)dataref.v;
         ReturnCode ret = m_consumer.put(cdr);
@@ -173,7 +168,6 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
             cdr = (EncapsOutputStreamExt)dataref.v;
 
             dataref.v = cdr;
-            //onSend(cdr);
             onSend(dataref);
             cdr = (EncapsOutputStreamExt)dataref.v;
             ret = m_consumer.put(cdr);
@@ -212,12 +206,10 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     
         OutputStream cdr = m_buffer.get();
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
-        //onBufferRead(cdr);
         onBufferRead(dataref);
         cdr = (EncapsOutputStreamExt)dataref.v;
 
         dataref.v =cdr;
-        //onSend(cdr);
         onSend(dataref);
         cdr = (EncapsOutputStreamExt)dataref.v;
         ReturnCode ret = m_consumer.put(cdr);
@@ -800,7 +792,6 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
         m_listeners.connectorData_[ConnectorDataListenerType.ON_SEND].notify(m_profile, data);
     }
 
-    //protected void onReceived(OutputStream data) {
     protected void onReceived(DataRef<OutputStream> data) {
         m_listeners.connectorData_[ConnectorDataListenerType.ON_RECEIVED].notify(m_profile, data);
     }
@@ -849,7 +840,6 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     private int m_leftskip;
     private String m_retmutex = new String();;
     private boolean m_readback;
-//zxc    private ConnectorListeners m_listeners = new  ConnectorListeners();
     private ConnectorListeners m_listeners;
     private ConnectorBase.ConnectorInfo m_profile;
 }

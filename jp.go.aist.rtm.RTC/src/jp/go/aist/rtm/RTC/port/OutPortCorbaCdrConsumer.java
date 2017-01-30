@@ -173,7 +173,6 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
                 DataRef<OutputStream> dataref = new DataRef<OutputStream>(data);
                 onReceived(dataref);
                 data = (EncapsOutputStreamExt)dataref.v;
-                //onReceived(data);
 
                 dataref.v = data;
                 onBufferWrite(dataref);
