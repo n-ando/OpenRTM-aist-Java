@@ -1890,7 +1890,6 @@ public class Manager {
             return null;
         }
 
-System.out.println("--20170203 00110 :"+"  :"+m_config.getProperty("corba.endpoints_ipv4"));
         if (m_config.getProperty("corba.endpoints_ipv4").equals("")) {
             setEndpointProperty(comp.getObjRef());
         }
@@ -4621,7 +4620,6 @@ System.out.println("--20170203 00110 :"+"  :"+m_config.getProperty("corba.endpoi
      */
     protected void setEndpointProperty(Object objref) {
         rtcout.println(Logbuf.TRACE,"sedEndpointProperty()");
-System.out.println("--20170203 00200 :"+"  :"+objref);
         if(objref==null){
             rtcout.println(Logbuf.WARN,"Object reference is nil.");
             return;
@@ -4638,7 +4636,6 @@ System.out.println("--20170203 00200 :"+"  :"+objref);
         endpointPropertySwitch("ipv6", ipv6, ipv6_list);
 
         String iorstr = m_pORB.object_to_string(objref);
-System.out.println("--20170203 00210 :"+"  :"+iorstr);
         IOR ior = new IOR();
         DataRef<IOR> iorholder = new DataRef<IOR>(ior);
         toIOR(iorstr, iorholder);
@@ -4653,9 +4650,7 @@ System.out.println("--20170203 00210 :"+"  :"+iorstr);
             String addr = endpoints.get(ic).host;
             if (ipv4.v.booleanValue() && StringUtil.isIPv4(addr)) {
                 String tmp_port = String.valueOf(endpoints.get(ic).port);
-System.out.println("--20170203 00220 :"+"  :"+tmp_port);
                 String tmp = addr + ":" + tmp_port;
-System.out.println("--20170203 00230 :"+"  :"+tmp);
                 if (ipv4_list.size() == 0 || ipv4_list.contains(ipv4_count)){
                     epstr.add(tmp);
                     epstr_ipv4.add(tmp);
@@ -4664,9 +4659,7 @@ System.out.println("--20170203 00230 :"+"  :"+tmp);
             }
             if (ipv6.v.booleanValue() && StringUtil.isIPv6(addr)) {
                 String tmp_port = String.valueOf(endpoints.get(ic).port);
-System.out.println("--20170203 00240 :"+"  :"+tmp_port);
                 String tmp = "[" + addr + "]:" + tmp_port;
-System.out.println("--20170203 00250 :"+"  :"+tmp);
                 if (ipv6_list.size() == 0 ||ipv6_list.contains(ipv6_count)){
                     epstr.add(tmp);
                     epstr_ipv6.add(tmp);
@@ -4676,13 +4669,10 @@ System.out.println("--20170203 00250 :"+"  :"+tmp);
         }
         String str = new String();
         str = StringUtil.flatten(epstr);
-System.out.println("--20170203 00260 :"+"  :"+str);
         m_config.setProperty("corba.endpoints", str);
         str = StringUtil.flatten(epstr_ipv4);
-System.out.println("--20170203 00270 :"+"  :"+str);
         m_config.setProperty("corba.endpoints_ipv4", str);
         str = StringUtil.flatten(epstr_ipv6);
-System.out.println("--20170203 00280 :"+"  :"+str);
         m_config.setProperty("corba.endpoints_ipv6", str);
    }
     /**
