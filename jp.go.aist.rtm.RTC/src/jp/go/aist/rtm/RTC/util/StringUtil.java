@@ -467,6 +467,9 @@ public class StringUtil {
         }
         return true;
     }
+    public static boolean isIPv4(final String str) {
+        return isIPv4(str,true);
+    }
 
     private static final Pattern V6_FORMAT = Pattern.compile("(([0-9a-f]{1,4})(:([0-9a-f]{1,4})){7}((\\.|#|p| port )\\d{1,4})?)|\\[([0-9a-f]{1,4})(:([0-9a-f]{1,4})){7}\\]:\\d{1,4}");
     public static boolean isIPv6(final String str, boolean strict) {
@@ -514,5 +517,8 @@ public class StringUtil {
             }
         }
         return true;
+    }
+    public static boolean isIPv6(final String str) {
+        return isIPv6(str,true);
     }
 }

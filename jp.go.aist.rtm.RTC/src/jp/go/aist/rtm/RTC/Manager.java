@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import java.lang.Boolean;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -27,6 +29,7 @@ import jp.go.aist.rtm.RTC.port.PortBase;
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
 import jp.go.aist.rtm.RTC.util.CORBA_RTCUtil;
+import jp.go.aist.rtm.RTC.util.DataRef;
 import jp.go.aist.rtm.RTC.util.IiopAddressComp;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
@@ -35,12 +38,22 @@ import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.Timer;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
+import java.io.ByteArrayOutputStream;
 
 import org.omg.CORBA.ORB;
+import org.omg.CORBA.OctetSeqHelper;
 import org.omg.CORBA.Object;
+import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.OutputStream;
 import org.omg.CORBA.SystemException;
 import org.omg.CosNaming.BindingListHolder;
 import org.omg.CosNaming.BindingType;
+import org.omg.IOP.IOR;
+import org.omg.IOP.IORHelper;
+import org.omg.IOP.TaggedProfile;
+import org.omg.IOP.TaggedProfileHelper;
+import org.omg.IOP.TAG_MULTIPLE_COMPONENTS;
+import org.omg.IOP.TAG_INTERNET_IOP;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 import org.omg.PortableServer.POAManager;
@@ -1845,7 +1858,9 @@ public class Manager {
             "os.version",
             "os.arch",
             "os.hostname",
-            "corba.endpoint",
+            "corba.endpoints",
+            "corba.endpoints_ipv4",
+            "corba.endpoints_ipv6",
             "corba.id",
             "exec_cxt.periodic.type",
             "exec_cxt.periodic.rate",
@@ -1866,13 +1881,6 @@ public class Manager {
             ""
         };
 
-        for (int ic=0; inherit_prop[ic].length() != 0; ++ic) {
-            
-            String key = inherit_prop[ic];
-            if (m_config.findNode(key) != null) {
-                prop.setProperty(key,m_config.getProperty(key));
-            }
-        }
 
         comp = factory.create(this);
         if (comp == null) {
@@ -1880,6 +1888,19 @@ public class Manager {
                 "RTC creation failed: " 
                 + comp_id.getProperty("implementaion_id"));
             return null;
+        }
+
+System.out.println("--20170203 00110 :"+"  :"+m_config.getProperty("corba.endpoints_ipv4"));
+        if (m_config.getProperty("corba.endpoints_ipv4").equals("")) {
+            setEndpointProperty(comp.getObjRef());
+        }
+
+        for (int ic=0; inherit_prop[ic].length() != 0; ++ic) {
+            
+            String key = inherit_prop[ic];
+            if (m_config.findNode(key) != null) {
+                prop.setProperty(key,m_config.getProperty(key));
+            }
         }
 
 
@@ -3832,6 +3853,9 @@ public class Manager {
             return true;
         }
         m_mgrservant = new ManagerServant();
+        if (m_config.getProperty("corba.endpoints_ipv4").equals("")) {
+            setEndpointProperty(m_mgrservant.getObjRef());
+        }
         return true;
     }
     
@@ -4589,6 +4613,259 @@ public class Manager {
           }
         return true;
     }
+
+
+    /**
+     * {@.ja corba.endpoints にエンドポイント情報を設定する}
+     * {@.en Setting endpoint info from corba.endpoints}
+     */
+    protected void setEndpointProperty(Object objref) {
+        rtcout.println(Logbuf.TRACE,"sedEndpointProperty()");
+System.out.println("--20170203 00200 :"+"  :"+objref);
+        if(objref==null){
+            rtcout.println(Logbuf.WARN,"Object reference is nil.");
+            return;
+        }
+
+        
+        DataRef<Boolean> ipv4 = new DataRef<Boolean>(Boolean.FALSE);
+        DataRef<Boolean> ipv6 = new DataRef<Boolean>(Boolean.FALSE);
+        
+        ArrayList<Integer> ipv4_list = new ArrayList<Integer>();
+        ArrayList<Integer> ipv6_list = new ArrayList<Integer>();
+
+        endpointPropertySwitch("ipv4", ipv4, ipv4_list);
+        endpointPropertySwitch("ipv6", ipv6, ipv6_list);
+
+        String iorstr = m_pORB.object_to_string(objref);
+System.out.println("--20170203 00210 :"+"  :"+iorstr);
+        IOR ior = new IOR();
+        DataRef<IOR> iorholder = new DataRef<IOR>(ior);
+        toIOR(iorstr, iorholder);
+        ArrayList<Address> endpoints = getEndpoints(iorholder.v); 
+
+        ArrayList<String> epstr = new ArrayList<String>();
+        ArrayList<String> epstr_ipv4 = new ArrayList<String>();
+        ArrayList<String> epstr_ipv6 = new ArrayList<String>();
+        int  ipv4_count=0;
+        int  ipv6_count=0;
+        for (int ic=0; ic < endpoints.size(); ++ic) {
+            String addr = endpoints.get(ic).host;
+            if (ipv4.v.booleanValue() && StringUtil.isIPv4(addr)) {
+                String tmp_port = String.valueOf(endpoints.get(ic).port);
+System.out.println("--20170203 00220 :"+"  :"+tmp_port);
+                String tmp = addr + ":" + tmp_port;
+System.out.println("--20170203 00230 :"+"  :"+tmp);
+                if (ipv4_list.size() == 0 || ipv4_list.contains(ipv4_count)){
+                    epstr.add(tmp);
+                    epstr_ipv4.add(tmp);
+                }
+                ipv4_count += 1;
+            }
+            if (ipv6.v.booleanValue() && StringUtil.isIPv6(addr)) {
+                String tmp_port = String.valueOf(endpoints.get(ic).port);
+System.out.println("--20170203 00240 :"+"  :"+tmp_port);
+                String tmp = "[" + addr + "]:" + tmp_port;
+System.out.println("--20170203 00250 :"+"  :"+tmp);
+                if (ipv6_list.size() == 0 ||ipv6_list.contains(ipv6_count)){
+                    epstr.add(tmp);
+                    epstr_ipv6.add(tmp);
+                }
+                ipv6_count += 1;
+            }
+        }
+        String str = new String();
+        str = StringUtil.flatten(epstr);
+System.out.println("--20170203 00260 :"+"  :"+str);
+        m_config.setProperty("corba.endpoints", str);
+        str = StringUtil.flatten(epstr_ipv4);
+System.out.println("--20170203 00270 :"+"  :"+str);
+        m_config.setProperty("corba.endpoints_ipv4", str);
+        str = StringUtil.flatten(epstr_ipv6);
+System.out.println("--20170203 00280 :"+"  :"+str);
+        m_config.setProperty("corba.endpoints_ipv6", str);
+   }
+    /**
+     * {@.ja corba.endpoint_property からオプション情報を取得する}
+     * {@.en Getting option info from corba.endpoint_property}
+     */
+    protected void endpointPropertySwitch(final String ipver,
+                           DataRef<Boolean> ip, ArrayList<Integer> ip_list) {
+        ip.v = Boolean.FALSE; 
+        ip_list.clear();
+
+        String ep_prop = m_config.getProperty("corba.endpoint_property", "ipv4");
+        ep_prop = ep_prop.toLowerCase();
+
+        int pos = ep_prop.indexOf(ipver);
+        if (pos < 0) { 
+            return; 
+        }
+
+        ip.v = Boolean.TRUE;
+        pos += ipver.length();
+ 
+        if (pos >= ep_prop.length() || ep_prop.charAt(pos) != '(') { 
+            return; 
+        }
+  
+        int par_begin, par_end;
+        par_begin = pos;
+        ++pos;
+        par_begin = pos;
+        int num = ep_prop.indexOf(")",pos);
+        if(num < 0){
+            num = ep_prop.length()-1;
+        }
+        par_end = num;
+
+        String list_num = ep_prop.substring(par_begin, par_end);
+        String[] nums = list_num.split(",");
+        for (int ic=0; ic < nums.length; ++ic) {
+            try {
+                int ival = Integer.parseInt(nums[ic],10);
+                ip_list.add(ival);
+            }
+            catch(Exception ex){
+
+            }
+        }
+    }
+
+    /**
+     * {@.ja }
+     * {@.en }
+     * 
+     * <p>    
+     * {@.ja }
+     * {@.en }
+     *
+     */
+    public boolean toIOR(final String iorstr, DataRef<IOR> iorholder) {
+        if (iorstr.isEmpty()) { 
+            return false; 
+        }
+        int size = iorstr.length();
+
+        if (size < 4) {
+            return false;
+        }
+
+        String ior = iorstr;
+        if(!ior.startsWith("IOR:")) {
+            return false;
+        }
+        
+
+        // IOR:xxyyzz......
+        // "IOR:" occupies 4 digits.
+        // two digits express one byte, and all byte sequence express IOR profile
+        ior = ior.substring(4);
+
+        ByteArrayOutputStream bastream = new ByteArrayOutputStream();
+        org.omg.CORBA.Any any = ORBUtil.getOrb().create_any(); 
+        OutputStream buf = any.create_output_stream();
+
+        int step = 0;
+        for (int ic=0; ic < ior.length(); ic += 2) {
+            String temp  = ior.substring(ic,ic+2);
+            try {
+                int ival = Integer.parseInt(temp,16);
+                bastream.write(ival);
+            }
+            catch(Exception ex){
+                return false;
+            }
+        }
+        byte value[] = bastream.toByteArray();
+        buf.write_long (value.length);
+        buf.write_octet_array (value, 0, value.length);
+        InputStream inp = buf.create_input_stream();
+        boolean swap = inp.read_boolean();  //Byte Order (0) Big Endian
+        byte[] padding = new byte[4];
+        inp.read_octet_array(padding,0,3);  //padding
+        int typeIdLength;
+        typeIdLength = inp.read_long();     //TypeId length 
+        iorholder.v = IORHelper.read(inp); 
+
+        return true;
+    }
+    /**
+     * {@.ja }
+     * {@.en }
+     * 
+     * <p>    
+     * {@.ja }
+     * {@.en }
+     *
+     */
+    public ArrayList<Address> getEndpoints(IOR ior) {
+        ArrayList<Address> addr = new ArrayList<Address>();
+        if (ior.profiles.length == 0 && ior.type_id.length() == 0) {
+            System.err.println("IOR is a nil object reference.");
+            return addr;
+        }
+
+        for (int ic=0; ic < ior.profiles.length; ++ic) {
+            if (ior.profiles[ic].tag == TAG_INTERNET_IOP.value) {
+                org.omg.CORBA.Any any = ORBUtil.getOrb().create_any(); 
+                OutputStream buf = any.create_output_stream();
+                TaggedProfileHelper.write(buf,ior.profiles[ic]);
+                InputStream inp = buf.create_input_stream();
+                //Profile Tag 
+                int tag = inp.read_long();    
+                //Profile length
+                int profileLength = inp.read_long(); 
+                //Byte Order
+                byte byteOrder = inp.read_octet();
+                //Version
+                byte[] version = new byte[2];
+                inp.read_octet_array(version,0,2);
+                //Host string
+                String host = inp.read_string();
+                //Port
+                int port = inp.read_short() & 0x0000ffff;
+                addr.add(new Address(host,port));
+                //extractAddrs(pBody.components, addr);
+            }
+            else if (ior.profiles[ic].tag == TAG_MULTIPLE_COMPONENTS.value) {
+                org.omg.CORBA.Any any = ORBUtil.getOrb().create_any(); 
+                OutputStream buf = any.create_output_stream();
+                TaggedProfileHelper.write(buf,ior.profiles[ic]);
+                InputStream inp = buf.create_input_stream();
+                int tag = inp.read_long();    
+                //Profile length
+                int profileLength = inp.read_long(); 
+                //Byte Order
+                byte byteOrder = inp.read_octet();
+                //Number of tagged components
+                int componentsLength = inp.read_long(); 
+                for(int icc=0;icc<componentsLength;++icc){
+                    int comptag  = inp.read_long();
+                    int compLength  = inp.read_long();
+                    byte cByteOrder = inp.read_octet();
+                    int vender  = inp.read_long();
+                }
+//                extractAddrs(pBody.components, addr);
+            }
+            else {
+                System.err.printf("Unrecognised profile tag: 0x%x",ior.profiles[ic].tag);
+            }
+        }
+        return addr;
+    }
+
+
+    class Address {
+        public Address(String host, int port ){
+            this.host = host;
+            this. port= port;
+        }
+        public String host;
+        public int port;
+    }
+
+
     /**
      * {@.ja コンポーネント削除用クラス}
      * {@.en Class}
