@@ -448,7 +448,7 @@ public class StringUtil {
 	return false;
     }
 
-    private static final Pattern V4_FORMAT = Pattern.compile("((([01]?\\d{1,2})|(2[0-4]\\d)|(25[0-5]))\\.){3}(([01]?\\d{1,2})|(2[0-4]\\d)|(25[0-5]))");
+    private static final Pattern V4_FORMAT = Pattern.compile("((([01]?\\d{1,2})|(2[0-4]\\d)|(25[0-5]))\\.){3}(([01]?\\d{1,2})|(2[0-4]\\d)|(25[0-5]))(:\\d{1,5})?");
     public static boolean isIPv4(final String str, boolean strict) {
         if (strict) {
             return V4_FORMAT.matcher(str).matches();
@@ -507,6 +507,8 @@ public class StringUtil {
                 if (ipv6[ic].isEmpty()) { 
                     continue; 
                 }
+                ipv6[ic] = ipv6[ic].replace("[", "");
+                ipv6[ic] = ipv6[ic].replace("]", "");
                 int hexval = Integer.decode("0x"+ipv6[ic]);
                 if (hexval < 0x0 || hexval > 0xFFFF) { 
                     return false; 
@@ -519,6 +521,6 @@ public class StringUtil {
         return true;
     }
     public static boolean isIPv6(final String str) {
-        return isIPv6(str,true);
+        return isIPv6(str,false);
     }
 }
