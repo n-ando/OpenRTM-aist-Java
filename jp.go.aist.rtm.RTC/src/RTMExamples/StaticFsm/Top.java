@@ -12,39 +12,18 @@ import java.util.Queue;
 /**
  * 
  */
-//@DataType(Top.Data.class)
-public class Top extends StateDef implements CameraProtocol {
+@DataType(Top.Data.class)
+public class Top extends StateDef implements MicrowaveProtocol {
 
-/*
     public static class Data {
 
         private int myCookingTime;
-// pyfsm/test/api_test.py:10
-//    class Data(object):
-//        def __init__(self):
-//            self.my_cooking_time = 0
-//
-//        def print_timer(self):
-//            pyfsm_logger.debug("  Timer set to {0} minutes".format(self.my_cooking_time))
-//
-//        def increment_timer(self):
-//            self.my_cooking_time += 1
-//
-//        def decrement_timer(self):
-//            self.my_cooking_time -= 1
-//
-//        def reset_timer(self):
-//            self.my_cooking_time = 0
-//
-//        def get_remaining_time(self):
-//            return self.my_cooking_time
-
         public Data() {
             myCookingTime = 0;
         }
 
         public void printTimer() {
-            LOGGER.debug("  Timer set to {} minutes", myCookingTime);
+            System.out.println("  Timer set to {} minutes"+ myCookingTime);
         }
 
         public void incrementTimer() {
@@ -63,67 +42,52 @@ public class Top extends StateDef implements CameraProtocol {
             return myCookingTime;
         }
     }
-*/
-
-    @Override
-    public void onEntry() {
-        System.out.println("Top::onEntry");
-        setOutputData(0);
-    }
 
     @Override
     public void onInit() {
-        System.out.println("Top::onInit");
-        setState(new State(Off.class));
+        System.out.println("[Microwave] TOP::onInit()");
+        setState(new State(Operational.class));
+    }
+
+    @Override
+    public void onEntry() {
+        System.out.println("[Microwave] TOP::onEntry()");
     }
 
     @Override
     public void onExit() {
-        System.out.println("Top::onExit");
+        System.out.println("[Microwave] TOP::onExit()");
     }
 
     @Override
-    public void on_do() {
-        System.out.println("Top::on_do");
+    public void open() {
+        // do nothing
     }
 
     @Override
-    public void EvOn(TimedLong param){ 
-    }
-    @Override
-    public void EvOff(TimedLong param){ 
-    }
-    @Override
-    public void EvConfig(TimedLong param){
-    }
-    @Override
-    public void EvInFocus(TimedLong param){
-    }
-    @Override
-    public void EvShutterHalf(TimedLong param){
-    }
-    @Override
-    public void EvShutterFull(TimedLong param){
-    }
-    @Override
-    public void EvShutterReleased(TimedLong param){
+    public void close() {
+        // do nothing
     }
 
     @Override
-    public int getOutputData() {
-        return m_que.poll();
+    public void minute() {
+        // do nothing
     }
 
     @Override
-    public boolean isOutputData() {
-        return m_que.isEmpty();
+    public void start() {
+        // do nothing
     }
 
-    protected void setOutputData(int val) {
-         m_que.offer(val);
+    @Override
+    public void stop() {
+        // do nothing
     }
 
-    private int m_val;
-    private static Queue<Integer> m_que = new ArrayDeque<Integer>();;
+    @Override
+    public void tick() {
+        // do nothing
+    }
+
 }
 

@@ -1,7 +1,7 @@
 package RTMExamples.StaticFsm;
 /**
- * {@.ja StaticFsmImpl}
- * {@.en StaticFsmImpl}
+ * {@.ja MicrowaveImpl}
+ * {@.en MicrowaveImpl}
  */
 
 import java.lang.reflect.Array;
@@ -20,6 +20,7 @@ import jp.go.aist.rtm.RTC.jfsm.Event;
 import jp.go.aist.rtm.RTC.jfsm.Machine;
 import jp.go.aist.rtm.RTC.jfsm.machine.EventBase;
 import jp.go.aist.rtm.RTC.port.ConnectorBase;
+import jp.go.aist.rtm.RTC.port.EventInPort;
 import jp.go.aist.rtm.RTC.port.InPort;
 import jp.go.aist.rtm.RTC.port.OutPort;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListenerT;
@@ -34,7 +35,7 @@ import RTC.ReturnCode_t;
  * {@.en Implemented class of a sample component of static FSM}
  *
  */
-public class StaticFsmImpl extends DataFlowComponentBase {
+public class MicrowaveImpl extends DataFlowComponentBase {
 
   /**
    * {@.ja  constructor}
@@ -43,40 +44,12 @@ public class StaticFsmImpl extends DataFlowComponentBase {
    *   {@.ja Maneger Object}
    *   {@.en Maneger Object}
    */
-  public StaticFsmImpl(Manager manager) {  
+  public MicrowaveImpl(Manager manager) {  
       super(manager);
       // <rtc-template block="initializer">
-      m_EvConfig_val = new TimedLong();
-      initializeParam(m_EvConfig_val);
-      m_EvConfig = new DataRef<TimedLong>(m_EvConfig_val);
-      m_EvConfigIn = new InPort<TimedLong>("EvConfig", m_EvConfig);
-      m_EvInFocus_val = new TimedLong();
-      initializeParam(m_EvInFocus_val);
-      m_EvInFocus = new DataRef<TimedLong>(m_EvInFocus_val);
-      m_EvInFocusIn = new InPort<TimedLong>("EvInFocus", m_EvInFocus);
-      m_EvOff_val = new TimedLong();
-      initializeParam(m_EvOff_val);
-      m_EvOff = new DataRef<TimedLong>(m_EvOff_val);
-      m_EvOffIn = new InPort<TimedLong>("EvOff", m_EvOff);
-      m_EvOn_val = new TimedLong();
-      initializeParam(m_EvOn_val);
-      m_EvOn = new DataRef<TimedLong>(m_EvOn_val);
-      m_EvOnIn = new InPort<TimedLong>("EvOn", m_EvOn);
-      m_EvShutterFull_val = new TimedLong();
-      initializeParam(m_EvShutterFull_val);
-      m_EvShutterFull = new DataRef<TimedLong>(m_EvShutterFull_val);
-      m_EvShutterFullIn = new InPort<TimedLong>("EvShutterFull", m_EvShutterFull);
-      m_EvShutterHalf_val = new TimedLong();
-      initializeParam(m_EvShutterHalf_val);
-      m_EvShutterHalf = new DataRef<TimedLong>(m_EvShutterHalf_val);
-      m_EvShutterHalfIn = new InPort<TimedLong>("EvShutterHalf", m_EvShutterHalf);
-      m_EvShutterReleased_val = new TimedLong();
-      initializeParam(m_EvShutterReleased_val);
-      m_EvShutterReleased = new DataRef<TimedLong>(m_EvShutterReleased_val);
-      m_EvShutterReleasedIn = new InPort<TimedLong>("EvShutterReleased", m_EvShutterReleased);
-      m_out_val = new TimedLong();
-      m_out = new DataRef<TimedLong>(m_out_val);
-      m_outOut = new OutPort<TimedLong>("out", m_out);
+      m_fsm = new Machine<>(Top.class, MicrowaveProtocol.class, null);
+      m_event = new DataRef<Machine<Top, MicrowaveProtocol>>(m_fsm);
+      m_eventIn = new EventInPort<Machine<Top, MicrowaveProtocol>>("event",m_event);
       // </rtc-template>
 
   }
@@ -95,42 +68,16 @@ public class StaticFsmImpl extends DataFlowComponentBase {
       // Registration: InPort/OutPort/Service
       // <rtc-template block="registration">
       // Set InPort buffers
-      addInPort("EvConfig", m_EvConfigIn);
-      addInPort("EvInFocus", m_EvInFocusIn);
-      addInPort("EvOff", m_EvOffIn);
-      addInPort("EvOn", m_EvOnIn);
-      addInPort("EvShutterFull", m_EvShutterFullIn);
-      addInPort("EvShutterHalf", m_EvShutterHalfIn);
-      addInPort("EvShutterReleased", m_EvShutterReleasedIn);
-      
-      machine_ = new Machine<>(Top.class, CameraProtocol.class, null);
-      m_que = new ArrayDeque<Event>();
+      addInPort("event", m_eventIn);
 
+      m_eventIn.bindEvent("open",   "open");
+      m_eventIn.bindEvent("close",  "close");
+      m_eventIn.bindEvent("minute", "minute");
+      m_eventIn.bindEvent("start",  "start");
+      m_eventIn.bindEvent("stop",   "stop");
 
-      m_EvConfigIn.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("EvConfig",m_que));
-      m_EvInFocusIn.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("EvInFocus",m_que));
-      m_EvOffIn.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("EvOff",m_que));
-      m_EvOnIn.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("EvOn",m_que));
-      m_EvShutterFullIn.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("EvShutterFull",m_que));
-      m_EvShutterHalfIn.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("EvShutterHalf",m_que));
-      m_EvShutterReleasedIn.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("EvShutterReleased",m_que));
 
       // Set OutPort buffer
-      addOutPort("out", m_outOut);
       // </rtc-template>
       
       
@@ -229,18 +176,6 @@ public class StaticFsmImpl extends DataFlowComponentBase {
    */
   @Override
   protected ReturnCode_t onExecute(int ec_id) {
-      synchronized (m_que) {
-          while (!m_que.isEmpty()) {
-              Event ev = m_que.poll();
-              machine_.dispatch(ev);
-          }
-      }
-      while (!machine_.current().isOutputData()) {
-          m_out_val.data = machine_.current().getOutputData();
-          System.out.println("output data: "  + m_out_val.data);
-          m_outOut.write();
-      }
-      machine_.current().on_do();
       return super.onExecute(ec_id);
   }
 
@@ -326,61 +261,19 @@ public class StaticFsmImpl extends DataFlowComponentBase {
 //
   // DataInPort declaration
   // <rtc-template block="inport_declare">
-  protected TimedLong m_EvConfig_val;
-  protected DataRef<TimedLong> m_EvConfig;
+  protected Machine<Top, MicrowaveProtocol> m_fsm;
+  protected DataRef<Machine<Top, MicrowaveProtocol>> m_event;
   /*!
    */
-  protected InPort<TimedLong> m_EvConfigIn;
+  protected EventInPort<Machine<Top, MicrowaveProtocol>> m_eventIn;
 
-  protected TimedLong m_EvInFocus_val;
-  protected DataRef<TimedLong> m_EvInFocus;
-  /*!
-   */
-  protected InPort<TimedLong> m_EvInFocusIn;
-
-  protected TimedLong m_EvOff_val;
-  protected DataRef<TimedLong> m_EvOff;
-  /*!
-   */
-  protected InPort<TimedLong> m_EvOffIn;
-
-  protected TimedLong m_EvOn_val;
-  protected DataRef<TimedLong> m_EvOn;
-  /*!
-   */
-  protected InPort<TimedLong> m_EvOnIn;
-
-  protected TimedLong m_EvShutterFull_val;
-  protected DataRef<TimedLong> m_EvShutterFull;
-  /*!
-   */
-  protected InPort<TimedLong> m_EvShutterFullIn;
-
-  protected TimedLong m_EvShutterHalf_val;
-  protected DataRef<TimedLong> m_EvShutterHalf;
-  /*!
-   */
-  protected InPort<TimedLong> m_EvShutterHalfIn;
-
-  protected TimedLong m_EvShutterReleased_val;
-  protected DataRef<TimedLong> m_EvShutterReleased;
-  /*!
-   */
-  protected InPort<TimedLong> m_EvShutterReleasedIn;
 
     
   // </rtc-template>
 
   // DataOutPort declaration
   // <rtc-template block="outport_declare">
-  protected TimedLong m_out_val;
-  protected DataRef<TimedLong> m_out;
-  /*!
-   */
-  protected OutPort<TimedLong> m_outOut;
 
-  private Machine<Top, CameraProtocol> machine_;
-  private Queue<Event> m_que;
     
   // </rtc-template>
 

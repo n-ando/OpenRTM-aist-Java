@@ -26,15 +26,15 @@ import _SDOPackage.NVListHolder;
  * {@.en Sample component of static FSM}
  *
  */
-public class StaticFsmComp implements ModuleInitProc {
+public class MicrowaveComp implements ModuleInitProc {
 
     public void myModuleInit(Manager mgr) {
-        Properties prop = new Properties(StaticFsm.component_conf);
-        mgr.registerFactory(prop, new StaticFsm(), new StaticFsm());
+        Properties prop = new Properties(Microwave.component_conf);
+        mgr.registerFactory(prop, new Microwave(), new Microwave());
 
         // Create a component
-        System.out.println("Creating a component: \"StaticFsm\"....");
-        RTObject_impl comp = mgr.createComponent("StaticFsm");
+        System.out.println("Creating a component: \"Microwave\"....");
+        RTObject_impl comp = mgr.createComponent("Microwave");
         if( comp==null ) {
     	    System.err.println("Component create failed.");
     	    System.exit(0);
@@ -105,7 +105,7 @@ public class StaticFsmComp implements ModuleInitProc {
 
         // Set module initialization proceduer
         // This procedure will be invoked in activateManager() function.
-        StaticFsmComp init = new StaticFsmComp();
+        MicrowaveComp init = new MicrowaveComp();
         manager.setModuleInitProc(init);
 
         // Activate manager and register to naming service

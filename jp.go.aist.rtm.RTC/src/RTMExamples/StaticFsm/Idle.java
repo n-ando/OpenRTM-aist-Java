@@ -1,36 +1,29 @@
 package RTMExamples.StaticFsm;
 
 import jp.go.aist.rtm.RTC.jfsm.DeepHistory;
+import jp.go.aist.rtm.RTC.jfsm.Event;
 import jp.go.aist.rtm.RTC.jfsm.State;
 
 import RTC.TimedLong;
 /**
  * 
  */
-@DeepHistory
-public class Idle extends NotShooting {
+public class Idle extends Operational {
 
     @Override
     public void onEntry() {
-        System.out.println("Idle::onEntry");
-        setOutputData(3);
+        ((Top.Data) data()).resetTimer();
+        System.out.println("[Microwave] Idle::onEntry()");
+        System.out.println("[Microwave] >>> Microwave ready <<<");
     }
 
     @Override
-    public void onExit() {
-        System.out.println("Idle::onExit");
+    public void minute() {
+        System.out.println("[Microwave] >>> Timer incremented <<<");
+        setState(new State(Programmed.class));
+        dispatch(new Event("minute"));
     }
 
-    @Override
-    public void on_do() {
-        System.out.println("Idle::on_do");
-    }
-
-    @Override
-    public void EvConfig(TimedLong param){
-        System.out.println("Idle::EvConfig");
-        setState(new State(Configuring.class));
-    }
 
 }
 
