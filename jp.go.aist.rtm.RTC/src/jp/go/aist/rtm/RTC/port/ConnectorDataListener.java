@@ -7,6 +7,7 @@ import org.omg.CORBA.portable.OutputStream;
 
 import RTC.ReturnCode_t;
 
+import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
   /**
    * {@.ja ConnectorDataListener クラス}
    * {@.en ConnectorDataListener class}

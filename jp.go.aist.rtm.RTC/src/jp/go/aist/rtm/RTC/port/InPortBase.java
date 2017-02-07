@@ -995,6 +995,27 @@ public abstract class InPortBase extends PortBase {
         this.addConnectorDataListener(type,listener,true);
     }
 
+    public void addConnectorDataListener(int type,
+                             ConnectorDataListener listener,
+                             boolean autoclean) {
+  
+        if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
+            rtcout.println(Logbuf.TRACE,
+                    "addConnectorDataListener("
+                    +ConnectorDataListenerType.toString(type)
+                    +")");
+            m_listeners.connectorData_[type].addObserver(listener);
+            return;
+        }
+        rtcout.println(Logbuf.ERROR, 
+                    "addConnectorDataListener(): Invalid listener type.");
+        return;
+    }
+    public void addConnectorDataListener(int type,
+                                        ConnectorDataListener listener) {
+        this.addConnectorDataListener(type,listener,true);
+    }
+
     /**
      * {@.ja ConnectorDataListener リスナを削除する}
      * {@.en Removing BufferDataListener type listener}
@@ -1011,6 +1032,22 @@ public abstract class InPortBase extends PortBase {
      */
     public void removeConnectorDataListener(int type,
                                 ConnectorDataListenerT listener) {
+
+
+        if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
+            rtcout.println(Logbuf.TRACE, 
+                             "removeConnectorDataListener("
+                             +ConnectorDataListenerType.toString(type)
+                             +")");
+            m_listeners.connectorData_[type].deleteObserver(listener);
+            return;
+        }
+        rtcout.println(Logbuf.ERROR, 
+                    "removeConnectorDataListener(): Invalid listener type.");
+        return;
+    }
+    public void removeConnectorDataListener(int type,
+                                ConnectorDataListener listener) {
 
 
         if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
