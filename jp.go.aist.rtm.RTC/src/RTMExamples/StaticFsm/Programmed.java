@@ -11,10 +11,12 @@ import RTC.TimedLong;
 public class Programmed extends Operational {
 
     @Override
-    public void minute() {
+    public void minute(TimedLong time) {
         System.out.println("[Microwave] >>> Timer incremented <<<");
         Top.Data data = data(Top.class);
-        data.incrementTimer();
+        for(int ic=0;ic<time.data;++ic){
+            data.incrementTimer();
+        }
         data.printTimer();
     }
 

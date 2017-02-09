@@ -18,10 +18,12 @@ public class Idle extends Operational {
     }
 
     @Override
-    public void minute() {
+    public void minute(TimedLong time) {
         System.out.println("[Microwave] >>> Timer incremented <<<");
         setState(new State(Programmed.class));
-        dispatch(new Event("minute"));
+        Class<?>[] args = new Class<?>[1];
+        args[0] = time.getClass();
+        dispatch(new Event("minute",args,time));
     }
 
 

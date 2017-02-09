@@ -11,7 +11,7 @@ public interface MicrowaveProtocol {
 
     void close();
 
-    void minute();
+    void minute(TimedLong time);
 
     void start();
 

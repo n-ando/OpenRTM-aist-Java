@@ -70,7 +70,7 @@ public class Top extends StateDef implements MicrowaveProtocol {
     }
 
     @Override
-    public void minute() {
+    public void minute(TimedLong time) {
         // do nothing
     }
 

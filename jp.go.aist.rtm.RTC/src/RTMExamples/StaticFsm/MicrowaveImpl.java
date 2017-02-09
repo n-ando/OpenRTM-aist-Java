@@ -25,6 +25,8 @@ import jp.go.aist.rtm.RTC.port.InPort;
 import jp.go.aist.rtm.RTC.port.OutPort;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListenerT;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListener;
+import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
 import jp.go.aist.rtm.RTC.util.DataRef;
 
 import RTC.TimedLong;
@@ -72,7 +74,7 @@ public class MicrowaveImpl extends DataFlowComponentBase {
 
       m_eventIn.bindEvent("eventopen",   "open");
       m_eventIn.bindEvent("eventclose",  "close");
-      m_eventIn.bindEvent("eventminute", "minute");
+      m_eventIn.bindEvent("eventminute", "minute", new TimedLong(new RTC.Time(0,0),0));
       m_eventIn.bindEvent("eventstart",  "start");
       m_eventIn.bindEvent("eventstop",   "stop");
       m_eventIn.bindEvent("eventtick",   "tick");
@@ -81,6 +83,9 @@ public class MicrowaveImpl extends DataFlowComponentBase {
       // Set OutPort buffer
       // </rtc-template>
       
+      m_eventIn.addConnectorListener(
+                            ConnectorListenerType.ON_CONNECT,
+                            new Listener("ON_CONNECT"));
       
 
       return super.onInitialize();
@@ -375,4 +380,25 @@ public class MicrowaveImpl extends DataFlowComponentBase {
       private String m_name;
       private Queue<Event> m_que;
   }
+    class Listener extends ConnectorListener{
+        public Listener(final String name){
+            m_name = name;
+        }
+
+        public ReturnCode operator(ConnectorBase.ConnectorInfo arg){
+            System.out.println("------------------------------");
+            System.out.println("Listener:          "+m_name);
+            System.out.println("Profile::name:     "+arg.name);
+            String str = new String();
+            System.out.println("Profile::properties:");
+            System.out.print("["+arg.properties.getProperty("interface_type"));
+            System.out.print("]["+arg.properties.getProperty("dataflow_type"));
+            System.out.print("]["+arg.properties.getProperty("subscription_type"));
+            System.out.print("]["+arg.properties.getProperty("publisher.push_policy"));
+            System.out.println("]["+arg.properties.getProperty("timestamp_policy")+"]");
+            System.out.println("------------------------------");
+            return ReturnCode.NO_CHANGE;
+        }
+        public String m_name;
+    }
 }
