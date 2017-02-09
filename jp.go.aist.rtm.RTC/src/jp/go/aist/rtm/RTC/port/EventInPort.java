@@ -50,7 +50,7 @@ public class EventInPort<FsmType extends MachineBase> extends InPortBase {
         }
         public ReturnCode operator(ConnectorBase.ConnectorInfo info, 
                                   OutputStream data){
-            if (info.properties.getProperty("fsm_event_name").equals(m_eventName) || info.name == m_eventName) {
+            if (info.properties.getProperty("fsm_event_name").equals(m_eventName) || info.name.equals(m_eventName)) {
                 m_fsm.dispatch(new Event(m_handler,null,null));
                 System.out.println("Event dispatched: " + m_eventName);
                 return ReturnCode.NO_CHANGE;
@@ -71,7 +71,7 @@ public class EventInPort<FsmType extends MachineBase> extends InPortBase {
         }
         public ReturnCode operator(ConnectorBase.ConnectorInfo info, 
                                   DataType data){
-            if (info.properties.getProperty("fsm_event_name").equals(m_eventName) || info.name == m_eventName) {
+            if (info.properties.getProperty("fsm_event_name").equals(m_eventName) || info.name.equals(m_eventName)) {
                 Class<?>[] args = new Class<?>[1];
                 args[0] = data.getClass();
                 m_fsm.dispatch(new Event(m_handler,args,data));
@@ -135,7 +135,9 @@ public class EventInPort<FsmType extends MachineBase> extends InPortBase {
             final String name, DataRef<FsmType> fsm,
             boolean read_block, boolean write_block,
             long read_timeout, long write_timeout) {
-        super(name,"any");
+//        super(name,"any");
+        super(name,"IDL:RTC/TimedLong:1.0");
+
         m_name = name;
         m_fsm = fsm;
         

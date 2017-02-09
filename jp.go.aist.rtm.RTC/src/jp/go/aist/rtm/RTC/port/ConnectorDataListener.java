@@ -284,8 +284,10 @@ public abstract class ConnectorDataListener
 //                            implements Observer, ConnectorListenerStatus{
                             implements Observer{
     public void update(Observable o, Object obj) {
-            ConnectorDataListenerArgument arg
-               = (ConnectorDataListenerArgument)obj;
+//            ConnectorDataListenerArgument arg
+//               = (ConnectorDataListenerArgument)obj;
+            ConnectorDataListenerArgumentDataRef<OutputStream> arg 
+                = (ConnectorDataListenerArgumentDataRef<OutputStream>)obj;
             operator(arg.m_info,arg.m_data);
     }
     //public abstract void operator(final ConnectorBase.ConnectorInfo info, 

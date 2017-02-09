@@ -23,7 +23,7 @@ public class Top extends StateDef implements MicrowaveProtocol {
         }
 
         public void printTimer() {
-            System.out.println("  Timer set to {} minutes"+ myCookingTime);
+            System.out.println("  Timer set to "+ myCookingTime+ " minutes" );
         }
 
         public void incrementTimer() {

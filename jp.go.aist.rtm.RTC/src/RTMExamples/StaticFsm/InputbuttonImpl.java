@@ -86,7 +86,7 @@ public class InputbuttonImpl extends DataFlowComponentBase {
 
     // The initialize action (on CREATED->ALIVE transition)
     // formaer rtc_init_entry() 
-//    @Override
+    @Override
     protected ReturnCode_t onInitialize() {
 
         try {
@@ -99,46 +99,26 @@ public class InputbuttonImpl extends DataFlowComponentBase {
         } catch (Exception e) {
             e.printStackTrace();
         }
-/*
-        m_outOut.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_BUFFER_WRITE,
-                            new DataListener("ON_BUFFER_WRITE"));
-        m_outOut.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_BUFFER_FULL, 
-                            new DataListener("ON_BUFFER_FULL"));
-        m_outOut.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT, 
-                            new DataListener("ON_BUFFER_WRITE_TIMEOUT"));
-        m_outOut.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_BUFFER_OVERWRITE, 
-                            new DataListener("ON_BUFFER_OVERWRITE"));
-        m_outOut.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_BUFFER_READ, 
-                            new DataListener("ON_BUFFER_READ"));
-        m_outOut.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_SEND, 
-                            new DataListener("ON_SEND"));
-        m_outOut.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_RECEIVED,
-                            new DataListener("ON_RECEIVED"));
-        m_outOut.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_RECEIVER_FULL, 
-                            new DataListener("ON_RECEIVER_FULL"));
-        m_outOut.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_RECEIVER_TIMEOUT, 
-                            new DataListener("ON_RECEIVER_TIMEOUT"));
-        m_outOut.addConnectorDataListener(
-                            ConnectorDataListenerType.ON_RECEIVER_ERROR,
-                            new DataListener("ON_RECEIVER_ERROR"));
-*/
-/*
-        m_outOut.addConnectorListener(
+
+        m_openOut.addConnectorListener(
                             ConnectorListenerType.ON_CONNECT,
                             new Listener("ON_CONNECT"));
-        m_outOut.addConnectorListener(
-                            ConnectorListenerType.ON_DISCONNECT,
-                            new Listener("ON_DISCONNECT"));
-*/
+        m_closeOut.addConnectorListener(
+                            ConnectorListenerType.ON_CONNECT,
+                            new Listener("ON_CONNECT"));
+        m_minuteOut.addConnectorListener(
+                            ConnectorListenerType.ON_CONNECT,
+                            new Listener("ON_CONNECT"));
+        m_startOut.addConnectorListener(
+                            ConnectorListenerType.ON_CONNECT,
+                            new Listener("ON_CONNECT"));
+        m_stopOut.addConnectorListener(
+                            ConnectorListenerType.ON_CONNECT,
+                            new Listener("ON_CONNECT"));
+        m_tickOut.addConnectorListener(
+                            ConnectorListenerType.ON_CONNECT,
+                            new Listener("ON_CONNECT"));
+
 
         return super.onInitialize();
     }
@@ -192,7 +172,7 @@ public class InputbuttonImpl extends DataFlowComponentBase {
         System.out.println("  stop         : Stop the microwave.");
         System.out.println("  tick         : Proceed time.");
         System.out.println("  -> others are interpreted as tick commnad.");
-        System.out.println(">> ");
+        System.out.print(">> ");
 
         BufferedReader buff = new BufferedReader(new InputStreamReader( System.in ));
         try {
@@ -207,7 +187,7 @@ public class InputbuttonImpl extends DataFlowComponentBase {
                     System.out.print(cmds[ic]+" ");
                 }
             }
-            System.out.print("");
+            System.out.println("");
             if(cmds[0].equals("open")){
                 m_open_val.data = 0;  
                 m_openOut.write();
@@ -367,16 +347,13 @@ public class InputbuttonImpl extends DataFlowComponentBase {
             System.out.println("------------------------------");
             System.out.println("Listener:          "+m_name);
             System.out.println("Profile::name:     "+arg.name);
-            System.out.println("Profile::id:       "+arg.id);
             String str = new String();
-            //System.out.println("Profile::data_type:"+arg.properties.getProperty("data_type"));
             System.out.println("Profile::properties:");
             System.out.print("["+arg.properties.getProperty("interface_type"));
             System.out.print("]["+arg.properties.getProperty("dataflow_type"));
             System.out.print("]["+arg.properties.getProperty("subscription_type"));
             System.out.print("]["+arg.properties.getProperty("publisher.push_policy"));
             System.out.println("]["+arg.properties.getProperty("timestamp_policy")+"]");
-//            System.out.println(arg.properties._dump(str,arg.properties,0));
             System.out.println("------------------------------");
             return ReturnCode.NO_CHANGE;
         }
