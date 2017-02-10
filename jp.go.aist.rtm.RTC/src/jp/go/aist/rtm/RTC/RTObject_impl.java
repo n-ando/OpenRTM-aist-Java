@@ -6089,6 +6089,42 @@ public class RTObject_impl extends DataFlowComponentPOA {
         postaction_[listener_type].addObserver(listener);
     }
   
+    public <DataType> 
+    PostFsmActionListener
+    addPostFsmActionListener(int listener_type,
+                                   DataType obj,
+                                   String memfunc) {
+        class Noname extends PostFsmActionListener {
+            public Noname(DataType obj, String memfunc) {
+                m_obj = obj;
+                try {
+                    Class clazz = m_obj.getClass();
+
+                    m_method = clazz.getMethod(memfunc,String.class);
+
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            public void operator(final String state) {
+                try {
+                    m_method.invoke(
+                          state);
+                }
+                catch(java.lang.Exception e){
+                    rtcout.println(Logbuf.WARN, 
+                        "Exception caught."+e.toString());
+                }
+            }
+            private DataType m_obj;
+            private Method m_method;
+        };
+        Noname listener = new Noname(obj, memfunc);
+        addPostFsmActionListener(listener_type, listener, true);
+        return listener;
+    }
   
     /**
      * {@.ja PostFsmActionListener リスナを削除する}

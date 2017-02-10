@@ -124,8 +124,10 @@ import java.lang.Integer;
    */
 public abstract class PostFsmActionListener implements Observer{
     public void update(Observable o, Object obj) {
-           Integer arg = (Integer)obj;
-           operator(arg.intValue());
+           String arg = (String)obj;
+           operator(arg);
+//           Integer arg = (Integer)obj;
+//           operator(arg.intValue());
     }
     /**
      * {@.ja 仮想コールバック関数}
@@ -135,6 +137,7 @@ public abstract class PostFsmActionListener implements Observer{
      * {@.en This is a the Callback function for PostFsmActionListener.}
      *
      */
-    public abstract void operator(final int exec_handle);
+    public abstract void operator(final String exec_handle);
+    //public abstract void operator(final int exec_handle);
 }
 

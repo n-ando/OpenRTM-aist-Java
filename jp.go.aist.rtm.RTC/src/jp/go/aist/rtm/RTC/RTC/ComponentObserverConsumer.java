@@ -29,6 +29,8 @@ import jp.go.aist.rtm.RTC.ConfigurationSetNameListener;
 import jp.go.aist.rtm.RTC.PreFsmActionListener;
 import jp.go.aist.rtm.RTC.PreFsmActionListenerType;
 import jp.go.aist.rtm.RTC.PostComponentActionListenerArgument;
+import jp.go.aist.rtm.RTC.PostFsmActionListener;
+import jp.go.aist.rtm.RTC.PostFsmActionListenerType;
 
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
@@ -52,10 +54,112 @@ import jp.go.aist.rtm.RTC.util.TimeValue;
 import _SDOPackage.NVListHolder;
 import _SDOPackage.ServiceProfile;
   /**
-   * 
-   * 
-   * 
+   * {@.ja ComponentObserver モジュール}
+   * <p>
+   *
+   * {@.ja コンポーネントの各種状態をComponentObserverサービスに対してコール
+   * バックするためのクラス。ツール等、コンポーネントの状態変化を知りた
+   * いエンティティがサービスプロバイダを当該コンポーネントに対してセッ
+   * トすると、対応する本コンシューマがアタッチされ、コンポーネントの状
+   * 態変化に応じて、update_status() オペレーションをSTATUS_KIND とヒン
+   * トを引数に呼び出す。本機能は、OMG の FSM4RTC仕様
+   * (formal/16-04-01) 7.2.4.2 ComponentObserver Interface に記述されて
+   * いる。
+   *
+   * STATUS_KIND には以下の種類がある。
+   * <ul> 
+   * <li>- COMPONENT_PROFILE: コンポーネントのプロファイル情報が変化
+   * <li>- RTC_STATUS       : コンポーネントの状態 (Init, Alive) が変化
+   * <li>- EC_STATUS        : ECの状態 (Inavtive, Active, Error) が変化
+   * <li>- PORT_PROFILE     : ポートのプロファイルが変化
+   * <li>- CONFIGURATION    : コンフィギュレーションが変化
+   * <li>- RTC_HEARTBEAT    : RTCの生存確認のハートビード
+   * <li>- EC_HEARTBEAT     : ECの生存確認のハートビート
+   * <li>- FSM_PROFILE      : FSMのプロファイルが変化
+   * <li>- FSM_STATUS       : FSMの状態が変化
+   * <li>- FSM_STRUCTURE    : FSMの構造が変化
+   * <li>- USER_DEFINED     : ユーザ定義
+   * </ul> 
+   *
+   * <br>
+   * \subsection COMPONENT_PROFILE COMPONENT_PROFILE
+   * <br>
+   * コンポーネントのプロファイル情報が変化した際にこのタグ名(enum値)を
+   * 第1引数にして update_status() オペレーションが呼び出される。(未実装)
+   *
+   * <br>
+   * \subsection RTC_STATUS RTC_STATUS
+   * <br>
+   * コンポーネントの状態 (Init, Alive) が変化した際にこのタグ名
+   * (enum値)を第1引数にして update_status() オペレーションが呼び出され
+   * る。厳密にはECの状態であるが、Inavtive, Active, Error, Finalize の
+   * 4つの状態に変化したことを検知することができる。以下の状態変化時に、
+   * それぞれヒントとして以下の文字列とともにコールバックされる。
+   *
+   * <ul> 
+   * <li>- onActivated 呼び出し成功時:   ACTIVE: <EC id>
+   * <li>- onDeactivated 呼び出し成功時: INACTIVE: <EC id>
+   * <li>- onReset 呼び出し成功時:       INACTIVE: <EC id>
+   * <li>- onAborting 呼び出し成功時:    ERROR: <EC id>
+   * <li>- onFinalize 呼び出し成功時:    FINALIZE: <EC id>
+   * </ul> 
+   *
+   * <br>
+   * \subsection EC_STATUS EC_STATUS
+   *
+   * <br>
+   * ECの状態 (Inavtive, Active, Error) が変化した際にこのタグ名(enum値)を
+   * 第1引数にして update_status() オペレーションが呼び出される。
+   *
+   * <br>
+   * \subsection PORT_PROFILE PORT_PROFILE
+   * ポートのプロファイルが変化した際にこのタグ名(enum値)を
+   * <br>
+   * 第1引数にして update_status() オペレーションが呼び出される。
+   *
+   * <br>
+   * \subsection CONFIGURATION CONFIGURATION
+   * コンフィギュレーションが変化した際にこのタグ名(enum値)を
+   * <br>
+   * 第1引数にして update_status() オペレーションが呼び出される。
+   *
+   * <br>
+   * \subsection RTC_HEARTBEAT RTC_HEARTBEAT
+   * RTCの生存確認のハートビードした際にこのタグ名(enum値)を
+   * <br>
+   * 第1引数にして update_status() オペレーションが呼び出される。
+   *
+   * <br>
+   * \subsection EC_HEARTBEAT EC_HEARTBEAT
+   * <br>
+   * ECの生存確認のハートビートした際にこのタグ名(enum値)を
+   * 第1引数にして update_status() オペレーションが呼び出される。
+   *
+   * <br>
+   * \subsection FSM_PROFILE FSM_PROFILE
+   * <br>
+   * FSMのプロファイルが変化した際にこのタグ名(enum値)を
+   * 第1引数にして update_status() オペレーションが呼び出される。
+   *
+   * <br>
+   * \subsection FSM_STATUS FSM_STATUS
+   * <br>
+   * FSMの状態が変化した際にこのタグ名(enum値)を
+   * 第1引数にして update_status() オペレーションが呼び出される。
+   *
+   * <br>
+   * \subsection FSM_STRUCTURE FSM_STRUCTURE
+   * <br>
+   * FSMの構造が変化した際にこのタグ名(enum値)を
+   * 第1引数にして update_status() オペレーションが呼び出される。
+   *
+   * <br>
+   * \subsection USER_DEFINED USER_DEFINED
+   * <br>
+   * ユーザ定義した際にこのタグ名(enum値)を
+   * 第1引数にして update_status() オペレーションが呼び出される。}
    */
+
 public class ComponentObserverConsumer implements SdoServiceConsumerBase, CallbackFunction, ObjectCreator<SdoServiceConsumerBase>, ObjectDestructor{
     /**
      * {@.ja ctor of ComponentObserverConsumer}
@@ -67,10 +171,6 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         m_portaction = new PortAction(this);
         m_ecaction = new ECAction(this);
         m_configMsg = new ConfigAction(this);
-//        m_interval = new TimeValue(0, 100000);
-//        m_heartbeat = false;
-//        m_hblistenerid = null;
-//        m_timer = new Timer(m_interval);
         m_fsmaction = new FSMAction(this);
         m_rtcInterval = new TimeValue(0, 100000);
         m_rtcHeartbeat = false;
@@ -106,7 +206,6 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
                 new NVListHolder(profile.properties);
         Properties prop = new Properties();
         NVUtil.copyToProperties(prop, nvholder);
-//        setHeartbeat(prop);
         setRTCHeartbeat(prop);
         setECHeartbeat(prop);
         setListeners(prop);
@@ -132,7 +231,6 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
                 new NVListHolder(profile.properties);
         Properties prop = new Properties();
         NVUtil.copyToProperties(prop, nvholder);
-//        setHeartbeat(prop);
         setRTCHeartbeat(prop);
         setListeners(prop);
         return true;
@@ -156,7 +254,6 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         unsetPortProfileListeners();
         unsetExecutionContextListeners();
         unsetConfigurationListeners();
-//        unsetHeartbeat();
         unsetRTCHeartbeat();
         unsetECHeartbeat();
     }
@@ -194,7 +291,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.en Connectiong listeners to RTObject}
      */
     protected void setListeners(Properties prop) {
-        if (prop.getProperty("observed_status").length()<1) {
+        if (prop.getProperty("observed_status").isEmpty()) {
             prop.setProperty("observed_status", "ALL");
         }
 
@@ -277,7 +374,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
                     bflag,
                     this,
                     "setFSMStatusListeners",
-                    "nsetFSMStatusListeners");
+                    "unsetFSMStatusListeners");
         m_observed[StatusKind._FSM_STATUS] = bflag.v.booleanValue();
 
         bflag.v = new Boolean(m_observed[StatusKind._FSM_STRUCTURE]);
@@ -341,7 +438,6 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.ja ハートビートを設定する}
      * {@.en Setting heartbeat}
      */
-    //protected void setHeartbeat(Properties prop) {
     protected void setRTCHeartbeat(Properties prop) {
         // if rtc_heartbeat is set, use it.
         if (prop.hasKey("rtc_heartbeat.enable") != null) {
@@ -352,7 +448,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         }
         if (StringUtil.toBool(prop.getProperty("heartbeat.enable"), "YES", "NO", false)) {
             String interval = prop.getProperty("heartbeat.interval");
-            if (interval.length()<1) {
+            if (interval.isEmpty()) {
                 m_rtcInterval.convert(1.0);
             }
             else {
@@ -401,7 +497,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         // if rtc_heartbeat is set, use it.
         if (StringUtil.toBool(prop.getProperty("ec_heartbeat.enable"), "YES", "NO", false)) {
             String interval = prop.getProperty("ec_heartbeat.interval");
-            if (interval.length()<1) {
+            if (interval.isEmpty()) {
                 m_ecInterval.convert(1.0);
             }
             else {
@@ -652,9 +748,50 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.en Setting FsmStructure listener}
      */
     protected void setFSMStructureListeners(){
-        m_fsmaction.fsmActionListener = 
-          m_rtobj.addPreFsmActionListener(PreFsmActionListenerType.PRE_ON_STATE_CHANGE, m_fsmaction, "updateFsmStatus");
-        ;
+//        m_fsmaction.fsmActionListener = 
+//          m_rtobj.addPreFsmActionListener(PreFsmActionListenerType.PRE_ON_STATE_CHANGE, m_fsmaction, "updateFsmStatus");
+//        ;
+        m_fsmaction.preOnFsmInitListener =
+          m_rtobj.addPreFsmActionListener(PreFsmActionListenerType.PRE_ON_INIT,
+                                       m_fsmaction,
+                                       "preInit");
+        m_fsmaction.preOnFsmEntryListener =
+          m_rtobj.addPreFsmActionListener(PreFsmActionListenerType.PRE_ON_ENTRY,
+                                       m_fsmaction,
+                                       "preEntry");
+        m_fsmaction.preOnFsmDoListener =
+          m_rtobj.addPreFsmActionListener(PreFsmActionListenerType.PRE_ON_DO,
+                                       m_fsmaction,
+                                       "preDo");
+        m_fsmaction.preOnFsmExitListener =
+          m_rtobj.addPreFsmActionListener(PreFsmActionListenerType.PRE_ON_EXIT,
+                                       m_fsmaction,
+                                       "preExit");
+        m_fsmaction.preOnFsmStateChangeListener =
+          m_rtobj.addPreFsmActionListener(PreFsmActionListenerType.PRE_ON_STATE_CHANGE,
+                                       m_fsmaction,
+                                       "preStateChange");
+
+        m_fsmaction.postOnFsmInitListener =
+          m_rtobj.addPostFsmActionListener(PostFsmActionListenerType.POST_ON_INIT,
+                                       m_fsmaction,
+                                       "postInit");
+        m_fsmaction.postOnFsmEntryListener =
+          m_rtobj.addPostFsmActionListener(PostFsmActionListenerType.POST_ON_ENTRY,
+                                       m_fsmaction,
+                                       "postEntry");
+        m_fsmaction.postOnFsmDoListener =
+          m_rtobj.addPostFsmActionListener(PostFsmActionListenerType.POST_ON_DO,
+                                       m_fsmaction,
+                                       "postDo");
+        m_fsmaction.postOnFsmExitListener =
+          m_rtobj.addPostFsmActionListener(PostFsmActionListenerType.POST_ON_EXIT,
+                                        m_fsmaction,
+                                        "postExit");
+        m_fsmaction.postOnFsmStateChangeListener =
+          m_rtobj.addPostFsmActionListener(PostFsmActionListenerType.POST_ON_EXIT,
+                                        m_fsmaction,
+                                        "postStateChange");
     }
 
     /**
@@ -662,7 +799,36 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.en Unsetting FsmStructure listener}
      */
     protected void unsetFSMStructureListeners(){
-        ;
+      m_rtobj.
+        removePreFsmActionListener(PreFsmActionListenerType.PRE_ON_INIT,
+                                   m_fsmaction.preOnFsmInitListener);
+      m_rtobj.
+        removePreFsmActionListener(PreFsmActionListenerType.PRE_ON_ENTRY,
+                                   m_fsmaction.preOnFsmEntryListener);
+      m_rtobj.
+        removePreFsmActionListener(PreFsmActionListenerType.PRE_ON_DO,
+                                   m_fsmaction.preOnFsmDoListener);
+      m_rtobj.
+        removePreFsmActionListener(PreFsmActionListenerType.PRE_ON_EXIT,
+                                   m_fsmaction.preOnFsmExitListener);
+      m_rtobj.
+        removePreFsmActionListener(PreFsmActionListenerType.PRE_ON_STATE_CHANGE,
+                                   m_fsmaction.preOnFsmStateChangeListener);
+      m_rtobj.
+        removePostFsmActionListener(PostFsmActionListenerType.POST_ON_INIT,
+                                    m_fsmaction.postOnFsmInitListener);
+      m_rtobj.
+        removePostFsmActionListener(PostFsmActionListenerType.POST_ON_ENTRY,
+                                    m_fsmaction.postOnFsmEntryListener);
+      m_rtobj.
+        removePostFsmActionListener(PostFsmActionListenerType.POST_ON_DO,
+                                    m_fsmaction.postOnFsmDoListener);
+      m_rtobj.
+        removePostFsmActionListener(PostFsmActionListenerType.POST_ON_EXIT,
+                                    m_fsmaction.postOnFsmExitListener);
+      m_rtobj.
+        removePostFsmActionListener(PostFsmActionListenerType.POST_ON_EXIT,
+                                    m_fsmaction.postOnFsmStateChangeListener);
     }
 
     //============================================================
@@ -957,13 +1123,77 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
             m_coc = coc;
         }
         // Action callback functions here
-        public  void updateFsmStatus(final String state) {
+        public void updateFsmStatus(final String state) {
             System.out.println(
                "ComponentObserver::updateFsmStatus(" + state + ")" ); 
             m_coc.updateStatus(StatusKind.from_int(StatusKind._FSM_STATUS), state);
         }
+
+        public void preInit(final String state) {
+            String msg = state; 
+            msg += " PRE_ON_INIT";
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._FSM_STATUS), msg);
+        }
+        public void preEntry(final String state) {
+            String msg = state; 
+            msg += " PRE_ONENTRY";
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._FSM_STATUS), msg);
+        }
+        public void preDo(final String state) {
+            String msg = state; 
+            msg += " PRE_ON_DO";
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._FSM_STATUS), msg);
+        }
+        public void preExit(final String state) {
+            String msg = state; 
+            msg += " PRE_ON_EXIT";
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._FSM_STATUS), msg);
+        }
+        public void preStateChange(final String state) {
+            String msg = state; 
+            msg += " PRE_ON_STATE_CHANGE";
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._FSM_STATUS), msg);
+        }
+
+        public void postInit(final String state, ReturnCode_t ret) {
+            String msg = state; 
+            msg += " POST_ON_INIT";
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._FSM_STATUS), msg);
+        }
+        public void postEntry(final String state, ReturnCode_t ret) {
+            String msg = state; 
+            msg += " POST_ONENTRY";
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._FSM_STATUS), msg);
+        }
+        public void postDo(final String state, ReturnCode_t ret) {
+            String msg = state; 
+            msg += " POST_ON_DO";
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._FSM_STATUS), msg);
+        }
+        public void postExit(final String state, ReturnCode_t ret) {
+            String msg = state; 
+            msg += " POST_ON_EXIT";
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._FSM_STATUS), msg);
+        }
+        public void postStateChange(final String state, ReturnCode_t ret) {
+            String msg = state; 
+            msg += " POST_ON_STATE_CHNAGE";
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._FSM_STATUS), msg);
+        }
       
         // Listener object's pointer holder
+        public PreFsmActionListener preOnFsmInitListener;
+        public PreFsmActionListener preOnFsmEntryListener;
+        public PreFsmActionListener preOnFsmDoListener;
+        public PreFsmActionListener preOnFsmExitListener;
+        public PreFsmActionListener preOnFsmStateChangeListener;
+      
+        public PostFsmActionListener postOnFsmInitListener;
+        public PostFsmActionListener postOnFsmEntryListener;
+        public PostFsmActionListener postOnFsmDoListener;
+        public PostFsmActionListener postOnFsmExitListener;
+        public PostFsmActionListener postOnFsmStateChangeListener;
+
         public PreFsmActionListener fsmActionListener;
 
         private ComponentObserverConsumer m_coc;
@@ -1015,10 +1245,6 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
     private ECAction m_ecaction;
     private ConfigAction m_configMsg;
     private FSMAction m_fsmaction;
-
-//    private TimeValue m_interval;
-//    private boolean m_heartbeat;
-//    private ListenerBase m_hblistenerid;
 
     private TimeValue m_rtcInterval;
     private boolean m_rtcHeartbeat;
