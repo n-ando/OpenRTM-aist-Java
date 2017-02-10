@@ -1,8 +1,15 @@
 package RTMExamples.SeqIO;
 
+import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
 import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.port.OutPort;
+import jp.go.aist.rtm.RTC.port.ConnectorBase;
+import jp.go.aist.rtm.RTC.port.ConnectorListener;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListener;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerT;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorListenerType;
 import jp.go.aist.rtm.RTC.util.DataRef;
 import RTC.ReturnCode_t;
 import RTC.TimedDouble;
@@ -118,6 +125,44 @@ public class SeqOutImpl  extends DataFlowComponentBase {
         addOutPort("FloatSeq", m_FloatSeqOut);
         addOutPort("DoubleSeq", m_DoubleSeqOut);
         seqOutView.init("SeqOut");
+
+        m_LongOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_WRITE,
+                            new DataListener("ON_BUFFER_WRITE"));
+        m_LongOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_FULL, 
+                            new DataListener("ON_BUFFER_FULL"));
+        m_LongOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_WRITE_TIMEOUT, 
+                            new DataListener("ON_BUFFER_WRITE_TIMEOUT"));
+        m_LongOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_OVERWRITE, 
+                            new DataListener("ON_BUFFER_OVERWRITE"));
+        m_LongOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_BUFFER_READ, 
+                            new DataListener("ON_BUFFER_READ"));
+        m_LongOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_SEND, 
+                            new DataListener("ON_SEND"));
+        m_LongOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVED,
+                            new DataListener("ON_RECEIVED"));
+        m_LongOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVER_FULL, 
+                            new DataListener("ON_RECEIVER_FULL"));
+        m_LongOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVER_TIMEOUT, 
+                            new DataListener("ON_RECEIVER_TIMEOUT"));
+        m_LongOut.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVER_ERROR,
+                            new DataListener("ON_RECEIVER_ERROR"));
+
+        m_LongOut.addConnectorListener(
+                            ConnectorListenerType.ON_CONNECT,
+                            new Listener("ON_CONNECT"));
+        m_LongOut.addConnectorListener(
+                            ConnectorListenerType.ON_DISCONNECT,
+                            new Listener("ON_DISCONNECT"));
         return super.onInitialize();
     }
     // The finalize action (on ALIVE->END transition)
@@ -298,4 +343,47 @@ public class SeqOutImpl  extends DataFlowComponentBase {
     // </rtc-template>
     private SeqViewApp seqOutView = new SeqViewApp();
 
+    class DataListener extends ConnectorDataListenerT<TimedLong>{
+        public DataListener(final String name){
+            super(TimedLong.class);
+            m_name = name;
+        }
+
+        public ReturnCode operator(ConnectorBase.ConnectorInfo arg,
+                               TimedLong data) {
+            ConnectorBase.ConnectorInfo info =(ConnectorBase.ConnectorInfo)arg;
+            System.out.println("------------------------------");
+            System.out.println("Listener:       "+m_name);
+            System.out.println("Profile::name:  "+info.name);
+            System.out.println("Profile::id:    "+info.id);
+//            System.out.println("Profile::properties: ");
+//            System.out.println(info.properties);
+            System.out.println("Data:           "+data.data);
+            System.out.println("------------------------------");
+            return ReturnCode.NO_CHANGE;
+        }
+        public String m_name;
+    }
+    class Listener extends ConnectorListener{
+        public Listener(final String name){
+            m_name = name;
+        }
+
+        public ReturnCode operator(ConnectorBase.ConnectorInfo arg){
+            System.out.println("------------------------------");
+            System.out.println("Listener:          "+m_name);
+            System.out.println("Profile::name:     "+arg.name);
+            System.out.println("Profile::id:       "+arg.id);
+            String str = new String();
+            System.out.println("Profile::properties:");
+            System.out.print("["+arg.properties.getProperty("interface_type"));
+            System.out.print("]["+arg.properties.getProperty("dataflow_type"));
+            System.out.print("]["+arg.properties.getProperty("subscription_type"));
+            System.out.print("]["+arg.properties.getProperty("publisher.push_policy"));
+            System.out.println("]["+arg.properties.getProperty("timestamp_policy")+"]");
+            System.out.println("------------------------------");
+            return ReturnCode.NO_CHANGE;
+        }
+        public String m_name;
+    }
 }
