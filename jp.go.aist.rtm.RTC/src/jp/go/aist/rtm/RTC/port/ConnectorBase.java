@@ -43,7 +43,7 @@ public abstract class ConnectorBase {
             name = name_;
             id = id_;
             ports = ports_;
-            properties = properties_;
+            properties = new Properties(properties_);
         }
         public String name;
         public String id;
