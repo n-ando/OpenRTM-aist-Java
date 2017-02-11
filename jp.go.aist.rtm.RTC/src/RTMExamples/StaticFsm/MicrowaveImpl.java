@@ -72,12 +72,12 @@ public class MicrowaveImpl extends DataFlowComponentBase {
       // Set InPort buffers
       addInPort("event", m_eventIn);
 
-      m_eventIn.bindEvent("eventopen",   "open");
-      m_eventIn.bindEvent("eventclose",  "close");
-      m_eventIn.bindEvent("eventminute", "minute", new TimedLong(new RTC.Time(0,0),0));
-      m_eventIn.bindEvent("eventstart",  "start");
-      m_eventIn.bindEvent("eventstop",   "stop");
-      m_eventIn.bindEvent("eventtick",   "tick");
+      m_eventIn.bindEvent("open",   "open");
+      m_eventIn.bindEvent("close",  "close");
+      m_eventIn.bindEvent("minute", "minute", new TimedLong(new RTC.Time(0,0),0));
+      m_eventIn.bindEvent("start",  "start");
+      m_eventIn.bindEvent("stop",   "stop");
+      m_eventIn.bindEvent("tick",   "tick");
 
 
       // Set OutPort buffer
