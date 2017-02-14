@@ -369,60 +369,90 @@ public class TypeCast<T> {
         } else if (klass.equals(TimedBooleanSeq.class)) {
             TimedBooleanSeq timedData = TimedBooleanSeq.class.cast(data);
             timedData.tm = fillTime(timedData.tm);
+            if(timedData.data==null){
+                timedData.data = new boolean[0];
+            }
             TimedBooleanSeqHelper.insert(any, timedData);
             return any;
             
         } else if (klass.equals(TimedCharSeq.class)) {
             TimedCharSeq timedData = TimedCharSeq.class.cast(data);
             timedData.tm = fillTime(timedData.tm);
+            if(timedData.data==null){
+                timedData.data = new char[0];
+            }
             TimedCharSeqHelper.insert(any, timedData);
             return any;
             
         } else if (klass.equals(TimedDoubleSeq.class)) {
             TimedDoubleSeq timedData = TimedDoubleSeq.class.cast(data);
             timedData.tm = fillTime(timedData.tm);
+            if(timedData.data==null){
+                timedData.data = new double[0];
+            }
             TimedDoubleSeqHelper.insert(any, timedData);
             return any;
             
         } else if (klass.equals(TimedFloatSeq.class)) {
             TimedFloatSeq timedData = TimedFloatSeq.class.cast(data);
             timedData.tm = fillTime(timedData.tm);
+            if(timedData.data==null){
+                timedData.data = new float[0];
+            }
             TimedFloatSeqHelper.insert(any, timedData);
             return any;
             
         } else if (klass.equals(TimedLongSeq.class)) {
             TimedLongSeq timedData = TimedLongSeq.class.cast(data);
             timedData.tm = fillTime(timedData.tm);
+            if(timedData.data==null){
+                timedData.data = new int[0];
+            }
             TimedLongSeqHelper.insert(any, timedData);
             return any;
             
         } else if (klass.equals(TimedOctetSeq.class)) {
             TimedOctetSeq timedData = TimedOctetSeq.class.cast(data);
             timedData.tm = fillTime(timedData.tm);
+            if(timedData.data==null){
+                timedData.data = new byte[0];
+            }
             TimedOctetSeqHelper.insert(any, timedData);
             return any;
             
         } else if (klass.equals(TimedShortSeq.class)) {
             TimedShortSeq timedData = TimedShortSeq.class.cast(data);
             timedData.tm = fillTime(timedData.tm);
+            if(timedData.data==null){
+                timedData.data = new short[0];
+            }
             TimedShortSeqHelper.insert(any, timedData);
             return any;
             
         } else if (klass.equals(TimedStringSeq.class)) {
             TimedStringSeq timedData = TimedStringSeq.class.cast(data);
             timedData.tm = fillTime(timedData.tm);
+            if(timedData.data==null){
+                timedData.data = new String[0];
+            }
             TimedStringSeqHelper.insert(any, timedData);
             return any;
             
         } else if (klass.equals(TimedULongSeq.class)) {
             TimedULongSeq timedData = TimedULongSeq.class.cast(data);
             timedData.tm = fillTime(timedData.tm);
+            if(timedData.data==null){
+                timedData.data = new int[0];
+            }
             TimedULongSeqHelper.insert(any, timedData);
             return any;
             
         } else if (klass.equals(TimedUShortSeq.class)) {
             TimedUShortSeq timedData = TimedUShortSeq.class.cast(data);
             timedData.tm = fillTime(timedData.tm);
+            if(timedData.data==null){
+                timedData.data = new short[0];
+            }
             TimedUShortSeqHelper.insert(any, timedData);
             return any;
         } else {
