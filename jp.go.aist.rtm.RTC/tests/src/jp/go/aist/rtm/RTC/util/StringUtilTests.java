@@ -1,9 +1,10 @@
 package jp.go.aist.rtm.RTC.util;
 
+import junit.framework.TestCase;
+
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.util.StringUtil;
-import junit.framework.TestCase;
 
 /**
 * 文字列操作クラス　テスト
@@ -88,7 +89,6 @@ public class StringUtilTests extends TestCase {
      * </ul>
      */
     public void test_unescape() {
-        
         final String[][] pairs = {
                 {"\\t", "\t"},
                 {"\\n", "\n"},
@@ -298,6 +298,82 @@ public class StringUtilTests extends TestCase {
         String normalized = StringUtil.normalize(values);
         String expected = "normalizeteststring.";
         assertEquals(expected, normalized);
+    }
+    /**
+     *
+     */
+    public void test_isIPv4() {
+        String addr = new String();
+        addr = "255.250.255.255"; // OK
+        assertEquals(StringUtil.isIPv4(addr), true);
+        addr = "0.0.0.0"; // OK
+        assertEquals(StringUtil.isIPv4(addr), true);
+        addr = "192.168.0.1"; // OK
+        assertEquals(StringUtil.isIPv4(addr), true);
+        addr = "192.168.100.0"; // OK
+        assertEquals(StringUtil.isIPv4(addr), true);
+
+        addr = "255.250.255"; // NG
+        assertEquals(StringUtil.isIPv4(addr), false);
+        addr = "255,250.255.0"; // NG
+        assertEquals(StringUtil.isIPv4(addr), false);
+        addr = "192.168.0.256"; // NG
+        assertEquals(StringUtil.isIPv4(addr), false);
+        addr = "ff.ff.ff.ff"; // NG
+        assertEquals(StringUtil.isIPv4(addr), false);
+        addr = "xx.yy.zz.00"; // NG
+        assertEquals(StringUtil.isIPv4(addr), false);
+
+        addr = "255.250.255.255:92183"; // OK
+        assertEquals(StringUtil.isIPv4(addr), true);
+        addr = "0.0.0.0:97763"; // OK
+        assertEquals(StringUtil.isIPv4(addr), true);
+        addr = "192.168.0.1:98657"; // OK
+        assertEquals(StringUtil.isIPv4(addr), true);
+        addr = "192.168.100.0:4689"; // OK
+        assertEquals(StringUtil.isIPv4(addr), true);
+
+        addr = "255.250.255:8686"; // NG
+        assertEquals(StringUtil.isIPv4(addr), false);
+        addr = "255,250.255.0:86545"; // NG
+        assertEquals(StringUtil.isIPv4(addr), false);
+        addr = "1293:192.168.0.1"; // NG
+        assertEquals(StringUtil.isIPv4(addr), false);
+        addr = "ff.ff.ff.ff.ff:9763"; // NG
+        assertEquals(StringUtil.isIPv4(addr), false);
+        addr = "xx.yy.zz.00:98767"; // NG
+        assertEquals(StringUtil.isIPv4(addr), false);
+    }
+    
+    /**
+     *
+     */
+    public void test_isIPv6() {
+        String addr = new String();
+        addr = "fe80:0:0:0:21c:42ff:fe87:d3d4"; // OK
+        assertEquals(StringUtil.isIPv6(addr), true);
+        addr = "::1"; // OK
+        assertEquals(StringUtil.isIPv6(addr), true);
+        addr = "fe80::21c:42ff:fe87:d3d4"; // OK
+        assertEquals(StringUtil.isIPv6(addr), true);
+
+        addr = "fe80::21c:42ff:fe87:1ffff"; // NG
+        assertEquals(StringUtil.isIPv6(addr), false);
+        addr = "ffe80::21c:42ff:fe87:d3d4"; // NG
+        assertEquals(StringUtil.isIPv6(addr), false);
+
+        addr = "[fe80:0:0:0:21c:42ff:fe87:d3d4]"; // OK
+        assertEquals(StringUtil.isIPv6(addr), true);
+        addr = "[::1]:9679"; // OK
+        assertEquals(StringUtil.isIPv6(addr), true);
+        addr = "[fe80::21c:42ff:fe87:d3d4]:7657"; // OK
+        assertEquals(StringUtil.isIPv6(addr), true);
+
+        addr = "[ffe80::21c:42ff:fe87:d3d4]:5678"; // NG
+        assertEquals(StringUtil.isIPv6(addr), false);
+        addr = "fe80::21c:42ff:fe87:d3d4]:87654"; // NG
+        assertEquals(StringUtil.isIPv6(addr), false);
+
     }
 
 }
