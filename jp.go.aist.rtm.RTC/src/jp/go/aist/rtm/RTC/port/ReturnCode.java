@@ -1,7 +1,7 @@
 package jp.go.aist.rtm.RTC.port;
     /**
      * {@.ja DataPortStatus リターンコード}
-     * {@.en @brief DataPortStatus return codes}
+     * {@.en DataPortStatus return codes}
      *
      * <p>
      * {@.ja データポート関連のクラスで共通のリターンコード
