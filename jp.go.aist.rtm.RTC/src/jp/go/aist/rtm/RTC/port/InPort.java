@@ -228,18 +228,28 @@ public class InPort<DataType> extends InPortBase {
                 return true;
             }
         }
+        int index = 0;;
         synchronized (m_connectorsMutex){
             synchronized (m_connectors){
                 if (m_connectors.size() == 0) {
                     rtcout.println(Logbuf.DEBUG, "no connectors");
                     return false;
                 }
-                r = m_connectors.elementAt(0).getBuffer().readable();
+                //r = m_connectors.elementAt(0).getBuffer().readable();
+                for(int ic=0;ic<m_connectors.size();++ic){
+                    r = m_connectors.elementAt(ic).getBuffer().readable();
+                    if (r > 0) {
+                        index =ic;
+                        break;
+                    }
+                }
             }
         }
         if (r > 0) {
+            String name = m_connectors.elementAt(index).name();
             rtcout.println(Logbuf.DEBUG, 
-                              "isNew() = true, readable data: " + r);
+                              "isNew() = true, connector name="+ name +
+                              ", readable data: " + r);
             return true;
         }
   
@@ -345,7 +355,7 @@ public class InPort<DataType> extends InPortBase {
 //                rtcout.println(Logbuf.TRACE, "OnRead called");
 //            }
 
-            ReturnCode ret;
+            ReturnCode ret = ReturnCode.PORT_OK;
             EncapsOutputStreamExt cdr = new EncapsOutputStreamExt(m_orb, 
                                                         isLittleEndian());
             DataRef<InputStream> dataref 
@@ -357,7 +367,14 @@ public class InPort<DataType> extends InPortBase {
                     return false;
                 }
 
-                ret = m_connectors.elementAt(0).read(dataref);
+                //ret = m_connectors.elementAt(0).read(dataref);
+                int index = 0;
+                for(int ic=0;ic<m_connectors.size();++ic){
+                    ret = m_connectors.elementAt(ic).read(dataref);
+                    if (ret.equals(ReturnCode.PORT_OK)) {
+                        break;
+                    }
+                }
             }
 
             if (ret.equals(ReturnCode.PORT_OK)) {
