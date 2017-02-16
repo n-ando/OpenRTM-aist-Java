@@ -135,8 +135,8 @@ public class EventInPort<FsmType extends MachineBase> extends InPortBase {
             final String name, DataRef<FsmType> fsm,
             boolean read_block, boolean write_block,
             long read_timeout, long write_timeout) {
-//        super(name,"any");
-        super(name,"IDL:RTC/TimedLong:1.0");
+        super(name,"any");
+        //super(name,"IDL:RTC/TimedLong:1.0");
 
         m_name = name;
         m_fsm = fsm;
