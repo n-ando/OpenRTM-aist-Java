@@ -58,7 +58,8 @@ public abstract class InPortBase extends PortBase {
 
         rtcout.println(Logbuf.DEBUG, "Port name: "+name);
 
-        m_singlebuffer = true;
+        //m_singlebuffer = true;
+        m_singlebuffer = false;
         m_thebuffer = null;
         m_isLittleEndian = true;
         // Set PortProfile::properties

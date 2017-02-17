@@ -2,6 +2,7 @@ package jp.go.aist.rtm.RTC.port;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import jp.go.aist.rtm.RTC.buffer.BufferBase;
 import jp.go.aist.rtm.RTC.buffer.RingBuffer;
@@ -256,6 +257,40 @@ public class InPort<DataType> extends InPortBase {
         rtcout.println(Logbuf.DEBUG, "isNew() = false, no readable data");
         return false;
     }
+    /**
+     *
+     */
+    public boolean isNew(ArrayList<String> names) {
+
+        rtcout.println(Logbuf.TRACE, "isNew()");
+        int r = 0;
+
+        synchronized (m_directNewDataMutex){
+            if (m_directNewData == true) {
+                rtcout.println(Logbuf.DEBUG, 
+                              "isNew() returns true because of direct write.");
+                return true;
+            }
+        }
+        boolean ret = false;
+        synchronized (m_connectorsMutex){
+            synchronized (m_connectors){
+                if (m_connectors.size() == 0) {
+                    rtcout.println(Logbuf.DEBUG, "no connectors");
+                    return false;
+                }
+                for(int ic=0;ic<m_connectors.size();++ic){
+                    r = m_connectors.elementAt(ic).getBuffer().readable();
+                    if (r > 0) {
+                        names.add(m_connectors.elementAt(ic).name());
+                        ret = true;
+                    }
+                }
+            }
+        }
+  
+        return ret;
+    }
     
     
     /**
@@ -368,11 +403,81 @@ public class InPort<DataType> extends InPortBase {
                 }
 
                 //ret = m_connectors.elementAt(0).read(dataref);
-                int index = 0;
                 for(int ic=0;ic<m_connectors.size();++ic){
                     ret = m_connectors.elementAt(ic).read(dataref);
                     if (ret.equals(ReturnCode.PORT_OK)) {
                         break;
+                    }
+                }
+            }
+
+            if (ret.equals(ReturnCode.PORT_OK)) {
+                rtcout.println(Logbuf.DEBUG, "data read succeeded");
+
+                m_value.v = read_stream(m_value,dataref.v);
+                if (m_OnReadConvert != null) {
+                    m_value.v = m_OnReadConvert.run(m_value.v);
+                    rtcout.println(Logbuf.DEBUG, "OnReadConvert called");
+                    return true;
+                }
+                return true;
+            }
+            else if (ret.equals(ReturnCode.BUFFER_EMPTY)) {
+                rtcout.println(Logbuf.WARN, "buffer empty");
+                return false;
+            }
+            else if (ret.equals(ReturnCode.BUFFER_TIMEOUT)) {
+                rtcout.println(Logbuf.WARN, "buffer read timeout");
+                return false;
+            }
+            rtcout.println(Logbuf.ERROR, 
+                           "unknown retern value from buffer.read()");
+            return false;
+
+        }
+    }
+    /**
+     *
+     */
+    public boolean read(String name) {
+        rtcout.println(Logbuf.TRACE, "DataType read()");
+
+        if (m_OnRead != null) {
+            m_OnRead.run();
+            rtcout.println(Logbuf.TRACE, "OnRead called");
+        }
+
+        // 1) direct connection
+        synchronized (m_directNewDataMutex){
+            if (m_directNewData == true) {
+                rtcout.println(Logbuf.DEBUG, "Direct data transfer");
+                m_directNewData = false;
+                if (m_OnReadConvert != null) {
+                    m_value.v = m_OnReadConvert.run(m_value.v);
+                    rtcout.println(Logbuf.DEBUG, 
+                         "OnReadConvert for direct data called");
+                    return true;
+                }
+                return true;
+            }
+        }
+        // 2) network connection
+        synchronized (m_connectorsMutex){
+            ReturnCode ret = ReturnCode.PORT_OK;
+            EncapsOutputStreamExt cdr = new EncapsOutputStreamExt(m_orb, 
+                                                        isLittleEndian());
+            DataRef<InputStream> dataref 
+                    = new DataRef<InputStream>(cdr.create_input_stream());
+            synchronized (m_connectors){
+
+                if (m_connectors.size() == 0) {
+                    rtcout.println(Logbuf.DEBUG, "no connectors");
+                    return false;
+                }
+
+                for(int ic=0;ic<m_connectors.size();++ic){
+                    if (m_connectors.elementAt(ic).name().equals(name)) {
+                        ret = m_connectors.elementAt(ic).read(dataref);
                     }
                 }
             }
