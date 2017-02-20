@@ -260,6 +260,42 @@ public class InPort<DataType> extends InPortBase {
     /**
      *
      */
+    public boolean isNew(String conenctor) {
+        rtcout.println(Logbuf.TRACE, "isNew()");
+        synchronized (m_directNewDataMutex){
+            if (m_directNewData == true) {
+                rtcout.println(Logbuf.DEBUG, 
+                              "isNew() returns true because of direct write.");
+                return true;
+            }
+        }
+        synchronized (m_connectorsMutex){
+            synchronized (m_connectors){
+                if (m_connectors.size() == 0) {
+                    rtcout.println(Logbuf.DEBUG, "no connectors");
+                    return false;
+                }
+                int r = 0;
+                for(int ic=0;ic<m_connectors.size();++ic){
+                    if (m_connectors.elementAt(ic).name().equals(conenctor)) {
+                        r = m_connectors.elementAt(ic).getBuffer().readable();
+                        if (r > 0) {
+                            String name = m_connectors.elementAt(ic).name();
+                            rtcout.println(Logbuf.DEBUG, 
+                              "isNew() = true, connector name="+ name +
+                              ", readable data: " + r);
+                            return true;
+                        }
+                        return false;
+                    }
+                }
+                return false;
+            }
+        }
+    }
+    /**
+     *
+     */
     public boolean isNew(ArrayList<String> names) {
 
         rtcout.println(Logbuf.TRACE, "isNew()");
