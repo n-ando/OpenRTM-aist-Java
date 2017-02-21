@@ -1,6 +1,8 @@
 package jp.go.aist.rtm.RTC.port;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -11,6 +13,7 @@ import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
 import jp.go.aist.rtm.RTC.util.ORBUtil;
+import jp.go.aist.rtm.RTC.util.Properties;
 
 import RTC.ReturnCode_t;
 
@@ -45,9 +48,16 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
                                          this.getClass().getClassLoader());
             m_streamable = (Streamable)holder.newInstance();
             m_field = m_streamable.getClass().getField("value");
+            Class helper = Class.forName(class_name+"Helper");
+
+            Method method = helper.getMethod("id");
+            m_id =  (String)method.invoke( null );
         }
         catch(NoSuchFieldException e){
             //getField throws
+            e.printStackTrace();
+        }
+        catch(NoSuchMethodException e){
             e.printStackTrace();
         }
         catch(java.lang.InstantiationException e){
@@ -62,6 +72,10 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
             e.printStackTrace();
         }
         catch(IllegalArgumentException e){
+            //invoke throws
+            e.printStackTrace();
+        }
+        catch(InvocationTargetException e){
             //invoke throws
             e.printStackTrace();
         }
@@ -88,6 +102,11 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
         ConnectorDataListenerArgumentDataRef<DataType> arg 
             = (ConnectorDataListenerArgumentDataRef<DataType>)obj;
         String type = arg.m_info.properties.getProperty("interface_type");
+
+        String data_type = arg.m_info.properties.getProperty("data_type");
+        if(!m_id.equals(data_type)) {
+            return;
+        }
         //rtcout.println(Logbuf.TRACE, "interface_type:"+type);
         if(type.equals("direct")) {
             m_datatype = (DataType)arg.m_data;
@@ -172,6 +191,7 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
     private Field m_field = null;
     private DataType m_datatype = null;
     protected Logbuf rtcout;
+    protected String m_id;
 }
 
 
