@@ -227,6 +227,9 @@ public class NVUtil {
                     else if(anyVal.type().name().equals("TimedShort")) {
                         value = RTC.TimedShortHelper.extract(anyVal).toString();
                     }
+                    else if(anyVal.type().name().equals("TimedString")) {
+                        value = RTC.TimedStringHelper.extract(anyVal).toString();
+                    }
                     else if(anyVal.type().name().equals("TimedBooleanSeq")) {
                         value = RTC.TimedBooleanSeqHelper.extract(anyVal).toString();
                     }
