@@ -1,0 +1,33 @@
+Source: openrtm-aist-java
+Section: science
+Priority: extra
+Maintainer: Noriaki Ando <n-ando@aist.go.jp>
+Build-Depends: debhelper
+Standards-Version: 3.8.4
+Homepage: http://openrtm.org
+
+Package: openrtm-aist-java
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, default-jdk|openjdk-7-jdk|openjdk-8-jdk, openrtm-aist-dev
+Description: OpenRTM-aist is a reference implementation of RT-Middleware
+ and RT-Component framework. RT-Component (RTC) is a component model
+ standardized in OMG (Object Management Group) as Robotic Technology
+ Component Specification 1.0 (formal/08-04-04,
+ http://www.omg.org/spec/RTC/1.0). OpenRTM-aist-Java is being developed and
+ distributed by Intelligent Systems Research Institute, National
+ Institute of Advanced Industrial Science and Technology (AIST), Japan.
+ Please see http://openrtm.org/ for more details.
+
+Package: openrtm-aist-java-example
+Architecture: any
+Multi-Arch: same
+Depends: openrtm-aist
+Description: OpenRTM-aist-Java examples
+ Example components and sources
+
+Package: openrtm-aist-java-doc
+Architecture: all
+Description: Documentation for openrtm-aist-java
+ Developer documentation.

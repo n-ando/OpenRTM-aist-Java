@@ -1,0 +1,17 @@
+Source: openrtp
+Section: science
+Priority: extra
+Maintainer: Noriaki Ando <n-ando@aist.go.jp>
+Build-Depends: debhelper
+Standards-Version: 3.8.4
+Homepage: http://www.openrtm.org
+
+Package: openrtp
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, default-jre, openrtm-aist-dev
+Description: OpenRTP, Open RT Platform distributed by AIST
+ OpenRTP is tool package for OpenRTM-aist and its interoperable
+ RT-Middleware implementations. OpenRTP is being developed and
+ distributed by Intelligent Systems Research Institute, National
+ Institute of Advanced Industrial Science and Technology (AIST), Japan.
+ Please see http://www.openrtm.org/ for more detail.

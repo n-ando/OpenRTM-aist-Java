@@ -1,0 +1,114 @@
+#------------------------------------------------------------
+#
+# @file RPM spec file for OpenRTM-aist-Java
+# @author Noriaki Ando <n-ando@aist.go.jp>
+#
+# $Id$
+#
+
+%define pkgname        OpenRTM-aist-Java
+%define version        __VERSION__
+%define short_version  __SHORT_VERSION__
+%define distname       __DISTNAME__
+%define builddir       %{_topdir}/BUILD/%{distname}
+%define pkgver         0
+%define _unpackaged_files_terminate_build   1
+%define rtm_libdir     %{_libdir}/openrtm-%{short_version}
+%define rtm_datadir    %{_datadir}/openrtm-%{short_version}
+%global debug_package  %{nil}
+
+#------------------------------------------------------------
+# Package information
+Name: OpenRTM-aist-Java
+Version: %{version}
+Release: %{pkgver}.%{distname}
+Summary: Java modules for OpenRTM-aist
+Group: Applications/System
+License: LGPL
+URL: http://openrtm.org
+#Source0: %{pkgname}-%{version}-RELEASE.tar.gz
+Vendor: AIST <n-ando@aist.go.jp>
+
+Prefix: %{_prefix}
+BuildRoot: %{_tmppath}/%{pkgname}-%{version}-%{release}-root
+Requires: java-1.8.0-openjdk-devel
+Requires: OpenRTM-aist-devel
+
+%description
+OpenRTM-aist is a reference implementation of RTC (Robotic Technology
+Component) specification which is OMG standard. OpenRTM-aist includes
+RT-Middleware runtime environment and RTC framework. The OMG standard
+defines a component model and certain important infrastructure
+services applicable to the domain of robotics software development.
+OpenRTM-aist is being developed and distributed by Task Intelligence
+Research Group, Intelligent Systems Research Institute, National
+Institute of Advanced Industrial Science and Technology (AIST), Japan.
+Please see http://openrtm.org/ for more detail.
+
+#------------------------------------------------------------
+# doc package
+%package doc
+Summary: Documentation
+Group: Development/Libraries
+%description doc
+Developer documentation.
+
+#------------------------------------------------------------
+# example package
+%package example
+Summary: Example
+Group: Development/Libraries
+Requires: OpenRTM-aist-Java
+%description example
+Example components and sources
+
+#------------------------------------------------------------
+# install section
+%install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT%{rtm_libdir}
+cp -r %{_topdir}/../../jar $RPM_BUILD_ROOT%{rtm_libdir}
+mkdir -p $RPM_BUILD_ROOT%{rtm_datadir}/doc/java
+cp -r %{_topdir}/../../JavaDoc $RPM_BUILD_ROOT%{rtm_datadir}/doc/java
+cp -r %{_topdir}/../../JavaDocEn $RPM_BUILD_ROOT%{rtm_datadir}/doc/java
+%define install_dir_example $RPM_BUILD_ROOT%{rtm_datadir}/components/java
+mkdir -p %{install_dir_example}
+cp -r %{_topdir}/../../examples/RTMExamples %{install_dir_example}
+cp %{_topdir}/../../examples/*.sh %{install_dir_example}
+cp %{_topdir}/../../examples/*.conf %{install_dir_example}
+cp %{_topdir}/../../examples/*.func %{install_dir_example}
+  
+#------------------------------------------------------------
+# clean section
+%clean
+rm -rf %{buildroot}
+
+#------------------------------------------------------------
+# core files section
+%files
+%defattr(-,root,root)
+%attr(755,root,root) %{rtm_libdir}/jar/*
+
+#------------------------------------------------------------
+# doc package file list
+%files doc
+%defattr(-,root,root,-)
+%{rtm_datadir}/doc/java/JavaDoc/*
+%{rtm_datadir}/doc/java/JavaDocEn/*
+
+#------------------------------------------------------------
+# example package file list
+%files example
+%defattr(-,root,root,-)
+%{rtm_datadir}/components/java/RTMExamples/*
+%{rtm_datadir}/components/java/*.func
+%defattr(755,root,root,-)
+%{rtm_datadir}/components/java/*.sh
+%{rtm_datadir}/components/java/*.conf
+
+#------------------------------------------------------------
+# changelog section
+%changelog
+* Wed Nov 16 2016  <n-ando@aist.go.jp> 1.2.0
+- 1.2.0-RELEASE
+
