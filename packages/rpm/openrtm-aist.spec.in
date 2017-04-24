@@ -36,14 +36,14 @@ Requires: OpenRTM-aist-devel
 
 %description
 OpenRTM-aist is a reference implementation of RTC (Robotic Technology
-Component) specification which is OMG standard. OpenRTM-aist includes
+Component Version 1.1, formal/12-09-01) specification which is OMG
+standard (http://www.omg.org/spec/RTC/). OpenRTM-aist includes
 RT-Middleware runtime environment and RTC framework. The OMG standard
 defines a component model and certain important infrastructure
-services applicable to the domain of robotics software development.
-OpenRTM-aist is being developed and distributed by Task Intelligence
-Research Group, Intelligent Systems Research Institute, National
-Institute of Advanced Industrial Science and Technology (AIST), Japan.
-Please see http://openrtm.org/ for more detail.
+services applicable to the domain of robotics software
+development. OpenRTM-aist is being developed and distributed by
+National Institute of Advanced Industrial Science and Technology
+(AIST), Japan. Please see http://www.openrtm.org/ for more detail.
 
 #------------------------------------------------------------
 # doc package
@@ -51,7 +51,7 @@ Please see http://openrtm.org/ for more detail.
 Summary: Documentation
 Group: Development/Libraries
 %description doc
-Developer documentation.
+Class reference manual of OpenRTM-aist.
 
 #------------------------------------------------------------
 # example package
@@ -60,7 +60,7 @@ Summary: Example
 Group: Development/Libraries
 Requires: OpenRTM-aist-Java
 %description example
-Example components and sources
+Example components of OpenRTM-aist.
 
 #------------------------------------------------------------
 # install section
