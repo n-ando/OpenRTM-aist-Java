@@ -9,9 +9,13 @@ Homepage: http://www.openrtm.org
 Package: openrtp
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, default-jre, openrtm-aist-dev
-Description: OpenRTP, Open RT Platform distributed by AIST
- OpenRTP is tool package for OpenRTM-aist and its interoperable
- RT-Middleware implementations. OpenRTP is being developed and
- distributed by Intelligent Systems Research Institute, National
- Institute of Advanced Industrial Science and Technology (AIST), Japan.
- Please see http://www.openrtm.org/ for more detail.
+Description: OpenRTM-aist, RT-Middleware distributed by AIST
+ OpenRTM-aist is a reference implementation of RTC (Robotic Technology
+ Component Version 1.1, formal/12-09-01) specification which is OMG
+ standard (http://www.omg.org/spec/RTC/). OpenRTM-aist includes
+ RT-Middleware runtime environment and RTC framework. The OMG standard
+ defines a component model and certain important infrastructure
+ services applicable to the domain of robotics software
+ development. OpenRTM-aist is being developed and distributed by
+ National Institute of Advanced Industrial Science and Technology
+ (AIST), Japan. Please see http://www.openrtm.org/ for more detail.
