@@ -35,6 +35,7 @@ import RTC.FsmStructure;
    *     addFsmStructureListener(SET_FSM_STRUCTURE,
    *                             new MyListener("set structure listener"));
    *    :
+   * };
    * </pre>
    *
    * 第1引数の "SET_FSM_STRUCTURE" は、コールバックをフックするポイン
@@ -84,6 +85,7 @@ import RTC.FsmStructure;
    *                             new MyListener("set structure listener"));
    *    :
    *    :
+   * };
    * </pre>
    *
    * The first argument "SET_FSM_STRUCTURE" specifies callback hook

@@ -35,12 +35,13 @@ import java.lang.Integer;
    *
    * <pre>
    * protected ReturnCode_t onInitialize() {
-   * {
+   *  
    *     addPreFsmActionListener(PRE_ON_STATE_CHANGE,
    *                             new MyListener("init listener"));
    *    :
    *    :
    *    :
+   * };
    * </pre>
    *
    * 第1引数の "PRE_ON_STATE_CHANGE" は、コールバックをフックするポイン
@@ -94,12 +95,13 @@ import java.lang.Integer;
    *
    * <pre>
    * protected ReturnCode_t onInitialize() {
-   * {
+   * 
    *     addPreFsmActionListener(PRE_ON_STATE_CHANGE,
    *                             new MyListener("init listener"));
    *    :
    *    :
    *    :
+   * };
    * </pre>
    *
    * The first argument "PRE_ON_STATE_CHANGE" specifies callback hook

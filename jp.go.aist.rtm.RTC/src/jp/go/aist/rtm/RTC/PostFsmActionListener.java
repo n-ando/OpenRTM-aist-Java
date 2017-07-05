@@ -36,6 +36,7 @@ import java.lang.Integer;
    *     addPostFsmActionListener(POST_ON_STATE_CHANGE,
    *                             new MyListener("init listener"));
    *    :
+   *  };
    * </pre>
    *
    * 第1引数の "POST_ON_STATE_CHANGE" は、コールバックをフックするポイン
@@ -88,6 +89,7 @@ import java.lang.Integer;
    *     addPostFsmActionListener(POST_ON_STATE_CHANGE,
    *                             new MyListener("init listener"));
    *    :
+   *  };
    * </pre>
    *
    * The first argument "POST_ON_STATE_CHANGE" specifies callback hook

@@ -62,6 +62,7 @@ import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
    *                         ConnectorDataListenerType.ON_BUFFER_WRITE,
    *                         new MyDataListener("ON_BUFFER_WRITE"));
    *    :
+   * };
    * }</pre>
    *
    * 第1引数の "ON_BUFFER_WRITE" は、コールバックをフックするポイントで
@@ -195,6 +196,7 @@ import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
    *                         ConnectorDataListenerType.ON_BUFFER_WRITE,
    *                         new MyDataListener("ON_BUFFER_WRITE"));
    *    :
+   * }
    * }</pre>
    *
    * The first argument "ON_BUFFER_WRITE" specifies hook point of

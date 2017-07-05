@@ -53,6 +53,7 @@ import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
    *                         ConnectorListenerType.ON_BUFFER_EMPTY,
    *                         new MyListener("ON_BUFFER_EMPTY"));
    *    :
+   * }
    * }</pre>
    *
    * 第1引数の "ON_BUFFER_EMPTY" は、コールバックをフックするポイントで
@@ -163,6 +164,7 @@ import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
    *                         ConnectorListenerType.ON_BUFFER_EMPTY,
    *                         new MyListener("ON_BUFFER_EMPTY"));
    *    :
+   * }
    * }</pre>
    *
    * The first argument "ON_BUFFER_EMPTY" specifies hook point of

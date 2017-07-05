@@ -10,7 +10,7 @@ import jp.go.aist.rtm.RTC.util.DataRef;
  * {@.ja EventInPort テンプレートクラス}
  * {@.en EventInPort template class}
  * <p>
- * {@.jaEventInPort の実装である EventInPort<T> のテンプレートクラス。
+ * {@.ja EventInPort の実装である EventInPort<T> のテンプレートクラス。
  * <T> はBasicDataType.idl にて定義されている型で、メンバとして
  * Time 型の tm , および T型の data を持つ構造体でなくてはならない。
  * EventInPort は内部にリングバッファを持ち、外部から送信されたデータを順次
@@ -94,13 +94,9 @@ public class EventInPort<FsmType extends MachineBase> extends InPortBase {
      *   {@.ja EventInPort 名。EventInPortBase:name() により参照される。}
      *   {@.en A name of the EventInPort. This name is referred by
      *             EventInPortBase::name().}
-     * @param value 
+     * @param fsm
      *   {@.ja この EventInPort にバインドされる T 型の変数}
      *   {@.en type-T variable that is bound to this EventInPort.}
-     * @param bufsize 
-     *   {@.ja EventInPort 内部のリングバッファのバッファ長(デフォルト値:64)
-     *   {@.en Buffer length of internal ring buffer of EventInPort
-     *                (The default value:64)}
      * @param read_block 
      *   {@.ja 読込ブロックフラグ。
      *        データ読込時に未読データがない場合、次のデータ受信までブロックする

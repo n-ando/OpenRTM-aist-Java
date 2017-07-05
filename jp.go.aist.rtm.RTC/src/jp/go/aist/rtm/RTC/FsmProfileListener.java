@@ -36,6 +36,7 @@ import java.lang.Integer;
    *     addFsmProfileListener(SET_FSM_PROFILE,
    *                           new MyListener("prof listener"));
    *    :
+   * };
    * </pre>
    *
    * 第1引数の "SET_FSM_PROFILE" は、コールバックをフックするポイン
@@ -92,6 +93,7 @@ import java.lang.Integer;
    *     addFsmProfileListener(SET_FSM_PROFILE,
    *                           new MyListener("prof listener"));
    *    :
+   * };
    * </pre>
    *
    * The first argument "SET_FSM_PROFILE" specifies callback hook
