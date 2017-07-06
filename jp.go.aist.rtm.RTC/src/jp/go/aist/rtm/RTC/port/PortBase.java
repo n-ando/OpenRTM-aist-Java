@@ -6,12 +6,15 @@ import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.CORBA_RTCUtil;
 import jp.go.aist.rtm.RTC.util.ConnectorProfileFactory;
 import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.POAUtil;
 import jp.go.aist.rtm.RTC.util.PortProfileFactory;
+import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
 import jp.go.aist.rtm.RTC.util.operatorFunc;
+import jp.go.aist.rtm.RTC.util.StringUtil;
 
 import org.omg.CORBA.SystemException;
 import org.omg.CORBA.TCKind;
@@ -582,7 +585,7 @@ public abstract class PortBase extends PortServicePOA {
             synchronized (m_profile_mutex) {
    	        if (isExistingConnId(connector_profile.value.connector_id)) {
                     rtcout.println(Logbuf.ERROR, "Connection already exists.");
-	            return ReturnCode_t.PRECONDITION_NOT_MET;
+                    return ReturnCode_t.PRECONDITION_NOT_MET;
 	        }
             }
         }
@@ -722,6 +725,34 @@ public abstract class PortBase extends PortServicePOA {
     notify_connect(ConnectorProfileHolder connector_profile) {
 
         rtcout.println(Logbuf.TRACE, "notify_connect()");
+
+
+        Properties prop = new Properties();
+        NVListHolder nvholder = 
+                new NVListHolder(this.m_profile.properties);
+        NVUtil.copyToProperties(prop, nvholder);
+        boolean default_value = StringUtil.toBool(
+                   prop.getProperty("dataport.allow_dup_connection"),
+                                     "YES", "NO", false); 
+
+        prop = new Properties();
+        nvholder = 
+                new NVListHolder(connector_profile.value.properties);
+        NVUtil.copyToProperties(prop, nvholder);
+        if (!StringUtil.toBool(
+            prop.getProperty("dataport.allow_dup_connection"), 
+            "YES","NO",default_value)){
+            for(int ic=0;ic<connector_profile.value.ports.length;++ic){
+                RTC.PortService port = connector_profile.value.ports[ic];
+                if(port._is_equivalent(m_objref)){
+                    boolean ret = CORBA_RTCUtil.already_connected(port, 
+                                                                  m_objref);
+                    if(ret){
+                        return ReturnCode_t.PRECONDITION_NOT_MET;
+                    }
+                }
+            }
+        }
 
         synchronized (m_connectorsMutex){
             ReturnCode_t[] retval = {ReturnCode_t.RTC_OK, ReturnCode_t.RTC_OK, 
