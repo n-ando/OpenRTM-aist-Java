@@ -534,6 +534,54 @@ public abstract class OutPortBase extends PortBase {
         return super.connect(connector_profile);
     }
 
+
+    /**
+     * {@.ja [CORBA interface] Port の接続通知を行う}
+     * {@.en [CORBA interface] Notify the Ports connection}
+     *
+     * @param connector_profile 
+     *   {@.ja ConnectorProfileHolder}
+     *   {@.en ConnectorProfileHolder}
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en ReturnCode_t The return code of ReturnCode_t type.}
+     */
+    public ReturnCode_t 
+    notify_connect(ConnectorProfileHolder connector_profile) {
+
+        Properties prop = new Properties();
+        NVListHolder nvholder = 
+                new NVListHolder(connector_profile.value.properties);
+        NVUtil.copyToProperties(prop, nvholder);
+
+        String _str = m_properties.getProperty("dataport.fan_out");
+        int _type = 100;
+        try {
+            _type = Integer.parseInt(_str);
+        }
+        catch(Exception ex){
+            rtcout.println(Logbuf.ERROR, 
+                    "invalid connection_limit value: "+_str );
+        }
+
+        _str = prop.getProperty("dataport.fan_out");
+        try {
+            _type = Integer.parseInt(_str);
+        }
+        catch(Exception ex){
+            rtcout.println(Logbuf.ERROR, 
+                    "invalid connection_limit value: "+_str );
+        }
+
+       int value = _type; 
+
+       if(value <= m_connectors.size()) {
+           return ReturnCode_t.PRECONDITION_NOT_MET;
+       }
+
+       return super.notify_connect(connector_profile);
+    }
+
     /**
      * {@.ja Interface 情報を公開する}
      * {@.en Publish interface information}
