@@ -26,14 +26,12 @@ public class OutPortProviderFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlo
      *
      */
     public static OutPortProviderFactory instance() {
-        if (factory_global == null) {
-            synchronized (factory_global_mutex) {
-                if (factory_global == null) {
-                    try {
-                        factory_global = new OutPortProviderFactory();
-                    } catch (Exception e) {
-                        factory_global = null;
-                    }
+        synchronized (factory_global_mutex) {
+            if (factory_global == null) {
+                try {
+                    factory_global = new OutPortProviderFactory();
+                } catch (Exception e) {
+                    factory_global = null;
                 }
             }
         }
