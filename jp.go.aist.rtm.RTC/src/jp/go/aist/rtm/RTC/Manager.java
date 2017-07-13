@@ -1880,6 +1880,7 @@ public class Manager {
             "naming.enable",
             "naming.type",
             "naming.formats",
+            "manager.instance_name",
             ""
         };
 
