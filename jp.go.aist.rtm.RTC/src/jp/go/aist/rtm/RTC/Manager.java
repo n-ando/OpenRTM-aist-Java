@@ -11,6 +11,7 @@ import java.lang.Boolean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.FileHandler;
@@ -1873,6 +1874,7 @@ public class Manager {
             "exec_cxt.activation_timeout",
             "exec_cxt.deactivation_timeout",
             "exec_cxt.reset_timeout",
+            "exec_cxt.cpu_affinity",
             "logger.enable",
             "logger.log_level",
             "naming.enable",
@@ -3774,8 +3776,46 @@ public class Manager {
         PeriodicExecutionContext.PeriodicExecutionContextInit(this);
         ExtTrigExecutionContext.ExtTrigExecutionContextInit(this);
         OpenHRPExecutionContext.OpenHRPExecutionContextInit(this);
-        
+        initCpuAffinity();
         return true;
+    }
+    /**
+     * {@.ja スレッドの CPU affinity マスクを設定・取得する}
+     * {@.en et  and get a thread's CPU affinity mask}
+     *
+     */
+    protected void initCpuAffinity() {
+        rtcout.println(Logbuf.TRACE, "initCpuAffinity()");
+        Properties node = m_config.findNode("manager.cpu_affinity");
+        if (node == null) {
+            return;
+        }
+        String affinity_str = m_config.getProperty("manager.cpu_affinity");
+
+        rtcout.println(Logbuf.DEBUG, "CPU affinity property: "+ affinity_str);
+
+        String[] tmp = affinity_str.split(",");
+        String osname = System.getProperty("os.name").toLowerCase();
+        rtcout.println(Logbuf.DEBUG, "os.name: "+ osname);
+        ICPUAffinity CPUAffinity;
+        if(osname.startsWith("windows")){
+            CPUAffinity = new CPUAffinityWindows();
+        }
+        else{
+            CPUAffinity = new CPUAffinityLinux();
+        }
+
+        ArrayList<Integer> cpu_num = new ArrayList<Integer>();
+        BitSet cpu_set = new BitSet();
+        cpu_set.clear();
+
+        rtcout.println(Logbuf.DEBUG, "cpu_num: ");
+        for(int ic=0;ic<tmp.length;++ic){
+            int num = Integer.parseInt(tmp[ic]);
+            rtcout.println(Logbuf.DEBUG, "    " + num);
+            cpu_set.set(num);
+        }
+        CPUAffinity.setProcessAffinity(cpu_set);
     }
     
     /**
