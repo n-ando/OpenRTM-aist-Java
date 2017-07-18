@@ -1,5 +1,7 @@
 package jp.go.aist.rtm.RTC;
 
+import java.lang.Object;
+
 /**
  * {@.ja InPortProvider用ファクトリの実装}
  * {@.en Implement of factory for InPortProvider} 
@@ -42,7 +44,8 @@ public class InPortProviderFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlob
     /**
      *  <p> mutex </p>
      */
-    private static String factory_global_mutex = new String();
+    //private static String factory_global_mutex = new String();
+    private static final Object factory_global_mutex = new Object();
     /**
      *  <p> object </p>
      */
