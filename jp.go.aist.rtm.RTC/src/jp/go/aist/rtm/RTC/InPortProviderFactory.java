@@ -28,8 +28,9 @@ public class InPortProviderFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlob
      *   {@.en InPortProviderFactory object}
      *
      */
-    public static InPortProviderFactory instance() {
-        synchronized (factory_global_mutex) {
+    //public static InPortProviderFactory instance() {
+    synchronized public static InPortProviderFactory instance() {
+        //synchronized (factory_global_mutex) {
             if (factory_global == null) {
                 try {
                     factory_global = new InPortProviderFactory();
@@ -37,7 +38,7 @@ public class InPortProviderFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlob
                     factory_global = null;
                 }
             }
-        }
+        //}
 
         return factory_global;
     }
