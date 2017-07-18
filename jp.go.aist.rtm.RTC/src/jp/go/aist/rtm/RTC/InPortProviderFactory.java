@@ -28,25 +28,17 @@ public class InPortProviderFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlob
      *   {@.en InPortProviderFactory object}
      *
      */
-    //public static InPortProviderFactory instance() {
     synchronized public static InPortProviderFactory instance() {
-        //synchronized (factory_global_mutex) {
-            if (factory_global == null) {
-                try {
-                    factory_global = new InPortProviderFactory();
-                } catch (Exception e) {
-                    factory_global = null;
-                }
+        if (factory_global == null) {
+            try {
+                factory_global = new InPortProviderFactory();
+            } catch (Exception e) {
+                factory_global = null;
             }
-        //}
+        }
 
         return factory_global;
     }
-    /**
-     *  <p> mutex </p>
-     */
-    //private static String factory_global_mutex = new String();
-    private static final Object factory_global_mutex = new Object();
     /**
      *  <p> object </p>
      */
