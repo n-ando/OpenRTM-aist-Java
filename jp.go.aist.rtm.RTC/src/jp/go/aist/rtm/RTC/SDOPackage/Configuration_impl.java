@@ -419,19 +419,21 @@ public class Configuration_impl extends ConfigurationPOA {
     public Parameter[] get_configuration_parameters()
             throws NotAvailable, InternalError {
 
-        rtcout.println(Logbuf.TRACE, "Configuration_impl.get_configurations()");
+        rtcout.println(Logbuf.TRACE, 
+                       "Configuration_impl.get_configuration_parameters()");
 
         try{
-            if( m_parameters==null ) {
-                m_parameters = new ParameterListHolder();
-                m_parameters.value = new Parameter[0];
-            }
-            synchronized (m_parameters) {
+            synchronized (m_parameters_lock) {
+                if( m_parameters==null ) {
+                    m_parameters = new ParameterListHolder();
+                    m_parameters.value = new Parameter[0];
+                }
                 ParameterListHolder param = new ParameterListHolder(m_parameters.value);
                 return param.value;
             }
         } catch (Exception ex) {
-            throw new InternalError("Configuration::get_configuration_parameters()");
+            throw new InternalError(
+                              "Configuration::get_configuration_parameters()");
         }
     }
 
@@ -1032,6 +1034,7 @@ public class Configuration_impl extends ConfigurationPOA {
      * {@.en List of  Parameter}
      */
     protected ParameterListHolder m_parameters;
+    protected final String m_parameters_lock = new String();
     /**
      * {@.ja コンフィギュレーションセット情報}
      * {@.en Information of configuration set}

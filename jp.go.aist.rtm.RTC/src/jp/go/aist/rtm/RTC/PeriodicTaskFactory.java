@@ -25,25 +25,17 @@ public class PeriodicTaskFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlobal
      *   {@.en PeriodicTaskFactory object}
      *
      */
-    public static PeriodicTaskFactory instance() {
+    synchronized public static PeriodicTaskFactory instance() {
         if (factory_global == null) {
-            synchronized (factory_global_mutex) {
-                if (factory_global == null) {
-                    try {
-                        factory_global = new PeriodicTaskFactory();
-                    } catch (Exception e) {
-                        factory_global = null;
-                    }
-                }
+            try {
+                factory_global = new PeriodicTaskFactory();
+            } catch (Exception e) {
+                factory_global = null;
             }
         }
 
         return factory_global;
     }
-    /**
-     *  <p> mutex </p>
-     */
-    private static String factory_global_mutex = new String();
     /**
      *  <p> object </p>
      */
