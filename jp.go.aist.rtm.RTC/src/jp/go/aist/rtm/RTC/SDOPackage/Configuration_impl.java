@@ -198,8 +198,10 @@ public class Configuration_impl extends ConfigurationPOA {
         rtcout.println(Logbuf.TRACE, "Configuration_impl.set_device_profile()");
 
         try {
-            if(m_deviceProfile == null) m_deviceProfile = new DeviceProfile();
-            synchronized (m_deviceProfile) {
+            synchronized (m_device_profile_lock) {
+                if(m_deviceProfile == null) {
+                    m_deviceProfile = new DeviceProfile();
+                }
                 m_deviceProfile = dProfile;
             }
         } catch(Exception ex) {
@@ -1024,6 +1026,7 @@ public class Configuration_impl extends ConfigurationPOA {
      * {@.en DeviceProfile}
      */
     protected DeviceProfile m_deviceProfile = new DeviceProfile();
+    protected final String m_device_profile_lock = new String();
     /**
      * {@.ja ServiceProfile リスト}
      * {@.en List of ServiceProfile}
