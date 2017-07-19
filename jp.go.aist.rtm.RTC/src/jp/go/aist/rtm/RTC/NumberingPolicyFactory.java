@@ -27,16 +27,12 @@ public class NumberingPolicyFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlo
      *   {@.en InPortProviderFactory object}
      *
      */
-    public static NumberingPolicyFactory instance() {
+    synchronized public static NumberingPolicyFactory instance() {
         if (factory_global == null) {
-            synchronized (factory_global_mutex) {
-                if (factory_global == null) {
-                    try {
-                        factory_global = new NumberingPolicyFactory();
-                    } catch (Exception e) {
-                        factory_global = null;
-                    }
-                }
+            try {
+                factory_global = new NumberingPolicyFactory();
+            } catch (Exception e) {
+                factory_global = null;
             }
         }
 

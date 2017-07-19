@@ -20,25 +20,17 @@ public class BufferFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlobal<ABSTR
      *   {@.ja BufferFactoryオブジェクト}
      *   {@.en BufferFactory object}
      */
-    public static BufferFactory instance() {
+    synchronized public static BufferFactory instance() {
         if (factory_global == null) {
-            synchronized (factory_global_mutex) {
-                if (factory_global == null) {
-                    try {
-                        factory_global = new BufferFactory();
-                    } catch (Exception e) {
-                        factory_global = null;
-                    }
-                }
+            try {
+                factory_global = new BufferFactory();
+            } catch (Exception e) {
+                factory_global = null;
             }
         }
 
         return factory_global;
     }
-    /**
-     *  <p> mutex </p>
-     */
-    private static String factory_global_mutex = new String();
     /**
      *  <p> object </p>
      */
