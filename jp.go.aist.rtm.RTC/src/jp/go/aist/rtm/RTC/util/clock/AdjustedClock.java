@@ -14,6 +14,7 @@ import jp.go.aist.rtm.RTC.util.TimeValue;
  */
 public class AdjustedClock extends SystemClock {
     private TimeValue m_offset;
+    private final Object m_lock = new Object();
 
     public AdjustedClock() {
         super();
@@ -21,14 +22,14 @@ public class AdjustedClock extends SystemClock {
     }
     
     public TimeValue getTime() {
-        synchronized (m_offset) {
+        synchronized (m_lock) {
             TimeValue base = super.getTime();
             return base.minus(m_offset);
         }
     }
 
     public boolean setTime(TimeValue clocktime) {
-        synchronized (m_offset) {
+        synchronized (m_lock) {
             long msec = System.currentTimeMillis();
             long sec = msec/TIME_CONV_UNIT;
             long usec = (msec - sec*TIME_CONV_UNIT)*TIME_CONV_UNIT;
