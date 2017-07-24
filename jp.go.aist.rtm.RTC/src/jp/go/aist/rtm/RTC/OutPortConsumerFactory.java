@@ -25,25 +25,17 @@ public class OutPortConsumerFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlo
      *   {@.en OutPortConsumerFactory object}
      *
      */
-    public static OutPortConsumerFactory instance() {
+    synchronized public static OutPortConsumerFactory instance() {
         if (factory_global == null) {
-            synchronized (factory_global_mutex) {
-                if (factory_global == null) {
-                    try {
-                        factory_global = new OutPortConsumerFactory();
-                    } catch (Exception e) {
-                        factory_global = null;
-                    }
-                }
+            try {
+                factory_global = new OutPortConsumerFactory();
+            } catch (Exception e) {
+                factory_global = null;
             }
         }
 
         return factory_global;
     }
-    /**
-     *  <p> mutex </p>
-     */
-    private static String factory_global_mutex = new String();
     /**
      *  <p> object </p>
      */

@@ -25,26 +25,17 @@ public class OutPortProviderFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGlo
      *   {@.en OutPortProviderFactory object}
      *
      */
-    public static OutPortProviderFactory instance() {
+    synchronized public static OutPortProviderFactory instance() {
         if (factory_global == null) {
-            synchronized (factory_global_mutex) {
-                if (factory_global == null) {
-                    try {
-                        factory_global = new OutPortProviderFactory();
-                    } catch (Exception e) {
-                        factory_global = null;
-                    }
-                }
+            try {
+                factory_global = new OutPortProviderFactory();
+            } catch (Exception e) {
+                factory_global = null;
             }
         }
 
         return factory_global;
     }
-    /**
-     * {@.ja 排他制御用変数}
-     * {@.en Variable for exclusive control}
-     */
-    private static String factory_global_mutex = new String();
     /**
      *  <p> object </p>
      */

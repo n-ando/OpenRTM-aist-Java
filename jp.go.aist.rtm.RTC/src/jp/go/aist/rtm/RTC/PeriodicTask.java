@@ -432,8 +432,8 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
         if (m_execCount > m_execCountMax) {
             synchronized (m_execStat.mutex) {
                 m_execStat.stat = m_execTime.getStatistics();
-                m_execCount = 0;
             }
+            m_execCount = 0;
         }
         ++m_execCount;
     }
@@ -445,8 +445,8 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
         if (m_periodCount > m_periodCountMax) {
             synchronized (m_periodStat.mutex) {
                 m_periodStat.stat = m_periodTime.getStatistics();
-                m_periodCount = 0;
             }
+            m_periodCount = 0;
         }
         ++m_periodCount;
     }

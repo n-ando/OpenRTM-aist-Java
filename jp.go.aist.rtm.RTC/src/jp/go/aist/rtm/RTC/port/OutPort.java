@@ -364,7 +364,7 @@ public class OutPort<DataType> extends OutPortBase {
             rtcout.println(Logbuf.TRACE, "OnWrite called");
         }
 
-        synchronized (m_profile.properties) {
+        synchronized (m_profile_mutex) {
             NVListHolder nvholder = 
                  new NVListHolder(m_profile.properties);
             try{

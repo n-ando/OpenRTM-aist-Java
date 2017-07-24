@@ -218,8 +218,10 @@ public class Organization_impl extends OrganizationPOA{
             throws InvalidParameter, NotAvailable, InternalError {
         rtcout.println(Logbuf.TRACE, "Organization_impl.set_organization_property()");
         try {
-            if( m_orgProperty==null ) m_orgProperty = new OrganizationProperty();
-            synchronized (m_orgProperty) {
+            synchronized (m_org_mutex) {
+                if( m_orgProperty==null ) {
+                    m_orgProperty = new OrganizationProperty();
+                }
                 m_orgProperty = organization_property;
                 return true;
             }
@@ -271,10 +273,13 @@ public class Organization_impl extends OrganizationPOA{
      */
     public boolean add_organization_property(final OrganizationProperty organization_property) 
             throws SystemException, InvalidParameter, NotAvailable, InternalError {
-        rtcout.println(Logbuf.TRACE, "Organization_impl.add_organization_property()");
+        rtcout.println(Logbuf.TRACE, 
+                       "Organization_impl.add_organization_property()");
         try {
-            if( m_orgProperty==null ) m_orgProperty = new OrganizationProperty();
-            synchronized (m_orgProperty) {
+            synchronized (m_org_mutex) {
+                if( m_orgProperty==null ) {
+                    m_orgProperty = new OrganizationProperty();
+                }
                 m_orgProperty = organization_property;
                 return true;
             }
@@ -854,6 +859,7 @@ public class Organization_impl extends OrganizationPOA{
      * member:property NVList
      */
     OrganizationProperty m_orgProperty = new OrganizationProperty();
+    private final java.lang.Object m_org_mutex = new java.lang.Object();
     /**
      * {@.ja Organization プロパティ検索用ヘルパークラス}
      */

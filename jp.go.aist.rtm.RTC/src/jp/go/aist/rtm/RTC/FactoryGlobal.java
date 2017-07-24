@@ -69,16 +69,12 @@ public class FactoryGlobal<ABSTRACTCLASS,IDENTIFIER> {
      *   {@.ja FactoryGlobal オブジェクト}
      *   {@.en FactoryGlobal object}
      */
-    public static FactoryGlobal instance() {
+    synchronized public static FactoryGlobal instance() {
         if (factory_global == null) {
-            synchronized (factory_global_mutex) {
-                if (factory_global == null) {
-                    try {
-                        factory_global = new FactoryGlobal();
-                    } catch (Exception e) {
-                        factory_global = null;
-                    }
-                }
+            try {
+                factory_global = new FactoryGlobal();
+            } catch (Exception e) {
+                factory_global = null;
             }
         }
 

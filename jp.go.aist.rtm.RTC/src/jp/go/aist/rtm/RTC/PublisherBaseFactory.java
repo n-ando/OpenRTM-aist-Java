@@ -22,25 +22,17 @@ public class PublisherBaseFactory<ABSTRACTCLASS,IDENTIFIER> extends FactoryGloba
      *   {@.en PublisherBaseFactory object}
      *
      */
-    public static PublisherBaseFactory instance() {
+    synchronized public static PublisherBaseFactory instance() {
         if (factory_global == null) {
-            synchronized (factory_global_mutex) {
-                if (factory_global == null) {
-                    try {
-                        factory_global = new PublisherBaseFactory();
-                    } catch (Exception e) {
-                        factory_global = null;
-                    }
-                }
+            try {
+                factory_global = new PublisherBaseFactory();
+            } catch (Exception e) {
+                factory_global = null;
             }
         }
 
         return factory_global;
     }
-    /**
-     *  <p> mutex </p>
-     */
-    private static String factory_global_mutex = new String();
     /**
      *  <p> object </p>
      */

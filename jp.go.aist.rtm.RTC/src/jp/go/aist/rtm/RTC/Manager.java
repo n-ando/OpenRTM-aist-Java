@@ -1863,6 +1863,7 @@ public class Manager {
             "naming.enable",
             "naming.type",
             "naming.formats",
+            "manager.instance_name",
             ""
         };
 
@@ -3661,8 +3662,9 @@ public class Manager {
         if (!(m_config.getProperty(type_conf) == null
                 || m_config.getProperty(type_conf).length() == 0)) {
             
+            BufferedReader conff;
             try {
-                BufferedReader conff = new BufferedReader(
+                conff = new BufferedReader(
                         new FileReader(m_config.getProperty(type_conf)));
                 type_prop.load(conff);
                 rtcout.println(Logbuf.INFO,
