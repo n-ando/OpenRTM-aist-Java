@@ -3684,9 +3684,8 @@ public class Manager {
         if (!(m_config.getProperty(type_conf) == null
                 || m_config.getProperty(type_conf).length() == 0)) {
             
-            BufferedReader conff;
             try {
-                conff = new BufferedReader(
+                BufferedReader conff = new BufferedReader(
                         new FileReader(m_config.getProperty(type_conf)));
                 type_prop.load(conff);
                 rtcout.println(Logbuf.INFO,
@@ -3697,6 +3696,7 @@ public class Manager {
                 str = type_prop._dump(str,type_prop,0);
                 rtcout.println(Logbuf.DEBUG,str);
                 config_fname.add(m_config.getProperty(type_conf));
+                conff.close();
                 
             } catch (FileNotFoundException e) {
                 rtcout.println(Logbuf.DEBUG, 
@@ -3711,7 +3711,7 @@ public class Manager {
                     +" in Manager.configureComponent() type_conf.");
                 rtcout.println(Logbuf.DEBUG, e.getMessage());
                 e.printStackTrace();
-            }
+            } 
         }
         if (m_config.findNode(category + "." + type_name) != null) {
             Properties temp = m_config.getNode(category + "." + type_name);
