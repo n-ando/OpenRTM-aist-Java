@@ -3650,6 +3650,7 @@ public class Manager {
                 str = name_prop._dump(str,name_prop,0);
                 rtcout.println(Logbuf.DEBUG, str);
                 config_fname.add(m_config.getProperty(name_conf));
+                conff.close();
             } catch (FileNotFoundException e) {
                 rtcout.println(Logbuf.DEBUG, 
                     "Exception: Caught FileNotFoundException"
