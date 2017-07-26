@@ -90,7 +90,7 @@ public class CPUAffinityWindows implements ICPUAffinity {
      * {@.en Setting the CPU affinity of a process}
      * 
      * <p>
-     * @param cpu_set
+     * @param cpu_num_list
      *   {@.ja CPU番号のリスト}
      *   {@.en The list in which the number of the CPU is stocked}
      * 
