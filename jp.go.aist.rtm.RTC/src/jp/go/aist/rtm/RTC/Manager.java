@@ -182,24 +182,22 @@ public class Manager {
      */
     public static Manager init(String[] argv) {
         
-        if (manager == null) {
-            synchronized (manager_mutex) {
-                if (manager == null) {
-                    try {
-                        manager = new Manager();
-                        manager.initManager(argv);
-                        manager.initLogger();
-                        manager.initORB();
-                        manager.initNaming();
-                        manager.initFactories();
-                        manager.initExecContext();
-                        manager.initComposite();
-                        manager.initTimer();
-                        manager.initManagerServant();
-                        
-                    } catch (Exception e) {
-                        manager = null;
-                    }
+        synchronized (manager_mutex) {
+            if (manager == null) {
+                try {
+                    manager = new Manager();
+                    manager.initManager(argv);
+                    manager.initLogger();
+                    manager.initORB();
+                    manager.initNaming();
+                    manager.initFactories();
+                    manager.initExecContext();
+                    manager.initComposite();
+                    manager.initTimer();
+                    manager.initManagerServant();
+                    
+                } catch (Exception e) {
+                    manager = null;
                 }
             }
         }
@@ -226,23 +224,21 @@ public class Manager {
      */ 
     public static Manager instance() {
         
-        if (manager == null) {
-            synchronized (manager_mutex) {
-                if (manager == null) {
-                    try {
-                        manager = new Manager();
-                        manager.initManager(null);
-                        manager.initLogger();
-                        manager.initORB();
-                        manager.initNaming();
-                        manager.initFactories();
-                        manager.initExecContext();
-                        manager.initComposite();
-                        manager.initTimer();
-                        
-                    } catch (Exception e) {
-                        manager = null;
-                    }
+        synchronized (manager_mutex) {
+            if (manager == null) {
+                try {
+                    manager = new Manager();
+                    manager.initManager(null);
+                    manager.initLogger();
+                    manager.initORB();
+                    manager.initNaming();
+                    manager.initFactories();
+                    manager.initExecContext();
+                    manager.initComposite();
+                    manager.initTimer();
+                    
+                } catch (Exception e) {
+                    manager = null;
                 }
             }
         }
