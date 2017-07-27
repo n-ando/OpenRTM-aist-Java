@@ -3317,22 +3317,24 @@ public class Manager {
                 try{
                     java.util.Enumeration<java.net.NetworkInterface> nic 
                          = java.net.NetworkInterface.getNetworkInterfaces();
-                    endpoints = new String();
-                    while(nic.hasMoreElements()) {
-                        java.net.NetworkInterface netIf = nic.nextElement();
-                        java.util.Enumeration<java.net.InetAddress> enumAddress 
-                                = netIf.getInetAddresses();
-                        while(enumAddress.hasMoreElements()){
-                            java.net.InetAddress inetAdd 
-                                = enumAddress.nextElement();
-                            String hostString = inetAdd.getHostAddress();
-                            if(isIpAddressFormat(hostString)){
-                                if(endpoints.length()!=0){
-                                    endpoints 
-                                        = endpoints + "," + hostString + ":";
-                                }
-                                else{
-                                    endpoints = hostString + ":";
+                    if(nic != null) {
+                        endpoints = new String();
+                        while(nic.hasMoreElements()) {
+                            java.net.NetworkInterface netIf = nic.nextElement();
+                            java.util.Enumeration<java.net.InetAddress> enumAddress 
+                                    = netIf.getInetAddresses();
+                            while(enumAddress.hasMoreElements()){
+                                java.net.InetAddress inetAdd 
+                                    = enumAddress.nextElement();
+                                String hostString = inetAdd.getHostAddress();
+                                if(isIpAddressFormat(hostString)){
+                                    if(endpoints.length()!=0){
+                                        endpoints 
+                                            = endpoints + "," + hostString + ":";
+                                    }
+                                    else{
+                                        endpoints = hostString + ":";
+                                    }
                                 }
                             }
                         }

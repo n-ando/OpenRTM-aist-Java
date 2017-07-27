@@ -18,6 +18,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.HelpFormatter;
 
 /**
  * {@.ja Managerのコンフィグレーションを表現するクラスです。}
@@ -243,6 +244,8 @@ class ManagerConfig {
             commandLine = parser.parse(options, args);
             
         } catch (ParseException e) {
+	    HelpFormatter help = new HelpFormatter();
+	    help.printHelp("UpdateKeyword", options, true);
             throw new IllegalArgumentException("Could not parse arguments.");
         }
 
@@ -278,16 +281,20 @@ class ManagerConfig {
 */
         if (commandLine.hasOption("p")) {
         // ORB's port number
-            String str = commandLine.getOptionValue("p").trim();
-            int portnum;
-            try {
-                portnum = Integer.parseInt(str);
-                String arg = ":"; 
-                arg += str;
-                m_argprop.setProperty("corba.endpoints", arg);
-            }
-            catch(Exception ex){
-                //do nothing
+            //String str = commandLine.getOptionValue("p").trim();
+            String str = commandLine.getOptionValue("p");
+            if(str != null){
+                str = str.trim();
+                int portnum;
+                try {
+                    portnum = Integer.parseInt(str);
+                    String arg = ":"; 
+                    arg += str;
+                    m_argprop.setProperty("corba.endpoints", arg);
+                }
+                catch(Exception ex){
+                    //do nothing
+                }
             }
         }
         if (commandLine.hasOption("d")) {

@@ -612,6 +612,9 @@ public class ModuleManager {
             }
             java.io.File dir = new java.io.File(loadpath);
             String[] flist = dir.list(new FileFilter());
+            if(flist == null) {
+                continue;
+            }
             for (int ic=0; ic < flist.length; ++ic) {
                 dlls.add(loadpath+separator+flist[ic]);
             }  
@@ -644,6 +647,9 @@ public class ModuleManager {
                 }
             }
             try {
+                if(target == null){
+                    continue;
+                }
                 Field field = target.getField("component_conf");
                 String[] data = (String[])field.get(null);
                 java.util.ArrayList al 

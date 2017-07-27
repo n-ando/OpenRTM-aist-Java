@@ -606,6 +606,10 @@ public class CORBA_RTCUtil {
             return 0.0;
         }
         ExecutionContext ec = get_actual_ec(rtc);
+        if(ec==null)
+        {
+            return 0.0;
+        }
         return ec.get_rate();
     }
     /**
@@ -634,6 +638,10 @@ public class CORBA_RTCUtil {
             return ReturnCode_t.BAD_PARAMETER;
         }
         ExecutionContext ec = get_actual_ec(rtc);
+        if(ec==null)
+        {
+            return ReturnCode_t.BAD_PARAMETER;
+        }
         return ec.set_rate(rate);
 
     }  
