@@ -295,9 +295,11 @@ class NamingOnCorba implements NamingBase {
                         else{
                             Manager mgr  = Manager.instance();
                             if(mgr==null){
+                                return null;
                             }
                             ORB orb = mgr.getORB();
                             if(orb==null){
+                                return null;
                             }
                             cns = new CorbaNaming(orb,host);
                         }

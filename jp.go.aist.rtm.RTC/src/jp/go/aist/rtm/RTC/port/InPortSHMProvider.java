@@ -681,39 +681,34 @@ public class InPortSHMProvider extends SharedMemory implements InPortProvider, O
         CdrDataHolder cdr_data = new CdrDataHolder();
         cdr_data.value = new byte[0];
         read(cdr_data);
-        if (m_buffer == null) {
-            EncapsOutputStreamExt cdr 
+        if(m_connector==null){
+            return OpenRTM.PortStatus.PORT_ERROR;
+        }
+
+        EncapsOutputStreamExt cdr 
             = new EncapsOutputStreamExt(m_orb,m_connector.isLittleEndian());
-            cdr.write_octet_array(cdr_data.value, 0, cdr_data.value.length);
+        cdr.write_octet_array(cdr_data.value, 0, cdr_data.value.length);
+
+        if (m_buffer == null) {
             DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
-            //onReceiverError(cdr);
             onReceiverError(dataref);
             cdr = (EncapsOutputStreamExt)dataref.v;
             return OpenRTM.PortStatus.PORT_ERROR;
         }
 
 
-        rtcout.println(Logbuf.PARANOID, "received data size: "+cdr_data.value.length);
+        rtcout.println(Logbuf.PARANOID, 
+                       "received data size: "+cdr_data.value.length);
 
-
-        EncapsOutputStreamExt cdr 
-            = new EncapsOutputStreamExt(m_orb,m_connector.isLittleEndian());
-        cdr.write_octet_array(cdr_data.value, 0, cdr_data.value.length);
 
         int len = cdr.getByteArray().length;
         rtcout.println(Logbuf.PARANOID, "converted CDR data size: "+len);
         DataRef<OutputStream> dataref = new DataRef<OutputStream>(cdr);
-        //onReceived(cdr);
         onReceived(dataref);
         cdr = (EncapsOutputStreamExt)dataref.v;
    
-        if(m_connector==null){
-            return OpenRTM.PortStatus.PORT_ERROR;
-        }
 
         jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_buffer.write(cdr);
-        //jp.go.aist.rtm.RTC.buffer.ReturnCode ret = m_connector.write(cdr);
-        //return convertReturn(ret,cdr);
         dataref.v = cdr;
         OpenRTM.PortStatus stat = convertReturn(ret,dataref);
         cdr = (EncapsOutputStreamExt)dataref.v;

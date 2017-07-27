@@ -997,7 +997,7 @@ public class CORBA_SeqUtil {
         } else {
             len = seq.value.length;
         }
-        if (index > len) {
+        if((index > len)||(len == 0)) {
             push_back(seq, elem);
             return;
         }

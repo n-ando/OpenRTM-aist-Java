@@ -1155,15 +1155,16 @@ public class Manager {
     private void initPreActivation() {
         String preactivation 
             = m_config.getProperty("manager.components.preactivation");
-        rtcout.println(Logbuf.TRACE, 
-            "Components pre-activation: " 
-            + Arrays.toString(preactivation.split(",")));
         String[] comps = new String[0];
         if ( preactivation == null || preactivation.length() == 0 ) {
+            rtcout.println(Logbuf.TRACE, 
+                "There are no pre-activation components." );
+            return;
         }
-        else {
-            comps = preactivation.split(",");
-        }
+        rtcout.println(Logbuf.TRACE, 
+                "Components pre-activation: " 
+                + Arrays.toString(preactivation.split(",")));
+        comps = preactivation.split(",");
 
         for (int ic=0; ic < comps.length; ++ic) {
             comps[ic] = comps[ic].trim();
@@ -1188,17 +1189,11 @@ public class Manager {
                 ReturnCode_t ret = CORBA_RTCUtil.activate(comp_ref);
                 if (ret != ReturnCode_t.RTC_OK) { 
                     rtcout.println(Logbuf.ERROR, comps[ic] + " activation filed.");
+                        continue;
                 }
                 else {
                     rtcout.println(Logbuf.INFO, comps[ic] + " activated.");
                 }
-/*
-                ExecutionContextListHolder eclistholder 
-                        = new ExecutionContextListHolder();
-                eclistholder.value = new ExecutionContext[0];
-                eclistholder.value = comp.get_owned_contexts();
-                eclistholder.value[0].activate_component(comp_ref);
-*/
             }
         }
     }
