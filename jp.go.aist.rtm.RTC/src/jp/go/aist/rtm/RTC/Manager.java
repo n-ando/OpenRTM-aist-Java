@@ -616,7 +616,7 @@ public class Manager {
                                 + bl.value[ic].binding_name[0].kind;
                 //String nspath = "/" + nsname + "/" + tmp;
                 String nspath = nsname + "/" + tmp;
-                nspath.replace("\\","");
+                nspath = nspath.replace("\\","");
 
                 Object obj;
                 try {
