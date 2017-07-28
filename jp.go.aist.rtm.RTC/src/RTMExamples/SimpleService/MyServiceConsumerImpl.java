@@ -90,6 +90,10 @@ public class MyServiceConsumerImpl  extends DataFlowComponentBase {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            if(args == null){
+                return super.onExecute(ec_id);
+            }
           
             pos = args.indexOf(" ");
             if( pos>0 ) {

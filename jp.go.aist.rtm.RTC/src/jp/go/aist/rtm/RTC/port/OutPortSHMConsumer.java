@@ -128,7 +128,9 @@ public class OutPortSHMConsumer extends CorbaConsumer<PortSharedMemory> implemen
      */
     public void setBuffer(BufferBase<OutputStream> buffer) {
         rtcout.println(Logbuf.TRACE, "OutPortSHMConsumer.setBuffer()");
-        m_buffer = buffer;
+        synchronized(m_mutex) {
+            m_buffer = buffer;
+        }
     }
     /**
      * {@.ja リスナを設定する。}

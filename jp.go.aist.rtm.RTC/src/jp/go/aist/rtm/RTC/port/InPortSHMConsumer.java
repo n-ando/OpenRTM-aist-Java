@@ -522,7 +522,9 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
      *   {@.en OutPortConnector}
      */
     public void setConnector(OutPortConnector connector) {
-        m_connector = connector;
+        synchronized(m_mutex) {
+            m_connector = connector;
+        }
     }
 
     private Logbuf rtcout;

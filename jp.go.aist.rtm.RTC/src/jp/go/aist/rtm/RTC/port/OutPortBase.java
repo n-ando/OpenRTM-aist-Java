@@ -205,11 +205,11 @@ public abstract class OutPortBase extends PortBase {
      *
      */
     public Vector<ConnectorBase.ConnectorInfo> getConnectorProfiles(){
-        rtcout.println(Logbuf.TRACE, 
-                       "getConnectorProfiles(): size = "+m_connectors.size());
         Vector<ConnectorBase.ConnectorInfo> profs 
             = new Vector<ConnectorBase.ConnectorInfo>();
         synchronized (m_connectors){
+            rtcout.println(Logbuf.TRACE, 
+                       "getConnectorProfiles(): size = "+m_connectors.size());
             for (int i=0, len=m_connectors.size(); i < len; ++i) {
                 profs.add(m_connectors.elementAt(i).profile());
             }

@@ -221,7 +221,12 @@ public class ExecutionContextProfile {
         }
     }
     public final String getKindString() {
-      return getKindString(m_profile.kind);
+      //return getKindString(m_profile.kind);
+        String str = new String();
+        synchronized (m_profile){
+            str = getKindString(m_profile.kind);
+        }
+      return str;
     }
 
     /**

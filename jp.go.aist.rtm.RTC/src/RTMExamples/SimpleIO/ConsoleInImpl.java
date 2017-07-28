@@ -147,7 +147,10 @@ public class ConsoleInImpl extends DataFlowComponentBase {
         System.out.println("Please input number: ");
         BufferedReader buff = new BufferedReader(new InputStreamReader( System.in ));
         try {
-            m_out_val.data = Integer.parseInt(buff.readLine());
+            String str = buff.readLine();
+            if(str != null){
+                m_out_val.data = Integer.parseInt(str);
+            }
         } catch (NumberFormatException e) {
             System.out.println("Input number Error!");
 //            e.printStackTrace();

@@ -279,7 +279,7 @@ public class FileNameservice implements LocalServiceBase, CallbackFunction, Obje
         if (fs.equals("flat")) {
             rtcout.println(Logbuf.DEBUG,"file_structure = flat");
             String d = m_profile.properties.getProperty("context_delimiter");
-            ns_path.replaceAll(file_separator, d);
+            ns_path = ns_path.replaceAll(file_separator, d);
             pathstring += ns_path;
         }
         else if (fs.equals("tree")) {
