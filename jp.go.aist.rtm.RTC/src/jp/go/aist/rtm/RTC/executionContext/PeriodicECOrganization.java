@@ -446,7 +446,7 @@ public class PeriodicECOrganization extends Organization_impl {
             for(int i=0; i < orglist.length; ++i) {
                 SDO[] sdos = orglist[i].get_members();
                 for (int j=0; j < sdos.length; ++j) {
-                    DataFlowComponentHolder dfc = null;
+                    DataFlowComponentHolder dfc = new DataFlowComponentHolder();
                     if (!sdoToDFC(sdos[j], dfc)) { 
                         continue; 
                     }
@@ -485,7 +485,7 @@ public class PeriodicECOrganization extends Organization_impl {
             for (int i=0; i < orglist.length; ++i) {
                 SDO[] sdos = orglist[i].get_members();
                 for (int j=0; j < sdos.length; ++j) {
-                    DataFlowComponentHolder dfc = null;
+                    DataFlowComponentHolder dfc = new DataFlowComponentHolder();
                     if (!sdoToDFC(sdos[j], dfc)) { 
                         continue;
                     }

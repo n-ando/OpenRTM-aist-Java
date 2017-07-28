@@ -3066,13 +3066,14 @@ public class RTObject_impl extends DataFlowComponentPOA {
         }
         return ret;
     }
+    /*
     public final Vector<InPortBase> getInPorts() {
         return m_inports;
     }
     public final Vector<OutPortBase> getOutPorts() {
         return m_outports;
     }
-
+    */
     /**
      * {@.ja [local interface] DataInPort を登録します。}
      * {@.en [local interface] Register DataInPort.}

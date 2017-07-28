@@ -692,7 +692,7 @@ public class ConfigAdmin {
      */
     public final Properties getConfigurationSet(final String config_id) {
         Properties p = new Properties(m_configsets.getNode(config_id));
-        if( p == null ) return m_emptyconf;
+        //if( p == null ) return m_emptyconf;
         return p;
     }
 

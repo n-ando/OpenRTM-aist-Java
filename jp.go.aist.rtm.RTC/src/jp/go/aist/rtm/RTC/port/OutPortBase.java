@@ -579,13 +579,15 @@ public abstract class OutPortBase extends PortBase {
                     "invalid connection_limit value: "+_str );
         }
 
-       int value = _type; 
+        int value = _type; 
 
-       if(value <= m_connectors.size()) {
-           return ReturnCode_t.PRECONDITION_NOT_MET;
-       }
+        synchronized (m_connectors){
+            if(value <= m_connectors.size()) {
+                return ReturnCode_t.PRECONDITION_NOT_MET;
+            } 
+        }
 
-       return super.notify_connect(connector_profile);
+        return super.notify_connect(connector_profile);
     }
 
     /**
