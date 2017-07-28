@@ -4115,7 +4115,7 @@ public class Manager {
                         str.append(properties.getProperty("category"));
                     }
                     else if (c == 'h') {
-                        str.append(m_config.getProperty("manager.os.hostname"));
+                        str.append(m_config.getProperty("os.hostname"));
                     }
                     else if (c == 'M') {
                         str.append(m_config.getProperty("manager.name"));
