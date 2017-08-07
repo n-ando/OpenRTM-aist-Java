@@ -17,7 +17,7 @@ import jp.go.aist.rtm.RTC.util.NVUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 import jp.go.aist.rtm.RTC.util.StringUtil;
 import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.RTShellUtil;
+import jp.go.aist.rtm.RTC.util.CORBA_RTCUtil;
 
 import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
@@ -140,7 +140,11 @@ public class get_actual_ec {
         // get_actual_ec
         //
         System.out.println( "-get_actual_ec");
-        ExecutionContext ec = RTShellUtil.get_actual_ec(conoutRef,0);
+        ExecutionContext ec = CORBA_RTCUtil.get_actual_ec(conoutRef,0);
+        if(ec == null) {
+            System.out.println("ec is null.");
+            return;
+        }
         assert ec.equals(eclisto.value[0]);
         if(ec.equals(eclisto.value[0])) {
              System.out.println( "OK");
@@ -149,7 +153,11 @@ public class get_actual_ec {
              System.out.println( "NG");
         }
 
-        ec = RTShellUtil.get_actual_ec(conoutRef,1);
+        ec = CORBA_RTCUtil.get_actual_ec(conoutRef,1);
+        if(ec == null) {
+            System.out.println("ec is null.");
+            return;
+        }
         assert ec.equals(eclisto.value[1]);
         if(ec.equals(eclisto.value[1])) {
              System.out.println( "OK");
@@ -157,7 +165,7 @@ public class get_actual_ec {
         else{
              System.out.println( "NG");
         }
-        ec = RTShellUtil.get_actual_ec(conoutRef,2);
+        ec = CORBA_RTCUtil.get_actual_ec(conoutRef,2);
         assert ec == null;
         if(ec==null) {
              System.out.println( "OK");
@@ -170,7 +178,7 @@ public class get_actual_ec {
         // get_ec_id
         //
         System.out.println( "-get_ec_id");
-        int id = RTShellUtil.get_ec_id(conoutRef, eclisto.value[0]);
+        int id = CORBA_RTCUtil.get_ec_id(conoutRef, eclisto.value[0]);
         System.out.println( "id : " + id );
         assert id == 0;
         if(id == 0){
@@ -179,7 +187,7 @@ public class get_actual_ec {
         else{
              System.out.println( "NG");
         }
-        id = RTShellUtil.get_ec_id(conoutRef, eclisto.value[1]);
+        id = CORBA_RTCUtil.get_ec_id(conoutRef, eclisto.value[1]);
         System.out.println( "id : " + id );
         assert id == 1;
         if(id == 1){
@@ -188,7 +196,7 @@ public class get_actual_ec {
         else{
              System.out.println( "NG");
         }
-        id = RTShellUtil.get_ec_id(conoutRef, null);
+        id = CORBA_RTCUtil.get_ec_id(conoutRef, null);
         System.out.println( "id : " + id );
         assert id == -1;
         if(id == -1){
@@ -197,7 +205,7 @@ public class get_actual_ec {
         else{
              System.out.println( "NG");
         }
-        id = RTShellUtil.get_ec_id(null, eclisto.value[1]);
+        id = CORBA_RTCUtil.get_ec_id(null, eclisto.value[1]);
         System.out.println( "id : " + id );
         assert id == -1;
         if(id == -1){
@@ -206,7 +214,7 @@ public class get_actual_ec {
         else{
              System.out.println( "NG");
         }
-        id = RTShellUtil.get_ec_id(conoutRef, eclistseq.value[0]);
+        id = CORBA_RTCUtil.get_ec_id(conoutRef, eclistseq.value[0]);
         System.out.println( "id : " + id );
         assert id == -1;
         if(id == -1){
@@ -220,7 +228,7 @@ public class get_actual_ec {
         //
         {
         System.out.println( "-activate/deactivate");
-        ReturnCode_t ret = RTShellUtil.activate(null, 0);
+        ReturnCode_t ret = CORBA_RTCUtil.activate(null, 0);
         assert ret == ReturnCode_t.BAD_PARAMETER;
         if(ret == ReturnCode_t.BAD_PARAMETER){
              System.out.println( "OK");
@@ -228,7 +236,7 @@ public class get_actual_ec {
         else{
              System.out.println( "NG");
         }
-        ret = RTShellUtil.activate(conoutRef, 3);
+        ret = CORBA_RTCUtil.activate(conoutRef, 3);
         assert ret == ReturnCode_t.BAD_PARAMETER;
         if(ret == ReturnCode_t.BAD_PARAMETER){
              System.out.println( "OK");
@@ -236,7 +244,7 @@ public class get_actual_ec {
         else{
              System.out.println( "NG");
         }
-        ret = RTShellUtil.deactivate(null, 0);
+        ret = CORBA_RTCUtil.deactivate(null, 0);
         assert ret == ReturnCode_t.BAD_PARAMETER;
         if(ret == ReturnCode_t.BAD_PARAMETER){
              System.out.println( "OK");
@@ -244,7 +252,7 @@ public class get_actual_ec {
         else{
              System.out.println( "NG");
         }
-        ret = RTShellUtil.deactivate(conoutRef, 3);
+        ret = CORBA_RTCUtil.deactivate(conoutRef, 3);
         assert ret == ReturnCode_t.BAD_PARAMETER;
         if(ret == ReturnCode_t.BAD_PARAMETER){
              System.out.println( "OK");
@@ -252,7 +260,7 @@ public class get_actual_ec {
         else{
              System.out.println( "NG");
         }
-        ret = RTShellUtil.activate(conoutRef, 0);
+        ret = CORBA_RTCUtil.activate(conoutRef, 0);
         assert ret == ReturnCode_t.RTC_OK;
         if(ret == ReturnCode_t.RTC_OK){
              System.out.println( "OK");
@@ -260,7 +268,7 @@ public class get_actual_ec {
         else{
              System.out.println( "NG");
         }
-        ret = RTShellUtil.deactivate(conoutRef, 0);
+        ret = CORBA_RTCUtil.deactivate(conoutRef, 0);
         assert ret == ReturnCode_t.RTC_OK;
         if(ret == ReturnCode_t.RTC_OK){
              System.out.println( "OK");
@@ -269,7 +277,7 @@ public class get_actual_ec {
              System.out.println( "NG");
         }
 /*
-        ret = RTShellUtil.activate(conoutRef, 1);
+        ret = CORBA_RTCUtil.activate(conoutRef, 1);
         assert ret == ReturnCode_t.RTC_OK;
         if(ret == ReturnCode_t.RTC_OK){
              System.out.println( "OK");
@@ -277,7 +285,7 @@ public class get_actual_ec {
         else{
              System.out.println( "NG");
         }
-        ret = RTShellUtil.deactivate(conoutRef, 1);
+        ret = CORBA_RTCUtil.deactivate(conoutRef, 1);
         assert ret == ReturnCode_t.RTC_OK;
         if(ret == ReturnCode_t.RTC_OK){
              System.out.println( "OK");
@@ -305,7 +313,7 @@ public class get_actual_ec {
         }
 
 
-        LifeCycleState ret = RTShellUtil.get_state(conoutRef, 0);
+        LifeCycleState ret = CORBA_RTCUtil.get_state(conoutRef, 0);
         String str_ret = getStateString(ret);
         System.out.println(str_ret);
         assert str_ret.equals("INACTIVE_STATE");
@@ -316,13 +324,13 @@ public class get_actual_ec {
              System.out.println( "NG");
         }
         //
-        RTShellUtil.activate(conoutRef, 0);
+        CORBA_RTCUtil.activate(conoutRef, 0);
         try{
             Thread.sleep(500); 
         }
         catch(InterruptedException e){
         }
-        ret = RTShellUtil.get_state(conoutRef, 0);
+        ret = CORBA_RTCUtil.get_state(conoutRef, 0);
         str_ret = getStateString(ret);
         System.out.println(str_ret);
         assert str_ret.equals("ACTIVE_STATE");
@@ -333,13 +341,13 @@ public class get_actual_ec {
              System.out.println( "NG");
         }
         //
-        RTShellUtil.deactivate(conoutRef, 0);
+        CORBA_RTCUtil.deactivate(conoutRef, 0);
         try{
             Thread.sleep(500); 
         }
         catch(InterruptedException e){
         }
-        ret = RTShellUtil.get_state(conoutRef, 0);
+        ret = CORBA_RTCUtil.get_state(conoutRef, 0);
         str_ret = getStateString(ret);
         assert str_ret.equals("INACTIVE_STATE");
         if(str_ret.equals("INACTIVE_STATE")){
@@ -350,7 +358,7 @@ public class get_actual_ec {
         }
         System.out.println(str_ret);
         //
-        ret = RTShellUtil.get_state(null, 0);
+        ret = CORBA_RTCUtil.get_state(null, 0);
         str_ret = getStateString(ret);
         assert str_ret.equals("ERROR_STATE");
         if(str_ret.equals("ERROR_STATE")){
@@ -361,7 +369,7 @@ public class get_actual_ec {
         }
         System.out.println(str_ret);
         //
-        ret = RTShellUtil.get_state(conoutRef, 3);
+        ret = CORBA_RTCUtil.get_state(conoutRef, 3);
         str_ret = getStateString(ret);
         assert str_ret.equals("ERROR_STATE");
         if(str_ret.equals("ERROR_STATE")){
@@ -378,46 +386,46 @@ public class get_actual_ec {
         //
         {
         System.out.println( "-is_in_active");
-        if(!RTShellUtil.is_in_active(conoutRef, 0)){
+        if(!CORBA_RTCUtil.is_in_active(conoutRef, 0)){
              System.out.println( "OK");
         }
         else{
              System.out.println( "NG");
         }
         //
-        RTShellUtil.activate(conoutRef, 0);
+        CORBA_RTCUtil.activate(conoutRef, 0);
         try{
             Thread.sleep(500); 
         }
         catch(InterruptedException e){
         }
-        if(RTShellUtil.is_in_active(conoutRef, 0)){
+        if(CORBA_RTCUtil.is_in_active(conoutRef, 0)){
              System.out.println( "OK");
         }
         else{
              System.out.println( "NG");
         }
         //
-        RTShellUtil.deactivate(conoutRef, 0);
+        CORBA_RTCUtil.deactivate(conoutRef, 0);
         try{
             Thread.sleep(500); 
         }
         catch(InterruptedException e){
         }
-        if(!RTShellUtil.is_in_active(conoutRef, 0)){
+        if(!CORBA_RTCUtil.is_in_active(conoutRef, 0)){
              System.out.println( "OK");
         }
         else{
              System.out.println( "NG");
         }
         //
-        if(!RTShellUtil.is_in_active(null, 0)){
+        if(!CORBA_RTCUtil.is_in_active(null, 0)){
              System.out.println( "OK");
         }
         else{
              System.out.println( "NG");
         }
-        if(!RTShellUtil.is_in_active(conoutRef, 3)){
+        if(!CORBA_RTCUtil.is_in_active(conoutRef, 3)){
              System.out.println( "OK");
         }
         else{
@@ -431,23 +439,23 @@ public class get_actual_ec {
         {
 
         System.out.println( "-get_default_rate/set_default_rate");
-        double ret = RTShellUtil.get_default_rate(conoutRef);
+        double ret = CORBA_RTCUtil.get_default_rate(conoutRef);
         if(ret == 1000.0){
              System.out.println( "OK");
         }
         else{
              System.out.println( "NG");
         }
-        RTShellUtil.set_default_rate(conoutRef, 500.0);
-        ret = RTShellUtil.get_default_rate(conoutRef);
+        CORBA_RTCUtil.set_default_rate(conoutRef, 500.0);
+        ret = CORBA_RTCUtil.get_default_rate(conoutRef);
         if(ret == 500.0){
              System.out.println( "OK");
         }
         else{
              System.out.println( "NG");
         }
-        ret = RTShellUtil.get_default_rate(null);
-        ReturnCode_t code = RTShellUtil.set_default_rate(null, 500.0);
+        ret = CORBA_RTCUtil.get_default_rate(null);
+        ReturnCode_t code = CORBA_RTCUtil.set_default_rate(null, 500.0);
         if(code == ReturnCode_t.BAD_PARAMETER){
              System.out.println( "OK");
         }

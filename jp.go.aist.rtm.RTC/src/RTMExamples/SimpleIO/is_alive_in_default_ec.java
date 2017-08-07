@@ -10,7 +10,7 @@ import jp.go.aist.rtm.RTC.CorbaNaming;
 import jp.go.aist.rtm.RTC.port.CorbaConsumer;
 
 import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.RTShellUtil;
+import jp.go.aist.rtm.RTC.util.CORBA_RTCUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 import RTC.RTObject;
@@ -30,6 +30,10 @@ public class is_alive_in_default_ec{
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if( naming == null ){
+            System.out.println("CorbaNaming is null.");
+            return;
+        }
         
         //
         //
@@ -39,7 +43,7 @@ public class is_alive_in_default_ec{
         {
             RTObject coninRef = conin._ptr();
 
-            if( RTShellUtil.is_alive_in_default_ec(coninRef)) {
+            if( CORBA_RTCUtil.is_alive_in_default_ec(coninRef)) {
                 System.out.println( "EC of " +args[0] + " exists." );
             }
             else {
@@ -62,7 +66,7 @@ public class is_alive_in_default_ec{
         }
 
         RTObject coninRef = conin._ptr();
-        if( RTShellUtil.is_alive_in_default_ec(coninRef)) {
+        if( CORBA_RTCUtil.is_alive_in_default_ec(coninRef)) {
             System.out.println( "EC of " +args[0] + " exist." );
         }
         else {

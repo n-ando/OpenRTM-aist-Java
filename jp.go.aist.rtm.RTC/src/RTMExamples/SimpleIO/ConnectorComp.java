@@ -70,6 +70,10 @@ public class ConnectorComp {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if( naming == null ){
+            System.out.println("CorbaNaming is null.");
+            return;
+        }
         
         CorbaConsumer<DataFlowComponent> conin =
             new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
