@@ -37,6 +37,11 @@ public class  get_component_profile_Comp {
         CorbaConsumer<DataFlowComponent> conin =
             new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
 
+        if(conin == null){
+            System.out.println("Failed to create CorbaConsumer.");
+            return;
+        }
+
         // find ConsoleIn0 component
         try {
             System.out.println( "args[0]:"+args[0] );

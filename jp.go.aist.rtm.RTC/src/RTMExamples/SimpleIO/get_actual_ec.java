@@ -57,6 +57,7 @@ public class get_actual_ec {
         if(out_impl==null)
         {
             System.out.println("ConsoleOut is null.");
+            return;
         }
         //
         Properties prop_in = new Properties(ConsoleIn.component_conf);
@@ -65,6 +66,7 @@ public class get_actual_ec {
         if(in_impl==null)
         {
             System.out.println("ConsoleIn is null.");
+            return;
         }
         //
         Properties prop_out_seq = new Properties(MyServiceConsumer.component_conf);
@@ -75,6 +77,7 @@ public class get_actual_ec {
         if(out_seq_impl==null)
         {
             System.out.println("MyServiceConsumer is null.");
+            return;
         }
         //
         //

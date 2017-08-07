@@ -80,6 +80,10 @@ public class ConnectorComp {
         PortServiceListHolder pout = new PortServiceListHolder();
         pout.value = new PortService[0];
 
+        if(conin == null){
+            System.out.println("Failed to create CorbaConsumer.");
+            return;
+        }
         // find ConsoleIn0 component
         try {
             conin.setObject(naming.resolve("ConsoleIn0.rtc"));
@@ -102,6 +106,10 @@ public class ConnectorComp {
         eclisti.value =  coninRef.get_owned_contexts();
         eclisti.value[0].activate_component(coninRef);
 
+        if(conout == null){
+            System.out.println("Failed to create CorbaConsumer.");
+            return;
+        }
         // find ConsoleOut0 component
         try {
             conout.setObject(naming.resolve("ConsoleOut0.rtc"));

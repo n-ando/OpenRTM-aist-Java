@@ -170,6 +170,10 @@ public class ConnectorComp {
 
         CorbaConsumer<DataFlowComponent> conin =
             new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
+        if(conin == null){
+            System.out.println("Failed to create CorbaConsumer.");
+            return;
+        }
         try {
             conin.setObject(naming.resolve("ConsoleIn0.rtc"));
         } catch (NotFound e) {
@@ -185,6 +189,10 @@ public class ConnectorComp {
         CorbaConsumer<DataFlowComponent> conout =
             new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
 
+        if(conout == null){
+            System.out.println("Failed to create CorbaConsumer.");
+            return;
+        }
         try {
             conout.setObject(naming.resolve("ConsoleOut0.rtc"));
         } catch (NotFound e) {
@@ -199,11 +207,16 @@ public class ConnectorComp {
         PortService port1_var = 
                 CORBA_RTCUtil.get_port_by_name(conout._ptr(), "ConsoleOut0.topic_in");
 
-        if(CORBA_RTCUtil.already_connected(port0_var, port1_var)){
-             System.out.println( "OK");
+        if((port0_var != null) && (port1_var != null)){
+            if(CORBA_RTCUtil.already_connected(port0_var, port1_var)){
+                System.out.println( "OK");
+            }
+            else{
+                System.out.println( "Fail");
+            }
         }
         else{
-             System.out.println( "Fail");
+            System.out.println( "Fail");
         }
 
 

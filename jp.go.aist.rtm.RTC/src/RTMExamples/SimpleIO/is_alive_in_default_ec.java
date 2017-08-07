@@ -46,6 +46,10 @@ public class is_alive_in_default_ec{
                 System.out.println( "EC of " +args[0] + " doesn't exist." );
             }
         }
+        if(conin == null){
+            System.out.println("Failed to create CorbaConsumer.");
+            return;
+        }
         // find component
         try {
             conin.setObject(naming.resolve(args[0]));

@@ -87,6 +87,10 @@ public class ConnectorComp {
         PortServiceListHolder pout = new PortServiceListHolder();
         pout.value = new PortService[0];
 
+        if((conin == null) || (conout == null)){
+            System.out.println("Failed to create CorbaConsumer.");
+            return;
+        }
         // find ConsoleIn0 component
         try {
             conin.setObject(naming.resolve("ConsoleIn0.rtc"));
@@ -185,13 +189,15 @@ public class ConnectorComp {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if( cmd.equals("0") ) {
-                    ec0Ref.tick();
-                } else if( cmd.equals("1") ) {
-                    ec1Ref.tick();
-                } else if( cmd.equals("2") ) { 
-                    ec0Ref.tick();
-                    ec1Ref.tick();
+                if(cmd != null){
+                    if( cmd.equals("0") ) {
+                        ec0Ref.tick();
+                    } else if( cmd.equals("1") ) {
+                        ec1Ref.tick();
+                    } else if( cmd.equals("2") ) { 
+                        ec0Ref.tick();
+                        ec1Ref.tick();
+                    }
                 }
             } catch(Exception ex) {
             }

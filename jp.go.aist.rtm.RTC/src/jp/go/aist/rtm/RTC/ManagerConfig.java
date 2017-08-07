@@ -264,7 +264,11 @@ class ManagerConfig {
             m_argprop.setProperty("manager.corba_servant","NO");;
         }
         if (commandLine.hasOption("f")) {
-            this.m_configFile = commandLine.getOptionValue("f").trim();
+            //this.m_configFile = commandLine.getOptionValue("f").trim();
+            String str = commandLine.getOptionValue("f");
+            if(str != null){
+                this.m_configFile = str.trim();
+            }
         }
         if (commandLine.hasOption("l")) {
             // do nothing

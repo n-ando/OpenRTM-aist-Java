@@ -46,6 +46,9 @@ public class is_existing{
                 System.out.println( args[0] + " doesn't exist." );
             }
         }
+        if(conin == null){
+            return;
+        }
         // find component
         try {
             conin.setObject(naming.resolve(args[0]));
