@@ -122,6 +122,10 @@ public class get_actual_ec {
             System.out.println("Failed to create CorbaConsumer.");
             return;
         }
+        if( naming == null ){
+            System.out.println("CorbaNaming is null.");
+            return;
+        }
         try {
             conout.setObject(naming.resolve(".host_cxt/ConsoleOut0.rtc"));
         } catch (NotFound e) {
