@@ -275,9 +275,12 @@ public class Manager {
      *   {@.en Existence of the only instance reference of the manager}
      */
     public static boolean isActive() {
-        if(manager==null)
-            return false;
-        return true;
+        synchronized (manager_mutex) {
+            if(manager==null) {
+                return false;
+            }
+            return true;
+        }
     }
     
     /**

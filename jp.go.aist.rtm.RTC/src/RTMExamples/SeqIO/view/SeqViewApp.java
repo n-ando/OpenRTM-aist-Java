@@ -89,11 +89,15 @@ public class SeqViewApp extends JFrame {
             
             synchronized (this) {
                 
-                if (_octetValMarked) {
-                    _view.setOctetVal(_octetVal);
+                synchronized (_octetValMarked_mutex) {
+                    if (_octetValMarked) {
+                        _view.setOctetVal(_octetVal);
+                    }
                 }
-                if (_shortValMarked) {
-                    _view.setShortVal(_shortVal);
+                synchronized (_shortValMarked_mutex) {
+                    if (_shortValMarked) {
+                        _view.setShortVal(_shortVal);
+                    }
                 }
                 synchronized (_longValMarked_mutex) {
                     if (_longValMarked) {

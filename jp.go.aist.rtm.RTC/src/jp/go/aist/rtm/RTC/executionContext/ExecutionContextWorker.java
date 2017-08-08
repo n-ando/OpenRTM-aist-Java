@@ -77,7 +77,9 @@ public class ExecutionContextWorker {
      */
     public boolean isRunning() {
         rtcout.println(Logbuf.TRACE, "isRunning()");
-        return m_running;
+        synchronized (m_mutex){
+            return m_running;
+        }
     }
 
     /**
