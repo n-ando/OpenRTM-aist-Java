@@ -118,6 +118,10 @@ public class get_actual_ec {
         CorbaConsumer<DataFlowComponent> conout =
             new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
         // find ConsoleOut0 component
+        if(conout == null){
+            System.out.println("Failed to create CorbaConsumer.");
+            return;
+        }
         try {
             conout.setObject(naming.resolve(".host_cxt/ConsoleOut0.rtc"));
         } catch (NotFound e) {
