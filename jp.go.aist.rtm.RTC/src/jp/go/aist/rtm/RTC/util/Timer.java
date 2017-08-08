@@ -44,7 +44,7 @@ public class Timer implements Runnable {
      * {@.en Processing at cycle of timer}
      * <p>
      * {@.ja invokeを起動する。}
-     * {@.en Starts invoke(). }
+     * {@.en Starts invoke().}
      * 
      * @return 
      *   {@.ja 処理結果
@@ -55,7 +55,12 @@ public class Timer implements Runnable {
      * 　　　　　At abnormal generation:Throws out the exception.}
      */
     public int svc() {
-        while(m_running) {
+        while(true) {
+            synchronized (m_running_mutex) {
+                if(!m_running) {
+                    break;
+                }
+            }
             try {
                 invoke();
                 if( m_interval.getSec() != 0) {
@@ -187,6 +192,7 @@ public class Timer implements Runnable {
     /**
      * <p>タイマー実行フラグ</p>
      */   
+    private final Object m_running_mutex = new Object();
     private boolean m_running;
     /**
      * <p>タイマー処理登録用クラス</p>
