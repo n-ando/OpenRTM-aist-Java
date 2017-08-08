@@ -950,8 +950,11 @@ public class Configuration_impl extends ConfigurationPOA {
     public final DeviceProfile getDeviceProfile() {
 
         rtcout.println(Logbuf.TRACE, "Configuration_impl.getDeviceProfile()");
+System.out.println("Configuration_impl.getDeviceProfile()");
 
-      return m_deviceProfile;
+        synchronized(m_deviceProfile){
+            return m_deviceProfile;
+        }
     }
 
     /**

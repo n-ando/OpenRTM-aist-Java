@@ -192,17 +192,37 @@ public class SeqViewApp extends JFrame {
         
         private void reset() {
             
-            _octetValMarked = false;
-            _shortValMarked = false;
-            _longValMarked = false;
-            _floatValMarked = false;
-            _doubleValMarked = false;
             
-            _octetSeqVal = null;
-            _shortSeqVal = null;
-            _longSeqVal = null;
-            _floatSeqVal = null;
-            _doubleSeqVal = null;
+            synchronized (_octetValMarked_mutex) {
+                _octetValMarked = false;
+            }
+            synchronized (_shortValMarked_mutex) {
+                _shortValMarked = false;
+            }
+            synchronized (_longValMarked_mutex) {
+                _longValMarked = false;
+            }
+            synchronized (_floatValMarked_mutex) {
+                _floatValMarked = false;
+            }
+            synchronized (_doubleValMarked_mutex) {
+                _doubleValMarked = false;
+            }
+            synchronized (_octetSeqVal_mutex) {
+                _octetSeqVal = null;
+            }
+            synchronized (_shortSeqVal_mutex) {
+                _shortSeqVal = null;
+            }
+            synchronized (_longSeqVal_mutex) {
+                _longSeqVal = null;
+            }
+            synchronized (_floatSeqVal_mutex) {
+                _floatSeqVal = null;
+            }
+            synchronized (_doubleSeqVal_mutex) {
+                _doubleSeqVal = null;
+            }
             
             _registered = false;
         }
@@ -215,21 +235,31 @@ public class SeqViewApp extends JFrame {
             }
         }
         
+        private final Object _octetValMarked_mutex = new Object();
         private boolean _octetValMarked;
         private byte _octetVal;
+        private final Object _shortValMarked_mutex = new Object();
         private boolean _shortValMarked;
         private short _shortVal;
+        private final Object _longValMarked_mutex = new Object();
         private boolean _longValMarked;
         private int _longVal;
+        private final Object _floatValMarked_mutex = new Object();
         private boolean _floatValMarked;
         private float _floatVal;
+        private final Object _doubleValMarked_mutex = new Object();
         private boolean _doubleValMarked;
         private double _doubleVal;
         
+        private final Object _octetSeqVal_mutex = new Object();
         private byte[] _octetSeqVal;
+        private final Object _shortSeqVal_mutex = new Object();
         private short[] _shortSeqVal;
+        private final Object _longSeqVal_mutex = new Object();
         private int[] _longSeqVal;
+        private final Object _floatSeqVal_mutex = new Object();
         private float[] _floatSeqVal;
+        private final Object _doubleSeqVal_mutex = new Object();
         private double[] _doubleSeqVal;
         
         private boolean _registered;
