@@ -396,7 +396,9 @@ public class NamingManager implements CallbackFunction {
      *   {@.en List of NameService}
      */
     public Vector<NamingService> getNameServices() {
-        return m_names;
+        synchronized (m_names) {
+            return m_names;
+        }
     }
     /**
      *

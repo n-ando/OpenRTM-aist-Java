@@ -437,10 +437,12 @@ public class ExecutionContextProfile {
      *
      */
     public final RTObject[] getComponentList() {
-        rtcout.println(Logbuf.TRACE,"getComponentList("
+        synchronized (m_profile){
+            rtcout.println(Logbuf.TRACE,"getComponentList("
                                     + m_profile.participants.length
                                     +")");
-        return m_profile.participants;
+            return m_profile.participants;
+        }
     }
 
     /**
