@@ -768,8 +768,11 @@ public abstract class PortBase extends PortServicePOA {
                            "publishInterfaces() in notify_connect() failed.");
             }
             onPublishInterfaces(getName(), connector_profile.value, retval[0]);
-            if (m_onPublishInterfaces != null) {
-                m_onPublishInterfaces.run(connector_profile);
+
+            synchronized (m_onPublishInterfaces_mutex){
+                if (m_onPublishInterfaces != null) {
+                    m_onPublishInterfaces.run(connector_profile);
+                }
             }
     
 
@@ -782,8 +785,10 @@ public abstract class PortBase extends PortServicePOA {
             onConnectNextport(getName(), connector_profile.value, retval[1]);
 
             // subscribe interface from the ConnectorProfile's information
-            if (m_onSubscribeInterfaces != null) {
-                m_onSubscribeInterfaces.run(connector_profile);
+            synchronized (m_onSubscribeInterfaces_mutex){
+                if (m_onSubscribeInterfaces != null) {
+                    m_onSubscribeInterfaces.run(connector_profile);
+                }
             }
             retval[2] = subscribeInterfaces(connector_profile);
             if (! ReturnCode_t.RTC_OK.equals(retval[2])) {
@@ -826,8 +831,10 @@ public abstract class PortBase extends PortServicePOA {
             }
 
             // connection established without errors
-            if (m_onConnected != null) {
-                m_onConnected.run(connector_profile);
+            synchronized (m_onConnected_mutex){
+                if (m_onConnected != null) {
+                    m_onConnected.run(connector_profile);
+                }
             }
             onConnected(getName(), connector_profile.value, ReturnCode_t.RTC_OK);
             return ReturnCode_t.RTC_OK;
@@ -1059,20 +1066,24 @@ public abstract class PortBase extends PortServicePOA {
                 onNotifyDisconnect(getName(), prof);
                 ReturnCode_t retval = disconnectNext(prof);
                 onDisconnectNextport(getName(), prof, retval);
-                if (m_onUnsubscribeInterfaces != null) {
-                    ConnectorProfileHolder holder 
-                        = new ConnectorProfileHolder(prof);
-                    m_onUnsubscribeInterfaces.run(holder);
-                    prof = holder.value;
+                synchronized (m_onUnsubscribeInterfaces_mutex){
+                    if (m_onUnsubscribeInterfaces != null) {
+                        ConnectorProfileHolder holder 
+                            = new ConnectorProfileHolder(prof);
+                        m_onUnsubscribeInterfaces.run(holder);
+                        prof = holder.value;
+                    }
                 }
                 onUnsubscribeInterfaces(getName(), prof);
                 unsubscribeInterfaces(prof);
 
-                if (m_onDisconnected != null) {
-                    ConnectorProfileHolder holder 
-                        = new ConnectorProfileHolder(prof);
-                    m_onDisconnected.run(holder);
-                    prof = holder.value;
+                synchronized (m_onDisconnected_mutex){
+                    if (m_onDisconnected != null) {
+                        ConnectorProfileHolder holder 
+                            = new ConnectorProfileHolder(prof);
+                        m_onDisconnected.run(holder);
+                        prof = holder.value;
+                    }
                 }
 
                 ConnectorProfileListHolder holder 
@@ -1286,7 +1297,9 @@ public abstract class PortBase extends PortServicePOA {
      *
      */
     public void setOnPublishInterfaces(ConnectionCallback on_publish) {
-        m_onPublishInterfaces = on_publish;
+        synchronized (m_onPublishInterfaces_mutex){
+            m_onPublishInterfaces = on_publish;
+        }
     }
 
     /**
@@ -1311,7 +1324,9 @@ public abstract class PortBase extends PortServicePOA {
      *
      */
     public void setOnSubscribeInterfaces(ConnectionCallback on_subscribe) {
-        m_onSubscribeInterfaces = on_subscribe;
+        synchronized (m_onSubscribeInterfaces_mutex){
+            m_onSubscribeInterfaces = on_subscribe;
+        }
     }
 
     /**
@@ -1339,7 +1354,9 @@ public abstract class PortBase extends PortServicePOA {
      *
      */
     public void setOnConnected(ConnectionCallback on_connected) {
-        m_onConnected = on_connected;
+        synchronized (m_onConnected_mutex){
+            m_onConnected = on_connected;
+        }
     }
 
     /**
@@ -1365,7 +1382,9 @@ public abstract class PortBase extends PortServicePOA {
      *
      */
     public void setOnUnsubscribeInterfaces(ConnectionCallback on_unsubscribe) {
-        m_onUnsubscribeInterfaces = on_unsubscribe;
+        synchronized (m_onUnsubscribeInterfaces_mutex){
+            m_onUnsubscribeInterfaces = on_unsubscribe;
+        }
     }
 
     /**
@@ -1390,7 +1409,9 @@ public abstract class PortBase extends PortServicePOA {
      *
      */
     public void setOnDisconnected(ConnectionCallback on_disconnected){
-        m_onDisconnected = on_disconnected;
+        synchronized (m_onDisconnected_mutex){
+            m_onDisconnected = on_disconnected;
+        }
     }
 
     public void setOnConnectionLost(ConnectionCallback on_connection_lost) {
@@ -2214,11 +2235,21 @@ public abstract class PortBase extends PortServicePOA {
     /**
      * <p>Callback functor objects</p>
      */
+    private final Object m_onPublishInterfaces_mutex = new Object();
     protected ConnectionCallback m_onPublishInterfaces;
+
+    private final Object m_onSubscribeInterfaces_mutex = new Object();
     protected ConnectionCallback m_onSubscribeInterfaces;
+
+    private final Object m_onConnected_mutex = new Object();
     protected ConnectionCallback m_onConnected;
+
+    private final Object m_onUnsubscribeInterfaces_mutex = new Object();
     protected ConnectionCallback m_onUnsubscribeInterfaces;
+
+    private final Object m_onDisconnected_mutex = new Object();
     protected ConnectionCallback m_onDisconnected;
+
     protected ConnectionCallback m_onConnectionLost;
     /**
      * {@.ja PortConnectListenerホルダ}
