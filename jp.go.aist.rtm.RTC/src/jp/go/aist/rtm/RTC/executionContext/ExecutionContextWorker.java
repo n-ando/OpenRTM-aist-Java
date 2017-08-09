@@ -639,7 +639,7 @@ public class ExecutionContextWorker {
                     RTObjectStateMachine rtobj = m_removedComps.get(ic);
                     LightweightRTObject lwrtobj = rtobj.getRTObject();
                     lwrtobj.detach_context(rtobj.getExecutionContextHandle());
-                    Iterator it = m_comps.iterator();
+                    Iterator<RTObjectStateMachine> it = m_comps.iterator();
                     while (it.hasNext()) {
                         if(rtobj == (RTObjectStateMachine)it.next()){
                             m_comps.remove(it);
