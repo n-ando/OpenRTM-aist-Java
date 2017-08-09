@@ -1415,7 +1415,9 @@ public abstract class PortBase extends PortServicePOA {
     }
 
     public void setOnConnectionLost(ConnectionCallback on_connection_lost) {
-        m_onConnectionLost = on_connection_lost;
+        synchronized (m_onConnectionLost_mutex){
+            m_onConnectionLost = on_connection_lost;
+        }
     }
 
     /**
@@ -2250,6 +2252,7 @@ public abstract class PortBase extends PortServicePOA {
     private final Object m_onDisconnected_mutex = new Object();
     protected ConnectionCallback m_onDisconnected;
 
+    protected final Object m_onConnectionLost_mutex = new Object();
     protected ConnectionCallback m_onConnectionLost;
     /**
      * {@.ja PortConnectListenerホルダ}

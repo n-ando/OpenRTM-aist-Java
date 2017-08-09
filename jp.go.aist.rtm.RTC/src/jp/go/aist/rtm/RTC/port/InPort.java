@@ -655,8 +655,10 @@ public class InPort<DataType> extends InPortBase {
     public boolean isEmpty() {
         rtcout.println(Logbuf.TRACE, "isEmpty()");
 
-        if (m_directNewData == true) { 
-            return false; 
+        synchronized (m_directNewDataMutex){
+            if (m_directNewData == true) { 
+                return false; 
+            }
         }
 
         int r = 0;

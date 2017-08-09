@@ -404,49 +404,51 @@ public class OutPort<DataType> extends OutPortBase {
         Vector<String> disconnect_ids = new Vector<String>();
         synchronized (m_connectorsMutex){
 
-            // check number of connectors
-            int conn_size = m_connectors.size();
-            if (!(conn_size > 0)) { 
-                return false; 
-            }
+            synchronized (m_connectors){
+                // check number of connectors
+                int conn_size = m_connectors.size();
+                if (!(conn_size > 0)) { 
+                    return false; 
+                }
         
-            // set timestamp
-//            set_timestamp(value);
+                // set timestamp
+//                set_timestamp(value);
 
-            m_status.setSize(conn_size);
+                m_status.setSize(conn_size);
 
-            for (int i=0, len=conn_size; i < len; ++i) {
-                ReturnCode ret;
-                // data -> (conversion) -> CDR stream
-                if (m_OnWriteConvert != null) {
-                    rtcout.println(Logbuf.DEBUG, 
+                for (int i=0, len=conn_size; i < len; ++i) {
+                    ReturnCode ret;
+                    // data -> (conversion) -> CDR stream
+                    if (m_OnWriteConvert != null) {
+                        rtcout.println(Logbuf.DEBUG, 
                                 "m_connectors.OnWriteConvert called");
-                    ret = m_connectors.elementAt(i).write(
+                        ret = m_connectors.elementAt(i).write(
                                                 m_OnWriteConvert.run(value));
-                }
-                else{
-                    rtcout.println(Logbuf.DEBUG, 
-                                "m_connectors.write called");
-                    ret = m_connectors.elementAt(i).write(value);
-                }
-
-                m_status.add(i, ret);
-                if (ret.equals(ReturnCode.PORT_OK)) {
-                    continue;
-                }
-
-                result = false;
-                String id = m_connectors.elementAt(i).id();
-
-                if (ret.equals(ReturnCode.CONNECTION_LOST)) {
-                    rtcout.println(Logbuf.TRACE, "connection_lost id: "+id);
-                    if(m_onConnectionLost != null) {
-                        RTC.ConnectorProfile prof = findConnProfile(id);
-                        RTC.ConnectorProfileHolder holder 
-                            = new RTC.ConnectorProfileHolder(prof);
-                        m_onConnectionLost.run(holder);
                     }
-                    disconnect_ids.add(id);
+                    else{
+                        rtcout.println(Logbuf.DEBUG, 
+                                "m_connectors.write called");
+                        ret = m_connectors.elementAt(i).write(value);
+                    }
+
+                    m_status.add(i, ret);
+                    if (ret.equals(ReturnCode.PORT_OK)) {
+                        continue;
+                    }
+
+                    result = false;
+                    String id = m_connectors.elementAt(i).id();
+
+                    if (ret.equals(ReturnCode.CONNECTION_LOST)) {
+                        rtcout.println(Logbuf.TRACE, "connection_lost id: "+id);
+                        if(m_onConnectionLost != null) {
+                            RTC.ConnectorProfile prof = findConnProfile(id);
+                            RTC.ConnectorProfileHolder holder 
+                                = new RTC.ConnectorProfileHolder(prof);
+                            m_onConnectionLost.run(holder);
+                        }
+                        disconnect_ids.add(id);
+                    }
                 }
             }
         }

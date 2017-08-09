@@ -186,9 +186,11 @@ public abstract class OutPortBase extends PortBase {
      *
      */
     public final Vector<OutPortConnector> connectors(){
-        rtcout.println(Logbuf.TRACE, 
+        synchronized (m_connectors){
+            rtcout.println(Logbuf.TRACE, 
                        "connectors(): size = "+m_connectors.size());
-        return m_connectors;
+            return m_connectors;
+        }
     }
     /**
      * {@.ja ConnectorProfile を取得}
