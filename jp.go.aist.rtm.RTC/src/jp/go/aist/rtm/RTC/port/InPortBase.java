@@ -689,13 +689,21 @@ public abstract class InPortBase extends PortBase {
                 }
 */
             }
-            int index = NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
-            holder.value[index].value.insert_string(endian_type);
+            int index = 
+                    NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
+            if(index<0) {
+                CORBA_SeqUtil.push_back(holder,
+                    NVUtil.newNVString("dataport.serializer.cdr.endian",
+                                       endian_type));
+            }
+            else{
+                holder.value[index].value.insert_string(endian_type);
+            }
             cprof.value.properties = holder.value;
-       }
-       catch(Exception e){
+        }
+        catch(Exception e){
             ;
-       }
+        }
         /*
          * Because properties of ConnectorProfileHolder was merged, 
          * the accesses such as prop["dataflow_type"] and 

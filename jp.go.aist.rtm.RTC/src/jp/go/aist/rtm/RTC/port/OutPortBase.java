@@ -698,8 +698,16 @@ public abstract class OutPortBase extends PortBase {
                 }
 */
             }
-            int index = NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
-            holder.value[index].value.insert_string(endian_type);
+            int index = 
+                    NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
+            if(index<0) {
+                CORBA_SeqUtil.push_back(holder,
+                    NVUtil.newNVString("dataport.serializer.cdr.endian",
+                                       endian_type));
+            }
+            else{
+                holder.value[index].value.insert_string(endian_type);
+            }
             cprof.value.properties = holder.value;
         }
         catch(Exception e){
@@ -1680,11 +1688,6 @@ public abstract class OutPortBase extends PortBase {
                 connector = new OutPortPullConnector(profile, provider, 
                                                         m_listeners, buffer);
 
-                if (connector == null) {
-                    rtcout.println(Logbuf.ERROR, 
-                                   "old compiler? new returned 0;");
-                    return null;
-                }
                 rtcout.println(Logbuf.TRACE, "OutPortPullConnector create");
 
     

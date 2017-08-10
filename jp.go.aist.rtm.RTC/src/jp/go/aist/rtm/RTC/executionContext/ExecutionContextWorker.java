@@ -642,7 +642,7 @@ public class ExecutionContextWorker {
                     Iterator<RTObjectStateMachine> it = m_comps.iterator();
                     while (it.hasNext()) {
                         if(rtobj == (RTObjectStateMachine)it.next()){
-                            m_comps.remove(it);
+                            it.remove();
                         }
                     }
                     rtobj = null;
