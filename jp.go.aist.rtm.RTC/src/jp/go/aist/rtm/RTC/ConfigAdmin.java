@@ -755,7 +755,6 @@ public class ConfigAdmin {
         Properties prop = m_configsets.getNode(m_activeId);
         if( prop == null ) return m_emptyconf;
         Properties p = new Properties(prop);
-        if( p == null ) return m_emptyconf;
         return p;
     }
 

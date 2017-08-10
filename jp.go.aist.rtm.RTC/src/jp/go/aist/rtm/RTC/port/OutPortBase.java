@@ -1633,11 +1633,6 @@ public abstract class OutPortBase extends PortBase {
                 connector = new OutPortPushConnector(profile, consumer, 
                                                         m_listeners, buffer);
 
-                if (connector == null) {
-                    rtcout.println(Logbuf.ERROR, 
-                                   "old compiler? new returned 0;");
-                    return null;
-                }
                 rtcout.println(Logbuf.TRACE, "OutPortPushConnector created");
     
                 String type = prop.getProperty("interface_type").trim();

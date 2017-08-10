@@ -1478,11 +1478,6 @@ public abstract class InPortBase extends PortBase {
                                                         m_listeners,buffer);
                 }
     
-                if (connector == null) {
-                    rtcout.println(Logbuf.ERROR, 
-                                   "old compiler? new returned 0;");
-                    return null;
-                }
                 rtcout.println(Logbuf.TRACE, "InPortPushConnector created");
     
                 m_connectors.add(connector);
@@ -1531,11 +1526,6 @@ public abstract class InPortBase extends PortBase {
                                                         buffer);
                 }
 
-                if (connector == null) {
-                    rtcout.println(Logbuf.ERROR, 
-                                   "old compiler? new returned 0;");
-                    return null;
-                }
                 rtcout.println(Logbuf.TRACE, "InPortPullConnector created");
                 
                 String type = prop.getProperty("interface_type").trim();

@@ -1556,19 +1556,16 @@ public class CorbaNaming {
             }
     
             // no more binding -> do-while loop will be finished
-            if( bi==null ) cont = false;
-            else {
-                if( bi.value!=null ) {
-                    if( bi.value.next_n(m_blLength, bl) == false )
-                        return;
-                } else {
+            if( bi.value!=null ) {
+                if( bi.value.next_n(m_blLength, bl) == false )
                     return;
-                }
-	    }
+            } else {
+                return;
+            }
         }
       
-      if( bi!=null ) bi.value.destroy();
-      return;
+        bi.value.destroy();
+        return;
     }
 
     /**

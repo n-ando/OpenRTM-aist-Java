@@ -1632,9 +1632,6 @@ public class Manager {
         
         try {
             ECFactoryBase factory = new ECFactoryJava(name);
-            if( factory == null ) {
-                return false;
-            }
             if( !m_ecfactory.registerObject(factory, new ECFactoryPredicate(factory))) {
                 factory = null;
                 return false;
