@@ -721,11 +721,10 @@ public class Properties {
     public void clear() {
         
         while (true) {
-            int ic = this.leaf.size() - 1;
-            if(ic < 0) {
+            if(this.leaf.size() <= 0) {
                 break;
             }
-            Properties tail = this.leaf.get(ic);
+            Properties tail = this.leaf.lastElement();
             if (tail != null) {
                 tail.destruct();
             }
