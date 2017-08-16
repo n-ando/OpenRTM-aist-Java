@@ -98,7 +98,7 @@ public class ConsoleInImpl  extends DataFlowComponentBase {
     protected ReturnCode_t onExecute(int ec_id) {
 //        m_count++;
 //        System.out.println("Please input number: " + m_count);
-        System.out.println("Please input number: ");
+        System.out.print("Please input number: ");
         BufferedReader buff = new BufferedReader(new InputStreamReader( System.in ));
         try {
             String str = buff.readLine();
@@ -115,7 +115,7 @@ public class ConsoleInImpl  extends DataFlowComponentBase {
         System.out.println("Sending to subscriber: "  + m_out.data);
         m_outOut.write();
 
-        return ReturnCode_t.RTC_OK;
+        return super.onExecute(ec_id);
     }
     //
     // The aborting action when main logic error occurred.
