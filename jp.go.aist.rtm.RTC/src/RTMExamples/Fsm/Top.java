@@ -111,7 +111,13 @@ public class Top extends StateDef implements CameraProtocol {
 
     @Override
     public int getOutputData() {
-        return m_que.poll();
+        Integer data = m_que.poll();
+        if(data == null) {
+            return 0;
+        }
+        else {
+            return data.intValue(); 
+        }
     }
 
     @Override

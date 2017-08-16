@@ -66,6 +66,10 @@ public class FsmComp implements ModuleInitProc {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if( rtobj==null ) {
+    	    System.err.println("Cannot get the component's object reference.");
+    	    System.exit(0);
+        }
 
         // Get the port list of the component
         PortServiceListHolder ports = new PortServiceListHolder();

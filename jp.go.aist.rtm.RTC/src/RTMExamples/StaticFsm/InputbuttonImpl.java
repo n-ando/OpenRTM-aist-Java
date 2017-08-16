@@ -177,6 +177,9 @@ public class InputbuttonImpl extends DataFlowComponentBase {
         BufferedReader buff = new BufferedReader(new InputStreamReader( System.in ));
         try {
             String cmd = buff.readLine();
+            if(cmd == null) {
+                return super.onExecute(ec_id);
+            }
             String[] cmds = cmd.split(" ");
             cmds[0] = cmds[0].trim();
 
