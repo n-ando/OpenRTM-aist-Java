@@ -441,11 +441,13 @@ public class OutPort<DataType> extends OutPortBase {
 
                     if (ret.equals(ReturnCode.CONNECTION_LOST)) {
                         rtcout.println(Logbuf.TRACE, "connection_lost id: "+id);
-                        if(m_onConnectionLost != null) {
-                            RTC.ConnectorProfile prof = findConnProfile(id);
-                            RTC.ConnectorProfileHolder holder 
-                                = new RTC.ConnectorProfileHolder(prof);
-                            m_onConnectionLost.run(holder);
+                        synchronized (m_onConnectionLost_mutex){
+                            if(m_onConnectionLost != null) {
+                                RTC.ConnectorProfile prof = findConnProfile(id);
+                                RTC.ConnectorProfileHolder holder 
+                                    = new RTC.ConnectorProfileHolder(prof);
+                                m_onConnectionLost.run(holder);
+                            }
                         }
                         disconnect_ids.add(id);
                     }

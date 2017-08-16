@@ -417,8 +417,10 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                     local_nsec = (int)(m_rtimeout.usec() % 1000)*1000;
                 }
                 if (readback && !timedread) {      // "readback" mode
-                    if (!(m_wcount > 0)) {
-                        return ReturnCode.BUFFER_EMPTY;
+                    synchronized (m_posmutex) {
+                        if (!(m_wcount > 0)) {
+                            return ReturnCode.BUFFER_EMPTY;
+                        }
                     }
                     advanceRptr(-1);
                 }
