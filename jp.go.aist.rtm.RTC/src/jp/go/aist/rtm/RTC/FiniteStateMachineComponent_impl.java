@@ -3066,10 +3066,14 @@ public class FiniteStateMachineComponent_impl extends FsmParticipantPOA{
         return ret;
     }
     public final Vector<InPortBase> getInPorts() {
-        return m_inports;
+        synchronized (m_inports){
+            return m_inports;
+        }
     }
     public final Vector<OutPortBase> getOutPorts() {
-        return m_outports;
+        synchronized (m_outports){
+            return m_outports;
+        }
     }
 
     /**
