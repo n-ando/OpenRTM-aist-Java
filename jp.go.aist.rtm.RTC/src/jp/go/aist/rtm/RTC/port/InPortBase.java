@@ -1466,30 +1466,30 @@ public abstract class InPortBase extends PortBase {
                                  CORBA_SeqUtil.refToVstring(cprof.value.ports),
                                  prop); 
         InPortConnector connector = null;
-        synchronized (m_connectors){
-            try {
-                if (m_singlebuffer) {
-                    connector = new InPortPushConnector(profile, provider,
-                                                    m_listeners,m_thebuffer);
-                }
-                else {
-                    BufferBase<OutputStream> buffer = null;
-                    connector = new InPortPushConnector(profile, provider, 
-                                                        m_listeners,buffer);
-                }
-    
-                rtcout.println(Logbuf.TRACE, "InPortPushConnector created");
-    
+        try {
+            if (m_singlebuffer) {
+                connector = new InPortPushConnector(profile, provider,
+                                                m_listeners,m_thebuffer);
+            }
+            else {
+                BufferBase<OutputStream> buffer = null;
+                connector = new InPortPushConnector(profile, provider, 
+                                                    m_listeners,buffer);
+            }
+
+            rtcout.println(Logbuf.TRACE, "InPortPushConnector created");
+
+            synchronized (m_connectors){
                 m_connectors.add(connector);
                 rtcout.println(Logbuf.PARANOID, 
-                               "connector push backed: "+m_connectors.size());
-                return connector;
+                           "connector push backed: "+m_connectors.size());
             }
-            catch (Exception e) {
-                rtcout.println(Logbuf.ERROR,
-                               "InPortPushConnector creation failed");
-                return null;
-            }
+            return connector;
+        }
+        catch (Exception e) {
+            rtcout.println(Logbuf.ERROR,
+                           "InPortPushConnector creation failed");
+            return null;
         }
     }
     /**
