@@ -111,6 +111,7 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
      */
     public ReturnCode_t onInitialize() {
 
+        super.onInitialize(); 
         rtcout.println(Logbuf.TRACE, 
                     "PeriodicECSharedComposite_impl.onInitialize()");
 
@@ -159,6 +160,7 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
      */
     public ReturnCode_t onActivated(int exec_handle) {
 
+        super.onActivated(exec_handle); 
         rtcout.println(Logbuf.TRACE, "PeriodicECSharedComposite_impl.onActivated(" + Integer.toString(exec_handle) + ")");
         ExecutionContext[] ecs = get_owned_contexts();
         try {
@@ -181,6 +183,7 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
      */
     public ReturnCode_t onDeactivated(int exec_handle) {
 
+        super.onDeactivated(exec_handle); 
         rtcout.println(Logbuf.TRACE, "PeriodicECSharedComposite_impl.onDeactivated(" + Integer.toString(exec_handle) + ")");
         ExecutionContext[] ecs = get_owned_contexts();
         try { 
@@ -202,6 +205,7 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
      */
     public ReturnCode_t onReset(int exec_handle) {
 
+        super.onReset(exec_handle); 
         rtcout.println(Logbuf.TRACE, "PeriodicECSharedComposite_impl.onReset(" + Integer.toString(exec_handle) + ")");
         ExecutionContext[] ecs = get_owned_contexts();
         try { 
@@ -223,6 +227,7 @@ public class PeriodicECSharedComposite_impl extends RTObject_impl {
      */
     public ReturnCode_t onFinalize() {
 
+        super.onFinalize();
         rtcout.println(Logbuf.TRACE, "PeriodicECSharedComposite_impl.onFinalize()");
         m_org.removeAllMembers();
         rtcout.println(Logbuf.TRACE, 
