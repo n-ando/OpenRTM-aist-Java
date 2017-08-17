@@ -397,7 +397,7 @@ public class NamingManager implements CallbackFunction {
      */
     public Vector<NamingService> getNameServices() {
         synchronized (m_names) {
-            return m_names;
+            return (Vector<NamingService>)m_names.clone();
         }
     }
     /**
