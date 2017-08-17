@@ -293,15 +293,20 @@ class NamingOnCorba implements NamingBase {
                             cns = m_cosnaming;
                         }
                         else{
-                            Manager mgr  = Manager.instance();
-                            if(mgr==null){
+                            if(Manager.isActive()){
+                                Manager mgr  = Manager.instance();
+                                if(mgr==null){
+                                    return null;
+                                }
+                                ORB orb = mgr.getORB();
+                                if(orb==null){
+                                    return null;
+                                }
+                                cns = new CorbaNaming(orb,host);
+                            }
+                            else{
                                 return null;
                             }
-                            ORB orb = mgr.getORB();
-                            if(orb==null){
-                                return null;
-                            }
-                            cns = new CorbaNaming(orb,host);
                         }
                         String[] names = rtc_name.split("/");
             
