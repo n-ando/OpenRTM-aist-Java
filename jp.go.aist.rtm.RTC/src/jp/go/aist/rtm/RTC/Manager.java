@@ -3694,8 +3694,9 @@ public class Manager {
         if (!(m_config.getProperty(type_conf) == null
                 || m_config.getProperty(type_conf).length() == 0)) {
             
+            BufferedReader conff = null;
             try {
-                BufferedReader conff = new BufferedReader(
+                conff = new BufferedReader(
                         new FileReader(m_config.getProperty(type_conf)));
                 type_prop.load(conff);
                 rtcout.println(Logbuf.INFO,
@@ -3722,6 +3723,18 @@ public class Manager {
                 rtcout.println(Logbuf.DEBUG, e.getMessage());
                 e.printStackTrace();
             } 
+            if(conff != null){
+                try {
+                    conff.close();
+                }
+                catch (Exception e) {
+                    rtcout.println(Logbuf.DEBUG, 
+                        "Exception: Caught unknown Exception"
+                        +" in Manager.configureComponent() close error.");
+                    rtcout.println(Logbuf.DEBUG, e.getMessage());
+                    e.printStackTrace();
+                }
+            }
         }
         if (m_config.findNode(category + "." + type_name) != null) {
             Properties temp = m_config.getNode(category + "." + type_name);
@@ -3962,10 +3975,12 @@ public class Manager {
             }
         }
         else {
+            FileReader reffile = null;
+            BufferedReader br = null;
             try{
                 String refstring = new String();
-                FileReader reffile = new FileReader(otherref);
-                BufferedReader br = new BufferedReader(reffile); 
+                reffile = new FileReader(otherref);
+                br = new BufferedReader(reffile); 
                 String line;
                 while ((line = br.readLine()) != null) {
                     refstring = refstring + line;
@@ -3980,6 +3995,20 @@ public class Manager {
                 //        mgr.set_child(m_mgrservant.getObjRef());
                 //        m_mgrservant.set_owner(mgr);
             } catch (IOException e) {
+            }
+            if(br != null){
+                try{
+                    br.close();
+                } 
+                catch (IOException e) {
+                }
+            }
+            if(reffile != null){
+                try{
+                    reffile.close();
+                } 
+                catch (IOException e) {
+                }
             }
         }
 
