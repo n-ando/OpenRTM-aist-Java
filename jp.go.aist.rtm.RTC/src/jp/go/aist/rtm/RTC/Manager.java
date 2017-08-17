@@ -3630,8 +3630,9 @@ public class Manager {
         if (!(m_config.getProperty(name_conf) == null
                 || m_config.getProperty(name_conf).length() == 0)) {
             
+            BufferedReader conff = null;
             try {
-                BufferedReader conff = new BufferedReader(
+                conff = new BufferedReader(
                         new FileReader(m_config.getProperty(name_conf)));
                 name_prop.load(conff);
                 rtcout.println(Logbuf.INFO, 
@@ -3649,11 +3650,27 @@ public class Manager {
                     +" in Manager.configureComponent() name_conf.");
                 rtcout.println(Logbuf.DEBUG, e.getMessage());
                 
+            } catch (IOException e) {
+                rtcout.println(Logbuf.DEBUG, 
+                    "Exception: Caught IOException"
+                    +" in Manager.configureComponent() name_prop.load().");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
             } catch (Exception e) {
                 rtcout.println(Logbuf.DEBUG, 
                     "Exception: Caught unknown"
                     +" in Manager.configureComponent() name_conf.");
                 rtcout.println(Logbuf.DEBUG, e.getMessage());
+            }
+            if(conff != null){
+                try {
+                    conff.close();
+                }
+                catch (Exception e) {
+                    rtcout.println(Logbuf.DEBUG, 
+                        "Exception: Caught unknown"
+                        +" in Manager.configureComponent() clsoe.");
+                    rtcout.println(Logbuf.DEBUG, e.getMessage());
+                }
             }
         }
 
@@ -3928,12 +3945,20 @@ public class Manager {
         File otherref 
             = new File(m_config.getProperty("manager.refstring_path"));
         if (!otherref.exists()) {
+            FileWriter reffile = null;
             try {
-                FileWriter reffile = new FileWriter(otherref);
+                reffile = new FileWriter(otherref);
                 reffile.write(
                         m_pORB.object_to_string(m_mgrservant.getObjRef()));
                 reffile.close();
             } catch (IOException e) {
+            }
+            if(reffile != null){
+                try {
+                    reffile.close();
+                } 
+                catch (IOException e) {
+                }
             }
         }
         else {
@@ -3998,8 +4023,9 @@ public class Manager {
         
         if (! (fileName.length() == 0)) {
 
+            BufferedReader conff = null;
             try {
-                BufferedReader conff = new BufferedReader(new FileReader(fileName));
+                conff = new BufferedReader(new FileReader(fileName));
                 properties.load(conff);
                 conff.close();
                 
@@ -4007,15 +4033,33 @@ public class Manager {
 
             } catch (FileNotFoundException e) {
                 rtcout.println(Logbuf.DEBUG, 
-                "Exception: Caught FileNotFoundException in Manager.mergeProperty().");
+                    "Exception: Caught FileNotFoundException"
+                    +" in Manager.mergeProperty().");
                 rtcout.println(Logbuf.DEBUG, e.getMessage());
                 e.printStackTrace();
 
+            } catch (IOException e) {
+                rtcout.println(Logbuf.DEBUG, 
+                    "Exception: Caught IOException"
+                    +" in Manager.mergeProperty() properties.load().");
+                rtcout.println(Logbuf.DEBUG, e.getMessage());
             } catch (Exception e) {
                 rtcout.println(Logbuf.DEBUG, 
-                    "Exception: Caught unknown Exception in Manager.mergeProperty().");
+                    "Exception: Caught unknown Exception"
+                    +" in Manager.mergeProperty().");
                 rtcout.println(Logbuf.DEBUG, e.getMessage());
                 e.printStackTrace();
+            }
+            if(conff != null){
+                try {
+                    conff.close();
+                }
+                catch (IOException e) {
+                    rtcout.println(Logbuf.DEBUG, 
+                        "Exception: Caught IOException"
+                        +" in Manager.mergeProperty() close().");
+                    rtcout.println(Logbuf.DEBUG, e.getMessage());
+                }
             }
         }
         
