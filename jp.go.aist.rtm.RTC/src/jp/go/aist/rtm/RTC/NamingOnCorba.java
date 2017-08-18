@@ -4,6 +4,7 @@ import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.port.CorbaConsumer;
 import jp.go.aist.rtm.RTC.port.PortBase;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
+import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
@@ -293,20 +294,8 @@ class NamingOnCorba implements NamingBase {
                             cns = m_cosnaming;
                         }
                         else{
-                            if(Manager.isActive()){
-                                Manager mgr  = Manager.instance();
-                                if(mgr==null){
-                                    return null;
-                                }
-                                ORB orb = mgr.getORB();
-                                if(orb==null){
-                                    return null;
-                                }
-                                cns = new CorbaNaming(orb,host);
-                            }
-                            else{
-                                return null;
-                            }
+                            ORB orb = ORBUtil.getOrb();
+                            cns = new CorbaNaming(orb,host);
                         }
                         String[] names = rtc_name.split("/");
             
