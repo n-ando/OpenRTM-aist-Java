@@ -437,7 +437,8 @@ class ManagerConfig {
             osArch = sysInfo.getProperty("os.arch");
             
             //プロセスID
-            pid = System.getProperty("java.version") + new Random().nextInt();
+            //pid = System.getProperty("java.version") + new Random().nextInt();
+            pid = java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
         } catch (Exception ignored) {
             ignored.printStackTrace();
         }
