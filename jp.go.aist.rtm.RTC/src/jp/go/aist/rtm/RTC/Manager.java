@@ -3955,11 +3955,8 @@ public class Manager {
             }
         }
 
-        //File otherref 
-        //    = new File(m_config.getProperty("manager.refstring_path"));
-        String filename 
-         = (new File(m_config.getProperty("manager.refstring_path"))).getName();
-        File otherref = new File(filename);
+        File otherref 
+            = new File(m_config.getProperty("manager.refstring_path"));
         if (!otherref.exists()) {
             FileWriter reffile = null;
             try {
