@@ -592,11 +592,14 @@ public class Manager {
         rtcout.println(Logbuf.PARANOID,
                             "getPortsOnNameServers("+nsname+","+kind+")");
         ArrayList<PortService> ports = new ArrayList<PortService>();
-        //PortService[] ports = new ;
+/*
         Vector<NamingService> ns = m_namingManager.getNameServices();
         Iterator<NamingService> it = ns.iterator();
+*/
+        ArrayList<CorbaNaming> ns = m_namingManager.getCorbaNamings();
+        Iterator<CorbaNaming> it = ns.iterator();
         while (it.hasNext()) {
-            //NamingOnCorba noc = it.next().ns;
+/*
             NamingBase noc = it.next().ns;
             if(noc == null){
                 continue;
@@ -605,6 +608,8 @@ public class Manager {
             if(cns == null){
                 continue;
             }
+*/
+            CorbaNaming cns = it.next();
             BindingListHolder bl = new BindingListHolder();
             cns.listByKind(nsname,kind,bl);
             for(int ic=0;ic<bl.value.length;++ic){
@@ -642,44 +647,6 @@ public class Manager {
         }
         PortService[] ret = (PortService[])ports.toArray(new PortService[0]);
         return ret;
-/*
-        for n in ns{
-            noc = n.ns;
-            if noc is None{
-                continue
-            }
-            cns = noc._cosnaming
-            if cns is None{
-                continue
-            } 
-            bl = cns.listByKind(nsname,kind,bl);
-      
-            for b in bl{
-                if b.binding_type != CosNaming.nobject{
-                    continue
-                }
-                tmp = b.binding_name[0].id + "." + b.binding_name[0].kind
-                
-                nspath = "/" + nsname + "/" + tmp
-                nspath.replace("\\","")
-        
-                obj = cns.resolveStr(nspath)
-                portsvc = obj
-        
-                if CORBA.is_nil(portsvc){
-                    continue
-                } 
-                try{
-                    p = portsvc.get_port_profile()
-                }          
-                except{
-                    continue
-                }
-                ports.append(portsvc)
-            }
-        }
-        return ports
-*/
     }
 
     /**
