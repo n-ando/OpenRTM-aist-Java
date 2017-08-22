@@ -146,6 +146,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             try{
                 RandomAccessFile file = new RandomAccessFile(address, "rw");
                 file.setLength(m_memory_size);
+                file.close();
             }
             catch(Exception ex) {
                 rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
@@ -215,6 +216,7 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             try{
                 RandomAccessFile file = new RandomAccessFile(address, "rw");
                 file.setLength(m_memory_size);
+                file.close();
             }
             catch(Exception ex) {
                 rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
