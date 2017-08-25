@@ -720,8 +720,11 @@ public class Properties {
      */
     public void clear() {
         
-        while (this.leaf.size() > 0) {
-            Properties tail = this.leaf.get(this.leaf.size() - 1);
+        while (true) {
+            if(this.leaf.size() <= 0) {
+                break;
+            }
+            Properties tail = this.leaf.lastElement();
             if (tail != null) {
                 tail.destruct();
             }

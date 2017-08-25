@@ -31,7 +31,8 @@ public class MyServiceSVC_impl extends MyServicePOA{
     public String[] get_echo_history() {
         // Please insert your code here and remove the following warning pragma
         // TODO "Code missing in function <EchoList get_echo_history()>"
-        return null;
+        String[] ret = {""};
+        return ret;
     }
 
     public void set_value(float value) {
@@ -48,7 +49,8 @@ public class MyServiceSVC_impl extends MyServicePOA{
     public float[] get_value_history() {
         // Please insert your code here and remove the following warning pragma
         // TODO "Code missing in function <ValueList get_value_history()>"
-        return null;
+        float[] ret = {};
+        return ret;
     }
 
     public String get_echo_message() {

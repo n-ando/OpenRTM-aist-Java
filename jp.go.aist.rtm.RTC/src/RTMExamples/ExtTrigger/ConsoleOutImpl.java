@@ -102,7 +102,7 @@ public class ConsoleOutImpl  extends DataFlowComponentBase {
             e.printStackTrace();
         }
 
-        return ReturnCode_t.RTC_OK;
+        return super.onExecute(ec_id);
     }
     //
     // The aborting action when main logic error occurred.

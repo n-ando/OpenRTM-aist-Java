@@ -951,7 +951,9 @@ public class Configuration_impl extends ConfigurationPOA {
 
         rtcout.println(Logbuf.TRACE, "Configuration_impl.getDeviceProfile()");
 
-      return m_deviceProfile;
+        synchronized(m_device_profile_lock){
+            return m_deviceProfile;
+        }
     }
 
     /**

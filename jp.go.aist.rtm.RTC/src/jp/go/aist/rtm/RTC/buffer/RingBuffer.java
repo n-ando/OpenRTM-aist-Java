@@ -109,8 +109,10 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
      * 
      */
     public ReturnCode length(int n) {
-        m_buffer.setSize(n);
-        m_length = n;
+        synchronized (m_posmutex) {
+            m_buffer.setSize(n);
+            m_length = n;
+        }
         this.reset();
         return ReturnCode.BUFFER_OK; //BUFFER_OK;
     }
@@ -415,8 +417,10 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
                     local_nsec = (int)(m_rtimeout.usec() % 1000)*1000;
                 }
                 if (readback && !timedread) {      // "readback" mode
-                    if (!(m_wcount > 0)) {
-                        return ReturnCode.BUFFER_EMPTY;
+                    synchronized (m_posmutex) {
+                        if (!(m_wcount > 0)) {
+                            return ReturnCode.BUFFER_EMPTY;
+                        }
                     }
                     advanceRptr(-1);
                 }
@@ -966,7 +970,9 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
             try {
                 double tm = Double.parseDouble(prop.getProperty("write.timeout"));
                 if (!(tm < 0)) {
-                    m_wtimeout.convert(tm);
+                    synchronized (m_full.mutex) {
+                        m_wtimeout.convert(tm);
+                    }
                 }
             }
             catch(NumberFormatException e){
@@ -996,7 +1002,9 @@ private static final int RINGBUFFER_DEFAULT_LENGTH = 8;
             try {
                 double tm = Double.parseDouble(prop.getProperty("read.timeout"));
                 if (!(tm < 0)) {
-                    m_rtimeout.convert(tm);
+                    synchronized (m_empty.mutex) {
+                        m_rtimeout.convert(tm);
+                    }
                 }
             }
             catch(NumberFormatException e){

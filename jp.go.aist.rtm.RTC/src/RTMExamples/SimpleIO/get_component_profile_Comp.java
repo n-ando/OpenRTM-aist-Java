@@ -10,7 +10,7 @@ import jp.go.aist.rtm.RTC.CorbaNaming;
 import jp.go.aist.rtm.RTC.port.CorbaConsumer;
 
 import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.RTShellUtil;
+import jp.go.aist.rtm.RTC.util.CORBA_RTCUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 import RTC.RTObject;
@@ -30,12 +30,21 @@ public class  get_component_profile_Comp {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if( naming == null ){
+            System.out.println("CorbaNaming is null.");
+            return;
+        }
         
         //
         //
         //
         CorbaConsumer<DataFlowComponent> conin =
             new CorbaConsumer<DataFlowComponent>(DataFlowComponent.class);
+
+        if(conin == null){
+            System.out.println("Failed to create CorbaConsumer.");
+            return;
+        }
 
         // find ConsoleIn0 component
         try {
@@ -52,7 +61,7 @@ public class  get_component_profile_Comp {
         RTObject coninRef = conin._ptr();
 
         Properties coninProp = new Properties();
-        coninProp = RTShellUtil.get_component_profile(coninRef);
+        coninProp = CORBA_RTCUtil.get_component_profile(coninRef);
 
         String str = new String();
         str = coninProp._dump(str,coninProp,0);

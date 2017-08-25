@@ -44,7 +44,7 @@ public class Timer implements Runnable {
      * {@.en Processing at cycle of timer}
      * <p>
      * {@.ja invokeを起動する。}
-     * {@.en Starts invoke(). }
+     * {@.en Starts invoke().}
      * 
      * @return 
      *   {@.ja 処理結果
@@ -55,7 +55,12 @@ public class Timer implements Runnable {
      * 　　　　　At abnormal generation:Throws out the exception.}
      */
     public int svc() {
-        while(m_running) {
+        while(true) {
+            synchronized (m_running_mutex) {
+                if(!m_running) {
+                    break;
+                }
+            }
             try {
                 invoke();
                 if( m_interval.getSec() != 0) {
@@ -82,9 +87,11 @@ public class Timer implements Runnable {
      * {@.en Starts the timer.}
      */
     public synchronized void start(){
-        if(!m_running) {
-            m_running = true;
-            this.open();
+        synchronized (m_running_mutex) {
+            if(!m_running) {
+                m_running = true;
+                this.open();
+            }
         }
     }
 
@@ -93,7 +100,9 @@ public class Timer implements Runnable {
      * {@.en Stops the timer.}
      */
     public synchronized void stop() {
-        m_running = false;
+        synchronized (m_running_mutex) {
+            m_running = false;
+        }
     }
         
     /**
@@ -112,12 +121,16 @@ public class Timer implements Runnable {
      * <li>Sets the cycle until the next starting. </ul>}
      */
     public void invoke(){
-        if( m_tasks==null ) m_tasks = new Vector<Task>();
-        for(int intIdx=0; intIdx<m_tasks.size(); ++intIdx) {
-            m_tasks.elementAt(intIdx).remains = m_tasks.elementAt(intIdx).remains.minus(m_interval); 
-            if( m_tasks.elementAt(intIdx).remains.sign() <= 0 ) {
-                m_tasks.elementAt(intIdx).listener.invoke();
-                m_tasks.elementAt(intIdx).remains = m_tasks.elementAt(intIdx).period;
+        synchronized (m_tasks_mutex) {
+            if( m_tasks==null ) m_tasks = new Vector<Task>();
+            for(int intIdx=0; intIdx<m_tasks.size(); ++intIdx) {
+                m_tasks.elementAt(intIdx).remains = 
+                        m_tasks.elementAt(intIdx).remains.minus(m_interval); 
+                if( m_tasks.elementAt(intIdx).remains.sign() <= 0 ) {
+                    m_tasks.elementAt(intIdx).listener.invoke();
+                    m_tasks.elementAt(intIdx).remains =
+                                m_tasks.elementAt(intIdx).period;
+                }
             }
         }
     }
@@ -135,15 +148,17 @@ public class Timer implements Runnable {
      */
     public synchronized ListenerBase registerListener(ListenerBase listener, TimeValue tm) {
         
-        if( m_tasks==null ) m_tasks = new Vector<Task>();
-        for(int intIdx=0; intIdx<m_tasks.size(); ++intIdx){
-            if(m_tasks.elementAt(intIdx).listener.equals(listener)) {
-                m_tasks.elementAt(intIdx).period = tm;
-                m_tasks.elementAt(intIdx).remains = tm;
-                return listener;
+        synchronized (m_tasks_mutex) {
+            if( m_tasks==null ) m_tasks = new Vector<Task>();
+            for(int intIdx=0; intIdx<m_tasks.size(); ++intIdx){
+                if(m_tasks.elementAt(intIdx).listener.equals(listener)) {
+                    m_tasks.elementAt(intIdx).period = tm;
+                    m_tasks.elementAt(intIdx).remains = tm;
+                    return listener;
+                }
             }
+            m_tasks.add(new Task(listener, tm));
         }
-        m_tasks.add(new Task(listener, tm));
         return listener;
     }
 
@@ -171,10 +186,12 @@ public class Timer implements Runnable {
      *   {@.en Listener ID}
      */
     public synchronized boolean unregisterListener(ListenerBase id) {
-        for(int intidx=0; intidx<m_tasks.size(); ++intidx) {
-            if( m_tasks.elementAt(intidx).listener.equals(id) ) {
-                m_tasks.remove(m_tasks.elementAt(intidx));
-                return true;
+        synchronized (m_tasks_mutex) {
+            for(int intidx=0; intidx<m_tasks.size(); ++intidx) {
+                if( m_tasks.elementAt(intidx).listener.equals(id) ) {
+                    m_tasks.remove(m_tasks.elementAt(intidx));
+                    return true;
+                }
             }
         }
         return false;
@@ -188,6 +205,7 @@ public class Timer implements Runnable {
      * <p>タイマー実行フラグ</p>
      */   
     private boolean m_running;
+    private final Object m_running_mutex = new Object();
     /**
      * <p>タイマー処理登録用クラス</p>
      */   
@@ -205,5 +223,6 @@ public class Timer implements Runnable {
      * <p>タイマー処理登録クラス</p>
      */   
     private Vector<Task> m_tasks = new Vector<Task>();
+    private final Object m_tasks_mutex = new Object();
 
 }

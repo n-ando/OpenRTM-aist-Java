@@ -396,7 +396,9 @@ public class NamingManager implements CallbackFunction {
      *   {@.en List of NameService}
      */
     public Vector<NamingService> getNameServices() {
-        return m_names;
+        synchronized (m_names) {
+            return m_names;
+        }
     }
     /**
      *
@@ -460,7 +462,6 @@ public class NamingManager implements CallbackFunction {
                 NamingOnCorba nameb 
                     = new NamingOnCorba(m_manager.getORB(), name_server);
                 NamingBase name = nameb;
-                if( name == null ) return null;
                 rtcout.println(Logbuf.INFO, 
                     "NameServer connection succeeded: " 
                     + method + "/" + name_server);
@@ -474,9 +475,6 @@ public class NamingManager implements CallbackFunction {
         }
         else if( m.endsWith("manager")) {
             NamingBase name = new NamingOnManager(m_manager.getORB(),m_manager);
-            if( name == null ) {
-                return null;
-            }
             return name;
         }
         return null;

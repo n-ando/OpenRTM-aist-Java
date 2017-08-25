@@ -89,36 +89,56 @@ public class SeqViewApp extends JFrame {
             
             synchronized (this) {
                 
-                if (_octetValMarked) {
-                    _view.setOctetVal(_octetVal);
+                synchronized (_octetValMarked_mutex) {
+                    if (_octetValMarked) {
+                        _view.setOctetVal(_octetVal);
+                    }
                 }
-                if (_shortValMarked) {
-                    _view.setShortVal(_shortVal);
+                synchronized (_shortValMarked_mutex) {
+                    if (_shortValMarked) {
+                        _view.setShortVal(_shortVal);
+                    }
                 }
-                if (_longValMarked) {
-                    _view.setLongVal(_longVal);
+                synchronized (_longValMarked_mutex) {
+                    if (_longValMarked) {
+                        _view.setLongVal(_longVal);
+                    }
                 }
-                if (_floatValMarked) {
-                    _view.setFloatVal(_floatVal);
+                synchronized (_floatValMarked_mutex) {
+                    if (_floatValMarked) {
+                        _view.setFloatVal(_floatVal);
+                    }
                 }
-                if (_doubleValMarked) {
-                    _view.setDoubleVal(_doubleVal);
+                synchronized (_doubleValMarked_mutex) {
+                    if (_doubleValMarked) {
+                        _view.setDoubleVal(_doubleVal);
+                    }
                 }
     
-                if (_octetSeqVal != null) {
-                    _view.setOctetSeqVal(_octetSeqVal);
+                synchronized (_octetSeqVal_mutex) {
+                    if (_octetSeqVal != null) {
+                        _view.setOctetSeqVal(_octetSeqVal);
+                    }
                 }
-                if (_shortSeqVal != null) {
-                    _view.setShortSeqVal(_shortSeqVal);
+                synchronized (_shortSeqVal_mutex) {
+                    if (_shortSeqVal != null) {
+                        _view.setShortSeqVal(_shortSeqVal);
+                    }
                 }
-                if (_longSeqVal != null) {
-                    _view.setLongSeqVal(_longSeqVal);
+                synchronized (_longSeqVal_mutex) {
+                    if (_longSeqVal != null) {
+                        _view.setLongSeqVal(_longSeqVal);
+                    }
                 }
-                if (_floatSeqVal != null) {
-                    _view.setFloatSeqVal(_floatSeqVal);
+                synchronized (_floatSeqVal_mutex) {
+                    if (_floatSeqVal != null) {
+                        _view.setFloatSeqVal(_floatSeqVal);
+                    }
                 }
-                if (_doubleSeqVal != null) {
-                    _view.setDoubleSeqVal(_doubleSeqVal);
+                synchronized (_doubleSeqVal_mutex) {
+                    if (_doubleSeqVal != null) {
+                        _view.setDoubleSeqVal(_doubleSeqVal);
+                    }
                 }
                 
                 reset();
@@ -127,82 +147,122 @@ public class SeqViewApp extends JFrame {
         
         synchronized public void setOctetVal(byte value) {
             
-            _octetValMarked = true;
+            synchronized (_octetValMarked_mutex) {
+                _octetValMarked = true;
+            }
             _octetVal = value;
             registInvoker();
         }
 
         synchronized public void setShortVal(short value) {
             
-            _shortValMarked = true;
+            synchronized (_shortValMarked_mutex) {
+                _shortValMarked = true;
+            }
             _shortVal = value;
             registInvoker();
         }
         
         synchronized public void setLongVal(int value) {
             
-            _longValMarked = true;
+            synchronized (_longValMarked_mutex) {
+                _longValMarked = true;
+            }
             _longVal = value;
             registInvoker();
         }
         
         synchronized public void setFloatVal(float value) {
             
-            _floatValMarked = true;
+            synchronized (_floatValMarked_mutex) {
+                _floatValMarked = true;
+            }
             _floatVal = value;
             registInvoker();
         }
         
         synchronized public void setDoubleVal(double value) {
             
-            _doubleValMarked = true;
+            synchronized (_doubleValMarked_mutex) {
+                _doubleValMarked = true;
+            }
             _doubleVal = value;
             registInvoker();
         }
         
         synchronized public void setOctetSeqVal(byte[] values) {
             
-            _octetSeqVal = values;
+            synchronized (_octetSeqVal_mutex) {
+                _octetSeqVal = values;
+            }
             registInvoker();
         }
         
         synchronized public void setShortSeqVal(short[] values) {
             
-            _shortSeqVal = values;
+            synchronized (_shortSeqVal_mutex) {
+                _shortSeqVal = values;
+            }
             registInvoker();
         }
         
         synchronized public void setLongSeqVal(int[] values) {
             
-            _longSeqVal = values;
+            synchronized (_longSeqVal_mutex) {
+                _longSeqVal = values;
+            }
             registInvoker();
         }
         
         synchronized public void setFloatSeqVal(float[] values) {
             
-            _floatSeqVal = values;
+            synchronized (_floatSeqVal_mutex) {
+                _floatSeqVal = values;
+            }
             registInvoker();
         }
         
         synchronized public void setDoubleSeqVal(double[] values) {
             
-            _doubleSeqVal = values;
+            synchronized (_doubleSeqVal_mutex) {
+                _doubleSeqVal = values;
+            }
             registInvoker();
         }
         
         private void reset() {
             
-            _octetValMarked = false;
-            _shortValMarked = false;
-            _longValMarked = false;
-            _floatValMarked = false;
-            _doubleValMarked = false;
             
-            _octetSeqVal = null;
-            _shortSeqVal = null;
-            _longSeqVal = null;
-            _floatSeqVal = null;
-            _doubleSeqVal = null;
+            synchronized (_octetValMarked_mutex) {
+                _octetValMarked = false;
+            }
+            synchronized (_shortValMarked_mutex) {
+                _shortValMarked = false;
+            }
+            synchronized (_longValMarked_mutex) {
+                _longValMarked = false;
+            }
+            synchronized (_floatValMarked_mutex) {
+                _floatValMarked = false;
+            }
+            synchronized (_doubleValMarked_mutex) {
+                _doubleValMarked = false;
+            }
+            synchronized (_octetSeqVal_mutex) {
+                _octetSeqVal = null;
+            }
+            synchronized (_shortSeqVal_mutex) {
+                _shortSeqVal = null;
+            }
+            synchronized (_longSeqVal_mutex) {
+                _longSeqVal = null;
+            }
+            synchronized (_floatSeqVal_mutex) {
+                _floatSeqVal = null;
+            }
+            synchronized (_doubleSeqVal_mutex) {
+                _doubleSeqVal = null;
+            }
             
             _registered = false;
         }
@@ -215,21 +275,31 @@ public class SeqViewApp extends JFrame {
             }
         }
         
+        private final Object _octetValMarked_mutex = new Object();
         private boolean _octetValMarked;
         private byte _octetVal;
+        private final Object _shortValMarked_mutex = new Object();
         private boolean _shortValMarked;
         private short _shortVal;
+        private final Object _longValMarked_mutex = new Object();
         private boolean _longValMarked;
         private int _longVal;
+        private final Object _floatValMarked_mutex = new Object();
         private boolean _floatValMarked;
         private float _floatVal;
+        private final Object _doubleValMarked_mutex = new Object();
         private boolean _doubleValMarked;
         private double _doubleVal;
         
+        private final Object _octetSeqVal_mutex = new Object();
         private byte[] _octetSeqVal;
+        private final Object _shortSeqVal_mutex = new Object();
         private short[] _shortSeqVal;
+        private final Object _longSeqVal_mutex = new Object();
         private int[] _longSeqVal;
+        private final Object _floatSeqVal_mutex = new Object();
         private float[] _floatSeqVal;
+        private final Object _doubleSeqVal_mutex = new Object();
         private double[] _doubleSeqVal;
         
         private boolean _registered;

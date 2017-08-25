@@ -688,13 +688,21 @@ public abstract class InPortBase extends PortBase {
                 }
 */
             }
-            int index = NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
-            holder.value[index].value.insert_string(endian_type);
+            int index = 
+                    NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
+            if(index<0) {
+                CORBA_SeqUtil.push_back(holder,
+                    NVUtil.newNVString("dataport.serializer.cdr.endian",
+                                       endian_type));
+            }
+            else{
+                holder.value[index].value.insert_string(endian_type);
+            }
             cprof.value.properties = holder.value;
-       }
-       catch(Exception e){
+        }
+        catch(Exception e){
             ;
-       }
+        }
         /*
          * Because properties of ConnectorProfileHolder was merged, 
          * the accesses such as prop["dataflow_type"] and 
@@ -1420,35 +1428,30 @@ public abstract class InPortBase extends PortBase {
                                  CORBA_SeqUtil.refToVstring(cprof.value.ports),
                                  prop); 
         InPortConnector connector = null;
-        synchronized (m_connectors){
-            try {
-                if (m_singlebuffer) {
-                    connector = new InPortPushConnector(profile, provider,
-                                                    m_listeners,m_thebuffer);
-                }
-                else {
-                    BufferBase<OutputStream> buffer = null;
-                    connector = new InPortPushConnector(profile, provider, 
-                                                        m_listeners,buffer);
-                }
-    
-                if (connector == null) {
-                    rtcout.println(Logbuf.ERROR, 
-                                   "old compiler? new returned 0;");
-                    return null;
-                }
-                rtcout.println(Logbuf.TRACE, "InPortPushConnector created");
-    
+        try {
+            if (m_singlebuffer) {
+                connector = new InPortPushConnector(profile, provider,
+                                                m_listeners,m_thebuffer);
+            }
+            else {
+                BufferBase<OutputStream> buffer = null;
+                connector = new InPortPushConnector(profile, provider, 
+                                                    m_listeners,buffer);
+            }
+
+            rtcout.println(Logbuf.TRACE, "InPortPushConnector created");
+
+            synchronized (m_connectors){
                 m_connectors.add(connector);
                 rtcout.println(Logbuf.PARANOID, 
-                               "connector push backed: "+m_connectors.size());
-                return connector;
+                           "connector push backed: "+m_connectors.size());
             }
-            catch (Exception e) {
-                rtcout.println(Logbuf.ERROR,
-                               "InPortPushConnector creation failed");
-                return null;
-            }
+            return connector;
+        }
+        catch (Exception e) {
+            rtcout.println(Logbuf.ERROR,
+                           "InPortPushConnector creation failed");
+            return null;
         }
     }
     /**
@@ -1485,11 +1488,6 @@ public abstract class InPortBase extends PortBase {
                                                         buffer);
                 }
 
-                if (connector == null) {
-                    rtcout.println(Logbuf.ERROR, 
-                                   "old compiler? new returned 0;");
-                    return null;
-                }
                 rtcout.println(Logbuf.TRACE, "InPortPullConnector created");
                 
                 String type = prop.getProperty("interface_type").trim();

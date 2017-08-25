@@ -221,7 +221,12 @@ public class ExecutionContextProfile {
         }
     }
     public final String getKindString() {
-      return getKindString(m_profile.kind);
+      //return getKindString(m_profile.kind);
+        String str = new String();
+        synchronized (m_profile){
+            str = getKindString(m_profile.kind);
+        }
+      return str;
     }
 
     /**
@@ -432,10 +437,12 @@ public class ExecutionContextProfile {
      *
      */
     public final RTObject[] getComponentList() {
-        rtcout.println(Logbuf.TRACE,"getComponentList("
+        synchronized (m_profile){
+            rtcout.println(Logbuf.TRACE,"getComponentList("
                                     + m_profile.participants.length
                                     +")");
-        return m_profile.participants;
+            return m_profile.participants;
+        }
     }
 
     /**

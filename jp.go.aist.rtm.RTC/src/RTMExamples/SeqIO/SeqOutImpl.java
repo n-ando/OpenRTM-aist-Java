@@ -159,18 +159,18 @@ public class SeqOutImpl  extends DataFlowComponentBase {
     // former rtc_active_do()
     @Override
     protected ReturnCode_t onExecute(int ec_id) {
-        m_Octet.v.data = (byte)(Math.random() * Byte.MAX_VALUE - Byte.MAX_VALUE/2);
-        m_Short.v.data = (short)(Math.random() * Short.MAX_VALUE -  Short.MAX_VALUE/2);
-        m_Long.v.data = (int)(Math.random() * Integer.MAX_VALUE - Integer.MAX_VALUE/2);
+        m_Octet.v.data = (byte)(Math.random() * (double)Byte.MAX_VALUE - (double)Byte.MAX_VALUE/2);
+        m_Short.v.data = (short)(Math.random() * (double)Short.MAX_VALUE -  (double)Short.MAX_VALUE/2);
+        m_Long.v.data = (int)(Math.random() * (double)Integer.MAX_VALUE - (double)Integer.MAX_VALUE/2);
         m_Float.v.data = (float)(Math.random() * Float.MAX_VALUE) - Float.MAX_VALUE/2;
         m_Double.v.data = Math.random() * Double.MAX_VALUE - Double.MAX_VALUE/2;
 
         for( int intIdx=0;intIdx<10;++intIdx ) {
             m_DoubleSeq.v.data[intIdx] = Math.random() * Double.MAX_VALUE - Double.MAX_VALUE/2;
             m_FloatSeq.v.data[intIdx] = (float)(Math.random() * Float.MAX_VALUE) - Float.MAX_VALUE/2;
-            m_LongSeq.v.data[intIdx] = (int)(Math.random() * Integer.MAX_VALUE - Integer.MAX_VALUE/2);
-            m_ShortSeq.v.data[intIdx] = (short)(Math.random() * Short.MAX_VALUE -  Short.MAX_VALUE/2);
-            m_OctetSeq.v.data[intIdx] = (byte)(Math.random() * Byte.MAX_VALUE - Byte.MAX_VALUE/2);
+            m_LongSeq.v.data[intIdx] = (int)(Math.random() * (double)Integer.MAX_VALUE - (double)Integer.MAX_VALUE/2);
+            m_ShortSeq.v.data[intIdx] = (short)(Math.random() * (double)Short.MAX_VALUE -  (double)Short.MAX_VALUE/2);
+            m_OctetSeq.v.data[intIdx] = (byte)(Math.random() * (double)Byte.MAX_VALUE - (double)Byte.MAX_VALUE/2);
         }
         
         m_DoubleOut.write();

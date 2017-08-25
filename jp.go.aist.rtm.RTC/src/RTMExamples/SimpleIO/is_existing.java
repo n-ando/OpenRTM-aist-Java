@@ -10,7 +10,7 @@ import jp.go.aist.rtm.RTC.CorbaNaming;
 import jp.go.aist.rtm.RTC.port.CorbaConsumer;
 
 import jp.go.aist.rtm.RTC.util.Properties;
-import jp.go.aist.rtm.RTC.util.RTShellUtil;
+import jp.go.aist.rtm.RTC.util.CORBA_RTCUtil;
 import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 import RTC.RTObject;
@@ -30,6 +30,10 @@ public class is_existing{
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if( naming == null ){
+            System.out.println("CorbaNaming is null.");
+            return;
+        }
         
         //
         //
@@ -39,12 +43,15 @@ public class is_existing{
         {
             RTObject coninRef = conin._ptr();
 
-            if( RTShellUtil.is_existing(coninRef)) {
+            if( CORBA_RTCUtil.is_existing(coninRef)) {
                 System.out.println( args[0] + " exists." );
             }
             else {
                 System.out.println( args[0] + " doesn't exist." );
             }
+        }
+        if(conin == null){
+            return;
         }
         // find component
         try {
@@ -58,7 +65,7 @@ public class is_existing{
         }
         RTObject coninRef = conin._ptr();
 
-        if( RTShellUtil.is_existing(coninRef)) {
+        if( CORBA_RTCUtil.is_existing(coninRef)) {
             System.out.println( args[0] + " exist." );
         }
         else {

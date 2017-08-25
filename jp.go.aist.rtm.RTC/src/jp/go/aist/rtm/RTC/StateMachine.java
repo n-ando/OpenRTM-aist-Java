@@ -408,9 +408,11 @@ public class StateMachine<STATE, LISTENER> {
      *   {@.en Initial state}
      */
     public void setStartState(StateHolder states) {
-        m_states.curr = (STATE)(states.curr);
-        m_states.prev = (STATE)states.prev;
-        m_states.next = (STATE)states.next;
+        synchronized (m_states) {
+            m_states.curr = (STATE)(states.curr);
+            m_states.prev = (STATE)states.prev;
+            m_states.next = (STATE)states.next;
+        }
     }
 
     /**

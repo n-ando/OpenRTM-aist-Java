@@ -77,7 +77,9 @@ public class ExecutionContextWorker {
      */
     public boolean isRunning() {
         rtcout.println(Logbuf.TRACE, "isRunning()");
-        return m_running;
+        synchronized (m_mutex){
+            return m_running;
+        }
     }
 
     /**
@@ -637,10 +639,10 @@ public class ExecutionContextWorker {
                     RTObjectStateMachine rtobj = m_removedComps.get(ic);
                     LightweightRTObject lwrtobj = rtobj.getRTObject();
                     lwrtobj.detach_context(rtobj.getExecutionContextHandle());
-                    Iterator it = m_comps.iterator();
+                    Iterator<RTObjectStateMachine> it = m_comps.iterator();
                     while (it.hasNext()) {
                         if(rtobj == (RTObjectStateMachine)it.next()){
-                            m_comps.remove(it);
+                            it.remove();
                         }
                     }
                     rtobj = null;

@@ -30,11 +30,11 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      * <p> tick </p> 
      */
     public void tick() throws SystemException {
-        if(m_workerthread.isRunning())
-        {
-            return ;
-        }
         synchronized (m_tickmutex) {
+            if(m_workerthread.isRunning())
+            {
+                return ;
+            }
             m_workerthread.invokeWorkerPostDo();
             TimeValue t0 = new TimeValue();
             t0.convert(System.nanoTime()/1000);

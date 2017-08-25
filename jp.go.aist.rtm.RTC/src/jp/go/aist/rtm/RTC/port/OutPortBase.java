@@ -180,9 +180,11 @@ public abstract class OutPortBase extends PortBase {
      *
      */
     public final Vector<OutPortConnector> connectors(){
-        rtcout.println(Logbuf.TRACE, 
+        synchronized (m_connectors){
+            rtcout.println(Logbuf.TRACE, 
                        "connectors(): size = "+m_connectors.size());
-        return m_connectors;
+            return m_connectors;
+        }
     }
     /**
      * {@.ja ConnectorProfile を取得}
@@ -199,11 +201,11 @@ public abstract class OutPortBase extends PortBase {
      *
      */
     public Vector<ConnectorBase.ConnectorInfo> getConnectorProfiles(){
-        rtcout.println(Logbuf.TRACE, 
-                       "getConnectorProfiles(): size = "+m_connectors.size());
         Vector<ConnectorBase.ConnectorInfo> profs 
             = new Vector<ConnectorBase.ConnectorInfo>();
         synchronized (m_connectors){
+            rtcout.println(Logbuf.TRACE, 
+                       "getConnectorProfiles(): size = "+m_connectors.size());
             for (int i=0, len=m_connectors.size(); i < len; ++i) {
                 profs.add(m_connectors.elementAt(i).profile());
             }
@@ -573,13 +575,15 @@ public abstract class OutPortBase extends PortBase {
                     "invalid connection_limit value: "+_str );
         }
 
-       int value = _type; 
+        int value = _type; 
 
-       if(value <= m_connectors.size()) {
-           return ReturnCode_t.PRECONDITION_NOT_MET;
-       }
+        synchronized (m_connectors){
+            if(value <= m_connectors.size()) {
+                return ReturnCode_t.PRECONDITION_NOT_MET;
+            } 
+        }
 
-       return super.notify_connect(connector_profile);
+        return super.notify_connect(connector_profile);
     }
 
     /**
@@ -688,8 +692,16 @@ public abstract class OutPortBase extends PortBase {
                 }
 */
             }
-            int index = NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
-            holder.value[index].value.insert_string(endian_type);
+            int index = 
+                    NVUtil.find_index(holder, "dataport.serializer.cdr.endian");
+            if(index<0) {
+                CORBA_SeqUtil.push_back(holder,
+                    NVUtil.newNVString("dataport.serializer.cdr.endian",
+                                       endian_type));
+            }
+            else{
+                holder.value[index].value.insert_string(endian_type);
+            }
             cprof.value.properties = holder.value;
         }
         catch(Exception e){
@@ -1580,11 +1592,6 @@ public abstract class OutPortBase extends PortBase {
                 connector = new OutPortPushConnector(profile, consumer, 
                                                         m_listeners, buffer);
 
-                if (connector == null) {
-                    rtcout.println(Logbuf.ERROR, 
-                                   "old compiler? new returned 0;");
-                    return null;
-                }
                 rtcout.println(Logbuf.TRACE, "OutPortPushConnector created");
     
                 String type = prop.getProperty("interface_type").trim();
@@ -1635,11 +1642,6 @@ public abstract class OutPortBase extends PortBase {
                 connector = new OutPortPullConnector(profile, provider, 
                                                         m_listeners, buffer);
 
-                if (connector == null) {
-                    rtcout.println(Logbuf.ERROR, 
-                                   "old compiler? new returned 0;");
-                    return null;
-                }
                 rtcout.println(Logbuf.TRACE, "OutPortPullConnector create");
     
                 m_connectors.add(connector);

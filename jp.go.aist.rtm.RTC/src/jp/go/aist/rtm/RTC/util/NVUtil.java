@@ -311,7 +311,10 @@ public class NVUtil {
     public static Properties toProperties(final NVListHolder nvlist) {
         to_prop prop = new to_prop();
         prop = (to_prop) CORBA_SeqUtil.for_each(nvlist, prop);
-        return prop.m_prop;
+        if(prop != null) {
+            return prop.m_prop;
+        }
+        return new Properties();
     }
 
     /**

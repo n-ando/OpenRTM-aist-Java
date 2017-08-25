@@ -261,9 +261,12 @@ public class Manager {
      *   {@.en Existence of the only instance reference of the manager}
      */
     public static boolean isActive() {
-        if(manager==null)
-            return false;
-        return true;
+        synchronized (manager_mutex) {
+            if(manager==null) {
+                return false;
+            }
+            return true;
+        }
     }
     
     /**
@@ -506,7 +509,6 @@ public class Manager {
                  prop.getProperty("rendezvous_point")=="" )
             ){
                
-                
                 continue;
             }
             PortService[] nsports;
@@ -1616,9 +1618,6 @@ public class Manager {
         
         try {
             ECFactoryBase factory = new ECFactoryJava(name);
-            if( factory == null ) {
-                return false;
-            }
             if( !m_ecfactory.registerObject(factory, new ECFactoryPredicate(factory))) {
                 factory = null;
                 return false;
@@ -3295,22 +3294,24 @@ public class Manager {
                 try{
                     java.util.Enumeration<java.net.NetworkInterface> nic 
                          = java.net.NetworkInterface.getNetworkInterfaces();
-                    endpoints = new String();
-                    while(nic.hasMoreElements()) {
-                        java.net.NetworkInterface netIf = nic.nextElement();
-                        java.util.Enumeration<java.net.InetAddress> enumAddress 
-                                = netIf.getInetAddresses();
-                        while(enumAddress.hasMoreElements()){
-                            java.net.InetAddress inetAdd 
-                                = enumAddress.nextElement();
-                            String hostString = inetAdd.getHostAddress();
-                            if(isIpAddressFormat(hostString)){
-                                if(endpoints.length()!=0){
-                                    endpoints 
-                                        = endpoints + "," + hostString + ":";
-                                }
-                                else{
-                                    endpoints = hostString + ":";
+                    if(nic != null) {
+                        endpoints = new String();
+                        while(nic.hasMoreElements()) {
+                            java.net.NetworkInterface netIf = nic.nextElement();
+                            java.util.Enumeration<java.net.InetAddress> enumAddress 
+                                    = netIf.getInetAddresses();
+                            while(enumAddress.hasMoreElements()){
+                                java.net.InetAddress inetAdd 
+                                    = enumAddress.nextElement();
+                                String hostString = inetAdd.getHostAddress();
+                                if(isIpAddressFormat(hostString)){
+                                    if(endpoints.length()!=0){
+                                        endpoints 
+                                            = endpoints + "," + hostString + ":";
+                                    }
+                                    else{
+                                        endpoints = hostString + ":";
+                                    }
                                 }
                             }
                         }
@@ -3638,7 +3639,7 @@ public class Manager {
             Properties temp = m_config.getNode(category + "." + inst_name);
             Vector<String> keys = temp.propertyNames();
             int length = keys.size();
-            if (!( length == 1 && keys.get(length-1).equals("config_file"))) {
+            if (!( length == 1 && keys.lastElement().equals("config_file"))) {
                 name_prop.merge(m_config.getNode(category + "." + inst_name));
                 rtcout.println(Logbuf.INFO,
                         "Component type conf exists in rtc.conf. Merged.");
@@ -3687,7 +3688,7 @@ public class Manager {
             Properties temp = m_config.getNode(category + "." + type_name);
             Vector<String> keys = temp.propertyNames();
             int length = keys.size();
-            if (!(length == 1 && keys.get(length-1).equals("config_file"))) {
+            if (!(length == 1 && keys.lastElement().equals("config_file"))) {
                 type_prop.merge(m_config.getNode(category + "." + type_name));
                 rtcout.println(Logbuf.INFO,
                         "Component type conf exists in rtc.conf. Merged.");
@@ -4050,7 +4051,7 @@ public class Manager {
                         str.append(properties.getProperty("category"));
                     }
                     else if (c == 'h') {
-                        str.append(m_config.getProperty("manager.os.hostname"));
+                        str.append(m_config.getProperty("os.hostname"));
                     }
                     else if (c == 'M') {
                         str.append(m_config.getProperty("manager.name"));

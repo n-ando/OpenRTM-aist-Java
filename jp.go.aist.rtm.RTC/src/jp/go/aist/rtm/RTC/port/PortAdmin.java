@@ -422,7 +422,11 @@ public class PortAdmin {
             return;
         }
         
-        removePort(this.m_portServants.find(new find_port_name(portName)));
+        PortBase port  = this.m_portServants.find(new find_port_name(portName));
+        if(port != null){
+            removePort(port);
+        }
+        //removePort(this.m_portServants.find(new find_port_name(portName)));
     }
 
     /**
