@@ -1017,6 +1017,7 @@ System.err.println("Manager's IOR information: "+ior);
      */
     public ReturnCode_t remove_slave_manager(RTM.Manager mgr) {
         if(mgr == null){
+            return ReturnCode_t.BAD_PARAMETER;
         }
         synchronized(m_masterMutex) {
             rtcout.println(Logbuf.TRACE, 

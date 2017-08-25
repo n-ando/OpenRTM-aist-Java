@@ -631,7 +631,7 @@ public class ModuleManager {
                 }
             }
             else{
-                String str[] = dlls.elementAt(ic).split(".class");
+                String str[] = dlls.elementAt(ic).split("\\.class");
                 str[0] = str[0].replace(separator,".");
                 str[0] = str[0].replace("..",".");
                 try {

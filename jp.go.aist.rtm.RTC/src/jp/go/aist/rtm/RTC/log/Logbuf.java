@@ -115,7 +115,7 @@ public class Logbuf {
         }
         
         String str;
-        if((parent.length() == 0) || (parent == null)) {
+        if((parent == null) || (parent.length() == 0)) {
             str = "OpenRTM-aist.logging." + name;
         } else {
             str = "OpenRTM-aist.logging." + parent + "." + name;
