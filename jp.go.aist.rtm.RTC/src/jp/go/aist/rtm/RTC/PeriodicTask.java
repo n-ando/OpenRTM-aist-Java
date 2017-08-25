@@ -89,6 +89,7 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
         synchronized (m_suspend.mutex) {
             m_suspend.suspend = false;
             try {
+                m_suspend.signal = false;
                 m_suspend.mutex.notify();
             }
             catch(java.lang.IllegalMonitorStateException e) {
@@ -127,6 +128,7 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
         synchronized (m_suspend.mutex) {
             m_suspend.suspend = false;
             try {
+                m_suspend.signal = false;
                 m_suspend.mutex.notify();
             }
             catch(java.lang.IllegalMonitorStateException e) {
@@ -147,6 +149,7 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
     public void signal() {
         synchronized (m_suspend.mutex) {
             try {
+                m_suspend.signal = false;
                 m_suspend.mutex.notify();
             }
             catch(java.lang.IllegalMonitorStateException e) {
@@ -370,11 +373,14 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
             { // wait if suspended
               synchronized (m_suspend.mutex) {
                   if (m_suspend.suspend) {
-                      try {
-                          m_suspend.mutex.wait();
+                      while(m_suspend.signal){
+                          try {
+                              m_suspend.mutex.wait();
+                          }
+                          catch(InterruptedException e ){
+                          }
                       }
-                      catch(InterruptedException e ){
-                      }
+                      m_suspend.signal = true;
                       // break if finalized
                       if (!m_alive.value)
                         {
@@ -517,6 +523,7 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
        */
       public suspend_t(boolean sus){
           suspend = sus;
+          signal = true;
       }
       /**
        * {@.ja フラグ格納用変数}
@@ -528,6 +535,11 @@ public class PeriodicTask extends PeriodicTaskBase implements ObjectCreator<Peri
        * {@.en Variable for exclusive control}
        */
       public String mutex = new String();
+      /**
+       * {@.ja フラグ格納用変数}
+       * {@.en Variable for flag storage}
+       */
+      public boolean signal;
     };
     /**
      * {@.ja タスク中断情報}

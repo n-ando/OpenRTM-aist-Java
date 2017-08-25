@@ -1564,8 +1564,8 @@ public class CorbaNaming {
             }
         }
       
-        bi.value.destroy();
-        return;
+        //bi.value.destroy();
+        //return;
     }
 
     /**

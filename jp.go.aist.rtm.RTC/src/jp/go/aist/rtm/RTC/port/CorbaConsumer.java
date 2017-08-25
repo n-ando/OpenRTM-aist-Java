@@ -77,10 +77,12 @@ public class CorbaConsumer<OBJECT_TYPE> extends CorbaConsumerBase {
         }
      
         try{
-            POA poa = Manager.instance().getPOA();
-            m_sev = (OBJECT_TYPE)(poa.reference_to_servant((Object)m_var));
-            if(m_sev != null){
-                return this.m_sev;
+            if(Manager.isActive()){
+                POA poa = Manager.instance().getPOA();
+                m_sev = (OBJECT_TYPE)(poa.reference_to_servant((Object)m_var));
+                if(m_sev != null){
+                    return this.m_sev;
+                }
             }
         }
         catch(Exception ex){

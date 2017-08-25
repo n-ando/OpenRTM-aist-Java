@@ -143,13 +143,22 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         }
         else {
             address = SHARED_NAME+m_shm_address;
+            RandomAccessFile file = null;
             try{
-                RandomAccessFile file = new RandomAccessFile(address, "rw");
+                file = new RandomAccessFile(address, "rw");
                 file.setLength(m_memory_size);
                 file.close();
             }
             catch(Exception ex) {
                 rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
+            }
+            if(file != null){
+                try{
+                    file.close();
+                }
+                catch(Exception ex) {
+                    rtcout.println(Logbuf.ERROR,"Close error  "+ex.toString() );
+                }
             }
         }
 /*
@@ -213,13 +222,22 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         }
         else {
             address = SHARED_NAME+m_shm_address;
+            RandomAccessFile file = null;
             try{
-                RandomAccessFile file = new RandomAccessFile(address, "rw");
+                file = new RandomAccessFile(address, "rw");
                 file.setLength(m_memory_size);
                 file.close();
             }
             catch(Exception ex) {
                 rtcout.println(Logbuf.ERROR,"Open error  "+ex.toString() );
+            }
+            if(file != null){
+                try{
+                    file.close();
+                }
+                catch(Exception ex) {
+                    rtcout.println(Logbuf.ERROR,"Close error  "+ex.toString() );
+                }
             }
         }
 /*
@@ -300,8 +318,9 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         }
         else {
             address = SHARED_NAME+m_shm_address;
+            RandomAccessFile file = null;
             try{
-                RandomAccessFile file = new RandomAccessFile(address, "rw");
+                file = new RandomAccessFile(address, "rw");
                 FileChannel channel = file.getChannel();
                 int length = (int)channel.size();
                 MappedByteBuffer buffer
@@ -323,6 +342,14 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             }
             catch(Exception ex) {
                 rtcout.println(Logbuf.ERROR,"write error  "+ex.toString() );
+            }
+            if(file != null){
+                try{
+                    file.close();
+                }
+                catch(Exception ex) {
+                    rtcout.println(Logbuf.ERROR,"close error  "+ex.toString() );
+                }
             }
         }
     }
@@ -364,8 +391,9 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
         }
         else {
             address = SHARED_NAME+m_shm_address;
+            RandomAccessFile file = null;
             try {
-                RandomAccessFile file = new RandomAccessFile(address, "rw");
+                file = new RandomAccessFile(address, "rw");
                 FileChannel channel = file.getChannel();
                 int length = (int)channel.size();
                 MappedByteBuffer buffer
@@ -386,6 +414,14 @@ public class SharedMemory extends OpenRTM.PortSharedMemoryPOA {
             }
             catch(Exception ex) {
                 rtcout.println(Logbuf.ERROR,"read error  "+ex.toString() );
+            }
+            if(file != null){
+                try {
+                    file.close();
+                }
+                catch(Exception ex) {
+                    rtcout.println(Logbuf.ERROR,"close error  "+ex.toString() );
+                }
             }
         }
 

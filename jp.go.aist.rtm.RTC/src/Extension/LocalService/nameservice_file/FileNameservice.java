@@ -145,11 +145,13 @@ public class FileNameservice implements LocalServiceBase, CallbackFunction, Obje
             if (!createDirectory(directory)) {
                 continue;
             }
+            FileWriter file = null;
+            BufferedWriter ofs = null;
             try {
                 String filename = filepath.getName();
                 rtcout.println(Logbuf.DEBUG,"file name: "+filename);
-                FileWriter file = new FileWriter(filepath);
-                BufferedWriter ofs = new BufferedWriter(file);
+                file = new FileWriter(filepath);
+                ofs = new BufferedWriter(file);
                 for (int i=0; i < ns_info.length; ++i) {
                     ofs.write(ns_info[i]);
                 }
@@ -163,6 +165,24 @@ public class FileNameservice implements LocalServiceBase, CallbackFunction, Obje
             catch (Exception ex) {
                 rtcout.println(Logbuf.ERROR,"Creating file has been failed. "
                                  + filepath);
+            }
+            if(ofs != null){
+                try{
+                    ofs.close();
+                }
+                catch (Exception ex) {
+                    rtcout.println(Logbuf.ERROR,"closed file has been failed. "
+                                 + filepath);
+                }
+            }
+            if(file != null){
+                try{
+                    file.close();
+                }
+                catch (Exception ex) {
+                    rtcout.println(Logbuf.ERROR,"closed file has been failed. "
+                                 + filepath);
+                }
             }
         }
     }

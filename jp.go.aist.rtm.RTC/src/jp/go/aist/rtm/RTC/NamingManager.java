@@ -2,6 +2,7 @@ package jp.go.aist.rtm.RTC;
 
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.port.PortBase;
@@ -397,8 +398,35 @@ public class NamingManager implements CallbackFunction {
      */
     public Vector<NamingService> getNameServices() {
         synchronized (m_names) {
-            return m_names;
+            return (Vector<NamingService>)m_names.clone();
         }
+    }
+    /**
+     *
+     * {@.ja 登録したネームサービスのCorbaNamingのリストを取得する}
+     * {@.en Get the list of registered CorbaNaming.}
+     *
+     * @return 
+     *   {@.ja CorbaNamingのリスト}
+     *   {@.en List of CorbaNaming}
+     */
+    public ArrayList<CorbaNaming> getCorbaNamings() {
+        ArrayList<CorbaNaming> ret = new ArrayList<CorbaNaming>();
+        synchronized (m_names) {
+            Iterator<NamingService> it = m_names.iterator();
+            while (it.hasNext()) {
+                NamingBase noc = it.next().ns;
+                if(noc == null){
+                    continue;
+                }
+                CorbaNaming cns = noc.getCorbaNaming();
+                if(cns == null){
+                    continue;
+                }
+                ret.add(cns);
+            }
+        }
+        return ret;
     }
     /**
      *
