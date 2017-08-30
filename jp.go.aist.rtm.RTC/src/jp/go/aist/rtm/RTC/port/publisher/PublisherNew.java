@@ -39,7 +39,7 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
         m_buffer = null;
         m_task = null;
         m_retcode = ReturnCode.PORT_OK;
-        m_pushPolicy = Policy.NEW;
+        m_pushPolicy = Policy.PUBLISHER_POLICY_NEW;
         m_skipn = 0;
         m_active = false;
         m_leftskip = 0;
@@ -75,16 +75,16 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
     public int svc() {
         synchronized (m_retmutex) {
             switch (m_pushPolicy) {
-                case ALL:
+                case PUBLISHER_POLICY_ALL:
                     m_retcode = pushAll();
                     break;
-                case FIFO:
+                case PUBLISHER_POLICY_FIFO:
                     m_retcode = pushFifo();
                     break;
-                case SKIP:
+                case PUBLISHER_POLICY_SKIP:
                     m_retcode = pushSkip();
                     break;
-                case NEW:
+                case PUBLISHER_POLICY_NEW:
                     m_retcode = pushNew();
                     break;
                 default:
@@ -329,27 +329,27 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
      * @param prop Properties
      */
     protected void setPushPolicy(final Properties prop) {
-        // push_policy default: NEW
+        // push_policy default: PUBLISHER_POLICY_NEW
         String push_policy = prop.getProperty("publisher.push_policy", "new");
         rtcout.println(Logbuf.DEBUG, "push_policy: " + push_policy );
     
         push_policy = StringUtil.normalize(push_policy);
         if (push_policy.equals("all")) {
-            m_pushPolicy = Policy.ALL;
+            m_pushPolicy = Policy.PUBLISHER_POLICY_ALL;
         }
         else if (push_policy.equals("fifo")) {
-            m_pushPolicy = Policy.FIFO;
+            m_pushPolicy = Policy.PUBLISHER_POLICY_FIFO;
         }
         else if (push_policy.equals("skip")) {
-            m_pushPolicy = Policy.SKIP;
+            m_pushPolicy = Policy.PUBLISHER_POLICY_SKIP;
         }
         else if (push_policy.equals("new")) {
-            m_pushPolicy = Policy.NEW;
+            m_pushPolicy = Policy.PUBLISHER_POLICY_NEW;
         }
         else {
             rtcout.println(Logbuf.ERROR, 
                            "invalid push_policy value: " + push_policy );
-            m_pushPolicy = Policy.NEW;     // default push policy
+            m_pushPolicy = Policy.PUBLISHER_POLICY_NEW;     // default push policy
         }
 
         // skip_count default: 0
@@ -752,10 +752,10 @@ public class PublisherNew extends PublisherBase implements Runnable, ObjectCreat
     protected Logbuf rtcout;
 
     protected enum Policy {
-        ALL,
-        FIFO,
-        SKIP,
-        NEW
+        PUBLISHER_POLICY_ALL,
+        PUBLISHER_POLICY_FIFO,
+        PUBLISHER_POLICY_SKIP,
+        PUBLISHER_POLICY_NEW
     }
     /**
      * <p> Connector data listener functions </p>
