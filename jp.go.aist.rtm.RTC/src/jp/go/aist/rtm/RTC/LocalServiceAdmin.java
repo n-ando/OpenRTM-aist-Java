@@ -66,7 +66,7 @@ public class LocalServiceAdmin {
     public void init(Properties props) {
         rtcout.println(Logbuf.TRACE, "LocalServiceAdmin::init():");
         String str = new String();
-        props._dump(str,props,0);
+        str = props._dump(str,props,0);
         rtcout.println(Logbuf.TRACE, str);
         String es = props.getProperty("enabled_services");
         String svcs[] = es.split(","); 

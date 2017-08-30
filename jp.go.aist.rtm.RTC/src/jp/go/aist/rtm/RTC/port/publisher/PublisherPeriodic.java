@@ -327,7 +327,7 @@ public class PublisherPeriodic extends PublisherBase implements Runnable, Object
     public ReturnCode init(Properties prop) {
         rtcout.println(Logbuf.TRACE, "init()");
         String str = new String();
-        prop._dump(str,prop,0);
+        str = prop._dump(str,prop,0);
         rtcout.println(Logbuf.PARANOID, str);
     
         setPushPolicy(prop);

@@ -4678,7 +4678,7 @@ public class Manager {
         admin.init(prop);
         rtcout.println(Logbuf.DEBUG,"LocalServiceAdmin's properties:");
         String str = new String();
-        prop._dump(str,prop,0);
+        str = prop._dump(str,prop,0);
         rtcout.println(Logbuf.TRACE, str);
 
         LocalServiceProfile[] svclist = admin.getServiceProfiles();
