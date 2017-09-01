@@ -114,10 +114,12 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
         output_stream.write_octet_array(ch,0,ch.length);
 
         try {
-            OpenRTM.PortStatus ret = _ptr().put(output_stream.getByteArray());
+            OpenRTM.PortStatus ret = ((OpenRTM.InPortCdrOperations)_ptr()).put(output_stream.getByteArray());
             return convertReturn(ret);
         }
         catch (Exception e) {
+            String crlf = System.getProperty("line.separator");
+            rtcout.println(Logbuf.PARANOID, "Exception"+crlf+e.toString());
             return ReturnCode.CONNECTION_LOST;
         }
     }
@@ -337,7 +339,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
     
         ORB orb = ORBUtil.getOrb();
         org.omg.CORBA.Object var = orb.string_to_object(ior);
-        if (!(_ptr()._is_equivalent(var))) {
+        if (!(_ptr(true)._is_equivalent(var))) {
             rtcout.println(Logbuf.ERROR, "connector property inconsistency");
             return false;
         }
@@ -375,7 +377,7 @@ public class InPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.InPortCdr > i
             return false;
         }
     
-        if (!(_ptr()._is_equivalent(obj))) {
+        if (!(_ptr(true)._is_equivalent(obj))) {
             rtcout.println(Logbuf.ERROR, "connector property inconsistency");
             return false;
         }

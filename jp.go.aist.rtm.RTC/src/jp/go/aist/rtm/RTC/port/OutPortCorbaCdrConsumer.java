@@ -162,7 +162,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
         rtcout.println(Logbuf.TRACE, "OutPutCorbaCdrConsumer.get()");
         OpenRTM.CdrDataHolder cdr_data = new OpenRTM.CdrDataHolder();
         try {
-            OpenRTM.PortStatus ret = _ptr().get(cdr_data);
+            OpenRTM.PortStatus ret = ((OpenRTM.OutPortCdrOperations)_ptr()).get(cdr_data);
             if (ret == OpenRTM.PortStatus.PORT_OK) {
                 rtcout.println(Logbuf.DEBUG, "get() successful");
                 data.write_octet_array(cdr_data.value, 0, 
@@ -312,7 +312,7 @@ public class OutPortCorbaCdrConsumer extends CorbaConsumer< OpenRTM.OutPortCdr> 
                             "dataport.corba_cdr.outport_ior found.");
         ORB orb = Manager.instance().getORB();
         Object var = orb.string_to_object(ior);
-        if (_ptr()._is_equivalent(var)) {
+        if (_ptr(true)._is_equivalent(var)) {
             releaseObject();
             rtcout.println(Logbuf.DEBUG, 
                             "CorbaConsumer's reference was released.");
