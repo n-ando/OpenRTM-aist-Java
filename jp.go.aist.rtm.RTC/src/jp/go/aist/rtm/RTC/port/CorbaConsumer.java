@@ -2,12 +2,8 @@ package jp.go.aist.rtm.RTC.port;
 
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.util.TypeCast;
-import jp.go.aist.rtm.RTC.util.ORBUtil;
 import org.omg.CORBA.Object;
-import org.omg.CORBA.ORB;
 import org.omg.PortableServer.POA;
-import org.omg.PortableServer.POAHelper;
-import org.omg.PortableServer.Servant;
 
 /**
  * <p>CORBAを通信手段とするコンシューマの実装クラスです。</p>
@@ -73,45 +69,7 @@ public class CorbaConsumer<OBJECT_TYPE> extends CorbaConsumerBase {
      */
     public OBJECT_TYPE _ptr() {
 
-        if(this.m_sev != null){
-            return this.m_sev;
-        }
-        if(this.m_var != null){
-     
-            try{
-                ORB orb = ORBUtil.getOrb();
-                Object obj = orb.resolve_initial_references("RootPOA");
-                POA poa = POAHelper.narrow(obj);
-                if (poa == null) {
-                    return this.m_var;
-                }
-                m_sev = (OBJECT_TYPE)(poa.reference_to_servant((Object)m_var));
-
-                if(m_sev != null){
-                    return this.m_sev;
-                }
-            }
-            catch(Exception ex){
-                return this.m_var;
-            }        
-        }
         return this.m_var;
-
-    }
-
-    /**
-     * <p>設定されているCORBAオブジェクトを取得します。</p>
-     * 
-     * @param 
-     * @return CORBAオブジェクト
-     */
-    public OBJECT_TYPE _ptr(boolean ref) {
-         
-        if(ref) {
-            return this.m_var;
-        }
-
-        return this._ptr();
 
     }
     

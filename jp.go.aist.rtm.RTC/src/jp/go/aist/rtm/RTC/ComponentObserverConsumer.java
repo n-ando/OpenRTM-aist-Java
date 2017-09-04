@@ -84,7 +84,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.en Re-initialization}
      */
     public boolean reinit(final _SDOPackage.ServiceProfile profile){
-        if (!m_observer._ptr(true)._is_equivalent(profile.service)) {
+        if (!m_observer._ptr()._is_equivalent(profile.service)) {
             CorbaConsumer<ComponentObserver> tmp = new CorbaConsumer<ComponentObserver>();
             if (!tmp.setObject(profile.service)) {
                 return false;

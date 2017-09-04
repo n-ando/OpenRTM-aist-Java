@@ -360,7 +360,7 @@ public class OutPortSHMConsumer extends CorbaConsumer<PortSharedMemory> implemen
                             "dataport.corba_cdr.outport_ior found.");
         ORB orb = Manager.instance().getORB();
         Object var = orb.string_to_object(ior);
-        if (_ptr(true)._is_equivalent(var)) {
+        if (_ptr()._is_equivalent(var)) {
             releaseObject();
             rtcout.println(Logbuf.DEBUG, 
                             "CorbaConsumer's reference was released.");

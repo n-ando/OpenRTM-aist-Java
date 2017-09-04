@@ -397,7 +397,7 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
     
         ORB orb = ORBUtil.getOrb();
         org.omg.CORBA.Object var = orb.string_to_object(ior);
-        if (!(_ptr(true)._is_equivalent(var))) {
+        if (!(_ptr()._is_equivalent(var))) {
             rtcout.println(Logbuf.ERROR, "connector property inconsistency");
             return false;
         }
@@ -435,7 +435,7 @@ public class InPortSHMConsumer extends CorbaConsumer< PortSharedMemory >implemen
             return false;
         }
     
-        if (!(_ptr(true)._is_equivalent(obj))) {
+        if (!(_ptr()._is_equivalent(obj))) {
             rtcout.println(Logbuf.ERROR, "connector property inconsistency");
             return false;
         }
