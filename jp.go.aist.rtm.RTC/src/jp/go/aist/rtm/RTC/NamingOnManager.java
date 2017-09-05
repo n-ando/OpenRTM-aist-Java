@@ -369,9 +369,20 @@ class NamingOnManager implements NamingBase {
         try{
             String mgrloc = "corbaloc:iiop:";
             Properties prop = m_mgr.getConfig();
+            
+            String[] names = name.split(":");
+            if (names.length == 1 && !names[0].equals("")) {
+                rtcout.println(Logbuf.PARANOID, "corba.master_managerc=" +
+                        prop.getProperty("corba.master_manager"));
+                String[] port = 
+                    prop.getProperty("corba.master_manager").split(":");
+                name = name + ":" + port[1];
+            }
+
             String manager_name = prop.getProperty("manager.name");
             mgrloc += name;
             mgrloc += "/" + manager_name;
+            rtcout.println(Logbuf.PARANOID, "mgrloc= "+mgrloc);
       
             Object mobj = m_orb.string_to_object(mgrloc);
             rtcout.println(Logbuf.DEBUG, "mobj= "+mobj);
