@@ -4153,6 +4153,14 @@ public class Manager {
                     else if (c == 'c') {
                         str.append(properties.getProperty("category"));
                     }
+                    else if (c == 'i') {
+                        str.append(properties.getProperty("implementation_id"));
+                    }
+                    else if (c == 'N') {
+                        String id = properties.getProperty("implementation_id");
+                        String iname = properties.getProperty("instance_name");
+                        str.append(iname.substring(id.length()));
+                    }
                     else if (c == 'h') {
                         str.append(m_config.getProperty("os.hostname"));
                     }
