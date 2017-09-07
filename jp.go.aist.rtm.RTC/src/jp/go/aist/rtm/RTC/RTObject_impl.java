@@ -920,13 +920,23 @@ public class RTObject_impl extends DataFlowComponentPOA {
     public ExecutionContext[] get_owned_contexts() throws SystemException {
 
         rtcout.println(Logbuf.TRACE, "RTObject_impl.get_owned_contexts()");
-
         ExecutionContextListHolder execlist;
         execlist = new ExecutionContextListHolder();
-        execlist.value = new ExecutionContext[0];
     
-        CORBA_SeqUtil.for_each(m_ecMine, new ec_copy(execlist));
-    
+        //CORBA_SeqUtil.for_each(m_ecMine, new ec_copy(execlist));
+        int len = m_ecMine.value.length;
+        ArrayList<ExecutionContextService> ecs_list 
+            = new ArrayList<ExecutionContextService>();
+        for(int ic=0; ic < len ; ++ic) {
+            ExecutionContextService ec_mine = m_ecMine.value[ic];
+
+            if (ec_mine != null) {
+                ecs_list.add(ec_mine);
+            }
+        }
+        execlist.value = new ExecutionContext[ecs_list.size()];
+        execlist.value = (ExecutionContext[])ecs_list.toArray(new ExecutionContext[0]);
+         
         return execlist.value;
      }
 
@@ -2576,7 +2586,19 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         rtcout.println(Logbuf.TRACE, "RTObject_impl.setProperties()");
 
+        {
+            rtcout.println(Logbuf.PARANOID, "prop:");
+            String str = new String();
+            str = prop._dump(str,prop,0);
+            rtcout.println(Logbuf.DEBUG, str);
+        }
         m_properties.merge(prop);
+        {
+            rtcout.println(Logbuf.PARANOID, "m_properties:");
+            String str = new String();
+            str = m_properties._dump(str,m_properties,0);
+            rtcout.println(Logbuf.DEBUG, str);
+        }
         try {
             syncAttributesByProperties();
         } catch (Exception ex) {
@@ -3051,7 +3073,26 @@ public class RTObject_impl extends DataFlowComponentPOA {
 
         String propkey = "port.inport.";
         propkey += name;
+        {
+            rtcout.println(Logbuf.PARANOID, "addInPort::m_properties:");
+            String str = new String();
+            str = m_properties._dump(str,m_properties,0);
+            rtcout.println(Logbuf.DEBUG, str);
+        }
+        {
+            rtcout.println(Logbuf.PARANOID, "addInPort::port.inport.dataport:");
+            String str = new String();
+            Properties prop = m_properties.getNode("port.inport.dataport");
+            str = prop._dump(str,prop,0);
+            rtcout.println(Logbuf.DEBUG, str);
+        }
         m_properties.getNode(propkey).merge(m_properties.getNode("port.inport.dataport"));
+        {
+            rtcout.println(Logbuf.PARANOID, "addInPort::m_properties2:");
+            String str = new String();
+            str = m_properties._dump(str,m_properties,0);
+            rtcout.println(Logbuf.DEBUG, str);
+        }
 
         boolean ret = addPort(inport);
     
