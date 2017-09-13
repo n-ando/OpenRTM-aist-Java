@@ -578,10 +578,24 @@ public class ManagerTest extends TestCase {
         }
         manager.activateManager();
         manager.m_module.allowAbsolutePath();
-        String str = manager.load("jp.go.aist.rtm.RTC.util.TimeValue", "sign");
+        //String str = manager.load("jp.go.aist.rtm.RTC.util.TimeValue", "sign");
+        ReturnCode_t ret;
+        ret = manager.load("jp.go.aist.rtm.RTC.util.TimeValue", "sign");
+        assertEquals(ret,ReturnCode_t.RTC_OK);
+
+        ret = manager.load("", "sign");
+        assertEquals(ret,ReturnCode_t.BAD_PARAMETER);
+
+        ret = manager.load("jp.go.aist.rtm.RTC.util.TimeValue", "abc");
+        assertEquals(ret,ReturnCode_t.BAD_PARAMETER);
+
+        ret = manager.load("jp.go.aist.rtm.RTC.util.ByteHolder", "stringFrom");
+        assertEquals(ret,ReturnCode_t.BAD_PARAMETER);
+
+
+
 
         manager.unload("jp.go.aist.rtm.RTC.util.TimeValue");
-
         manager.unloadAll();
         Vector<Properties> modules = manager.getLoadedModules();
         assertEquals(0, modules.size());
@@ -826,6 +840,7 @@ public class ManagerTest extends TestCase {
         RTObject_impl comp = mgr2.createComponent("DataFlowComponentFactory");
         assertNull(comp);
         m_mgr.terminate();
+        m_mgr.shutdown();
     }
 
     /**
@@ -837,11 +852,16 @@ public class ManagerTest extends TestCase {
      * </p>
      */
     public void test_cleanupComponent() throws Exception {
+System.out.println("test_cleanupComponent()");
         java.io.File fileCurrent = new java.io.File(".");
         String rootPath = fileCurrent.getAbsolutePath();
         rootPath = rootPath.substring(0,rootPath.length()-1);
         String testPath = rootPath + "tests/fixtures/Manager/fixture4.conf";
         String param[] = {"-f", testPath };
+        if(m_mgr != null){
+            System.out.println("m_mgr != null");
+            m_mgr.shutdown();
+        }
         m_mgr = Manager.init(param);
         assertNotNull(m_mgr);
         assertNotNull(m_mgr.getORB());
