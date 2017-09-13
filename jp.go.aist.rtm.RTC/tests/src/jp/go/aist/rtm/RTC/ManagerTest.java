@@ -840,7 +840,6 @@ public class ManagerTest extends TestCase {
         RTObject_impl comp = mgr2.createComponent("DataFlowComponentFactory");
         assertNull(comp);
         m_mgr.terminate();
-        m_mgr.shutdown();
     }
 
     /**
@@ -852,7 +851,6 @@ public class ManagerTest extends TestCase {
      * </p>
      */
     public void test_cleanupComponent() throws Exception {
-System.out.println("test_cleanupComponent()");
         java.io.File fileCurrent = new java.io.File(".");
         String rootPath = fileCurrent.getAbsolutePath();
         rootPath = rootPath.substring(0,rootPath.length()-1);
