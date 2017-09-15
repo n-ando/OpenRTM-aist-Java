@@ -298,6 +298,11 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
     public ReturnCode_t onAddedComponent(LightweightRTObject rtobj)
     {
+        synchronized (m_workerthread.mutex_) {
+            if(m_workerthread.running_ == false) {
+                m_worker.updateComponentList();
+            }
+        }
         return ReturnCode_t.RTC_OK;
     }
     public ReturnCode_t onRemovingComponent(LightweightRTObject rtobj)
@@ -306,6 +311,11 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
     public ReturnCode_t onRemovedComponent(LightweightRTObject rtobj)
     {
+        synchronized (m_workerthread.mutex_) {
+            if(m_workerthread.running_ == false) {
+                m_worker.updateComponentList();
+            }
+        }
         return ReturnCode_t.RTC_OK;
     }
 
@@ -592,7 +602,8 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     }
     public ReturnCode_t activateComponent(LightweightRTObject comp) {
 
-        rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.activateComponent()");
+        rtcout.println(Logbuf.TRACE, 
+                       "PeriodicExecutionContext.activateComponent()");
         ReturnCode_t ret = onActivating(comp); // Template
         if (ret != ReturnCode_t.RTC_OK)
         {

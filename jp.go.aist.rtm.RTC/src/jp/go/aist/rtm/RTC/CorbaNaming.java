@@ -86,7 +86,7 @@ public class CorbaNaming {
         m_nameServer = name_server;
         m_rootContext = null;
         m_blLength = 100;
-        
+
         Object obj;
         int pos = m_nameServer.indexOf("iiop:");
         if(pos==0){
@@ -96,12 +96,15 @@ public class CorbaNaming {
             m_nameServer = "corbaloc::" + m_nameServer + "/NameService";
         }
 //        m_nameServer = "corbaloc:iiop:1.2@" + m_nameServer + "/NameService";
-
-        //rtcout.println(Logbuf.PARANOID, "m_nameServer="+m_nameServer);
-        obj = m_varORB.string_to_object(m_nameServer);
-        //rtcout.println(Logbuf.PARANOID, "obj="+obj);
-        m_rootContext =  NamingContextExtHelper.narrow(obj);
-        if (m_rootContext==null) {
+        try{
+            obj = m_varORB.string_to_object(m_nameServer);
+            m_rootContext =  NamingContextExtHelper.narrow(obj);
+            if (m_rootContext==null) {
+                throw new Exception("bad_alloc()");
+            }
+        }
+        catch(Exception ex){
+            String crlf = System.getProperty("line.separator");
             throw new Exception("bad_alloc()");
         }
     }

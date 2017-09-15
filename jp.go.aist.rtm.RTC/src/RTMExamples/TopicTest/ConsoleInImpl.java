@@ -22,15 +22,12 @@ import RTC.TimedLong;
 import RTC.PortService;
 import RTC.PortServiceListHolder;
 
-import org.omg.PortableServer.POAPackage.ObjectNotActive;
-import org.omg.PortableServer.POAPackage.ServantAlreadyActive;
-import org.omg.PortableServer.POAPackage.WrongPolicy;
-
 import org.omg.CORBA.portable.OutputStream;
 
 import jp.go.aist.rtm.RTC.port.CorbaPort;
+import jp.go.aist.rtm.RTC.port.CorbaConsumer;
 
-import RTMExamples.SimpleService.MyServiceSVC_impl;
+import RTMExamples.SimpleService.MyService;
 
 
 
@@ -51,10 +48,6 @@ public class ConsoleInImpl extends DataFlowComponentBase {
     public ConsoleInImpl(Manager manager) {
         super(manager);
         // <rtc-template block="initializer">
-        m_out_val = new TimedLong(new RTC.Time(0,0),0);
-        m_out = new DataRef<TimedLong>(m_out_val);
-        m_outOut = new OutPort<TimedLong>("out", m_out);
-
         m_topic_out_val = new TimedLong(new RTC.Time(0,0),0);
         m_topic_out = new DataRef<TimedLong>(m_topic_out_val);
         m_topic_outOut = new TopicOutPort<TimedLong>("topic_out", m_topic_out);
@@ -78,42 +71,14 @@ public class ConsoleInImpl extends DataFlowComponentBase {
 
     // The initialize action (on CREATED->ALIVE transition)
     // formaer rtc_init_entry() 
-//    @Override
+    @Override
     protected ReturnCode_t onInitialize() {
-/*
-        try {
-            addOutPort("out", m_outOut);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-*/
         addOutPort("topic_out", m_topic_outOut);
-        try {
-            m_ServicePort.registerProvider("topic_service", 
-                                                "TestService", 
-                                                m_service);
-        } catch (ServantAlreadyActive e) {
-            e.printStackTrace();
-        } catch (WrongPolicy e) {
-            e.printStackTrace();
-        } catch (ObjectNotActive e) {
-            e.printStackTrace();
-        }
+        m_ServicePort.registerConsumer("topic_service", 
+                                            "Service", 
+                                            m_myservice0Base);
+        // Set CORBA Service Ports
         addPort(m_ServicePort);
-/*
-        PortServiceListHolder pslholder = new PortServiceListHolder();
-        pslholder.value = new PortService[0];
-        pslholder.value = get_ports();
-        PortProfile prof = ports[0].get_port_profile();
-        NVListHolder nvholder = 
-                new NVListHolder(prof.properties);
-        CORBA_SeqUtil.push_back(nvholder, 
-                NVUtil.newNVString("publish_topic","test"));
-        prof.properties = nvholder.value;
-        ports[0].setPortRef();
-*/
-        //m_topic_outOut.appendProperty("publish_topic","test");
- 
         return super.onInitialize();
     }
     // The finalize action (on ALIVE->END transition)
@@ -155,22 +120,65 @@ public class ConsoleInImpl extends DataFlowComponentBase {
     // former rtc_active_do()
     @Override
     protected ReturnCode_t onExecute(int ec_id) {
-        System.out.println("Please input number: ");
+        System.out.print("Please input : ");
         BufferedReader buff = new BufferedReader(new InputStreamReader( System.in ));
+        String str = null;
         try {
-            String str = buff.readLine();
+            str = buff.readLine();
             if(str != null){
-                m_out_val.data = Integer.parseInt(str);
+                m_topic_out_val.data = Integer.parseInt(str);
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Input number Error!");
-//            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("Input number Error!");
-//            e.printStackTrace();
+            System.out.println("Sending to subscriber: "  
+                               + m_topic_out_val.data);
+            m_topic_outOut.write();
+        } catch (Exception e) {
+            if(str != null){
+                String[] argv = str.split(" ");
+                m_myservice0 = m_myservice0Base._ptr();
+                if( argv[0].equals("echo") && argv.length>1 ) {
+                    String retmsg = m_myservice0.echo(argv[1]);
+                    System.out.println( "echo return: " + retmsg );
+                }
+                else if( argv[0].equals("set_value") && argv.length>1 ) {
+                    Float val = Float.valueOf(argv[1]);
+                    m_myservice0.set_value(val.floatValue());
+                    System.out.println( "Set remote value: " + val );
+                }
+          
+                else if( argv[0].equals("get_value") ) {
+                    System.out.println( "Current remote value: " 
+                                        + m_myservice0.get_value() );
+                }
+          
+                else if( argv[0].equals("get_echo_history") ) {
+                    String[] echo_history = m_myservice0.get_echo_history();
+                    for( int intIdx=0;intIdx<echo_history.length;intIdx++ ) {
+                        System.out.println( intIdx+": "+echo_history[intIdx]);
+                    }
+                }
+                else if( argv[0].equals("get_value_history") ) {
+                    float[] value_history = m_myservice0.get_value_history();
+                    for( int intIdx=0;intIdx<value_history.length;intIdx++ ) {
+                        System.out.println( intIdx+": "+value_history[intIdx]);
+                    }
+                }
+                else{
+                    System.out.println("");
+                    System.out.println("Command list: ");
+                    System.out.println(" echo [msg]       : echo message.");
+                    System.out.println(" set_value [value]: set value." );
+                    System.out.println(" get_value        : "
+                                       +"get current value.");
+                    System.out.println(" get_echo_history : "
+                                       +"get input messsage history." );
+                    System.out.println(" get_value_history: "
+                                       +"get input value history." );
+                }
+            }
+            else{
+                System.out.println("Input Error!");
+            }
         }
-        System.out.println("Sending to subscriber: "  + m_out_val.data);
-        m_outOut.write();
 
         return super.onExecute(ec_id);
     }
@@ -217,10 +225,6 @@ public class ConsoleInImpl extends DataFlowComponentBase {
 
     // DataOutPort declaration
     // <rtc-template block="outport_declare">
-    protected TimedLong m_out_val;
-    protected DataRef<TimedLong> m_out;
-    protected OutPort<TimedLong> m_outOut;
-    
     protected TimedLong m_topic_out_val;
     protected DataRef<TimedLong> m_topic_out;
     protected TopicOutPort<TimedLong> m_topic_outOut;
@@ -234,7 +238,11 @@ public class ConsoleInImpl extends DataFlowComponentBase {
 
     // Service declaration
     // <rtc-template block="service_declare">
-    protected MyServiceSVC_impl m_service = new MyServiceSVC_impl();
+    protected CorbaConsumer<MyService> m_myservice0Base =
+        new CorbaConsumer<MyService>(MyService.class);
+    
+    protected MyService m_myservice0;
+    //protected MyServiceSVC_impl m_service = new MyServiceSVC_impl();
     
     // </rtc-template>
 
@@ -256,8 +264,6 @@ public class ConsoleInImpl extends DataFlowComponentBase {
             System.out.println("Listener:       "+m_name);
             System.out.println("Profile::name:  "+info.name);
             System.out.println("Profile::id:    "+info.id);
-//            System.out.println("Profile::properties: ");
-//            System.out.println(info.properties);
             System.out.println("Data:           "+data.data);
             System.out.println("------------------------------");
         }

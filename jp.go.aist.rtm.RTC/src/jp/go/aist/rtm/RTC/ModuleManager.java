@@ -168,7 +168,7 @@ public class ModuleManager {
                 throw new IllegalArgumentException(
                                     "Downloading module is not allowed.");
             } else {
-                throw new IllegalArgumentException(
+                throw new ClassNotFoundException(
                                             "Not implemented." + moduleName);
             }
         } catch (MalformedURLException moduleName_is_not_URL) {
@@ -233,6 +233,9 @@ public class ModuleManager {
                         fullClassName = fullClassName.replace("..",".");
                         target = Class.forName(fullClassName);
                         module_path = fullClassName;                    
+                        if(target!=null){
+                            break;
+                        }
                     } catch (ClassNotFoundException e) {
                         // do nothing
                     }

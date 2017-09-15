@@ -59,7 +59,7 @@ public class CORBA_RTCUtil {
      * coil::Properties get_component_profile(const RTC::RTObject_ptr rtc)
      */
     public static Properties get_component_profile(final RTObject rtc){
-            if(rtc == null){
+        if(rtc == null){
             return null;
         }
         ComponentProfile cprofs = rtc.get_component_profile();
@@ -219,6 +219,9 @@ public class CORBA_RTCUtil {
     public static int get_ec_id(RTObject rtc, ExecutionContext ec){
 
         if(rtc == null){
+            return -1;
+        }
+        if(ec == null){
             return -1;
         }
         ExecutionContext[] eclist = rtc.get_owned_contexts();
@@ -1583,7 +1586,6 @@ public class CORBA_RTCUtil {
      *
      */
     public static PortService get_port_by_url(String port_name){
-        System.out.println("get_port_by_url:"+port_name);
         Manager mgr = Manager.instance();
         NamingManager nm = mgr.getNaming();
         String[] ports  = port_name.split("\\.");

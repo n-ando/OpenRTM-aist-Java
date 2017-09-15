@@ -8,6 +8,7 @@ import jp.go.aist.rtm.RTC.util.ORBUtil;
 
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
+import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContext;
 import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.CosNaming.BindingIteratorHolder;
@@ -222,18 +223,34 @@ class NamingOnCorba implements NamingBase {
     public void get_RTC_by_Name(NamingContext context, String name, 
             RTCListHolder rtcs){
 
+        rtcout.println(Logbuf.PARANOID, "get_RTC_by_Name("+name+")");
         int length = 500;
         BindingListHolder bl = new BindingListHolder();
         BindingIteratorHolder bi = new BindingIteratorHolder();
 
         context.list(length,bl,bi);
+        rtcout.println(Logbuf.PARANOID, "bl="+bl);
+        rtcout.println(Logbuf.PARANOID, "bl.vlaue="+bl.value);
+        rtcout.println(Logbuf.PARANOID, "bl.vlaue.length="+bl.value.length);
+        rtcout.println(Logbuf.PARANOID, "bi="+bi);
+        rtcout.println(Logbuf.PARANOID, "bi.vlaue="+bi.value);
+        rtcout.println(Logbuf.PARANOID, 
+                "BindingType.ncontext.valeu()="+BindingType.ncontext.value());
+        rtcout.println(Logbuf.PARANOID, 
+                "BindingType.nobject.vlaue()="+BindingType.nobject.value());
         BindingHolder bindholder = new BindingHolder();
-        while (bi.value.next_one(bindholder)) {
-            if(bindholder.value.binding_type==BindingType.ncontext){
+        Binding bindings[] = bl.value;
+        for(int ic=0;ic<bindings.length;++ic) {
+            BindingType type = bindings[ic].binding_type;
+            rtcout.println(Logbuf.PARANOID, 
+                "bindings[ic].binding_type.value()="
+                +type.value());
+            if(type.value()==BindingType.ncontext.value()){
                 try{
                     NamingContext next_context 
                         = NamingContextExtHelper.narrow(
-                            context.resolve(bindholder.value.binding_name));
+                            context.resolve(bindings[ic].binding_name));
+
                     get_RTC_by_Name(next_context, name, rtcs);
                 }
                 catch(Exception ex){
@@ -242,14 +259,21 @@ class NamingOnCorba implements NamingBase {
                     return;
                 }
             }
-            else if(bindholder.value.binding_type==BindingType.nobject){
-                if(bindholder.value.binding_name[0].id.equals(name) && 
-                        bindholder.value.binding_name[0].kind.equals("rtc")){
+            else if(type.value()==BindingType.nobject.value()){
+                NameComponent names[] = bindings[ic].binding_name;
+                rtcout.println(Logbuf.PARANOID, 
+                        "bindings[ic].binding_name[0].id="
+                        +names[0].id);
+                rtcout.println(Logbuf.PARANOID, 
+                        "bindings[ic].binding_name[0].kind="
+                        +names[0].kind);
+                if(names[0].id.equals(name) && 
+                        names[0].kind.equals("rtc")){
                     try{
-                        CorbaConsumer cc = new CorbaConsumer();
-                        cc.setObject(context.resolve(
-                                        bindholder.value.binding_name));
-                        RTObject obj = RTObjectHelper.narrow(cc.getObject());
+                        rtcout.println(Logbuf.PARANOID, "names="+names);
+                        rtcout.println(Logbuf.PARANOID, "context="+context);
+                        RTObject obj = 
+                            RTObjectHelper.narrow(context.resolve(names));
                         CORBA_SeqUtil.push_back(rtcs, obj);
                     }
                     catch (Exception ex) {
@@ -290,24 +314,42 @@ class NamingOnCorba implements NamingBase {
           
                     try{
                         CorbaNaming cns;
+                        rtcout.println(Logbuf.PARANOID, "host="+host);
                         if(host.equals("*")){
                             cns = m_cosnaming;
                         }
                         else{
                             ORB orb = ORBUtil.getOrb();
+                            String[] names = host.split(":");
+                            if (names.length == 1 && !names[0].equals("")) {
+                                host += ":2809";
+                            }
+                            rtcout.println(Logbuf.PARANOID, "host="+host);
                             cns = new CorbaNaming(orb,host);
                         }
                         String[] names = rtc_name.split("/");
+                        rtcout.println(Logbuf.PARANOID, 
+                                    "names.length="+names.length);
             
                         if(names.length == 2 && names[0].equals("*")){
+                            rtcout.println(Logbuf.PARANOID, 
+                                        "cns="+cns);
                             NamingContext root_cxt = cns.getRootContext();
+                            rtcout.println(Logbuf.PARANOID, 
+                                        "names[1]="+names[1]);
                             get_RTC_by_Name(root_cxt, names[1], rtc_list);
                             return rtc_list.value;
                         }
                         else{
+                            rtcout.println(Logbuf.PARANOID, 
+                                    "names[0]="+names[0]);
                             rtc_name += ".rtc";
+                            rtcout.println(Logbuf.PARANOID, 
+                                    "rtc_name.rtc="+rtc_name);
                             Object obj = cns.resolveStr(rtc_name);
                             if(obj == null){
+                                rtcout.println(Logbuf.PARANOID, 
+                                    rtc_name + " is not found on "+host+".");
                                 return null;
                             }
                             CORBA_SeqUtil.push_back(rtc_list, 
@@ -316,6 +358,10 @@ class NamingOnCorba implements NamingBase {
                         }
                     }
                     catch (Exception ex) {
+                       String crlf = System.getProperty("line.separator");
+                       rtcout.println(Logbuf.PARANOID,
+                               rtc_name + " is not found on "+host+"."
+                               + crlf + ex.toString());
                        return null;
                     }
                 }

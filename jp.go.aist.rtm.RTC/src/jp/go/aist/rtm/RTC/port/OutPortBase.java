@@ -27,6 +27,7 @@ import org.omg.CORBA.portable.OutputStream;
 import org.omg.PortableServer.POA;
 
 import _SDOPackage.NVListHolder;
+import _SDOPackage.NameValue;
 import RTC.ConnectorProfile;
 import RTC.ConnectorProfileHolder;
 import RTC.ReturnCode_t;
@@ -92,12 +93,12 @@ public abstract class OutPortBase extends PortBase {
 
         rtcout.println(Logbuf.PARANOID, "given properties:");
         String str = new String();
-        prop._dump(str,prop,0);
+        str = prop._dump(str,prop,0);
         rtcout.println(Logbuf.DEBUG, str);
 
         rtcout.println(Logbuf.PARANOID, "m_properties:");
         str = "";
-        m_properties._dump(str,m_properties,0);
+        str = m_properties._dump(str,m_properties,0);
         rtcout.println(Logbuf.DEBUG, str);
 
         m_properties.merge(prop);
@@ -111,7 +112,7 @@ public abstract class OutPortBase extends PortBase {
 
         rtcout.println(Logbuf.PARANOID, "updated properties:");
         str = "";
-        m_properties._dump(str,m_properties,0);
+        str = m_properties._dump(str,m_properties,0);
         rtcout.println(Logbuf.DEBUG, str);
 
         configure();
@@ -649,6 +650,10 @@ public abstract class OutPortBase extends PortBase {
              *       << cprof[dataport.outport.buffer.write.full_policy]
              */
             prop.merge(conn_prop.getNode("dataport.outport"));
+            conn_prop.getNode("dataport").merge(prop);
+            NVListHolder holder = new NVListHolder(new NameValue[0]);
+            NVUtil.copyFromProperties(holder, conn_prop);
+            cprof.value.properties = holder.value;
         }
         rtcout.println(Logbuf.DEBUG, 
                            "ConnectorProfile::properties are as follows.");

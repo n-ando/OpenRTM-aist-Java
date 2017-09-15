@@ -442,6 +442,9 @@ public class ExecutionContextWorker {
             return ReturnCode_t.RTC_ERROR;
         }
         rtcout.println(Logbuf.DEBUG, "addComponent() succeeded.");
+        if (m_running==false) {
+            updateComponentList();
+        }
         return ReturnCode_t.RTC_OK;
     }
 
@@ -527,9 +530,13 @@ public class ExecutionContextWorker {
             synchronized (m_removedMutex){
                 m_removedComps.add(rtobj);
 
-                return ReturnCode_t.RTC_OK;
+                //return ReturnCode_t.RTC_OK;
             }
         }
+        if (m_running==false) {
+            updateComponentList();
+        }
+        return ReturnCode_t.RTC_OK;
     }
     public RTObjectStateMachine findComponent(LightweightRTObject comp) {
         for (int ic=0; ic < m_comps.size() ; ++ic) {

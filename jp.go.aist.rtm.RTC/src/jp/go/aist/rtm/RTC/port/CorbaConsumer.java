@@ -69,25 +69,6 @@ public class CorbaConsumer<OBJECT_TYPE> extends CorbaConsumerBase {
      */
     public OBJECT_TYPE _ptr() {
 
-        if(this.m_sev != null){
-            return this.m_sev;
-        }
-        if(this.m_var != null){
-            return this.m_var;
-        }
-     
-        try{
-            if(Manager.isActive()){
-                POA poa = Manager.instance().getPOA();
-                m_sev = (OBJECT_TYPE)(poa.reference_to_servant((Object)m_var));
-                if(m_sev != null){
-                    return this.m_sev;
-                }
-            }
-        }
-        catch(Exception ex){
-            return this.m_var;
-        }        
         return this.m_var;
 
     }
