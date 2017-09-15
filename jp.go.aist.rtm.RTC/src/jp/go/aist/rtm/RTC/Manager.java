@@ -1745,6 +1745,8 @@ public class Manager {
         Properties prop = new Properties();
         int i,len;
         FactoryBase factory = findPropertyFormFactory(comp_id);
+        rtcout.println(Logbuf.PARANOID, 
+                        "findPropertyFormFactory(comp_id):" +factory);
         if (factory == null) {
             rtcout.println(Logbuf.ERROR, 
                 "Factory not found: " 
@@ -1833,6 +1835,8 @@ public class Manager {
         }
 
         comp = factory.create(this);
+        rtcout.println(Logbuf.PARANOID, 
+                        "factory.create(this):" +comp);
         if (comp == null) {
             rtcout.println(Logbuf.ERROR, 
                 "RTC creation failed: " 
@@ -2836,6 +2840,10 @@ public class Manager {
                 rtcout.println(Logbuf.ERROR, "Unknown Exception");
             }
         }
+
+        String form = m_config.getProperty("manager.instance_name");
+        String i_name = formatString(form,m_config);
+        m_config.setProperty("manager.instance_name",i_name);
     }
     
     /**

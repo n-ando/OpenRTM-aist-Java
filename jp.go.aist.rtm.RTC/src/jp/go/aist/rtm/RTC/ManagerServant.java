@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Matcher;
 
 import jp.go.aist.rtm.RTC.log.Logbuf;
 import jp.go.aist.rtm.RTC.util.CORBA_SeqUtil;
@@ -555,20 +556,32 @@ System.err.println("Manager's IOR information: "+ior);
         rtcout.println(Logbuf.TRACE, "create_component("+module_name+")");
 
         RTC.RTObject rtc = create_component_by_address(module_name);
+        rtcout.println(Logbuf.PARANOID, "create_component_by_address():"+rtc);
         if(rtc != null){
             return rtc;
         }
 
         rtc = create_component_by_mgrname(module_name);
+        rtcout.println(Logbuf.PARANOID, "create_component_by_mgrname():"+rtc);
         if(rtc  != null){
             return rtc;
         }
 
+        String[] temp = new String[1];  
+        temp[0] = module_name;
+        get_parameter_by_modulename("manager_address",temp);
+        String manager_name = new String();
+        manager_name = get_parameter_by_modulename("manager_name",temp);
+        rtcout.println(Logbuf.PARANOID, "m_isMaster:"+m_isMaster);
         if(m_isMaster){
             synchronized(m_slaveMutex) {
+                rtcout.println(Logbuf.PARANOID, 
+                                "m_slaves.length:"+m_slaves.length);
                 for (int ic=0; ic < m_slaves.length; ++ic) {
                     try {
                         rtc = m_slaves[ic].create_component(module_name);
+                        rtcout.println(Logbuf.PARANOID, 
+                                "m_slaves[ic].create_component():" +rtc);
                         if(rtc != null){
                             return rtc;
                         }
@@ -580,16 +593,30 @@ System.err.println("Manager's IOR information: "+ior);
                     }
                 }
             }
+            rtcout.println(Logbuf.PARANOID, 
+                                "manager_name:"+manager_name);
+            if(manager_name==null){
+                String name = module_name + "&manager_name=manager_%p";
+        
+                rtc = create_component_by_mgrname(name);
+                rtcout.println(Logbuf.PARANOID, 
+                        "create_component_by_mgrname("
+                        +name
+                        +"):"
+                        +rtc);
+                return rtc;
+            }
         }
-
-
-        // create on this manager
+        else {
+            // create on this manager
     
-        RTObject_impl rtobj = m_mgr.createComponent(module_name);
-        if(rtobj != null){
-            return rtobj.getObjRef();
+            RTObject_impl rtobj = m_mgr.createComponent(module_name);
+            rtcout.println(Logbuf.PARANOID, 
+                        "m_mgr.createComponent():" +rtobj);
+            if(rtobj != null){
+                return rtobj.getObjRef();
+            }
         }
-
         return null;
 
     }
@@ -1393,12 +1420,19 @@ System.err.println("Manager's IOR information: "+ior);
      * 
      */
     public RTC.RTObject create_component_by_mgrname(String module_name) {
+        rtcout.println(Logbuf.PARANOID, 
+                        "create_component_by_mgrname("
+                        +module_name
+                        +")");
         String arg = module_name;
         String[] tmp = new String[1];
         tmp[0] = arg;
         String mgrstr = get_parameter_by_modulename("manager_name",tmp);
         arg = tmp[0];
 
+        rtcout.println(Logbuf.PARANOID, 
+                        "get_parameter_by_modulename(\"manager_name\",tmp):"
+                        +mgrstr);
         if(mgrstr==null){
             return null;
         }
@@ -1406,7 +1440,18 @@ System.err.println("Manager's IOR information: "+ior);
             return null;
         }
 
-        RTM.Manager mgrobj = findManager_by_name(mgrstr);
+        RTM.Manager mgrobj;
+        if(mgrstr.equals("manager_%p")){
+            mgrobj = null;
+        }
+        else{
+            mgrobj = findManager_by_name(mgrstr);
+            rtcout.println(Logbuf.PARANOID, 
+                            "findManager_by_name("
+                            +mgrstr
+                            +"):"
+                            +mgrobj);
+        }
 
         tmp[0] = arg;
         String language = get_parameter_by_modulename("language",tmp);
@@ -1427,6 +1472,14 @@ System.err.println("Manager's IOR information: "+ior);
             if(rtcd_cmd.isEmpty()){
                 rtcd_cmd = "rtcd_java";
             }
+ 
+            String load_path = config.getProperty("manager.modules.load_path");
+            String load_path_language = config.getProperty(
+                                         "manager.modules."
+                                         +language
+                                         +".load_paths");
+            load_path = load_path + "," + load_path_language;
+
             List<String> cmd = new ArrayList();
             cmd.add(rtcd_cmd);
             cmd.add("-o");
@@ -1441,6 +1494,10 @@ System.err.println("Manager's IOR information: "+ior);
             cmd.add("manager.name:"+man_name);
             cmd.add("-o");
             cmd.add("manager.instance_name:"+mgrstr);
+            cmd.add("-o");
+            cmd.add("manager.modules.load_path:"+load_path);
+            cmd.add("-o");
+            cmd.add("manager.shutdown_auto:YES");
 /*
             String cmd = rtcd_cmd;
             cmd += " -o " + "manager.is_master:NO";
@@ -1454,6 +1511,7 @@ System.err.println("Manager's IOR information: "+ior);
             rtcout.println(Logbuf.DEBUG, "Invoking command: "+ cmd + ".");
             try{
                 ProcessBuilder pb = new ProcessBuilder(cmd);
+                pb.redirectErrorStream(true);
                 Process p = pb.start();
             }
             catch(Exception ex){
@@ -1468,8 +1526,54 @@ System.err.println("Manager's IOR information: "+ior);
                  //do nothing
             }
             int count = 0;
+
+            ArrayList slaves_name = new ArrayList();
+            java.util.regex.Pattern pattern 
+                = java.util.regex.Pattern.compile(
+               "^manager_[0-9]+$");
+            
+            if(mgrstr.equals("manager_%p")){
+                synchronized (m_slaveMutex) {
+                    for (int ic=0; ic < m_slaves.length; ++ic) {
+                        _SDOPackage.NameValue[] prof 
+                            = m_slaves[ic]. get_configuration();
+                        NVListHolder nvholder = 
+                            new NVListHolder(prof);
+                        Properties proper = new Properties();
+                        NVUtil.copyToProperties(proper, nvholder);
+                        String i_name 
+                                = proper.getProperty("manager.instance_name");
+                        Matcher matcher = pattern.matcher(i_name);
+                        if(matcher.matches()){
+                            slaves_name.add(i_name);
+                        }
+                    }
+                }
+            }
+
             while (mgrobj == null) {
-                mgrobj = findManager_by_name(mgrstr);
+                if(mgrstr.equals("manager_%p")){
+                    synchronized (m_slaveMutex) {
+                        for (int ic=0; ic < m_slaves.length; ++ic) {
+                            _SDOPackage.NameValue[] prof 
+                                = m_slaves[ic]. get_configuration();
+                            NVListHolder nvholder = 
+                                new NVListHolder(prof);
+                            Properties proper = new Properties();
+                            NVUtil.copyToProperties(proper, nvholder);
+                            String i_name 
+                                = proper.getProperty("manager.instance_name");
+                            Matcher matcher = pattern.matcher(i_name);
+                            if(matcher.matches() && 
+                                        !slaves_name.contains(i_name)){
+                                mgrobj = m_slaves[ic];
+                            }
+                        }
+                    }
+                }
+                else{
+                    mgrobj = findManager_by_name(mgrstr);
+                }
                 ++count;
                 if (count > 1000) { 
                     break; 
@@ -1565,11 +1669,21 @@ System.err.println("Manager's IOR information: "+ior);
             if(rtcd_cmd.isEmpty()){
                 rtcd_cmd = "rtcd_java";
             }
+ 
+            String load_path = config.getProperty("manager.modules.load_path");
+            String load_path_language = config.getProperty(
+                                         "manager.modules."
+                                         +language
+                                         +".load_paths");
+            load_path = load_path + "," + load_path_language;
+
 
             List<String> cmd = new ArrayList();
             cmd.add(rtcd_cmd);
             cmd.add("-p");
             cmd.add(mgrvstr[1]);
+            cmd.add("-o");
+            cmd.add("manager.modules.load_path:"+load_path);
 
             rtcout.println(Logbuf.DEBUG, "Invoking command: "+ cmd + ".");
 
