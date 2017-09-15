@@ -1585,10 +1585,10 @@ System.err.println("Manager's IOR information: "+ior);
                     //do nothing
                 }
             }
-            if (mgrobj == null) {
-                rtcout.println(Logbuf.WARN, "Manager cannot be found.");
-                return null;
-            }
+        }
+        if (mgrobj == null) {
+            rtcout.println(Logbuf.WARN, "Manager cannot be found.");
+            return null;
         }
         rtcout.println(Logbuf.DEBUG, "Creating component on "+mgrstr);
         rtcout.println(Logbuf.DEBUG, "arg: "+arg);
