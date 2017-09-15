@@ -1440,12 +1440,18 @@ System.err.println("Manager's IOR information: "+ior);
             return null;
         }
 
-        RTM.Manager mgrobj = findManager_by_name(mgrstr);
-        rtcout.println(Logbuf.PARANOID, 
-                        "findManager_by_name("
-                        +mgrstr
-                        +"):"
-                        +mgrobj);
+        RTM.Manager mgrobj;
+        if(mgrstr.equals("manager_%p")){
+            mgrobj = null;
+        }
+        else{
+            mgrobj = findManager_by_name(mgrstr);
+            rtcout.println(Logbuf.PARANOID, 
+                            "findManager_by_name("
+                            +mgrstr
+                            +"):"
+                            +mgrobj);
+        }
 
         tmp[0] = arg;
         String language = get_parameter_by_modulename("language",tmp);
@@ -1466,6 +1472,14 @@ System.err.println("Manager's IOR information: "+ior);
             if(rtcd_cmd.isEmpty()){
                 rtcd_cmd = "rtcd_java";
             }
+ 
+            String load_path = config.getProperty("manager.modules.load_path");
+            String load_path_language = config.getProperty(
+                                         "manager.modules."
+                                         +language
+                                         +".load_paths");
+            load_path = load_path + "," + load_path_language;
+
             List<String> cmd = new ArrayList();
             cmd.add(rtcd_cmd);
             cmd.add("-o");
@@ -1480,6 +1494,8 @@ System.err.println("Manager's IOR information: "+ior);
             cmd.add("manager.name:"+man_name);
             cmd.add("-o");
             cmd.add("manager.instance_name:"+mgrstr);
+            cmd.add("-o");
+            cmd.add("manager.modules.load_path:"+load_path);
             cmd.add("-o");
             cmd.add("manager.shutdown_auto:YES");
 /*
@@ -1653,11 +1669,21 @@ System.err.println("Manager's IOR information: "+ior);
             if(rtcd_cmd.isEmpty()){
                 rtcd_cmd = "rtcd_java";
             }
+ 
+            String load_path = config.getProperty("manager.modules.load_path");
+            String load_path_language = config.getProperty(
+                                         "manager.modules."
+                                         +language
+                                         +".load_paths");
+            load_path = load_path + "," + load_path_language;
+
 
             List<String> cmd = new ArrayList();
             cmd.add(rtcd_cmd);
             cmd.add("-p");
             cmd.add(mgrvstr[1]);
+            cmd.add("-o");
+            cmd.add("manager.modules.load_path:"+load_path);
 
             rtcout.println(Logbuf.DEBUG, "Invoking command: "+ cmd + ".");
 

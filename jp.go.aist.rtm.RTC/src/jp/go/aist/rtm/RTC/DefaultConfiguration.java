@@ -70,6 +70,9 @@ interface DefaultConfiguration {
         "sdo.service.provider.enabled_services",  "ALL",
         "sdo.service.consumer.enabled_services",  "ALL",
         "manager.local_service.enabled_services","ALL",
+        "manager.modules.C++.load_paths",  "./",
+        "manager.modules.Python.load_paths",  "./",
+        "manager.modules.Java.load_paths",  "./",
         ""
     };
 }
