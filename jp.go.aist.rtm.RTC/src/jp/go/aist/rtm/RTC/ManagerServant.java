@@ -1480,6 +1480,8 @@ System.err.println("Manager's IOR information: "+ior);
             cmd.add("manager.name:"+man_name);
             cmd.add("-o");
             cmd.add("manager.instance_name:"+mgrstr);
+            cmd.add("-o");
+            cmd.add("manager.shutdown_auto:YES");
 /*
             String cmd = rtcd_cmd;
             cmd += " -o " + "manager.is_master:NO";
