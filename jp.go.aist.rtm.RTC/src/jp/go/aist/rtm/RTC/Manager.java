@@ -3931,9 +3931,69 @@ public class Manager {
         if (m_config.getProperty("corba.endpoints_ipv4").equals("")) {
             setEndpointProperty(m_mgrservant.getObjRef());
         }
+        Properties prop = m_config.getNode("manager");
+        String[] names = prop.getProperty("naming_formats").split(",");
+    
+        if(StringUtil.toBool(prop.getProperty("is_master"), 
+                                                    "YES", "NO", true)) {
+            for(int ic=0;ic<names.length;++ic){
+                String mgr_name = formatString(names[ic], prop);
+                m_namingManager.bindObject(mgr_name, m_mgrservant);
+            }
+        }
+        if(StringUtil.toBool(
+                m_config.getProperty("corba.update_master_manager.enable"), 
+                "YES", "NO", true) && 
+           !StringUtil.toBool(
+                m_config.getProperty("manager.is_master"), "YES", "NO", false)
+        ) {
+            TimeValue tm = new TimeValue(10, 0);
+            if(m_config.findNode("corba.update_master_manager.interval")!=null){
+                String interval = m_config.getProperty(
+                                      "corba.update_master_manager.interval");
+                try{
+                    double duration = Double.parseDouble(interval);
+                    tm.convert(duration);
+                }
+                catch(Exception ex){
+                }
+            }
+            if(m_timer != null){
+                m_updateMasterManager 
+                            = new updateMasterManager(m_mgrservant);
+                m_timer.registerListenerObj(m_updateMasterManager,tm);
+            }
+        }
         return true;
     }
-    
+    /**
+     * {@.ja タイマー処理用リスナー}
+     * {@.en Listener for timer processing}
+     */
+    updateMasterManager m_updateMasterManager;
+    /**
+     * {@.ja Manager の更新のためのリスナークラス}
+     * {@.en Listener Class for update of Manager}
+     */
+    class updateMasterManager implements CallbackFunction {
+        private ManagerServant m_mgrser;
+        /**
+         * {@.ja コンストラクタ}
+         * {@.en Constructor}
+         *
+         */
+        public updateMasterManager(ManagerServant mgrser) {
+            m_mgrser = mgrser;
+        }
+        /**
+         * {@.ja コールバックメソッド}
+         * {@.en Callback method}
+         */
+        public void doOperate() {
+            m_mgrser.update_master_manager();
+        }
+    }
+
     /**
      * {@.ja ManagerServantをバインドする。}
      * {@.en Binds ManagerServant.}

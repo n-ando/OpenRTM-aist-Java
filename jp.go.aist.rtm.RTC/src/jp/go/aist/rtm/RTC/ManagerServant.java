@@ -1511,7 +1511,6 @@ System.err.println("Manager's IOR information: "+ior);
             rtcout.println(Logbuf.DEBUG, "Invoking command: "+ cmd + ".");
             try{
                 ProcessBuilder pb = new ProcessBuilder(cmd);
-                pb.redirectErrorStream(true);
                 Process p = pb.start();
             }
             catch(Exception ex){
@@ -1732,6 +1731,67 @@ System.err.println("Manager's IOR information: "+ior);
             rtcout.println(Logbuf.DEBUG, 
                         "Exception was caught while creating component.");
             return null;
+        }
+    }
+
+    /**
+     * {@.ja マスターマネージャの有無を確認してリストを更新する}
+     * {@.en Confirms the presence of a master manager and renews a list.}
+     * 
+     * void update_master_manager()
+     */
+    public void update_master_manager() {
+        rtcout.println(Logbuf.PARANOID, 
+                        "update_master_manager()");
+        if(!m_isMaster && m_objref!=null){
+            synchronized (m_masterMutex) {
+                if (m_masters.length > 0){
+                    RTM.Manager m_masters[] = new RTM.Manager[0];
+                    ArrayList<RTM.Manager> masters 
+                                    = new ArrayList<RTM.Manager>();
+                    for (int ic=0; ic < m_masters.length; ++ic) {
+                        try{
+                            if(m_masters[ic]._non_existent()){
+                            }
+                            else{
+                                masters.add(m_masters[ic]);
+                            }
+                        }
+                        catch(Exception ex){
+                            String crlf = System.getProperty("line.separator");
+                            rtcout.println(Logbuf.ERROR, 
+                                            "Unknown exception cought."
+                                            + crlf
+                                            + ex.toString());
+                        }
+                    }
+                    m_masters 
+                        = (RTM.Manager[])masters.toArray(new RTM.Manager[0]);
+                }
+            }
+            if (m_masters.length == 0){
+                try{
+                    Properties config = m_mgr.getConfig();
+                    RTM.Manager owner = findManager(
+                            config.getProperty("corba.master_manager"));
+                    if(owner != null){
+                        rtcout.println(Logbuf.INFO,
+                                        "Master manager not found");
+                        return;
+                    }
+                    add_master_manager(owner);
+                    owner.add_slave_manager(m_objref);
+              
+                    return;
+                }
+                catch(Exception ex){
+                    String crlf = System.getProperty("line.separator");
+                    rtcout.println(Logbuf.ERROR, 
+                                    "Unknown exception cought."
+                                    + crlf
+                                    + ex.toString());
+                }
+            }
         }
     }
 
