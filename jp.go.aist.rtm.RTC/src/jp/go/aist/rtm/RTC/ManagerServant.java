@@ -572,6 +572,9 @@ System.err.println("Manager's IOR information: "+ior);
         get_parameter_by_modulename("manager_address",temp);
         String manager_name = new String();
         manager_name = get_parameter_by_modulename("manager_name",temp);
+
+        CompParam comp_param = new CompParam(temp[0]);
+
         rtcout.println(Logbuf.PARANOID, "m_isMaster:"+m_isMaster);
         if(m_isMaster){
             synchronized(m_slaveMutex) {
@@ -579,17 +582,31 @@ System.err.println("Manager's IOR information: "+ior);
                                 "m_slaves.length:"+m_slaves.length);
                 for (int ic=0; ic < m_slaves.length; ++ic) {
                     try {
-                        rtc = m_slaves[ic].create_component(module_name);
-                        rtcout.println(Logbuf.PARANOID, 
+                        _SDOPackage.NameValue[] prof 
+                            = m_slaves[ic]. get_configuration();
+                        NVListHolder nvholder = new NVListHolder(prof);
+                        Properties prop = new Properties();
+                        NVUtil.copyToProperties(prop, nvholder);
+                        String slave_lang
+                            = prop.getProperty("manager.language");
+                        if(slave_lang.equals(comp_param.language())){
+                            rtc = m_slaves[ic].create_component(module_name);
+                            rtcout.println(Logbuf.PARANOID, 
                                 "m_slaves[ic].create_component():" +rtc);
-                        if(rtc != null){
-                            return rtc;
+                            if(rtc != null){
+                                return rtc;
+                            }
                         }
                     }
                     catch (org.omg.CORBA.SystemException ex) {
                         rtcout.println(Logbuf.ERROR, 
                                     "Unknown exception cought.");
                         rtcout.println(Logbuf.DEBUG, ex.toString());
+                        RTM.ManagerListHolder holder 
+                                    = new RTM.ManagerListHolder(m_slaves);
+                        CORBA_SeqUtil.erase(holder, ic); 
+                        --ic;
+                        m_slaves = holder.value;
                     }
                 }
             }
@@ -1453,22 +1470,15 @@ System.err.println("Manager's IOR information: "+ior);
                             +mgrobj);
         }
 
-        tmp[0] = arg;
-        String language = get_parameter_by_modulename("language",tmp);
-        arg = tmp[0];
+        CompParam comp_param = new CompParam(arg);
 
-        if(language==null){
-            language = "Java";
-        }
-        if(language.isEmpty()){
-            language = "Java";
-        }
-  
         if(mgrobj == null){
             rtcout.println(Logbuf.WARN, mgrstr +" cannot be found.");
             Properties config = m_mgr.getConfig();
             String rtcd_cmd = 
-                config.getProperty("manager.modules."+language+".manager_cmd");
+                config.getProperty("manager.modules."
+                                   +comp_param.language()
+                                   +".manager_cmd");
             if(rtcd_cmd.isEmpty()){
                 rtcd_cmd = "rtcd_java";
             }
@@ -1476,7 +1486,7 @@ System.err.println("Manager's IOR information: "+ior);
             String load_path = config.getProperty("manager.modules.load_path");
             String load_path_language = config.getProperty(
                                          "manager.modules."
-                                         +language
+                                         +comp_param.language()
                                          +".load_paths");
             load_path = load_path + "," + load_path_language;
 
@@ -1497,16 +1507,9 @@ System.err.println("Manager's IOR information: "+ior);
             cmd.add("-o");
             cmd.add("manager.modules.load_path:"+load_path);
             cmd.add("-o");
+            cmd.add("manager.supported_languages:"+ comp_param.language());
+            cmd.add("-o");
             cmd.add("manager.shutdown_auto:YES");
-/*
-            String cmd = rtcd_cmd;
-            cmd += " -o " + "manager.is_master:NO";
-            cmd += " -o " + "manager.corba_servant:YES";
-            cmd += " -o " + "corba.master_manager:" 
-                + config.getProperty("corba.master_manager");
-            cmd += " -o " + "manager.name:" + config.getProperty("manager.name");
-            cmd += " -o " + "manager.instance_name:" + mgrstr;
-*/
 
             rtcout.println(Logbuf.DEBUG, "Invoking command: "+ cmd + ".");
             try{
@@ -1649,21 +1652,14 @@ System.err.println("Manager's IOR information: "+ior);
 
         RTM.Manager mgrobj = findManager(mgrstr);
         
-        tmp[0] = arg;
-        String language = get_parameter_by_modulename("language",tmp);
-        arg = tmp[0];
-
-        if(language==null){
-            language = "Java";
-        }
-        if(language.isEmpty()){
-            language = "Java";
-        }
+        CompParam comp_param = new CompParam(arg);
 
         if(mgrobj == null){
             Properties config = m_mgr.getConfig();
             String rtcd_cmd = 
-                config.getProperty("manager.modules."+language+".manager_cmd");
+                config.getProperty("manager.modules."
+                                   +comp_param.language()
+                                   +".manager_cmd");
 
             if(rtcd_cmd.isEmpty()){
                 rtcd_cmd = "rtcd_java";
@@ -1672,7 +1668,7 @@ System.err.println("Manager's IOR information: "+ior);
             String load_path = config.getProperty("manager.modules.load_path");
             String load_path_language = config.getProperty(
                                          "manager.modules."
-                                         +language
+                                         +comp_param.language()
                                          +".load_paths");
             load_path = load_path + "," + load_path_language;
 
@@ -1774,7 +1770,7 @@ System.err.println("Manager's IOR information: "+ior);
                     Properties config = m_mgr.getConfig();
                     RTM.Manager owner = findManager(
                             config.getProperty("corba.master_manager"));
-                    if(owner != null){
+                    if(owner == null){
                         rtcout.println(Logbuf.INFO,
                                         "Master manager not found");
                         return;

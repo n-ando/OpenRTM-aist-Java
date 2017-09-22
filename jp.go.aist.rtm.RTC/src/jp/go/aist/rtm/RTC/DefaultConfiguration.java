@@ -65,6 +65,7 @@ interface DefaultConfiguration {
         "manager.name",                     "manager",
         "manager.command",                  "rtcd",
         "manager.nameservers",              "default",
+        "manager.language",                 "Java",
         "manager.components.naming_policy", "process_unique",
         "manager.modules.C++.manager_cmd", "rtcd",
         "manager.modules.Python.manager_cmd", "rtcd_python",
