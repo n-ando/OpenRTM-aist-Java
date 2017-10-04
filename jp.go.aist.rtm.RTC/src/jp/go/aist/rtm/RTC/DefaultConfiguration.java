@@ -73,9 +73,16 @@ interface DefaultConfiguration {
         "sdo.service.provider.enabled_services",  "ALL",
         "sdo.service.consumer.enabled_services",  "ALL",
         "manager.local_service.enabled_services","ALL",
-        "manager.modules.C++.load_paths",  "./",
+        "manager.modules.C++.load_paths",     "./",
         "manager.modules.Python.load_paths",  "./",
-        "manager.modules.Java.load_paths",  "./",
+        "manager.modules.Java.load_paths",    "./",
+        "manager.supported_languages",        "C++, Python, Java",
+        "manager.modules.C++.suffixes",       "",
+        "manager.modules.Python.suffixes",    "py",
+        "manager.modules.Java.suffixes",      "class",
+        "manager.modules.C++.profile_cmd",    "rtcprof",
+        "manager.modules.Python.profile_cmd", "rtcprof_python",
+        "manager.modules.Java.profile_cmd",   "rtcprof_java",
         ""
     };
 }
