@@ -620,8 +620,8 @@ public class ModuleManager {
         String[] langs = 
             m_properties.getProperty("manager.supported_languages").split(",");
         rtcout.println(Logbuf.DEBUG, 
-                       "langs:"
-                       +m_properties.getProperty("manager.supported_languages"));
+                   "manager.supported_languages:"
+                   +m_properties.getProperty("manager.supported_languages"));
 
         for(int ic=0;ic<langs.length;++ic) {
             String lang = langs[ic].trim();
@@ -710,12 +710,17 @@ public class ModuleManager {
 
             // get file list for each suffixes
             ArrayList<String> flist = new ArrayList<String>();
+            File dir = new File(path);
+            rtcout.println(Logbuf.PARANOID,"dir:"+dir);
+            if(!dir.exists()){
+                continue;
+            }
             for (String suffix: suffixes) {
                 String  glob = ".*\\."; 
                 glob += suffix.trim();
                 rtcout.println(Logbuf.PARANOID,"glob: "+glob);
-                File dir = new File(path);
                 String[] files = dir.list(new FilePathFilter(glob));
+                rtcout.println(Logbuf.PARANOID,"files.length:"+files.length);
                 ArrayList<String> tmp 
                     = new ArrayList<String>(Arrays.asList(files));
                 rtcout.println(Logbuf.DEBUG,
@@ -817,14 +822,14 @@ public class ModuleManager {
         }
         @Override
         public boolean accept(File dir, String name) {
-          if(m_regex.isEmpty()){
-              return false;
-          }
+            if(m_regex.isEmpty()){
+                 return false;
+            }
          
-          if(name.matches(m_regex)){
-              return true;
-          }
-          return false;
+            if(name.matches(m_regex)){
+                return true;
+            }
+            return false;
         }
     }  
 
@@ -863,6 +868,11 @@ public class ModuleManager {
                 rtcout.println(Logbuf.PARANOID, 
                        "profile_cmd: "+cmd);
                 List<String> cmdlist = new ArrayList();
+                String osname = System.getProperty("os.name").toLowerCase();
+                if(osname.startsWith("windows")){
+                    cmdlist.add("cmd");
+                    cmdlist.add("/c");
+                }
                 cmdlist.add(cmd);
                 cmdlist.add(module);
                 Process process;
@@ -911,7 +921,7 @@ public class ModuleManager {
                     continue;
                 }
                 rtcout.println(Logbuf.PARANOID, "prop.size():"+prop.size());
-                if(prop.size()!=0){
+                if(!prop.getProperty("implementation_id").isEmpty()){
                     prop.setProperty("module_file_name",
                                      new File(module).getName());
                     prop.setProperty("module_file_path", module);

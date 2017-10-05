@@ -320,6 +320,7 @@ System.err.println("Manager's IOR information: "+ior);
         rtcout.println(Logbuf.TRACE, "get_loadable_modules()");
         // copy local module profiles
         Vector<Properties> prof = m_mgr.getLoadableModules();
+        rtcout.println(Logbuf.PARANOID, "prof.size():"+prof.size());
         RTM.ModuleProfile[] cprof = new RTM.ModuleProfile[prof.size()];
         for (int i=0, len=prof.size(); i < len; ++i) {
             String dumpString = new String();
@@ -364,6 +365,7 @@ System.err.println("Manager's IOR information: "+ior);
                 }
             }
         }
+        rtcout.println(Logbuf.PARANOID, "cprof.length:"+cprof.length);
         return cprof;
 
 /*
@@ -1372,6 +1374,10 @@ System.err.println("Manager's IOR information: "+ior);
     public String get_parameter_by_modulename(String param_name, 
                     String[] module_name){
         
+        rtcout.println(Logbuf.PARANOID, 
+                        "get_parameter_by_modulename("
+                        +param_name
+                        +")");
         String arg = module_name[0];
         int pos = arg.indexOf("&"+param_name+"=");
         if(pos == -1){
@@ -1479,6 +1485,17 @@ System.err.println("Manager's IOR information: "+ior);
                 config.getProperty("manager.modules."
                                    +comp_param.language()
                                    +".manager_cmd");
+            rtcout.println(Logbuf.PARANOID, 
+                                   "comp_param.language():"
+                                   +comp_param.language());
+            rtcout.println(Logbuf.PARANOID, 
+                                   "manager.modules."
+                                   +comp_param.language()
+                                   +".manager_cmd:"
+                                   +config.getProperty("manager.modules."
+                                                       +comp_param.language()
+                                                       +".manager_cmd"));
+
             if(rtcd_cmd.isEmpty()){
                 rtcd_cmd = "rtcd_java";
             }
@@ -1491,6 +1508,11 @@ System.err.println("Manager's IOR information: "+ior);
             load_path = load_path + "," + load_path_language;
 
             List<String> cmd = new ArrayList();
+            String osname = System.getProperty("os.name").toLowerCase();
+            if(osname.startsWith("windows")){
+                cmd.add("cmd");
+                cmd.add("/c");
+            }
             cmd.add(rtcd_cmd);
             cmd.add("-o");
             cmd.add("manager.is_master:NO");
@@ -1534,6 +1556,7 @@ System.err.println("Manager's IOR information: "+ior);
                 = java.util.regex.Pattern.compile(
                "^manager_[0-9]+$");
             
+            rtcout.println(Logbuf.PARANOID, "mgrstr:"+mgrstr);
             if(mgrstr.equals("manager_%p")){
                 synchronized (m_slaveMutex) {
                     for (int ic=0; ic < m_slaves.length; ++ic) {
@@ -1553,9 +1576,13 @@ System.err.println("Manager's IOR information: "+ior);
                 }
             }
 
+            rtcout.println(Logbuf.PARANOID, 
+                           "slaves_name.size():"+slaves_name.size());
             while (mgrobj == null) {
                 if(mgrstr.equals("manager_%p")){
                     synchronized (m_slaveMutex) {
+                        rtcout.println(Logbuf.PARANOID, 
+                                        "m_slaves.length:"+m_slaves.length);
                         for (int ic=0; ic < m_slaves.length; ++ic) {
                             _SDOPackage.NameValue[] prof 
                                 = m_slaves[ic]. get_configuration();
@@ -1565,7 +1592,13 @@ System.err.println("Manager's IOR information: "+ior);
                             NVUtil.copyToProperties(proper, nvholder);
                             String i_name 
                                 = proper.getProperty("manager.instance_name");
+                            rtcout.println(Logbuf.PARANOID, "i_name:"+i_name);
                             Matcher matcher = pattern.matcher(i_name);
+                            rtcout.println(Logbuf.PARANOID, 
+                                        "matcher.matches():"+matcher.matches());
+                            rtcout.println(Logbuf.PARANOID, 
+                                        "slaves_name.contains(i_name):"
+                                        +slaves_name.contains(i_name));
                             if(matcher.matches() && 
                                         !slaves_name.contains(i_name)){
                                 mgrobj = m_slaves[ic];
@@ -1674,6 +1707,11 @@ System.err.println("Manager's IOR information: "+ior);
 
 
             List<String> cmd = new ArrayList();
+            String osname = System.getProperty("os.name").toLowerCase();
+            if(osname.startsWith("windows")){
+                cmd.add("cmd");
+                cmd.add("/c");
+            }
             cmd.add(rtcd_cmd);
             cmd.add("-p");
             cmd.add(mgrvstr[1]);
