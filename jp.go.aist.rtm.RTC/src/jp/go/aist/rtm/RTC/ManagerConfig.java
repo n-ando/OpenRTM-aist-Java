@@ -397,6 +397,7 @@ class ManagerConfig {
      * <li> os.arch    : OSアーキテクチャ
      * <li> os.hostname: ホスト名
      * <li> manager.pid        : プロセスID
+     * <li> manager.modules.C++.suffixes: ライブラリの拡張子
      * </ul>}
      * {@.en Get the following system info. and set them to Manager's 
      * properties.
@@ -407,6 +408,7 @@ class ManagerConfig {
      * <li> os.arch    : OS architecture
      * <li> os.hostname: Hostname
      * <li> manager.pid        : process ID
+     * <li> manager.modules.C++.suffixes: The suffix of library
      * </ul>}
      *
      * 
@@ -423,12 +425,22 @@ class ManagerConfig {
         String osArch = "UNKNOWN";
         String hostName = "UNKNOWN";
         String pid = "UNKNOWN";
+        String suffix = "UNKNOWN";
         
         try {
             java.util.Properties sysInfo = System.getProperties();
             
             // OS名
             osName = sysInfo.getProperty("os.name");
+            if(osName.toLowerCase().startsWith("windows")){
+                suffix = "dll";
+            }
+            else if(osName.toLowerCase().startsWith("linux")){
+                suffix = "so";
+            }
+            else{
+                suffix = "dylib";
+            }
             
             // OSバージョン
             osVersion = sysInfo.getProperty("os.version");
@@ -457,6 +469,7 @@ class ManagerConfig {
         properties.setProperty("os.arch", osArch);
         properties.setProperty("os.hostname", hostName);
         properties.setProperty("manager.pid", pid);
+        properties.setProperty("manager.modules.C++.suffixes", suffix);
 
     }
 

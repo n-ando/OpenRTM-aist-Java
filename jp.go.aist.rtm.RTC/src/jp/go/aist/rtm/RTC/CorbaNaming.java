@@ -597,13 +597,8 @@ public class CorbaNaming {
                         Object obj, final boolean force)
         throws SystemException, NotFound, CannotProceed, InvalidName {
 
-
         try {
-            if( isNamingContext(obj) ) {
-                m_rootContext.rebind(name, NamingContextExtHelper.narrow(obj));
-            } else {
-                m_rootContext.rebind(name, obj);
-            }
+            m_rootContext.rebind(name, obj);
         } catch(NotFound ex) {
             if( force ) {
                 rebindRecursive(m_rootContext, name, obj);
@@ -1877,6 +1872,24 @@ public class CorbaNaming {
                 name[intIdx].kind = "";
             }
         }
+/*
+        NameComponent[] nametest = m_rootContext.to_name(sname);
+        if(name.length!=nametest.length){
+            System.out.println("\u001b[00;32m"+"CorbaNaming:toName():");
+            System.out.println("length:"+name.length+","+nametest.length);
+        }
+        else{
+            for(int ic=0;ic<name.length;++ic){
+                if(!name[ic].id.equals(nametest[ic].id) 
+                || !name[ic].kind.equals(nametest[ic].kind)){ 
+                    System.out.println("\u001b[00;32m"+"CorbaNaming:toName():");
+                    System.out.println(ic+":"+name[ic].id+","+name[ic].kind);
+                    System.out.println(
+                            ic+":"+nametest[ic].id+","+nametest[ic].kind);
+                }
+            }
+        }
+*/
         return name;
     }
 

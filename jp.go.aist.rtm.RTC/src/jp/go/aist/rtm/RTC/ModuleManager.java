@@ -1,6 +1,10 @@
 package jp.go.aist.rtm.RTC;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,8 +12,13 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -606,24 +615,392 @@ public class ModuleManager {
      */
     public Vector<Properties> getLoadableModules() {
         rtcout.println(Logbuf.TRACE, "getLoadableModules()");
-        Vector<String> dlls = new Vector<String>();
-        String separator =  System.getProperty("file.separator");
-        for (int i=0; i < m_loadPath.size(); ++i) {
-            String loadpath = m_loadPath.elementAt(i);
-            if(loadpath==null || loadpath.equals("")){
-                continue;
-            }
-            java.io.File dir = new java.io.File(loadpath);
-            String[] flist = dir.list(new FileFilter());
-            if(flist == null) {
-                continue;
-            }
-            for (int ic=0; ic < flist.length; ++ic) {
-                dlls.add(loadpath+separator+flist[ic]);
-            }  
+        //# getting loadable module file path list.
+
+        String[] langs = 
+            m_properties.getProperty("manager.supported_languages").split(",");
+        rtcout.println(Logbuf.DEBUG, 
+                   "manager.supported_languages:"
+                   +m_properties.getProperty("manager.supported_languages"));
+
+        for(int ic=0;ic<langs.length;++ic) {
+            String lang = langs[ic].trim();
+
+            ArrayList<String> modules = new ArrayList<String>();
+            getModuleList(lang, modules);
+            rtcout.println(Logbuf.TRACE, lang + ":" +modules.toString());
+
+            ArrayList<Properties> tmpprops = new ArrayList<Properties>();
+            getModuleProfiles(lang, modules, tmpprops);
+            rtcout.println(Logbuf.TRACE, 
+                           "Modile profile size: "
+                           +tmpprops.size()
+                           +" (newly founded modules)");
+            m_modprofs.addAll(tmpprops);
         }
 
-        Vector<Properties> props = new Vector<Properties>();
+        rtcout.println(Logbuf.DEBUG, 
+                       "Modile profile size: "
+                       + m_modprofs.size());
+                       
+        removeInvalidModules();
+        rtcout.println(Logbuf.DEBUG, 
+                       "Modile profile size: "
+                       + m_modprofs.size()
+                       + " (invalid mod-profiles deleted)");
+        
+        return new Vector<Properties>(m_modprofs);
+    }
+    /**
+     * {@.ja 無効なモジュールプロファイルを削除する}
+     * {@.en Removing incalid module profile}
+     */
+    protected void removeInvalidModules(){
+
+        Iterator it = m_modprofs.iterator();
+        while (it.hasNext()) {
+            Properties prop = (Properties)it.next();
+            File file = new File(prop.getProperty("module_file_path"));
+            if(!file.exists()){
+                it.remove();
+            }
+        }
+
+    }
+    /**
+     * {@.ja 指定言語におけるロードパス上のローダブルなファイルリストを返す}
+     * {@.en loadable file list on the loadpath for given language}
+     *
+     * void getModuleList(const std::string& lang, coil::vstring& modules);
+     */
+    protected void getModuleList(final String lang, ArrayList<String> modules) {
+        rtcout.println(Logbuf.PARANOID,
+                       "getModuleList("+lang+","+modules.toString()+")");
+        String l = "manager.modules." + lang;
+        Properties lprop = Manager.instance().getConfig().getNode(l);
+
+        //load path: manager.modules.<lang>.load_path 
+        //           + manager.modules.load_path
+        rtcout.println(Logbuf.PARANOID,
+                               "load_paths :"+lprop.getProperty("load_paths"));
+        String[] vstr = lprop.getProperty("load_paths").split(",");
+        ArrayList<String> paths = new ArrayList(Arrays.asList(vstr));
+
+        rtcout.println(Logbuf.PARANOID,
+                               "m_loadPath :"+m_loadPath.toString());
+
+        paths.addAll(m_loadPath);
+        paths = deleteSamePath(paths);
+        rtcout.println(Logbuf.PARANOID,
+                               "paths :"+paths.toString());
+
+        String[] vstr2 = lprop.getProperty("suffixes").split(",");
+        ArrayList<String> suffixes = new ArrayList(Arrays.asList(vstr2));
+        rtcout.println(Logbuf.DEBUG, 
+                       "suffixes: "
+                       + suffixes.toString());
+
+        // for each load path list
+        for (String path : paths) {
+            if (path.isEmpty()) {
+                rtcout.println(Logbuf.WARN,"Given load path is empty");
+                continue;
+            }
+            rtcout.println(Logbuf.DEBUG,"Module load path: "+path);
+
+            // get file list for each suffixes
+            ArrayList<String> flist = new ArrayList<String>();
+            File dir = new File(path);
+            rtcout.println(Logbuf.PARANOID,"dir:"+dir);
+            if(!dir.exists()){
+                continue;
+            }
+            for (String suffix: suffixes) {
+                String  glob = ".*\\."; 
+                glob += suffix.trim();
+                rtcout.println(Logbuf.PARANOID,"glob: "+glob);
+                String[] files = dir.list(new FilePathFilter(glob));
+                rtcout.println(Logbuf.PARANOID,"files.length:"+files.length);
+                ArrayList<String> tmp 
+                    = new ArrayList<String>(Arrays.asList(files));
+                rtcout.println(Logbuf.DEBUG,
+                                   "File list (path:"
+                                   +path
+                                   +", ext:"
+                                   +suffix
+                                   +"): "
+                                   +tmp.toString());
+                flist.addAll(tmp);
+            }
+        
+            // reformat file path and remove cached files
+            for (String file : flist) {
+                if (!path.endsWith("/")) { 
+                    path += "/"; 
+                }
+                String fpath = path + file;
+                addNewFile(fpath, modules);
+            }
+        }
+    }
+    /**
+     * {@.ja 同じパスを削除}
+     * {@.en Deletes the same path.}
+     * <p>
+     * {@.ja 指定されたリスト内を走査して重複しているパス名を削除する。}
+     * {@.en Deletes the path a list overlaps.}
+     */
+    private ArrayList<String> deleteSamePath(ArrayList<String> paths){
+        rtcout.println(Logbuf.PARANOID,
+                        "deleteSamePath("+paths.toString()+")");
+
+        ArrayList<String> tmp_paths = new ArrayList<String>();
+        for(String path_str : paths){
+            rtcout.println(Logbuf.PARANOID,
+                        "path_str:"+path_str);
+            if(!path_str.isEmpty()){
+                Path path = Paths.get(path_str);
+                path = path.normalize();
+                Path absolutePath = path.toAbsolutePath();
+                rtcout.println(Logbuf.PARANOID,
+                        "absolutePath:"+absolutePath);
+                
+                ArrayList<Path> abs_tmp_paths = new ArrayList<Path>();
+                for(String tmp_path : tmp_paths){
+                    Path abs_tmp_path = Paths.get(tmp_path);
+                    abs_tmp_path = abs_tmp_path.normalize();
+                    abs_tmp_paths.add(abs_tmp_path);
+                }
+                if(abs_tmp_paths.indexOf(absolutePath) == -1){
+                    tmp_paths.add(path_str);
+                }
+            }
+        }
+        rtcout.println(Logbuf.PARANOID,
+                        "tmp_paths:"+tmp_paths.toString());
+
+        return tmp_paths;
+    }
+    /**
+     * {@.ja キャッシュに無いパスだけmodulesに追加する}
+     * {@.en Adding file path not existing cache}
+     */
+    protected void addNewFile(final String fpath,
+                                  ArrayList<String> modules) {
+        rtcout.println(Logbuf.PARANOID, 
+                               "addNewFile("+fpath+")");
+        boolean exists = false;
+        for (Properties modprof : m_modprofs) {
+            rtcout.println(Logbuf.PARANOID, 
+                               "module_file_path:"
+                               +modprof.getProperty("module_file_path"));
+            if (modprof.getProperty("module_file_path").equals(fpath)) {
+                exists = true;
+                rtcout.println(Logbuf.DEBUG, 
+                               "Module "+fpath+" already exists in cache.");
+                break;
+            }
+        }
+        if (!exists) {
+            rtcout.println(Logbuf.DEBUG, "New module: "+fpath);
+            modules.add(fpath);
+        }
+    }
+
+    /**
+     * {@.ja ファイルフィルタ用関数}
+     * {@.en The function for file filters}
+     * <p>
+     * {@.ja ファイル名にフィルタをかけるために使用される。}
+     * {@.en This class is used to filter directory listings 
+     * in the list method of class File.}
+     */
+    private class FilePathFilter implements FilenameFilter{
+        private String m_regex = new String();
+        public FilePathFilter(String str) {
+            m_regex = str;
+        }
+        @Override
+        public boolean accept(File dir, String name) {
+            if(m_regex.isEmpty()){
+                 return false;
+            }
+         
+            if(name.matches(m_regex)){
+                return true;
+            }
+            return false;
+        }
+    }  
+
+
+    /**
+     * {@.ja 指定言語、ファイルリストからモジュールのプロパティを返す}
+     * {@.en Getting module properties from given language and file list}
+     *
+     */
+    protected void getModuleProfiles(final String lang,
+                                     final ArrayList<String> modules,
+                                     final ArrayList<Properties> modprops) {
+        rtcout.println(Logbuf.PARANOID, 
+                       "getModuleProfiles("+lang+","+modules.toString()+")");
+
+        String  l = "manager.modules." + lang;
+        Properties lprop = Manager.instance().getConfig().getNode(l);
+
+        String[] paths = lprop.getProperty("load_paths").split(",");
+
+        Properties prop = new Properties();
+
+        for (String module : modules) {
+            if(lang.equals("Java")){
+                prop = getRtcProfile(module);
+                if(prop!=null){
+                    prop.setProperty("module_file_name",
+                                     new File(module).getName());
+                    prop.setProperty("module_file_path", module);
+                    modprops.add(prop);
+                }
+            }
+            else{
+                prop = new Properties();
+                String cmd = lprop.getProperty("profile_cmd");
+                rtcout.println(Logbuf.PARANOID, 
+                       "profile_cmd: "+cmd);
+                List<String> cmdlist = new ArrayList();
+                String osname = System.getProperty("os.name").toLowerCase();
+                if(osname.startsWith("windows")){
+                    cmdlist.add("cmd");
+                    cmdlist.add("/c");
+                }
+                cmdlist.add(cmd);
+                cmdlist.add(module);
+                Process process;
+                InputStream input;
+                try{
+                    rtcout.println(Logbuf.PARANOID, 
+                                   "cmdlist :"+cmdlist.toString());
+                    ProcessBuilder pb = new ProcessBuilder(cmdlist);
+                    process = pb.start();
+                    input = process.getInputStream();
+                    process.waitFor();
+                }
+                catch(Exception ex){
+                    rtcout.println(Logbuf.DEBUG, cmd + ": failed");
+                    String crlf = System.getProperty("line.separator");
+                    rtcout.println(Logbuf.PARANOID, crlf + ex.toString());
+                    continue;
+                }
+      
+                try{
+                    BufferedReader br = new BufferedReader( 
+                                        new InputStreamReader(input));
+ 
+                    String line;
+ 
+                    rtcout.println(Logbuf.PARANOID, "-----");
+                    for (;;) {
+                        line = br.readLine();
+                        rtcout.println(Logbuf.PARANOID, line);
+                        if(line == null){
+                            break;
+                        }
+                        String[] vstr = line.split(":");
+                        if(vstr.length != 1){
+                            prop.setProperty(vstr[0],vstr[1]);
+                        }
+                    }
+                    rtcout.println(Logbuf.PARANOID, "-----");
+ 
+                    br.close();
+                    input.close();
+                }
+                catch(Exception ex){
+                    String crlf = System.getProperty("line.separator");
+                    rtcout.println(Logbuf.DEBUG, crlf + ex.toString());
+                    continue;
+                }
+                rtcout.println(Logbuf.PARANOID, "prop.size():"+prop.size());
+                if(!prop.getProperty("implementation_id").isEmpty()){
+                    prop.setProperty("module_file_name",
+                                     new File(module).getName());
+                    prop.setProperty("module_file_path", module);
+                    rtcout.println(Logbuf.PARANOID, 
+                            "module_file_name:"
+                            +prop.getProperty("module_file_name"));
+                    rtcout.println(Logbuf.PARANOID, 
+                            "module_file_path:"
+                            +prop.getProperty("module_file_path"));
+                    modprops.add(prop);
+                }
+            }
+        }
+        return;
+    }
+
+    private Properties getRtcProfile(String loadpath){
+        if(loadpath==null || loadpath.equals("")){
+            return null;
+        }
+        Properties prop = new Properties();
+        Class target = null;
+        File file = new File(loadpath);
+        if(file.isAbsolute()) {
+            URLClassLoader url = createURLClassLoader(file.getParent());
+            if(url!=null){
+                String name = file.getName();
+                name = getModuleName(name);
+                StringHolder packageModuleName = new StringHolder();
+                target = getClassFromName(url,name,packageModuleName);
+            }
+        }
+        else{
+            String separator =  System.getProperty("file.separator");
+            String str[] = loadpath.split("\\.class");
+            str[0] = str[0].replace(separator,".");
+            str[0] = str[0].replace("..",".");
+            try {
+                target = Class.forName(str[0],
+                                     true,
+                                     this.getClass().getClassLoader());
+            }
+            catch(Exception e){
+                return null;
+            }
+        }
+        try {
+            if(target == null){
+                return null;
+            }
+            Field field = target.getField("component_conf");
+            String[] data = (String[])field.get(null);
+            java.util.ArrayList al 
+                = new java.util.ArrayList(java.util.Arrays.asList(data));
+        
+            prop = new Properties((String[])al.toArray(new String[]{}));
+            rtcout.println(Logbuf.TRACE, 
+                                "loadabe module:"+loadpath);
+        } 
+        catch(Exception e){
+            return null;
+        }
+     
+        return prop;
+    }
+/*
+        ArrayList<String> dlls = new ArrayList<String>();
+        String separator =  System.getProperty("file.separator");
+        java.io.File dir = new java.io.File(loadpath);
+
+        String[] flist = dir.list(new FileFilter());
+        if(flist == null) {
+            return;
+        }
+        for (int ic=0; ic < flist.length; ++ic) {
+            dlls.add(loadpath+separator+flist[ic]);
+        }  
+
+        ArrayList<Properties> props = new ArrayList<Properties>();
         for (int ic=0; ic < dlls.size(); ++ic) {
             Class target = null;
             File file = new File(dlls.elementAt(ic));
@@ -658,10 +1035,10 @@ public class ModuleManager {
                 java.util.ArrayList al 
                     = new java.util.ArrayList(java.util.Arrays.asList(data));
             
-                al.add(0,"module_file_name");
-                al.add(1,file.getName());
-                al.add(2,"module_file_path");
-                al.add(3,dlls.elementAt(ic));
+                //al.add(0,"module_file_name");
+                //al.add(1,file.getName());
+                //al.add(2,"module_file_path");
+                //al.add(3,dlls.elementAt(ic));
                 props.add(new Properties((String[])al.toArray(new String[]{})));
                 rtcout.println(Logbuf.TRACE, 
                                     "loadabe module:"+dlls.elementAt(ic));
@@ -672,7 +1049,7 @@ public class ModuleManager {
         }  
          
         return props;
-    }
+*/
     
     /**
      * {@.ja モジュールの絶対パス指定許可。}
@@ -795,4 +1172,5 @@ public class ModuleManager {
         }
     }
     private Logbuf rtcout;
+    private ArrayList<Properties> m_modprofs = new ArrayList<Properties>();
 }

@@ -1083,7 +1083,9 @@ public class Manager {
      * "Manager.components.precreate".}
      */
     private void precreateComponent() {
-        rtcout.println(Logbuf.TRACE, "Components pre-creation: " + m_config.getProperty("manager.components.precreate").split(","));
+        rtcout.println(Logbuf.TRACE, 
+           "Components pre-creation: " 
+           + m_config.getProperty("manager.components.precreate").split(","));
         String[] comp 
             = m_config.getProperty("manager.components.precreate").split(",");
         for (int i=0; i < comp.length; ++i) {
@@ -1672,9 +1674,9 @@ public class Manager {
      *         部分が存在する。
      * comp_args:     [id]?[configuration] <br>
      *                id は必須、configurationはオプション<ul>
-     * <li>id:            RTC:[vendor]:[category]:[implementation_id]:[version]
+     * <li>id: RTC:[vendor]:[category]:[implementation_id]:[language]:[version]
      *                RTC は固定かつ必須
-     *                vendor, category, version はオプション
+     *                vendor, category,language,version はオプション
      *                implementation_id は必須
      *                オプションを省略する場合でも ":" は省略不可</li>
      * <li>configuration: [key0]=[value0]&[key1]=[value1]&[key2]=[value2].....
@@ -1683,27 +1685,25 @@ public class Manager {
      * </ul>
      *
      * 例えば、<br>
-     * RTC:jp.go.aist:example:ConfigSample:1.0?conf.default.str_param0=munya
+     * RTC:jp.go.aist:example:ConfigSample::1.0?conf.default.str_param0=munya
      * RTC::example:ConfigSample:?conf.default.int_param0=100}
      *
      *   {@.en Target RT-Component names for the creation.<br>
      *   comp_args:     [id]?[configuration] <br>
      *   for examples,<br> 
-     * RTC:jp.go.aist:example:ConfigSample:1.0?conf.default.str_param0=munya
+     * RTC:jp.go.aist:example:ConfigSample::1.0?conf.default.str_param0=munya
      * RTC::example:ConfigSample:?conf.default.int_param0=100}
      * @return
      *   {@.ja 生成したRTコンポーネントのインスタンス}
      *   {@.en Created RT-Component's instances}
      */
     public RTObject_impl createComponent(final String comp_args) {
-        
         rtcout.println(Logbuf.TRACE, 
                             "Manager.createComponent(" + comp_args + ")");
         
         if( comp_args == null || comp_args.equals("") ) {
             return null;
         }
-        m_listeners.rtclifecycle_.preCreate(comp_args);
 
         //------------------------------------------------------------
         // extract "comp_type" and "comp_prop" from comp_arg
@@ -1712,6 +1712,22 @@ public class Manager {
         if (!procComponentArgs(comp_args, comp_id, comp_prop)) {
             return null;
         }
+
+        rtcout.println(Logbuf.PARANOID, 
+                "comp_prop.getProperty(\"instance_name\"):" 
+                + comp_prop.getProperty("instance_name"));
+        if(!comp_prop.getProperty("instance_name").equals("")){
+            RTObject_impl comp = 
+                    getComponent(comp_prop.getProperty("instance_name"));
+            if(comp!=null){
+                rtcout.println(Logbuf.PARANOID, 
+                    "A RTC with the instance name ("
+                    + comp_prop.getProperty("instance_name")
+                    +") has started already.");
+                return comp;
+            }
+        }
+        m_listeners.rtclifecycle_.preCreate(comp_args);
 
         //------------------------------------------------------------
         // Because the format of port-name had been changed from <port_name> 
@@ -2096,33 +2112,38 @@ public class Manager {
                 "Invalid arguments. Two or more '?' in arg : " + comp_arg);
             return false;
         }
-        if (id_and_conf[0].indexOf(":") == -1) {
-            id_and_conf[0] = "RTC:::".concat(id_and_conf[0]);
-            id_and_conf[0] = id_and_conf[0].concat(":");
-        }
-        String[] id = id_and_conf[0].split(":",-1);
-
-        // id should be devided into 1 or 5 elements
-        // RTC:[vendor]:[category]:impl_id:[version] => 5
-        if (id.length != 5) {
-            rtcout.println(Logbuf.ERROR, 
-                    "Invalid RTC id format.: " + id_and_conf[0]);
-            return false;
-        }
-
+        /*
         final String[] prof = {
           "RTC",
           "vendor",
           "category",
           "implementation_id",
+          "language",
           "version"
         };
+        */
+        String[] prof = (String[])CompParam.prof_list.toArray(new String[0]);
+        int param_num = prof.length;
+
+        if (id_and_conf[0].indexOf(":") == -1) {
+            id_and_conf[0] = prof[0] + ":::" + id_and_conf[0];
+            id_and_conf[0] = id_and_conf[0].concat("::");
+        }
+        String[] id = id_and_conf[0].split(":",-1);
+
+        // id should be devided into 1 or 6 elements
+        // RTC:[vendor]:[category]:impl_id:[language]:[version] => 6
+        if (id.length != param_num) {
+            rtcout.println(Logbuf.ERROR, 
+                    "Invalid RTC id format.: " + id_and_conf[0]);
+            return false;
+        }
 
         if (id[0].trim().equals(prof[0]) == false) {
             rtcout.println(Logbuf.ERROR, "Invalid id type: " + id[0]);
             return false;
         }
-        for (int i = 1; i < 5; ++i) {
+        for (int i = 1; i < param_num; ++i) {
             comp_id.setProperty(prof[i], id[i].trim());
             rtcout.println(Logbuf.TRACE, 
                 "RTC basic propfile " + prof[i] + ":" + id[i].trim());
@@ -3832,9 +3853,69 @@ public class Manager {
             return true;
         }
         m_mgrservant = new ManagerServant();
+        Properties prop = m_config.getNode("manager");
+        String[] names = prop.getProperty("naming_formats").split(",");
+    
+        if(StringUtil.toBool(prop.getProperty("is_master"), 
+                                                    "YES", "NO", true)) {
+            for(int ic=0;ic<names.length;++ic){
+                String mgr_name = formatString(names[ic], prop);
+                m_namingManager.bindObject(mgr_name, m_mgrservant);
+            }
+        }
+        if(StringUtil.toBool(
+                m_config.getProperty("corba.update_master_manager.enable"), 
+                "YES", "NO", true) && 
+           !StringUtil.toBool(
+                m_config.getProperty("manager.is_master"), "YES", "NO", false)
+        ) {
+            TimeValue tm = new TimeValue(10, 0);
+            if(m_config.findNode("corba.update_master_manager.interval")!=null){
+                String interval = m_config.getProperty(
+                                      "corba.update_master_manager.interval");
+                try{
+                    double duration = Double.parseDouble(interval);
+                    tm.convert(duration);
+                }
+                catch(Exception ex){
+                }
+            }
+            if(m_timer != null){
+                m_updateMasterManager 
+                            = new updateMasterManager(m_mgrservant);
+                m_timer.registerListenerObj(m_updateMasterManager,tm);
+            }
+        }
         return true;
     }
-    
+    /**
+     * {@.ja タイマー処理用リスナー}
+     * {@.en Listener for timer processing}
+     */
+    updateMasterManager m_updateMasterManager;
+    /**
+     * {@.ja Manager の更新のためのリスナークラス}
+     * {@.en Listener Class for update of Manager}
+     */
+    class updateMasterManager implements CallbackFunction {
+        private ManagerServant m_mgrser;
+        /**
+         * {@.ja コンストラクタ}
+         * {@.en Constructor}
+         *
+         */
+        public updateMasterManager(ManagerServant mgrser) {
+            m_mgrser = mgrser;
+        }
+        /**
+         * {@.ja コールバックメソッド}
+         * {@.en Callback method}
+         */
+        public void doOperate() {
+            m_mgrser.update_master_manager();
+        }
+    }
+
     /**
      * {@.ja ManagerServantをバインドする。}
      * {@.en Binds ManagerServant.}
@@ -4606,6 +4687,11 @@ public class Manager {
             str = m_prop.getProperty("category");
             if (str != null && !str.equals("") &&
                 !str.equals(prop.getProperty("category"))) { 
+                return false; 
+            }
+            str = m_prop.getProperty("language");
+            if (str!=null &&  !str.equals("") &&
+                !str.equals(prop.getProperty("language"))) {
                 return false; 
             }
             str = m_prop.getProperty("version");
