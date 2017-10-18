@@ -241,6 +241,17 @@
 
 		<delete file="rtcd_java.exe" />
 
+		<delete file="rtcprof.jsmooth" />
+		<copy file="rtcprof.jsmooth.in" tofile="rtcprof.jsmooth"/>
+		<replace file="rtcprof.jsmooth" token="@version@" 
+			value="${version}" />
+		<taskdef name="jsmoothgen"
+		classname="net.charabia.jsmoothgen.ant.JSmoothGen"
+		classpath="${dir.jsmooth}/lib/jsmoothgen-ant.jar"/>
+		<jsmoothgen project="rtcprof.jsmooth"
+			skeletonroot="${dir.jsmooth}/skeletons"/>
+		<copy file="rtcprof_java.exe" todir="${source.examples.scripts}" />
+		<delete file="rtcprof_java.exe" />
 	</target>
 
 	<target name="javaDoc" description="JavaDocを作成します">
