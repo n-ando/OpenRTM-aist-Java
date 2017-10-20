@@ -413,44 +413,43 @@ System.err.println("Manager's IOR information: "+ior);
         Vector<Properties> prof = m_mgr.getLoadedModules();
         cprof.value = new RTM.ModuleProfile[prof.size()];
 
-        for (int i=0, len=prof.size(); i < len; ++i) {
-            String dumpString = new String();
-            dumpString = prof.elementAt(i)._dump(dumpString, 
-                                                    prof.elementAt(i), 1);
-            
+        int ic =0;
+        for (Properties prop: prof) {
+            //String dumpString = prop._dump(dumpString, porp, 1);
             _SDOPackage.NVListHolder nvlist = new _SDOPackage.NVListHolder();
-            NVUtil.copyFromProperties(nvlist, prof.elementAt(i));
-            cprof.value[i] = new RTM.ModuleProfile(nvlist.value);
+            NVUtil.copyFromProperties(nvlist, prop);
+            cprof.value[ic] = new RTM.ModuleProfile(nvlist.value);
+            ++ic;
         }
 
-        if (false) {
+        if(m_isMaster){
             // copy slaves' module profile
             synchronized(m_slaveMutex) {
-
                 rtcout.println(Logbuf.DEBUG,
                                     m_slaves.length+" slave managers exists.");
-                for (int i=0, len= m_slaves.length; i < len; ++i) {
+                ArrayList<RTM.Manager> slaves
+                    = new ArrayList(Arrays.asList(m_slaves));
+                Iterator<RTM.Manager> it = slaves.iterator();
+                while (it.hasNext()) {
+                    RTM.Manager slave = (RTM.Manager)it.next();
                     try {
-                        if (m_slaves[i]!=null) {
-                            RTM.ModuleProfile[] sprof;
-                            sprof = m_slaves[i].get_loaded_modules();
-                            RTM.ModuleProfileListHolder holder
-                                = new RTM.ModuleProfileListHolder(sprof);
-                            CORBA_SeqUtil.push_back_list(cprof, holder);
-                            continue;
-                        }
+                        RTM.ModuleProfile[] sprof;
+                        sprof = slave.get_loaded_modules();
+                        RTM.ModuleProfileListHolder holder
+                            = new RTM.ModuleProfileListHolder(sprof);
+                        CORBA_SeqUtil.push_back_list(cprof, holder);
+                        continue;
                     }
                     catch(Exception ex) {
-                        rtcout.println(Logbuf.INFO,
-                                    "slave ("+i+") has disappeared.");
-                        m_slaves[i] = (RTM.Manager)null;
+                        String crlf = System.getProperty("line.separator");
+                        rtcout.println(Logbuf.ERROR,
+                                    "Unknown exception cought."
+                                    + crlf
+                                    + ex.toString());
+                        it.remove();
                     }
-                    RTM.ManagerListHolder holder 
-                                    = new RTM.ManagerListHolder(m_slaves);
-                    CORBA_SeqUtil.erase(holder, i); 
-                    --i;
-                    m_slaves = holder.value;
-                  }
+                }
+                m_slaves = (RTM.Manager[])slaves.toArray(new RTM.Manager[0]);
             }
         }
         return cprof.value;
@@ -1554,7 +1553,9 @@ System.err.println("Manager's IOR information: "+ior);
             ArrayList slaves_name = new ArrayList();
             java.util.regex.Pattern pattern 
                 = java.util.regex.Pattern.compile(
-               "^manager_[0-9]+$");
+               "^manager(_[0-9]+)?(_%p)?$"
+               //"^manager_[0-9]+$"
+               );
             
             rtcout.println(Logbuf.PARANOID, "mgrstr:"+mgrstr);
             if(mgrstr.equals("manager_%p")){
@@ -1683,7 +1684,9 @@ System.err.println("Manager's IOR information: "+ior);
             return null;
         }
 
+        rtcout.println(Logbuf.PARANOID, "mgrstr: "+mgrstr);
         RTM.Manager mgrobj = findManager(mgrstr);
+        rtcout.println(Logbuf.PARANOID, "mgrobj: "+mgrobj);
         
         CompParam comp_param = new CompParam(arg);
 
