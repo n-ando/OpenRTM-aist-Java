@@ -1818,6 +1818,11 @@ public class Manager {
                 "Factory not found: " 
                 + comp_id.getProperty("implementaion_id"));
 
+            if (!StringUtil.toBool(
+                   prop.getProperty("manager.modules.search_auto"), 
+                   "YES", "NO", true)) {
+                return null;
+            }
             // automatic module loading
             Vector<Properties> mp = m_module.getLoadableModules();
             rtcout.println(Logbuf.INFO, 

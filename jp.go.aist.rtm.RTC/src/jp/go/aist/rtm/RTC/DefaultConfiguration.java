@@ -76,6 +76,7 @@ interface DefaultConfiguration {
         "manager.modules.C++.load_paths",     "./",
         "manager.modules.Python.load_paths",  "./",
         "manager.modules.Java.load_paths",    "./",
+        "manager.modules.search_auto",        "YES",
         "manager.supported_languages",        "C++, Python, Java",
         "manager.modules.C++.suffixes",       "",
         "manager.modules.Python.suffixes",    "py",
