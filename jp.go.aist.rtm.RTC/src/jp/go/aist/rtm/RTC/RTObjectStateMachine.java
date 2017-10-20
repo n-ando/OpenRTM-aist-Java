@@ -78,14 +78,14 @@ public class RTObjectStateMachine {
      */
     private class onActivated implements StateAction {
         public void doAction(StateHolder state) {
-			// call Servant
-			if (m_rtobjPtr != null) {
-				if (m_rtobjPtr.on_activated(m_id) != ReturnCode_t.RTC_OK) {
-					m_sm.goTo(LifeCycleState.ERROR_STATE);
-				}
-				return;
-			}
-			// call Object reference
+            // call Servant
+            if (m_rtobjPtr != null) {
+                if (m_rtobjPtr.on_activated(m_id) != ReturnCode_t.RTC_OK) {
+                    m_sm.goTo(LifeCycleState.ERROR_STATE);
+                }
+                return;
+            }
+            // call Object reference
             if (!m_ca) { 
                 return; 
             }
@@ -153,14 +153,14 @@ public class RTObjectStateMachine {
      */
     private class onStateUpdate implements StateAction {
         public void doAction(StateHolder state) {
-			// call Servant
-			if (m_rtobjPtr != null) {
-				if (m_rtobjPtr.on_state_update(m_id) != ReturnCode_t.RTC_OK) {
-					m_sm.goTo(LifeCycleState.ERROR_STATE);
-				}
-				return;
-			}
-			// call Object reference
+            // call Servant
+            if (m_rtobjPtr != null) {
+                if (m_rtobjPtr.on_state_update(m_id) != ReturnCode_t.RTC_OK) {
+                    m_sm.goTo(LifeCycleState.ERROR_STATE);
+                }
+                return;
+            }
+            // call Object reference
             if (!m_dfc) { 
                 return; 
             }
@@ -227,14 +227,14 @@ public class RTObjectStateMachine {
      */
     private class onReset implements StateAction {
         public void doAction(StateHolder state) {
-			// call Servant
-			if (m_rtobjPtr != null) {
-				if (m_rtobjPtr.on_reset(m_id) != ReturnCode_t.RTC_OK) {
-					m_sm.goTo(LifeCycleState.ERROR_STATE);
-				}
-				return;
-			}
-			// call Object reference
+            // call Servant
+            if (m_rtobjPtr != null) {
+                if (m_rtobjPtr.on_reset(m_id) != ReturnCode_t.RTC_OK) {
+                    m_sm.goTo(LifeCycleState.ERROR_STATE);
+                }
+                return;
+            }
+            // call Object reference
             if (!m_ca) { 
                 return; 
             }
@@ -363,7 +363,7 @@ public class RTObjectStateMachine {
         if (!m_ca) { 
             return; 
         }
-        m_caVar.on_error(m_id);
+        m_caVar.on_aborting(m_id);
     }
     /**
      *
@@ -441,23 +441,24 @@ public class RTObjectStateMachine {
     /**
      *
      */
-    public void onRateChanged(){
+    public ReturnCode_t onRateChanged(){
         // call Servant
         if (m_rtobjPtr != null) {
-            if (m_rtobjPtr.on_rate_changed(m_id) != ReturnCode_t.RTC_OK) {
+            ReturnCode_t ret  = m_rtobjPtr.on_rate_changed(m_id); 
+            if (!ret.equals(ReturnCode_t.RTC_OK)) {
                 m_sm.goTo(LifeCycleState.ERROR_STATE);
             }
-            return;
+            return ret;
         }
         // call Object reference
         if (!m_dfc) { 
-            return; 
+            return ReturnCode_t.RTC_ERROR; 
         }
-        if (m_dfcVar.on_rate_changed(m_id) != ReturnCode_t.RTC_OK) {
+        ReturnCode_t ret = m_dfcVar.on_rate_changed(m_id);
+        if (!ret.equals(ReturnCode_t.RTC_OK)) {
             m_sm.goTo(LifeCycleState.ERROR_STATE);
-            return;
         }
-        return;
+        return ret;
     }
 
     // FsmParticipantAction
@@ -553,13 +554,14 @@ public class RTObjectStateMachine {
         if (m_caVar==null) {
             return; 
         }
-		m_ca = true;
-		Manager manager = Manager.instance();
-		try {
-		    m_rtobjPtr = (RTObject_impl)manager.getPOA().reference_to_servant(comp);
-		} catch (Exception ex) {
+        m_ca = true;
+        Manager manager = Manager.instance();
+        try {
+            m_rtobjPtr = (RTObject_impl)manager.getPOA().reference_to_servant(comp);
+        } catch (Exception ex) {
+            m_rtobjPtr = null; 
 
-		}
+        }
     }
     protected void setDataFlowComponentAction(final LightweightRTObject comp){
         if(comp._is_a(DataFlowComponentActionHelper.id())) {

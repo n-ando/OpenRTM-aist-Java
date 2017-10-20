@@ -22,6 +22,7 @@ import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.util.equalFunctor;
 import OpenRTM.DataFlowComponent;
+import RTC.ExecutionContextListHolder;
 import RTC.ExecutionContextService;
 import RTC.ExecutionContextServiceHelper;
 import RTC.ExecutionContextServicePOA;
@@ -104,7 +105,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.setObjRef()");
         m_worker.setECRef(ref);
         m_profile.setObjRef(ref);
-		m_ref = ref;
+	m_ref = ref;
     }
 
     /**
@@ -598,6 +599,15 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             rtcout.println(Logbuf.ERROR, "Setting execution rate failed. " + rate);
             return ret;
         }
+
+        ret = m_worker.rateChanged();
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR, 
+                           "Invoking on_rate_changed() for each RTC failed.");
+            return ret;
+        }
+
         ret = onSetRate(rate);
         if (ret != ReturnCode_t.RTC_OK)
         {
@@ -1745,7 +1755,31 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *
      */
     public ReturnCode_t setRate(double rate) {
-      return m_profile.setRate(rate);
+        rtcout.println(Logbuf.TRACE, "setRate("+rate+")");
+        ReturnCode_t ret = m_profile.setRate(rate);
+        if(!ret.equals(ReturnCode_t.RTC_OK)){
+            rtcout.println(Logbuf.ERROR, "Setting execution rate failed. "
+                                         +rate);
+            return ret;
+        }
+
+        ret = m_worker.rateChanged();
+        if(!ret.equals(ReturnCode_t.RTC_OK)){
+            rtcout.println(Logbuf.ERROR, 
+                          "Invoking on_rate_changed() for each RTC failed.");
+            return ret;
+        }
+
+        ret = onSetRate(rate);
+        if(!ret.equals(ReturnCode_t.RTC_OK)){
+            rtcout.println(Logbuf.ERROR, 
+                           "onSetRate("+rate+" failed.");
+            return ret;
+        }
+
+
+        rtcout.println(Logbuf.INFO,"setRate("+rate+") done");
+        return ret;
     }
     /**
      * {@.ja ExecutionContext の実行周期(Hz)を取得する}
