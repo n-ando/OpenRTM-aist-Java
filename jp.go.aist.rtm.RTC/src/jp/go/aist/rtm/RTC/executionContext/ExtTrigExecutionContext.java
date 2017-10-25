@@ -515,6 +515,15 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             rtcout.println(Logbuf.ERROR, "Setting execution rate failed. " + rate);
             return ret;
         }
+
+        ret = m_worker.rateChanged();
+        if (ret != ReturnCode_t.RTC_OK)
+        {
+            rtcout.println(Logbuf.ERROR, 
+                           "Invoking on_rate_changed() for each RTC failed.");
+            return ret;
+        }
+
         ret = onSetRate(rate);
         if (ret != ReturnCode_t.RTC_OK)
         {

@@ -10,6 +10,7 @@ import jp.go.aist.rtm.RTC.util.Properties;
 import jp.go.aist.rtm.RTC.util.TimeValue;
 import jp.go.aist.rtm.RTC.log.Logbuf;
 
+import RTC.ExecutionContextListHolder;
 import RTC.ExecutionContextService;
 import RTC.LifeCycleState;
 import RTC.LightweightRTObject;
@@ -164,6 +165,32 @@ public class ExecutionContextWorker {
     }
 
     /**
+     * {@.ja ExecutionContext の周期が変化した}
+     * {@.en Changing execution rate of the ExecutionContext}
+     * <p>
+     * @return 
+     *   {@.ja ReturnCode_t 型のリターンコード}
+     *   {@.en The return code of ReturnCode_t type}
+     *
+     *
+     * RTC::ReturnCode_t rateChanged(void);
+     */
+    public ReturnCode_t rateChanged(){
+        rtcout.println(Logbuf.TRACE, "rateChanged()");
+        ReturnCode_t ret = ReturnCode_t.RTC_OK;
+        synchronized (m_mutex){
+            for (RTObjectStateMachine comp: m_comps) {
+                ReturnCode_t tmp = comp.onRateChanged();
+                if(!tmp.equals(ReturnCode_t.RTC_OK)){
+                    ret = tmp;
+                }
+            }
+        }
+        return ret;
+
+    }
+
+    /**
      * {@.ja RTコンポーネントをアクティブ化する}
      * {@.en Activate an RT-component}
      * <p>
@@ -210,8 +237,8 @@ public class ExecutionContextWorker {
                     "Component is in INACTIVE state. Going to ACTIVE state.");
             rtobjhldr.rtobjsm.goTo(LifeCycleState.ACTIVE_STATE);
             rtcout.println(Logbuf.DEBUG,"activateComponent() done.");
-            return ReturnCode_t.RTC_OK;
         }
+        return ReturnCode_t.RTC_OK;
     }
     public ReturnCode_t waitActivateComplete(RTObjectStateMachine rtobj,
                                            TimeValue timeout,
