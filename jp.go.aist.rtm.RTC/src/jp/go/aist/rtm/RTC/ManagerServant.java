@@ -1531,6 +1531,9 @@ System.err.println("Manager's IOR information: "+ior);
             cmd.add("manager.supported_languages:"+ comp_param.language());
             cmd.add("-o");
             cmd.add("manager.shutdown_auto:YES");
+            cmd.add("-o");
+            String log_level = config.getProperty("logger.log_level");
+            cmd.add("logger.log_level:"+log_level);
 
             rtcout.println(Logbuf.DEBUG, "Invoking command: "+ cmd + ".");
             try{
@@ -1635,8 +1638,11 @@ System.err.println("Manager's IOR information: "+ior);
             return rtobj;
         }
         catch (org.omg.CORBA.SystemException e) {
+            String crlf = System.getProperty("line.separator");
             rtcout.println(Logbuf.DEBUG, 
-                        "Exception was caught while creating component.");
+                        "Exception was caught while creating component."
+                        +crlf
+                        +e.toString());
             return null;
         }
     }
@@ -1720,6 +1726,9 @@ System.err.println("Manager's IOR information: "+ior);
             cmd.add(mgrvstr[1]);
             cmd.add("-o");
             cmd.add("manager.modules.load_path:"+load_path);
+            cmd.add("-o");
+            String log_level = config.getProperty("logger.log_level");
+            cmd.add("logger.log_level:"+log_level);
 
             rtcout.println(Logbuf.DEBUG, "Invoking command: "+ cmd + ".");
 
