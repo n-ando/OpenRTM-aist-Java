@@ -497,7 +497,7 @@ class ManagerConfig {
      * {@.ja 使用されるコンフィグレーションファイルのパス}
      * {@.en Manager's configuration file path}
      */
-    protected String m_configFile;
+    protected String m_configFile = new String();
     /**
      * {@.ja Manager マスタフラグ}
      * {@.en Manager master flag}
