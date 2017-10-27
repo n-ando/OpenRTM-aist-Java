@@ -733,7 +733,13 @@ public class CorbaNaming {
         
         for( int intIdx=0;intIdx<len;intIdx++ ) {
             if( intIdx==(len-1) ) {
-                cxt.rebind(subName(name, intIdx, intIdx), obj);
+                if(obj instanceof org.omg.CosNaming.NamingContext){
+                    cxt.rebind_context(subName(name, intIdx, intIdx), 
+                                       NamingContextExtHelper.narrow(obj));
+                }
+                else{
+                    cxt.rebind(subName(name, intIdx, intIdx), obj);
+                }
                 return;
             }
             // If the context is not a NamingContext, CannotProceed is thrown
