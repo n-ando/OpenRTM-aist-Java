@@ -54,6 +54,8 @@ public class ManagerServant extends ManagerPOA {
     public ManagerServant() {
         rtcout = new Logbuf("ManagerServant");
         m_mgr = jp.go.aist.rtm.RTC.Manager.instance();
+        m_objref = null; 
+        m_isMaster = false;
 
         Properties config = m_mgr.getConfig();    
     
