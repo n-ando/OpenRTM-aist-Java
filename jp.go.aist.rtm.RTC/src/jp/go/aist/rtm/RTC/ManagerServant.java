@@ -1817,29 +1817,31 @@ System.err.println("Manager's IOR information: "+ior);
                         = (RTM.Manager[])masters.toArray(new RTM.Manager[0]);
                 }
             }
-            if (m_masters.length == 0){
-                try{
-                    Properties config = m_mgr.getConfig();
-                    RTM.Manager owner = findManager(
+            synchronized(m_masterMutex) {
+                if (m_masters.length == 0){
+                    try{
+                        Properties config = m_mgr.getConfig();
+                        RTM.Manager owner = findManager(
                             config.getProperty("corba.master_manager"));
-                    if(owner == null){
-                        rtcout.println(Logbuf.INFO,
+                        if(owner == null){
+                            rtcout.println(Logbuf.INFO,
                                         "Master manager not found");
+                            return;
+                        }
+                        add_master_manager(owner);
+                        owner.add_slave_manager(m_objref);
+              
                         return;
                     }
-                    add_master_manager(owner);
-                    owner.add_slave_manager(m_objref);
-              
-                    return;
-                }
-                catch(Exception ex){
-                    String crlf = System.getProperty("line.separator");
-                    rtcout.println(Logbuf.ERROR, 
+                    catch(Exception ex){
+                        String crlf = System.getProperty("line.separator");
+                        rtcout.println(Logbuf.ERROR, 
                                     "Unknown exception cought."
                                     + crlf
                                     + ex.toString());
-                }
-            }
+                    }
+                }  
+            }  
         }
     }
 

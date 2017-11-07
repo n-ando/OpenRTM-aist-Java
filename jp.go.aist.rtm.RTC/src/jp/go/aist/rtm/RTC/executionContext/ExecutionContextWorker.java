@@ -469,8 +469,10 @@ public class ExecutionContextWorker {
             return ReturnCode_t.RTC_ERROR;
         }
         rtcout.println(Logbuf.DEBUG, "addComponent() succeeded.");
-        if (m_running==false) {
-            updateComponentList();
+        synchronized (m_mutex){
+            if (m_running==false) {
+                updateComponentList();
+            }
         }
         return ReturnCode_t.RTC_OK;
     }
@@ -560,8 +562,10 @@ public class ExecutionContextWorker {
                 //return ReturnCode_t.RTC_OK;
             }
         }
-        if (m_running==false) {
-            updateComponentList();
+        synchronized (m_mutex){
+            if (m_running==false) {
+                updateComponentList();
+            }
         }
         return ReturnCode_t.RTC_OK;
     }
