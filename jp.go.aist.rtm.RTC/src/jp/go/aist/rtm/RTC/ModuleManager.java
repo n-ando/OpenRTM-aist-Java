@@ -259,8 +259,6 @@ public class ModuleManager {
                                     "Not implemented." + moduleName);
         }
         rtcout.println(Logbuf.PARANOID, "module_path:"+ module_path);
-        rtcout.println(Logbuf.PARANOID, "module_path.length():"
-                                        + module_path.length());
         if(module_path==null || module_path.length()==0) {
             throw new IllegalArgumentException("Invalid file name.");
         }
