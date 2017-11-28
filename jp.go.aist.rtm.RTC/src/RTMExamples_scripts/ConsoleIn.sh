@@ -6,7 +6,7 @@ if test "x$RTM_JAVA_ROOT" = "x" ; then
     echo "Abort."
     exit 1
 fi
-
+cd `dirname $0`
 . ./search_classpath.func
 export CLASSPATH=`get_classpath`
 java RTMExamples.SimpleIO.ConsoleInComp -f RTMExamples/SimpleIO/rtc.conf ${1+"$@"}
