@@ -189,6 +189,8 @@ public class ModuleManager {
         Class target = null;
 
         File file = new File(moduleName);
+        rtcout.println(Logbuf.PARANOID, "Is moduleName AbsolutePath ? " 
+                                        + file.exists());
         if(file.exists()){ // When moduleName is AbsolutePath.
             if(!m_absoluteAllowed) {
                 throw new IllegalArgumentException(
@@ -251,10 +253,12 @@ public class ModuleManager {
                 }
             }
         }
+        rtcout.println(Logbuf.PARANOID, "target:"+ target);
         if( target==null ) {
             throw new ClassNotFoundException(
                                     "Not implemented." + moduleName);
         }
+        rtcout.println(Logbuf.PARANOID, "module_path:"+ module_path);
         if(module_path==null || module_path.length()==0) {
             throw new IllegalArgumentException("Invalid file name.");
         }
@@ -720,6 +724,9 @@ public class ModuleManager {
                 glob += suffix.trim();
                 rtcout.println(Logbuf.PARANOID,"glob: "+glob);
                 String[] files = dir.list(new FilePathFilter(glob));
+                if(files == null) {
+                    continue;
+                }
                 rtcout.println(Logbuf.PARANOID,"files.length:"+files.length);
                 ArrayList<String> tmp 
                     = new ArrayList<String>(Arrays.asList(files));
