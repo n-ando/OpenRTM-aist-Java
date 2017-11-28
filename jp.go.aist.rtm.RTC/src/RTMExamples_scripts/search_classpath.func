@@ -1,9 +1,9 @@
 get_classpath()
 {
   FILE1=`ls ${RTM_JAVA_ROOT}/jar/OpenRTM*`
-  FILE2=`ls ${RTM_JAVA_ROOT}/lib/commons-cli*`
-  FILE3=`ls ${RTM_JAVA_ROOT}/lib/jna-?.?.?.jar`
-  FILE4=`ls ${RTM_JAVA_ROOT}/lib/jna-platform-*.jar`
+  FILE2=`ls ${RTM_JAVA_ROOT}/jar/commons-cli*`
+  FILE3=`ls ${RTM_JAVA_ROOT}/jar/jna-?.?.?.jar`
+  FILE4=`ls ${RTM_JAVA_ROOT}/jar/jna-platform-*.jar`
   CLASSPATH=.:$FILE1:$FILE2:$FILE3:$FILE4:${RTM_JAVA_ROOT}/bin
   echo ${CLASSPATH}
 }
