@@ -66,6 +66,9 @@ Example components of OpenRTM-aist.
 # install section
 %install
 rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/usr/bin
+cp %{_topdir}/../../examples/rtcd_java $RPM_BUILD_ROOT/usr/bin 
+cp %{_topdir}/../../examples/rtcprof_java $RPM_BUILD_ROOT/usr/bin 
 mkdir -p $RPM_BUILD_ROOT%{rtm_libdir}
 cp -r %{_topdir}/../../jar $RPM_BUILD_ROOT%{rtm_libdir}
 mkdir -p $RPM_BUILD_ROOT%{rtm_datadir}/doc/java
@@ -77,6 +80,9 @@ cp -r %{_topdir}/../../examples/RTMExamples %{install_dir_example}
 cp %{_topdir}/../../examples/*.sh %{install_dir_example}
 cp %{_topdir}/../../examples/*.conf %{install_dir_example}
 cp %{_topdir}/../../examples/*.func %{install_dir_example}
+rm -f %{install_dir_example}/rtcd_java
+rm -f %{install_dir_example}/rtcd_java.sh
+rm -f %{install_dir_example}/rtcprof_java*
   
 #------------------------------------------------------------
 # clean section
@@ -88,6 +94,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root)
 %attr(755,root,root) %{rtm_libdir}/jar/*
+%attr(755,root,root) /usr/bin/*
 
 #------------------------------------------------------------
 # doc package file list
