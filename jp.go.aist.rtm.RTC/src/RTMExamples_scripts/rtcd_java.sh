@@ -1,14 +1,41 @@
 #!/bin/sh
+#
+# The script to start the RTC.
 
-if test "x$RTM_JAVA_ROOT" = "x" ; then
+#######################################
+# Gets CLASSPATH for OpenRTM
+# Arguments:
+#   None
+# Returns:
+#   CLASSPATH
+#######################################
+get_classpath()
+{
+  local file1
+  file1=$(ls ${RTM_JAVA_ROOT}/jar/OpenRTM*)
+  local file2
+  file2=$(ls ${RTM_JAVA_ROOT}/jar/commons-cli*)
+  local file3
+  file3=$(ls ${RTM_JAVA_ROOT}/jar/jna-?.?.?.jar)
+  local file4
+  file4=$(ls ${RTM_JAVA_ROOT}/jar/jna-platform-*.jar)
+  local file5
+  file5=$(ls ${RTM_JAVA_ROOT}/jar/rtcd.jar)
+  local class_path
+  class_path=.:${file1}:${file2}:${file3}:${file4}:${file5}:${RTM_JAVA_ROOT}/bin
+  echo ${class_path}
+}
+
+
+if test "x${RTM_JAVA_ROOT}" = "x" ; then
     echo "Environment variable RTM_JAVA_ROOT is not set."
     echo "Please specify the OpenRTM-aist installation directory."
     echo "Abort."
     exit 1
 fi
 
-. ./search_classpath.func
-export CLASSPATH=`get_classpath`
-java -jar $RTM_JAVA_ROOT/jar/rtcd.jar ${1+"$@"}
+export CLASSPATH=$(get_classpath)
+
+java rtcd.rtcd -f ./rtcd_java.conf ${1+"$@"}
 
 

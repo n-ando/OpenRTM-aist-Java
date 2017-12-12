@@ -2,7 +2,9 @@ package rtcprof;
 
 import java.util.Vector;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URLClassLoader;
 import java.net.URL;
@@ -17,7 +19,6 @@ public class rtcprof {
     private static Class getClassFromName(String name){
         String separator =  System.getProperty("file.separator");
         Class target = null;
-
         try {
             target = Class.forName(name);
         } catch (java.lang.NoClassDefFoundError e) {
@@ -43,17 +44,20 @@ public class rtcprof {
                                            String name){
         String separator =  System.getProperty("file.separator");
         Class target = null;
-
         try {
             target = url.loadClass(name);
         } catch (java.lang.NoClassDefFoundError e) {
             String messagetString = e.getMessage();
             String key = "wrong name: ";
             int index = messagetString.indexOf(key);
-            String packageName 
-                = messagetString.substring(index+key.length(),
+            String packageName = new String();
+            if(index < 0){
+                packageName = messagetString;
+            }
+            else{
+                packageName = messagetString.substring(index+key.length(),
                                                messagetString.length()-1);
-
+            }
             URL[] urls = url.getURLs();
             java.util.ArrayList al 
                     = new java.util.ArrayList(java.util.Arrays.asList(urls));
@@ -112,6 +116,19 @@ public class rtcprof {
         return url;
     }
     /**
+     *
+     */
+    private static void addClassPath(ClassLoader classLoader, String path) throws ReflectiveOperationException, MalformedURLException {
+        if (classLoader instanceof URLClassLoader) {
+            // URLClassLoaderであることが前提
+            Method method =
+                URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+            // ロードするURLを追加する
+            method.invoke(classLoader, new File(path).toURI().toURL());
+        }
+    }
+    /**
      * フルパスで指定されたコンポーネント（jarファイルとclassファイル）の
      * スペックを読み込み表示する。
      *
@@ -120,16 +137,26 @@ public class rtcprof {
      *
      */
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.err.println("usage: ");
-            if (args.length != 0) {
-                System.err.println(args[0]+" .class or .jar");
-            }
+        if (args.length == 0) {
+            System.err.print("usage: ");
+            System.err.println("rtcprof_java"+" <RTC>.class");
+            System.err.print("   or: ");
+            System.err.println("rtcprof_java"+" <RTCs>.jar classname");
+            System.err.println("");
+            System.err.println("Example:");
+            System.err.println("  rtcprof_java"+" ConsoleIn.class");
+            System.err.println("  rtcprof_java"+" bin.jar RTMExamples.SimpleIO.ConsoleIn");
             System.err.println("");
             System.exit(-1);
         }
         String separator =  System.getProperty("file.separator");
         Class target = null;
+        try{
+            args[0] = new File(args[0]).getCanonicalPath();
+        }
+        catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
         File file = new File(args[0]);
         if(file.isAbsolute()) {
             URLClassLoader url = createURLClassLoader(file.getParent());
@@ -141,7 +168,14 @@ public class rtcprof {
                         int point = name.lastIndexOf(extensions[ic]);
                         name = name.substring(0, point);
                         if(extensions[ic].equals(".jar")){
-                            name =  name+"."+name;
+                            try{
+                                addClassPath(url, args[0]);
+                                if(args.length == 2){
+                                    name = args[1];
+                                }
+                            }
+                            catch (Exception ex) {
+                            }
                         }
                         break;
                     }
