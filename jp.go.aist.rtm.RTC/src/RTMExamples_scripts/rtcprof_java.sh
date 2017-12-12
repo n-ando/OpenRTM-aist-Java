@@ -1,23 +1,36 @@
 #!/bin/sh
+#
+# The shell script to get the profile of RTC.
 
-if test "x$RTM_JAVA_ROOT" = "x" ; then
+#######################################
+# Gets CLASSPATH for OpenRTM
+# Arguments:
+#   None
+# Returns:
+#   CLASSPATH
+#######################################
+get_classpath()
+{
+  local file1
+  file1=$(ls ${RTM_JAVA_ROOT}/jar/OpenRTM*)
+  local file2
+  file2=$(ls ${RTM_JAVA_ROOT}/jar/commons-cli*)
+  local file3
+  file3=$(ls ${RTM_JAVA_ROOT}/jar/jna-?.?.?.jar)
+  local file4
+  file4=$(ls ${RTM_JAVA_ROOT}/jar/jna-platform-*.jar)
+  local class_path
+  class_path=.:${file1}:${file2}:${file3}:${file4}:${RTM_JAVA_ROOT}/bin:$(dirname $0)/bin
+  echo ${class_path}
+}
+
+if test "x${RTM_JAVA_ROOT}" = "x" ; then
     echo "Environment variable RTM_JAVA_ROOT is not set."
     echo "Please specify the OpenRTM-aist installation directory."
     echo "Abort."
     exit 1
 fi
 
-class_path=$1 
-case $1 in 
-	*\.jar )
-		class_path=$1 
-		;;
-	* )
-		class_path=$(dirname $1)
-		;;
-esac
-
-. ./search_classpath.func
-export CLASSPATH=`get_classpath`:$class_path
-java -cp $CLASSPATH:$RTM_JAVA_ROOT/jar/rtcprof.jar rtcprof.rtcprof ${1+"$@"}
+export CLASSPATH=$(get_classpath)
+java -cp ${CLASSPATH}:${RTM_JAVA_ROOT}/jar/rtcprof.jar rtcprof.rtcprof ${1+"$@"}
 
