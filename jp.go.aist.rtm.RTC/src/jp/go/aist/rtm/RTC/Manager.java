@@ -3949,6 +3949,7 @@ public class Manager {
      *
      */
     protected boolean initManagerServant() {
+        rtcout.println(Logbuf.TRACE, "initManagerServant()");
         if (!StringUtil.toBool(m_config.getProperty("manager.corba_servant"), 
                                                     "YES", "NO", true)) {
             return true;
@@ -4837,7 +4838,7 @@ public class Manager {
      * {@.en Setting endpoint info from corba.endpoints}
      */
     protected void setEndpointProperty(Object objref) {
-        rtcout.println(Logbuf.TRACE,"sedEndpointProperty()");
+        rtcout.println(Logbuf.TRACE,"setEndpointProperty()");
         if(objref==null){
             rtcout.println(Logbuf.WARN,"Object reference is nil.");
             return;

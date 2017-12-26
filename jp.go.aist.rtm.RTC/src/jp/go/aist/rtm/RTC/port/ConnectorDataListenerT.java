@@ -97,23 +97,26 @@ public abstract class ConnectorDataListenerT<DataType> implements Observer{
      *   {@.en Object}
      */
     public void update(Observable o, Object obj) {
-        //ConnectorDataListenerArgument arg
-        //       = (ConnectorDataListenerArgument)obj;
+        rtcout.println(Logbuf.PARANOID, "update");
         ConnectorDataListenerArgumentDataRef<DataType> arg 
             = (ConnectorDataListenerArgumentDataRef<DataType>)obj;
         String type = arg.m_info.properties.getProperty("interface_type");
 
         String data_type = arg.m_info.properties.getProperty("data_type");
+        rtcout.println(Logbuf.PARANOID, "interface_type:"+type);
+        rtcout.println(Logbuf.PARANOID, "data_type:"+data_type);
+        rtcout.println(Logbuf.PARANOID, "m_id:"+m_id);
+        if(data_type.isEmpty()) {
+             data_type = m_id;
+        } 
         if(!m_id.equals(data_type)) {
             return;
         }
-        //rtcout.println(Logbuf.TRACE, "interface_type:"+type);
         if(type.equals("direct")) {
             m_datatype = (DataType)arg.m_data;
         }
         else { 
             try {
-                //m_streamable._read(arg.m_data.create_input_stream());
                 OutputStream out_data = (OutputStream)arg.m_data;
                 m_streamable._read(out_data.create_input_stream());
                 m_datatype = (DataType)m_field.get(m_streamable);
