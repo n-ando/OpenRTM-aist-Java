@@ -195,7 +195,7 @@ public class ThroughputImpl extends DataFlowComponentBase {
         inLongIn.addConnectorListener(
             ConnectorListenerType.ON_CONNECT, new Listener(this));
         addOutPort("out", outLongOut);
-        varSize = Long.SIZE;
+        varSize = Integer.SIZE;
       } else if(type.equals("float")){
         addInPort("in", inFloatIn);
         inFloatIn.addConnectorDataListener(
@@ -220,12 +220,12 @@ public class ThroughputImpl extends DataFlowComponentBase {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    System.out.println("varsize: "+varSize);
+    //System.out.println("varsize: "+varSize);
 
-    record.ensureCapacity(maxSample.getValue());
     for(int ic=0;ic<maxSample.getValue();++ic){
-      record.add(new TimeValue());
+      record.add(new RTC.Time(0,0));
     }
+      
 
     return super.onInitialize();
   }
@@ -448,19 +448,28 @@ public class ThroughputImpl extends DataFlowComponentBase {
   public void receiveData(final RTC.Time rtcTime, final long seqLength) {
 
     // data arrived -> getting time
-    TimeValue receivedTime 
-        = ClockManager.getInstance().getClock("system").getTime();
+    //TimeValue receivedTime 
+    //    = ClockManager.getInstance().getClock("system").getTime();
+
+    long nanotime = System.nanoTime();
+    RTC.Time receivedTime = new RTC.Time((int)(nanotime/1000000000),
+                                            (int)(nanotime%1000000000));
+    //TimeValue receivedTime 
+    //  = new TimeValue((nanotime/1000000000),(nanotime%1000000000));
+
     if (seqSize == 0) { 
       seqSize = seqLength; 
     }
 
     // calculate latency statistics
+    /*
     System.out.println(
         "Time: " + rtcTime.sec + "[s]\t" + rtcTime.nsec + "[ns]");
     System.out.print("length(): " +  seqLength);
     System.out.print("\tseqSize: " +  seqSize);
     System.out.print("\trecordNum: " + recordNum);
     System.out.println("\trecordPtr: " + recordPtr);
+    */
 
     if (seqLength != seqSize && recordNum != 0) {
       double maxLatency = 0.0, minLatency = 10000.0, meanLatency = 0.0;
@@ -472,16 +481,17 @@ public class ThroughputImpl extends DataFlowComponentBase {
       } else {
          recordLen = recordPtr;
       }
-
+      /*
       System.out.print("%%%%% record_num: " + recordNum);
       System.out.print(" record_ptr: " + recordPtr);
       System.out.print(" record_len: " + recordLen);
       System.out.println(" maxsample: " + maxSample.getValue());
-
+      */
       for (int ic = 0; ic < recordLen; ++ic) {
-        double tmp = record.get(ic).toDouble();
+        double tmp = (double)record.get(ic).sec 
+                        + (double)record.get(ic).nsec/(1000000000.0);
         sum = sum + tmp;
-        sqSum = (sqSum + tmp) * tmp;
+        sqSum = sqSum + (tmp * tmp);
         if (tmp > maxLatency) { 
           maxLatency = tmp; 
         } else if (tmp < minLatency) { 
@@ -493,9 +503,11 @@ public class ThroughputImpl extends DataFlowComponentBase {
       stdDev = Math.sqrt(variance);
       // Time tm (long, long) = 4byte + 4byte [Mbps]
       throughput 
-          = ((((seqSize * varSize) + 8) * 8) / meanLatency) / (1024 * 1024);
+          = (((seqSize * varSize) + (Integer.SIZE + Integer.SIZE)) 
+              / meanLatency) 
+              / (1024 * 1024);
 
-      // size[byte], min[s], max[s], mean[s], stddev[s], throughpiut[Mbps]
+      // size[byte], min[s], max[s], mean[s], stddev[s], throughput[Mbps]
       String str = new String();
       str = seqSize + "\t";
       str = str + minLatency + "\t" + maxLatency + "\t";
@@ -507,12 +519,13 @@ public class ThroughputImpl extends DataFlowComponentBase {
       } catch(Exception ex){
         System.out.println(ex.toString());
       }
-
+      /*
       System.out.println("==============================");
       System.out.print(seqSize + "\t");
       System.out.print(minLatency + "\t" + maxLatency + "\t");
       System.out.print(meanLatency + "\t" + stdDev + "\t");
       System.out.println(throughput);
+      */
       // reset size/index variables
       recordNum = 0;
       recordPtr = 0;
@@ -526,8 +539,17 @@ public class ThroughputImpl extends DataFlowComponentBase {
       }
     }
     // measuring latency
-    TimeValue sendTime = new TimeValue(rtcTime.sec, rtcTime.nsec/1000);
-    receivedTime = receivedTime.minus(sendTime);
+    int sec;
+    int nsec;
+    if(receivedTime.nsec>=rtcTime.nsec){
+      sec = receivedTime.sec - rtcTime.sec;
+      nsec = receivedTime.nsec - rtcTime.nsec;
+    } else {
+      sec = receivedTime.sec - rtcTime.sec - 1;
+      nsec = (receivedTime.nsec+1000000000) - rtcTime.nsec;
+    }
+    receivedTime = new RTC.Time(sec,nsec);
+
     record.set(recordPtr,receivedTime);
     seqSize = seqLength;
     recordPtr = recordPtr + 1; 
@@ -567,16 +589,17 @@ public class ThroughputImpl extends DataFlowComponentBase {
       outputStream.newLine();
       String str = new String();
       str = info.properties._dump(str,info.properties,0);
-      outputStream.write(str);
+      String crlf = System.getProperty("line.separator");
+      str = str.replace(crlf, crlf+"#");
+      outputStream.write("#"+str+crlf);
       // print header
       outputStream.write( 
-          "size[byte]\tmin[s]\tmax[s]\tmean[s]\tstddev[s]\tthroughpiut[Mbps]");
+          "size[byte]\tmin[s]\tmax[s]\tmean[s]\tstddev[s]\tthroughput[Mbps]");
       outputStream.newLine();
       outputStream.flush();
 
-      record.ensureCapacity(maxSample.getValue());
       for(int ic=0;ic<maxSample.getValue();++ic){
-        record.add(new TimeValue());
+        record.add(new RTC.Time(0,0));
       }
     } catch(Exception ex) {
       System.out.println(ex.toString());
@@ -665,7 +688,7 @@ public class ThroughputImpl extends DataFlowComponentBase {
   
   private int dataSize;
   private BufferedWriter outputStream;
-  private ArrayList<TimeValue> record = new ArrayList<TimeValue>();
+  private ArrayList<RTC.Time> record = new ArrayList<RTC.Time>();
   private long sendCount;
   private int logMulCnt;
   private long varSize;
