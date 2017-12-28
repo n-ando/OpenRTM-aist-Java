@@ -652,8 +652,8 @@ public class ThroughputImpl extends DataFlowComponentBase {
       String str = new String();
       str = info.properties._dump(str,info.properties,0);
       String crlf = System.getProperty("line.separator");
-      str = str.replace(crlf, crlf+"#");
-      outputStream.write("#"+str+crlf);
+      str = str.replace(crlf, crlf+"# ");
+      outputStream.write("# "+str+crlf);
       // print header
       outputStream.write( 
           "size[byte]\tmin[s]\tmax[s]\tmean[s]\tstddev[s]\tthroughput[Mbps]");
