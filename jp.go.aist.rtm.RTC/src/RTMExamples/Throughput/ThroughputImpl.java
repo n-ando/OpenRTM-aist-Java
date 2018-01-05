@@ -393,7 +393,7 @@ public class ThroughputImpl extends DataFlowComponentBase {
 */
 
     try{
-      Thread.sleep((long)(sleepTime.getValue()*1000));
+      Thread.sleep((long)(sleepTime.getValue()*1000.0));
     }catch(InterruptedException ex){
     }
 
@@ -556,7 +556,8 @@ public class ThroughputImpl extends DataFlowComponentBase {
         sqSum = sqSum + (tmp * tmp);
         if (tmp > maxLatency) { 
           maxLatency = tmp; 
-        } else if (tmp < minLatency) { 
+        } 
+        if (tmp < minLatency) { 
           minLatency = tmp; 
         }
       }
@@ -675,9 +676,6 @@ public class ThroughputImpl extends DataFlowComponentBase {
 
   // DataOutPort declaration
   // <rtc-template block="outport_declare">
-  //protected TimedLong m_out_val;
-  //protected DataRef<TimedLong> m_out;
-  //protected OutPort<TimedLong> m_outOut;
 
   protected TimedOctetSeq inOctet = new TimedOctetSeq();
   protected DataRef<TimedOctetSeq> inOctetRef;
@@ -797,14 +795,16 @@ public class ThroughputImpl extends DataFlowComponentBase {
     @Override
     public ReturnCode operator(ConnectorBase.ConnectorInfo arg){
       System.out.println("------------------------------");
-      System.out.println("       Connected !!");
-      System.out.println("------------------------------");
+      //System.out.println("       Connected !!");
+      //System.out.println("------------------------------");
       System.out.println("Profile::name:   "+arg.name);
       System.out.println("Profile::id:     "+arg.id);
       System.out.println("Profile::properties: ");
       String str = new String();
+      /*
       System.out.println(
           "Profile::data_type:"+arg.properties.getProperty("data_type"));
+      */
       str = arg.properties._dump(str,arg.properties,0);
       System.out.println(str);
       System.out.println("------------------------------");
