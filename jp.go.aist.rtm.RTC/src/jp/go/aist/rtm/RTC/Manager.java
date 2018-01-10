@@ -879,8 +879,8 @@ public class Manager {
         }
 
         precreateComponent();
-        initPreActivation();
         initPreConnection();
+        initPreActivation();
 /*
         { // pre-connection
             String preconnect 
