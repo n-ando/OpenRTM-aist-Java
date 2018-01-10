@@ -9,4 +9,4 @@ fi
 cd `dirname $0`
 . ./search_classpath.func
 export CLASSPATH=`get_classpath`
-java RTMExamples.Throughput.ThroughputComp -f ../RTMExamples/Throughput/rtc.conf ${1+"$@"}
+java RTMExamples.Throughput.ThroughputComp -f RTMExamples/Throughput/rtc.conf ${1+"$@"}
