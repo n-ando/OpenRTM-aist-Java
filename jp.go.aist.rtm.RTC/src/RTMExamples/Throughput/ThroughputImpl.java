@@ -343,7 +343,8 @@ public class ThroughputImpl extends DataFlowComponentBase {
 
 
     if (getInPortConnectorSize() == 0) {
-      super.exit();
+      Thread async = new Thread(new func_exit(this));
+      async.start();
     }
     return super.onDeactivated(ec_id);
   }
@@ -380,7 +381,7 @@ public class ThroughputImpl extends DataFlowComponentBase {
       dataSize = dataSize + increment.getValue();
     } else {
       if((long)sendCount > maxSend.getValue()) {
-        exit();
+        deactivate(ec_id);
         return ReturnCode_t.RTC_OK;
       }
     }
@@ -593,12 +594,9 @@ public class ThroughputImpl extends DataFlowComponentBase {
       recordNum = 0;
       recordPtr = 0;
       if (seqLength < seqSize) {
-        super.exit();
-/*
-        coil::Async* async;
-        async = coil::AsyncInvoker(this, std::mem_fun(&Throughput::exit));
-        async->invoke();
-*/
+        Thread async = new Thread(new func_exit(this));
+        async.start();
+        return;
       }
     }
     // measuring latency
@@ -756,6 +754,18 @@ public class ThroughputImpl extends DataFlowComponentBase {
   private long seqSize = 0;
   private int recordNum = 0;
   private int recordPtr = 0;
+
+  class func_exit implements Runnable{
+    public func_exit(ThroughputImpl comp){
+      this.obj = comp;
+    }
+    
+    @Override
+    public void run() {
+        obj.exit();
+    }
+    ThroughputImpl obj;  
+  }
 
   class DataListener<DataType> extends ConnectorDataListenerT<DataType>{
     public DataListener(ThroughputImpl comp, Class cl){
