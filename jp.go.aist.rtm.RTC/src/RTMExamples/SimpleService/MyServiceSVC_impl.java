@@ -23,7 +23,14 @@ public class MyServiceSVC_impl extends MyServicePOA{
         if( m_echoList.value==null ) m_echoList.value = new String[0];
         this.push_back(m_echoList, msg);
         System.out.println( "MyService::echo() was called." );
-        System.out.println( "Message: " + msg );
+        for(int ic=0;ic<10;++ic){
+            System.out.println( "Message: " + msg );
+            try{
+                Thread.sleep(1000L);
+            }catch(InterruptedException ex){
+            }
+        }
+        System.out.println( "MyService::echo() was finished." );
         return msg;
     }
 

@@ -8,6 +8,7 @@ import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
 import jp.go.aist.rtm.RTC.port.CorbaConsumer;
 import jp.go.aist.rtm.RTC.port.CorbaPort;
+import jp.go.aist.rtm.RTC.util.DataRef;
 import RTC.ReturnCode_t;
 
 public class MyServiceConsumerImpl  extends DataFlowComponentBase {
@@ -16,6 +17,7 @@ public class MyServiceConsumerImpl  extends DataFlowComponentBase {
         super(manager);
         // <rtc-template block="initializer">
         m_MyServicePort = new CorbaPort("MyService");
+        this.result = new DataRef<String>(resultVal);
     }
 
     // The initialize action (on CREATED->ALIVE transition)
@@ -112,10 +114,21 @@ public class MyServiceConsumerImpl  extends DataFlowComponentBase {
              std::cout << "arg    : " << argv[1] << std::endl;
             */
           
+          if(async != null && !async.isAlive()){
+              System.out.println( "echo() finished: " + this.result.v );
+              async = null;
+          }
           m_myservice0 = m_myservice0Base._ptr();
           if( argv[0].equals("echo") && argv.length>1 ) {
-              String retmsg = m_myservice0.echo(argv[1]);
-              System.out.println( "echo return: " + retmsg );
+              if(async == null){
+                  //String retmsg = m_myservice0.echo(argv[1]);
+                  //System.out.println( "echo return: " + retmsg );
+                  async = new Thread(
+                          new echoFunctor(m_myservice0,argv[1],this.result));
+                  async.start();
+              } else{
+                  System.out.println("echo() still invoking");
+              }
               return super.onExecute(ec_id);
           }
           
@@ -217,4 +230,25 @@ public class MyServiceConsumerImpl  extends DataFlowComponentBase {
     protected MyService m_myservice0;
     
     // </rtc-template>
+    Thread async;
+    String resultVal = new String();
+    DataRef<String> result;
+
+    class echoFunctor implements Runnable{
+      public echoFunctor(MyService comp,String arg,DataRef<String> result){
+        this.obj = comp;
+        this.arg = arg;
+        this.result = result;
+      }
+    
+      @Override
+      public void run() {
+        result.v = obj.echo(this.arg);
+      }
+      MyService obj;  
+      String arg;
+      DataRef<String> result;
+    }
+
+
 }
