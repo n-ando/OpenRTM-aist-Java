@@ -7,6 +7,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import java.lang.Boolean;
+import java.lang.reflect.InvocationTargetException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -1372,12 +1375,24 @@ public class Manager {
      * @param initFunc 
      *   {@.ja 初期化メソッド名}
      *   {@.en The initialize function name}
+     * @return 
+     *   {@.ja RTC_OK               正常終了
+     *         RTC_ERROR            ロード失敗・不明なエラー 
+     *         PRECONDITION_NOT_MET 設定により許可されない操作
+     *         BAD_PARAMETER        不正なパラメータ}
+     *   {@.en RTC_OK               Normal return
+     *         RTC_ERROR            Load failed, or unknown error
+     *         PRECONDITION_NOT_MET Not allowed operation by conf
+     *         BAD_PARAMETER        Invalid parameter}
      * 
      */
-    public String load(final String moduleFileName, final String initFunc) {
+    //public String load(final String moduleFileName, final String initFunc) {
+    public ReturnCode_t load(final String moduleFileName, final String initFunc) {
+
         
         rtcout.println(Logbuf.TRACE, 
                         "Manager.load("+moduleFileName+","+initFunc+")");
+        String crlf = System.getProperty("line.separator");
         
         String file_name = moduleFileName;
         String init_func = initFunc;
@@ -1389,14 +1404,37 @@ public class Manager {
             String path = m_module.load(file_name, init_func);
             rtcout.println(Logbuf.DEBUG, "module path: "+path);
             m_listeners.module_.postLoad(path, init_func);
-            return path;
             
-        } catch (Exception e) {
-            rtcout.println(Logbuf.WARN, 
-                "Exception: Caught unknown Exception in Manager.load().");
-            rtcout.println(Logbuf.WARN, e.getMessage());
+        } 
+        catch (IllegalArgumentException e) {
+            rtcout.println(Logbuf.ERROR, 
+                "Caught Illegal Argument Exception in Manager.load()."
+                + crlf 
+                + e.getMessage());
+            return ReturnCode_t.BAD_PARAMETER;
         }
-        return null;
+        catch (ClassNotFoundException e) {
+            rtcout.println(Logbuf.ERROR, 
+                "Caught Class NotFound Exception in Manager.load()."
+                + crlf 
+                + e.getMessage());
+            return ReturnCode_t.RTC_ERROR;
+        }
+        catch (InvocationTargetException e) {
+            rtcout.println(Logbuf.ERROR, 
+                "Caught Invocation Target Exception in Manager.load()."
+                + crlf 
+                + e.getMessage());
+            return ReturnCode_t.PRECONDITION_NOT_MET;
+        }
+        catch (Exception e) {
+            rtcout.println(Logbuf.ERROR, 
+                "Caught unknown Exception in Manager.load()."
+                + crlf 
+                + e.getMessage());
+            return ReturnCode_t.BAD_PARAMETER;
+        }
+        return ReturnCode_t.RTC_OK;
     }
     
     /**
