@@ -1,8 +1,12 @@
 package jp.go.aist.rtm.RTC.executionContext;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.Manager;
+import jp.go.aist.rtm.RTC.ICPUAffinity;
+import jp.go.aist.rtm.RTC.CPUAffinityLinux;
+import jp.go.aist.rtm.RTC.CPUAffinityWindows;
 import jp.go.aist.rtm.RTC.ObjectCreator;
 import jp.go.aist.rtm.RTC.ObjectDestructor;
 import jp.go.aist.rtm.RTC.RTObjectStateMachine;
@@ -137,6 +141,19 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
         int count = 0 ;
         rtcout.println(Logbuf.TRACE, "PeriodicExecutionContext.svc()");
 
+        if(m_cpu.size()>0) {
+            ICPUAffinity CPUAffinity;
+            String osname = System.getProperty("os.name").toLowerCase();
+            rtcout.println(Logbuf.DEBUG, "os.name: "+ osname);
+            if(osname.startsWith("windows")){
+                CPUAffinity = new CPUAffinityWindows();
+            }
+            else{
+                CPUAffinity = new CPUAffinityLinux();
+            }
+            CPUAffinity.setThreadAffinity(m_cpu);
+        }
+
         do {
             invokeWorkerPreDo();
             synchronized (m_workerthread.mutex_) {
@@ -156,9 +173,12 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
             if(count > 1000){
                 TimeValue t1_w = t1;
                 TimeValue period_w = period;
-                rtcout.println(Logbuf.PARANOID, "Period:    " + period.getSec() + " [s]");
-                rtcout.println(Logbuf.PARANOID, "Execution: " + t1_w.minus(t0).getSec() + " [s]");
-                rtcout.println(Logbuf.PARANOID, "Sleep:     " + period_w.minus(t1_w).getSec() + " [s]");
+                rtcout.println(Logbuf.PARANOID, "Period:    " 
+                               + period.getSec() + " [s]");
+                rtcout.println(Logbuf.PARANOID, "Execution: " 
+                               + t1_w.minus(t0).getSec() + " [s]");
+                rtcout.println(Logbuf.PARANOID, "Sleep:     " 
+                               + period_w.minus(t1_w).getSec() + " [s]");
             }
             TimeValue delta = t1.minus(t0);
             if( !m_nowait && period.toDouble() > delta.toDouble())
@@ -1561,6 +1581,7 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     protected boolean m_nowait;
     protected Thread m_thread = null;
     protected boolean ticked_;
+    protected ArrayList<Integer> m_cpu = new ArrayList<Integer>();
 
     /**
      * <p>このExecutionContextを生成するFactoryクラスを
@@ -1682,6 +1703,10 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
                 + ", Timeout = "+m_resetTimeout.toDouble());
         // Setting given Properties to EC's profile::properties
         setProperties(props);
+     
+        setCpuAffinity(props);
+        rtcout.println(Logbuf.DEBUG, "init() done");
+
     }
 
 
@@ -2000,4 +2025,31 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
     public void invokeWorkerPreDo()   { m_worker.invokeWorkerPreDo(); }
     public void invokeWorkerDo()      { m_worker.invokeWorkerDo(); }
     public void invokeWorkerPostDo()  { m_worker.invokeWorkerPostDo(); }
+
+    /**
+     * {@.ja  終了処理用コールバック関数。}
+     * {@.en Callback function to finalize}
+     * 
+     */
+    public void setCpuAffinity(Properties props){
+        rtcout.println(Logbuf.TRACE, "setCpuAffinity()");
+        String affinity_str = props.getProperty("cpu_affinity");
+
+        if(!affinity_str.isEmpty()) {
+            rtcout.println(Logbuf.DEBUG, "CPU affinity property: " 
+                                         + affinity_str);
+            String[] tmp = affinity_str.split(",");
+            m_cpu.clear();
+            for (int ic=0; ic < tmp.length; ++ic) {
+                try {
+                    m_cpu.add(Integer.parseInt(tmp[ic]));
+                    rtcout.println(Logbuf.DEBUG, "CPU affinity int value: "
+                                                 + tmp[ic]
+                                                 + " add.");
+                }
+                catch(Exception ex){
+                }
+            }
+        }
+    }
 }

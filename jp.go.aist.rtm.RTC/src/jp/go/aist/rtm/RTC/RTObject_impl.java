@@ -6204,6 +6204,7 @@ public class RTObject_impl extends DataFlowComponentPOA {
             "activation_timeout",
             "deactivation_timeout",
             "reset_timeout",
+            "cpu_affinity",
             ""
           };
         Properties node = m_properties.findNode("exec_cxt");
@@ -6379,65 +6380,134 @@ public class RTObject_impl extends DataFlowComponentPOA {
      * {@.en creating, initializing and binding context}
      */
     protected ReturnCode_t createContexts(ArrayList<Properties> ec_args){
-         ReturnCode_t ret = ReturnCode_t.RTC_OK;
-         Set<String> avail_ec
-           = ExecutionContextFactory.instance().getIdentifiers();
-         for (int ic=0; ic < ec_args.size(); ++ic) {
-             String ec_type = ec_args.get(ic).getProperty("type");
-             String ec_name = ec_args.get(ic).getProperty("name");
-             ExecutionContextBase ec = null;
-             // if EC's name exists, find existing EC in the factory.
-             if (!(ec_name.length()<1) &&
-                 findExistingEC(ec_args.get(ic), ec) == ReturnCode_t.RTC_OK) { 
-                 rtcout.println(Logbuf.DEBUG, "EC: type="
-                                        + ec_type
-                                        + ", name="
-                                        + ec_name
-                                        + " already exists.");
-             }
-             // If EC's name is empty or no existing EC, create new EC.
-             else { // If EC's name is empty or no existing EC, create new EC.
-                 boolean find_flag = false;
-                 Iterator it = avail_ec.iterator();
-                 while (it.hasNext()) {
-                     if(it.next().equals(ec_type)){
-                         find_flag= true;
-                         break;
-                     }
-                 }
-                 if (!find_flag) {
-                     rtcout.println(Logbuf.WARN, "EC: "
-                                        + ec_type
-                                        + " is not available.");
-                     rtcout.println(Logbuf.DEBUG, "Available ECs: "
-                                        + avail_ec.toString());
-                     continue;
-                 }
-                 ExecutionContextFactory<ExecutionContextBase,String> factory 
-                                        = ExecutionContextFactory.instance();
-                 ec = factory.createObject(ec_type);
+        ReturnCode_t ret = ReturnCode_t.RTC_OK;
+        Set<String> avail_ec
+            = ExecutionContextFactory.instance().getIdentifiers();
+        for (int ic=0; ic < ec_args.size(); ++ic) {
+            String ec_type = ec_args.get(ic).getProperty("type");
+            String ec_name = ec_args.get(ic).getProperty("name");
+            ExecutionContextBase ec = null;
+            // if EC's name exists, find existing EC in the factory.
+            if (!(ec_name.length()<1) &&
+                findExistingEC(ec_args.get(ic), ec) == ReturnCode_t.RTC_OK) { 
+                rtcout.println(Logbuf.DEBUG, "EC: type="
+                                             + ec_type
+                                             + ", name="
+                                             + ec_name
+                                             + " already exists.");
+            }
+            // If EC's name is empty or no existing EC, create new EC.
+            else { // If EC's name is empty or no existing EC, create new EC.
+                boolean find_flag = false;
+                Iterator it = avail_ec.iterator();
+                while (it.hasNext()) {
+                    if(it.next().equals(ec_type)){
+                        find_flag= true;
+                        break;
+                    }
+                }
+                if (!find_flag) {
+                    rtcout.println(Logbuf.WARN, "EC: "
+                                       + ec_type
+                                       + " is not available.");
+                    rtcout.println(Logbuf.DEBUG, "Available ECs: "
+                                       + avail_ec.toString());
+                    continue;
+                }
+                ExecutionContextFactory<ExecutionContextBase,String> factory 
+                                       = ExecutionContextFactory.instance();
+                ec = factory.createObject(ec_type);
 
-             }
+            }
      
-             // EC factory available but creation failed. Resource full?
-             if (ec == null) {
-                 rtcout.println(Logbuf.ERROR, "EC ("
-                                        + ec_type
-                                        + ") creation failed.");
-                 rtcout.println(Logbuf.DEBUG, "Available EC list: "
+            // EC factory available but creation failed. Resource full?
+            if (ec == null) {
+                rtcout.println(Logbuf.ERROR, "EC ("
+                                      + ec_type
+                                       + ") creation failed.");
+                rtcout.println(Logbuf.DEBUG, "Available EC list: "
                                         + avail_ec.toString());
-                 ret = ReturnCode_t.RTC_ERROR;
-                 continue;
-             }
-             rtcout.println(Logbuf.DEBUG, "EC ("
-                                        + ec_type
-                                        + ") created.");
+                ret = ReturnCode_t.RTC_ERROR;
+                continue;
+            }
+            rtcout.println(Logbuf.DEBUG, "EC ("
+                                       + ec_type
+                                       + ") created.");
      
-             ec.init(ec_args.get(ic));
-             m_eclist.add(ec);
-             ec.bindComponent(this);
-         }
-         return ret;
+            ec.init(ec_args.get(ic));
+            m_eclist.add(ec);
+            ec.bindComponent(this);
+        }
+        if (m_eclist.size() == 0) {
+            Properties default_prop = new Properties();
+            default_prop.setDefaults(DefaultConfiguration.default_config);
+            ExecutionContextBase ec = null;
+
+            String ec_type = 
+                        default_prop.getProperty("exec_cxt.periodic.type");
+            Iterator it = avail_ec.iterator();
+            while (it.hasNext()) {
+                if(it.next().equals(ec_type)){
+                    rtcout.println(Logbuf.WARN, "EC: "
+                                       + ec_type
+                                       + " is not available.");
+                    rtcout.println(Logbuf.DEBUG, "Available ECs: "
+                                       + it.toString());
+                    return ReturnCode_t.RTC_ERROR;
+                }
+            }
+            ExecutionContextFactory<ExecutionContextBase,String> factory 
+                                       = ExecutionContextFactory.instance();
+            ec = factory.createObject(ec_type);
+            if (ec == null) {
+                rtcout.println(Logbuf.ERROR, "EC ("
+                                       + ec_type
+                                       + ") creation failed.");
+                rtcout.println(Logbuf.DEBUG, "Available EC list: "
+                                       + avail_ec.toString());
+                return ReturnCode_t.RTC_ERROR;
+            }
+            Properties default_opts = new Properties();
+            Properties prop = default_prop.findNode("exec_cxt.exec_cxt");
+            if (prop == null) {
+                rtcout.println(Logbuf.WARN, "No default EC options found.");
+                return ReturnCode_t.RTC_ERROR;
+            }
+            default_opts.merge(prop);
+            final String inherited_opts[] =
+              {
+                "sync_transition",
+                "sync_activation",
+                "sync_deactivation",
+                "sync_reset",
+                "transition_timeout",
+                "activation_timeout",
+                "deactivation_timeout",
+                "reset_timeout",
+                "cpu_affinity",
+                ""
+              };
+            Properties node = m_properties.findNode("exec_cxt");
+            if (node == null) {
+                rtcout.println(Logbuf.WARN, "No exec_cxt option found.");
+                return ReturnCode_t.RTC_ERROR;
+            }
+            rtcout.println(Logbuf.DEBUG, "Copying inherited EC options.");
+            for (int ic=0; inherited_opts[ic].length()<1; ++ic) {
+                if (node.findNode(inherited_opts[ic]) != null) {
+                    rtcout.println(Logbuf.PARANOID, "Option "
+                                            + inherited_opts[ic]
+                                            + " exists.");
+                    default_opts.setProperty(inherited_opts[ic], 
+                                        node.getProperty(inherited_opts[ic]));
+                }
+            }
+            ec.init(default_opts);
+            m_eclist.add(ec);
+            ec.bindComponent(this);
+        }
+
+        return ret;
     }
     /**
      * {@.ja マネージャオブジェクト}

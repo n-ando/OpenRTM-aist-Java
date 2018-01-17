@@ -139,6 +139,7 @@
 
 	
         <target name="buildAllLinux">
+		<antcall target="createVersionFile" />
 
 		<antcall target="idlCompile" />
 
@@ -314,6 +315,13 @@
                 </javadoc>
 	</target>
 
+
+	<target name="createVersionFile" description="VersionFileを生成します">
+		<exec executable="sed" dir="${source.common}" output="${source.common}/Version.java">
+                    <arg line=" -e 's/@OPENRTM_NAME@/${target.name}/g'  -e 's/@OPENRTM_VERSION@/${version}/g' ./Version.java.in">
+                    </arg>
+		</exec>
+	</target>
 
 	<target name="idlCompile" description="IDLファイルをコンパイルします">
 		<delete dir="src/_SDOPackage" />
