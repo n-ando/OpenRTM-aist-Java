@@ -12,7 +12,7 @@ import java.util.Observable;
 
 import jp.go.aist.rtm.RTC.DataFlowComponentBase;
 import jp.go.aist.rtm.RTC.Manager;
-//import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
+import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
 import jp.go.aist.rtm.RTC.port.InPort;
 import jp.go.aist.rtm.RTC.port.OutPort;
 import jp.go.aist.rtm.RTC.port.ConnectorBase;
@@ -773,8 +773,7 @@ public class ThroughputImpl extends DataFlowComponentBase {
       throughputComp = comp;
     }
     @Override
-    //public ReturnCode operator(ConnectorBase.ConnectorInfo arg,
-    public void operator(ConnectorBase.ConnectorInfo arg,
+    public ReturnCode operator(ConnectorBase.ConnectorInfo arg,
                  DataType data) {
       ConnectorBase.ConnectorInfo info =(ConnectorBase.ConnectorInfo)arg;
       Class cl = data.getClass();
@@ -793,7 +792,7 @@ public class ThroughputImpl extends DataFlowComponentBase {
         //set throws
       }
       throughputComp.receiveData(tim, leng);
-      //return ReturnCode.NO_CHANGE;
+      return ReturnCode.NO_CHANGE;
     }
     public ThroughputImpl throughputComp;
   }
@@ -804,8 +803,7 @@ public class ThroughputImpl extends DataFlowComponentBase {
     }
 
     @Override
-    //public ReturnCode operator(ConnectorBase.ConnectorInfo arg){
-    public void operator(ConnectorBase.ConnectorInfo arg){
+    public ReturnCode operator(ConnectorBase.ConnectorInfo arg){
       System.out.println("------------------------------");
       //System.out.println("       Connected !!");
       //System.out.println("------------------------------");
@@ -821,7 +819,7 @@ public class ThroughputImpl extends DataFlowComponentBase {
       System.out.println(str);
       System.out.println("------------------------------");
       throughputComp.setConnectorProfile(arg);
-      //return ReturnCode.NO_CHANGE;
+      return ReturnCode.NO_CHANGE;
     }
     public ThroughputImpl  throughputComp;
   }
