@@ -36,6 +36,6 @@ fi
 
 export CLASSPATH=$(get_classpath)
 
-java rtcd.rtcd -f ./rtcd_java.conf ${1+"$@"}
+java rtcd.rtcd ${1+"$@"}
 
 
