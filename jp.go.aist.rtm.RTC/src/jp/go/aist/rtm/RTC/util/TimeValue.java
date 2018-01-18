@@ -202,7 +202,7 @@ public class TimeValue {
      */
     public double toDouble(){
         normalize();
-        return this.tv_sec + this.tv_usec/ (double)TIMEVALUE_ONE_SECOND_IN_USECS;
+        return (double)this.tv_sec + (double)this.tv_usec/ (double)TIMEVALUE_ONE_SECOND_IN_USECS;
     }
     
     /**
