@@ -3883,63 +3883,6 @@ public class Manager {
             }
         }
 
-        File otherref 
-            = new File(m_config.getProperty("manager.refstring_path"));
-        if (!otherref.exists()) {
-            FileWriter reffile = null;
-            try {
-                reffile = new FileWriter(otherref);
-                reffile.write(
-                        m_pORB.object_to_string(m_mgrservant.getObjRef()));
-                reffile.close();
-            } catch (IOException e) {
-            }
-            if(reffile != null){
-                try {
-                    reffile.close();
-                } 
-                catch (IOException e) {
-                }
-            }
-        }
-        else {
-            FileReader reffile = null;
-            BufferedReader br = null;
-            try{
-                String refstring = new String();
-                reffile = new FileReader(otherref);
-                br = new BufferedReader(reffile); 
-                String line;
-                while ((line = br.readLine()) != null) {
-                    refstring = refstring + line;
-                }
-                br.close();
-                reffile.close();
-
-
-                //Object obj = m_pORB.string_to_object(refstring);
-                //Manager mgr = ManagerHelper.narrow(obj);
-                //        if (mgr==null) return false;
-                //        mgr.set_child(m_mgrservant.getObjRef());
-                //        m_mgrservant.set_owner(mgr);
-            } catch (IOException e) {
-            }
-            if(br != null){
-                try{
-                    br.close();
-                } 
-                catch (IOException e) {
-                }
-            }
-            if(reffile != null){
-                try{
-                    reffile.close();
-                } 
-                catch (IOException e) {
-                }
-            }
-        }
-
         return true;
     }
 
