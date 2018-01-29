@@ -22,6 +22,8 @@ import jp.go.aist.rtm.RTC.port.InPortDSConsumer;
 import jp.go.aist.rtm.RTC.port.OutPortDSProvider;
 import jp.go.aist.rtm.RTC.port.OutPortDSConsumer;
 
+import jp.go.aist.rtm.RTC.ComponentObserverConsumer;
+
 /**
  * {@.ja Factory初期処理用クラス}
  * {@.en Class for Factory initial processing}
@@ -75,6 +77,7 @@ public class FactoryInit {
         NodeNumberingPolicy.NodeNumberingPolicyInit();
         NamingServiceNumberingPolicy.NamingServiceNumberingPolicyInit();
 
+        ComponentObserverConsumer.ComponentObserverConsumerInit();
         //ExtendedFsmServiceProvider.ExtendedFsmServiceProviderInit();
     }
 }
