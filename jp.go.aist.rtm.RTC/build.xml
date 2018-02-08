@@ -282,7 +282,7 @@
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 
 
-			package="yes" source="1.5" splitindex="true" 
+			package="yes" splitindex="true" 
                         use="true" version="true" charset="UTF-8" 
                         classpath="lib/commons-cli-1.1.jar:lib/jna-4.2.2.jar:lib/jna-platform-4.2.2.jar" 
                         >
@@ -306,7 +306,7 @@
 			nodeprecated="false" nodeprecatedlist="false" 
                         noindex="false" nonavbar="false" notree="false" 
 
-			package="yes" source="1.5" splitindex="true" 
+			package="yes" splitindex="true" 
                         use="true" version="true" charset="UTF-8"
                         classpath="lib/commons-cli-1.1.jar:lib/jna-4.2.2.jar:lib/jna-platform-4.2.2.jar" 
                         >
