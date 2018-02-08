@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.FileHandler;
@@ -996,8 +997,7 @@ public class Manager {
      * {@.ja このメソッドは"manager.components.preactivation"に設定される
      * コンポーネントを活性化する。
      * 例:
-     * manager.components.preconnect: RTC0.port0^RTC0.port1(interface_type=corba_cdr&dataflow_type=pull&~),~}
-     * {@.en This method activates components set to 
+     * manager.components.preconnect: RTC0.port0?port=RTC0.port1&interface_type=corba_cdr&dataflow_type=pull&~,~
      * "manager.components.preconnect".}
      *
      */
@@ -1015,29 +1015,48 @@ public class Manager {
                 +Arrays.toString(connectors));
         }
         for (int ic=0; ic < connectors.length; ++ic) {
-            // ConsoleIn.out^Console.in(dataflow_type=push&....)
-            String[] conn_prop = connectors[ic].split("\\(");
+            // ConsoleIn.out?Console.in&dataflow_type=push&....
+            String[] conn_prop = connectors[ic].split("\\?");
             if ( conn_prop == null || conn_prop.length == 0 ) {
             }
-            if ( conn_prop.length == 2 ) {
-                conn_prop[1] = conn_prop[1].replace(")","");
+            //String[] params = connectors[ic].split("&");
+            ArrayList<String> params 
+                    = new ArrayList(Arrays.asList(conn_prop[1].split("&")));
+            HashMap<String,String> config = new HashMap<>();
+            ArrayList<String> ports = new ArrayList<String>();
+            for(String param :params){
+                String[] elem = param.split("=");
+                if(elem.length != 2){
+                    continue;
+                }
+	        elem[0] = elem[0].trim();
+	        elem[1] = elem[1].trim();
+                String exp = "port\\d*";
+                if(elem[0].matches(exp)){
+                    ports.add(elem[1]);
+                    continue;
+                }
+                config.put(elem[0],elem[1]);
             }
-            String[] comp_ports = conn_prop[0].split("\\^"); //"^" is expressing a connection between ports.
-            if(comp_ports.length != 2) {
+
+            if(ports.size() == 0) {
                 rtcout.println(Logbuf.ERROR, 
                     "Invalid format for pre-connection.");
                 rtcout.println(Logbuf.ERROR, 
-                    "Format must be Comp0.port0:Comp1.port1");
+                    "Format must be RTC0.port0?port=RTC0.port1");
                 continue;
             }
-            String comp0_name = comp_ports[0].split("\\.")[0];
-            String port0_name = comp_ports[0];
+
+            String comp0_name = conn_prop[0].split("\\.")[0];
+            //String port0_name 
+            //    = conn_prop[0].substring(conn_prop[0].lastIndexOf(".") + 1);
+            String port0_name = conn_prop[0];
+
             RTC.RTObject comp0_ref;
             if(comp0_name.indexOf("://") == -1){
                 RTObject_impl comp0 = getComponent(comp0_name);
                 if (comp0 == null) { 
-                    rtcout.println(Logbuf.ERROR, 
-                    comp0_name + " not found.");
+                    rtcout.println(Logbuf.ERROR, comp0_name + " not found.");
                     continue;
                 }
                 comp0_ref = comp0.getObjRef();
@@ -1049,7 +1068,7 @@ public class Manager {
                     continue;
                 }
                 comp0_ref = rtcs[0];
-                String[] array = comp_ports[0].split("/");
+                String[] array = conn_prop[0].split("/");
                 port0_name = array[array.length-1];
             }
 
@@ -1060,61 +1079,73 @@ public class Manager {
                 continue;
             }
             
-
-            String comp1_name = comp_ports[1].split("\\.")[0];
-            String port1_name = comp_ports[1];
-            RTC.RTObject comp1_ref;
-            if(comp1_name.indexOf("://") == -1){
-                RTObject_impl comp1 = getComponent(comp1_name);
-                if (comp1 == null) { 
-                    rtcout.println(Logbuf.ERROR, 
-                    comp1_name + " not found.");
-                    continue;
-                }
-                comp1_ref = comp1.getObjRef();
-            }
-            else{
-                RTC.RTObject[] rtcs = m_namingManager.string_to_component(comp1_name);
-                if(rtcs == null || rtcs.length == 0) {
-                    rtcout.println(Logbuf.ERROR, comp1_name + " not found.");
-                    continue;
-                }
-                comp1_ref = rtcs[0];
-                String[] array = comp_ports[1].split("/");
-                port1_name = array[array.length-1];
-            }
-
-
-            PortService port1_var = CORBA_RTCUtil.get_port_by_name(comp1_ref, port1_name);
-            if(port1_var == null){
-                rtcout.println(Logbuf.ERROR, "port " + port1_name + " not found.");
-                continue;
-            }
-
-
+            //Makes ConnectorProfile 
             NVListHolder nvholder = new NVListHolder();
             if( nvholder.value==null ) {
                 nvholder.value = new NameValue[0];
             }
-            String[] opt_props = conn_prop[1].split("\\&");
-            for (int o=0; o < opt_props.length; ++o) {
-                String[] temp = opt_props[o].split("=");
-                //prop["dataport." + temp[0]] = temp[1];
-                if(temp.length  == 2){
-                    rtcout.println(Logbuf.TRACE, "options: " + Arrays.toString(temp));
-                    CORBA_SeqUtil.push_back(nvholder,
-                        NVUtil.newNVString("dataport." + temp[0],temp[1]));
-                }
+            if(config.get("dataflow_type")==null){
+                config.put("dataflow_type","push");
             }
+            if(config.get("interface_type")==null){
+                config.put("interface_type","corba_cdr");
+            }
+            config.forEach((k, v) -> {
+                rtcout.println(Logbuf.TRACE, "options: " + k +","+ v);
+                CORBA_SeqUtil.push_back(nvholder,
+                        NVUtil.newNVString("dataport." + k,v));
+            });
             Properties prop = new Properties();
             NVUtil.copyToProperties(prop, nvholder);
-            ReturnCode_t ret = CORBA_RTCUtil.connect(
-                        connectors[ic],prop,port0_var, port1_var);
-            if(ret != ReturnCode_t.RTC_OK){
-                rtcout.println(Logbuf.ERROR, 
+
+            //Connects ports
+            for(String port : ports){
+                //String port_name = port.substring(port.lastIndexOf(".")+1);
+                String port_name = port;
+                String comp_name = port.split("\\.")[0];
+
+                RTC.RTObject comp_ref;
+                if(comp_name.indexOf("://") == -1){
+                    RTObject_impl comp = getComponent(comp_name);
+                    if (comp == null) { 
+                        rtcout.println(Logbuf.ERROR, 
+                                            comp_name + " not found.");
+                        continue;
+                    }
+                    comp_ref = comp.getObjRef();
+                }
+                else{
+                    RTC.RTObject[] rtcs 
+                            = m_namingManager.string_to_component(comp_name);
+                    if(rtcs == null || rtcs.length == 0) {
+                        rtcout.println(Logbuf.ERROR, comp_name + " not found.");
+                        continue;
+                    }
+                    comp_ref = rtcs[0];
+                    String[] array = port.split("/");
+                    port_name = array[array.length-1];
+                }
+
+
+                PortService port_var 
+                    = CORBA_RTCUtil.get_port_by_name(comp_ref, port_name);
+                if(port_var == null){
+                    rtcout.println(Logbuf.ERROR, 
+                            "port " + port_name + " not found.");
+                    continue;
+                }
+
+
+                //ReturnCode_t ret = CORBA_RTCUtil.connect(
+                //        connectors[ic],prop,port0_var, port_var);
+                ReturnCode_t ret = CORBA_RTCUtil.connect(
+                        conn_prop[0]+"?"+port_name,prop,port0_var, port_var);
+                if(ret != ReturnCode_t.RTC_OK){
+                    rtcout.println(Logbuf.ERROR, 
                             "Connection error in topic connection.");
+                }
+                NVUtil.dump(nvholder);
             }
-            NVUtil.dump(nvholder);
         }
     }
 
@@ -3858,63 +3889,6 @@ public class Manager {
             for (int i=0; i < names.length; ++i) {
                 String mgr_name = formatString(names[i], prop);
                 m_namingManager.bindObject(mgr_name, m_mgrservant);
-            }
-        }
-
-        File otherref 
-            = new File(m_config.getProperty("manager.refstring_path"));
-        if (!otherref.exists()) {
-            FileWriter reffile = null;
-            try {
-                reffile = new FileWriter(otherref);
-                reffile.write(
-                        m_pORB.object_to_string(m_mgrservant.getObjRef()));
-                reffile.close();
-            } catch (IOException e) {
-            }
-            if(reffile != null){
-                try {
-                    reffile.close();
-                } 
-                catch (IOException e) {
-                }
-            }
-        }
-        else {
-            FileReader reffile = null;
-            BufferedReader br = null;
-            try{
-                String refstring = new String();
-                reffile = new FileReader(otherref);
-                br = new BufferedReader(reffile); 
-                String line;
-                while ((line = br.readLine()) != null) {
-                    refstring = refstring + line;
-                }
-                br.close();
-                reffile.close();
-
-
-                //Object obj = m_pORB.string_to_object(refstring);
-                //Manager mgr = ManagerHelper.narrow(obj);
-                //        if (mgr==null) return false;
-                //        mgr.set_child(m_mgrservant.getObjRef());
-                //        m_mgrservant.set_owner(mgr);
-            } catch (IOException e) {
-            }
-            if(br != null){
-                try{
-                    br.close();
-                } 
-                catch (IOException e) {
-                }
-            }
-            if(reffile != null){
-                try{
-                    reffile.close();
-                } 
-                catch (IOException e) {
-                }
             }
         }
 

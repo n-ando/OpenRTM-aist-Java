@@ -18,6 +18,8 @@ import jp.go.aist.rtm.RTC.port.InPortSHMConsumer;
 import jp.go.aist.rtm.RTC.port.OutPortSHMProvider;
 import jp.go.aist.rtm.RTC.port.OutPortSHMConsumer;
 
+import jp.go.aist.rtm.RTC.ComponentObserverConsumer;
+
 /**
  * {@.ja Factory初期処理用クラス}
  * {@.en Class for Factory initial processing}
@@ -65,5 +67,8 @@ public class FactoryInit {
         DefaultNumberingPolicy.DefaultNumberingPolicyInit();
         NodeNumberingPolicy.NodeNumberingPolicyInit();
         NamingServiceNumberingPolicy.NamingServiceNumberingPolicyInit();
+
+        ComponentObserverConsumer.ComponentObserverConsumerInit();
+        //ExtendedFsmServiceProvider.ExtendedFsmServiceProviderInit();
     }
 }

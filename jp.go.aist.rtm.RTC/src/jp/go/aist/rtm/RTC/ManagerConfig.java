@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Random;
 
 import jp.go.aist.rtm.Constants;
@@ -372,14 +373,31 @@ class ManagerConfig {
             }
         }
 
-        // Search rtc configuration file from default search path
-        for (int i = 0; Constants.CONFIG_FILE_PATH[i] != null; i++) {
-            if (fileExist(Constants.CONFIG_FILE_PATH[i])) {
-                m_configFile = Constants.CONFIG_FILE_PATH[i];
-                return true;
+        String osname = System.getProperty("os.name").toLowerCase();
+        if(osname.startsWith("windows")){
+            ArrayList<String> paths = new ArrayList<String>();
+            paths.add("./rtc.conf");
+            String def_path = System.getenv("RTM_ROOT")
+                          + "bin\\"
+                          + System.getenv("RTM_VC_VERSION")
+                          + "\\rtc.conf";
+            paths.add(def_path);
+            for(String path:paths){
+                if (fileExist(path)) {
+                    this.m_configFile = path;
+                    return true;
+                }
             }
         }
-
+        else{ 
+            // Search rtc configuration file from default search path
+            for (int i = 0; Constants.CONFIG_FILE_PATH[i] != null; i++) {
+                if (fileExist(Constants.CONFIG_FILE_PATH[i])) {
+                    m_configFile = Constants.CONFIG_FILE_PATH[i];
+                    return true;
+                }
+            }
+        } 
         return false;
     }
     
