@@ -4041,6 +4041,9 @@ public class RTObject_impl extends DataFlowComponentPOA {
             }
             catch(Exception ex) {
             }
+            ExecutionContextFactory<ExecutionContextBase,String> factory 
+                                   = ExecutionContextFactory.instance();
+            factory.deleteObject(m_eclist.get(i));
         }
         if (!m_eclist.isEmpty()) {
             m_eclist.clear();

@@ -1564,6 +1564,25 @@ implements Runnable, ObjectCreator<ExecutionContextBase>, ObjectDestructor, Exec
      *
      */
     public void destructor_(Object obj) {
+        if(obj != this){
+             ((EventDrivenExecutionContext)obj).destructor_(obj);
+             return;
+        }
+        synchronized(m_svcmutex) {
+            m_svc = false;
+        }
+        synchronized (m_workerthread.mutex_) {
+            if(m_workerthread.running_ == false)
+            {
+                m_workerthread.running_ = true ;
+                m_workerthread.mutex_.notifyAll();
+            }
+        }
+        try {
+            wait();
+        } catch( InterruptedException e) {
+            e.printStackTrace();
+        }
         obj = null;
     }
     /**

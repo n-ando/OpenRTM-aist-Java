@@ -2405,7 +2405,7 @@ public class Manager {
         }
         else {
             rtcout.println(Logbuf.DEBUG, 
-                "Factory not found: "+comp_id.getProperty("implementation_id"));
+                "Factory found: "+comp_id.getProperty("implementation_id"));
             factory.destroy(comp);
         } 
         String shutdown_on_nortcs 
