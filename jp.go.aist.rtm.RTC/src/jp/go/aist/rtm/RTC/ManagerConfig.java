@@ -29,6 +29,8 @@ import org.apache.commons.cli.HelpFormatter;
  * {@.ja コマンドライン引数や環境変数、設定ファイルを読み込み・解析して
  * コンフィグレーション情報を生成します。
  * 各設定の優先度は次の通りです。
+ * <ul>
+ * <li> UNIX/Linux 
  * <ol>
  * <li>コマンドラインオプション -f</li>
  * <li>環境変数 RTC_MANAGER_CONFIG</li>
@@ -39,15 +41,22 @@ import org.apache.commons.cli.HelpFormatter;
  * <li>デフォルト設定ファイル /usr/local/etc/rtc/rtc.conf</li>
  * <li>埋め込みコンフィギュレーション値</li>
  * </ol>
- * ただし、コマンドラインオプション -d が指定された場合は、
- * （たとえ -f で設定ファイルを指定しても）埋め込みコンフィグレーション値を
- * 優先的に使用します。}
+ * <li> Windows
+ * <ol>
+ * <li>コマンドラインオプション -f</li>
+ * <li>環境変数 RTC_MANAGER_CONFIG</li>
+ * <li>デフォルト設定ファイル ./rtc.conf</li>
+ * <li>デフォルト設定ファイル %RTM_ROOT%/%RTM_VC_VERSION%/rtc.conf</li>
+ * </ol></ul>}
+ *
  * {@.en This class receives the command line arguments and will be 
  * instantiated.
  * Set property information of Manager with the configuration file specified
  * by the command line argument or the environment variable etc.
  *
  * The priorities of each configuration are as follows:
+ * <ul>
+ * <li> UNIX/Linux 
  * <OL>
  * <LI>Command option "-f"
  * <LI>Environment variable "RTC_MANAGER_CONFIG"
@@ -57,9 +66,14 @@ import org.apache.commons.cli.HelpFormatter;
  * <LI>Default configuration file "/usr/local/etc/rtc.conf"
  * <LI>Default configuration file "/usr/local/etc/rtc/rtc.conf"
  * <LI>Embedded configuration value
- *</OL>
- * If the command option "-d" is specified (even if specify configuration file
- * by "-f" option), the embedded configuration values will be used.}
+ * </OL>
+ * <li> Windows
+ * <OL>
+ * <LI>Command option "-f"
+ * <LI>Environment variable "RTC_MANAGER_CONFIG"
+ * <LI>Default configuration file "./rtc.conf"
+ * <LI>Default configuration file "%RTM_ROOT%/%RTM_VC_VERSION%/rtc.conf"
+ * </OL></ul>}
  *
  */
 class ManagerConfig {
@@ -120,19 +134,21 @@ class ManagerConfig {
      * コンフィグレーション情報を構成します。
      * マンドラインオプションには、以下のものを使用できます。
      * <ul>
-     * <li>-f filePath : コンフィグレーションファイルのパスを指定します。</li>
-     * <li>-l module : ロードするモジュールを指定します。（未実装）</li>
-     * <li>-o options : その他のオプションを指定します。</li>
-     * <li>-d : デフォルトコンフィグレーションを使用します。（未実装）</li>
+     * <li> -a              : マネージャサービスOFF </li>
+     * <li> -f &lt;file name&gt;  : 設定ファイルの指定 </li>
+     * <li> -o &lt;options&gt;    : オプション指定 </li>
+     * <li> -p &lt;port number&gt;: ポート番号指定 </li>
+     * <li> -d              : マスターマネージャ指定 </li>
      * </ul>}
      *
      * {@.en Initialize with command line options. The following command options
      * are available.
      * <ul>
-     * <li>-f file   : Specify the configuration file.
-     * <li>-l module : Specify modules to be loaded. (Not implemented)
-     * <li>-o options: Specify other options. 
-     * <li>-d        : Use default static configuration. (Not implemented)
+     * <li> -a              : Disable manager service</li>
+     * <li> -f &lt;file name&gt;  : Specify a configuration file</li>
+     * <li> -o &lt;option&gt;     : Specify options</li>
+     * <li> -p &lt;port number&gt;: Specify a port number</li>
+     * <li> -d              : Run as the master manager</li>
      * </ul>}
      *
      * @param args 
@@ -195,20 +211,18 @@ class ManagerConfig {
      *
      * <p>
      * {@.ja <ul>
-     * <li> -a         : Create manager's corba service or not.
-     * <li> -f file    : コンフィギュレーションファイルを指定する。
-     * <li> -l module  : ロードするモジュールを指定する。(未実装)
-     * <li> -o options : その他オプションを指定する。
-     * <li> -p endpoint: Multiple endpoint option.
-     * <li> -d         : デフォルトのコンフィギュレーションを使う。(未実装)
+     * <li>-a               : マネージャサービスOFF </li>
+     * <li>-f &lt;file name&gt;  : 設定ファイルの指定 </li>
+     * <li>-o &lt;options&gt;    : オプション指定 </li>
+     * <li>-p &lt;port number&gt;: ポート番号指定 </li>
+     * <li>-d               : マスターマネージャ指定 </li>
      * </ul>}
      * {@.en <ul> 
-     * <li> -a         : Create manager's corba service or not.
-     * <li> -f file    : Specify the configuration file.
-     * <li> -l module  : Specify modules to be loaded. (Not implemented)
-     * <li> -o options : Other options. 
-     * <li> -p endpoint: Multiple endpoint option.
-     * <li> -d         : Use default static configuration. (Not implemented)
+     * <li> -a              : Disable manager service</li>
+     * <li> -f &lt;file name&gt;  : Specify a configuration file</li>
+     * <li> -o &lt;option&gt;     : Specify options</li>
+     * <li> -p &lt;port number&gt;: Specify a port number</li>
+     * <li> -d              : Run as the master manager</li>
      * </ul>}
      * </p>
      *
@@ -223,12 +237,12 @@ class ManagerConfig {
     protected void parseArgs(String[] args) throws IllegalArgumentException {
         
         Options options = new Options();
-        options.addOption("a", false, "create manager's corba service or not");
-        options.addOption("f", true, "configuration file");
-        options.addOption("l", true, "load module");
+        options.addOption("a", false, "Disable manager service");
+        options.addOption("f", true, "Specify a configuration file");
+        //options.addOption("l", true, "load module");
         //options.addOption("o", true, "other options");
-        options.addOption("p", true, "multiple endpoint options");
-        options.addOption("d", false, "use default configuration");
+        options.addOption("p", true, "Specify a port number");
+        options.addOption("d", false, "Run as the master manager");
         Option opt_oter = OptionBuilder.
                                 withLongOpt("other"). 
                                 withDescription("other options").
@@ -268,12 +282,20 @@ class ManagerConfig {
             //this.m_configFile = commandLine.getOptionValue("f").trim();
             String str = commandLine.getOptionValue("f");
             if(str != null){
+                if(!fileExist(str)){
+                    System.err.println("Configuration file: "
+                                       + str 
+                                       + " not found.");
+                    System.exit(-1);
+                }
                 this.m_configFile = str.trim();
             }
         }
+/*
         if (commandLine.hasOption("l")) {
             // do nothing
         }
+*/
 /*
         if (commandLine.hasOption("o")) {
             String optarg = commandLine.getOptionValue("o").trim();
@@ -316,6 +338,8 @@ class ManagerConfig {
      * すでに特定済みの場合は、そのファイルの存在有無のみをチェックします。
      * 
      * なお、次の順序でコンフィグレーションファイルを検索します。
+     * <ul>
+     * <li> UNIX/Linux 
      * <ol>
      * <li>コマンドラインオプション -f</li>
      * <li>環境変数 RTC_MANAGER_CONFIG</li>
@@ -324,11 +348,20 @@ class ManagerConfig {
      * <li>デフォルト設定ファイル /etc/rtc/rtc.conf</li>
      * <li>デフォルト設定ファイル /usr/local/etc/rtc.conf</li>
      * <li>デフォルト設定ファイル /usr/local/etc/rtc/rtc.conf</li>
-     * </ol>}
+     * </ol>
+     * <li> Windows
+     * <ol>
+     * <li>コマンドラインオプション -f</li>
+     * <li>環境変数 RTC_MANAGER_CONFIG</li>
+     * <li>デフォルト設定ファイル ./rtc.conf</li>
+     * <li>デフォルト設定ファイル %RTM_ROOT%/%RTM_VC_VERSION%/rtc.conf</li>
+     * </ol></ul>}
      * {@.en Find the configuration file and configure it.
      * Confirm the file existence when the configuration file has 
      * already configured.
      * The configuration file is retrieved in the following order. 
+     * <ul>
+     * <li> UNIX/Linux 
      * <ol>
      * <li>The command line option -f</li>
      * <li>The environment variable RTC_MANAGER_CONFIG</li>
@@ -337,7 +370,14 @@ class ManagerConfig {
      * <li>Default configuration file /etc/rtc/rtc.conf</li>
      * <li>Default configuration file /usr/local/etc/rtc.conf</li>
      * <li>Default configuration file /usr/local/etc/rtc/rtc.conf</li>
-     * </ol>}
+     * </ol>
+     * <li> Windows
+     * <OL>
+     * <LI>Command option "-f"
+     * <LI>Environment variable "RTC_MANAGER_CONFIG"
+     * <LI>Default configuration file "./rtc.conf"
+     * <LI>Default configuration file "%RTM_ROOT%/%RTM_VC_VERSION%/rtc.conf"
+     * </OL></ul>}
      * 
      * @return 
      *   {@.ja <ul>
@@ -358,19 +398,27 @@ class ManagerConfig {
     protected boolean findConfigFile() {
         
         // Check existance of configuration file given command arg
+        System.out.println("zxci:"+m_configFile);
         if (! (m_configFile == null || m_configFile.length() == 0)) {
             if (fileExist(m_configFile)) {
                 return true;
             }
+            System.err.println("Configuration file: "
+                               + m_configFile 
+                               + " not found.");
         }
 
         // Search rtc configuration file from environment variable
         String env = System.getenv(CONFIG_FILE_ENV);
+        System.out.println("env:"+env);
         if (env != null) {
             if (fileExist(env)) {
                 this.m_configFile = env;
                 return true;
             }
+            System.err.println("Configuration file: "
+                               + env 
+                               + " not found.");
         }
 
         String osname = System.getProperty("os.name").toLowerCase();
