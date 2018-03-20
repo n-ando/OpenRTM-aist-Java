@@ -741,10 +741,14 @@ public class ModuleManager {
             }
         
             // reformat file path and remove cached files
+            String separator =  System.getProperty("file.separator");
             for (String file : flist) {
                 if (!path.endsWith("/")) { 
                     path += "/"; 
                 }
+                //if (!path.endsWith(separator)) { 
+                //    path += separator; 
+                //}
                 String fpath = path + file;
                 addNewFile(fpath, modules);
             }
@@ -912,7 +916,7 @@ public class ModuleManager {
                         if(line == null){
                             break;
                         }
-                        String[] vstr = line.split(":");
+                        String[] vstr = line.split("[\\s]*:[\\s]*");
                         if(vstr.length != 1){
                             prop.setProperty(vstr[0],vstr[1]);
                         }

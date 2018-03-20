@@ -36,7 +36,7 @@ public class CompParam {
      */
     public CompParam(String module_name){
         String modulename = module_name.split("\\?")[0];
-        String[] param_list = modulename.split(":",-1);
+        String[] param_list = modulename.split("[\\s]*:[\\s]*",-1);
         if(param_list.length < prof_list.size()){
             m_type = "RTC";
             m_vendor = "";
