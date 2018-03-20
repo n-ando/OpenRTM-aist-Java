@@ -1532,7 +1532,7 @@ System.err.println("Manager's IOR information: "+ior);
             cmd.add("-o");
             cmd.add("manager.supported_languages:"+ comp_param.language());
             cmd.add("-o");
-            cmd.add("manager.shutdown_auto:YES");
+            cmd.add("manager.shutdown_auto:NO");
             cmd.add("-o");
             String log_level = config.getProperty("logger.log_level");
             cmd.add("logger.log_level:"+log_level);
