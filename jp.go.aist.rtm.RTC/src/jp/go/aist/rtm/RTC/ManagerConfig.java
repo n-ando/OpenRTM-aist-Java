@@ -398,7 +398,6 @@ class ManagerConfig {
     protected boolean findConfigFile() {
         
         // Check existance of configuration file given command arg
-        System.out.println("zxci:"+m_configFile);
         if (! (m_configFile == null || m_configFile.length() == 0)) {
             if (fileExist(m_configFile)) {
                 return true;
@@ -410,7 +409,6 @@ class ManagerConfig {
 
         // Search rtc configuration file from environment variable
         String env = System.getenv(CONFIG_FILE_ENV);
-        System.out.println("env:"+env);
         if (env != null) {
             if (fileExist(env)) {
                 this.m_configFile = env;
