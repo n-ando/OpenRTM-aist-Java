@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.Vector;
 
 import jp.go.aist.rtm.RTC.util.Properties;
@@ -86,6 +87,7 @@ public class ModuleManager {
             }
             m_loadPath.add(loadPath[i]);
         }
+        m_loadPath = recursiveDirectory(m_loadPath);
         
         m_absoluteAllowed = StringUtil.toBool(
                 properties.getProperty(ALLOW_ABSPATH), "yes", "no", false);
@@ -361,7 +363,8 @@ public class ModuleManager {
             URI uri = path.toURI();
             urls[0] = uri.toURL();
         } catch(java.net.MalformedURLException ex){
-            rtcout.println(Logbuf.WARN, "java.net.MalformedURLException: toURL() threw Exception."+ex);
+            rtcout.println(Logbuf.WARN, 
+                "java.net.MalformedURLException: toURL() threw Exception."+ex);
             return null;
         }
         URLClassLoader url = new URLClassLoader(urls);
@@ -548,6 +551,7 @@ public class ModuleManager {
      */
     public void setLoadpath(final Vector<String> loadPath) {
         m_loadPath = new Vector<String>(loadPath);
+        m_loadPath = recursiveDirectory(m_loadPath);
     }
     
     /**
@@ -580,7 +584,8 @@ public class ModuleManager {
      *   {@.en List of additional module search path}
      */
     public void addLoadPath(final Vector<String> loadPath) {
-        m_loadPath.addAll(loadPath);
+        Vector<String>loadpath = recursiveDirectory(loadPath);
+        m_loadPath.addAll(loadpath);
     }
     
     /**
@@ -1133,6 +1138,7 @@ public class ModuleManager {
         public Class dll;
     }
 
+
     /**
      * {@.ja モジュール・ロード・パス・リスト}
      * {@.en Module load path list}
@@ -1184,4 +1190,26 @@ public class ModuleManager {
     }
     private Logbuf rtcout;
     private ArrayList<Properties> m_modprofs = new ArrayList<Properties>();
+    /**
+     * {@.ja 指定したパス以下に存在するディレクトリを探索する}
+     * {@.en Searches the directory which exists in below of designated paths.}
+     */
+    private Vector<String> recursiveDirectory(Vector<String> paths){
+        Vector<String> result = new Vector<String>();
+        for(String path:paths){
+            Stack<File> stack = new Stack<>();
+            stack.add(new File(path));
+            while(!stack.isEmpty()){
+                File item = stack.pop();
+                if (item.isDirectory()) {
+                    result.add(item.getPath());
+                    for (File child : item.listFiles()){
+                        stack.push(child);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
 }
