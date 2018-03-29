@@ -37,6 +37,7 @@ import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.SystemException;
 import org.omg.PortableServer.POA;
+import org.omg.PortableServer.POAHelper;
 
 //import OpenRTM.DataFlowFiniteStateMachineComponent;
 //import OpenRTM.DataFlowFiniteStateMachineComponentHelper;
@@ -6290,6 +6291,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
             finalizeContexts();
             m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_pSdoConfigImpl));
             m_pPOA.deactivate_object(m_pPOA.servant_to_id(this));
+            org.omg.CORBA.Object obj 
+                    = m_pORB.resolve_initial_references("omniINSPOA");
+            POA poa = POAHelper.narrow(obj);
+            poa.deactivate_object(poa.servant_to_id(this));
         } catch(Exception ex) {
         }
 
