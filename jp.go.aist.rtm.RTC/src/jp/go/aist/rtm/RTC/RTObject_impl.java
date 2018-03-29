@@ -827,6 +827,17 @@ public class RTObject_impl extends DataFlowComponentPOA {
         if (m_exiting) { 
             return ReturnCode_t.RTC_OK; 
         }
+
+        try{
+            Organization[] orglist = get_organizations();
+            for (Organization org:orglist) {
+                org.remove_member(getInstanceName());
+            }
+        }
+        catch(Exception ex){
+            rtcout.println(Logbuf.WARN, "no organization");
+        }
+
         // deactivate myself on owned EC
         CORBA_SeqUtil.for_each(m_ecMine,
                                new deactivate_comps((LightweightRTObject)m_objref._duplicate()));
