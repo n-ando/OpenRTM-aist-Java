@@ -1761,7 +1761,10 @@ public class Manager {
             ""
         };
 
-
+        Properties prop_ = prop.getNode("port");
+        prop_.merge(m_config.getNode("port"));
+         
+       
         comp = factory.create(this);
         rtcout.println(Logbuf.PARANOID, 
                         "factory.create(this):" +comp);
