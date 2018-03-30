@@ -732,7 +732,7 @@ public abstract class PortBase extends PortServicePOA {
                 new NVListHolder(this.m_profile.properties);
         NVUtil.copyToProperties(prop, nvholder);
         boolean default_value = StringUtil.toBool(
-                   prop.getProperty("dataport.allow_dup_connection"),
+                   prop.getProperty("allow_dup_connection"),
                                      "YES", "NO", false); 
 
         prop = new Properties();

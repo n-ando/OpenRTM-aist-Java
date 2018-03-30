@@ -37,6 +37,7 @@ import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.SystemException;
 import org.omg.PortableServer.POA;
+import org.omg.PortableServer.POAHelper;
 
 import OpenRTM.DataFlowComponent;
 import OpenRTM.DataFlowComponentHelper;
@@ -817,6 +818,17 @@ public class RTObject_impl extends DataFlowComponentPOA {
         if (m_exiting) { 
             return ReturnCode_t.RTC_OK; 
         }
+
+        try{
+            Organization[] orglist = get_organizations();
+            for (Organization org:orglist) {
+                org.remove_member(getInstanceName());
+            }
+        }
+        catch(Exception ex){
+            rtcout.println(Logbuf.WARN, "no organization");
+        }
+
         // deactivate myself on owned EC
         CORBA_SeqUtil.for_each(m_ecMine,
                                new deactivate_comps((LightweightRTObject)m_objref._duplicate()));
@@ -6048,6 +6060,10 @@ public class RTObject_impl extends DataFlowComponentPOA {
             finalizeContexts();
             m_pPOA.deactivate_object(m_pPOA.servant_to_id(m_pSdoConfigImpl));
             m_pPOA.deactivate_object(m_pPOA.servant_to_id(this));
+            org.omg.CORBA.Object obj 
+                    = m_pORB.resolve_initial_references("omniINSPOA");
+            POA poa = POAHelper.narrow(obj);
+            poa.deactivate_object(poa.servant_to_id(this));
         } catch(Exception ex) {
         }
 

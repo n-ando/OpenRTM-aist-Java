@@ -557,7 +557,15 @@ public abstract class OutPortBase extends PortBase {
                 new NVListHolder(connector_profile.value.properties);
         NVUtil.copyToProperties(prop, nvholder);
 
-        String _str = m_properties.getProperty("dataport.fan_out");
+        Properties node = prop.getNode("dataport.outport");
+        Properties portprop = new Properties(m_properties);
+        portprop.merge(node);
+        node.merge(portprop);
+        NVListHolder holder = new NVListHolder(new NameValue[0]);
+        NVUtil.copyFromProperties(holder,prop);
+        connector_profile.value.properties = holder.value;
+
+        String _str = node.getProperty("fan_out");
         int _type = 100;
         try {
             _type = Integer.parseInt(_str);

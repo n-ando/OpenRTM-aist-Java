@@ -1748,6 +1748,10 @@ public class Manager {
             ""
         };
 
+        Properties prop_ = prop.getNode("port");
+        prop_.merge(m_config.getNode("port"));
+         
+       
         for (int ic=0; inherit_prop[ic].length() != 0; ++ic) {
             
             String key = inherit_prop[ic];
