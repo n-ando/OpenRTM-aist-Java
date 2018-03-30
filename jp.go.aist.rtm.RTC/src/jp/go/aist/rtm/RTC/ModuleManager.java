@@ -1203,9 +1203,16 @@ public class ModuleManager {
             while(!stack.isEmpty()){
                 File item = stack.pop();
                 if (item.isDirectory()) {
-                    result.add(item.getPath());
-                    for (File child : item.listFiles()){
-                        stack.push(child);
+                    String str = item.getPath();
+                    String osname = System.getProperty("os.name").toLowerCase();
+                    if(osname.startsWith("windows")){
+                        str = str.replace("\\","/");
+                    }
+                    if(result.indexOf(str)==-1){
+                        result.add(str);
+                        for (File child : item.listFiles()){
+                            stack.push(child);
+                        }
                     }
                 }
             }
