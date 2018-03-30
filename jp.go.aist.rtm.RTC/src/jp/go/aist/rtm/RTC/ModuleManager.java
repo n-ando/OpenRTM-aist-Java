@@ -886,6 +886,7 @@ public class ModuleManager {
                 List<String> cmdlist = new ArrayList();
                 String osname = System.getProperty("os.name").toLowerCase();
                 if(osname.startsWith("windows")){
+                    module = module.replace("\\","/");
                     cmdlist.add("cmd");
                     cmdlist.add("/c");
                 }
