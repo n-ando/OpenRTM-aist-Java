@@ -24,6 +24,9 @@ get_classpath()
   echo ${class_path}
 }
 
+rtm_jar_path=`find /usr/lib -name OpenRTM-aist*.jar 2>/dev/null`
+RTM_JAVA_ROOT=`echo ${rtm_jar_path%/jar/*}`
+
 if test "x${RTM_JAVA_ROOT}" = "x" ; then
     echo "Environment variable RTM_JAVA_ROOT is not set."
     echo "Please specify the OpenRTM-aist installation directory."
