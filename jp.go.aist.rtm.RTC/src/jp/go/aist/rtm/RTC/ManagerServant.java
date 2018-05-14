@@ -1151,7 +1151,19 @@ System.err.println("Manager's IOR information: "+ior);
      *   {@.en ReturnCode_t}
      */
     public RTC.ReturnCode_t shutdown() {
-        m_mgr.terminate();
+        synchronized(m_masterMutex) {
+            m_masters = new RTM.Manager[0];
+        }
+        synchronized(m_slaveMutex) {
+            m_slaves = new RTM.Manager[0];
+        }
+        Properties config = m_mgr.getConfig();
+        String tick = config.getProperty("manager.termination_waittime");
+        double wait_time = 1.0;
+        if (! (tick == null || tick.equals(""))) {
+            wait_time = Double.valueOf(tick);
+        }
+        m_mgr.terminate(wait_time);
         return ReturnCode_t.RTC_OK;
     }
 

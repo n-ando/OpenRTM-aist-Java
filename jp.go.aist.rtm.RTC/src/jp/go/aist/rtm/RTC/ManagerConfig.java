@@ -243,6 +243,7 @@ class ManagerConfig {
         //options.addOption("o", true, "other options");
         options.addOption("p", true, "Specify a port number");
         options.addOption("d", false, "Run as the master manager");
+        options.addOption("i", false, "Don't Shutdown if a configuration file doesn't exist");
         Option opt_oter = OptionBuilder.
                                 withLongOpt("other"). 
                                 withDescription("other options").
@@ -286,7 +287,10 @@ class ManagerConfig {
                     System.err.println("Configuration file: "
                                        + str 
                                        + " not found.");
-                    System.exit(-1);
+                    if (!commandLine.hasOption("i")) {
+                        System.exit(-1);
+                    }
+                    
                 }
                 this.m_configFile = str.trim();
             }
@@ -575,4 +579,5 @@ class ManagerConfig {
      * {@.en configuration properties from arguments}
      */
     protected Properties m_argprop = new Properties();
+    
 }

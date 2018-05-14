@@ -79,7 +79,7 @@ public class Manager {
             super();
         }
         public void run(){
-            terminate();
+            terminate(0.0);
             try {
                 Thread.sleep(100);
             }catch (InterruptedException e) {
@@ -246,10 +246,10 @@ public class Manager {
      * {@.en Terminate manager's processing}
      *
      */
-    public void terminate() {
+    public void terminate(double tm) {
         
         if (m_terminator != null) {
-            m_terminator.terminate();
+            m_terminator.terminate(tm);
         }
     }
     
@@ -4467,7 +4467,12 @@ public class Manager {
        * {@.en Start ORB and manager's termination processing.}
        *
        */
-        public void terminate() {
+        public void terminate(double tm) {
+            try {
+                Thread.sleep((int)tm*1000);
+            } catch (InterruptedException e) {
+               
+            }
             this.open("");
         }
         
