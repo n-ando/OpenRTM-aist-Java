@@ -79,6 +79,15 @@ public class ModuleManager {
         
         m_loadPath = new Vector<String>();
         String[] loadPath = properties.getProperty(MOD_LOADPTH).split(",");
+        /*
+        for(int ic=0;ic<loadPath.length;++ic) {
+            try{
+                loadPath[ic] = new File(loadPath[ic]).getCanonicalPath();
+            }
+            catch(Exception e){
+            }
+        }
+        */
         String separator =  System.getProperty("file.separator");
         for (int i = 0; i < loadPath.length; ++i) {
             loadPath[i] = loadPath[i].trim();
@@ -223,13 +232,18 @@ public class ModuleManager {
                     String packageName = m_loadPath.elementAt(i);
                     fullClassName = packageName + separator + moduleName;
                 }
+                rtcout.println(Logbuf.PARANOID, "fullClassName = " + fullClassName);
                 file = new File(fullClassName);
+                rtcout.println(Logbuf.PARANOID, 
+                               "getParent = " + file.getParent());
                 if(file.isAbsolute()){
                     URLClassLoader url = createURLClassLoader(file.getParent());
+                    rtcout.println(Logbuf.PARANOID, "url =" + url);
                     if(url!=null){
                         String name = file.getName();
                         name = getModuleName(name);
 
+                        rtcout.println(Logbuf.PARANOID, "name =" + name);
                         StringHolder packageModuleName = new StringHolder();
                         target = getClassFromName(url,name,packageModuleName);
                         module_path = packageModuleName.value;
@@ -241,6 +255,8 @@ public class ModuleManager {
                 else{
                     try {
                         fullClassName = getModuleName(fullClassName);
+                        rtcout.println(Logbuf.PARANOID, 
+                                       "fullClassName =" + fullClassName);
                         fullClassName 
                                 = fullClassName.replace(separator,".");
                         fullClassName = fullClassName.replace("..",".");
@@ -693,6 +709,15 @@ public class ModuleManager {
         rtcout.println(Logbuf.PARANOID,
                                "load_paths :"+lprop.getProperty("load_paths"));
         String[] vstr = lprop.getProperty("load_paths").split(",");
+        /*
+        for(int ic=0;ic<vstr.length;++ic) {
+            try{
+                vstr[ic] = new File(vstr[ic]).getCanonicalPath();
+            }
+            catch(Exception e){
+            }
+        }
+        */
         ArrayList<String> paths = new ArrayList(Arrays.asList(vstr));
 
         rtcout.println(Logbuf.PARANOID,
@@ -865,7 +890,15 @@ public class ModuleManager {
         Properties lprop = Manager.instance().getConfig().getNode(l);
 
         String[] paths = lprop.getProperty("load_paths").split(",");
-
+        /*
+        for(int ic=0;ic<paths.length;++ic) {
+            try{
+                paths[ic] = new File(paths[ic]).getCanonicalPath();
+            }
+            catch(Exception e){
+            }
+        }
+        */
         Properties prop = new Properties();
 
         for (String module : modules) {
@@ -1199,7 +1232,11 @@ public class ModuleManager {
         Vector<String> result = new Vector<String>();
         for(String path:paths){
             Stack<File> stack = new Stack<>();
-            stack.add(new File(path));
+            File temp_path = new File(path);
+            stack.add(temp_path);
+            if(!temp_path.isDirectory()){
+                result.add(path);
+            }
             while(!stack.isEmpty()){
                 File item = stack.pop();
                 if (item.isDirectory()) {
