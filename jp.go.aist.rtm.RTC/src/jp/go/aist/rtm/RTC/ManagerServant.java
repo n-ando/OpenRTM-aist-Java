@@ -1,5 +1,6 @@
 package jp.go.aist.rtm.RTC;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -1519,7 +1520,19 @@ System.err.println("Manager's IOR information: "+ior);
                                          +comp_param.language()
                                          +".load_paths");
             load_path = load_path + "," + load_path_language;
-
+            /*
+            String paths[] = load_path.split(",");
+            String new_paths = "";
+            for(String pa : paths) {
+                try{
+                    String str = new File(pa).getCanonicalPath();
+                    new_paths = new_paths + str +",";
+                }
+                catch(Exception e){
+                }    
+            }
+            load_path = new_paths;
+            */
             List<String> cmd = new ArrayList();
             String osname = System.getProperty("os.name").toLowerCase();
             if(osname.startsWith("windows")){
@@ -1727,8 +1740,19 @@ System.err.println("Manager's IOR information: "+ior);
                                          +comp_param.language()
                                          +".load_paths");
             load_path = load_path + "," + load_path_language;
-
-
+            /*
+            String paths[] = load_path.split(",");
+            String new_paths = "";
+            for(String pa : paths) {
+                try{
+                    String str = new File(pa).getCanonicalPath();
+                    new_paths = new_paths + str +",";
+                }
+                catch(Exception e){
+                }    
+            }
+            load_path = new_paths;
+            */
             List<String> cmd = new ArrayList();
             String osname = System.getProperty("os.name").toLowerCase();
             if(osname.startsWith("windows")){
