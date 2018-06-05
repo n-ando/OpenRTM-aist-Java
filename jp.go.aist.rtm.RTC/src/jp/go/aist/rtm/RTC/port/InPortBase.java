@@ -655,10 +655,6 @@ public abstract class InPortBase extends PortBase {
              */
             prop.merge(conn_prop.getNode("dataport.inport"));
 
-            conn_prop.getNode("dataport").merge(prop);
-            NVListHolder holder = new NVListHolder(new NameValue[0]);
-            NVUtil.copyFromProperties(holder, conn_prop);
-            cprof.value.properties = holder.value;
 
         }
         rtcout.println(Logbuf.DEBUG, 
