@@ -3,12 +3,16 @@ package jp.go.aist.rtm.RTC;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.Exception;
+import java.util.Vector;
+import java.util.Enumeration;
+
 
 import OpenRTM.StatusKind;
 import OpenRTM.StatusKindHelper;
 import OpenRTM.StatusKindHolder;
 import OpenRTM.ComponentObserver;
 import OpenRTM.ComponentObserverHelper;
+import org.omg.CORBA.portable.OutputStream;
 
 import RTC.ReturnCode_t;
 
@@ -17,6 +21,12 @@ import jp.go.aist.rtm.RTC.port.PortConnectListener;
 import jp.go.aist.rtm.RTC.port.PortConnectListenerType;
 import jp.go.aist.rtm.RTC.port.PortConnectRetListener;
 import jp.go.aist.rtm.RTC.port.PortConnectRetListenerType;
+import jp.go.aist.rtm.RTC.port.OutPortBase;
+import jp.go.aist.rtm.RTC.port.InPortBase;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListener;
+import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
+import jp.go.aist.rtm.RTC.port.ConnectorBase;
+
 
 import jp.go.aist.rtm.RTC.util.CallbackFunction;
 import jp.go.aist.rtm.RTC.util.DataRef;
@@ -394,6 +404,27 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
             m_portaction.portDisconnectListener =
               m_rtobj.addPortConnectRetListener(PortConnectRetListenerType.ON_DISCONNECTED, m_portaction, "onDisconnect");
         }
+        Vector<InPortBase> inports = m_rtobj.getInPorts();
+        Enumeration<InPortBase> e_inports = inports.elements();
+        while(e_inports.hasMoreElements()) {
+            InPortBase inport = e_inports.nextElement();
+            String msg = "RECEIVE:InPort:";
+            msg += inport.getName();
+            inport.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVED,
+                            new DataPortAction(this, msg));
+        }
+
+        Vector<OutPortBase> outports = m_rtobj.getOutPorts();
+        Enumeration<OutPortBase> e_outports = outports.elements();
+        while(e_outports.hasMoreElements()) {
+            OutPortBase outport = e_outports.nextElement();
+            String msg = "SEND:OutPort:";
+            msg += outport.getName();
+            outport.addConnectorDataListener(
+                            ConnectorDataListenerType.ON_SEND,
+                            new DataPortAction(this, msg));
+        }
     }
 
     /**
@@ -629,6 +660,26 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         public PortConnectRetListener portDisconnectListener;
 
         private ComponentObserverConsumer m_coc;
+    };
+
+
+    /**
+     * {@.ja DataPortデータ送信・受信アクションリスナ}
+     * {@.en DataPort's data send/receive action listener}
+     */
+    private class DataPortAction extends ConnectorDataListener {
+        public DataPortAction(ComponentObserverConsumer coc, String msg) {
+            m_coc = coc;
+            m_msg = msg;
+        }
+        @Override
+        public void operator(final ConnectorBase.ConnectorInfo info, 
+                                  final OutputStream data) {
+            m_coc.updateStatus(StatusKind.from_int(StatusKind._PORT_PROFILE), m_msg);
+            
+        }
+        private ComponentObserverConsumer m_coc;
+        private String m_msg;
     };
 
     /**
