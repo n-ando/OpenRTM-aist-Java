@@ -658,10 +658,6 @@ public abstract class OutPortBase extends PortBase {
              *       << cprof[dataport.outport.buffer.write.full_policy]
              */
             prop.merge(conn_prop.getNode("dataport.outport"));
-            conn_prop.getNode("dataport").merge(prop);
-            NVListHolder holder = new NVListHolder(new NameValue[0]);
-            NVUtil.copyFromProperties(holder, conn_prop);
-            cprof.value.properties = holder.value;
         }
         rtcout.println(Logbuf.DEBUG, 
                            "ConnectorProfile::properties are as follows.");
