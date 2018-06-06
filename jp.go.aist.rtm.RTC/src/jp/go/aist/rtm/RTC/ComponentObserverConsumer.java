@@ -25,6 +25,7 @@ import jp.go.aist.rtm.RTC.port.OutPortBase;
 import jp.go.aist.rtm.RTC.port.InPortBase;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListener;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
+import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
 import jp.go.aist.rtm.RTC.port.ConnectorBase;
 
 
@@ -85,6 +86,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         Properties prop = new Properties();
         NVUtil.copyToProperties(prop, nvholder);
         setHeartbeat(prop);
+        setDataPortInterval(prop);
         setListeners(prop);
         return true;
     }
@@ -287,6 +289,26 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
     }
 
     /**
+     * {@.ja データポートイベントの間隔を設定する}
+     * {@.en Setting interval of dataport events}
+     */
+    protected void setDataPortInterval(Properties prop) {
+        try {
+            m_outportInterval = new TimeValue(Double.parseDouble(prop.getProperty("port_profile.send_event.min_interval")));
+        }
+        catch(Exception ex){
+            //do nothing
+        }
+        
+        try {
+            m_inportInterval = new TimeValue(Double.parseDouble(prop.getProperty("port_profile.receive_event.min_interval")));
+        }
+        catch(Exception ex){
+            //do nothing
+        }
+    }
+    
+    /**
      * {@.ja ハートビートを設定する}
      * {@.en Setting heartbeat}
      */
@@ -412,7 +434,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
             msg += inport.getName();
             inport.addConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
-                            new DataPortAction(this, msg));
+                            new DataPortAction(this, msg, m_inportInterval));
         }
 
         Vector<OutPortBase> outports = m_rtobj.getOutPorts();
@@ -423,7 +445,7 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
             msg += outport.getName();
             outport.addConnectorDataListener(
                             ConnectorDataListenerType.ON_SEND,
-                            new DataPortAction(this, msg));
+                            new DataPortAction(this, msg, m_outportInterval));
         }
     }
 
@@ -668,18 +690,31 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
      * {@.en DataPort's data send/receive action listener}
      */
     private class DataPortAction extends ConnectorDataListener {
-        public DataPortAction(ComponentObserverConsumer coc, String msg) {
+        public DataPortAction(ComponentObserverConsumer coc, String msg, TimeValue interval) {
             m_coc = coc;
             m_msg = msg;
+            m_interval = interval;
+            m_last = new TimeValue(System.nanoTime());
         }
         @Override
-        public void operator(final ConnectorBase.ConnectorInfo info, 
+        public ReturnCode operator(final ConnectorBase.ConnectorInfo info, 
                                   final OutputStream data) {
-            m_coc.updateStatus(StatusKind.from_int(StatusKind._PORT_PROFILE), m_msg);
             
+            TimeValue curr = new TimeValue(System.nanoTime());
+            TimeValue intvl = curr.minus(m_last);
+            
+            if(intvl.toDouble() > m_interval.toDouble())
+            {
+                m_last = curr;
+                m_coc.updateStatus(StatusKind.from_int(StatusKind._PORT_PROFILE), m_msg);
+            }
+            
+            return ReturnCode.NO_CHANGE;
         }
         private ComponentObserverConsumer m_coc;
         private String m_msg;
+        private TimeValue m_last;
+        private TimeValue m_interval;
     };
 
     /**
@@ -835,6 +870,9 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
     private TimeValue m_interval;
     private boolean m_heartbeat;
     private ListenerBase m_hblistenerid;
+    
+    private TimeValue m_inportInterval;
+    private TimeValue m_outportInterval;
 
     // このタイマーはいずれグローバルなタイマにおきかえる
     private Timer m_timer;
