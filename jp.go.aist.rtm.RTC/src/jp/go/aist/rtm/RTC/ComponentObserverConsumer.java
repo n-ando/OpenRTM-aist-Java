@@ -25,7 +25,6 @@ import jp.go.aist.rtm.RTC.port.OutPortBase;
 import jp.go.aist.rtm.RTC.port.InPortBase;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListener;
 import jp.go.aist.rtm.RTC.port.ConnectorDataListenerType;
-import jp.go.aist.rtm.RTC.connectorListener.ReturnCode;
 import jp.go.aist.rtm.RTC.port.ConnectorBase;
 
 
