@@ -431,9 +431,13 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
             InPortBase inport = e_inports.nextElement();
             String msg = "RECEIVE:InPort:";
             msg += inport.getName();
+            DataPortAction action = new DataPortAction(this, msg, m_inportInterval);
             inport.addConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
-                            new DataPortAction(this, msg, m_inportInterval));
+                            action);
+            synchronized (m_recievedactions){
+                m_recievedactions.add(action);
+            }
         }
 
         Vector<OutPortBase> outports = m_rtobj.getOutPorts();
@@ -442,9 +446,13 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
             OutPortBase outport = e_outports.nextElement();
             String msg = "SEND:OutPort:";
             msg += outport.getName();
+            DataPortAction action = new DataPortAction(this, msg, m_outportInterval);
             outport.addConnectorDataListener(
                             ConnectorDataListenerType.ON_SEND,
-                            new DataPortAction(this, msg, m_outportInterval));
+                            action);
+            synchronized (m_sendactions){
+                m_sendactions.add(action);
+            }
         }
     }
 
@@ -468,6 +476,34 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         if (m_portaction.portDisconnectListener != null) {
             m_rtobj.removePortConnectRetListener(PortConnectRetListenerType.ON_DISCONNECTED, m_portaction.portDisconnectListener);
             m_portaction.portDisconnectListener = null;
+        }
+
+        Vector<InPortBase> inports = m_rtobj.getInPorts();
+        Enumeration<InPortBase> e_inports = inports.elements();
+        while(e_inports.hasMoreElements()) {
+            InPortBase inport = e_inports.nextElement();
+            synchronized (m_recievedactions){
+                java.util.Iterator it = m_recievedactions.iterator();
+                while( !it.hasNext() ){
+                    inport.removeConnectorDataListener(
+                            ConnectorDataListenerType.ON_RECEIVED,
+                            (DataPortAction)it.next());
+                }
+            }
+        }
+        
+        Vector<OutPortBase> outports = m_rtobj.getOutPorts();
+        Enumeration<OutPortBase> e_outports = outports.elements();
+        while(e_outports.hasMoreElements()) {
+            OutPortBase outport = e_outports.nextElement();
+            synchronized (m_sendactions){
+                java.util.Iterator it = m_sendactions.iterator();
+                while( !it.hasNext() ){
+                    outport.removeConnectorDataListener(
+                            ConnectorDataListenerType.ON_SEND,
+                            (DataPortAction)it.next());
+                }
+            }
         }
     }
 
@@ -874,6 +910,9 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
 
     // このタイマーはいずれグローバルなタイマにおきかえる
     private Timer m_timer;
+
+    private Vector<DataPortAction> m_recievedactions = new Vector<DataPortAction>();
+    private Vector<DataPortAction> m_sendactions = new Vector<DataPortAction>();
 
 
 };
