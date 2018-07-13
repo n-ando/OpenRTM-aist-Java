@@ -484,11 +484,11 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         while(e_inports.hasMoreElements()) {
             InPortBase inport = e_inports.nextElement();
             synchronized (m_recievedactions){
-                java.util.Iterator it = m_recievedactions.iterator();
-                while( !it.hasNext() ){
+                Enumeration<DataPortAction> e = m_recievedactions.elements();
+                while( e.hasMoreElements() ){
                     inport.removeConnectorDataListener(
                             ConnectorDataListenerType.ON_RECEIVED,
-                            (DataPortAction)it.next());
+                            e.nextElement());
                 }
             }
         }
@@ -498,11 +498,11 @@ public class ComponentObserverConsumer implements SdoServiceConsumerBase, Callba
         while(e_outports.hasMoreElements()) {
             OutPortBase outport = e_outports.nextElement();
             synchronized (m_sendactions){
-                java.util.Iterator it = m_sendactions.iterator();
-                while( !it.hasNext() ){
+                Enumeration<DataPortAction> e = m_sendactions.elements();
+                while( e.hasMoreElements() ){
                     outport.removeConnectorDataListener(
                             ConnectorDataListenerType.ON_SEND,
-                            (DataPortAction)it.next());
+                            e.nextElement());
                 }
             }
         }
