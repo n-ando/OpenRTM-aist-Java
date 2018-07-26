@@ -1057,6 +1057,8 @@ public abstract class InPortBase extends PortBase {
                     "addConnectorDataListener(): Invalid listener type.");
         return;
     }
+
+
     public void addConnectorDataListener(int type,
                                         ConnectorDataListenerT listener) {
         this.addConnectorDataListener(type,listener,true);
@@ -1114,6 +1116,23 @@ public abstract class InPortBase extends PortBase {
                     "removeConnectorDataListener(): Invalid listener type.");
         return;
     }
+
+    public void removeConnectorDataListener(int type,
+                             ConnectorDataListener listener) {
+  
+        if (type < ConnectorDataListenerType.CONNECTOR_DATA_LISTENER_NUM) {
+            rtcout.println(Logbuf.TRACE, 
+                             "removeConnectorDataListener("
+                             +ConnectorDataListenerType.toString(type)
+                             +")");
+            m_listeners.connectorData_[type].deleteObserver(listener);
+            return;
+        }
+        rtcout.println(Logbuf.ERROR, 
+                    "removeConnectorDataListener(): Invalid listener type.");
+        return;
+    }
+
   
     /**
      * {@.ja ConnectorListener リスナを追加する}
